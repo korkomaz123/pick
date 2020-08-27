@@ -7,6 +7,7 @@ class ProductEntity {
   final String image;
   final double price;
   final double discount;
+  final String channel;
   final StoreEntity store;
 
   ProductEntity({
@@ -16,6 +17,7 @@ class ProductEntity {
     this.image,
     this.price,
     this.discount,
+    this.channel,
     this.store,
   });
 
@@ -26,5 +28,6 @@ class ProductEntity {
         image = json['image'],
         price = json['price'],
         discount = json['discount'],
+        channel = json['channel'],
         store = json['store'];
 }

@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class SigaBottomBar extends StatelessWidget {
+class CigaBottomBar extends StatelessWidget {
   final PageStyle pageStyle;
   final BottomEnum activeItem;
 
-  SigaBottomBar({this.pageStyle, this.activeItem});
+  CigaBottomBar({this.pageStyle, this.activeItem});
 
   @override
   Widget build(BuildContext context) {

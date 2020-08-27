@@ -61,8 +61,14 @@ final List<StoreEntity> stores = List.generate(
   10,
   (index) => StoreEntity(
     id: index.toString(),
-    name: 'Store ${index+1}',
-    imageUrl: 'lib/public/images/brand${index+1}.png',
+    name: 'Store ${index + 1}',
+    imageUrl: 'lib/public/images/brand${index + 1}.png',
     products: products,
   ),
 );
+
+final List<CartItemEntity> myCartItems = [
+  CartItemEntity(product: products[0], itemCount: 3),
+  CartItemEntity(product: products[0], itemCount: 2),
+  CartItemEntity(product: products[0], itemCount: 4),
+];

@@ -1,4 +1,4 @@
-import 'package:ciga/src/components/product_card.dart';
+import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ProductCard(
+                          ProductVCard(
                             cardWidth: widget.pageStyle.unitWidth * 155,
                             cardHeight: widget.pageStyle.unitHeight * 360,
                             product: widget.products[index],
@@ -66,7 +66,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                               color: greyColor.withOpacity(0.4),
                             ),
                           ),
-                          ProductCard(
+                          ProductVCard(
                             cardWidth: widget.pageStyle.unitWidth * 155,
                             cardHeight: widget.pageStyle.unitHeight * 360,
                             product: widget.products[index],
@@ -74,7 +74,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                           )
                         ],
                       )
-                    : ProductCard(
+                    : ProductVCard(
                         cardWidth: widget.pageStyle.unitWidth * 315,
                         cardHeight: widget.pageStyle.unitHeight * 360,
                         product: widget.products[index],

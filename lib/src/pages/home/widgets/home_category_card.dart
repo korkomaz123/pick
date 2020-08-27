@@ -1,11 +1,9 @@
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/strings.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'home_products_carousel.dart';
@@ -53,14 +51,6 @@ class HomeCategoryCard extends StatelessWidget {
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 23,
               color: greyDarkColor,
-            ),
-          ),
-          InkWell(
-            onTap: () => null,
-            child: Container(
-              width: pageStyle.unitWidth * 18,
-              height: pageStyle.unitHeight * 17,
-              child: SvgPicture.asset(wishlistIcon, color: greyColor),
             ),
           ),
         ],

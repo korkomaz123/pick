@@ -1,5 +1,5 @@
-import 'package:ciga/src/components/siga_app_bar.dart';
-import 'package:ciga/src/components/siga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_app_bar.dart';
+import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -24,7 +24,7 @@ class _StoreListPageState extends State<StoreListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: SigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -40,7 +40,7 @@ class _StoreListPageState extends State<StoreListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: SigaBottomBar(
+      bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.store,
       ),

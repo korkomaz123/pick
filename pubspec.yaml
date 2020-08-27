@@ -1,7 +1,7 @@
 name: ciga
 description: Ecommerce app for multi-vendor
 
-publish_to: 'none' 
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -33,8 +33,10 @@ dependencies:
   enum_to_string: ^1.0.9
   string_validator: ^0.1.4
   google_fonts: ^1.1.0
+  flutter_xlider: ^3.4.0
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
+  intl_phone_number_input: ^0.4.6+2
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +58,7 @@ flutter:
     - family: AvenirBook
       fonts:
         - asset: lib/public/fonts/Avenir-Book.ttf
-    - family: AvenirBlack 
+    - family: AvenirBlack
       fonts:
         - asset: lib/public/fonts/Avenir-Black.ttf
+

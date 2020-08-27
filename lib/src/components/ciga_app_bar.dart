@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class SigaAppBar extends StatefulWidget implements PreferredSizeWidget {
+class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
 
-  SigaAppBar({this.pageStyle});
+  CigaAppBar({this.pageStyle});
 
   @override
-  _SigaAppBarState createState() => _SigaAppBarState();
+  _CigaAppBarState createState() => _CigaAppBarState();
 
   @override
   Size get preferredSize => Size.fromHeight(120);
 }
 
-class _SigaAppBarState extends State<SigaAppBar> {
+class _CigaAppBarState extends State<CigaAppBar> {
   double logoWidth;
 
   double logoHeight;

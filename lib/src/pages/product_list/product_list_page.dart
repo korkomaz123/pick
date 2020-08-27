@@ -1,9 +1,10 @@
-import 'package:ciga/src/components/product_card.dart';
-import 'package:ciga/src/components/siga_app_bar.dart';
-import 'package:ciga/src/components/siga_bottom_bar.dart';
+import 'package:ciga/src/components/product_v_card.dart';
+import 'package:ciga/src/components/ciga_app_bar.dart';
+import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/home/widgets/home_advertise.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -39,7 +40,7 @@ class _ProductListPageState extends State<ProductListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: SigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -59,7 +60,7 @@ class _ProductListPageState extends State<ProductListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: SigaBottomBar(
+      bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
@@ -90,13 +91,25 @@ class _ProductListPageState extends State<ProductListPage> {
               fontSize: pageStyle.unitFontSize * 17,
             ),
           ),
-          InkWell(
-            onTap: () => null,
-            child: Container(
-              width: pageStyle.unitWidth * 20,
-              height: pageStyle.unitHeight * 17,
-              child: SvgPicture.asset(filterIcon),
-            ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => null,
+                icon: Icon(
+                  Icons.sort,
+                  color: Colors.white,
+                  size: pageStyle.unitFontSize * 25,
+                ),
+              ),
+              InkWell(
+                onTap: () => _showFilterDialog(),
+                child: Container(
+                  width: pageStyle.unitWidth * 20,
+                  height: pageStyle.unitHeight * 17,
+                  child: SvgPicture.asset(filterIcon),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -140,11 +153,13 @@ class _ProductListPageState extends State<ProductListPage> {
       children: List.generate(
         20,
         (index) {
-          return ProductCard(
+          return ProductVCard(
             pageStyle: pageStyle,
             product: homeCategories[0].products[1],
             cardWidth: pageStyle.unitWidth * 186,
             cardHeight: pageStyle.unitHeight * 253,
+            isShoppingCart: true,
+            isWishlist: true,
           );
         },
       ),
@@ -168,6 +183,16 @@ class _ProductListPageState extends State<ProductListPage> {
         borderColor: primaryColor,
         onPressed: () => null,
       ),
+    );
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (context) {
+        return FilterPage();
+      },
     );
   }
 }

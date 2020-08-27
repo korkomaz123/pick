@@ -1,5 +1,5 @@
-import 'package:ciga/src/components/siga_app_bar.dart';
-import 'package:ciga/src/components/siga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_app_bar.dart';
+import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -22,7 +22,7 @@ class _BrandListPageState extends State<BrandListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: SigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -38,7 +38,7 @@ class _BrandListPageState extends State<BrandListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: SigaBottomBar(
+      bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
