@@ -37,6 +37,7 @@ dependencies:
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
   intl_phone_number_input: ^0.4.6+2
+  sliding_sheet: ^0.3.7
 
 dev_dependencies:
   flutter_test:

@@ -5,13 +5,14 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:ciga/src/routes/routes.dart';
 
-class CheckoutAddressPage extends StatefulWidget {
+class CheckoutConfirmedPage extends StatefulWidget {
   @override
-  _CheckoutAddressPageState createState() => _CheckoutAddressPageState();
+  _CheckoutConfirmedPageState createState() => _CheckoutConfirmedPageState();
 }
 
-class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
+class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   PageStyle pageStyle;
   TextEditingController noteController = TextEditingController();
   PaymentEnum payment;
@@ -133,7 +134,11 @@ Edit subscription to newsletter.''',
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: greyColor,
-        onPressed: () => null,
+        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        ),
         radius: 0,
       ),
     );

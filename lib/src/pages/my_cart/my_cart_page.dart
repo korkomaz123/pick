@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -21,14 +22,17 @@ class MyCartPage extends StatefulWidget {
 class _MyCartPageState extends State<MyCartPage> {
   PageStyle pageStyle;
   TextEditingController couponCodeController = TextEditingController();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: SingleChildScrollView(
         child: Column(
           children: [

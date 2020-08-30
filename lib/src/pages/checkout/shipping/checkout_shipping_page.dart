@@ -1,18 +1,19 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
-class CheckoutShoppingPage extends StatefulWidget {
+class CheckoutShippingPage extends StatefulWidget {
   @override
-  _CheckoutShoppingPageState createState() => _CheckoutShoppingPageState();
+  _CheckoutShippingPageState createState() => _CheckoutShippingPageState();
 }
 
-class _CheckoutShoppingPageState extends State<CheckoutShoppingPage> {
+class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   PageStyle pageStyle;
   ShippingEnum shipping;
 
@@ -22,7 +23,7 @@ class _CheckoutShoppingPageState extends State<CheckoutShoppingPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle),
+      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 1),
       body: Container(
         width: pageStyle.deviceWidth,
         padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -131,7 +132,7 @@ class _CheckoutShoppingPageState extends State<CheckoutShoppingPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => Navigator.pushNamed(context, Routes.checkoutReview),
         radius: 30,
       ),
     );
@@ -147,7 +148,7 @@ class _CheckoutShoppingPageState extends State<CheckoutShoppingPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => Navigator.pop(context),
         radius: 30,
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -22,25 +23,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageStyle pageStyle;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
-      appBar: CigaAppBar(pageStyle: pageStyle),
+      key: scaffoldKey,
+      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: SingleChildScrollView(
         child: Column(
           children: [
             HomeHeaderCarousel(pageStyle: pageStyle),
             Column(
               children: homeCategories
-                  .map(
-                    (category) => HomeCategoryCard(
-                      category: category,
-                      pageStyle: pageStyle,
-                    ),
-                  )
+                  .map((category) => HomeCategoryCard(
+                        category: category,
+                        pageStyle: pageStyle,
+                      ))
                   .toList(),
             ),
             HomeBodyCare(pageStyle: pageStyle),

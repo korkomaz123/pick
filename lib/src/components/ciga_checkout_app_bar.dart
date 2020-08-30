@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_checkout_stepper.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -6,18 +7,25 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaCheckoutAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
+  final int currentIndex;
 
-  CigaCheckoutAppBar({this.pageStyle});
+  CigaCheckoutAppBar({this.pageStyle, this.currentIndex});
 
   @override
   _CigaCheckoutAppBarState createState() => _CigaCheckoutAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(120);
+  Size get preferredSize => Size.fromHeight(currentIndex == null ? 60 : 120);
 }
 
 class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
   PageStyle pageStyle;
+  List<String> steps = [
+    'address'.toUpperCase(),
+    'shipping'.toUpperCase(),
+    'review'.toUpperCase(),
+    'payment'.toUpperCase(),
+  ];
 
   @override
   void initState() {
@@ -61,6 +69,31 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
           ),
         ),
       ],
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(widget.currentIndex == null ? 0 : 60),
+        child: widget.currentIndex == null
+            ? SizedBox.shrink()
+            : CigaCheckoutStepper(
+                totalSteps: 4,
+                currentStep: widget.currentIndex,
+                items: List.generate(
+                  steps.length,
+                  (index) {
+                    return Tab(
+                      child: Text(
+                        steps[index],
+                        style: TextStyle(
+                          color: widget.currentIndex == index
+                              ? primaryColor
+                              : Colors.black,
+                          fontSize: pageStyle.unitFontSize * 12,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
@@ -24,6 +25,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   PageStyle pageStyle;
   ProductEntity product;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -36,8 +38,10 @@ class _ProductPageState extends State<ProductPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: CigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: SingleChildScrollView(
         child: Column(
           children: [

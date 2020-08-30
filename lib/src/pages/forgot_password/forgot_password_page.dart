@@ -1,0 +1,159 @@
+import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/routes/routes.dart';
+import 'package:ciga/src/theme/icons.dart';
+import 'package:ciga/src/theme/styles.dart';
+import 'package:ciga/src/theme/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+class ForgotPasswordPage extends StatefulWidget {
+  @override
+  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  PageStyle pageStyle;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController userNameOrEmailController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    pageStyle = PageStyle(context, designWidth, designHeight);
+    pageStyle.initializePageStyles();
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: pageStyle.unitHeight * 120,
+                ),
+                alignment: Alignment.center,
+                child: SvgPicture.asset(
+                  logoIcon,
+                  width: pageStyle.unitWidth * 120,
+                  height: pageStyle.unitHeight * 80,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  'FORGOT PASSWORD',
+                  style: bookTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 14,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              _buildUsernameOrEmail(),
+              SizedBox(height: 40),
+              _buildGetNewPassButton(),
+              SizedBox(height: 60),
+              _buildAuthChoiceDivider(),
+              SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUsernameOrEmail() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 20,
+      ),
+      child: TextFormField(
+        controller: userNameOrEmailController,
+        textAlign: TextAlign.center,
+        style: bookTextStyle.copyWith(
+          color: Colors.white,
+          fontSize: pageStyle.unitFontSize * 14,
+        ),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(0),
+          hintText: 'USERNAME OR EMAIL',
+          hintStyle: bookTextStyle.copyWith(
+            color: greyColor,
+            fontSize: pageStyle.unitFontSize * 14,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          fillColor: Colors.white,
+          filled: true,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGetNewPassButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 50,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 20,
+      ),
+      child: TextButton(
+        title: 'GET NEW PASSWORD',
+        titleSize: pageStyle.unitFontSize * 19,
+        titleColor: primaryColor,
+        buttonColor: Colors.white,
+        borderColor: Colors.transparent,
+        onPressed: () => null,
+        radius: 10,
+      ),
+    );
+  }
+
+  Widget _buildAuthChoiceDivider() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () => Navigator.pop(context),
+            child: Text(
+              'Login',
+              style: bookTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ),
+          Container(
+            height: pageStyle.unitHeight * 20,
+            child: VerticalDivider(color: Colors.white, thickness: 0.5),
+          ),
+          InkWell(
+            onTap: () => Navigator.pushReplacementNamed(context, Routes.signUp),
+            child: Text(
+              'Register',
+              style: bookTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

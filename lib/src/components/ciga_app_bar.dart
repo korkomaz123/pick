@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,9 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
-  CigaAppBar({this.pageStyle});
+  CigaAppBar({this.pageStyle, @required this.scaffoldKey});
 
   @override
   _CigaAppBarState createState() => _CigaAppBarState();
@@ -61,7 +63,9 @@ class _CigaAppBarState extends State<CigaAppBar> {
       ),
       leading: IconButton(
         icon: Icon(Icons.menu, color: Colors.white, size: pageIconSize),
-        onPressed: () => null,
+        onPressed: () {
+          widget.scaffoldKey.currentState.openDrawer();
+        },
       ),
       actions: [
         Padding(
@@ -107,6 +111,8 @@ class _CigaAppBarState extends State<CigaAppBar> {
             suffixIcon: Icons.search,
             suffixIconSize: pageIconSize,
             suffixIconColor: greyDarkColor,
+            readOnly: true,
+            onTap: () => Navigator.pushNamed(context, Routes.search),
           ),
         ),
       ),

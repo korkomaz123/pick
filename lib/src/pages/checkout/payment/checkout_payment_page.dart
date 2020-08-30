@@ -6,13 +6,14 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:ciga/src/routes/routes.dart';
 
-class CheckoutAddressPage extends StatefulWidget {
+class CheckoutPaymentPage extends StatefulWidget {
   @override
-  _CheckoutAddressPageState createState() => _CheckoutAddressPageState();
+  _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
 }
 
-class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
+class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   PageStyle pageStyle;
   TextEditingController noteController = TextEditingController();
   PaymentEnum payment;
@@ -23,7 +24,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle),
+      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 3),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -215,7 +216,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => Navigator.pushNamed(context, Routes.checkoutConfirmed),
         radius: 30,
       ),
     );
@@ -231,7 +232,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => Navigator.pop(context),
         radius: 30,
       ),
     );

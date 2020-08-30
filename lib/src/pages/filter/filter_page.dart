@@ -1,11 +1,9 @@
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FilterPage extends StatefulWidget {
@@ -17,8 +15,14 @@ class _FilterPageState extends State<FilterPage> {
   PageStyle pageStyle;
   double minPrice = 0;
   double maxPrice = 10;
+  String category;
   String gender;
   List<String> selectedStores = [];
+  bool isHideSizes = true;
+  bool isHideColors = true;
+  bool isHideStores = true;
+  String size;
+  String color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +34,12 @@ class _FilterPageState extends State<FilterPage> {
         child: Column(
           children: [
             _buildAppBar(),
+            _buildCategories(),
             _buildPriceRange(),
             _buildGender(),
-            _buildStoreChoice(),
+            _buildSizes(),
+            _buildColors(),
+            _buildStores(),
             _buildApplyButton(),
           ],
         ),
@@ -79,6 +86,39 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
+  Widget _buildCategories() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 20,
+        vertical: pageStyle.unitHeight * 20,
+      ),
+      child: SelectOptionCustom(
+        items: ['BEST DEALS', 'NEW ARRIVALS'],
+        itemWidth: pageStyle.unitWidth * 160,
+        itemHeight: pageStyle.unitHeight * 40,
+        value: category,
+        itemSpace: pageStyle.unitWidth * 10,
+        titleSize: pageStyle.unitFontSize * 15,
+        radius: 30,
+        selectedColor: primaryColor,
+        selectedBorderColor: Colors.transparent,
+        selectedTitleColor: Colors.white,
+        unSelectedColor: greyLightColor,
+        unSelectedBorderColor: Colors.transparent,
+        unSelectedTitleColor: greyDarkColor,
+        onTap: (value) {
+          if (value != category) {
+            category = value;
+          } else {
+            category = '';
+          }
+          setState(() {});
+        },
+      ),
+    );
+  }
+
   Widget _buildPriceRange() {
     return Container(
       width: pageStyle.deviceWidth,
@@ -112,21 +152,23 @@ class _FilterPageState extends State<FilterPage> {
             ),
           ),
           SizedBox(height: pageStyle.unitHeight * 10),
-          FlutterSlider(
-            values: [minPrice, maxPrice],
-            rangeSlider: true,
-            max: 10,
-            min: 0,
-            tooltip: FlutterSliderTooltip(
-              leftSuffix: Text(' KD'),
-              rightSuffix: Text(' KD'),
-            ),
-            onDragging: (handlerIndex, lowerValue, upperValue) {
-              minPrice = lowerValue;
-              maxPrice = upperValue;
+          RangeSlider(
+            values: RangeValues(minPrice, maxPrice),
+            onChanged: (RangeValues values) {
+              minPrice = values.start;
+              maxPrice = values.end;
               setState(() {});
             },
-          ),
+            min: 0,
+            max: 10,
+            activeColor: Colors.white,
+            inactiveColor: Colors.white70,
+            divisions: 20,
+            labels: RangeLabels(
+              'KD ' + minPrice.toString(),
+              'KD ' + maxPrice.toString(),
+            ),
+          )
         ],
       ),
     );
@@ -156,7 +198,7 @@ class _FilterPageState extends State<FilterPage> {
           SizedBox(height: pageStyle.unitHeight * 20),
           Container(
             width: double.infinity,
-            height: pageStyle.unitHeight * 32,
+            // height: pageStyle.unitHeight * 32,
             child: SelectOptionCustom(
               items: GenderEnum.values
                   .map((e) => EnumToString.parse(e).toUpperCase())
@@ -164,23 +206,22 @@ class _FilterPageState extends State<FilterPage> {
               itemWidth: pageStyle.unitWidth * 82,
               itemHeight: pageStyle.unitHeight * 31,
               value: gender,
-              itemSpace: 1,
+              itemSpace: pageStyle.unitWidth * 10,
               titleSize: pageStyle.unitFontSize * 12,
               radius: 30,
-              selectedColor: Colors.transparent,
-              selectedBorderColor: Colors.white,
-              selectedTitleColor: Colors.white,
-              unSelectedColor: Colors.white,
-              unSelectedBorderColor: Colors.black.withOpacity(0.6),
-              unSelectedTitleColor: greyDarkColor,
-              listStyle: true,
-              isVertical: false,
+              selectedColor: Colors.white,
+              selectedBorderColor: Colors.transparent,
+              selectedTitleColor: primaryColor,
+              unSelectedColor: Colors.transparent,
+              unSelectedBorderColor: Colors.white,
+              unSelectedTitleColor: Colors.white,
               onTap: (value) {
                 if (value != gender) {
-                  setState(() {
-                    gender = value;
-                  });
+                  gender = value;
+                } else {
+                  gender = '';
                 }
+                setState(() {});
               },
             ),
           ),
@@ -189,7 +230,7 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildStoreChoice() {
+  Widget _buildSizes() {
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
@@ -201,48 +242,73 @@ class _FilterPageState extends State<FilterPage> {
         vertical: pageStyle.unitHeight * 15,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Store',
-            style: boldTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 22,
-            ),
-          ),
-          SizedBox(height: pageStyle.unitHeight * 10),
           Container(
             width: double.infinity,
-            height: pageStyle.unitHeight * 190,
-            child: SelectOptionCustomStyle1(
-              items: stores.map((e) => e.name).toList(),
-              values: selectedStores,
-              itemWidth: pageStyle.unitWidth * 303,
-              itemHeight: pageStyle.unitHeight * 39.5,
-              selectedColor: Colors.transparent,
-              selectedTitleColor: Colors.white,
-              selectedBorderColor: Colors.white,
-              unSelectedColor: Colors.white,
-              unSelectedTitleColor: greyDarkColor,
-              unSelectedBorderColor: greyDarkColor,
-              listStyle: true,
-              isVertical: true,
-              onTap: (value) {
-                if (selectedStores.contains(value)) {
-                  selectedStores.remove(value);
-                } else {
-                  selectedStores.add(value);
-                }
-                setState(() {});
-              },
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: greyLightColor, width: 0.5),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Sizes',
+                  style: boldTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 22,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    isHideSizes = !isHideSizes;
+                  }),
+                  icon: Icon(
+                    isHideSizes
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: Colors.white,
+                    size: pageStyle.unitFontSize * 25,
+                  ),
+                ),
+              ],
             ),
           ),
+          isHideSizes
+              ? SizedBox.shrink()
+              : Container(
+                  width: double.infinity,
+                  child: SelectOptionCustom(
+                    items: ['S', 'M', 'L', 'XL', 'XXL'],
+                    itemWidth: pageStyle.unitWidth * 60,
+                    itemHeight: pageStyle.unitHeight * 31,
+                    value: size,
+                    itemSpace: pageStyle.unitWidth * 10,
+                    titleSize: pageStyle.unitFontSize * 12,
+                    radius: 30,
+                    selectedColor: Colors.white,
+                    selectedBorderColor: Colors.transparent,
+                    selectedTitleColor: primaryColor,
+                    unSelectedColor: Colors.transparent,
+                    unSelectedBorderColor: Colors.white,
+                    unSelectedTitleColor: Colors.white,
+                    onTap: (value) {
+                      if (value != size) {
+                        size = value;
+                      } else {
+                        size = '';
+                      }
+                      setState(() {});
+                    },
+                  ),
+                ),
         ],
       ),
     );
   }
 
-  Widget _buildApplyButton() {
+  Widget _buildColors() {
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
@@ -253,13 +319,135 @@ class _FilterPageState extends State<FilterPage> {
         horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 15,
       ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: greyLightColor, width: 0.5),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Colors',
+                  style: boldTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 22,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    isHideColors = !isHideColors;
+                  }),
+                  icon: Icon(
+                    isHideColors
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: Colors.white,
+                    size: pageStyle.unitFontSize * 25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          isHideColors
+              ? SizedBox.shrink()
+              : Container(
+                  width: double.infinity,
+                  child: SelectOptionCustom(
+                    items: ['RED', 'YELLOW', 'PURPLE', 'BLUE'],
+                    itemWidth: pageStyle.unitWidth * 80,
+                    itemHeight: pageStyle.unitHeight * 31,
+                    value: color,
+                    itemSpace: pageStyle.unitWidth * 10,
+                    titleSize: pageStyle.unitFontSize * 12,
+                    radius: 30,
+                    selectedColor: Colors.white,
+                    selectedBorderColor: Colors.transparent,
+                    selectedTitleColor: primaryColor,
+                    unSelectedColor: Colors.transparent,
+                    unSelectedBorderColor: Colors.white,
+                    unSelectedTitleColor: Colors.white,
+                    onTap: (value) {
+                      if (value != color) {
+                        color = value;
+                      } else {
+                        color = '';
+                      }
+                      setState(() {});
+                    },
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStores() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      margin: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 20,
+        vertical: pageStyle.unitHeight * 20,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 15,
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: greyLightColor, width: 0.5),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Stores',
+                  style: boldTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 22,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    isHideStores = !isHideStores;
+                  }),
+                  icon: Icon(
+                    isHideStores
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: Colors.white,
+                    size: pageStyle.unitFontSize * 25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 60,
+      margin: EdgeInsets.only(top: pageStyle.unitHeight * 30),
       child: TextButton(
         title: 'Apply',
         titleSize: pageStyle.unitFontSize * 24,
-        titleColor: primaryColor,
-        buttonColor: greyLightColor,
+        titleColor: Colors.white,
+        buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        radius: 30,
+        radius: 0,
         onPressed: () => Navigator.pop(context),
       ),
     );

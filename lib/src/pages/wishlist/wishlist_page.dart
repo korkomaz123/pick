@@ -2,19 +2,23 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/routes/routes.dart';
+import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class BrandListPage extends StatefulWidget {
+import 'widgets/wishlist_remove_dialog.dart';
+
+class WishlistPage extends StatefulWidget {
   @override
-  _BrandListPageState createState() => _BrandListPageState();
+  _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _BrandListPageState extends State<BrandListPage> {
+class _WishlistPageState extends State<WishlistPage> {
   PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -24,7 +28,6 @@ class _BrandListPageState extends State<BrandListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: backgroundColor,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
@@ -33,9 +36,30 @@ class _BrandListPageState extends State<BrandListPage> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(
-                  10,
-                  (index) => _buildBrandCard(index),
+                  products.length,
+                  (index) {
+                    return Container(
+                      width: pageStyle.deviceWidth,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 10,
+                      ),
+                      child: Column(
+                        children: [
+                          WishlistProductCard(
+                            pageStyle: pageStyle,
+                            product: products[index],
+                            onRemoveWishlist: () =>
+                                _onRemoveWishlist(products[index]),
+                          ),
+                          index < (products.length - 1)
+                              ? Divider(color: greyColor, thickness: 0.5)
+                              : SizedBox.shrink(),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -44,7 +68,7 @@ class _BrandListPageState extends State<BrandListPage> {
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
-        activeItem: BottomEnum.home,
+        activeItem: BottomEnum.wishlist,
       ),
     );
   }
@@ -67,7 +91,7 @@ class _BrandListPageState extends State<BrandListPage> {
             onTap: () => Navigator.pop(context),
           ),
           Text(
-            'Brands',
+            'My Wishlist',
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
@@ -79,34 +103,12 @@ class _BrandListPageState extends State<BrandListPage> {
     );
   }
 
-  Widget _buildBrandCard(int index) {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, Routes.productList),
-      child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 58,
-        margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 10),
-        padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset('lib/public/images/brand${index + 1}.png'),
-            Row(
-              children: [
-                Text(
-                  'View Products',
-                  style: bookTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 11,
-                  ),
-                ),
-                Icon(Icons.arrow_forward_ios, size: 22, color: primaryColor),
-              ],
-            ),
-          ],
-        ),
-      ),
+  void _onRemoveWishlist(ProductEntity product) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return WishlistRemoveDialog(pageStyle: pageStyle);
+      },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/strings.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -22,7 +23,9 @@ class CigaBottomBar extends StatelessWidget {
       unselectedItemColor: Colors.black,
       showUnselectedLabels: true,
       currentIndex: BottomEnum.values.indexOf(activeItem),
-      onTap: (value) {},
+      onTap: (value) => BottomEnum.values.indexOf(activeItem) != value
+          ? _onChangedTab(value, context)
+          : null,
       items: [
         BottomNavigationBarItem(
           icon: Container(
@@ -116,5 +119,36 @@ class CigaBottomBar extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _onChangedTab(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
+        break;
+      case 1:
+        Navigator.pushNamed(context, Routes.categoryList);
+        break;
+      case 2:
+        Navigator.pushNamed(context, Routes.storeList);
+        break;
+      case 3:
+        Navigator.pushNamed(context, Routes.wishlist);
+        break;
+      case 4:
+        Navigator.pushNamed(context, Routes.account);
+        break;
+      default:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
+        break;
+    }
   }
 }

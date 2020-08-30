@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
@@ -6,12 +7,14 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/home/widgets/home_advertise.dart';
+import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ProductListPage extends StatefulWidget {
   final arguments;
@@ -26,6 +29,7 @@ class _ProductListPageState extends State<ProductListPage> {
   PageStyle pageStyle;
   String category;
   int categoryIndex;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -39,8 +43,10 @@ class _ProductListPageState extends State<ProductListPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: CigaAppBar(pageStyle: pageStyle),
+      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -62,7 +68,7 @@ class _ProductListPageState extends State<ProductListPage> {
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
-        activeItem: BottomEnum.home,
+        activeItem: BottomEnum.category,
       ),
     );
   }
@@ -94,7 +100,7 @@ class _ProductListPageState extends State<ProductListPage> {
           Row(
             children: [
               IconButton(
-                onPressed: () => null,
+                onPressed: () => _onSortBy(),
                 icon: Icon(
                   Icons.sort,
                   color: Colors.white,
@@ -194,5 +200,23 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage();
       },
     );
+  }
+
+  void _onSortBy() async {
+    final result = await showSlidingBottomSheet(context, builder: (context) {
+      return SlidingSheetDialog(
+        elevation: 8,
+        cornerRadius: 0,
+        snapSpec: SnapSpec(
+          snap: true,
+          snappings: [0.8],
+          positioning: SnapPositioning.relativeToAvailableSpace,
+        ),
+        duration: Duration(milliseconds: 300),
+        builder: (context, state) {
+          return ProductSortByDialog(pageStyle: pageStyle);
+        },
+      );
+    });
   }
 }

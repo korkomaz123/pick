@@ -39,11 +39,13 @@ class Routes {
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
   static const String checkoutPayment = '/checkout-payment';
+  static const String checkoutConfirmed = '/checkout-confirmed';
 
   /// wishlist
   static const String wishlist = '/wishlist';
 
   /// account
+  static const String account = '/my-account';
   static const String updateProfile = '/update-profile';
   static const String notificationMessages = '/notification-messages';
   static const String orderHistory = '/order-history';

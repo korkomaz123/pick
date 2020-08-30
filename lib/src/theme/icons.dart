@@ -23,3 +23,6 @@ const String orderHistoryIcon = '$iconsAssetPath/order-history-icon.svg';
 const String termsIcon = '$iconsAssetPath/terms-icon.svg';
 const String aboutUsIcon = '$iconsAssetPath/about-us-icon.svg';
 const String couponIcon = '$iconsAssetPath/coupon-icon.svg';
+const String notificationIcon = '$iconsAssetPath/notification-icon.svg';
+const String rateIcon = '$iconsAssetPath/rate-icon.svg';
+const String addIcon = '$iconsAssetPath/add-icon.svg';

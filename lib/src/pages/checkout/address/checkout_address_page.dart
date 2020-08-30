@@ -1,8 +1,7 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/theme/styles.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -34,7 +33,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle),
+      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -128,6 +127,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
               ),
               SizedBox(height: pageStyle.unitHeight * 30),
               _buildToolbarButtons(),
+              SizedBox(height: pageStyle.unitHeight * 20),
             ],
           ),
         ),
@@ -197,7 +197,10 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
               titleColor: Colors.white,
               buttonColor: primaryColor,
               borderColor: Colors.transparent,
-              onPressed: () => null,
+              onPressed: () => Navigator.pushNamed(
+                context,
+                Routes.checkoutShipping,
+              ),
               radius: 30,
             ),
           ),
