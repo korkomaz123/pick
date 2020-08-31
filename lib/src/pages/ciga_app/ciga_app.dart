@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+import 'package:ciga/src/bloc/place_bloc.dart';
 import 'package:ciga/src/routes/generator.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:cross_local_storage/cross_local_storage.dart';
@@ -6,15 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-// ignore: must_be_immutable
 class CigaApp extends StatelessWidget {
-  CigaApp({
-    Key key,
-  }) : super(key: key);
+  CigaApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CigaAppView();
+    return ChangeNotifierProvider<PlaceBloc>(
+      create: (context) => PlaceBloc(),
+      child: CigaAppView(),
+    );
   }
 }
 
@@ -53,9 +55,6 @@ class _CigaAppViewState extends State<CigaAppView> {
       onGenerateRoute: (settings) {
         return RouteGenerator.generateRoute(settings);
       },
-      // builder: (context, child) {
-      //   return child;
-      // },
     );
   }
 }

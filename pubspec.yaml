@@ -42,6 +42,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  dio: ^3.0.10
+  provider: ^4.3.2+1
 
 flutter:
 

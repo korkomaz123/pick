@@ -35,6 +35,7 @@ class Routes {
   static const String myCart = '/my-cart';
 
   /// checkout
+  static const String searchAddress = '/search-address';
   static const String checkoutAddress = '/checkout-address';
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
