@@ -16,7 +16,7 @@ class ProductSortByDialog extends StatelessWidget {
       child: Container(
         width: pageStyle.deviceWidth,
         color: Colors.white,
-        padding: EdgeInsets.only(top: pageStyle.unitHeight * 6),
+        padding: EdgeInsets.only(top: pageStyle.unitHeight * 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -32,7 +32,7 @@ class ProductSortByDialog extends StatelessWidget {
                       width: pageStyle.deviceWidth,
                       padding: EdgeInsets.symmetric(
                         horizontal: pageStyle.unitWidth * 10,
-                        vertical: pageStyle.unitHeight * 10,
+                        vertical: pageStyle.unitHeight * 8,
                       ),
                       child: Text(
                         sortByList[index],

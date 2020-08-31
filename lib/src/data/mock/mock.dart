@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 
@@ -111,3 +112,29 @@ List<String> sortByList = [
   'Sort By Stores',
   'Products on Sale',
 ];
+
+List<CategoryMenuEntity> categoryMenu = List.generate(
+  5,
+  (menuIndex) => CategoryMenuEntity(
+    id: '${menuIndex + 1}',
+    title: 'menu${menuIndex + 1}',
+    subMenu: List.generate(
+      4,
+      (subMenuIndex) => CategoryMenuEntity(
+        id: '${menuIndex + 1} - ${subMenuIndex + 1}',
+        title: 'submenu${menuIndex + 1}-${subMenuIndex + 1}',
+        subMenu: List.generate(
+          6,
+          (subSubMenuIndex) => CategoryMenuEntity(
+            id: '${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
+            title:
+                'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
+            subMenu: [],
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+
+List<String> colorItems = ['#FD0000', '#F5FF00', '#00A7FF', '#853299'];

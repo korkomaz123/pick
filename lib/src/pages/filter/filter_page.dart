@@ -1,10 +1,15 @@
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
+
+import 'widgets/filter_color_select.dart';
+import 'widgets/filter_store_select_dialog.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -22,7 +27,27 @@ class _FilterPageState extends State<FilterPage> {
   bool isHideColors = true;
   bool isHideStores = true;
   String size;
-  String color;
+  String selectedColor;
+  Map<String, Color> colors = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < colorItems.length; i++) {
+      colors[colorItems[i]] = _getColorFromHex(colorItems[i]);
+    }
+  }
+
+  Color _getColorFromHex(String hexColor) {
+    hexColor = hexColor.replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    if (hexColor.length == 8) {
+      return Color(int.parse("0x$hexColor"));
+    }
+    return Colors.transparent;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +204,7 @@ class _FilterPageState extends State<FilterPage> {
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        vertical: pageStyle.unitHeight * 10,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 10,
@@ -235,7 +260,7 @@ class _FilterPageState extends State<FilterPage> {
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        vertical: pageStyle.unitHeight * 10,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 10,
@@ -313,7 +338,7 @@ class _FilterPageState extends State<FilterPage> {
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        vertical: pageStyle.unitHeight * 10,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 10,
@@ -357,25 +382,19 @@ class _FilterPageState extends State<FilterPage> {
               ? SizedBox.shrink()
               : Container(
                   width: double.infinity,
-                  child: SelectOptionCustom(
-                    items: ['RED', 'YELLOW', 'PURPLE', 'BLUE'],
-                    itemWidth: pageStyle.unitWidth * 80,
-                    itemHeight: pageStyle.unitHeight * 31,
-                    value: color,
-                    itemSpace: pageStyle.unitWidth * 10,
-                    titleSize: pageStyle.unitFontSize * 12,
-                    radius: 30,
-                    selectedColor: Colors.white,
-                    selectedBorderColor: Colors.transparent,
-                    selectedTitleColor: primaryColor,
-                    unSelectedColor: Colors.transparent,
-                    unSelectedBorderColor: Colors.white,
-                    unSelectedTitleColor: Colors.white,
+                  padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+                  child: FilterColorSelect(
+                    items: colorItems,
+                    itemWidth: pageStyle.unitWidth * 30,
+                    itemHeight: pageStyle.unitHeight * 30,
+                    value: selectedColor,
+                    pageStyle: pageStyle,
+                    colors: colors,
                     onTap: (value) {
-                      if (value != color) {
-                        color = value;
+                      if (selectedColor == value) {
+                        selectedColor = '';
                       } else {
-                        color = '';
+                        selectedColor = value;
                       }
                       setState(() {});
                     },
@@ -417,9 +436,7 @@ class _FilterPageState extends State<FilterPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => setState(() {
-                    isHideStores = !isHideStores;
-                  }),
+                  onPressed: () => _onStore(),
                   icon: Icon(
                     isHideStores
                         ? Icons.keyboard_arrow_down
@@ -451,5 +468,36 @@ class _FilterPageState extends State<FilterPage> {
         onPressed: () => Navigator.pop(context),
       ),
     );
+  }
+
+  void _onStore() async {
+    final result = await showSlidingBottomSheet(context, builder: (context) {
+      return SlidingSheetDialog(
+        elevation: 8,
+        cornerRadius: 16,
+        snapSpec: SnapSpec(
+          snap: true,
+          snappings: [1],
+          positioning: SnapPositioning.relativeToAvailableSpace,
+        ),
+        builder: (context, state) {
+          return FilterStoreSelectDialog(
+            pageStyle: pageStyle,
+            values: selectedStores,
+            onChangedValue: (value) => _onChangedValue(value),
+          );
+        },
+      );
+    });
+    print(result);
+  }
+
+  void _onChangedValue(value) {
+    if (selectedStores.contains(value)) {
+      selectedStores.remove(value);
+    } else {
+      selectedStores.add(value);
+    }
+    setState(() {});
   }
 }

@@ -26,3 +26,7 @@ const String couponIcon = '$iconsAssetPath/coupon-icon.svg';
 const String notificationIcon = '$iconsAssetPath/notification-icon.svg';
 const String rateIcon = '$iconsAssetPath/rate-icon.svg';
 const String addIcon = '$iconsAssetPath/add-icon.svg';
+const String sideCategoryIcon = '$iconsAssetPath/side-category-icon.svg';
+const String newArrivalIcon = '$iconsAssetPath/new-arrival-icon.svg';
+const String bestDealIcon = '$iconsAssetPath/best-deal-icon.svg';
+const String sideLoginIcon = '$iconsAssetPath/log-in-icon.svg';
