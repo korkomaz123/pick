@@ -86,7 +86,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             widget.value.toString(),
             style: boldTextStyle.copyWith(
               color: primarySwatchColor,
-              fontSize: widget.pageStyle.unitFontSize * 17,
+              fontSize: widget.pageStyle.unitFontSize * 15,
             ),
           ),
         ),

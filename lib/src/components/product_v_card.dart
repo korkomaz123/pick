@@ -47,7 +47,7 @@ class ProductVCard extends StatelessWidget {
                   child: Image.asset(
                     'lib/public/images/shutterstock_151558448-1.png',
                     width: cardWidth * 0.5,
-                    height: cardHeight * 0.64,
+                    height: cardHeight * 0.54,
                   ),
                 ),
                 Expanded(
@@ -71,7 +71,7 @@ class ProductVCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: mediumTextStyle.copyWith(
                             color: greyDarkColor,
-                            fontSize: pageStyle.unitFontSize * 14,
+                            fontSize: pageStyle.unitFontSize * 12,
                           ),
                         ),
                       ),

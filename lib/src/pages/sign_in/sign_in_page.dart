@@ -215,6 +215,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignUpPhase() {
     return Container(
       width: pageStyle.deviceWidth,
+      padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
