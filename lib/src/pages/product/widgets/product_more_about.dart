@@ -1,6 +1,7 @@
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ProductMoreAbout extends StatelessWidget {
@@ -22,7 +23,7 @@ class ProductMoreAbout extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'More About Product',
+            'product_more_about'.tr(),
             style: boldTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 19,
@@ -38,7 +39,7 @@ class ProductMoreAbout extends StatelessWidget {
           ),
           SizedBox(height: pageStyle.unitFontSize * 15),
           Text(
-            'Reviews',
+            'product_reviews'.tr(),
             style: boldTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 19,

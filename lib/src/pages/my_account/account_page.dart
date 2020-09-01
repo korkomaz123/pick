@@ -9,6 +9,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class AccountPage extends StatefulWidget {
@@ -129,7 +130,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(profileIcon),
             ),
             title: Text(
-              'Update Profile',
+              'account_update_profile_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -148,7 +149,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(logoutIcon),
             ),
             title: Text(
-              'Logout',
+              'account_logout_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -175,7 +176,7 @@ class _AccountPageState extends State<AccountPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'General Setting',
+            'account_general_setting_title'.tr(),
             style: boldTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 18,
             ),
@@ -189,7 +190,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(wishlistIcon),
             ),
             title: Text(
-              'My Wishlist',
+              'account_wishlist_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -203,7 +204,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(notificationIcon),
             ),
             title: Text(
-              'Get Notification',
+              'account_get_notification_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -227,7 +228,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(messageIcon),
             ),
             title: Text(
-              'Notification Messages',
+              'account_notification_messages_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -246,7 +247,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(languageIcon),
             ),
             title: Text(
-              'Language',
+              'account_language_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -260,7 +261,7 @@ class _AccountPageState extends State<AccountPage> {
                 color: Colors.grey.shade300,
               ),
               child: SelectOptionCustom(
-                items: ['AR', 'EN'],
+                items: ['account_language_ar'.tr(), 'account_language_en'.tr()],
                 value: language,
                 itemWidth: pageStyle.unitWidth * 50,
                 itemHeight: pageStyle.unitHeight * 25,
@@ -275,10 +276,16 @@ class _AccountPageState extends State<AccountPage> {
                 unSelectedBorderColor: Colors.transparent,
                 isVertical: false,
                 listStyle: true,
-                onTap: (value) => {
-                  setState(() {
+                onTap: (value) {
+                  if (language != value) {
                     language = value;
-                  })
+                    if (language == 'account_language_ar') {
+                      EasyLocalization.of(context).locale = Locale('en', 'US');
+                    } else {
+                      EasyLocalization.of(context).locale = Locale('ar', 'AR');
+                    }
+                    setState(() {});
+                  }
                 },
               ),
             ),
@@ -291,7 +298,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(rateIcon),
             ),
             title: Text(
-              'Rate the App',
+              'account_rate_app_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -311,7 +318,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(orderHistoryIcon),
             ),
             title: Text(
-              'Order History',
+              'account_order_history_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -330,7 +337,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(termsIcon),
             ),
             title: Text(
-              'Privacy and Terms',
+              'account_terms_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -349,7 +356,7 @@ class _AccountPageState extends State<AccountPage> {
               child: SvgPicture.asset(aboutUsIcon),
             ),
             title: Text(
-              'About Us',
+              'account_about_us_title'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
               ),

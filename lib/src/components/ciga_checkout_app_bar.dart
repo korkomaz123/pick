@@ -3,6 +3,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaCheckoutAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -21,10 +22,10 @@ class CigaCheckoutAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
   PageStyle pageStyle;
   List<String> steps = [
-    'address'.toUpperCase(),
-    'shipping'.toUpperCase(),
-    'review'.toUpperCase(),
-    'payment'.toUpperCase(),
+    'checkout_step_address'.tr(),
+    'checkout_step_shipping'.tr(),
+    'checkout_step_review'.tr(),
+    'checkout_step_payment'.tr(),
   ];
 
   @override
@@ -46,7 +47,7 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        'Checkout',
+        'checkout_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
           fontSize: pageStyle.unitFontSize * 23,

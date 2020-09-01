@@ -1,9 +1,9 @@
 import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/strings.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -30,7 +30,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            discoverOurStoresTitle,
+            'home_discover_stores'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: widget.pageStyle.unitFontSize * 23,
@@ -108,7 +108,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    seeAllTitle,
+                    'view_all'.tr(),
                     style: mediumTextStyle.copyWith(
                       fontSize: widget.pageStyle.unitFontSize * 15,
                       color: primaryColor,

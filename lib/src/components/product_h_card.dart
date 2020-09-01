@@ -5,6 +5,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ProductHCard extends StatelessWidget {
@@ -75,7 +76,7 @@ class ProductHCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            product.price.toString() + ' KD',
+                            product.price.toString() + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               fontSize: pageStyle.unitFontSize * 12,
                               color: greyColor,
@@ -83,7 +84,7 @@ class ProductHCard extends StatelessWidget {
                           ),
                           SizedBox(width: pageStyle.unitWidth * 20),
                           Text(
-                            product.discount.toString() + ' KD',
+                            product.discount.toString() + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               decorationStyle: TextDecorationStyle.solid,
                               decoration: TextDecoration.lineThrough,

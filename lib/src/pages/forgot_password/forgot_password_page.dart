@@ -5,6 +5,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -42,7 +43,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Container(
                 alignment: Alignment.center,
                 child: Text(
-                  'FORGOT PASSWORD',
+                  'forgot_password_title'.tr(),
                   style: bookTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -78,7 +79,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
-          hintText: 'USERNAME OR EMAIL',
+          hintText: 'username'.tr().toUpperCase() +
+              ' ' +
+              'or'.tr() +
+              ' ' +
+              'email'.tr().toUpperCase(),
           hintStyle: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
@@ -110,7 +115,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextButton(
-        title: 'GET NEW PASSWORD',
+        title: 'get_new_password'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
         buttonColor: Colors.white,
@@ -131,7 +136,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           InkWell(
             onTap: () => Navigator.pop(context),
             child: Text(
-              'Login',
+              'login'.tr(),
               style: bookTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 14,
@@ -145,7 +150,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           InkWell(
             onTap: () => Navigator.pushReplacementNamed(context, Routes.signUp),
             child: Text(
-              'Register',
+              'register'.tr(),
               style: bookTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 14,

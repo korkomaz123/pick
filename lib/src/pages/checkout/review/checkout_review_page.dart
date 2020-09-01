@@ -6,6 +6,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutReviewPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                   vertical: pageStyle.unitHeight * 20,
                 ),
                 child: Text(
-                  'Review',
+                  'checkout_review_title'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -68,7 +69,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your Note',
+          'checkout_note_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: greyDarkColor,
             fontSize: pageStyle.unitFontSize * 17,
@@ -83,7 +84,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
               fontSize: pageStyle.unitFontSize * 14,
             ),
             decoration: InputDecoration(
-              hintText: 'Write Your Note',
+              hintText: 'checkout_note_hint'.tr(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: greyColor),
@@ -103,7 +104,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'CONTINUE TO PAYMENT',
+        title: 'checkout_continue_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,
         buttonColor: primaryColor,
@@ -119,7 +120,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'BACK TO SHIPPING',
+        title: 'checkout_back_shipping_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyColor,
         buttonColor: Colors.white,

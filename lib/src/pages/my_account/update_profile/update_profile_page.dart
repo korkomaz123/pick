@@ -8,6 +8,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class UpdateProfilePage extends StatefulWidget {
@@ -126,7 +127,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 4,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'Display Name',
+        label: 'display_name'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -146,7 +147,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 4,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'First Name',
+        label: 'first_name'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -166,7 +167,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 4,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'Last Name',
+        label: 'last_name'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -186,7 +187,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 4,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'Phone Number',
+        label: 'phone_number_hint'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -206,7 +207,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 4,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'New Password',
+        label: 'new_password'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -220,7 +221,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
       child: TextButton(
-        title: 'UPDATE',
+        title: 'update_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,
         buttonColor: primaryColor,

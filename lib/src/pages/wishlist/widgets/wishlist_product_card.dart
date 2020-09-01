@@ -2,6 +2,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class WishlistProductCard extends StatelessWidget {
@@ -56,7 +57,7 @@ class WishlistProductCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      product.price.toString() + ' KD',
+                      product.price.toString() + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -64,7 +65,7 @@ class WishlistProductCard extends StatelessWidget {
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      product.discount.toString() + ' KD',
+                      product.discount.toString() + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -77,7 +78,7 @@ class WishlistProductCard extends StatelessWidget {
                 ),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 TextButton(
-                  title: 'ADD TO CART',
+                  title: 'wishlist_add_cart_button_title'.tr(),
                   titleSize: pageStyle.unitFontSize * 15,
                   titleColor: Colors.white,
                   buttonColor: primaryColor,

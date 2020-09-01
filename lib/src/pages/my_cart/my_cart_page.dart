@@ -10,6 +10,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
@@ -66,7 +67,7 @@ class _MyCartPageState extends State<MyCartPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'My Cart',
+            'my_cart_title'.tr(),
             style: boldTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 23,
@@ -75,7 +76,7 @@ class _MyCartPageState extends State<MyCartPage> {
           InkWell(
             onTap: () => null,
             child: Text(
-              'Clear cart'.toUpperCase(),
+              'my_cart_clear_cart'.tr(),
               style: bookTextStyle.copyWith(
                 color: dangerColor,
                 fontSize: pageStyle.unitFontSize * 11,
@@ -97,14 +98,14 @@ class _MyCartPageState extends State<MyCartPage> {
       child: Row(
         children: [
           Text(
-            'Total 4 ',
+            'total'.tr() + ' 4 ',
             style: boldTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
           Text(
-            'Items',
+            'items'.tr(),
             style: bookTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 13,
@@ -171,7 +172,7 @@ class _MyCartPageState extends State<MyCartPage> {
                 Row(
                   children: [
                     Text(
-                      cartItem.product.price.toString() + ' KD',
+                      cartItem.product.price.toString() + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -179,7 +180,9 @@ class _MyCartPageState extends State<MyCartPage> {
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      cartItem.product.discount.toString() + ' KD',
+                      cartItem.product.discount.toString() +
+                          ' ' +
+                          'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -233,14 +236,14 @@ class _MyCartPageState extends State<MyCartPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Products',
+                'products'.tr(),
                 style: boldTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
                 ),
               ),
               Text(
-                '2 Items',
+                '2 ' + 'items'.tr(),
                 style: boldTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -253,14 +256,14 @@ class _MyCartPageState extends State<MyCartPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total',
+                'total'.tr(),
                 style: boldTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
                 ),
               ),
               Text(
-                '240 KD',
+                '240 ' + 'currency'.tr(),
                 style: boldTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,
@@ -282,7 +285,7 @@ class _MyCartPageState extends State<MyCartPage> {
         vertical: pageStyle.unitHeight * 15,
       ),
       child: TextButton(
-        title: 'CHECKOUT',
+        title: 'checkout_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 23,
         titleColor: primaryColor,
         buttonColor: Colors.white,

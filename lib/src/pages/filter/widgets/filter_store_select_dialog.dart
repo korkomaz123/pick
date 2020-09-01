@@ -4,6 +4,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FilterStoreSelectDialog extends StatefulWidget {
@@ -51,7 +52,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Store',
+            'filter_store_title'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: widget.pageStyle.unitFontSize * 22,
@@ -93,7 +94,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
-          hintText: 'Search in stores',
+          hintText: 'filter_search_store_hint'.tr(),
           fillColor: Colors.white,
           filled: true,
         ),

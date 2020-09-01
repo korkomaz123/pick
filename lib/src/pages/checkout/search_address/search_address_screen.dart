@@ -2,7 +2,7 @@ import 'package:ciga/src/bloc/place_bloc.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'search_address_view.dart';
 
 class SearchAddressScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class SearchAddressScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0.0,
         title: Text(
-          "Search address",
+          "checkout_search_address_title".tr(),
           style: TextStyle(color: greyDarkColor),
         ),
         iconTheme: IconThemeData(color: greyDarkColor),

@@ -1,6 +1,7 @@
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class SearchFilterDialog extends StatefulWidget {
@@ -30,7 +31,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Category',
+              'bottom_category'.tr(),
               style: boldTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: widget.pageStyle.unitFontSize * 23,
@@ -58,7 +59,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             ),
             SizedBox(height: widget.pageStyle.unitHeight * 20),
             Text(
-              'Stores',
+              'bottom_store'.tr(),
               style: boldTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: widget.pageStyle.unitFontSize * 23,
@@ -86,7 +87,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             ),
             SizedBox(height: widget.pageStyle.unitHeight * 20),
             Text(
-              'Gender',
+              'filter_gender'.tr(),
               style: boldTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: widget.pageStyle.unitFontSize * 23,

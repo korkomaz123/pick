@@ -4,6 +4,7 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -72,7 +73,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Username',
+          hintText: 'username'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -104,7 +105,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Password',
+          hintText: 'password'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -120,7 +121,7 @@ class _SignInPageState extends State<SignInPage> {
           ),
           suffix: InkWell(
             onTap: () => null,
-            child: Text('Reset'),
+            child: Text('reset'.tr()),
           ),
         ),
         obscureText: true,
@@ -136,7 +137,7 @@ class _SignInPageState extends State<SignInPage> {
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextButton(
-        title: 'SIGN IN',
+        title: 'sign_in'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
         buttonColor: Colors.white,
@@ -159,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, Routes.forgotPassword),
         child: Text(
-          'Forgot Password?',
+          'ask_forgot_password'.tr(),
           style: mediumTextStyle.copyWith(
             color: primarySwatchColor,
             fontSize: pageStyle.unitFontSize * 14,
@@ -220,7 +221,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Don\'t have an account? ',
+            'ask_have_account'.tr(),
             style: bookTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
@@ -229,7 +230,7 @@ class _SignInPageState extends State<SignInPage> {
           InkWell(
             onTap: () => Navigator.pushNamed(context, Routes.signUp),
             child: Text(
-              'Sign Up',
+              'sign_up'.tr(),
               style: bookTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 17,

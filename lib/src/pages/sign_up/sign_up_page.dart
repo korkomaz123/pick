@@ -4,6 +4,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -72,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'First Name',
+          hintText: 'first_name'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -104,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Last Name',
+          hintText: 'last_name'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -136,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Enter your Email',
+          hintText: 'email_hint'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -169,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Enter your Password',
+          hintText: 'password_hint'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -185,7 +186,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           suffix: InkWell(
             onTap: () => null,
-            child: Text('Reset'),
+            child: Text('reset'.tr()),
           ),
         ),
         obscureText: true,
@@ -208,7 +209,7 @@ class _SignUpPageState extends State<SignUpPage> {
         title: Row(
           children: [
             Text(
-              'I agree with ',
+              'prefix_agree_terms'.tr() + ' ',
               style: bookTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 16,
@@ -217,7 +218,7 @@ class _SignUpPageState extends State<SignUpPage> {
             InkWell(
               onTap: () => null,
               child: Text(
-                'Privacy and Policy',
+                'suffix_agree_terms'.tr(),
                 style: bookTextStyle.copyWith(
                   color: primarySwatchColor,
                   fontSize: pageStyle.unitFontSize * 16,
@@ -238,7 +239,7 @@ class _SignUpPageState extends State<SignUpPage> {
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextButton(
-        title: 'CREATE AN ACCOUNT',
+        title: 'create_account'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
         buttonColor: Colors.white,
@@ -256,7 +257,7 @@ class _SignUpPageState extends State<SignUpPage> {
       child: FlatButton(
         onPressed: () => Navigator.pop(context),
         child: Text(
-          'or login to your account',
+          'login_account'.tr(),
           style: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 17,

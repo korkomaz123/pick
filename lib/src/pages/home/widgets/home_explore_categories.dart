@@ -1,8 +1,8 @@
 import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/strings.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeExploreCategories extends StatelessWidget {
@@ -21,7 +21,7 @@ class HomeExploreCategories extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            exploreCategoriesTitle,
+            'home_categories'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 23,
@@ -74,7 +74,7 @@ class HomeExploreCategories extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    seeAllTitle,
+                    'view_all'.tr(),
                     style: mediumTextStyle.copyWith(
                       fontSize: pageStyle.unitFontSize * 15,
                       color: primaryColor,

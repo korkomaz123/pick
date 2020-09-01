@@ -9,6 +9,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CategoryListPage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
             onTap: () => Navigator.pop(context),
           ),
           Text(
-            'Categories',
+            'home_categories'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,

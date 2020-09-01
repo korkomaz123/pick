@@ -10,7 +10,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'widgets/wishlist_remove_dialog.dart';
 
 class WishlistPage extends StatefulWidget {
@@ -91,7 +91,7 @@ class _WishlistPageState extends State<WishlistPage> {
             onTap: () => Navigator.pop(context),
           ),
           Text(
-            'My Wishlist',
+            'account_wishlist_title'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,

@@ -3,6 +3,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartCouponCode extends StatefulWidget {
@@ -43,7 +44,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                   height: widget.pageStyle.unitHeight * 20,
                   child: SvgPicture.asset(couponIcon),
                 ),
-                hintText: 'Coupon Code',
+                hintText: 'my_cart_coupon_code_hint'.tr(),
               ),
             ),
           ),
@@ -51,7 +52,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
             width: widget.pageStyle.unitWidth * 110,
             height: widget.pageStyle.unitHeight * 40,
             child: TextIconButton(
-              title: 'Apply',
+              title: 'apply_button_title'.tr(),
               iconData: Icons.check_circle_outline,
               titleSize: widget.pageStyle.unitFontSize * 15,
               iconSize: widget.pageStyle.unitFontSize * 20,

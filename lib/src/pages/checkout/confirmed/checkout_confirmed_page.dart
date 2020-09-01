@@ -4,6 +4,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
@@ -32,7 +33,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
             children: [
               SizedBox(height: pageStyle.unitHeight * 30),
               Text(
-                'Thank You',
+                'checkout_ordered_success_title'.tr(),
                 style: boldTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 34,
@@ -49,7 +50,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 ),
                 color: greyLightColor,
                 child: Text(
-                  'It\'s ordered!\nOrder No. #32212',
+                  'checkout_ordered_success_text'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -58,7 +59,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               ),
               SizedBox(height: pageStyle.unitHeight * 20),
               Text(
-                'You\'ve successfully placed the order',
+                'checkout_ordered_success_subtitle'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -68,10 +69,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               Padding(
                 padding: EdgeInsets.only(left: pageStyle.unitWidth * 8),
                 child: Text(
-                  '''You can check status of your order by using our
-Delivery status feature. You will receive an order
-Confirmation e-mail with details cf your order and 
-a link to track its progress.''',
+                  'checkout_ordered_success_subtext'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -80,7 +78,7 @@ a link to track its progress.''',
               ),
               _buildShowAllMyOrderedButton(),
               Text(
-                'Your account',
+                'checkout_ordered_success_account_title'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -90,10 +88,7 @@ a link to track its progress.''',
               Padding(
                 padding: EdgeInsets.only(left: pageStyle.unitWidth * 8),
                 child: Text(
-                  '''You can log to your account using e -mail and
-Password defined easier. On your account you can
-Edit your profile data. Check history of transactions.
-Edit subscription to newsletter.''',
+                  'checkout_ordered_success_account_text'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -113,7 +108,7 @@ Edit subscription to newsletter.''',
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
       child: TextButton(
-        title: 'SHOW ALL MY ORDERED',
+        title: 'checkout_show_all_ordered_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 17,
         titleColor: Colors.white,
         buttonColor: primaryColor,
@@ -129,7 +124,7 @@ Edit subscription to newsletter.''',
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
       child: TextButton(
-        title: 'BACK TO SHOP',
+        title: 'checkout_back_shop_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 17,
         titleColor: greyColor,
         buttonColor: Colors.white,

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'widgets/search_filter_dialog.dart';
 import 'widgets/search_product_card.dart';
 
@@ -40,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Search',
+          'search_title'.tr(),
           style: boldTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 40,
@@ -94,7 +94,7 @@ class _SearchPageState extends State<SearchPage> {
           fillColor: Colors.grey.shade300,
           filled: true,
           prefixIcon: Icon(Icons.search),
-          hintText: 'Search for items',
+          hintText: 'search_items'.tr(),
         ),
       ),
     );
@@ -145,7 +145,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Row(
         children: [
           Text(
-            'ALL',
+            'all'.tr(),
             style: bookTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 19,
             ),
@@ -154,7 +154,7 @@ class _SearchPageState extends State<SearchPage> {
           MaterialButton(
             onPressed: () => _onShowFilterBottomSheetDialog(),
             child: Text(
-              '+ Filter',
+              '+ ' + 'filter_title'.tr(),
               style: bookTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 19,
               ),
@@ -179,7 +179,7 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'History Search',
+                  'search_history_search'.tr(),
                   style: boldTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 21,
                     color: greyColor,
@@ -188,7 +188,7 @@ class _SearchPageState extends State<SearchPage> {
                 InkWell(
                   onTap: () => null,
                   child: Text(
-                    'Clear all',
+                    'search_clear_all'.tr(),
                     style: bookTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 15,

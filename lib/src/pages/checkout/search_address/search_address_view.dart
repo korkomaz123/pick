@@ -3,6 +3,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceBloc placeBloc;
@@ -95,7 +96,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                 focusNode: nodeTo,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Search Address",
+                  hintText: "checkout_search_address_title".tr(),
                   hintStyle: TextStyle(color: greyColor, fontSize: 14),
                   contentPadding: EdgeInsets.only(top: 15.0),
                 ),

@@ -8,6 +8,7 @@ import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       vertical: pageStyle.unitHeight * 30,
                     ),
                     child: Text(
-                      '2 Items',
+                      '2 ' + 'items'.tr(),
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -93,7 +94,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             onTap: () => Navigator.pop(context),
           ),
           Text(
-            'Order History',
+            'account_order_history_title'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
@@ -118,7 +119,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             ),
             color: Colors.grey.shade200,
             child: Text(
-              'Order No. #${order.orderNo}',
+              'order_order_no'.tr() + ' #${order.orderNo}',
               style: bookTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: pageStyle.unitFontSize * 14,
@@ -135,7 +136,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Order Date',
+                  'order_order_date'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -161,7 +162,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Status',
+                  'order_status'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -187,7 +188,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Payment Method',
+                  'order_payment_method'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -213,14 +214,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total',
+                  'total'.tr(),
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
-                  'KD ${order.totalPrice}',
+                  'currency'.tr() + ' ${order.totalPrice}',
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,

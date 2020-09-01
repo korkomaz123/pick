@@ -6,6 +6,7 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -142,7 +143,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
           Row(
             children: [
               Text(
-                'Channel',
+                'product_channel'.tr(),
                 style: boldTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 20,
@@ -162,7 +163,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Store',
+                'product_store'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 11,
@@ -211,7 +212,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
               });
             },
             child: Text(
-              isMore ? 'Less' : 'More',
+              isMore ? 'product_less'.tr() : 'product_more'.tr(),
               style: bookTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 14,
@@ -233,7 +234,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
             width: pageStyle.unitWidth * 271,
             height: pageStyle.unitHeight * 50,
             child: TextButton(
-              title: 'Buy Now',
+              title: 'product_buy_now'.tr(),
               titleSize: pageStyle.unitFontSize * 23,
               titleColor: primaryColor,
               buttonColor: Colors.white,

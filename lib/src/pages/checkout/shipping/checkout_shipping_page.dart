@@ -5,6 +5,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
@@ -35,7 +36,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
                 vertical: pageStyle.unitHeight * 20,
               ),
               child: Text(
-                'Shipping Method',
+                'checkout_shipping_method_title'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -70,14 +71,14 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
         },
         activeColor: darkColor,
         title: Text(
-          'Free Shipping',
+          'checkout_free_shipping_title'.tr(),
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
           ),
         ),
         subtitle: Text(
-          'Average time 2 Days to delivery',
+          'checkout_free_shipping_text'.tr(),
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 11,
@@ -105,14 +106,14 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
         },
         activeColor: darkColor,
         title: Text(
-          'Flat Rate',
+          'checkout_flat_rate_shipping_title'.tr(),
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
           ),
         ),
         subtitle: Text(
-          'Same Day delivery',
+          'checkout_flat_rate_shipping_text'.tr(),
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 11,
@@ -127,7 +128,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'CONTINUE TO REVIEW',
+        title: 'checkout_continue_review_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,
         buttonColor: primaryColor,
@@ -143,7 +144,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'BACK TO ADDRESS',
+        title: 'checkout_back_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyColor,
         buttonColor: Colors.white,

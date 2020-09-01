@@ -5,6 +5,7 @@ import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
@@ -69,7 +70,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         },
         activeColor: darkColor,
         title: Text(
-          'Cash on Delivery',
+          'checkout_payment_cash_on_delivery'.tr(),
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
@@ -146,14 +147,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Subtotal',
+                'checkout_subtotal_title'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
               ),
               Text(
-                'KD 250',
+                'currency'.tr() + ' 250',
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -166,14 +167,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Shipping Cost',
+                'checkout_shipping_cost_title'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
               ),
               Text(
-                'Free',
+                'free'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -186,14 +187,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total',
+                'total'.tr(),
                 style: bookTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
               ),
               Text(
-                'KD 250',
+                'currency'.tr() + ' 250',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -211,7 +212,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'PLACE TO PAYMENT',
+        title: 'checkout_place_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,
         buttonColor: primaryColor,
@@ -227,7 +228,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
-        title: 'BACK TO REVIEW',
+        title: 'checkout_back_review_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyColor,
         buttonColor: Colors.white,

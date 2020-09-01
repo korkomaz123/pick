@@ -5,6 +5,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaSideMenu extends StatefulWidget {
@@ -73,7 +74,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   SvgPicture.asset(sideLoginIcon),
                   SizedBox(width: pageStyle.unitWidth * 4),
                   Text(
-                    'Login',
+                    'login'.tr(),
                     style: mediumTextStyle.copyWith(
                       color: Colors.white,
                       fontSize: pageStyle.unitFontSize * 23,
@@ -104,7 +105,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               height: pageStyle.unitHeight * 20,
             ),
             title: Text(
-              'BEST DEALS',
+              'side_best_deals'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
                 color: greyColor,
@@ -126,7 +127,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               height: pageStyle.unitHeight * 20,
             ),
             title: Text(
-              'CATEGORIES',
+              'side_categories'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
                 color: greyColor,
@@ -151,7 +152,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               height: pageStyle.unitHeight * 20,
             ),
             title: Text(
-              'STORES',
+              'side_stores'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
                 color: greyColor,
@@ -168,7 +169,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               height: pageStyle.unitHeight * 20,
             ),
             title: Text(
-              'NEW ARRIVALS',
+              'side_new_arrivals'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
                 color: greyColor,

@@ -4,6 +4,7 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -44,7 +45,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'First Name',
+                hint: 'first_name'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.text,
               ),
@@ -53,7 +54,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'Last Name',
+                hint: 'last_name'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.text,
               ),
@@ -69,7 +70,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                   initialValue: phoneNumber,
                   ignoreBlank: false,
                   autoValidate: false,
-                  hintText: 'Phone Number',
+                  hintText: 'phone_number_hint'.tr(),
                   errorMessage: "",
                   textFieldController: phoneNumberController,
                   selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
@@ -80,7 +81,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'Email',
+                hint: 'email'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.emailAddress,
               ),
@@ -94,7 +95,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'Country',
+                hint: 'checkout_country_hint'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.text,
               ),
@@ -103,7 +104,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'State / Province',
+                hint: 'checkout_state_hint'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.text,
               ),
@@ -112,7 +113,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'Street Name',
+                hint: 'checkout_street_name_hint'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.text,
               ),
@@ -121,7 +122,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'Zip - Code',
+                hint: 'checkout_zip_code_hint'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.number,
               ),
@@ -141,7 +142,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: TextButton(
-        title: 'SEARCHING ADDRESS',
+        title: 'checkout_searching_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyDarkColor,
         buttonColor: greyLightColor,
@@ -158,7 +159,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: TextButton(
-        title: 'SELECT ADDRESS',
+        title: 'checkout_select_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyDarkColor,
         buttonColor: greyLightColor,
@@ -180,7 +181,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           Container(
             width: pageStyle.unitWidth * 150,
             child: TextButton(
-              title: 'SAVE ADDRESS',
+              title: 'checkout_save_address_button_title'.tr(),
               titleSize: pageStyle.unitFontSize * 14,
               titleColor: greyDarkColor,
               buttonColor: greyLightColor,
@@ -192,7 +193,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           Container(
             width: pageStyle.unitWidth * 197,
             child: TextButton(
-              title: 'CONTINUE TO SHIPPING',
+              title: 'checkout_continue_shipping_button_title'.tr(),
               titleSize: pageStyle.unitFontSize * 14,
               titleColor: Colors.white,
               buttonColor: primaryColor,

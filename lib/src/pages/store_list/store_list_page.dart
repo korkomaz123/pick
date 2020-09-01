@@ -9,6 +9,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class StoreListPage extends StatefulWidget {
@@ -69,7 +70,7 @@ class _StoreListPageState extends State<StoreListPage> {
             onTap: () => Navigator.pop(context),
           ),
           Text(
-            'Stores',
+            'bottom_stores'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
@@ -104,7 +105,7 @@ class _StoreListPageState extends State<StoreListPage> {
             Row(
               children: [
                 Text(
-                  'View Store',
+                  'store_visit_store'.tr(),
                   style: bookTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 11,

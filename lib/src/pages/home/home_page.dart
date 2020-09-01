@@ -38,12 +38,12 @@ class _HomePageState extends State<HomePage> {
           children: [
             HomeHeaderCarousel(pageStyle: pageStyle),
             Column(
-              children: homeCategories
-                  .map((category) => HomeCategoryCard(
-                        category: category,
-                        pageStyle: pageStyle,
-                      ))
-                  .toList(),
+              children: homeCategories.map((category) {
+                return HomeCategoryCard(
+                  category: category,
+                  pageStyle: pageStyle,
+                );
+              }).toList(),
             ),
             HomeBodyCare(pageStyle: pageStyle),
             SizedBox(height: pageStyle.unitHeight * 10),

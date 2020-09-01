@@ -4,6 +4,7 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -102,7 +103,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
             radius: 30,
             fontSize: widget.pageStyle.unitFontSize * 13,
             fontColor: greyDarkColor,
-            hint: 'Search for items',
+            hint: 'search_items'.tr(),
             hintColor: primarySwatchColor,
             hintSize: widget.pageStyle.unitFontSize * 13,
             label: '',

@@ -7,7 +7,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'widgets/filter_color_select.dart';
 import 'widgets/filter_store_select_dialog.dart';
 
@@ -85,7 +85,7 @@ class _FilterPageState extends State<FilterPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        'Filter',
+        'filter_title'.tr(),
         style: boldTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 25,
@@ -98,7 +98,7 @@ class _FilterPageState extends State<FilterPage> {
             child: InkWell(
               onTap: () => null,
               child: Text(
-                'Reset All',
+                'filter_reset_all'.tr(),
                 style: bookTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 16,
@@ -119,7 +119,7 @@ class _FilterPageState extends State<FilterPage> {
         vertical: pageStyle.unitHeight * 20,
       ),
       child: SelectOptionCustom(
-        items: ['BEST DEALS', 'NEW ARRIVALS'],
+        items: ['side_best_deals'.tr(), 'side_new_arrivals'.tr()],
         itemWidth: pageStyle.unitWidth * 160,
         itemHeight: pageStyle.unitHeight * 40,
         value: category,
@@ -159,7 +159,7 @@ class _FilterPageState extends State<FilterPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Price',
+            'filter_price'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 22,
@@ -214,7 +214,7 @@ class _FilterPageState extends State<FilterPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gender',
+            'filter_gender'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 22,
@@ -279,7 +279,7 @@ class _FilterPageState extends State<FilterPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Sizes',
+                  'filter_size'.tr(),
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
@@ -357,7 +357,7 @@ class _FilterPageState extends State<FilterPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Colors',
+                  'filter_color'.tr(),
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
@@ -429,7 +429,7 @@ class _FilterPageState extends State<FilterPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Stores',
+                  'filter_stores'.tr(),
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
@@ -459,7 +459,7 @@ class _FilterPageState extends State<FilterPage> {
       height: pageStyle.unitHeight * 60,
       margin: EdgeInsets.only(top: pageStyle.unitHeight * 30),
       child: TextButton(
-        title: 'Apply',
+        title: 'apply_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 24,
         titleColor: Colors.white,
         buttonColor: primaryColor,
