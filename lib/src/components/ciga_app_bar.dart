@@ -10,14 +10,19 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final bool isCartPage;
 
-  CigaAppBar({this.pageStyle, @required this.scaffoldKey});
+  CigaAppBar({
+    this.pageStyle,
+    @required this.scaffoldKey,
+    this.isCartPage = false,
+  });
 
   @override
   _CigaAppBarState createState() => _CigaAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(120);
+  Size get preferredSize => Size.fromHeight(90);
 }
 
 class _CigaAppBarState extends State<CigaAppBar> {
@@ -57,6 +62,8 @@ class _CigaAppBarState extends State<CigaAppBar> {
     shoppingCartIconHeight = widget.pageStyle.unitHeight * 23.92;
     return AppBar(
       elevation: 0,
+      centerTitle: true,
+      toolbarHeight: widget.pageStyle.unitHeight * 40,
       title: Container(
         width: logoWidth,
         height: logoHeight,
@@ -70,48 +77,69 @@ class _CigaAppBarState extends State<CigaAppBar> {
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(right: widget.pageStyle.unitWidth * 10),
-          child: Center(
-            child: Badge(
-              badgeColor: badgeColor,
-              badgeContent: Text(
-                '20',
-                style: TextStyle(fontSize: pageTagSize, color: Colors.white),
-              ),
-              showBadge: true,
-              child: Container(
-                width: shoppingCartIconWidth,
-                height: shoppingCartIconHeight,
-                child: SvgPicture.asset(shoppingCartIcon),
+          padding: EdgeInsets.only(right: widget.pageStyle.unitWidth * 20),
+          child: InkWell(
+            onTap: () => widget.isCartPage
+                ? null
+                : Navigator.pushNamed(context, Routes.myCart),
+            child: Center(
+              child: Badge(
+                badgeColor: badgeColor,
+                badgeContent: Text(
+                  '20',
+                  style: TextStyle(
+                    fontSize: widget.pageStyle.unitFontSize * 8,
+                    color: Colors.white,
+                  ),
+                ),
+                showBadge: true,
+                child: Container(
+                  width: widget.pageStyle.unitWidth * 25,
+                  height: widget.pageStyle.unitHeight * 25,
+                  child: SvgPicture.asset(shoppingCartIcon),
+                ),
               ),
             ),
           ),
         ),
       ],
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(widget.pageStyle.appBarHeight),
+        preferredSize: Size.fromHeight(widget.pageStyle.unitHeight * 40),
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: widget.pageStyle.unitWidth * 10,
-            // vertical: pageStyle.unitHeight * 4,
           ),
           margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-          child: InputFieldSuffix(
-            width: widget.pageStyle.deviceWidth,
+          width: double.infinity,
+          height: widget.pageStyle.unitHeight * 40,
+          child: TextFormField(
             controller: _searchController,
-            borderColor: primaryColor,
-            radius: 30,
-            fontSize: widget.pageStyle.unitFontSize * 13,
-            fontColor: greyDarkColor,
-            hint: 'search_items'.tr(),
-            hintColor: primarySwatchColor,
-            hintSize: widget.pageStyle.unitFontSize * 13,
-            label: '',
-            labelColor: greyDarkColor,
-            labelSize: widget.pageStyle.unitFontSize * 13,
-            suffixIcon: Icons.search,
-            suffixIconSize: pageIconSize,
-            suffixIconColor: greyDarkColor,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: widget.pageStyle.unitWidth * 20,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              hintText: 'search_items'.tr(),
+              hintStyle: TextStyle(color: primarySwatchColor),
+              suffixIcon: Icon(
+                Icons.search,
+                color: greyDarkColor,
+                size: widget.pageStyle.unitFontSize * 25,
+              ),
+            ),
             readOnly: true,
             onTap: () => Navigator.pushNamed(context, Routes.search),
           ),

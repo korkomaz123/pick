@@ -58,6 +58,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                     product: products[index],
                     isShoppingCart: true,
                     isWishlist: true,
+                    isShare: true,
                     pageStyle: pageStyle,
                   ),
                 );

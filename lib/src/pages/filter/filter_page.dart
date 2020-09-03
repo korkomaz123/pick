@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'widgets/filter_category_select.dart';
 import 'widgets/filter_color_select.dart';
 import 'widgets/filter_store_select_dialog.dart';
 
@@ -20,14 +21,14 @@ class _FilterPageState extends State<FilterPage> {
   PageStyle pageStyle;
   double minPrice = 0;
   double maxPrice = 10;
-  String category;
-  String gender;
+  List<String> selectedCategories = [];
+  List<String> selectedGenders = [];
   List<String> selectedStores = [];
   bool isHideSizes = true;
   bool isHideColors = true;
   bool isHideStores = true;
-  String size;
-  String selectedColor;
+  List<String> selectedSizes = [];
+  List<String> selectedColors = [];
   Map<String, Color> colors = {};
 
   @override
@@ -55,48 +56,59 @@ class _FilterPageState extends State<FilterPage> {
     pageStyle.initializePageStyles();
     return Material(
       color: filterBackgroundColor,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            _buildCategories(),
-            _buildPriceRange(),
-            _buildGender(),
-            _buildSizes(),
-            _buildColors(),
-            _buildStores(),
-            _buildApplyButton(),
-          ],
-        ),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildAppBar(),
+                _buildCategories(),
+                _buildPriceRange(),
+                _buildGender(),
+                _buildSizes(),
+                _buildColors(),
+                _buildStores(),
+                _buildSelectedStores(),
+                SizedBox(height: pageStyle.unitHeight * 100),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildApplyButton(),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAppBar() {
-    return AppBar(
-      backgroundColor: filterBackgroundColor,
-      elevation: 0,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.white,
-          size: pageStyle.unitFontSize * 22,
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: Text(
-        'filter_title'.tr(),
-        style: boldTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 25,
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: pageStyle.unitWidth * 10),
-          child: Center(
+    return Container(
+      color: filterBackgroundColor,
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.only(top: pageStyle.unitHeight * 30),
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: pageStyle.unitFontSize * 22,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          Text(
+            'filter_title'.tr(),
+            style: boldTextStyle.copyWith(
+              color: Colors.white,
+              fontSize: pageStyle.unitFontSize * 25,
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.only(right: pageStyle.unitWidth * 8.0),
             child: InkWell(
-              onTap: () => null,
+              onTap: () => _onResetAll(),
               child: Text(
                 'filter_reset_all'.tr(),
                 style: bookTextStyle.copyWith(
@@ -106,8 +118,8 @@ class _FilterPageState extends State<FilterPage> {
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -118,25 +130,17 @@ class _FilterPageState extends State<FilterPage> {
         horizontal: pageStyle.unitWidth * 20,
         vertical: pageStyle.unitHeight * 20,
       ),
-      child: SelectOptionCustom(
+      child: FilterCategorySelect(
         items: ['side_best_deals'.tr(), 'side_new_arrivals'.tr()],
         itemWidth: pageStyle.unitWidth * 160,
         itemHeight: pageStyle.unitHeight * 40,
-        value: category,
-        itemSpace: pageStyle.unitWidth * 10,
-        titleSize: pageStyle.unitFontSize * 15,
-        radius: 30,
-        selectedColor: primaryColor,
-        selectedBorderColor: Colors.transparent,
-        selectedTitleColor: Colors.white,
-        unSelectedColor: greyLightColor,
-        unSelectedBorderColor: Colors.transparent,
-        unSelectedTitleColor: greyDarkColor,
+        values: selectedCategories,
+        pageStyle: pageStyle,
         onTap: (value) {
-          if (value != category) {
-            category = value;
+          if (selectedCategories.contains(value)) {
+            selectedCategories.remove(value);
           } else {
-            category = '';
+            selectedCategories.add(value);
           }
           setState(() {});
         },
@@ -147,13 +151,9 @@ class _FilterPageState extends State<FilterPage> {
   Widget _buildPriceRange() {
     return Container(
       width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
-      ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: pageStyle.unitWidth * 30,
+        vertical: pageStyle.unitHeight * 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +169,7 @@ class _FilterPageState extends State<FilterPage> {
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
-              '0 KD - 10 KD',
+              '$minPrice KD - $maxPrice KD',
               style: boldTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 25,
@@ -202,13 +202,9 @@ class _FilterPageState extends State<FilterPage> {
   Widget _buildGender() {
     return Container(
       width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
-      ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: pageStyle.unitWidth * 30,
+        vertical: pageStyle.unitHeight * 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,11 +224,11 @@ class _FilterPageState extends State<FilterPage> {
               items: GenderEnum.values
                   .map((e) => EnumToString.parse(e).toUpperCase())
                   .toList(),
-              itemWidth: pageStyle.unitWidth * 82,
+              itemWidth: pageStyle.unitWidth * 72,
               itemHeight: pageStyle.unitHeight * 31,
-              value: gender,
-              itemSpace: pageStyle.unitWidth * 10,
-              titleSize: pageStyle.unitFontSize * 12,
+              values: selectedGenders,
+              itemSpace: pageStyle.unitWidth * 6,
+              titleSize: pageStyle.unitFontSize * 10,
               radius: 30,
               selectedColor: Colors.white,
               selectedBorderColor: Colors.transparent,
@@ -241,10 +237,10 @@ class _FilterPageState extends State<FilterPage> {
               unSelectedBorderColor: Colors.white,
               unSelectedTitleColor: Colors.white,
               onTap: (value) {
-                if (value != gender) {
-                  gender = value;
+                if (selectedGenders.contains(value)) {
+                  selectedGenders.remove(value);
                 } else {
-                  gender = '';
+                  selectedGenders.add(value);
                 }
                 setState(() {});
               },
@@ -258,13 +254,9 @@ class _FilterPageState extends State<FilterPage> {
   Widget _buildSizes() {
     return Container(
       width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
-      ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: pageStyle.unitWidth * 30,
+        vertical: pageStyle.unitHeight * 10,
       ),
       child: Column(
         children: [
@@ -308,8 +300,8 @@ class _FilterPageState extends State<FilterPage> {
                     items: ['S', 'M', 'L', 'XL', 'XXL'],
                     itemWidth: pageStyle.unitWidth * 60,
                     itemHeight: pageStyle.unitHeight * 31,
-                    value: size,
-                    itemSpace: pageStyle.unitWidth * 10,
+                    values: selectedSizes,
+                    itemSpace: pageStyle.unitWidth * 6,
                     titleSize: pageStyle.unitFontSize * 12,
                     radius: 30,
                     selectedColor: Colors.white,
@@ -319,10 +311,10 @@ class _FilterPageState extends State<FilterPage> {
                     unSelectedBorderColor: Colors.white,
                     unSelectedTitleColor: Colors.white,
                     onTap: (value) {
-                      if (value != size) {
-                        size = value;
+                      if (selectedSizes.contains(value)) {
+                        selectedSizes.remove(value);
                       } else {
-                        size = '';
+                        selectedSizes.add(value);
                       }
                       setState(() {});
                     },
@@ -336,13 +328,9 @@ class _FilterPageState extends State<FilterPage> {
   Widget _buildColors() {
     return Container(
       width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
-      ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: pageStyle.unitWidth * 30,
+        vertical: pageStyle.unitHeight * 10,
       ),
       child: Column(
         children: [
@@ -387,14 +375,14 @@ class _FilterPageState extends State<FilterPage> {
                     items: colorItems,
                     itemWidth: pageStyle.unitWidth * 30,
                     itemHeight: pageStyle.unitHeight * 30,
-                    value: selectedColor,
+                    values: selectedColors,
                     pageStyle: pageStyle,
                     colors: colors,
                     onTap: (value) {
-                      if (selectedColor == value) {
-                        selectedColor = '';
+                      if (selectedColors.contains(value)) {
+                        selectedColors.remove(value);
                       } else {
-                        selectedColor = value;
+                        selectedColors.add(value);
                       }
                       setState(() {});
                     },
@@ -410,7 +398,7 @@ class _FilterPageState extends State<FilterPage> {
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        vertical: pageStyle.unitHeight * 10,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 10,
@@ -449,6 +437,39 @@ class _FilterPageState extends State<FilterPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedStores() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 30,
+        vertical: pageStyle.unitHeight * 2,
+      ),
+      child: Wrap(
+        spacing: pageStyle.unitWidth * 6,
+        runSpacing: pageStyle.unitHeight * 2,
+        children: selectedStores.map((store) {
+          return Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 6,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.white,
+            ),
+            child: Text(
+              store,
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+                fontSize: pageStyle.unitFontSize * 12,
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -498,6 +519,20 @@ class _FilterPageState extends State<FilterPage> {
     } else {
       selectedStores.add(value);
     }
+    setState(() {});
+  }
+
+  void _onResetAll() {
+    minPrice = 0;
+    maxPrice = 10;
+    selectedCategories = [];
+    selectedGenders = [];
+    selectedStores = [];
+    isHideSizes = true;
+    isHideColors = true;
+    isHideStores = true;
+    selectedSizes = [];
+    selectedColors = [];
     setState(() {});
   }
 }

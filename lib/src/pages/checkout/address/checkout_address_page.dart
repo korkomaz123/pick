@@ -16,7 +16,6 @@ class CheckoutAddressPage extends StatefulWidget {
 class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PageStyle pageStyle;
-
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -26,8 +25,13 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
-
   PhoneNumber phoneNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    phoneNumber = PhoneNumber(dialCode: '+965', isoCode: 'KW');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 width: pageStyle.deviceWidth,
                 padding: pageStyle.unitWidth * 10,
                 fontSize: pageStyle.unitFontSize * 14,
-                hint: 'email'.tr(),
+                hint: 'email_hint'.tr(),
                 validator: (value) => null,
                 inputType: TextInputType.emailAddress,
               ),

@@ -25,6 +25,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
   ProductEntity product;
   bool isMore = false;
   int activeIndex = 0;
+  bool isFavorite = true;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
           _buildImageCarousel(),
           _buildTitle(),
           _buildDescription(),
+          _buildPrice(),
           SizedBox(height: pageStyle.unitHeight * 10),
           _buildToolbar(),
         ],
@@ -59,6 +61,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
+            onTap: () => Navigator.pop(context),
             child: Container(
               width: pageStyle.unitWidth * 22,
               height: pageStyle.unitHeight * 22,
@@ -66,10 +69,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
             ),
           ),
           InkWell(
+            onTap: () => setState(() {
+              isFavorite = !isFavorite;
+            }),
             child: Container(
               width: pageStyle.unitWidth * 22,
               height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(wishlistedIcon),
+              child: SvgPicture.asset(
+                isFavorite ? wishlistedIcon : wishlistIcon,
+              ),
             ),
           ),
         ],
@@ -98,10 +106,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
                 });
               },
               itemBuilder: (context, index) {
-                return Image.asset(
-                  'lib/public/images/shutterstock_151558448-1.png',
-                  width: pageStyle.unitWidth * 343,
-                  height: pageStyle.unitHeight * 240.31,
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    Routes.viewFullImage,
+                    arguments: {'pageStyle': pageStyle},
+                  ),
+                  child: Image.asset(
+                    'lib/public/images/shutterstock_151558448-1.png',
+                    width: pageStyle.unitWidth * 343,
+                    height: pageStyle.unitHeight * 240.31,
+                  ),
                 );
               },
             ),
@@ -224,6 +239,34 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
     );
   }
 
+  Widget _buildPrice() {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        children: [
+          Text(
+            product.price.toString() + ' ' + 'currency'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 14,
+              color: greyColor,
+            ),
+          ),
+          SizedBox(width: pageStyle.unitWidth * 10),
+          Text(
+            product.discount.toString() + ' ' + 'currency'.tr(),
+            style: mediumTextStyle.copyWith(
+              decorationStyle: TextDecorationStyle.solid,
+              decoration: TextDecoration.lineThrough,
+              decorationColor: dangerColor,
+              fontSize: pageStyle.unitFontSize * 14,
+              color: greyColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildToolbar() {
     return Container(
       width: double.infinity,
@@ -231,7 +274,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: pageStyle.unitWidth * 271,
+            width: pageStyle.unitWidth * 296,
             height: pageStyle.unitHeight * 50,
             child: TextButton(
               title: 'product_buy_now'.tr(),
@@ -245,7 +288,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
           ),
           RoundImageButton(
             width: pageStyle.unitWidth * 58,
-            height: pageStyle.unitHeight * 49,
+            height: pageStyle.unitHeight * 50,
             color: greyLightColor,
             child: Container(
               width: pageStyle.unitWidth * 25,

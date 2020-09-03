@@ -146,5 +146,9 @@
     "wishlist_remove_item_dialog_title": "Are You Sure",
     "wishlist_remove_item_dialog_text": "You want to remove this item from your wishes list?",
     "yes_button_title": "YES",
-    "no_button_title": "NO"
+    "no_button_title": "NO",
+    "order_pending": "Pending",
+    "order_on_progress": "On Progress",
+    "order_delivered": "Delivered",
+    "my_orders": "My Orders"
 }

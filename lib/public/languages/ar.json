@@ -146,5 +146,9 @@
     "wishlist_remove_item_dialog_title": "هل أنت واثق",
     "wishlist_remove_item_dialog_text": "تريد إزالة هذا البند من قائمة رغباتك؟",
     "yes_button_title": "نعم",
-    "no_button_title": "لا"
+    "no_button_title": "لا",
+    "order_pending": "قيد الانتظار",
+    "order_on_progress": "قيد التقدم",
+    "order_delivered": "تم التوصيل",
+    "my_orders": "طلباتي"
 }

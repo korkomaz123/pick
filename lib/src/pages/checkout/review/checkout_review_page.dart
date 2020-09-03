@@ -44,14 +44,24 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                 ),
               ),
               Column(
-                children: myCartItems
-                    .map((e) => ProductHCard(
+                children: List.generate(
+                  myCartItems.length,
+                  (index) {
+                    return Column(
+                      children: [
+                        ProductHCard(
                           pageStyle: pageStyle,
-                          cardWidth: pageStyle.unitWidth * 350,
-                          cardHeight: pageStyle.unitHeight * 170,
-                          product: e.product,
-                        ))
-                    .toList(),
+                          cardWidth: pageStyle.unitWidth * 340,
+                          cardHeight: pageStyle.unitHeight * 150,
+                          product: myCartItems[index].product,
+                        ),
+                        index < (myCartItems.length - 1)
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
+                      ],
+                    );
+                  },
+                ),
               ),
               _buildNote(),
               SizedBox(height: pageStyle.unitHeight * 30),
@@ -92,7 +102,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
             ),
             validator: (value) => null,
             keyboardType: TextInputType.text,
-            maxLines: 10,
+            maxLines: 6,
           ),
         ),
       ],

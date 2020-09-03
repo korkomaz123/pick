@@ -32,7 +32,11 @@ class _MyCartPageState extends State<MyCartPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      appBar: CigaAppBar(
+        pageStyle: pageStyle,
+        scaffoldKey: scaffoldKey,
+        isCartPage: true,
+      ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: SingleChildScrollView(
         child: Column(
@@ -74,7 +78,9 @@ class _MyCartPageState extends State<MyCartPage> {
             ),
           ),
           InkWell(
-            onTap: () => null,
+            onTap: () => setState(() {
+              myCartItems.clear();
+            }),
             child: Text(
               'my_cart_clear_cart'.tr(),
               style: bookTextStyle.copyWith(
@@ -98,7 +104,7 @@ class _MyCartPageState extends State<MyCartPage> {
       child: Row(
         children: [
           Text(
-            'total'.tr() + ' 4 ',
+            'total'.tr() + ' ${myCartItems.length} ',
             style: boldTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
@@ -124,7 +130,19 @@ class _MyCartPageState extends State<MyCartPage> {
         vertical: pageStyle.unitHeight * 15,
       ),
       child: Column(
-        children: myCartItems.map((e) => _buildMyCartProduct(e)).toList(),
+        children: List.generate(
+          myCartItems.length,
+          (index) {
+            return Column(
+              children: [
+                _buildMyCartProduct(myCartItems[index]),
+                index < (myCartItems.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -289,7 +307,7 @@ class _MyCartPageState extends State<MyCartPage> {
         titleSize: pageStyle.unitFontSize * 23,
         titleColor: primaryColor,
         buttonColor: Colors.white,
-        borderColor: primaryColor,
+        borderColor: primarySwatchColor,
         onPressed: () => Navigator.pushNamed(context, Routes.checkoutAddress),
         radius: 0,
       ),

@@ -8,17 +8,31 @@ final List<CategoryEntity> homeCategories = [
     id: '1',
     name: 'Best Deal',
     products: products,
-  ),
-  CategoryEntity(
-    id: '2',
-    name: 'New Arrival',
-    products: products,
+    subCategories: subCategories,
   ),
   CategoryEntity(
     id: '3',
+    name: 'New Arrival',
+    products: products,
+    subCategories: subCategories,
+  ),
+  CategoryEntity(
+    id: '4',
     name: 'Perfumes',
     products: products,
+    subCategories: subCategories,
   ),
+];
+
+final List<CategoryEntity> subCategories = [
+  CategoryEntity(id: 'all', name: 'All', products: products),
+  CategoryEntity(id: 'sub1', name: 'Sub1', products: products),
+  CategoryEntity(id: 'sub2', name: 'Sub2', products: products),
+  CategoryEntity(id: 'sub3', name: 'Sub3', products: products),
+  CategoryEntity(id: 'sub4', name: 'Sub4', products: products),
+  CategoryEntity(id: 'sub5', name: 'Sub5', products: products),
+  CategoryEntity(id: 'sub6', name: 'Sub6', products: products),
+  CategoryEntity(id: 'sub7', name: 'Sub7', products: products),
 ];
 
 final List<CategoryEntity> allCategories = List.generate(
@@ -28,6 +42,7 @@ final List<CategoryEntity> allCategories = List.generate(
     name: 'Category ${index + 1}',
     imageUrl: 'lib/public/images/category${index + 1}.png',
     products: products,
+    subCategories: subCategories,
   ),
 ).toList();
 
@@ -79,28 +94,28 @@ final List<OrderEntity> orders = [
   OrderEntity(
     orderNo: '129292',
     orderDate: '18/11/2020',
-    status: 'Pending',
+    status: OrderStatusEnum.pending,
     paymentMethod: 'Cash On Delivery',
     totalPrice: '2029',
   ),
   OrderEntity(
     orderNo: '129293',
     orderDate: '21/11/2020',
-    status: 'Pending',
+    status: OrderStatusEnum.onProgress,
     paymentMethod: 'Visa Card',
     totalPrice: '882',
   ),
   OrderEntity(
     orderNo: '129294',
     orderDate: '3/12/2020',
-    status: 'Pending',
+    status: OrderStatusEnum.delivered,
     paymentMethod: 'KNet',
     totalPrice: '1029',
   ),
   OrderEntity(
     orderNo: '129295',
     orderDate: '11/12/2020',
-    status: 'Pending',
+    status: OrderStatusEnum.onProgress,
     paymentMethod: 'Cash On Delivery',
     totalPrice: '2726',
   ),

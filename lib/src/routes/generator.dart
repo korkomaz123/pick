@@ -13,6 +13,7 @@ import 'package:ciga/src/pages/my_account/account_page.dart';
 import 'package:ciga/src/pages/my_account/order_history/order_history_page.dart';
 import 'package:ciga/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:ciga/src/pages/my_cart/my_cart_page.dart';
+import 'package:ciga/src/pages/product/product_image.dart';
 import 'package:ciga/src/pages/product/product_page.dart';
 import 'package:ciga/src/pages/product_list/product_list_page.dart';
 import 'package:ciga/src/pages/search/search_page.dart';
@@ -57,6 +58,10 @@ class RouteGenerator {
         );
       case Routes.myCart:
         return MaterialPageRoute(builder: (context) => MyCartPage());
+      case Routes.viewFullImage:
+        return MaterialPageRoute(
+          builder: (context) => ProductImage(arguments: params),
+        );
       case Routes.searchAddress:
         return MaterialPageRoute(builder: (context) => SearchAddressScreen());
       case Routes.checkoutAddress:

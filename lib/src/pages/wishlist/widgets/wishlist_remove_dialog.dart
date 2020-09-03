@@ -13,6 +13,9 @@ class WishlistRemoveDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(pageStyle.unitWidth * 10),
+      ),
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 15,
@@ -25,6 +28,7 @@ class WishlistRemoveDialog extends StatelessWidget {
           children: [
             Text(
               'wishlist_remove_item_dialog_title'.tr(),
+              textAlign: TextAlign.center,
               style: bookTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 26,
                 color: Colors.white,
@@ -33,6 +37,7 @@ class WishlistRemoveDialog extends StatelessWidget {
             SizedBox(height: pageStyle.unitHeight * 6),
             Text(
               'wishlist_remove_item_dialog_text'.tr(),
+              textAlign: TextAlign.center,
               style: bookTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 15,
                 color: Colors.white,

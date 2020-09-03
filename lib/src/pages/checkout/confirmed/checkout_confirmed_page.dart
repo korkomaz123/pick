@@ -1,10 +1,12 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
@@ -32,12 +34,18 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: pageStyle.unitHeight * 30),
-              Text(
-                'checkout_ordered_success_title'.tr(),
-                style: boldTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 34,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'checkout_ordered_success_title'.tr(),
+                    style: boldTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 34,
+                    ),
+                  ),
+                  SvgPicture.asset(orderedSuccessIcon),
+                ],
               ),
               Container(
                 width: double.infinity,
@@ -110,11 +118,11 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
       child: TextButton(
         title: 'checkout_show_all_ordered_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 17,
-        titleColor: Colors.white,
+        titleColor: Colors.white70,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => null,
-        radius: 0,
+        onPressed: () => Navigator.pushNamed(context, Routes.orderHistory),
+        radius: 30,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
@@ -63,8 +64,26 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               color: Colors.white,
               border: Border.all(color: greyColor),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
+                topRight: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'ar'
+                      ? 10
+                      : 0,
+                ),
+                bottomRight: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'ar'
+                      ? 10
+                      : 0,
+                ),
+                topLeft: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'en'
+                      ? 10
+                      : 0,
+                ),
+                bottomLeft: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'en'
+                      ? 10
+                      : 0,
+                ),
               ),
             ),
             alignment: Alignment.center,
@@ -102,8 +121,26 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               color: Colors.white,
               border: Border.all(color: greyColor),
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10),
-                bottomRight: Radius.circular(10),
+                topRight: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'en'
+                      ? 10
+                      : 0,
+                ),
+                bottomRight: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'en'
+                      ? 10
+                      : 0,
+                ),
+                topLeft: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'ar'
+                      ? 10
+                      : 0,
+                ),
+                bottomLeft: Radius.circular(
+                  EasyLocalization.of(context).locale.languageCode == 'ar'
+                      ? 10
+                      : 0,
+                ),
               ),
             ),
             child: Icon(Icons.add, size: widget.pageStyle.unitFontSize * 18),

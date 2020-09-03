@@ -5,8 +5,9 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
-import 'package:ciga/src/pages/home/widgets/home_advertise.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -17,7 +18,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ProductListPage extends StatefulWidget {
-  final arguments;
+  final ProductListArguments arguments;
 
   ProductListPage({this.arguments});
 
@@ -27,15 +28,25 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   PageStyle pageStyle;
-  String category;
-  int categoryIndex;
+  ProductListArguments arguments;
+  CategoryEntity category;
+  List<CategoryEntity> subCategories;
+  StoreEntity store;
+  int activeSubcategoryIndex;
+  bool isFromStore;
+  String selectedCategory;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    categoryIndex = widget.arguments as int ?? 0;
-    category = topCategoryItems.elementAt(categoryIndex);
+    arguments = widget.arguments;
+    category = arguments.category;
+    subCategories = arguments.subCategory;
+    store = arguments.store;
+    activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
+    isFromStore = arguments.isFromStore;
+    selectedCategory = subCategories[activeSubcategoryIndex].name;
   }
 
   @override
@@ -54,12 +65,10 @@ class _ProductListPageState extends State<ProductListPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  isFromStore ? _buildStoreBar() : SizedBox.shrink(),
                   _buildCategoryBar(),
                   _buildProductList(),
-                  _buildLoadMoreButton(),
                   SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeAdvertise(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10)
                 ],
               ),
             ),
@@ -79,45 +88,68 @@ class _ProductListPageState extends State<ProductListPage> {
       height: pageStyle.unitHeight * 60,
       color: primarySwatchColor,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          InkWell(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: pageStyle.unitFontSize * 20,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          Text(
-            'Best Deals',
-            style: boldTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
-            ),
-          ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                onPressed: () => _onSortBy(),
-                icon: Icon(
-                  Icons.sort,
-                  color: Colors.white,
-                  size: pageStyle.unitFontSize * 25,
-                ),
-              ),
               InkWell(
-                onTap: () => _showFilterDialog(),
-                child: Container(
-                  width: pageStyle.unitWidth * 20,
-                  height: pageStyle.unitHeight * 17,
-                  child: SvgPicture.asset(filterIcon),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: pageStyle.unitFontSize * 20,
                 ),
+                onTap: () => Navigator.pop(context),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => _onSortBy(),
+                    icon: Icon(
+                      Icons.sort,
+                      color: Colors.white,
+                      size: pageStyle.unitFontSize * 25,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => _showFilterDialog(),
+                    child: Container(
+                      width: pageStyle.unitWidth * 20,
+                      height: pageStyle.unitHeight * 17,
+                      child: SvgPicture.asset(filterIcon),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              isFromStore ? store.name : category.name,
+              style: boldTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: pageStyle.unitFontSize * 17,
+              ),
+            ),
+          )
         ],
+      ),
+    );
+  }
+
+  Widget _buildStoreBar() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 80,
+      margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 8),
+      alignment: Alignment.center,
+      color: Colors.white,
+      child: Image.asset(
+        store.imageUrl,
+        width: pageStyle.unitWidth * 120,
+        height: pageStyle.unitHeight * 60,
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -125,25 +157,24 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildCategoryBar() {
     return Container(
       width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 60,
-      color: Colors.white,
+      height: pageStyle.unitHeight * 50,
       child: SelectOptionCustomCustom(
-        items: topCategoryItems,
-        value: category,
-        titleSize: pageStyle.unitFontSize * 18,
+        items: subCategories.map((e) => e.name).toList(),
+        value: selectedCategory,
+        titleSize: pageStyle.unitFontSize * 14,
         itemSpace: pageStyle.unitWidth * 0,
         radius: pageStyle.unitWidth * 20,
         selectedColor: primaryColor,
-        unSelectedColor: Colors.white,
-        selectedBorderColor: Colors.white,
-        unSelectedBorderColor: Colors.white,
+        unSelectedColor: Colors.transparent,
+        selectedBorderColor: Colors.transparent,
+        unSelectedBorderColor: primaryColor,
         selectedTitleColor: Colors.white,
-        unSelectedTitleColor: primaryColor,
+        unSelectedTitleColor: greyColor,
         listStyle: true,
         onTap: (value) {
-          if (category != value) {
+          if (selectedCategory != value) {
             setState(() {
-              category = value;
+              selectedCategory = value;
             });
           }
         },
@@ -166,28 +197,9 @@ class _ProductListPageState extends State<ProductListPage> {
             cardHeight: pageStyle.unitHeight * 253,
             isShoppingCart: true,
             isWishlist: true,
+            isShare: true,
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildLoadMoreButton() {
-    return Container(
-      color: Colors.white,
-      width: pageStyle.deviceWidth,
-      margin: EdgeInsets.only(top: pageStyle.unitHeight * 1.5),
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.deviceWidth * 0.3,
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      child: TextButton(
-        title: 'Load More',
-        titleSize: pageStyle.unitFontSize * 22,
-        titleColor: Colors.white,
-        buttonColor: primaryColor,
-        borderColor: primaryColor,
-        onPressed: () => null,
       ),
     );
   }

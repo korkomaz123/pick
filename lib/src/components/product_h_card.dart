@@ -14,6 +14,7 @@ class ProductHCard extends StatelessWidget {
   final ProductEntity product;
   final bool isShoppingCart;
   final bool isWishlist;
+  final bool isShare;
   final PageStyle pageStyle;
 
   ProductHCard({
@@ -22,6 +23,7 @@ class ProductHCard extends StatelessWidget {
     this.product,
     this.isShoppingCart = false,
     this.isWishlist = false,
+    this.isShare = false,
     this.pageStyle,
   });
 
@@ -49,14 +51,15 @@ class ProductHCard extends StatelessWidget {
                   child: Image.asset(
                     'lib/public/images/shutterstock_151558448-1.png',
                     width: cardWidth * 0.4,
-                    height: cardHeight,
+                    height: cardHeight * 0.7,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(height: cardHeight * 0.2),
                       Text(
                         'Jazzia Group',
                         style: mediumTextStyle.copyWith(
@@ -73,26 +76,47 @@ class ProductHCard extends StatelessWidget {
                           fontSize: pageStyle.unitFontSize * 14,
                         ),
                       ),
+                      SizedBox(height: pageStyle.unitHeight * 10),
                       Row(
                         children: [
-                          Text(
-                            product.price.toString() + ' ' + 'currency'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: pageStyle.unitFontSize * 12,
-                              color: greyColor,
+                          Expanded(
+                            child: Text(
+                              product.price.toString() + ' ' + 'currency'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: pageStyle.unitFontSize * 12,
+                                color: greyColor,
+                              ),
                             ),
                           ),
-                          SizedBox(width: pageStyle.unitWidth * 20),
-                          Text(
-                            product.discount.toString() + ' ' + 'currency'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              decorationStyle: TextDecorationStyle.solid,
-                              decoration: TextDecoration.lineThrough,
-                              decorationColor: dangerColor,
-                              fontSize: pageStyle.unitFontSize * 12,
-                              color: greyColor,
+                          Expanded(
+                            child: Text(
+                              product.discount.toString() +
+                                  ' ' +
+                                  'currency'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                decorationStyle: TextDecorationStyle.solid,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: dangerColor,
+                                fontSize: pageStyle.unitFontSize * 12,
+                                color: greyColor,
+                              ),
                             ),
                           ),
+                          isShoppingCart
+                              ? Expanded(
+                                  child: InkWell(
+                                    onTap: () => null,
+                                    child: Container(
+                                      width: pageStyle.unitWidth * 18,
+                                      height: pageStyle.unitHeight * 17,
+                                      child: SvgPicture.asset(
+                                        shoppingCartIcon,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
                         ],
                       ),
                     ],
@@ -101,39 +125,43 @@ class ProductHCard extends StatelessWidget {
               ],
             ),
           ),
-          isWishlist
-              ? Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => null,
-                      child: Container(
-                        width: pageStyle.unitWidth * 18,
-                        height: pageStyle.unitHeight * 17,
-                        child: SvgPicture.asset(wishlistIcon, color: greyColor),
+          Column(
+            children: [
+              isShare
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () => null,
+                          child: Icon(
+                            Icons.share,
+                            color: greyColor,
+                            size: pageStyle.unitFontSize * 20,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
-          isShoppingCart
-              ? Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => null,
-                      child: Container(
-                        width: pageStyle.unitWidth * 18,
-                        height: pageStyle.unitHeight * 17,
-                        child: SvgPicture.asset(shoppingCartIcon,
-                            color: primaryColor),
+                    )
+                  : SizedBox.shrink(),
+              isWishlist
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () => null,
+                          child: Container(
+                            width: pageStyle.unitWidth * 18,
+                            height: pageStyle.unitHeight * 17,
+                            child: SvgPicture.asset(wishlistIcon,
+                                color: greyColor),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
         ],
       ),
     );

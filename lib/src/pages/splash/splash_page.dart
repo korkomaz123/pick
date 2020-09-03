@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
     _pageStyle = PageStyle(context, designWidth, designHeight);
     _pageStyle.initializePageStyles();
     return Scaffold(
-      backgroundColor: cigaAppTheme.primaryColor,
+      backgroundColor: primarySwatchColor,
       body: Center(
         child: Container(
           width: _pageStyle.unitWidth * 229.01,

@@ -1,7 +1,9 @@
+import 'enum.dart';
+
 class OrderEntity {
   final String orderNo;
   final String orderDate;
-  final String status;
+  final OrderStatusEnum status;
   final String paymentMethod;
   final String totalPrice;
 

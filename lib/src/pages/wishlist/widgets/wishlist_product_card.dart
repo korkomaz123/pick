@@ -9,8 +9,14 @@ class WishlistProductCard extends StatelessWidget {
   final PageStyle pageStyle;
   final ProductEntity product;
   final Function onRemoveWishlist;
+  final Function onAddToCart;
 
-  WishlistProductCard({this.pageStyle, this.product, this.onRemoveWishlist});
+  WishlistProductCard({
+    this.pageStyle,
+    this.product,
+    this.onRemoveWishlist,
+    this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +89,7 @@ class WishlistProductCard extends StatelessWidget {
                   titleColor: Colors.white,
                   buttonColor: primaryColor,
                   borderColor: Colors.transparent,
-                  onPressed: () => null,
+                  onPressed: onAddToCart,
                   radius: 10,
                 ),
               ],

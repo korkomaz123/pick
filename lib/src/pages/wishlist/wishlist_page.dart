@@ -6,6 +6,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _WishlistPageState extends State<WishlistPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
+      backgroundColor: Colors.white,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
@@ -52,6 +54,7 @@ class _WishlistPageState extends State<WishlistPage> {
                             product: products[index],
                             onRemoveWishlist: () =>
                                 _onRemoveWishlist(products[index]),
+                            onAddToCart: () => _onAddToCart(products[index]),
                           ),
                           index < (products.length - 1)
                               ? Divider(color: greyColor, thickness: 0.5)
@@ -110,5 +113,11 @@ class _WishlistPageState extends State<WishlistPage> {
         return WishlistRemoveDialog(pageStyle: pageStyle);
       },
     );
+  }
+
+  void _onAddToCart(ProductEntity product) async {
+    products.remove(product);
+    setState(() {});
+    Navigator.pushNamed(context, Routes.myCart);
   }
 }

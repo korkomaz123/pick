@@ -95,85 +95,122 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
       child: Column(
         children: [
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 4,
             ),
-            leading: SvgPicture.asset(
-              bestDealIcon,
-              width: pageStyle.unitWidth * 20,
-              height: pageStyle.unitHeight * 20,
-            ),
-            title: Text(
-              'side_best_deals'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: greyColor,
-              ),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  bestDealIcon,
+                  width: pageStyle.unitWidth * 20,
+                  height: pageStyle.unitHeight * 20,
+                ),
+                SizedBox(width: pageStyle.unitWidth * 10),
+                Text(
+                  'side_best_deals'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                    color: greyColor,
+                  ),
+                ),
+              ],
             ),
           ),
-          ListTile(
+          InkWell(
             onTap: () {
               showMenu = !showMenu;
               activeMenu = categoryMenu;
               setState(() {});
             },
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-            ),
-            leading: SvgPicture.asset(
-              sideCategoryIcon,
-              width: pageStyle.unitWidth * 20,
-              height: pageStyle.unitHeight * 20,
-            ),
-            title: Text(
-              'side_categories'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: greyColor,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
               ),
-            ),
-            trailing: Icon(
-              showMenu ? Icons.keyboard_arrow_up : Icons.arrow_forward_ios,
-              size: showMenu
-                  ? pageStyle.unitFontSize * 30
-                  : pageStyle.unitFontSize * 20,
-              color: greyColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        sideCategoryIcon,
+                        width: pageStyle.unitWidth * 20,
+                        height: pageStyle.unitHeight * 20,
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'side_categories'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                          color: greyColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    showMenu
+                        ? Icons.keyboard_arrow_up
+                        : Icons.arrow_forward_ios,
+                    size: showMenu
+                        ? pageStyle.unitFontSize * 30
+                        : pageStyle.unitFontSize * 20,
+                    color: greyColor,
+                  ),
+                ],
+              ),
             ),
           ),
           showMenu ? _buildCategorySubMenu() : SizedBox.shrink(),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 4,
             ),
-            leading: SvgPicture.asset(
-              shoppingBasketIcon,
-              width: pageStyle.unitWidth * 20,
-              height: pageStyle.unitHeight * 20,
-            ),
-            title: Text(
-              'side_stores'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: greyColor,
-              ),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  shoppingBasketIcon,
+                  width: pageStyle.unitWidth * 20,
+                  height: pageStyle.unitHeight * 20,
+                ),
+                SizedBox(width: pageStyle.unitWidth * 10),
+                Text(
+                  'side_stores'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                    color: greyColor,
+                  ),
+                ),
+              ],
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 4,
             ),
-            leading: SvgPicture.asset(
-              newArrivalIcon,
-              width: pageStyle.unitWidth * 20,
-              height: pageStyle.unitHeight * 20,
-            ),
-            title: Text(
-              'side_new_arrivals'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: greyColor,
-              ),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  newArrivalIcon,
+                  width: pageStyle.unitWidth * 20,
+                  height: pageStyle.unitHeight * 20,
+                ),
+                SizedBox(width: pageStyle.unitWidth * 10),
+                Text(
+                  'side_new_arrivals'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                    color: greyColor,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -187,30 +224,39 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       padding: EdgeInsets.only(left: pageStyle.unitWidth * 80),
       child: Column(
         children: activeMenu.map((menu) {
-          return ListTile(
+          return InkWell(
             onTap: () {
               if (menu.subMenu.isNotEmpty) {
                 activeMenu = menu.subMenu;
                 setState(() {});
               }
             },
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-            ),
-            title: Text(
-              menu.title,
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: greyColor,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    menu.title,
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 16,
+                      color: greyColor,
+                    ),
+                  ),
+                  menu.subMenu.isNotEmpty
+                      ? Icon(
+                          Icons.arrow_forward_ios,
+                          size: pageStyle.unitFontSize * 18,
+                          color: greyColor,
+                        )
+                      : SizedBox.shrink(),
+                ],
               ),
             ),
-            trailing: menu.subMenu.isNotEmpty
-                ? Icon(
-                    Icons.arrow_forward_ios,
-                    size: pageStyle.unitFontSize * 18,
-                    color: greyColor,
-                  )
-                : SizedBox.shrink(),
           );
         }).toList(),
       ),

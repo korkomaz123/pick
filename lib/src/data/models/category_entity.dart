@@ -5,19 +5,22 @@ class CategoryEntity {
   final String name;
   final String imageUrl;
   final List<ProductEntity> products;
+  final List<CategoryEntity> subCategories;
 
   CategoryEntity({
     this.id,
     this.name,
     this.imageUrl,
     this.products,
+    this.subCategories,
   });
 
   CategoryEntity.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
         imageUrl = json['imageUrl'],
-        products = json['products'];
+        products = json['products'],
+        subCategories = json['subCategories'];
 
   Map<String, dynamic> toJson() => {
         'id': id,

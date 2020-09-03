@@ -1,11 +1,9 @@
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -46,18 +44,6 @@ class _SearchPageState extends State<SearchPage> {
             fontSize: pageStyle.unitFontSize * 40,
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Center(
-              child: Container(
-                width: pageStyle.unitWidth * 30,
-                height: pageStyle.unitHeight * 30,
-                child: SvgPicture.asset(closeIcon, color: greyColor),
-              ),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -186,7 +172,9 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => null,
+                  onTap: () => setState(() {
+                    searchHistory = [];
+                  }),
                   child: Text(
                     'search_clear_all'.tr(),
                     style: bookTextStyle.copyWith(
@@ -199,43 +187,50 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           SizedBox(height: pageStyle.unitHeight * 4),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                searchHistory.length,
-                (index) {
-                  return Column(
+          searchHistory.isNotEmpty
+              ? Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: pageStyle.unitWidth * 10,
+                    vertical: pageStyle.unitHeight * 15,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        searchHistory[index],
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 15,
-                          color: greyColor,
-                        ),
-                      ),
-                      index < (searchHistory.length - 1)
-                          ? Divider(
-                              thickness: 0.5,
-                              color: greyDarkColor,
-                            )
-                          : SizedBox.shrink(),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
+                    children: List.generate(
+                      searchHistory.length,
+                      (index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () => setState(() {
+                                filterData = searchHistory[index];
+                              }),
+                              child: Text(
+                                searchHistory[index],
+                                style: mediumTextStyle.copyWith(
+                                  fontSize: pageStyle.unitFontSize * 15,
+                                  color: greyColor,
+                                ),
+                              ),
+                            ),
+                            index < (searchHistory.length - 1)
+                                ? Divider(
+                                    thickness: 0.5,
+                                    color: greyDarkColor,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );

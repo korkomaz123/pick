@@ -3,7 +3,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FilterColorSelect extends StatelessWidget {
   final List<String> items;
-  final String value;
+  final List<String> values;
   final Map<String, Color> colors;
   final double itemWidth;
   final double itemHeight;
@@ -12,7 +12,7 @@ class FilterColorSelect extends StatelessWidget {
 
   FilterColorSelect({
     this.items,
-    this.value,
+    this.values,
     this.colors,
     this.itemWidth,
     this.itemHeight,
@@ -29,8 +29,8 @@ class FilterColorSelect extends StatelessWidget {
         return InkWell(
           onTap: () => onTap(item),
           child: Container(
-            width: value == item ? itemWidth * 1.2 : itemWidth,
-            height: value == item ? itemHeight * 1.2 : itemHeight,
+            width: values.contains(item) ? itemWidth * 1.2 : itemWidth,
+            height: values.contains(item) ? itemHeight * 1.2 : itemHeight,
             decoration: BoxDecoration(
               color: colors[item],
               borderRadius: BorderRadius.circular(2),

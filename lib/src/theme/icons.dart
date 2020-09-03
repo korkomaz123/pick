@@ -30,3 +30,7 @@ const String sideCategoryIcon = '$iconsAssetPath/side-category-icon.svg';
 const String newArrivalIcon = '$iconsAssetPath/new-arrival-icon.svg';
 const String bestDealIcon = '$iconsAssetPath/best-deal-icon.svg';
 const String sideLoginIcon = '$iconsAssetPath/log-in-icon.svg';
+const String orderedSuccessIcon = '$iconsAssetPath/ordered-success-icon.svg';
+const String pendingIcon = '$iconsAssetPath/pending-icon.svg';
+const String onProgressIcon = '$iconsAssetPath/on-progress-icon.svg';
+const String deliveredIcon = '$iconsAssetPath/delivered-icon.svg';

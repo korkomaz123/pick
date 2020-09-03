@@ -52,7 +52,7 @@ class CigaBottomBar extends StatelessWidget {
             child: SvgPicture.asset(categoryIcon),
           ),
           title: Text(
-            'home_category'.tr(),
+            'bottom_category'.tr(),
             style: bookTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),

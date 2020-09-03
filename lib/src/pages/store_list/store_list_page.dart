@@ -5,6 +5,7 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -59,32 +60,102 @@ class _StoreListPageState extends State<StoreListPage> {
       color: primarySwatchColor,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          InkWell(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: pageStyle.unitFontSize * 20,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          Text(
-            'bottom_stores'.tr(),
-            style: boldTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
-            ),
-          ),
-          SizedBox.shrink(),
+          _buildCategoryButton(),
+          _buildStoreButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => Navigator.pushReplacementNamed(
+          context,
+          Routes.categoryList,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            bottomLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            topRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            bottomRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+          ),
+        ),
+        color: Colors.white,
+        elevation: 0,
+        child: Text(
+          'home_categories'.tr(),
+          style: boldTextStyle.copyWith(
+            color: greyColor,
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoreButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            bottomLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            topRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            bottomRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+          ),
+        ),
+        color: Colors.white.withOpacity(0.4),
+        elevation: 0,
+        child: Text(
+          'bottom_store'.tr(),
+          style: boldTextStyle.copyWith(
+            color: Colors.white,
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildStoreCard(StoreEntity store) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, Routes.productList),
+      onTap: () {
+        ProductListArguments arguments = ProductListArguments(
+          category: CategoryEntity(),
+          subCategory: subCategories,
+          store: store,
+          selectedSubCategoryIndex: 0,
+          isFromStore: true,
+        );
+        Navigator.pushNamed(
+          context,
+          Routes.productList,
+          arguments: arguments,
+        );
+      },
       child: Container(
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 58,

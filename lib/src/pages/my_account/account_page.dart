@@ -27,6 +27,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
+    language = EasyLocalization.of(context).locale.languageCode.toUpperCase();
     return Scaffold(
       key: scaffoldKey,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
@@ -107,57 +108,90 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Column(
         children: [
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(emailIcon),
-            ),
-            title: Text(
-              'okorkomaz1@gmail.com',
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-              ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+            child: Row(
+              children: [
+                Container(
+                  width: pageStyle.unitWidth * 22,
+                  height: pageStyle.unitHeight * 22,
+                  child: SvgPicture.asset(emailIcon),
+                ),
+                SizedBox(width: pageStyle.unitWidth * 10),
+                Text(
+                  'okorkomaz1@gmail.com',
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+              ],
             ),
           ),
-          ListTile(
+          InkWell(
             onTap: () => Navigator.pushNamed(context, Routes.updateProfile),
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(profileIcon),
-            ),
-            title: Text(
-              'account_update_profile_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(profileIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_update_profile_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(logoutIcon),
-            ),
-            title: Text(
-              'account_logout_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(logoutIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_logout'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
             ),
           ),
         ],
@@ -181,190 +215,306 @@ class _AccountPageState extends State<AccountPage> {
               fontSize: pageStyle.unitFontSize * 18,
             ),
           ),
-          ListTile(
+          SizedBox(height: pageStyle.unitHeight * 10),
+          InkWell(
             onTap: () => Navigator.pushNamed(context, Routes.wishlist),
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(wishlistIcon),
-            ),
-            title: Text(
-              'account_wishlist_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(top: pageStyle.unitHeight * 5),
+              child: Row(
+                children: [
+                  Container(
+                    width: pageStyle.unitWidth * 22,
+                    height: pageStyle.unitHeight * 22,
+                    child: SvgPicture.asset(wishlistIcon),
+                  ),
+                  SizedBox(width: pageStyle.unitWidth * 10),
+                  Text(
+                    'account_wishlist_title'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(notificationIcon),
-            ),
-            title: Text(
-              'account_get_notification_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-              ),
-            ),
-            trailing: Switch(
-              value: getNotification,
-              onChanged: (value) {
-                setState(() {
-                  getNotification = value;
-                });
-              },
-              activeColor: primaryColor,
-              inactiveTrackColor: Colors.grey.shade200,
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(messageIcon),
-            ),
-            title: Text(
-              'account_notification_messages_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-              ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(languageIcon),
-            ),
-            title: Text(
-              'account_language_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-              ),
-            ),
-            trailing: Container(
-              width: pageStyle.unitWidth * 100,
-              height: pageStyle.unitHeight * 25,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey.shade300,
-              ),
-              child: SelectOptionCustom(
-                items: ['account_language_ar'.tr(), 'account_language_en'.tr()],
-                value: language,
-                itemWidth: pageStyle.unitWidth * 50,
-                itemHeight: pageStyle.unitHeight * 25,
-                itemSpace: 0,
-                titleSize: pageStyle.unitFontSize * 12,
-                radius: 8,
-                selectedColor: primaryColor,
-                selectedTitleColor: Colors.white,
-                selectedBorderColor: Colors.transparent,
-                unSelectedColor: Colors.grey.shade300,
-                unSelectedTitleColor: greyColor,
-                unSelectedBorderColor: Colors.transparent,
-                isVertical: false,
-                listStyle: true,
-                onTap: (value) {
-                  if (language != value) {
-                    language = value;
-                    if (language == 'account_language_ar') {
-                      EasyLocalization.of(context).locale = Locale('en', 'US');
-                    } else {
-                      EasyLocalization.of(context).locale = Locale('ar', 'AR');
-                    }
-                    setState(() {});
-                  }
-                },
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(notificationIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_get_notification_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Switch(
+                    value: getNotification,
+                    onChanged: (value) {
+                      setState(() {
+                        getNotification = value;
+                      });
+                    },
+                    activeColor: primaryColor,
+                    inactiveTrackColor: Colors.grey.shade200,
+                  ),
+                ],
               ),
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(rateIcon),
-            ),
-            title: Text(
-              'account_rate_app_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(messageIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_notification_message_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
             ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
+          ),
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(languageIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_language_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: pageStyle.unitWidth * 100,
+                    height: pageStyle.unitHeight * 25,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey.shade300,
+                    ),
+                    child: SelectOptionCustom(
+                      items: ['EN', 'AR'],
+                      value: language,
+                      itemWidth: pageStyle.unitWidth * 50,
+                      itemHeight: pageStyle.unitHeight * 25,
+                      itemSpace: 0,
+                      titleSize: pageStyle.unitFontSize * 12,
+                      radius: 8,
+                      selectedColor: primaryColor,
+                      selectedTitleColor: Colors.white,
+                      selectedBorderColor: Colors.transparent,
+                      unSelectedColor: Colors.grey.shade300,
+                      unSelectedTitleColor: greyColor,
+                      unSelectedBorderColor: Colors.transparent,
+                      isVertical: false,
+                      listStyle: true,
+                      onTap: (value) {
+                        if (language != value) {
+                          language = value;
+                          if (language == 'EN') {
+                            EasyLocalization.of(context).locale =
+                                EasyLocalization.of(context)
+                                    .supportedLocales
+                                    .first;
+                          } else {
+                            EasyLocalization.of(context).locale =
+                                EasyLocalization.of(context)
+                                    .supportedLocales
+                                    .last;
+                          }
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-          ListTile(
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(rateIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_rate_app_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
             onTap: () => Navigator.pushNamed(context, Routes.orderHistory),
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(orderHistoryIcon),
-            ),
-            title: Text(
-              'account_order_history_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(orderHistoryIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_order_history_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(termsIcon),
-            ),
-            title: Text(
-              'account_terms_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(termsIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_terms_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.all(0),
-            leading: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(aboutUsIcon),
-            ),
-            title: Text(
-              'account_about_us_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(aboutUsIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_about_us_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
-              color: greyDarkColor,
             ),
           ),
         ],

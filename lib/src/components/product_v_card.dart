@@ -14,6 +14,7 @@ class ProductVCard extends StatelessWidget {
   final ProductEntity product;
   final bool isShoppingCart;
   final bool isWishlist;
+  final bool isShare;
   final PageStyle pageStyle;
 
   ProductVCard({
@@ -22,6 +23,7 @@ class ProductVCard extends StatelessWidget {
     this.product,
     this.isShoppingCart = false,
     this.isWishlist = false,
+    this.isShare = false,
     this.pageStyle,
   });
 
@@ -39,19 +41,23 @@ class ProductVCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 8),
             child: Column(
               children: [
-                InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.product,
-                    arguments: product,
-                  ),
-                  child: Image.asset(
-                    'lib/public/images/shutterstock_151558448-1.png',
-                    width: cardWidth * 0.5,
-                    height: cardHeight * 0.54,
+                Expanded(
+                  flex: 2,
+                  child: InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.product,
+                      arguments: product,
+                    ),
+                    child: Image.asset(
+                      'lib/public/images/shutterstock_151558448-1.png',
+                      width: cardWidth,
+                      height: cardHeight * 0.8,
+                    ),
                   ),
                 ),
                 Expanded(
+                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -73,9 +79,11 @@ class ProductVCard extends StatelessWidget {
                           style: mediumTextStyle.copyWith(
                             color: greyDarkColor,
                             fontSize: pageStyle.unitFontSize * 12,
+                            height: pageStyle.unitHeight * 1.2,
                           ),
                         ),
                       ),
+                      // SizedBox(height: pageStyle.unitHeight * 10),
                       Row(
                         children: [
                           Text(
@@ -85,7 +93,7 @@ class ProductVCard extends StatelessWidget {
                               color: greyColor,
                             ),
                           ),
-                          SizedBox(width: pageStyle.unitWidth * 20),
+                          SizedBox(width: pageStyle.unitWidth * 10),
                           Text(
                             product.discount.toString() + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
@@ -96,6 +104,18 @@ class ProductVCard extends StatelessWidget {
                               color: greyColor,
                             ),
                           ),
+                          SizedBox(width: pageStyle.unitWidth * 10),
+                          isShoppingCart
+                              ? InkWell(
+                                  onTap: () => null,
+                                  child: Container(
+                                    width: pageStyle.unitWidth * 18,
+                                    height: pageStyle.unitHeight * 17,
+                                    child: SvgPicture.asset(shoppingCartIcon,
+                                        color: primaryColor),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
                         ],
                       ),
                     ],
@@ -104,39 +124,43 @@ class ProductVCard extends StatelessWidget {
               ],
             ),
           ),
-          isWishlist
-              ? Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => null,
-                      child: Container(
-                        width: pageStyle.unitWidth * 18,
-                        height: pageStyle.unitHeight * 17,
-                        child: SvgPicture.asset(wishlistIcon, color: greyColor),
+          Column(
+            children: [
+              isShare
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () => null,
+                          child: Icon(
+                            Icons.share,
+                            color: greyColor,
+                            size: pageStyle.unitFontSize * 20,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
-          isShoppingCart
-              ? Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => null,
-                      child: Container(
-                        width: pageStyle.unitWidth * 18,
-                        height: pageStyle.unitHeight * 17,
-                        child: SvgPicture.asset(shoppingCartIcon,
-                            color: primaryColor),
+                    )
+                  : SizedBox.shrink(),
+              isWishlist
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () => null,
+                          child: Container(
+                            width: pageStyle.unitWidth * 18,
+                            height: pageStyle.unitHeight * 17,
+                            child: SvgPicture.asset(wishlistIcon,
+                                color: greyColor),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
         ],
       ),
     );

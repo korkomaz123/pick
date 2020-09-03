@@ -33,6 +33,7 @@ class Routes {
 
   /// my cart
   static const String myCart = '/my-cart';
+  static const String viewFullImage = '/image-view-fullscreen';
 
   /// checkout
   static const String searchAddress = '/search-address';

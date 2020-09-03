@@ -192,6 +192,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
         bordered: false,
+        keyboardType: TextInputType.phone,
       ),
     );
   }
@@ -212,6 +213,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
         bordered: false,
+        obsecureText: true,
       ),
     );
   }

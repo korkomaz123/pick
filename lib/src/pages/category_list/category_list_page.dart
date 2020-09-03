@@ -5,6 +5,8 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -29,7 +31,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.white,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
@@ -44,8 +46,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
                     children: [
                       _buildCategoryCard(allCategories[index]),
                       activeIndex == index
-                          ? _buildSubcategoriesList()
+                          ? _buildSubcategoriesList(allCategories[index])
                           : SizedBox.shrink(),
+                      SizedBox(height: pageStyle.unitHeight * 6),
                     ],
                   ),
                 ),
@@ -68,24 +71,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
       color: primarySwatchColor,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          InkWell(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: pageStyle.unitFontSize * 20,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          Text(
-            'home_categories'.tr(),
-            style: boldTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
-            ),
-          ),
-          SizedBox.shrink(),
+          _buildCategoryButton(),
+          _buildStoreButton(),
         ],
       ),
     );
@@ -93,16 +82,14 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _buildCategoryCard(CategoryEntity category) {
     return InkWell(
-      onLongPress: () {
+      onTap: () {
         setState(() {
           activeIndex = allCategories.indexOf(category);
         });
       },
-      onTap: () => Navigator.pushNamed(context, Routes.productList),
       child: Container(
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 128,
-        margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 6),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(category.imageUrl),
@@ -113,19 +100,30 @@ class _CategoryListPageState extends State<CategoryListPage> {
     );
   }
 
-  Widget _buildSubcategoriesList() {
+  Widget _buildSubcategoriesList(CategoryEntity category) {
     return Column(
       children: List.generate(
-        topCategoryItems.length,
+        category.subCategories.length,
         (index) => InkWell(
-          onTap: () => Navigator.pushNamed(
-            context,
-            Routes.productList,
-            arguments: index,
-          ),
+          onTap: () {
+            activeIndex = -1;
+            setState(() {});
+            ProductListArguments arguments = ProductListArguments(
+              category: category,
+              subCategory: category.subCategories,
+              store: StoreEntity(),
+              selectedSubCategoryIndex: index,
+              isFromStore: false,
+            );
+            Navigator.pushNamed(
+              context,
+              Routes.productList,
+              arguments: arguments,
+            );
+          },
           child: Container(
             width: pageStyle.deviceWidth,
-            color: Colors.white,
+            color: greyLightColor,
             margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 20,
@@ -135,7 +133,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  topCategoryItems[index],
+                  category.subCategories[index].name,
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 18,
@@ -148,6 +146,77 @@ class _CategoryListPageState extends State<CategoryListPage> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            bottomLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            topRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            bottomRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+          ),
+        ),
+        color: Colors.white.withOpacity(0.4),
+        elevation: 0,
+        child: Text(
+          'home_categories'.tr(),
+          style: boldTextStyle.copyWith(
+            color: Colors.white,
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoreButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => Navigator.pushReplacementNamed(
+          context,
+          Routes.storeList,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            bottomLeft: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
+            ),
+            topRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+            bottomRight: Radius.circular(
+              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
+            ),
+          ),
+        ),
+        color: Colors.white,
+        elevation: 0,
+        child: Text(
+          'bottom_store'.tr(),
+          style: boldTextStyle.copyWith(
+            color: greyColor,
+            fontSize: pageStyle.unitFontSize * 12,
           ),
         ),
       ),

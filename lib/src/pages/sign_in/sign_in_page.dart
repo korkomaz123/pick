@@ -6,6 +6,7 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class SignInPage extends StatefulWidget {
@@ -18,13 +19,14 @@ class _SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isShowPass = false;
 
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: primarySwatchColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -32,7 +34,7 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(
-                  vertical: pageStyle.unitHeight * 120,
+                  vertical: pageStyle.unitHeight * 100,
                 ),
                 alignment: Alignment.center,
                 child: SvgPicture.asset(
@@ -96,6 +98,7 @@ class _SignInPageState extends State<SignInPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
+        vertical: pageStyle.unitHeight * 10,
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextFormField(
@@ -119,12 +122,20 @@ class _SignInPageState extends State<SignInPage> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
-          suffix: InkWell(
-            onTap: () => null,
-            child: Text('reset'.tr()),
+          suffixIcon: InkWell(
+            onTap: () {
+              setState(() {
+                isShowPass = !isShowPass;
+              });
+            },
+            child: Icon(
+              !isShowPass ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+              color: Colors.white54,
+              size: pageStyle.unitFontSize * 20,
+            ),
           ),
         ),
-        obscureText: true,
+        obscureText: !isShowPass,
       ),
     );
   }
@@ -147,7 +158,7 @@ class _SignInPageState extends State<SignInPage> {
           Routes.home,
           (route) => false,
         ),
-        radius: 10,
+        radius: 20,
       ),
     );
   }
@@ -162,7 +173,7 @@ class _SignInPageState extends State<SignInPage> {
         child: Text(
           'ask_forgot_password'.tr(),
           style: mediumTextStyle.copyWith(
-            color: primarySwatchColor,
+            color: Colors.white54,
             fontSize: pageStyle.unitFontSize * 14,
           ),
         ),
@@ -206,8 +217,8 @@ class _SignInPageState extends State<SignInPage> {
           SvgPicture.asset(facebookIcon),
           SizedBox(width: pageStyle.unitWidth * 20),
           SvgPicture.asset(googleIcon),
-          SizedBox(width: pageStyle.unitWidth * 20),
-          SvgPicture.asset(smsIcon),
+          // SizedBox(width: pageStyle.unitWidth * 20),
+          // SvgPicture.asset(smsIcon),
         ],
       ),
     );
@@ -216,12 +227,12 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignUpPhase() {
     return Container(
       width: pageStyle.deviceWidth,
-      padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 30),
+      padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 60),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'ask_have_account'.tr(),
+            'ask_have_account'.tr() + ' ',
             style: bookTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,

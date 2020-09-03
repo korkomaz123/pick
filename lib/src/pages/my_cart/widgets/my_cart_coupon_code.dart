@@ -31,6 +31,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
         children: [
           Container(
             width: widget.pageStyle.unitWidth * 218,
+            height: widget.pageStyle.unitHeight * 40,
             child: TextFormField(
               controller: widget.controller,
               style: boldTextStyle.copyWith(
@@ -39,7 +40,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
               ),
               decoration: InputDecoration(
                 prefixIcon: Container(
-                  margin: EdgeInsets.only(top: 10, right: 10),
+                  margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                   width: widget.pageStyle.unitWidth * 20,
                   height: widget.pageStyle.unitHeight * 20,
                   child: SvgPicture.asset(couponIcon),
