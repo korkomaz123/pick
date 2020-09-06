@@ -34,3 +34,6 @@ const String orderedSuccessIcon = '$iconsAssetPath/ordered-success-icon.svg';
 const String pendingIcon = '$iconsAssetPath/pending-icon.svg';
 const String onProgressIcon = '$iconsAssetPath/on-progress-icon.svg';
 const String deliveredIcon = '$iconsAssetPath/delivered-icon.svg';
+const String greyLogoIcon = '$iconsAssetPath/grey-logo-icon.svg';
+const String freeShippingIcon = '$iconsAssetPath/free-shipping-icon.svg';
+const String flatRateIcon = '$iconsAssetPath/flat-rate-icon.svg';

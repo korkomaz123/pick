@@ -140,6 +140,7 @@
     "account_order_history_title": "تاريخ الطلب",
     "account_terms_title": "الخصوصية والشروط",
     "account_about_us_title": "معلومات عنا",
+    "account_contact_us_title": "اتصل بنا",
     "account_language_ar": "مع",
     "account_language_en": "في",
     "wishlist_add_cart_button_title": "أضف إلى السلة",
@@ -150,5 +151,14 @@
     "order_pending": "قيد الانتظار",
     "order_on_progress": "قيد التقدم",
     "order_delivered": "تم التوصيل",
-    "my_orders": "طلباتي"
+    "my_orders": "طلباتي",
+    "message_title": "رسالة",
+    "message_hint": "الرجاء كتابة رسالتك",
+    "send_button_title": "إرسال",
+    "message_sent_prefix": "تم ارسال رسالتك",
+    "message_sent_suffix": "سيتواصل معك فريق الدعم قريبًا",
+    "sort_error_prefix": "وجه الفتاة! هناك خطأ ما",
+    "sort_error_suffix": "هذا لا يبدو صحيحًا! دعونا نحاول حل هذا",
+    "retry_button_title": "أعد المحاولة",
+    "no_data_message": "عذرا ، لا توجد بيانات متاحة"
 }

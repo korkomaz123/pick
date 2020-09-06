@@ -8,6 +8,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
+import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -55,7 +56,7 @@ class _ProductListPageState extends State<ProductListPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.white,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
@@ -67,7 +68,9 @@ class _ProductListPageState extends State<ProductListPage> {
                 children: [
                   isFromStore ? _buildStoreBar() : SizedBox.shrink(),
                   _buildCategoryBar(),
-                  _buildProductList(),
+                  selectedCategory == 'Sub1'
+                      ? ProductNoAvailable(pageStyle: pageStyle)
+                      : _buildProductList(),
                   SizedBox(height: pageStyle.unitHeight * 10),
                 ],
               ),
@@ -158,6 +161,7 @@ class _ProductListPageState extends State<ProductListPage> {
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
+      color: backgroundColor,
       child: SelectOptionCustomCustom(
         items: subCategories.map((e) => e.name).toList(),
         value: selectedCategory,

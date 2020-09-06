@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -6,6 +8,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/image_custom_picker_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,6 +27,19 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  File image;
+  ImageCustomPickerService imageCustomPickerService;
+
+  @override
+  void initState() {
+    super.initState();
+    imageCustomPickerService = ImageCustomPickerService(
+      context: context,
+      backgroundColor: Colors.white,
+      titleColor: primaryColor,
+      video: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,20 +89,26 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: pageStyle.unitHeight * 140,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('lib/public/images/profile.png'),
+                  image: image != null
+                      ? FileImage(image)
+                      : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
+                shape: BoxShape.circle,
               ),
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Container(
-                margin: EdgeInsets.only(right: pageStyle.unitWidth * 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+              child: InkWell(
+                onTap: () => _onChangeImage(),
+                child: Container(
+                  margin: EdgeInsets.only(right: pageStyle.unitWidth * 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgPicture.asset(addIcon),
                 ),
-                child: SvgPicture.asset(addIcon),
               ),
             ),
           ],
@@ -232,5 +254,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         radius: 0,
       ),
     );
+  }
+
+  void _onChangeImage() async {
+    image = await imageCustomPickerService.getImageWithDialog();
+    if (image != null) {
+      setState(() {});
+    }
   }
 }

@@ -3,11 +3,13 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductSingleProduct extends StatefulWidget {
@@ -59,6 +61,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
       width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
             onTap: () => Navigator.pop(context),
@@ -68,17 +71,26 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
               child: SvgPicture.asset(closeIcon),
             ),
           ),
-          InkWell(
-            onTap: () => setState(() {
-              isFavorite = !isFavorite;
-            }),
-            child: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(
-                isFavorite ? wishlistedIcon : wishlistIcon,
+          Column(
+            children: [
+              InkWell(
+                onTap: () => _onShareProduct(),
+                child: Icon(Icons.share, color: greyDarkColor),
               ),
-            ),
+              SizedBox(height: pageStyle.unitHeight * 10),
+              InkWell(
+                onTap: () => setState(() {
+                  isFavorite = !isFavorite;
+                }),
+                child: Container(
+                  width: pageStyle.unitWidth * 22,
+                  height: pageStyle.unitHeight * 22,
+                  child: SvgPicture.asset(
+                    !isFavorite ? wishlistedIcon : wishlistIcon,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -295,11 +307,75 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
               height: pageStyle.unitHeight * 25,
               child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
             ),
-            onTap: () => null,
+            onTap: () => _onAddToCart(product),
             radius: 1,
           ),
         ],
       ),
     );
+  }
+
+  void _onAddToCart(ProductEntity product) async {
+    Flushbar(
+      messageText: Container(
+        width: pageStyle.unitWidth * 300,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: boldTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 15,
+                  ),
+                ),
+                Text(
+                  product.name,
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 12,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Cart Total',
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 13,
+                  ),
+                ),
+                Text(
+                  'KD 460',
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 13,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      icon: SvgPicture.asset(
+        orderedSuccessIcon,
+        width: pageStyle.unitWidth * 20,
+        height: pageStyle.unitHeight * 20,
+      ),
+      duration: Duration(seconds: 3),
+      leftBarIndicatorColor: Colors.blue[100],
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: primaryColor,
+    )..show(context);
+  }
+
+  void _onShareProduct() {
+    Share.share('Share my product');
   }
 }

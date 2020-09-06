@@ -2,10 +2,12 @@ import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/routes/routes.dart';
+import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
@@ -84,6 +86,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
             fontSize: pageStyle.unitFontSize * 11,
           ),
         ),
+        secondary: SvgPicture.asset(freeShippingIcon),
       ),
     );
   }
@@ -119,6 +122,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
             fontSize: pageStyle.unitFontSize * 11,
           ),
         ),
+        secondary: SvgPicture.asset(flatRateIcon),
       ),
     );
   }

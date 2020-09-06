@@ -64,10 +64,17 @@ class _CigaAppBarState extends State<CigaAppBar> {
       elevation: 0,
       centerTitle: true,
       toolbarHeight: widget.pageStyle.unitHeight * 40,
-      title: Container(
-        width: logoWidth,
-        height: logoHeight,
-        child: SvgPicture.asset(logoIcon),
+      title: InkWell(
+        onTap: () => Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        ),
+        child: Container(
+          width: logoWidth,
+          height: logoHeight,
+          child: SvgPicture.asset(logoIcon),
+        ),
       ),
       leading: IconButton(
         icon: Icon(Icons.menu, color: Colors.white, size: pageIconSize),

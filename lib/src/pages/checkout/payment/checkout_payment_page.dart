@@ -1,11 +1,13 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
@@ -69,12 +71,18 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
           });
         },
         activeColor: darkColor,
-        title: Text(
-          'checkout_payment_cash_on_delivery'.tr(),
-          style: bookTextStyle.copyWith(
-            color: greyColor,
-            fontSize: pageStyle.unitFontSize * 14,
-          ),
+        title: Row(
+          children: [
+            SvgPicture.asset(freeShippingIcon),
+            SizedBox(width: pageStyle.unitWidth * 10),
+            Text(
+              'checkout_payment_cash_on_delivery'.tr(),
+              style: bookTextStyle.copyWith(
+                color: greyColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ],
         ),
       ),
     );

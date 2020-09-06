@@ -23,7 +23,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: primarySwatchColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -74,7 +74,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         controller: userNameOrEmailController,
         textAlign: TextAlign.center,
         style: bookTextStyle.copyWith(
-          color: Colors.white,
+          color: greyDarkColor,
           fontSize: pageStyle.unitFontSize * 14,
         ),
         decoration: InputDecoration(

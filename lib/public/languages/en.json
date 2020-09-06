@@ -140,6 +140,7 @@
     "account_order_history_title": "Order History",
     "account_terms_title": "Privacy and Terms",
     "account_about_us_title": "About Us",
+    "account_contact_us_title": "Contact Us",
     "account_language_ar": "AR",
     "account_language_en": "EN",
     "wishlist_add_cart_button_title": "ADD TO CART",
@@ -150,5 +151,14 @@
     "order_pending": "Pending",
     "order_on_progress": "On Progress",
     "order_delivered": "Delivered",
-    "my_orders": "My Orders"
+    "my_orders": "My Orders",
+    "message_title": "Message",
+    "message_hint": "Please write your message",
+    "send_button_title": "Send",
+    "message_sent_prefix": "Your message has been sent",
+    "message_sent_suffix": "Our support team will contact with you soon",
+    "sort_error_prefix": "Oops! Something went wrong",
+    "sort_error_suffix": "This doesn't seem right! Let us try sort this out",
+    "retry_button_title": "Retry",
+    "no_data_message": "Sorry, There is no available data"
 }

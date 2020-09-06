@@ -32,6 +32,7 @@ class _AccountPageState extends State<AccountPage> {
       key: scaffoldKey,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawerEnableOpenDragGesture: false,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -277,7 +278,10 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           InkWell(
-            onTap: () => null,
+            onTap: () => Navigator.pushNamed(
+              context,
+              Routes.notificationMessages,
+            ),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
@@ -451,7 +455,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           SizedBox(height: pageStyle.unitHeight * 5),
           InkWell(
-            onTap: () => null,
+            onTap: () => Navigator.pushNamed(context, Routes.terms),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
@@ -485,7 +489,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           SizedBox(height: pageStyle.unitHeight * 5),
           InkWell(
-            onTap: () => null,
+            onTap: () => Navigator.pushNamed(context, Routes.aboutUs),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
@@ -502,6 +506,40 @@ class _AccountPageState extends State<AccountPage> {
                       SizedBox(width: pageStyle.unitWidth * 10),
                       Text(
                         'account_about_us_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: pageStyle.unitHeight * 5),
+          InkWell(
+            onTap: () => Navigator.pushNamed(context, Routes.contactUs),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(emailIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_contact_us_title'.tr(),
                         style: mediumTextStyle.copyWith(
                           fontSize: pageStyle.unitFontSize * 16,
                         ),

@@ -3,10 +3,12 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:share/share.dart';
 
 class ProductVCard extends StatelessWidget {
   final double cardWidth;
@@ -107,7 +109,8 @@ class ProductVCard extends StatelessWidget {
                           SizedBox(width: pageStyle.unitWidth * 10),
                           isShoppingCart
                               ? InkWell(
-                                  onTap: () => null,
+                                  onTap: () =>
+                                      _onAddProductToCart(context, product),
                                   child: Container(
                                     width: pageStyle.unitWidth * 18,
                                     height: pageStyle.unitHeight * 17,
@@ -132,7 +135,7 @@ class ProductVCard extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(
-                          onTap: () => null,
+                          onTap: () => _onShareProduct(),
                           child: Icon(
                             Icons.share,
                             color: greyColor,
@@ -164,5 +167,69 @@ class ProductVCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _onAddProductToCart(BuildContext context, ProductEntity product) {
+    Flushbar(
+      messageText: Container(
+        width: pageStyle.unitWidth * 300,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: boldTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 15,
+                  ),
+                ),
+                Text(
+                  product.name,
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 12,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Cart Total',
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 13,
+                  ),
+                ),
+                Text(
+                  'KD 460',
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: pageStyle.unitFontSize * 13,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      icon: SvgPicture.asset(
+        orderedSuccessIcon,
+        width: pageStyle.unitWidth * 20,
+        height: pageStyle.unitHeight * 20,
+      ),
+      duration: Duration(seconds: 3),
+      leftBarIndicatorColor: Colors.blue[100],
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: primaryColor,
+    )..show(context);
+  }
+
+  void _onShareProduct() {
+    Share.share('Share my product');
   }
 }
