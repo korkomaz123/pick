@@ -57,4 +57,8 @@ class Routes {
   static const String aboutUs = '/about-us';
   static const String contactUs = '/contact-us';
   static const String contactUsSuccess = '/contact-us-success';
+  static const String shippingAddress = '/shipping-address';
+  static const String editAddress = '/edit-address';
+  static const String viewOrder = '/view-order';
+  static const String reOrder = '/re-order';
 }

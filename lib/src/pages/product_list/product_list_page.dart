@@ -189,19 +189,33 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildProductList() {
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
-      spacing: pageStyle.unitWidth * 2,
-      runSpacing: pageStyle.unitHeight * 2,
       children: List.generate(
         20,
         (index) {
-          return ProductVCard(
-            pageStyle: pageStyle,
-            product: homeCategories[0].products[1],
-            cardWidth: pageStyle.unitWidth * 186,
-            cardHeight: pageStyle.unitHeight * 253,
-            isShoppingCart: true,
-            isWishlist: true,
-            isShare: true,
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: index % 2 == 0
+                    ? BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      )
+                    : BorderSide.none,
+                bottom: BorderSide(
+                  color: greyColor,
+                  width: pageStyle.unitWidth * 0.5,
+                ),
+              ),
+            ),
+            child: ProductVCard(
+              pageStyle: pageStyle,
+              product: homeCategories[0].products[1],
+              cardWidth: pageStyle.unitWidth * 186,
+              cardHeight: pageStyle.unitHeight * 253,
+              isShoppingCart: true,
+              isWishlist: true,
+              isShare: true,
+            ),
           );
         },
       ),
@@ -222,7 +236,7 @@ class _ProductListPageState extends State<ProductListPage> {
     final result = await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
-        cornerRadius: 0,
+        cornerRadius: 10,
         snapSpec: SnapSpec(
           snap: true,
           snappings: [0.8],

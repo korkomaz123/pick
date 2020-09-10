@@ -49,29 +49,54 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       key: scaffoldKey,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildProfilePicture(),
-            _buildEmail(),
-            _buildDisplayName(),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            _buildFirstName(),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            _buildLastName(),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            _buildPhoneNumber(),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            _buildNewPassword(),
-            SizedBox(height: pageStyle.unitHeight * 50),
-            _buildUpdateButton(),
-            SizedBox(height: pageStyle.unitHeight * 30),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildAppBar(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildProfilePicture(),
+                  _buildEmail(),
+                  _buildDisplayName(),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  _buildFirstName(),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  _buildLastName(),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  _buildPhoneNumber(),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  _buildNewPassword(),
+                  SizedBox(height: pageStyle.unitHeight * 50),
+                  _buildUpdateButton(),
+                  SizedBox(height: pageStyle.unitHeight * 30),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return AppBar(
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+      ),
+      centerTitle: true,
+      title: Text(
+        'account_update_profile_title'.tr(),
+        style: boldTextStyle.copyWith(
+          color: Colors.white,
+          fontSize: pageStyle.unitFontSize * 17,
+        ),
       ),
     );
   }

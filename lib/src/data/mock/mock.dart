@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/models/adress_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
@@ -123,10 +124,12 @@ final List<OrderEntity> orders = [
 ];
 
 List<String> sortByList = [
-  'Price from High to Low',
-  'Price from Low to High',
-  'Sort By Stores',
+  'Price (Low to High)',
+  'Price (High to Low)',
+  'Sort By Brand',
   'Products on Sale',
+  'Name (A - Z)',
+  'Name (Z - A)',
 ];
 
 List<CategoryMenuEntity> categoryMenu = List.generate(
@@ -168,3 +171,13 @@ MessageEntity message = MessageEntity(
 );
 
 List<MessageEntity> messages = List.generate(20, (index) => message).toList();
+
+List<AddressEntity> shippingAddresses = List.generate(4, (index) {
+  return AddressEntity(
+    country: 'Kuwait',
+    city: 'Salmaya Salem Almubarak',
+    street: 'Street',
+    zipCode: '00232',
+    phoneNumber: '+9653373373',
+  );
+}).toList();

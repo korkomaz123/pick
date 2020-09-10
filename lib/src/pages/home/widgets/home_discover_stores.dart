@@ -30,7 +30,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'home_discover_stores'.tr(),
+            'home_discover_brands'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: widget.pageStyle.unitFontSize * 23,
@@ -108,7 +108,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'view_all'.tr(),
+                    'view_more_brands'.tr(),
                     style: mediumTextStyle.copyWith(
                       fontSize: widget.pageStyle.unitFontSize * 15,
                       color: primaryColor,

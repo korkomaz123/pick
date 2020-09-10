@@ -84,7 +84,10 @@ class _CigaAppBarState extends State<CigaAppBar> {
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(right: widget.pageStyle.unitWidth * 20),
+          padding: EdgeInsets.only(
+            right: widget.pageStyle.unitWidth * 20,
+            left: widget.pageStyle.unitWidth * 20,
+          ),
           child: InkWell(
             onTap: () => widget.isCartPage
                 ? null

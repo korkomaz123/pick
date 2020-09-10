@@ -74,7 +74,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildCategoryButton(),
-          _buildStoreButton(),
+          _buildBrandButton(),
         ],
       ),
     );
@@ -84,7 +84,11 @@ class _CategoryListPageState extends State<CategoryListPage> {
     return InkWell(
       onTap: () {
         setState(() {
-          activeIndex = allCategories.indexOf(category);
+          if (activeIndex != allCategories.indexOf(category)) {
+            activeIndex = allCategories.indexOf(category);
+          } else {
+            activeIndex = -1;
+          }
         });
       },
       child: Container(
@@ -186,7 +190,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     );
   }
 
-  Widget _buildStoreButton() {
+  Widget _buildBrandButton() {
     return Container(
       width: pageStyle.unitWidth * 100,
       child: MaterialButton(
@@ -213,7 +217,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         color: Colors.white,
         elevation: 0,
         child: Text(
-          'bottom_store'.tr(),
+          'brands_title'.tr(),
           style: boldTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 12,

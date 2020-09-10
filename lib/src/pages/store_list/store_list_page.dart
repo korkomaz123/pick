@@ -63,7 +63,7 @@ class _StoreListPageState extends State<StoreListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildCategoryButton(),
-          _buildStoreButton(),
+          _buildBrandButton(),
         ],
       ),
     );
@@ -106,7 +106,7 @@ class _StoreListPageState extends State<StoreListPage> {
     );
   }
 
-  Widget _buildStoreButton() {
+  Widget _buildBrandButton() {
     return Container(
       width: pageStyle.unitWidth * 100,
       child: MaterialButton(
@@ -130,7 +130,7 @@ class _StoreListPageState extends State<StoreListPage> {
         color: Colors.white.withOpacity(0.4),
         elevation: 0,
         child: Text(
-          'bottom_store'.tr(),
+          'brands_title'.tr(),
           style: boldTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 12,

@@ -16,6 +16,10 @@ import 'package:ciga/src/pages/my_account/contact_us/contact_us_success_page.dar
 import 'package:ciga/src/pages/my_account/notification_messages/notification_message_details_page.dart';
 import 'package:ciga/src/pages/my_account/notification_messages/notiifcation_messages_page.dart';
 import 'package:ciga/src/pages/my_account/order_history/order_history_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/reorder_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/view_order_page.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/edit_address_page.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/shipping_address_page.dart';
 import 'package:ciga/src/pages/my_account/terms/terms_page.dart';
 import 'package:ciga/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:ciga/src/pages/my_cart/my_cart_page.dart';
@@ -106,6 +110,21 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (context) => NotificationMessageDetailsPage(message: params),
         );
+      case Routes.shippingAddress:
+        return MaterialPageRoute(builder: (context) => ShippingAddressPage());
+      case Routes.editAddress:
+        return MaterialPageRoute(
+          builder: (context) => EditAddressPage(address: params),
+        );
+      case Routes.viewOrder:
+        return MaterialPageRoute(
+          builder: (context) => ViewOrderPage(order: params),
+        );
+      case Routes.reOrder:
+        return MaterialPageRoute(
+          builder: (context) => ReOrderPage(order: params),
+        );
+
       default:
         return MaterialPageRoute(builder: (context) => SplashPage());
     }

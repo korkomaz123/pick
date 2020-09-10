@@ -168,7 +168,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         titleColor: greyDarkColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => Navigator.pushNamed(context, Routes.shippingAddress),
         radius: 0,
       ),
     );

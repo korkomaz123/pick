@@ -163,7 +163,7 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           InkWell(
-            onTap: () => null,
+            onTap: () => Navigator.pushNamed(context, Routes.shippingAddress),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
@@ -175,11 +175,11 @@ class _AccountPageState extends State<AccountPage> {
                       Container(
                         width: pageStyle.unitWidth * 22,
                         height: pageStyle.unitHeight * 22,
-                        child: SvgPicture.asset(logoutIcon),
+                        child: SvgPicture.asset(shippingAddressIcon),
                       ),
                       SizedBox(width: pageStyle.unitWidth * 10),
                       Text(
-                        'account_logout'.tr(),
+                        'shipping_address_title'.tr(),
                         style: mediumTextStyle.copyWith(
                           fontSize: pageStyle.unitFontSize * 16,
                         ),
@@ -235,6 +235,19 @@ class _AccountPageState extends State<AccountPage> {
                     style: mediumTextStyle.copyWith(
                       fontSize: pageStyle.unitFontSize * 16,
                     ),
+                  ),
+                  Spacer(),
+                  Text(
+                    '10 ' + 'items'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 16,
+                      color: primaryColor,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
                   ),
                 ],
               ),
@@ -540,6 +553,39 @@ class _AccountPageState extends State<AccountPage> {
                       SizedBox(width: pageStyle.unitWidth * 10),
                       Text(
                         'account_contact_us_title'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: pageStyle.unitFontSize * 20,
+                    color: greyDarkColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () => null,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 22,
+                        height: pageStyle.unitHeight * 22,
+                        child: SvgPicture.asset(logoutIcon),
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 10),
+                      Text(
+                        'account_logout'.tr(),
                         style: mediumTextStyle.copyWith(
                           fontSize: pageStyle.unitFontSize * 16,
                         ),

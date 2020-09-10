@@ -217,8 +217,10 @@ class _SignInPageState extends State<SignInPage> {
           SvgPicture.asset(facebookIcon),
           SizedBox(width: pageStyle.unitWidth * 20),
           SvgPicture.asset(googleIcon),
-          // SizedBox(width: pageStyle.unitWidth * 20),
-          // SvgPicture.asset(smsIcon),
+          SizedBox(width: pageStyle.unitWidth * 20),
+          SvgPicture.asset(twitterIcon),
+          SizedBox(width: pageStyle.unitWidth * 20),
+          SvgPicture.asset(appleIcon),
         ],
       ),
     );

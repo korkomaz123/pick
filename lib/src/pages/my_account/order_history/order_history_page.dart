@@ -5,12 +5,14 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -220,6 +222,79 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              vertical: pageStyle.unitHeight * 15,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MaterialButton(
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    Routes.viewOrder,
+                    arguments: order,
+                  ),
+                  height: pageStyle.unitHeight * 45,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: primaryColor,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.eye,
+                        color: Colors.white54,
+                        size: pageStyle.unitFontSize * 20,
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 4),
+                      Text(
+                        'view_order_button_title'.tr(),
+                        style: bookTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: pageStyle.unitWidth * 5),
+                MaterialButton(
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    Routes.reOrder,
+                    arguments: order,
+                  ),
+                  minWidth: pageStyle.unitWidth * 150,
+                  height: pageStyle.unitHeight * 45,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: primaryColor,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.history,
+                        color: Colors.white54,
+                        size: pageStyle.unitFontSize * 20,
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 4),
+                      Text(
+                        'reorder_button_title'.tr(),
+                        style: bookTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

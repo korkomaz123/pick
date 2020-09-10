@@ -50,22 +50,29 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   Widget _buildMenuHeader() {
     return Container(
       width: menuWidth,
-      height: pageStyle.unitHeight * 270,
+      height: pageStyle.unitHeight * 140,
       color: primaryColor,
       child: Stack(
         children: [
-          Center(
-            child: SvgPicture.asset(
-              logoIcon,
-              width: pageStyle.unitWidth * 230,
-              height: pageStyle.unitHeight * 130,
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: pageStyle.unitHeight * 40,
+                left: pageStyle.unitWidth * 30,
+              ),
+              child: SvgPicture.asset(
+                logoIcon,
+                width: pageStyle.unitWidth * 95,
+                height: pageStyle.unitHeight * 55,
+              ),
             ),
           ),
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
               padding: EdgeInsets.only(
-                left: pageStyle.unitWidth * 40,
+                left: pageStyle.unitWidth * 30,
                 bottom: pageStyle.unitHeight * 10,
               ),
               width: double.infinity,
@@ -77,7 +84,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                     'login'.tr(),
                     style: mediumTextStyle.copyWith(
                       color: Colors.white,
-                      fontSize: pageStyle.unitFontSize * 23,
+                      fontSize: pageStyle.unitFontSize * 14,
                     ),
                   ),
                 ],
@@ -113,7 +120,8 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   'side_best_deals'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
-                    color: greyColor,
+                    color: greyDarkColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -129,42 +137,42 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               width: double.infinity,
               padding: EdgeInsets.symmetric(
                 horizontal: pageStyle.unitWidth * 10,
-                vertical: pageStyle.unitHeight * 4,
+                // vertical: pageStyle.unitHeight * 4,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+              child: Column(
+                children: List.generate(allCategories.length, (index) {
+                  return Column(
                     children: [
-                      SvgPicture.asset(
-                        sideCategoryIcon,
-                        width: pageStyle.unitWidth * 20,
-                        height: pageStyle.unitHeight * 20,
+                      Divider(
+                        color: greyColor,
+                        thickness: pageStyle.unitHeight * 0.5,
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 10),
-                      Text(
-                        'side_categories'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 16,
-                          color: greyColor,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: pageStyle.unitWidth * 10,
+                          vertical: pageStyle.unitHeight * 6,
+                        ),
+                        child: Text(
+                          allCategories[index].name,
+                          style: TextStyle(
+                            color: greyColor,
+                            fontSize: pageStyle.unitFontSize * 14,
+                          ),
                         ),
                       ),
+                      index == (allCategories.length - 1)
+                          ? Divider(
+                              color: greyColor,
+                              thickness: pageStyle.unitHeight * 0.5,
+                            )
+                          : SizedBox.shrink(),
                     ],
-                  ),
-                  Icon(
-                    showMenu
-                        ? Icons.keyboard_arrow_up
-                        : Icons.arrow_forward_ios,
-                    size: showMenu
-                        ? pageStyle.unitFontSize * 30
-                        : pageStyle.unitFontSize * 20,
-                    color: greyColor,
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
             ),
           ),
-          showMenu ? _buildCategorySubMenu() : SizedBox.shrink(),
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
@@ -183,7 +191,8 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   'side_stores'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
-                    color: greyColor,
+                    color: greyDarkColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -207,58 +216,14 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   'side_new_arrivals'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
-                    color: greyColor,
+                    color: greyDarkColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategorySubMenu() {
-    return Container(
-      width: menuWidth,
-      padding: EdgeInsets.only(left: pageStyle.unitWidth * 80),
-      child: Column(
-        children: activeMenu.map((menu) {
-          return InkWell(
-            onTap: () {
-              if (menu.subMenu.isNotEmpty) {
-                activeMenu = menu.subMenu;
-                setState(() {});
-              }
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
-                vertical: pageStyle.unitHeight * 4,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    menu.title,
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 16,
-                      color: greyColor,
-                    ),
-                  ),
-                  menu.subMenu.isNotEmpty
-                      ? Icon(
-                          Icons.arrow_forward_ios,
-                          size: pageStyle.unitFontSize * 18,
-                          color: greyColor,
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

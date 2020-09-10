@@ -70,7 +70,7 @@ class CigaBottomBar extends StatelessWidget {
             child: SvgPicture.asset(storeIcon),
           ),
           title: Text(
-            'bottom_store'.tr(),
+            'brands_title'.tr(),
             style: bookTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),

@@ -107,7 +107,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'view_all'.tr(),
+                    'view_more_categories'.tr(),
                     style: mediumTextStyle.copyWith(
                       fontSize: widget.pageStyle.unitFontSize * 15,
                       color: primaryColor,
