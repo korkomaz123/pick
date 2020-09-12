@@ -33,6 +33,7 @@ import 'package:ciga/src/pages/splash/splash_page.dart';
 import 'package:ciga/src/pages/store_list/store_list_page.dart';
 import 'package:ciga/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'routes.dart';
 
@@ -41,92 +42,224 @@ class RouteGenerator {
     final Object params = settings.arguments;
     switch (settings.name) {
       case Routes.start:
-        return MaterialPageRoute(builder: (context) => SplashPage());
+        return PageTransition(
+          child: SplashPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.signIn:
-        return MaterialPageRoute(builder: (context) => SignInPage());
+        return PageTransition(
+          child: SignInPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.signUp:
-        return MaterialPageRoute(builder: (context) => SignUpPage());
+        return PageTransition(
+          child: SignUpPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.forgotPassword:
-        return MaterialPageRoute(builder: (context) => ForgotPasswordPage());
+        return PageTransition(
+          child: ForgotPasswordPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.home:
-        return MaterialPageRoute(builder: (context) => HomePage());
+        return PageTransition(
+          child: HomePage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.productList:
-        return MaterialPageRoute(
-          builder: (context) => ProductListPage(arguments: params),
+        return PageTransition(
+          child: ProductListPage(arguments: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
         );
       case Routes.categoryList:
-        return MaterialPageRoute(builder: (context) => CategoryListPage());
+        return PageTransition(
+          child: CategoryListPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.storeList:
-        return MaterialPageRoute(builder: (context) => StoreListPage());
+        return PageTransition(
+          child: StoreListPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.brandList:
-        return MaterialPageRoute(builder: (context) => BrandListPage());
+        return PageTransition(
+          child: BrandListPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.filter:
-        return MaterialPageRoute(builder: (context) => FilterPage());
+        return PageTransition(
+          child: FilterPage(),
+          type: PageTransitionType.leftToRight,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.product:
-        return MaterialPageRoute(
-          builder: (context) => ProductPage(arguments: params),
+        return PageTransition(
+          child: ProductPage(arguments: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
         );
       case Routes.myCart:
-        return MaterialPageRoute(builder: (context) => MyCartPage());
+        return PageTransition(
+          child: MyCartPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.viewFullImage:
-        return MaterialPageRoute(
-          builder: (context) => ProductImage(arguments: params),
+        return PageTransition(
+          child: ProductImage(arguments: params),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
         );
       case Routes.searchAddress:
-        return MaterialPageRoute(builder: (context) => SearchAddressScreen());
+        return PageTransition(
+          child: SearchAddressScreen(),
+          type: PageTransitionType.upToDown,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.checkoutAddress:
-        return MaterialPageRoute(builder: (context) => CheckoutAddressPage());
+        return PageTransition(
+          child: CheckoutAddressPage(),
+          type: PageTransitionType.rotate,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.checkoutShipping:
-        return MaterialPageRoute(builder: (context) => CheckoutShippingPage());
+        return PageTransition(
+          child: CheckoutShippingPage(),
+          type: PageTransitionType.rightToLeft,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.checkoutReview:
-        return MaterialPageRoute(builder: (context) => CheckoutReviewPage());
+        return PageTransition(
+          child: CheckoutReviewPage(),
+          type: PageTransitionType.rightToLeft,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.checkoutPayment:
-        return MaterialPageRoute(builder: (context) => CheckoutPaymentPage());
+        return PageTransition(
+          child: CheckoutPaymentPage(),
+          type: PageTransitionType.rightToLeft,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.checkoutConfirmed:
-        return MaterialPageRoute(builder: (context) => CheckoutConfirmedPage());
+        return PageTransition(
+          child: CheckoutConfirmedPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.search:
-        return MaterialPageRoute(builder: (context) => SearchPage());
+        return PageTransition(
+          child: SearchPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.account:
-        return MaterialPageRoute(builder: (context) => AccountPage());
+        return PageTransition(
+          child: AccountPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 550),
+        );
       case Routes.updateProfile:
-        return MaterialPageRoute(builder: (context) => UpdateProfilePage());
+        return PageTransition(
+          child: UpdateProfilePage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.wishlist:
-        return MaterialPageRoute(builder: (context) => WishlistPage());
+        return PageTransition(
+          child: WishlistPage(),
+          type: PageTransitionType.scale,
+          alignment: Alignment.center,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.orderHistory:
-        return MaterialPageRoute(builder: (context) => OrderHistoryPage());
+        return PageTransition(
+          child: OrderHistoryPage(),
+          type: PageTransitionType.downToUp,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.aboutUs:
-        return MaterialPageRoute(builder: (context) => AboutUsPage());
+        return PageTransition(
+          child: AboutUsPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.terms:
-        return MaterialPageRoute(builder: (context) => TermsPage());
+        return PageTransition(
+          child: TermsPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.contactUs:
-        return MaterialPageRoute(builder: (context) => ContactUsPage());
+        return PageTransition(
+          child: ContactUsPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.contactUsSuccess:
-        return MaterialPageRoute(builder: (context) => ContactUsSuccessPage());
+        return PageTransition(
+          child: ContactUsSuccessPage(),
+          type: PageTransitionType.rotate,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.notificationMessages:
-        return MaterialPageRoute(
-          builder: (context) => NotificationMessagesPage(),
+        return PageTransition(
+          child: NotificationMessagesPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
         );
       case Routes.notificationMessageDetails:
-        return MaterialPageRoute(
-          builder: (context) => NotificationMessageDetailsPage(message: params),
+        return PageTransition(
+          child: NotificationMessageDetailsPage(message: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
         );
       case Routes.shippingAddress:
-        return MaterialPageRoute(builder: (context) => ShippingAddressPage());
+        return PageTransition(
+          child: ShippingAddressPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
       case Routes.editAddress:
-        return MaterialPageRoute(
-          builder: (context) => EditAddressPage(address: params),
+        return PageTransition(
+          child: EditAddressPage(address: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
         );
       case Routes.viewOrder:
-        return MaterialPageRoute(
-          builder: (context) => ViewOrderPage(order: params),
+        return PageTransition(
+          child: ViewOrderPage(order: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
         );
       case Routes.reOrder:
-        return MaterialPageRoute(
-          builder: (context) => ReOrderPage(order: params),
+        return PageTransition(
+          child: ReOrderPage(order: params),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
         );
 
       default:
-        return MaterialPageRoute(builder: (context) => SplashPage());
+        return PageTransition(
+          child: SplashPage(),
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 750),
+        );
     }
   }
 }

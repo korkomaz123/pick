@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
+import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -11,6 +12,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
@@ -20,10 +22,39 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage> {
+class _MyCartPageState extends State<MyCartPage>
+    with SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   TextEditingController couponCodeController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  List<AnimationController> _slideControllers = [];
+  AnimationController _slideController;
+  Animation<Offset> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// slide animation controller
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+    _offsetAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(1.5, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.elasticIn,
+    ));
+
+    /// generate animation controller list
+    _slideControllers = List.generate(
+      products.length,
+      (index) => _slideController,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,32 +160,43 @@ class _MyCartPageState extends State<MyCartPage> {
         horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 15,
       ),
-      child: Column(
-        children: List.generate(
-          myCartItems.length,
-          (index) {
-            return Column(
-              children: [
-                _buildMyCartProduct(myCartItems[index]),
-                index < (myCartItems.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
-              ],
-            );
-          },
+      child: AnimationLimiter(
+        child: Column(
+          children: List.generate(
+            myCartItems.length,
+            (index) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: Duration(seconds: 1),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: Column(
+                      children: [
+                        _buildMyCartProduct(index),
+                        index < (myCartItems.length - 1)
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMyCartProduct(CartItemEntity cartItem) {
+  Widget _buildMyCartProduct(int index) {
     return Container(
       width: double.infinity,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
-            onTap: () => null,
+            onTap: () => _onRemoveCartItem(index),
             child: Icon(
               Icons.remove_circle_outline,
               size: pageStyle.unitFontSize * 22,
@@ -179,7 +221,7 @@ class _MyCartPageState extends State<MyCartPage> {
                   ),
                 ),
                 Text(
-                  cartItem.product.description,
+                  myCartItems[index].product.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
@@ -190,7 +232,9 @@ class _MyCartPageState extends State<MyCartPage> {
                 Row(
                   children: [
                     Text(
-                      cartItem.product.price.toString() + ' ' + 'currency'.tr(),
+                      myCartItems[index].product.price.toString() +
+                          ' ' +
+                          'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -198,7 +242,7 @@ class _MyCartPageState extends State<MyCartPage> {
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      cartItem.product.discount.toString() +
+                      myCartItems[index].product.discount.toString() +
                           ' ' +
                           'currency'.tr(),
                       style: mediumTextStyle.copyWith(
@@ -214,14 +258,14 @@ class _MyCartPageState extends State<MyCartPage> {
                 SizedBox(height: pageStyle.unitHeight * 10),
                 MyCartShopCounter(
                   pageStyle: pageStyle,
-                  value: cartItem.itemCount,
-                  onDecrement: () => cartItem.itemCount > 0
+                  value: myCartItems[index].itemCount,
+                  onDecrement: () => myCartItems[index].itemCount > 0
                       ? setState(() {
-                          cartItem.itemCount -= 1;
+                          myCartItems[index].itemCount -= 1;
                         })
                       : null,
                   onIncrement: () => setState(() {
-                    cartItem.itemCount += 1;
+                    myCartItems[index].itemCount += 1;
                   }),
                 ),
               ],
@@ -312,5 +356,15 @@ class _MyCartPageState extends State<MyCartPage> {
         radius: 0,
       ),
     );
+  }
+
+  void _onRemoveCartItem(int index) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return MyCartRemoveDialog(pageStyle: pageStyle);
+      },
+    );
+    if (result != null) {}
   }
 }

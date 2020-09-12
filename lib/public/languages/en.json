@@ -150,6 +150,8 @@
     "wishlist_add_cart_button_title": "ADD TO CART",
     "wishlist_remove_item_dialog_title": "Are You Sure",
     "wishlist_remove_item_dialog_text": "You want to remove this item from your wishes list?",
+    "my_cart_remove_item_dialog_title": "Are You Sure",
+    "my_cart_remove_item_dialog_text": "You want to remove this item from your cart?",
     "yes_button_title": "YES",
     "no_button_title": "NO",
     "order_pending": "Pending",

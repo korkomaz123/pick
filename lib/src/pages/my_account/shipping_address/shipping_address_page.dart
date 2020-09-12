@@ -190,7 +190,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRemove() async {
-    final result = await showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return ShippingAddressRemoveDialog(pageStyle: pageStyle);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -22,18 +24,58 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct> {
+class _ProductSingleProductState extends State<ProductSingleProduct>
+    with TickerProviderStateMixin {
   PageStyle pageStyle;
   ProductEntity product;
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
+  AnimationController _addToCartController;
+  AnimationController _favoriteController;
+  Animation<double> _addToCartScaleAnimation;
+  Animation<double> _favoriteScaleAnimation;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
     product = widget.product;
+
+    /// add to cart button animation
+    _addToCartController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addToCartScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _addToCartController,
+      curve: Curves.easeIn,
+    ));
+
+    /// favorite button animation
+    _favoriteController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _favoriteScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _favoriteController,
+      curve: Curves.easeIn,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _addToCartController.dispose();
+    _favoriteController.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,14 +121,20 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               InkWell(
-                onTap: () => setState(() {
-                  isFavorite = !isFavorite;
-                }),
-                child: Container(
-                  width: pageStyle.unitWidth * 22,
-                  height: pageStyle.unitHeight * 22,
-                  child: SvgPicture.asset(
-                    !isFavorite ? wishlistedIcon : wishlistIcon,
+                onTap: () {
+                  _onFavorite();
+                  setState(() {
+                    isFavorite = !isFavorite;
+                  });
+                },
+                child: ScaleTransition(
+                  scale: _favoriteScaleAnimation,
+                  child: Container(
+                    width: pageStyle.unitWidth * 22,
+                    height: pageStyle.unitHeight * 22,
+                    child: SvgPicture.asset(
+                      !isFavorite ? wishlistedIcon : wishlistIcon,
+                    ),
                   ),
                 ),
               ),
@@ -302,10 +350,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
             width: pageStyle.unitWidth * 58,
             height: pageStyle.unitHeight * 50,
             color: greyLightColor,
-            child: Container(
-              width: pageStyle.unitWidth * 25,
-              height: pageStyle.unitHeight * 25,
-              child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
+            child: ScaleTransition(
+              scale: _addToCartScaleAnimation,
+              child: Container(
+                width: pageStyle.unitWidth * 25,
+                height: pageStyle.unitHeight * 25,
+                child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
+              ),
             ),
             onTap: () => _onAddToCart(product),
             radius: 1,
@@ -315,7 +366,24 @@ class _ProductSingleProductState extends State<ProductSingleProduct> {
     );
   }
 
-  void _onAddToCart(ProductEntity product) async {
+  void _onAddToCart(ProductEntity product) {
+    _addToCartController.repeat(reverse: true);
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      _addToCartController.stop(canceled: true);
+      timer.cancel();
+    });
+    _showSnackbar();
+  }
+
+  void _onFavorite() {
+    _favoriteController.repeat(reverse: true);
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      _favoriteController.stop(canceled: true);
+      timer.cancel();
+    });
+  }
+
+  void _showSnackbar() {
     Flushbar(
       messageText: Container(
         width: pageStyle.unitWidth * 300,

@@ -86,6 +86,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     pageStyle.initializePageStyles();
     _setPaymentWidget();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(

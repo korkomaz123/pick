@@ -12,6 +12,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CategoryListPage extends StatefulWidget {
@@ -105,50 +106,61 @@ class _CategoryListPageState extends State<CategoryListPage> {
   }
 
   Widget _buildSubcategoriesList(CategoryEntity category) {
-    return Column(
-      children: List.generate(
-        category.subCategories.length,
-        (index) => InkWell(
-          onTap: () {
-            activeIndex = -1;
-            setState(() {});
-            ProductListArguments arguments = ProductListArguments(
-              category: category,
-              subCategory: category.subCategories,
-              store: StoreEntity(),
-              selectedSubCategoryIndex: index,
-              isFromStore: false,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.productList,
-              arguments: arguments,
-            );
-          },
-          child: Container(
-            width: pageStyle.deviceWidth,
-            color: greyLightColor,
-            margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 20,
-              vertical: pageStyle.unitHeight * 10,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  category.subCategories[index].name,
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 18,
+    return AnimationLimiter(
+      child: Column(
+        children: List.generate(
+          category.subCategories.length,
+          (index) => AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 375),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: InkWell(
+                  onTap: () {
+                    activeIndex = -1;
+                    setState(() {});
+                    ProductListArguments arguments = ProductListArguments(
+                      category: category,
+                      subCategory: category.subCategories,
+                      store: StoreEntity(),
+                      selectedSubCategoryIndex: index,
+                      isFromStore: false,
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      Routes.productList,
+                      arguments: arguments,
+                    );
+                  },
+                  child: Container(
+                    width: pageStyle.deviceWidth,
+                    color: greyLightColor,
+                    margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: pageStyle.unitWidth * 20,
+                      vertical: pageStyle.unitHeight * 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          category.subCategories[index].name,
+                          style: mediumTextStyle.copyWith(
+                            color: greyColor,
+                            fontSize: pageStyle.unitFontSize * 18,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: pageStyle.unitFontSize * 22,
+                          color: primaryColor,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: pageStyle.unitFontSize * 22,
-                  color: primaryColor,
-                ),
-              ],
+              ),
             ),
           ),
         ),

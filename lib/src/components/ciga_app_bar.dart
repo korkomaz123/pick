@@ -22,7 +22,7 @@ class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CigaAppBarState createState() => _CigaAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(90);
+  Size get preferredSize => Size.fromHeight(100);
 }
 
 class _CigaAppBarState extends State<CigaAppBar> {
@@ -63,7 +63,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
     return AppBar(
       elevation: 0,
       centerTitle: true,
-      toolbarHeight: widget.pageStyle.unitHeight * 40,
+      toolbarHeight: widget.pageStyle.unitHeight * 50,
       title: InkWell(
         onTap: () => Navigator.pushNamedAndRemoveUntil(
           context,

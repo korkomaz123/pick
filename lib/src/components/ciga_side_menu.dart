@@ -188,7 +188,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                 ),
                 SizedBox(width: pageStyle.unitWidth * 10),
                 Text(
-                  'side_stores'.tr(),
+                  'brands_title'.tr().toUpperCase(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                     color: greyDarkColor,

@@ -38,6 +38,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
       body: SingleChildScrollView(
         child: Form(

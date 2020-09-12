@@ -30,6 +30,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
+      backgroundColor: Colors.white,
       appBar: CigaOrderHistoryAppBar(pageStyle: pageStyle),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: SingleChildScrollView(

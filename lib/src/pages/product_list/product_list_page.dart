@@ -233,7 +233,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onSortBy() async {
-    final result = await showSlidingBottomSheet(context, builder: (context) {
+    await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
         cornerRadius: 10,

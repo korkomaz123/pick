@@ -14,7 +14,6 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ReOrderPage extends StatefulWidget {
@@ -86,6 +85,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     pageStyle.initializePageStyles();
     _setPaymentWidget();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
@@ -430,7 +430,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       ),
       color: primaryColor,
       child: Text(
-        'next'.tr(),
+        'next_button_title'.tr(),
         style: bookTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 17,
           color: Colors.white,
