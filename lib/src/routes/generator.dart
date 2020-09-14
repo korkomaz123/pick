@@ -33,7 +33,7 @@ import 'package:ciga/src/pages/splash/splash_page.dart';
 import 'package:ciga/src/pages/store_list/store_list_page.dart';
 import 'package:ciga/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'routes.dart';
 
@@ -42,223 +42,145 @@ class RouteGenerator {
     final Object params = settings.arguments;
     switch (settings.name) {
       case Routes.start:
-        return PageTransition(
-          child: SplashPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => SplashPage(),
         );
       case Routes.signIn:
-        return PageTransition(
-          child: SignInPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => SignInPage(),
         );
       case Routes.signUp:
-        return PageTransition(
-          child: SignUpPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => SignUpPage(),
         );
       case Routes.forgotPassword:
-        return PageTransition(
-          child: ForgotPasswordPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => ForgotPasswordPage(),
         );
       case Routes.home:
-        return PageTransition(
-          child: HomePage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => HomePage(),
         );
       case Routes.productList:
-        return PageTransition(
-          child: ProductListPage(arguments: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => ProductListPage(arguments: params),
         );
       case Routes.categoryList:
-        return PageTransition(
-          child: CategoryListPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CategoryListPage(),
         );
       case Routes.storeList:
-        return PageTransition(
-          child: StoreListPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => StoreListPage(),
         );
       case Routes.brandList:
-        return PageTransition(
-          child: BrandListPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => BrandListPage(),
         );
       case Routes.filter:
-        return PageTransition(
-          child: FilterPage(),
-          type: PageTransitionType.leftToRight,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => FilterPage(),
         );
       case Routes.product:
-        return PageTransition(
-          child: ProductPage(arguments: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => ProductPage(arguments: params),
         );
       case Routes.myCart:
-        return PageTransition(
-          child: MyCartPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => MyCartPage(),
         );
       case Routes.viewFullImage:
-        return PageTransition(
-          child: ProductImage(arguments: params),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => ProductImage(arguments: params),
         );
       case Routes.searchAddress:
-        return PageTransition(
-          child: SearchAddressScreen(),
-          type: PageTransitionType.upToDown,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => SearchAddressScreen(),
         );
       case Routes.checkoutAddress:
-        return PageTransition(
-          child: CheckoutAddressPage(),
-          type: PageTransitionType.rotate,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutAddressPage(),
         );
       case Routes.checkoutShipping:
-        return PageTransition(
-          child: CheckoutShippingPage(),
-          type: PageTransitionType.rightToLeft,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutShippingPage(),
         );
       case Routes.checkoutReview:
-        return PageTransition(
-          child: CheckoutReviewPage(),
-          type: PageTransitionType.rightToLeft,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutReviewPage(),
         );
       case Routes.checkoutPayment:
-        return PageTransition(
-          child: CheckoutPaymentPage(),
-          type: PageTransitionType.rightToLeft,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutPaymentPage(),
         );
       case Routes.checkoutConfirmed:
-        return PageTransition(
-          child: CheckoutConfirmedPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutConfirmedPage(),
         );
       case Routes.search:
-        return PageTransition(
-          child: SearchPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => SearchPage(),
         );
       case Routes.account:
-        return PageTransition(
-          child: AccountPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 550),
+        return CupertinoPageRoute(
+          builder: (context) => AccountPage(),
         );
       case Routes.updateProfile:
-        return PageTransition(
-          child: UpdateProfilePage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => UpdateProfilePage(),
         );
       case Routes.wishlist:
-        return PageTransition(
-          child: WishlistPage(),
-          type: PageTransitionType.scale,
-          alignment: Alignment.center,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => WishlistPage(),
         );
       case Routes.orderHistory:
-        return PageTransition(
-          child: OrderHistoryPage(),
-          type: PageTransitionType.downToUp,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => OrderHistoryPage(),
         );
       case Routes.aboutUs:
-        return PageTransition(
-          child: AboutUsPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => AboutUsPage(),
         );
       case Routes.terms:
-        return PageTransition(
-          child: TermsPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => TermsPage(),
         );
       case Routes.contactUs:
-        return PageTransition(
-          child: ContactUsPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => ContactUsPage(),
         );
       case Routes.contactUsSuccess:
-        return PageTransition(
-          child: ContactUsSuccessPage(),
-          type: PageTransitionType.rotate,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => ContactUsSuccessPage(),
         );
       case Routes.notificationMessages:
-        return PageTransition(
-          child: NotificationMessagesPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => NotificationMessagesPage(),
         );
       case Routes.notificationMessageDetails:
-        return PageTransition(
-          child: NotificationMessageDetailsPage(message: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => NotificationMessageDetailsPage(message: params),
         );
       case Routes.shippingAddress:
-        return PageTransition(
-          child: ShippingAddressPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => ShippingAddressPage(),
         );
       case Routes.editAddress:
-        return PageTransition(
-          child: EditAddressPage(address: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => EditAddressPage(address: params),
         );
       case Routes.viewOrder:
-        return PageTransition(
-          child: ViewOrderPage(order: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => ViewOrderPage(order: params),
         );
       case Routes.reOrder:
-        return PageTransition(
-          child: ReOrderPage(order: params),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => ReOrderPage(order: params),
         );
 
       default:
-        return PageTransition(
-          child: SplashPage(),
-          type: PageTransitionType.fade,
-          duration: Duration(milliseconds: 750),
+        return CupertinoPageRoute(
+          builder: (context) => SplashPage(),
         );
     }
   }

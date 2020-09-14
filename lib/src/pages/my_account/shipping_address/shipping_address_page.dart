@@ -46,7 +46,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           vertical: pageStyle.unitHeight * 5,
         ),
         child: MaterialButton(
-          onPressed: () => null,
+          onPressed: () => Navigator.pushNamed(context, Routes.editAddress),
           color: primaryColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -91,96 +91,101 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       child: SingleChildScrollView(
         child: Column(
           children: List.generate(shippingAddresses.length, (index) {
-            return Container(
-              width: pageStyle.deviceWidth,
-              height: pageStyle.unitHeight * 190,
-              margin: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
-                vertical: pageStyle.unitHeight * 15,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 60,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            shippingAddresses[index].country,
-                            style: TextStyle(
-                              color: greyDarkColor,
-                              fontSize: pageStyle.unitFontSize * 14,
+            return InkWell(
+              onTap: () => setState(() {
+                defaultAddress = index;
+              }),
+              child: Container(
+                width: pageStyle.deviceWidth,
+                height: pageStyle.unitHeight * 190,
+                margin: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                  vertical: pageStyle.unitHeight * 15,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: pageStyle.unitWidth * 60,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              shippingAddresses[index].country,
+                              style: TextStyle(
+                                color: greyDarkColor,
+                                fontSize: pageStyle.unitFontSize * 14,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: pageStyle.unitHeight * 10),
-                          Text(
-                            shippingAddresses[index].city,
-                            style: TextStyle(
-                              color: greyDarkColor,
-                              fontSize: pageStyle.unitFontSize * 14,
+                            SizedBox(height: pageStyle.unitHeight * 10),
+                            Text(
+                              shippingAddresses[index].city,
+                              style: TextStyle(
+                                color: greyDarkColor,
+                                fontSize: pageStyle.unitFontSize * 14,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: pageStyle.unitHeight * 10),
-                          Text(
-                            shippingAddresses[index].street,
-                            style: TextStyle(
-                              color: greyDarkColor,
-                              fontSize: pageStyle.unitFontSize * 14,
+                            SizedBox(height: pageStyle.unitHeight * 10),
+                            Text(
+                              shippingAddresses[index].street,
+                              style: TextStyle(
+                                color: greyDarkColor,
+                                fontSize: pageStyle.unitFontSize * 14,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: pageStyle.unitHeight * 10),
-                          Text(
-                            shippingAddresses[index].phoneNumber,
-                            style: TextStyle(
-                              color: greyDarkColor,
-                              fontSize: pageStyle.unitFontSize * 14,
+                            SizedBox(height: pageStyle.unitHeight * 10),
+                            Text(
+                              shippingAddresses[index].phoneNumber,
+                              style: TextStyle(
+                                color: greyDarkColor,
+                                fontSize: pageStyle.unitFontSize * 14,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Radio(
-                      value: index,
-                      groupValue: defaultAddress,
-                      activeColor: primaryColor,
-                      onChanged: (value) {
-                        defaultAddress = value;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: SvgPicture.asset(editIcon),
-                      onPressed: () => Navigator.pushNamed(
-                        context,
-                        Routes.editAddress,
-                        arguments: shippingAddresses[index],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: IconButton(
-                      icon: SvgPicture.asset(trashIcon),
-                      onPressed: () => _onRemove(),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Radio(
+                        value: index,
+                        groupValue: defaultAddress,
+                        activeColor: primaryColor,
+                        onChanged: (value) {
+                          defaultAddress = value;
+                          setState(() {});
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: SvgPicture.asset(editIcon),
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          Routes.editAddress,
+                          arguments: shippingAddresses[index],
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        icon: SvgPicture.asset(trashIcon),
+                        onPressed: () => _onRemove(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }),

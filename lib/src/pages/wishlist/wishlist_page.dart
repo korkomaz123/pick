@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -9,11 +11,13 @@ import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:lottie/lottie.dart';
 import 'widgets/wishlist_remove_dialog.dart';
 
 class WishlistPage extends StatefulWidget {
@@ -26,99 +30,8 @@ class _WishlistPageState extends State<WishlistPage>
   PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  List<AnimationController> _slideControllers = [];
-  AnimationController _slideController;
-  List<AnimationController> _rotationControllers = [];
-  AnimationController _rotationController;
-  List<AnimationController> _scaleInControllers = [];
-  AnimationController _scaleInController;
-  List<AnimationController> _scaleOutControllers = [];
-  AnimationController _scaleOutController;
-  Animation<Offset> _offsetAnimation;
-  Animation<double> _rotateAnimation;
-  Animation<double> _scaleInAnimation;
-  Animation<double> _scaleOutAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    /// slide animation controller
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _offsetAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(1.5, 0.0),
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.elasticIn,
-    ));
-
-    /// rotation animation controller
-    _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _rotateAnimation = Tween<double>(
-      begin: 0,
-      end: 300,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.easeIn,
-    ));
-
-    /// scaleIn animation controller
-    _scaleInController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _scaleInAnimation = Tween<double>(
-      begin: 0,
-      end: 0.8,
-    ).animate(CurvedAnimation(
-      parent: _scaleInController,
-      curve: Curves.easeIn,
-    ));
-
-    /// scaleOut animation controller
-    _scaleOutController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _scaleOutAnimation = Tween<double>(
-      begin: 1,
-      end: 0,
-    ).animate(CurvedAnimation(
-      parent: _scaleOutController,
-      curve: Curves.easeIn,
-    ));
-
-    /// generate animation controller list
-    _slideControllers = List.generate(
-      products.length,
-      (index) => _slideController,
-    );
-    _rotationControllers = List.generate(
-      products.length,
-      (index) => _rotationController,
-    );
-    _scaleInControllers = List.generate(
-      products.length,
-      (index) => _scaleInController,
-    );
-    _scaleOutControllers = List.generate(
-      products.length,
-      (index) => _scaleOutController,
-    );
-  }
-
-  @override
-  void dispose() {
-    _slideController.dispose();
-    super.dispose();
-  }
+  bool isDeleting = false;
+  bool isAdding = false;
 
   @override
   Widget build(BuildContext context) {
@@ -129,36 +42,64 @@ class _WishlistPageState extends State<WishlistPage>
       backgroundColor: Colors.white,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: Column(
+      body: Stack(
         children: [
-          _buildAppBar(),
-          Expanded(
-            child: AnimatedList(
-              key: listKey,
-              initialItemCount: products.length,
-              itemBuilder: (context, index, _) {
-                return Container(
-                  width: pageStyle.deviceWidth,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: pageStyle.unitWidth * 10,
-                  ),
-                  child: Column(
-                    children: [
-                      WishlistProductCard(
-                        pageStyle: pageStyle,
-                        product: products[index],
-                        onRemoveWishlist: () => _onRemoveWishlist(index),
-                        onAddToCart: () => _onAddToCart(index),
+          Column(
+            children: [
+              _buildAppBar(),
+              Expanded(
+                child: AnimatedList(
+                  key: listKey,
+                  initialItemCount: products.length,
+                  itemBuilder: (context, index, _) {
+                    return Container(
+                      width: pageStyle.deviceWidth,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 10,
                       ),
-                      index < (products.length - 1)
-                          ? Divider(color: greyColor, thickness: 0.5)
-                          : SizedBox.shrink(),
-                    ],
-                  ),
-                );
-              },
-            ),
+                      child: Column(
+                        children: [
+                          WishlistProductCard(
+                            pageStyle: pageStyle,
+                            product: products[index],
+                            onRemoveWishlist: () => _onRemoveWishlist(index),
+                            onAddToCart: () => _onAddToCart(index),
+                          ),
+                          index < (products.length - 1)
+                              ? Divider(color: greyColor, thickness: 0.5)
+                              : SizedBox.shrink(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
+          isDeleting
+              ? Material(
+                  color: Colors.black.withOpacity(0.9),
+                  child: Center(
+                    child: Lottie.asset(
+                      'lib/public/animations/heart-break.json',
+                      width: pageStyle.unitWidth * 100,
+                      height: pageStyle.unitHeight * 100,
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+          isAdding
+              ? Material(
+                  color: Colors.black.withOpacity(0.9),
+                  child: Center(
+                    child: Lottie.asset(
+                      'lib/public/animations/add-to-cart-shopping.json',
+                      width: pageStyle.unitWidth * 100,
+                      height: pageStyle.unitHeight * 100,
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -206,42 +147,37 @@ class _WishlistPageState extends State<WishlistPage>
       },
     );
     if (result != null) {
-      _slideControllers[index].forward(from: 0);
+      Timer.periodic(
+        AnimationDurations.removeFavoriteItemAniDuration,
+        (timer) {
+          timer.cancel();
+          isDeleting = false;
+          setState(() {});
+        },
+      );
       listKey.currentState.removeItem(
         index,
         (context, animation) {
-          return SlideTransition(
-            position: _offsetAnimation,
-            child: Container(
-              width: pageStyle.deviceWidth,
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
-              ),
-              child: Column(
-                children: [
-                  WishlistProductCard(
-                    pageStyle: pageStyle,
-                    product: products[index],
-                    onRemoveWishlist: () => null,
-                    onAddToCart: () => null,
-                  ),
-                  index < (products.length - 1)
-                      ? Divider(color: greyColor, thickness: 0.5)
-                      : SizedBox.shrink(),
-                ],
-              ),
-            ),
-          );
+          return Container();
         },
-        duration: Duration(seconds: 2),
+        duration: AnimationDurations.removeFavoriteItemAniDuration,
       );
+      isDeleting = true;
+      setState(() {});
     }
   }
 
   void _onAddToCart(int index) async {
-    _scaleInControllers[index].forward(from: 0);
-    _scaleOutControllers[index].forward(from: 0);
-    _rotationControllers[index].forward(from: 0);
+    isAdding = true;
+    setState(() {});
+    Timer.periodic(
+      AnimationDurations.addToCartAniDuration,
+      (timer) {
+        timer.cancel();
+        isAdding = false;
+        setState(() {});
+      },
+    );
     listKey.currentState.removeItem(
       index,
       (context, animation) {
@@ -249,50 +185,24 @@ class _WishlistPageState extends State<WishlistPage>
           width: pageStyle.deviceWidth,
           height: pageStyle.unitHeight * 260,
           padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
-          child: Stack(
-            children: [
-              Center(
-                child: ScaleTransition(
-                  scale: _scaleInAnimation,
-                  child: Container(
-                    width: pageStyle.deviceWidth,
-                    height: pageStyle.unitHeight * 260,
-                    child: SvgPicture.asset(
-                      shoppingCartIcon,
-                      color: Colors.black,
-                    ),
-                  ),
+          child: Container(
+            width: pageStyle.deviceWidth,
+            padding: EdgeInsets.symmetric(
+              horizontal: pageStyle.unitWidth * 10,
+            ),
+            child: Column(
+              children: [
+                WishlistProductCard(
+                  pageStyle: pageStyle,
+                  product: products[index],
+                  onRemoveWishlist: () => null,
+                  onAddToCart: () => null,
                 ),
-              ),
-              Center(
-                child: ScaleTransition(
-                  scale: _scaleOutAnimation,
-                  alignment: Alignment.center,
-                  child: RotationTransition(
-                    turns: _rotateAnimation,
-                    child: Container(
-                      width: pageStyle.deviceWidth,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 10,
-                      ),
-                      child: Column(
-                        children: [
-                          WishlistProductCard(
-                            pageStyle: pageStyle,
-                            product: products[index],
-                            onRemoveWishlist: () => null,
-                            onAddToCart: () => null,
-                          ),
-                          index < (products.length - 1)
-                              ? Divider(color: greyColor, thickness: 0.5)
-                              : SizedBox.shrink(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                index < (products.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
+              ],
+            ),
           ),
         );
       },

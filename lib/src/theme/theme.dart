@@ -1,3 +1,4 @@
+import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:flutter/material.dart';
 
 //Common
@@ -25,6 +26,14 @@ final ThemeData cigaAppTheme = ThemeData(
   appBarTheme: AppBarTheme(
     color: cigaMaterialColor,
     iconTheme: IconThemeData(color: Colors.white),
+  ),
+  pageTransitionsTheme: PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android:
+          CupertinoPageTransitionsBuilderCustomBackGestureWidth(),
+      TargetPlatform.iOS:
+          CupertinoPageTransitionsBuilderCustomBackGestureWidth(),
+    },
   ),
 );
 

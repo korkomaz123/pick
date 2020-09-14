@@ -6,6 +6,7 @@ import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class CigaApp extends StatelessWidget {
@@ -39,22 +40,25 @@ class _CigaAppViewState extends State<CigaAppView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        EasyLocalization.of(context).delegate,
-        const FallbackCupertinoLocalisationsDelegate(),
-      ],
-      supportedLocales: EasyLocalization.of(context).supportedLocales,
-      locale: EasyLocalization.of(context).locale,
-      debugShowCheckedModeBanner: false,
-      theme: cigaAppTheme,
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        return RouteGenerator.generateRoute(settings);
-      },
+    return BackGestureWidthTheme(
+      backGestureWidth: BackGestureWidth.fraction(1 / 2),
+      child: MaterialApp(
+        navigatorKey: _navigatorKey,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          EasyLocalization.of(context).delegate,
+          const FallbackCupertinoLocalisationsDelegate(),
+        ],
+        supportedLocales: EasyLocalization.of(context).supportedLocales,
+        locale: EasyLocalization.of(context).locale,
+        debugShowCheckedModeBanner: false,
+        theme: cigaAppTheme,
+        initialRoute: '/',
+        onGenerateRoute: (settings) {
+          return RouteGenerator.generateRoute(settings);
+        },
+      ),
     );
   }
 }

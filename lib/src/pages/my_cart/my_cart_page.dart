@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -10,10 +12,12 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:lottie/lottie.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
 
@@ -27,34 +31,7 @@ class _MyCartPageState extends State<MyCartPage>
   PageStyle pageStyle;
   TextEditingController couponCodeController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  List<AnimationController> _slideControllers = [];
-  AnimationController _slideController;
-  Animation<Offset> _offsetAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    /// slide animation controller
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _offsetAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(1.5, 0.0),
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.elasticIn,
-    ));
-
-    /// generate animation controller list
-    _slideControllers = List.generate(
-      products.length,
-      (index) => _slideController,
-    );
-  }
+  bool isDeleting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,20 +46,36 @@ class _MyCartPageState extends State<MyCartPage>
         isCartPage: true,
       ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildTitleBar(),
-            _buildTotalItemsTitle(),
-            _buildTotalItems(),
-            MyCartCouponCode(
-              pageStyle: pageStyle,
-              controller: couponCodeController,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTitleBar(),
+                _buildTotalItemsTitle(),
+                _buildTotalItems(),
+                MyCartCouponCode(
+                  pageStyle: pageStyle,
+                  controller: couponCodeController,
+                ),
+                _buildTotalPrice(),
+                _buildCheckoutButton(),
+              ],
             ),
-            _buildTotalPrice(),
-            _buildCheckoutButton(),
-          ],
-        ),
+          ),
+          isDeleting
+              ? Material(
+                  color: Colors.black.withOpacity(0.3),
+                  child: Center(
+                    child: Lottie.asset(
+                      'lib/public/animations/trash-clean.json',
+                      width: pageStyle.unitWidth * 100,
+                      height: pageStyle.unitHeight * 100,
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ],
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
@@ -365,6 +358,17 @@ class _MyCartPageState extends State<MyCartPage>
         return MyCartRemoveDialog(pageStyle: pageStyle);
       },
     );
-    if (result != null) {}
+    if (result != null) {
+      isDeleting = true;
+      setState(() {});
+      Timer.periodic(
+        AnimationDurations.removeItemAniDuration,
+        (timer) {
+          timer.cancel();
+          isDeleting = false;
+          setState(() {});
+        },
+      );
+    }
   }
 }

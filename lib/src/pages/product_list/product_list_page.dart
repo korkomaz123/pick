@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -37,6 +39,7 @@ class _ProductListPageState extends State<ProductListPage> {
   bool isFromStore;
   String selectedCategory;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -48,6 +51,13 @@ class _ProductListPageState extends State<ProductListPage> {
     activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
     isFromStore = arguments.isFromStore;
     selectedCategory = subCategories[activeSubcategoryIndex].name;
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      timer.cancel();
+      isLoading = false;
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -62,20 +72,26 @@ class _ProductListPageState extends State<ProductListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  isFromStore ? _buildStoreBar() : SizedBox.shrink(),
-                  _buildCategoryBar(),
-                  selectedCategory == 'Sub1'
-                      ? ProductNoAvailable(pageStyle: pageStyle)
-                      : _buildProductList(),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                ],
-              ),
-            ),
-          ),
+          isLoading
+              ? Expanded(
+                  child: Center(
+                    child: RippleLoadingSpinner(),
+                  ),
+                )
+              : Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        isFromStore ? _buildStoreBar() : SizedBox.shrink(),
+                        _buildCategoryBar(),
+                        selectedCategory == 'Sub1'
+                            ? ProductNoAvailable(pageStyle: pageStyle)
+                            : _buildProductList(),
+                        SizedBox(height: pageStyle.unitHeight * 10),
+                      ],
+                    ),
+                  ),
+                ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(

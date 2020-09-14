@@ -131,7 +131,11 @@ class ProductVCard extends StatelessWidget {
             children: [
               isShare
                   ? Align(
-                      alignment: Alignment.topRight,
+                      alignment:
+                          EasyLocalization.of(context).locale.languageCode ==
+                                  'en'
+                              ? Alignment.topRight
+                              : Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(
@@ -147,7 +151,11 @@ class ProductVCard extends StatelessWidget {
                   : SizedBox.shrink(),
               isWishlist
                   ? Align(
-                      alignment: Alignment.topRight,
+                      alignment:
+                          EasyLocalization.of(context).locale.languageCode ==
+                                  'en'
+                              ? Alignment.topRight
+                              : Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(

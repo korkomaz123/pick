@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.5"
+  cupertino_back_gesture:
+    dependency: "direct main"
+    description:
+      name: cupertino_back_gesture
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -254,18 +261,18 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_twitter_login:
+    dependency: "direct main"
+    description:
+      name: flutter_twitter_login
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_xlider:
-    dependency: "direct main"
-    description:
-      name: flutter_xlider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.4.0"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -380,6 +387,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.4"
+  lottie:
+    dependency: "direct main"
+    description:
+      name: lottie
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   matcher:
     dependency: transitive
     description:
@@ -408,13 +429,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.4"
-  page_transition:
-    dependency: "direct main"
-    description:
-      name: page_transition
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.6"
   path:
     dependency: transitive
     description:
@@ -576,6 +590,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2+7"
+  sign_in_with_apple:
+    dependency: "direct main"
+    description:
+      name: sign_in_with_apple
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.5.2"
   sky_engine:
     dependency: transitive
     description: flutter

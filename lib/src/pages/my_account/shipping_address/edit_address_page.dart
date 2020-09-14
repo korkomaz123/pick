@@ -34,11 +34,13 @@ class _EditAddressPageState extends State<EditAddressPage> {
   @override
   void initState() {
     super.initState();
-    countryController.text = widget.address.country;
-    cityController.text = widget.address.city;
-    streetController.text = widget.address.street;
-    zipCodeController.text = widget.address.zipCode;
-    phoneNumberController.text = widget.address.phoneNumber;
+    if (widget.address != null) {
+      countryController.text = widget.address.country;
+      cityController.text = widget.address.city;
+      streetController.text = widget.address.street;
+      zipCodeController.text = widget.address.zipCode;
+      phoneNumberController.text = widget.address.phoneNumber;
+    }
   }
 
   @override
