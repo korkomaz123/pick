@@ -10,7 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:share/share.dart';
 
-class ProductVCard extends StatelessWidget {
+class ProductVCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
   final ProductEntity product;
@@ -30,17 +30,32 @@ class ProductVCard extends StatelessWidget {
   });
 
   @override
+  _ProductVCardState createState() => _ProductVCardState();
+}
+
+class _ProductVCardState extends State<ProductVCard> {
+  bool isWishlist;
+
+  @override
+  void initState() {
+    super.initState();
+    isWishlist = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      width: cardWidth,
-      height: cardHeight,
+      width: widget.cardWidth,
+      height: widget.cardHeight,
       child: Stack(
         children: [
           Container(
-            width: cardWidth,
-            height: cardHeight,
+            width: widget.cardWidth,
+            height: widget.cardHeight,
             color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.pageStyle.unitWidth * 8,
+            ),
             child: Column(
               children: [
                 Expanded(
@@ -49,12 +64,11 @@ class ProductVCard extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(
                       context,
                       Routes.product,
-                      arguments: product,
+                      arguments: widget.product,
                     ),
                     child: Image.asset(
                       'lib/public/images/shutterstock_151558448-1.png',
-                      width: cardWidth,
-                      height: cardHeight * 0.8,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -67,53 +81,53 @@ class ProductVCard extends StatelessWidget {
                         'Jazzia Group',
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
-                          fontSize: pageStyle.unitFontSize * 10,
+                          fontSize: widget.pageStyle.unitFontSize * 10,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          right: cardWidth * 0.2,
-                        ),
-                        child: Text(
-                          product.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: mediumTextStyle.copyWith(
-                            color: greyDarkColor,
-                            fontSize: pageStyle.unitFontSize * 12,
-                            height: pageStyle.unitHeight * 1.2,
-                          ),
+                      Text(
+                        widget.product.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: mediumTextStyle.copyWith(
+                          color: greyDarkColor,
+                          fontSize: widget.pageStyle.unitFontSize * 12,
+                          height: widget.pageStyle.unitHeight * 1.2,
                         ),
                       ),
                       // SizedBox(height: pageStyle.unitHeight * 10),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            product.price.toString() + ' ' + 'currency'.tr(),
+                            widget.product.price.toString() +
+                                ' ' +
+                                'currency'.tr(),
                             style: mediumTextStyle.copyWith(
-                              fontSize: pageStyle.unitFontSize * 12,
+                              fontSize: widget.pageStyle.unitFontSize * 12,
                               color: greyColor,
                             ),
                           ),
-                          SizedBox(width: pageStyle.unitWidth * 10),
+                          SizedBox(width: widget.pageStyle.unitWidth * 10),
                           Text(
-                            product.discount.toString() + ' ' + 'currency'.tr(),
+                            widget.product.discount.toString() +
+                                ' ' +
+                                'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               decorationStyle: TextDecorationStyle.solid,
                               decoration: TextDecoration.lineThrough,
                               decorationColor: dangerColor,
-                              fontSize: pageStyle.unitFontSize * 12,
+                              fontSize: widget.pageStyle.unitFontSize * 12,
                               color: greyColor,
                             ),
                           ),
-                          SizedBox(width: pageStyle.unitWidth * 10),
-                          isShoppingCart
+                          Spacer(),
+                          widget.isShoppingCart
                               ? InkWell(
-                                  onTap: () =>
-                                      _onAddProductToCart(context, product),
+                                  onTap: () => _onAddProductToCart(
+                                      context, widget.product),
                                   child: Container(
-                                    width: pageStyle.unitWidth * 18,
-                                    height: pageStyle.unitHeight * 17,
+                                    width: widget.pageStyle.unitWidth * 18,
+                                    height: widget.pageStyle.unitHeight * 17,
                                     child: SvgPicture.asset(shoppingCartIcon,
                                         color: primaryColor),
                                   ),
@@ -129,7 +143,7 @@ class ProductVCard extends StatelessWidget {
           ),
           Column(
             children: [
-              isShare
+              widget.isShare
                   ? Align(
                       alignment:
                           EasyLocalization.of(context).locale.languageCode ==
@@ -143,13 +157,13 @@ class ProductVCard extends StatelessWidget {
                           child: Icon(
                             Icons.share,
                             color: greyColor,
-                            size: pageStyle.unitFontSize * 20,
+                            size: widget.pageStyle.unitFontSize * 20,
                           ),
                         ),
                       ),
                     )
                   : SizedBox.shrink(),
-              isWishlist
+              widget.isWishlist
                   ? Align(
                       alignment:
                           EasyLocalization.of(context).locale.languageCode ==
@@ -159,12 +173,18 @@ class ProductVCard extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(
-                          onTap: () => null,
+                          onTap: () => setState(() {
+                            isWishlist = !isWishlist;
+                          }),
                           child: Container(
-                            width: pageStyle.unitWidth * 18,
-                            height: pageStyle.unitHeight * 17,
-                            child: SvgPicture.asset(wishlistIcon,
-                                color: greyColor),
+                            width: widget.pageStyle.unitWidth * 18,
+                            height: widget.pageStyle.unitHeight * 17,
+                            child: isWishlist
+                                ? SvgPicture.asset(wishlistedIcon)
+                                : SvgPicture.asset(
+                                    wishlistIcon,
+                                    color: greyColor,
+                                  ),
                           ),
                         ),
                       ),
@@ -180,7 +200,7 @@ class ProductVCard extends StatelessWidget {
   void _onAddProductToCart(BuildContext context, ProductEntity product) {
     Flushbar(
       messageText: Container(
-        width: pageStyle.unitWidth * 300,
+        width: widget.pageStyle.unitWidth * 300,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -191,14 +211,14 @@ class ProductVCard extends StatelessWidget {
                   product.name,
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 15,
+                    fontSize: widget.pageStyle.unitFontSize * 15,
                   ),
                 ),
                 Text(
                   product.name,
                   style: mediumTextStyle.copyWith(
                     color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 12,
+                    fontSize: widget.pageStyle.unitFontSize * 12,
                   ),
                 ),
               ],
@@ -210,14 +230,14 @@ class ProductVCard extends StatelessWidget {
                   'Cart Total',
                   style: mediumTextStyle.copyWith(
                     color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
+                    fontSize: widget.pageStyle.unitFontSize * 13,
                   ),
                 ),
                 Text(
                   'KD 460',
                   style: mediumTextStyle.copyWith(
                     color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
+                    fontSize: widget.pageStyle.unitFontSize * 13,
                   ),
                 ),
               ],
@@ -227,8 +247,8 @@ class ProductVCard extends StatelessWidget {
       ),
       icon: SvgPicture.asset(
         orderedSuccessIcon,
-        width: pageStyle.unitWidth * 20,
-        height: pageStyle.unitHeight * 20,
+        width: widget.pageStyle.unitWidth * 20,
+        height: widget.pageStyle.unitHeight * 20,
       ),
       duration: Duration(seconds: 3),
       leftBarIndicatorColor: Colors.blue[100],

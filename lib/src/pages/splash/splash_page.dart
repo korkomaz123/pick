@@ -22,7 +22,10 @@ class _SplashPageState extends State<SplashPage> {
     Timer.periodic(Duration(seconds: 5), (timer) {
       timer.cancel();
       Navigator.pushNamedAndRemoveUntil(
-          context, Routes.signIn, (route) => false);
+        context,
+        Routes.home,
+        (route) => false,
+      );
     });
   }
 

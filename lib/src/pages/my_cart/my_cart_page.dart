@@ -65,7 +65,7 @@ class _MyCartPageState extends State<MyCartPage>
           ),
           isDeleting
               ? Material(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withOpacity(0),
                   child: Center(
                     child: Lottie.asset(
                       'lib/public/animations/trash-clean.json',

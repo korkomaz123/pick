@@ -1,6 +1,6 @@
 class AnimationDurations {
   static const Duration addToCartAniDuration =
-      const Duration(milliseconds: 5000);
+      const Duration(milliseconds: 3600);
   static const Duration removeFavoriteItemAniDuration =
       const Duration(milliseconds: 1000);
   static const Duration addFavoriteItemAniDuration =

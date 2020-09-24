@@ -29,7 +29,8 @@ class ProductListPage extends StatefulWidget {
   _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> {
+class _ProductListPageState extends State<ProductListPage>
+    with SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
@@ -40,10 +41,14 @@ class _ProductListPageState extends State<ProductListPage> {
   String selectedCategory;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
+  TabController tabController;
 
   @override
   void initState() {
     super.initState();
+
+    tabController = TabController(length: allCategories.length, vsync: this);
+
     arguments = widget.arguments;
     category = arguments.category;
     subCategories = arguments.subCategory;
@@ -72,6 +77,8 @@ class _ProductListPageState extends State<ProductListPage> {
       body: Column(
         children: [
           _buildAppBar(),
+          isFromStore ? _buildStoreBar() : SizedBox.shrink(),
+          _buildCategoryTabBar(),
           isLoading
               ? Expanded(
                   child: Center(
@@ -79,18 +86,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   ),
                 )
               : Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        isFromStore ? _buildStoreBar() : SizedBox.shrink(),
-                        _buildCategoryBar(),
-                        selectedCategory == 'Sub1'
-                            ? ProductNoAvailable(pageStyle: pageStyle)
-                            : _buildProductList(),
-                        SizedBox(height: pageStyle.unitHeight * 10),
-                      ],
-                    ),
-                  ),
+                  child: _buildCategoryTabView(),
                 ),
         ],
       ),
@@ -173,67 +169,87 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  Widget _buildCategoryBar() {
+  Widget _buildCategoryTabBar() {
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       color: backgroundColor,
-      child: SelectOptionCustomCustom(
-        items: subCategories.map((e) => e.name).toList(),
-        value: selectedCategory,
-        titleSize: pageStyle.unitFontSize * 14,
-        itemSpace: pageStyle.unitWidth * 0,
-        radius: pageStyle.unitWidth * 20,
-        selectedColor: primaryColor,
-        unSelectedColor: Colors.transparent,
-        selectedBorderColor: Colors.transparent,
-        unSelectedBorderColor: primaryColor,
-        selectedTitleColor: Colors.white,
-        unSelectedTitleColor: greyColor,
-        listStyle: true,
-        onTap: (value) {
-          if (selectedCategory != value) {
-            setState(() {
-              selectedCategory = value;
-            });
-          }
-        },
+      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 4),
+      child: TabBar(
+        controller: tabController,
+        indicator: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(
+            color: primaryColor,
+            width: pageStyle.unitWidth * 2,
+          ),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        isScrollable: true,
+        tabs: List.generate(
+          allCategories.length,
+          (index) {
+            return Tab(
+              child: Text(
+                allCategories[index].name,
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.black,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabView() {
+    return TabBarView(
+      controller: tabController,
+      children: List.generate(
+        allCategories.length,
+        (index) => index == 1
+            ? ProductNoAvailable(pageStyle: pageStyle)
+            : _buildProductList(),
       ),
     );
   }
 
   Widget _buildProductList() {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      children: List.generate(
-        20,
-        (index) {
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(
-                right: index % 2 == 0
-                    ? BorderSide(
-                        color: greyColor,
-                        width: pageStyle.unitWidth * 0.5,
-                      )
-                    : BorderSide.none,
-                bottom: BorderSide(
-                  color: greyColor,
-                  width: pageStyle.unitWidth * 0.5,
+    return SingleChildScrollView(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        children: List.generate(
+          20,
+          (index) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  right: index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  bottom: BorderSide(
+                    color: greyColor,
+                    width: pageStyle.unitWidth * 0.5,
+                  ),
                 ),
               ),
-            ),
-            child: ProductVCard(
-              pageStyle: pageStyle,
-              product: homeCategories[0].products[1],
-              cardWidth: pageStyle.unitWidth * 186,
-              cardHeight: pageStyle.unitHeight * 253,
-              isShoppingCart: true,
-              isWishlist: true,
-              isShare: true,
-            ),
-          );
-        },
+              child: ProductVCard(
+                pageStyle: pageStyle,
+                product: homeCategories[0].products[1],
+                cardWidth: pageStyle.unitWidth * 186,
+                cardHeight: pageStyle.unitHeight * 253,
+                isShoppingCart: true,
+                isWishlist: true,
+                isShare: true,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

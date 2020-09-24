@@ -1,5 +1,5 @@
 import 'package:provider/provider.dart';
-import 'package:ciga/src/bloc/place_bloc.dart';
+import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/routes/generator.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:cross_local_storage/cross_local_storage.dart';
@@ -14,8 +14,8 @@ class CigaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<PlaceBloc>(
-      create: (context) => PlaceBloc(),
+    return ChangeNotifierProvider<PlaceChangeNotifier>(
+      create: (context) => PlaceChangeNotifier(),
       child: CigaAppView(),
     );
   }

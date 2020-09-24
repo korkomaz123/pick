@@ -4,7 +4,7 @@ import 'package:ciga/src/data/models/place_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class PlaceBloc with ChangeNotifier {
+class PlaceChangeNotifier with ChangeNotifier {
   StreamController<PlaceEntity> locationController =
       StreamController<PlaceEntity>.broadcast();
   PlaceEntity locationSelect;

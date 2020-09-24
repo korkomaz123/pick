@@ -78,7 +78,7 @@ class _WishlistPageState extends State<WishlistPage>
           ),
           isDeleting
               ? Material(
-                  color: Colors.black.withOpacity(0.9),
+                  color: Colors.black.withOpacity(0),
                   child: Center(
                     child: Lottie.asset(
                       'lib/public/animations/heart-break.json',
@@ -90,12 +90,12 @@ class _WishlistPageState extends State<WishlistPage>
               : SizedBox.shrink(),
           isAdding
               ? Material(
-                  color: Colors.black.withOpacity(0.9),
+                  color: Colors.black.withOpacity(0),
                   child: Center(
                     child: Lottie.asset(
                       'lib/public/animations/add-to-cart-shopping.json',
-                      width: pageStyle.unitWidth * 100,
-                      height: pageStyle.unitHeight * 100,
+                      width: pageStyle.unitWidth * 200,
+                      height: pageStyle.unitHeight * 200,
                     ),
                   ),
                 )

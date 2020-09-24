@@ -35,7 +35,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
           children: [
             _buildDialogHeader(context),
             _buildDialogSearchInput(),
-            _buildStoreList(),
+            _buildBrandList(),
           ],
         ),
       ),
@@ -52,7 +52,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'filter_store_title'.tr(),
+            'brands_title'.tr(),
             style: boldTextStyle.copyWith(
               color: Colors.white,
               fontSize: widget.pageStyle.unitFontSize * 22,
@@ -94,7 +94,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
-          hintText: 'filter_search_store_hint'.tr(),
+          hintText: 'filter_search_brand_hint'.tr(),
           fillColor: Colors.white,
           filled: true,
         ),
@@ -102,7 +102,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
     );
   }
 
-  Widget _buildStoreList() {
+  Widget _buildBrandList() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),

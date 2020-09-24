@@ -1,4 +1,4 @@
-import 'package:ciga/src/bloc/place_bloc.dart';
+import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class SearchAddressView extends StatefulWidget {
-  final PlaceBloc placeBloc;
-  SearchAddressView({this.placeBloc});
+  final PlaceChangeNotifier placeChangeNotifier;
+  SearchAddressView({this.placeChangeNotifier});
 
   @override
   _SearchAddressViewState createState() => _SearchAddressViewState();
@@ -24,7 +24,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   @override
   void initState() {
     super.initState();
-    formLocation = widget?.placeBloc?.formLocation?.name;
+    formLocation = widget?.placeChangeNotifier?.formLocation?.name;
   }
 
   navigator() {
@@ -37,29 +37,31 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       color: Colors.white,
       child: Column(
         children: <Widget>[
-          buildForm(widget?.placeBloc),
+          buildForm(widget?.placeChangeNotifier),
           Container(
             height: 20,
             color: Color(0xfff5f5f5),
           ),
-          widget?.placeBloc?.listPlace != null
+          widget?.placeChangeNotifier?.listPlace != null
               ? Expanded(
                   child: ListView.separated(
                     shrinkWrap: true,
-                    itemCount: widget?.placeBloc?.listPlace?.length,
+                    itemCount: widget?.placeChangeNotifier?.listPlace?.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(widget?.placeBloc?.listPlace[index].name),
+                        title: Text(
+                            widget?.placeChangeNotifier?.listPlace[index].name),
                         subtitle: Text(
-                          widget?.placeBloc?.listPlace[index].formattedAddress,
+                          widget?.placeChangeNotifier?.listPlace[index]
+                              .formattedAddress,
                         ),
                         onTap: () {
-                          widget?.placeBloc
+                          widget?.placeChangeNotifier
                               ?.selectLocation(
-                                  widget?.placeBloc?.listPlace[index])
+                                  widget?.placeChangeNotifier?.listPlace[index])
                               ?.then((_) {
-                            toLocation =
-                                widget?.placeBloc?.locationSelect?.name;
+                            toLocation = widget
+                                ?.placeChangeNotifier?.locationSelect?.name;
                             FocusScope.of(context).requestFocus(nodeTo);
                             navigator();
                           });
@@ -78,7 +80,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     );
   }
 
-  Widget buildForm(PlaceBloc placeBloc) {
+  Widget buildForm(PlaceChangeNotifier placeChangeNotifier) {
     return Container(
       padding: EdgeInsets.only(bottom: 20.0),
       color: Colors.white,
@@ -110,7 +112,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                 ),
                 onChanged: (String value) async {
                   toLocation = value;
-                  await placeBloc?.search(value);
+                  await placeChangeNotifier?.search(value);
                 },
                 onTap: () {
                   setState(() {

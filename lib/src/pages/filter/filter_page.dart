@@ -23,7 +23,7 @@ class _FilterPageState extends State<FilterPage> {
   double maxPrice = 10;
   List<String> selectedCategories = [];
   List<String> selectedGenders = [];
-  List<String> selectedStores = [];
+  List<String> selectedBrands = [];
   bool isHideSizes = true;
   bool isHideColors = true;
   bool isHideStores = true;
@@ -68,7 +68,7 @@ class _FilterPageState extends State<FilterPage> {
                 _buildSizes(),
                 _buildColors(),
                 _buildStores(),
-                _buildSelectedStores(),
+                _buildSelectedBrands(),
                 SizedBox(height: pageStyle.unitHeight * 100),
               ],
             ),
@@ -417,7 +417,7 @@ class _FilterPageState extends State<FilterPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'filter_stores'.tr(),
+                  'brands_title'.tr(),
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
@@ -441,7 +441,7 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildSelectedStores() {
+  Widget _buildSelectedBrands() {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
@@ -451,7 +451,7 @@ class _FilterPageState extends State<FilterPage> {
       child: Wrap(
         spacing: pageStyle.unitWidth * 6,
         runSpacing: pageStyle.unitHeight * 2,
-        children: selectedStores.map((store) {
+        children: selectedBrands.map((store) {
           return Container(
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
@@ -492,32 +492,35 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   void _onStore() async {
-    final result = await showSlidingBottomSheet(context, builder: (context) {
-      return SlidingSheetDialog(
-        elevation: 8,
-        cornerRadius: 16,
-        snapSpec: SnapSpec(
-          snap: true,
-          snappings: [1],
-          positioning: SnapPositioning.relativeToAvailableSpace,
-        ),
-        builder: (context, state) {
-          return FilterStoreSelectDialog(
-            pageStyle: pageStyle,
-            values: selectedStores,
-            onChangedValue: (value) => _onChangedValue(value),
-          );
-        },
-      );
-    });
+    final result = await showSlidingBottomSheet(
+      context,
+      builder: (context) {
+        return SlidingSheetDialog(
+          elevation: 8,
+          cornerRadius: 16,
+          snapSpec: SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToAvailableSpace,
+          ),
+          builder: (context, state) {
+            return FilterStoreSelectDialog(
+              pageStyle: pageStyle,
+              values: selectedBrands,
+              onChangedValue: (value) => _onChangedValue(value),
+            );
+          },
+        );
+      },
+    );
     print(result);
   }
 
   void _onChangedValue(value) {
-    if (selectedStores.contains(value)) {
-      selectedStores.remove(value);
+    if (selectedBrands.contains(value)) {
+      selectedBrands.remove(value);
     } else {
-      selectedStores.add(value);
+      selectedBrands.add(value);
     }
     setState(() {});
   }
@@ -527,7 +530,7 @@ class _FilterPageState extends State<FilterPage> {
     maxPrice = 10;
     selectedCategories = [];
     selectedGenders = [];
-    selectedStores = [];
+    selectedBrands = [];
     isHideSizes = true;
     isHideColors = true;
     isHideStores = true;

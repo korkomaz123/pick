@@ -65,6 +65,7 @@
     "filter_stores": "Stores",
     "filter_store_title": "Store",
     "filter_search_store_hint": "Search in stores",
+    "filter_search_brand_hint": "Search in brands",
     "sort": "Sort",
     "product_list_sort_by_phl": "Price from High to Low",
     "product_list_sort_by_plh": "Price from Low to High",
@@ -172,6 +173,8 @@
     "save_address_button_title": "Save Address",
     "remove_shipping_address_title": "Are You Sure",
     "remove_shipping_address_subtitle": "You want to delete this shipping address?",
+    "remove_reorder_item_title": "Are You Sure",
+    "remove_reorder_item_subtitle": "You want to delete this item from your reorder?",
     "view_order_button_title": "View Order",
     "reorder_button_title": "Reorder",
     "next_button_title": "Next"

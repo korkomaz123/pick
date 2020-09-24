@@ -1,6 +1,7 @@
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 
 class ProductImage extends StatefulWidget {
   final arguments;
@@ -22,15 +23,22 @@ class _ProductImageState extends State<ProductImage> {
       body: SafeArea(
         child: Stack(
           children: [
-            Container(
-              width: pageStyle.deviceWidth,
-              height: pageStyle.deviceHeight,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'lib/public/images/shutterstock_151558448-1.png',
+            Zoom(
+              width: pageStyle.deviceWidth * 2,
+              height: pageStyle.deviceHeight * 2,
+              opacityScrollBars: 0.1,
+              scrollWeight: pageStyle.unitWidth * 2,
+              child: Container(
+                width: pageStyle.deviceWidth,
+                height: pageStyle.deviceHeight,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'lib/public/images/shutterstock_151558448-1.png',
+                    ),
+                    fit: BoxFit.fitWidth,
                   ),
-                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -57,9 +65,6 @@ class _ProductImageState extends State<ProductImage> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: pageStyle.deviceWidth,
-                padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
-                ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -72,6 +77,7 @@ class _ProductImageState extends State<ProductImage> {
                           width: pageStyle.unitWidth * 120,
                           height: pageStyle.unitHeight * 120,
                           decoration: BoxDecoration(
+                            color: Colors.white,
                             image: DecorationImage(
                               image: AssetImage(
                                 'lib/public/images/shutterstock_151558448-1.png',

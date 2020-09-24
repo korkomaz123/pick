@@ -80,7 +80,7 @@ final List<StoreEntity> stores = List.generate(
   10,
   (index) => StoreEntity(
     id: index.toString(),
-    name: 'Store ${index + 1}',
+    name: 'Brand ${index + 1}',
     imageUrl: 'lib/public/images/brand${index + 1}.png',
     products: products,
   ),

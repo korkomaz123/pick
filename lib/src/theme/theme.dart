@@ -27,14 +27,6 @@ final ThemeData cigaAppTheme = ThemeData(
     color: cigaMaterialColor,
     iconTheme: IconThemeData(color: Colors.white),
   ),
-  pageTransitionsTheme: PageTransitionsTheme(
-    builders: {
-      TargetPlatform.android:
-          CupertinoPageTransitionsBuilderCustomBackGestureWidth(),
-      TargetPlatform.iOS:
-          CupertinoPageTransitionsBuilderCustomBackGestureWidth(),
-    },
-  ),
 );
 
 /// App Colors

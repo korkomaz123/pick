@@ -28,10 +28,10 @@ dependencies:
   flutter_bloc: ^6.0.1
   meta: ^1.1.8
   badges: ^1.1.1
-  google_sign_in: ^4.5.1
+  # google_sign_in: ^4.5.1
   # flutter_facebook_login: ^3.0.0
-  flutter_twitter_login: ^1.1.0
-  sign_in_with_apple: ^2.5.2
+  # flutter_twitter_login: ^1.1.0
+  # sign_in_with_apple: ^2.5.2
   enum_to_string: ^1.0.9
   string_validator: ^0.1.4
   google_fonts: ^1.1.0
@@ -48,6 +48,7 @@ dependencies:
   cupertino_back_gesture: ^0.0.3
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
+  zoom_widget: ^0.1.3
 
 dev_dependencies:
   flutter_test:

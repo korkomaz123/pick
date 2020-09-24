@@ -23,9 +23,7 @@ class CigaBottomBar extends StatelessWidget {
       unselectedItemColor: Colors.black,
       showUnselectedLabels: true,
       currentIndex: BottomEnum.values.indexOf(activeItem),
-      onTap: (value) => BottomEnum.values.indexOf(activeItem) != value
-          ? _onChangedTab(value, context)
-          : null,
+      onTap: (value) => _onChangedTab(value, context),
       items: [
         BottomNavigationBarItem(
           icon: Container(
@@ -131,15 +129,35 @@ class CigaBottomBar extends StatelessWidget {
         );
         break;
       case 1:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
         Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
         Navigator.pushNamed(context, Routes.storeList);
         break;
       case 3:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
         Navigator.pushNamed(context, Routes.wishlist);
         break;
       case 4:
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
         Navigator.pushNamed(context, Routes.account);
         break;
       default:

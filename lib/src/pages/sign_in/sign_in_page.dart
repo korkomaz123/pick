@@ -153,11 +153,7 @@ class _SignInPageState extends State<SignInPage> {
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.home,
-          (route) => false,
-        ),
+        onPressed: () => Navigator.pop(context),
         radius: 20,
       ),
     );

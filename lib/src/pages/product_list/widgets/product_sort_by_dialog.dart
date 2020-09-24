@@ -67,15 +67,31 @@ class ProductSortByDialog extends StatelessWidget {
                           ),
                         ),
                       ),
-                      index < (sortByList.length - 1)
-                          ? Divider(
-                              thickness: 0.8,
-                              color: greyColor.withOpacity(0.6),
-                            )
-                          : SizedBox.shrink(),
+                      Divider(
+                        thickness: 0.8,
+                        color: greyColor.withOpacity(0.6),
+                      )
                     ],
                   );
                 },
+              ),
+            ),
+            InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: pageStyle.deviceWidth,
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                  vertical: pageStyle.unitHeight * 4,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Default',
+                  textAlign: TextAlign.center,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
               ),
             ),
           ],

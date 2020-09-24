@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -11,10 +13,14 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:lottie/lottie.dart';
+
+import 'widgets/reorder_remove_dialog.dart';
 
 class ReOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -33,6 +39,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
+  bool isDeleting = false;
 
   @override
   void initState() {
@@ -88,10 +95,26 @@ class _ReOrderPageState extends State<ReOrderPage> {
       backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: Column(
+      body: Stack(
         children: [
-          _buildAppBar(),
-          _buildOrder(),
+          Column(
+            children: [
+              _buildAppBar(),
+              _buildOrder(),
+            ],
+          ),
+          isDeleting
+              ? Material(
+                  color: Colors.black.withOpacity(0),
+                  child: Center(
+                    child: Lottie.asset(
+                      'lib/public/animations/trash-clean.json',
+                      width: pageStyle.unitWidth * 100,
+                      height: pageStyle.unitHeight * 100,
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -252,7 +275,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                             ? Alignment.topRight
                             : Alignment.topLeft,
                     child: IconButton(
-                      onPressed: () => null,
+                      onPressed: () => _onDeleteOrderItem(),
                       icon: SvgPicture.asset(trashIcon),
                     ),
                   ),
@@ -437,5 +460,26 @@ class _ReOrderPageState extends State<ReOrderPage> {
         ),
       ),
     );
+  }
+
+  void _onDeleteOrderItem() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return ReorderRemoveDialog(pageStyle: pageStyle);
+      },
+    );
+    if (result != null) {
+      isDeleting = true;
+      Timer.periodic(
+        AnimationDurations.removeItemAniDuration,
+        (timer) {
+          timer.cancel();
+          isDeleting = false;
+          setState(() {});
+        },
+      );
+      setState(() {});
+    }
   }
 }

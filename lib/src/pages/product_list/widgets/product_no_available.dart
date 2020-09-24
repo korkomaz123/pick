@@ -14,9 +14,8 @@ class ProductNoAvailable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: pageStyle.unitHeight * 200),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(greyLogoIcon),
           SizedBox(height: pageStyle.unitHeight * 20),
