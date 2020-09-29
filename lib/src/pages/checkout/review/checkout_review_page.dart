@@ -55,9 +55,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                           cardHeight: pageStyle.unitHeight * 150,
                           product: myCartItems[index].product,
                         ),
-                        index < (myCartItems.length - 1)
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
+                        index < (myCartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                       ],
                     );
                   },
@@ -115,7 +113,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
         title: 'checkout_continue_payment_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -131,7 +129,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
         title: 'checkout_back_shipping_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,

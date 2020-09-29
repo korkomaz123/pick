@@ -133,7 +133,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
         title: 'checkout_continue_review_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -149,7 +149,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
       child: TextButton(
         title: 'checkout_back_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,

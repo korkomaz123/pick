@@ -54,7 +54,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            newArrivals.name,
+            'home_new_arrivals'.tr(),
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

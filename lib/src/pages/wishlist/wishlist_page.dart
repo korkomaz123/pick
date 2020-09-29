@@ -8,6 +8,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -25,8 +26,7 @@ class WishlistPage extends StatefulWidget {
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage>
-    with TickerProviderStateMixin {
+class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
   PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
@@ -59,15 +59,20 @@ class _WishlistPageState extends State<WishlistPage>
                       ),
                       child: Column(
                         children: [
-                          WishlistProductCard(
-                            pageStyle: pageStyle,
-                            product: products[index],
-                            onRemoveWishlist: () => _onRemoveWishlist(index),
-                            onAddToCart: () => _onAddToCart(index),
+                          InkWell(
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.product,
+                              arguments: products[index],
+                            ),
+                            child: WishlistProductCard(
+                              pageStyle: pageStyle,
+                              product: products[index],
+                              onRemoveWishlist: () => _onRemoveWishlist(index),
+                              onAddToCart: () => _onAddToCart(index),
+                            ),
                           ),
-                          index < (products.length - 1)
-                              ? Divider(color: greyColor, thickness: 0.5)
-                              : SizedBox.shrink(),
+                          index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                         ],
                       ),
                     );
@@ -198,9 +203,7 @@ class _WishlistPageState extends State<WishlistPage>
                   onRemoveWishlist: () => null,
                   onAddToCart: () => null,
                 ),
-                index < (products.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
+                index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
               ],
             ),
           ),

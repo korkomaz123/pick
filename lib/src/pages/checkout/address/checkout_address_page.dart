@@ -148,7 +148,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: TextButton(
         title: 'checkout_searching_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyDarkColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
@@ -165,7 +165,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: TextButton(
         title: 'checkout_select_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyDarkColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
@@ -187,7 +187,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             width: pageStyle.unitWidth * 150,
             child: TextButton(
               title: 'checkout_save_address_button_title'.tr(),
-              titleSize: pageStyle.unitFontSize * 14,
+              titleSize: pageStyle.unitFontSize * 12,
               titleColor: greyDarkColor,
               buttonColor: greyLightColor,
               borderColor: Colors.transparent,
@@ -199,7 +199,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             width: pageStyle.unitWidth * 197,
             child: TextButton(
               title: 'checkout_continue_shipping_button_title'.tr(),
-              titleSize: pageStyle.unitFontSize * 14,
+              titleSize: pageStyle.unitFontSize * 12,
               titleColor: Colors.white,
               buttonColor: primaryColor,
               borderColor: Colors.transparent,

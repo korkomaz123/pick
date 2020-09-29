@@ -14,7 +14,7 @@ final List<CategoryEntity> homeCategories = [
   ),
   CategoryEntity(
     id: '3',
-    name: 'New Arrival',
+    name: 'New Arrivals',
     products: products,
     subCategories: subCategories,
   ),
@@ -146,8 +146,7 @@ List<CategoryMenuEntity> categoryMenu = List.generate(
           6,
           (subSubMenuIndex) => CategoryMenuEntity(
             id: '${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
-            title:
-                'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
+            title: 'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
             subMenu: [],
           ),
         ),

@@ -177,5 +177,7 @@
     "remove_reorder_item_subtitle": "تريد حذف هذا العنصر من إعادة ترتيب الخاص بك؟",
     "view_order_button_title": "مشاهدة الطلب",
     "reorder_button_title": "إعادة ترتيب",
-    "next_button_title": "التالى"
+    "next_button_title": "التالى",
+    "product_brand": "الماركة",
+    "suk": "سوك"
 }

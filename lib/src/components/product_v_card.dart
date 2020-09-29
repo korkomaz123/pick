@@ -99,9 +99,7 @@ class _ProductVCardState extends State<ProductVCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.product.price.toString() +
-                                ' ' +
-                                'currency'.tr(),
+                            widget.product.price.toString() + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               fontSize: widget.pageStyle.unitFontSize * 12,
                               color: greyColor,
@@ -109,9 +107,7 @@ class _ProductVCardState extends State<ProductVCard> {
                           ),
                           SizedBox(width: widget.pageStyle.unitWidth * 10),
                           Text(
-                            widget.product.discount.toString() +
-                                ' ' +
-                                'currency'.tr(),
+                            widget.product.discount.toString() + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               decorationStyle: TextDecorationStyle.solid,
                               decoration: TextDecoration.lineThrough,
@@ -123,13 +119,11 @@ class _ProductVCardState extends State<ProductVCard> {
                           Spacer(),
                           widget.isShoppingCart
                               ? InkWell(
-                                  onTap: () => _onAddProductToCart(
-                                      context, widget.product),
+                                  onTap: () => _onAddProductToCart(context, widget.product),
                                   child: Container(
                                     width: widget.pageStyle.unitWidth * 18,
                                     height: widget.pageStyle.unitHeight * 17,
-                                    child: SvgPicture.asset(shoppingCartIcon,
-                                        color: primaryColor),
+                                    child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
                                   ),
                                 )
                               : SizedBox.shrink(),
@@ -143,33 +137,9 @@ class _ProductVCardState extends State<ProductVCard> {
           ),
           Column(
             children: [
-              widget.isShare
-                  ? Align(
-                      alignment:
-                          EasyLocalization.of(context).locale.languageCode ==
-                                  'en'
-                              ? Alignment.topRight
-                              : Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () => _onShareProduct(),
-                          child: Icon(
-                            Icons.share,
-                            color: greyColor,
-                            size: widget.pageStyle.unitFontSize * 20,
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
               widget.isWishlist
                   ? Align(
-                      alignment:
-                          EasyLocalization.of(context).locale.languageCode ==
-                                  'en'
-                              ? Alignment.topRight
-                              : Alignment.topLeft,
+                      alignment: EasyLocalization.of(context).locale.languageCode == 'en' ? Alignment.topRight : Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(

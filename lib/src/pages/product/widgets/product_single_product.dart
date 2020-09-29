@@ -24,8 +24,7 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct>
-    with TickerProviderStateMixin {
+class _ProductSingleProductState extends State<ProductSingleProduct> with TickerProviderStateMixin {
   PageStyle pageStyle;
   ProductEntity product;
   bool isMore = false;
@@ -238,7 +237,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'product_store'.tr(),
+                'product_brand'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 11,
@@ -303,22 +302,34 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Container(
       width: double.infinity,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            product.price.toString() + ' ' + 'currency'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 14,
-              color: greyColor,
-            ),
+          Row(
+            children: [
+              Text(
+                product.price.toString() + ' ' + 'currency'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: greyColor,
+                ),
+              ),
+              SizedBox(width: pageStyle.unitWidth * 10),
+              Text(
+                product.discount.toString() + ' ' + 'currency'.tr(),
+                style: mediumTextStyle.copyWith(
+                  decorationStyle: TextDecorationStyle.solid,
+                  decoration: TextDecoration.lineThrough,
+                  decorationColor: dangerColor,
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: greyColor,
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: pageStyle.unitWidth * 10),
           Text(
-            product.discount.toString() + ' ' + 'currency'.tr(),
+            'suk'.tr() + ' ' + '2018',
             style: mediumTextStyle.copyWith(
-              decorationStyle: TextDecorationStyle.solid,
-              decoration: TextDecoration.lineThrough,
-              decorationColor: dangerColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: pageStyle.unitFontSize * 10,
               color: greyColor,
             ),
           ),

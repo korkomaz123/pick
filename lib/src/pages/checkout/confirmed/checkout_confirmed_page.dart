@@ -117,7 +117,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
       child: TextButton(
         title: 'checkout_show_all_ordered_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 17,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white70,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -133,7 +133,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
       child: TextButton(
         title: 'checkout_back_shop_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 17,
+        titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: greyColor,

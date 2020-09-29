@@ -177,5 +177,7 @@
     "remove_reorder_item_subtitle": "You want to delete this item from your reorder?",
     "view_order_button_title": "View Order",
     "reorder_button_title": "Reorder",
-    "next_button_title": "Next"
+    "next_button_title": "Next",
+    "product_brand": "Brand",
+    "suk": "SUK"
 }

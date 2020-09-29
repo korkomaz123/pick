@@ -17,6 +17,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
@@ -29,8 +30,7 @@ class ProductListPage extends StatefulWidget {
   _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage>
-    with SingleTickerProviderStateMixin {
+class _ProductListPageState extends State<ProductListPage> with SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
@@ -173,18 +173,16 @@ class _ProductListPageState extends State<ProductListPage>
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
-      color: backgroundColor,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 4),
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
       child: TabBar(
         controller: tabController,
         indicator: BoxDecoration(
-          color: backgroundColor,
-          border: Border.all(
-            color: primaryColor,
-            width: pageStyle.unitWidth * 2,
-          ),
+          color: primaryColor,
           borderRadius: BorderRadius.circular(30),
         ),
+        unselectedLabelColor: greyDarkColor,
+        labelColor: Colors.white,
         isScrollable: true,
         tabs: List.generate(
           allCategories.length,
@@ -194,7 +192,6 @@ class _ProductListPageState extends State<ProductListPage>
                 allCategories[index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: pageStyle.unitFontSize * 14,
-                  color: Colors.black,
                 ),
               ),
             );
@@ -209,9 +206,7 @@ class _ProductListPageState extends State<ProductListPage>
       controller: tabController,
       children: List.generate(
         allCategories.length,
-        (index) => index == 1
-            ? ProductNoAvailable(pageStyle: pageStyle)
-            : _buildProductList(),
+        (index) => index == 1 ? ProductNoAvailable(pageStyle: pageStyle) : _buildProductList(),
       ),
     );
   }
@@ -226,7 +221,13 @@ class _ProductListPageState extends State<ProductListPage>
             return Container(
               decoration: BoxDecoration(
                 border: Border(
-                  right: index % 2 == 0
+                  right: EasyLocalization.of(context).locale.languageCode == 'en' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  left: EasyLocalization.of(context).locale.languageCode == 'ar' && index % 2 == 0
                       ? BorderSide(
                           color: greyColor,
                           width: pageStyle.unitWidth * 0.5,

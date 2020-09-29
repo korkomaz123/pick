@@ -99,9 +99,7 @@ class _ProductHCardState extends State<ProductHCard> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.product.price.toString() +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.price.toString() + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 fontSize: widget.pageStyle.unitFontSize * 12,
                                 color: greyColor,
@@ -110,9 +108,7 @@ class _ProductHCardState extends State<ProductHCard> {
                           ),
                           Expanded(
                             child: Text(
-                              widget.product.discount.toString() +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.discount.toString() + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -149,33 +145,9 @@ class _ProductHCardState extends State<ProductHCard> {
           ),
           Column(
             children: [
-              widget.isShare
-                  ? Align(
-                      alignment:
-                          EasyLocalization.of(context).locale.languageCode ==
-                                  'en'
-                              ? Alignment.topRight
-                              : Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () => _onShareProduct(),
-                          child: Icon(
-                            Icons.share,
-                            color: greyColor,
-                            size: widget.pageStyle.unitFontSize * 20,
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
               widget.isWishlist
                   ? Align(
-                      alignment:
-                          EasyLocalization.of(context).locale.languageCode ==
-                                  'en'
-                              ? Alignment.topRight
-                              : Alignment.topLeft,
+                      alignment: EasyLocalization.of(context).locale.languageCode == 'en' ? Alignment.topRight : Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(
