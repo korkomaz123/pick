@@ -63,7 +63,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
     return AppBar(
       elevation: 0,
       centerTitle: true,
-      toolbarHeight: widget.pageStyle.unitHeight * 50,
+      toolbarHeight: widget.pageStyle.unitHeight * 60,
       title: InkWell(
         onTap: () => Navigator.pushNamedAndRemoveUntil(
           context,
@@ -89,9 +89,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
             left: widget.pageStyle.unitWidth * 20,
           ),
           child: InkWell(
-            onTap: () => widget.isCartPage
-                ? null
-                : Navigator.pushNamed(context, Routes.myCart),
+            onTap: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
             child: Center(
               child: Badge(
                 badgeColor: badgeColor,
@@ -119,7 +117,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
           padding: EdgeInsets.symmetric(
             horizontal: widget.pageStyle.unitWidth * 10,
           ),
-          margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+          margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 5),
           width: double.infinity,
           height: widget.pageStyle.unitHeight * 40,
           child: TextFormField(
