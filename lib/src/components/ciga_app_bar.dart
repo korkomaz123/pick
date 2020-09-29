@@ -22,7 +22,7 @@ class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CigaAppBarState createState() => _CigaAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(100);
+  Size get preferredSize => Size.fromHeight(110);
 }
 
 class _CigaAppBarState extends State<CigaAppBar> {
