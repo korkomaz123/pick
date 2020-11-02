@@ -2,7 +2,10 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -11,13 +14,24 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class BrandListPage extends StatefulWidget {
+  final List<BrandEntity> brands;
+
+  BrandListPage({this.brands});
+
   @override
   _BrandListPageState createState() => _BrandListPageState();
 }
 
 class _BrandListPageState extends State<BrandListPage> {
+  List<BrandEntity> brands;
   PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    brands = widget.brands;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +49,7 @@ class _BrandListPageState extends State<BrandListPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: List.generate(
-                  10,
+                  brands.length,
                   (index) => _buildBrandCard(index),
                 ),
               ),
@@ -82,7 +96,16 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildBrandCard(int index) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, Routes.productList),
+      onTap: () {
+        ProductListArguments arguments = ProductListArguments(
+          category: CategoryEntity(),
+          subCategory: [],
+          brand: brands[index],
+          selectedSubCategoryIndex: 0,
+          isFromBrand: true,
+        );
+        Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+      },
       child: Container(
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 58,
@@ -92,7 +115,14 @@ class _BrandListPageState extends State<BrandListPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset('lib/public/images/brand${index + 1}.png'),
+            Image.network(brands[index].brandThumbnail),
+            Text(
+              brands[index].brandLabel,
+              style: mediumTextStyle.copyWith(
+                color: darkColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
             Row(
               children: [
                 Text(

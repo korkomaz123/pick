@@ -7,9 +7,10 @@ class ProgressService {
 
   ProgressService({this.context});
 
-  void showProgress() {
-    showDialog(
+  void showProgress() async {
+    await showDialog(
       context: context,
+      barrierColor: Colors.white.withOpacity(0.01),
       builder: (context) {
         return CigaLoadingDialog();
       },

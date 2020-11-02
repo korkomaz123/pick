@@ -67,7 +67,7 @@ class RouteGenerator {
         );
       case Routes.categoryList:
         return CupertinoPageRoute(
-          builder: (context) => CategoryListPage(),
+          builder: (context) => CategoryListPage(categories: params),
         );
       case Routes.storeList:
         return CupertinoPageRoute(
@@ -75,7 +75,7 @@ class RouteGenerator {
         );
       case Routes.brandList:
         return CupertinoPageRoute(
-          builder: (context) => BrandListPage(),
+          builder: (context) => BrandListPage(brands: params),
         );
       case Routes.filter:
         return CupertinoPageRoute(

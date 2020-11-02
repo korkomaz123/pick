@@ -1,7 +1,11 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_repository.dart';
+import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
+import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +25,8 @@ class CigaApp extends StatelessWidget {
 
   final HomeRepository homeRepository = HomeRepository();
   final SignInRepository signInRepository = SignInRepository();
+  final CategoryRepository categoryRepository = CategoryRepository();
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +34,38 @@ class CigaApp extends StatelessWidget {
       value: homeRepository,
       child: RepositoryProvider.value(
         value: signInRepository,
-        child: ChangeNotifierProvider<PlaceChangeNotifier>(
-          create: (context) => PlaceChangeNotifier(),
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => HomeBloc(
-                  homeRepository: homeRepository,
-                ),
+        child: RepositoryProvider.value(
+          value: categoryRepository,
+          child: RepositoryProvider.value(
+            value: productRepository,
+            child: ChangeNotifierProvider<PlaceChangeNotifier>(
+              create: (context) => PlaceChangeNotifier(),
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => HomeBloc(
+                      homeRepository: homeRepository,
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) => SignInBloc(
+                      signInRepository: signInRepository,
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) => CategoryBloc(
+                      categoryRepository: categoryRepository,
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) => ProductBloc(
+                      productRepository: productRepository,
+                    ),
+                  ),
+                ],
+                child: CigaAppView(),
               ),
-              BlocProvider(
-                create: (context) => SignInBloc(
-                  signInRepository: signInRepository,
-                ),
-              ),
-            ],
-            child: CigaAppView(),
+            ),
           ),
         ),
       ),

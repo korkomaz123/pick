@@ -1,18 +1,20 @@
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 
+import 'brand_entity.dart';
+
 class ProductListArguments {
   final CategoryEntity category;
-  final StoreEntity store;
+  final BrandEntity brand;
   final List<CategoryEntity> subCategory;
   final int selectedSubCategoryIndex;
-  final bool isFromStore;
+  final bool isFromBrand;
 
   ProductListArguments({
     this.category,
-    this.store,
+    this.brand,
     this.subCategory,
     this.selectedSubCategoryIndex,
-    this.isFromStore,
+    this.isFromBrand,
   });
 }

@@ -185,5 +185,12 @@
     "required_email": "البريد الالكتروني مطلوب",
     "invalid_email": "البريد الإلكتروني غير صالح",
     "required_password": "كلمة المرور مطلوبة",
-    "short_length_password": "طول كلمة المرور الخاصة بك قصير"
+    "short_length_password": "طول كلمة المرور الخاصة بك قصير",
+    "price_high_low": "السعر(من أسفل إلى أعلى)",
+    "price_low_high": "(من الأعلى إلى الأقل)السعر",
+    "sort_by_brand": "فرز حسب الماركة",
+    "products_on_sale": "المنتجات المعروضة للبيع",
+    "name_az": "الاسم (أ - ي)",
+    "name_za": "الاسم (ي - أ)",
+    "default": "إفتراضي"
 }

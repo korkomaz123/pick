@@ -43,3 +43,4 @@ const Color succeedColor = Color(0xFF2E9017);
 const Color favoriteColor = Color(0xFFFF5757);
 const Color dangerColor = Color(0xFFC10000);
 const Color greyLightColor = Color(0xFFEAEAEA);
+const Color orangeColor = Color(0xFFFF800A);

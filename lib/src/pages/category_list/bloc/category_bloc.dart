@@ -33,5 +33,25 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   Stream<CategoryState> _mapCategorySubCategoriesLoadedToState(
     String categoryId,
     String lang,
-  ) async* {}
+  ) async* {
+    yield CategorySubCategoriesLoadedInProcess();
+    try {
+      final result =
+          await _categoryRepository.getSubCategories(categoryId, lang);
+      if (result['code'] == 'SUCCESS') {
+        List<dynamic> categoryList = result['categories'];
+        List<CategoryEntity> categories = [];
+        for (int i = 0; i < categoryList.length; i++) {
+          categories.add(CategoryEntity.fromJson(categoryList[i]));
+        }
+        yield CategorySubCategoriesLoadedSuccess(subCategories: categories);
+      } else {
+        yield CategorySubCategoriesLoadedFailure(
+          message: result['errorMessage'],
+        );
+      }
+    } catch (e) {
+      yield CategorySubCategoriesLoadedFailure(message: e.toString());
+    }
+  }
 }

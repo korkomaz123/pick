@@ -8,11 +8,24 @@ abstract class ProductEvent extends Equatable {
 }
 
 class ProductListLoaded extends ProductEvent {
-  final String subCategoryId;
+  final String categoryId;
   final String lang;
 
-  ProductListLoaded({this.subCategoryId, this.lang});
+  ProductListLoaded({this.categoryId, this.lang});
 
   @override
-  List<Object> get props => [subCategoryId, lang];
+  List<Object> get props => [categoryId, lang];
 }
+
+class ProductListSorted extends ProductEvent {
+  final String categoryId;
+  final String lang;
+  final String sortItem;
+
+  ProductListSorted({this.categoryId, this.lang, this.sortItem});
+
+  @override
+  List<Object> get props => [categoryId, lang, sortItem];
+}
+
+class ProductListFiltered extends ProductEvent {}

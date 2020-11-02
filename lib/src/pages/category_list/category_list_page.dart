@@ -3,6 +3,7 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
@@ -16,6 +17,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CategoryListPage extends StatefulWidget {
+  final List<CategoryEntity> categories;
+
+  CategoryListPage({this.categories});
+
   @override
   _CategoryListPageState createState() => _CategoryListPageState();
 }
@@ -24,7 +29,14 @@ class _CategoryListPageState extends State<CategoryListPage> {
   PageStyle pageStyle;
   String category;
   int activeIndex;
+  List<CategoryEntity> categories;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    categories = widget.categories;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +54,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: List.generate(
-                  allCategories.length,
+                  categories.length,
                   (index) => Column(
                     children: [
-                      _buildCategoryCard(allCategories[index]),
+                      _buildCategoryCard(categories[index]),
                       activeIndex == index
-                          ? _buildSubcategoriesList(allCategories[index])
+                          ? _buildSubcategoriesList(categories[index])
                           : SizedBox.shrink(),
                       SizedBox(height: pageStyle.unitHeight * 6),
                     ],
@@ -85,8 +97,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
     return InkWell(
       onTap: () {
         setState(() {
-          if (activeIndex != allCategories.indexOf(category)) {
-            activeIndex = allCategories.indexOf(category);
+          if (activeIndex != categories.indexOf(category)) {
+            activeIndex = categories.indexOf(category);
           } else {
             activeIndex = -1;
           }
@@ -97,7 +109,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         height: pageStyle.unitHeight * 128,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(category.imageUrl),
+            image: NetworkImage(category.imageUrl),
             fit: BoxFit.cover,
           ),
         ),
@@ -112,7 +124,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
           category.subCategories.length,
           (index) => AnimationConfiguration.staggeredList(
             position: index,
-            duration: const Duration(milliseconds: 375),
+            duration: Duration(milliseconds: 375),
             child: SlideAnimation(
               verticalOffset: 50.0,
               child: FadeInAnimation(
@@ -123,9 +135,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
                     ProductListArguments arguments = ProductListArguments(
                       category: category,
                       subCategory: category.subCategories,
-                      store: StoreEntity(),
+                      brand: BrandEntity(),
                       selectedSubCategoryIndex: index,
-                      isFromStore: false,
+                      isFromBrand: false,
                     );
                     Navigator.pushNamed(
                       context,
@@ -212,18 +224,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
-            ),
-            bottomLeft: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
-            ),
-            topRight: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
-            ),
-            bottomRight: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
-            ),
+            topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+            bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+            topRight: Radius.circular(lang == 'en' ? 30 : 0),
+            bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
           ),
         ),
         color: Colors.white,

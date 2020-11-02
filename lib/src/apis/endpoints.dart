@@ -26,4 +26,5 @@ class EndPoints {
       '$baseUrl/getMyShippingAddresses';
   static const String submitOrder = '$baseUrl/SubmitOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
+  static const String filterProducts = '$baseUrl/Filterproducts';
 }

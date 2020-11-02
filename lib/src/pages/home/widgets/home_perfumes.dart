@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -71,9 +72,9 @@ class _HomePerfumesState extends State<HomePerfumes> {
           ProductListArguments arguments = ProductListArguments(
             category: homeCategories[2],
             subCategory: homeCategories[2].subCategories,
-            store: StoreEntity(),
+            brand: BrandEntity(),
             selectedSubCategoryIndex: 0,
-            isFromStore: false,
+            isFromBrand: false,
           );
           Navigator.pushNamed(
             context,

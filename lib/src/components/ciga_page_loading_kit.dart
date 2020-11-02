@@ -17,7 +17,8 @@ class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner>
         vsync: this,
         duration: Duration(milliseconds: 1200),
       ),
-      color: primaryColor,
+      color: orangeColor,
+      size: 40,
     );
   }
 }
@@ -36,7 +37,7 @@ class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
         vsync: this,
         duration: Duration(milliseconds: 1200),
       ),
-      color: primaryColor,
+      color: orangeColor,
     );
   }
 }
@@ -55,7 +56,7 @@ class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
         vsync: this,
         duration: Duration(milliseconds: 1200),
       ),
-      color: primaryColor,
+      color: orangeColor,
     );
   }
 }
@@ -74,7 +75,7 @@ class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
         vsync: this,
         duration: Duration(milliseconds: 1200),
       ),
-      color: primaryColor,
+      color: orangeColor,
     );
   }
 }

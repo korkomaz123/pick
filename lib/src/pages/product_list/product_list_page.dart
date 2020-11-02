@@ -1,26 +1,29 @@
-import 'dart:async';
 import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
-import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
+import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+
+import 'widgets/product_list_view.dart';
 
 class ProductListPage extends StatefulWidget {
   final ProductListArguments arguments;
@@ -31,31 +34,46 @@ class ProductListPage extends StatefulWidget {
   _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage>
-    with SingleTickerProviderStateMixin {
+class _ProductListPageState extends State<ProductListPage> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
   List<CategoryEntity> subCategories;
-  StoreEntity store;
+  List<ProductModel> products;
+  String sortByItem;
+  BrandEntity brand;
   int activeSubcategoryIndex;
-  bool isFromStore;
+  bool isFromBrand;
   String selectedCategory;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TabController tabController;
+  CategoryBloc categoryBloc;
+  ProductBloc productBloc;
+  ProgressService progressService;
+  SnackBarService snackBarService;
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: allCategories.length, vsync: this);
 
+    sortByItem = '';
     arguments = widget.arguments;
     category = arguments.category;
-    subCategories = arguments.subCategory;
-    store = arguments.store;
+    brand = arguments.brand;
     activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
-    isFromStore = arguments.isFromStore;
+    isFromBrand = arguments.isFromBrand;
+    subCategories = [category];
     selectedCategory = subCategories[activeSubcategoryIndex].name;
+
+    productBloc = context.bloc<ProductBloc>();
+    categoryBloc = context.bloc<CategoryBloc>();
+    categoryBloc.add(CategorySubCategoriesLoaded(categoryId: category.id));
+
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
   }
 
   @override
@@ -70,16 +88,36 @@ class _ProductListPageState extends State<ProductListPage>
       body: Column(
         children: [
           _buildAppBar(),
-          isFromStore ? _buildStoreBar() : SizedBox.shrink(),
-          _buildCategoryTabBar(),
-          // isLoading
-          //     ? Expanded(
-          //         child: Center(
-          //           child: RippleLoadingSpinner(),
-          //         ),
-          //       )
-          Expanded(
-            child: _buildCategoryTabView(),
+          isFromBrand ? _buildBrandBar() : SizedBox.shrink(),
+          BlocConsumer<CategoryBloc, CategoryState>(
+            listener: (context, categoryState) {
+              if (categoryState is CategorySubCategoriesLoadedInProcess) {
+                progressService.showProgress();
+              }
+              if (categoryState is CategorySubCategoriesLoadedSuccess) {
+                progressService.hideProgress();
+              }
+              if (categoryState is CategorySubCategoriesLoadedFailure) {
+                progressService.hideProgress();
+                snackBarService.showErrorSnackBar(categoryState.message);
+              }
+            },
+            builder: (context, categoryState) {
+              if (categoryState is CategorySubCategoriesLoadedSuccess) {
+                for (int i = 0; i < categoryState.subCategories.length; i++) {
+                  subCategories.add(categoryState.subCategories[i]);
+                }
+                return ProductListView(
+                  subCategories: subCategories,
+                  activeIndex: widget.arguments.selectedSubCategoryIndex,
+                  scaffoldKey: scaffoldKey,
+                  pageStyle: pageStyle,
+                  onChangeTab: (index) => _onChangeTab(index),
+                );
+              } else {
+                return Container();
+              }
+            },
           ),
         ],
       ),
@@ -134,7 +172,7 @@ class _ProductListPageState extends State<ProductListPage>
           Align(
             alignment: Alignment.center,
             child: Text(
-              isFromStore ? store.name : category.name,
+              isFromBrand ? brand.brandLabel : category.name,
               style: boldTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 17,
@@ -146,110 +184,18 @@ class _ProductListPageState extends State<ProductListPage>
     );
   }
 
-  Widget _buildStoreBar() {
+  Widget _buildBrandBar() {
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 80,
       margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 8),
       alignment: Alignment.center,
       color: Colors.white,
-      child: Image.asset(
-        store.imageUrl,
+      child: Image.network(
+        brand.brandThumbnail,
         width: pageStyle.unitWidth * 120,
         height: pageStyle.unitHeight * 60,
         fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _buildCategoryTabBar() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
-      child: TabBar(
-        controller: tabController,
-        indicator: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        unselectedLabelColor: greyDarkColor,
-        labelColor: Colors.white,
-        isScrollable: true,
-        tabs: List.generate(
-          allCategories.length,
-          (index) {
-            return Tab(
-              child: Text(
-                allCategories[index].name,
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryTabView() {
-    return TabBarView(
-      controller: tabController,
-      children: List.generate(
-        allCategories.length,
-        (index) => index == 1
-            ? ProductNoAvailable(pageStyle: pageStyle)
-            : _buildProductList(),
-      ),
-    );
-  }
-
-  Widget _buildProductList() {
-    return SingleChildScrollView(
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        children: List.generate(
-          20,
-          (index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  right: EasyLocalization.of(context).locale.languageCode ==
-                              'en' &&
-                          index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  left: EasyLocalization.of(context).locale.languageCode ==
-                              'ar' &&
-                          index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  bottom: BorderSide(
-                    color: greyColor,
-                    width: pageStyle.unitWidth * 0.5,
-                  ),
-                ),
-              ),
-              child: ProductVCard(
-                pageStyle: pageStyle,
-                product: ProductModel(),
-                cardWidth: pageStyle.unitWidth * 186,
-                cardHeight: pageStyle.unitHeight * 253,
-                isShoppingCart: true,
-                isWishlist: true,
-                isShare: true,
-              ),
-            );
-          },
-        ),
       ),
     );
   }
@@ -265,7 +211,7 @@ class _ProductListPageState extends State<ProductListPage>
   }
 
   void _onSortBy() async {
-    await showSlidingBottomSheet(context, builder: (context) {
+    final result = await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
         cornerRadius: 10,
@@ -280,5 +226,23 @@ class _ProductListPageState extends State<ProductListPage>
         },
       );
     });
+    if (result != null) {
+      if (sortByItem != result) {
+        sortByItem = result;
+        productBloc.add(ProductListSorted(
+          categoryId: subCategories[activeSubcategoryIndex].id,
+          lang: lang,
+          sortItem: result,
+        ));
+      }
+    }
+  }
+
+  void _onChangeTab(int index) {
+    activeSubcategoryIndex = index;
+    productBloc.add(ProductListSorted(
+      categoryId: subCategories[index].id,
+      lang: lang,
+    ));
   }
 }

@@ -146,9 +146,9 @@ class _StoreListPageState extends State<StoreListPage> {
         ProductListArguments arguments = ProductListArguments(
           category: CategoryEntity(),
           subCategory: subCategories,
-          store: store,
+          // store: store,
           selectedSubCategoryIndex: 0,
-          isFromStore: true,
+          // isFromStore: true,
         );
         Navigator.pushNamed(
           context,

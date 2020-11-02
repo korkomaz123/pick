@@ -6,7 +6,7 @@ class CigaLoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.transparent,
       child: Center(
         child: PouringHourLoadingSpinner(),
       ),

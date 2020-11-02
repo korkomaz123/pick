@@ -49,7 +49,7 @@ class ProductSortByDialog extends StatelessWidget {
                   return Column(
                     children: [
                       InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => Navigator.pop(context, sortByList[index]),
                         child: Container(
                           width: pageStyle.deviceWidth,
                           padding: EdgeInsets.symmetric(
@@ -58,7 +58,7 @@ class ProductSortByDialog extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            sortByList[index],
+                            sortByList[index].tr(),
                             textAlign: TextAlign.center,
                             style: mediumTextStyle.copyWith(
                               color: primaryColor,
@@ -77,7 +77,7 @@ class ProductSortByDialog extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () => Navigator.pop(context),
+              onTap: () => Navigator.pop(context, 'default'),
               child: Container(
                 width: pageStyle.deviceWidth,
                 padding: EdgeInsets.symmetric(
@@ -86,7 +86,7 @@ class ProductSortByDialog extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'Default',
+                  'default'.tr(),
                   textAlign: TextAlign.center,
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,

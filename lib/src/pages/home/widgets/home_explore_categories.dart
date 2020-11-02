@@ -52,8 +52,8 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                   width: widget.pageStyle.deviceWidth,
                   height: widget.pageStyle.unitHeight * 460,
                   child: Swiper(
-                    itemCount: widget.categories.length > 8
-                        ? 8
+                    itemCount: widget.categories.length > 6
+                        ? 6
                         : widget.categories.length,
                     autoplay: true,
                     curve: Curves.easeIn,
@@ -79,8 +79,8 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                     ),
                     child: SmoothIndicator(
                       offset: activeIndex.toDouble(),
-                      count: widget.categories.length > 8
-                          ? 8
+                      count: widget.categories.length > 6
+                          ? 6
                           : widget.categories.length,
                       axisDirection: Axis.horizontal,
                       effect: SlideEffect(
@@ -106,7 +106,11 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               horizontal: widget.pageStyle.unitWidth * 15,
             ),
             child: InkWell(
-              onTap: () => Navigator.pushNamed(context, Routes.categoryList),
+              onTap: () => Navigator.pushNamed(
+                context,
+                Routes.categoryList,
+                arguments: widget.categories,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

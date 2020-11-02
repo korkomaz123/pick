@@ -9,7 +9,6 @@ import 'widgets/home_discover_stores.dart';
 import 'widgets/home_header_carousel.dart';
 import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_perfumes.dart';
-import 'widgets/home_recent.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';

@@ -107,7 +107,11 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
               vertical: widget.pageStyle.unitHeight * 4,
             ),
             child: InkWell(
-              onTap: () => Navigator.pushNamed(context, Routes.storeList),
+              onTap: () => Navigator.pushNamed(
+                context,
+                Routes.brandList,
+                arguments: widget.brands,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

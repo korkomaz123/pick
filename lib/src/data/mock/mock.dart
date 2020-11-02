@@ -124,12 +124,12 @@ final List<OrderEntity> orders = [
 ];
 
 List<String> sortByList = [
-  'Price (Low to High)',
-  'Price (High to Low)',
-  'Sort By Brand',
-  'Products on Sale',
-  'Name (A - Z)',
-  'Name (Z - A)',
+  'price_low_high',
+  'price_high_low',
+  'sort_by_brand',
+  'products_on_sale',
+  'name_az',
+  'name_za',
 ];
 
 List<CategoryMenuEntity> categoryMenu = List.generate(
