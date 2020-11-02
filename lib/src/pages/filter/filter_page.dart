@@ -222,7 +222,7 @@ class _FilterPageState extends State<FilterPage> {
             // height: pageStyle.unitHeight * 32,
             child: SelectOptionCustom(
               items: GenderEnum.values
-                  .map((e) => EnumToString.parse(e).toUpperCase())
+                  .map((e) => EnumToString.convertToString(e))
                   .toList(),
               itemWidth: pageStyle.unitWidth * 72,
               itemHeight: pageStyle.unitHeight * 31,

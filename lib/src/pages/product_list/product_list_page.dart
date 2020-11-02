@@ -9,6 +9,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
@@ -30,7 +31,8 @@ class ProductListPage extends StatefulWidget {
   _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> with SingleTickerProviderStateMixin {
+class _ProductListPageState extends State<ProductListPage>
+    with SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
@@ -40,13 +42,11 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
   bool isFromStore;
   String selectedCategory;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isLoading = true;
   TabController tabController;
 
   @override
   void initState() {
     super.initState();
-
     tabController = TabController(length: allCategories.length, vsync: this);
 
     arguments = widget.arguments;
@@ -56,13 +56,6 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
     activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
     isFromStore = arguments.isFromStore;
     selectedCategory = subCategories[activeSubcategoryIndex].name;
-    Timer.periodic(Duration(seconds: 3), (timer) {
-      timer.cancel();
-      isLoading = false;
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   @override
@@ -79,15 +72,15 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
           _buildAppBar(),
           isFromStore ? _buildStoreBar() : SizedBox.shrink(),
           _buildCategoryTabBar(),
-          isLoading
-              ? Expanded(
-                  child: Center(
-                    child: RippleLoadingSpinner(),
-                  ),
-                )
-              : Expanded(
-                  child: _buildCategoryTabView(),
-                ),
+          // isLoading
+          //     ? Expanded(
+          //         child: Center(
+          //           child: RippleLoadingSpinner(),
+          //         ),
+          //       )
+          Expanded(
+            child: _buildCategoryTabView(),
+          ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -206,7 +199,9 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
       controller: tabController,
       children: List.generate(
         allCategories.length,
-        (index) => index == 1 ? ProductNoAvailable(pageStyle: pageStyle) : _buildProductList(),
+        (index) => index == 1
+            ? ProductNoAvailable(pageStyle: pageStyle)
+            : _buildProductList(),
       ),
     );
   }
@@ -221,13 +216,17 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
             return Container(
               decoration: BoxDecoration(
                 border: Border(
-                  right: EasyLocalization.of(context).locale.languageCode == 'en' && index % 2 == 0
+                  right: EasyLocalization.of(context).locale.languageCode ==
+                              'en' &&
+                          index % 2 == 0
                       ? BorderSide(
                           color: greyColor,
                           width: pageStyle.unitWidth * 0.5,
                         )
                       : BorderSide.none,
-                  left: EasyLocalization.of(context).locale.languageCode == 'ar' && index % 2 == 0
+                  left: EasyLocalization.of(context).locale.languageCode ==
+                              'ar' &&
+                          index % 2 == 0
                       ? BorderSide(
                           color: greyColor,
                           width: pageStyle.unitWidth * 0.5,
@@ -241,7 +240,7 @@ class _ProductListPageState extends State<ProductListPage> with SingleTickerProv
               ),
               child: ProductVCard(
                 pageStyle: pageStyle,
-                product: homeCategories[0].products[1],
+                product: ProductModel(),
                 cardWidth: pageStyle.unitWidth * 186,
                 cardHeight: pageStyle.unitHeight * 253,
                 isShoppingCart: true,

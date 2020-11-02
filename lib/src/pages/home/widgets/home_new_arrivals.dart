@@ -1,6 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -11,8 +12,9 @@ import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<ProductModel> newArrivals;
 
-  HomeNewArrivals({this.pageStyle});
+  HomeNewArrivals({this.pageStyle, this.newArrivals});
 
   @override
   _HomeNewArrivalsState createState() => _HomeNewArrivalsState();
@@ -33,7 +35,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
           _buildHeadline(),
           HomeProductsCarousel(
             pageStyle: widget.pageStyle,
-            products: newArrivals.products,
+            products: widget.newArrivals,
             isVerticalCard: false,
           ),
           Divider(

@@ -1,6 +1,6 @@
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -9,7 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeProductsCarousel extends StatefulWidget {
   final PageStyle pageStyle;
-  final List<ProductEntity> products;
+  final List<ProductModel> products;
   final int crossAxisCount;
   final bool isVerticalCard;
 

@@ -2,6 +2,7 @@ import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -11,8 +12,9 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomePerfumes extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<ProductModel> perfumes;
 
-  HomePerfumes({this.pageStyle});
+  HomePerfumes({this.pageStyle, this.perfumes});
 
   @override
   _HomePerfumesState createState() => _HomePerfumesState();
@@ -110,7 +112,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
           ProductVCard(
             cardWidth: widget.pageStyle.unitWidth * 155,
             cardHeight: widget.pageStyle.unitHeight * 360,
-            product: perfumes.products[0],
+            product: widget.perfumes[0],
             pageStyle: widget.pageStyle,
             isShoppingCart: true,
             isWishlist: true,
@@ -131,7 +133,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
               ProductVCard(
                 cardWidth: widget.pageStyle.unitWidth * 155,
                 cardHeight: widget.pageStyle.unitHeight * 220,
-                product: perfumes.products[1],
+                product: widget.perfumes[1],
                 pageStyle: widget.pageStyle,
                 isShoppingCart: true,
                 isWishlist: true,
@@ -144,7 +146,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
               ProductVCard(
                 cardWidth: widget.pageStyle.unitWidth * 155,
                 cardHeight: widget.pageStyle.unitHeight * 220,
-                product: perfumes.products[1],
+                product: widget.perfumes[1],
                 pageStyle: widget.pageStyle,
                 isShoppingCart: true,
                 isWishlist: true,

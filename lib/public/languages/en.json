@@ -1,4 +1,5 @@
 {
+    "email": "Email",
     "username": "Username",
     "password": "Password",
     "new_password": "New Password",
@@ -22,6 +23,7 @@
     "get_new_password": "GET NEW PASSWORD",
     "get_new_password_error_text1": "Error: There is no account with that username or email, please try again",
     "login": "Login",
+    "logout": "Logout",
     "register": "Register",
     "get_new_password_success_title": "Thank You.\nPlease Check Your Email",
     "side_best_deals": "BEST DEALS",
@@ -179,5 +181,9 @@
     "reorder_button_title": "Reorder",
     "next_button_title": "Next",
     "product_brand": "Brand",
-    "suk": "SUK"
+    "suk": "SUK",
+    "required_email": "Email is required",
+    "invalid_email": "Email is invalid",
+    "required_password": "Password is required",
+    "short_length_password": "The length of your password is short"
 }

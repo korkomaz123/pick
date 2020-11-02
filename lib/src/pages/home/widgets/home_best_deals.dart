@@ -1,6 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -11,8 +12,9 @@ import 'home_products_carousel.dart';
 
 class HomeBestDeals extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<ProductModel> bestDeals;
 
-  HomeBestDeals({this.pageStyle});
+  HomeBestDeals({this.pageStyle, this.bestDeals});
 
   @override
   _HomeBestDealsState createState() => _HomeBestDealsState();
@@ -33,7 +35,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
           _buildHeadline(),
           HomeProductsCarousel(
             pageStyle: widget.pageStyle,
-            products: bestDeals.products,
+            products: widget.bestDeals,
           ),
           Divider(
             height: widget.pageStyle.unitHeight * 4,

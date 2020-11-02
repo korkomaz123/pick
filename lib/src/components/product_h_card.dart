@@ -1,4 +1,4 @@
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:share/share.dart';
+// import 'package:share/share.dart';
 
 class ProductHCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
-  final ProductEntity product;
+  final ProductModel product;
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
@@ -65,11 +65,11 @@ class _ProductHCardState extends State<ProductHCard> {
                     Routes.product,
                     arguments: widget.product,
                   ),
-                  child: Image.asset(
-                    'lib/public/images/shutterstock_151558448-1.png',
+                  child: Image.network(
+                    widget.product.imageUrl,
                     width: widget.cardWidth * 0.4,
                     height: widget.cardHeight * 0.7,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
                 Expanded(
@@ -99,7 +99,7 @@ class _ProductHCardState extends State<ProductHCard> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.product.price.toString() + ' ' + 'currency'.tr(),
+                              widget.product.price + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 fontSize: widget.pageStyle.unitFontSize * 12,
                                 color: greyColor,
@@ -108,7 +108,7 @@ class _ProductHCardState extends State<ProductHCard> {
                           ),
                           Expanded(
                             child: Text(
-                              widget.product.discount.toString() + ' ' + 'currency'.tr(),
+                              widget.product.price + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -147,7 +147,11 @@ class _ProductHCardState extends State<ProductHCard> {
             children: [
               widget.isWishlist
                   ? Align(
-                      alignment: EasyLocalization.of(context).locale.languageCode == 'en' ? Alignment.topRight : Alignment.topLeft,
+                      alignment:
+                          EasyLocalization.of(context).locale.languageCode ==
+                                  'en'
+                              ? Alignment.topRight
+                              : Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: InkWell(
@@ -175,7 +179,7 @@ class _ProductHCardState extends State<ProductHCard> {
     );
   }
 
-  void _onAddProductToCart(BuildContext context, ProductEntity product) {
+  void _onAddProductToCart(BuildContext context, ProductModel product) {
     Flushbar(
       messageText: Container(
         width: widget.pageStyle.unitWidth * 300,
@@ -233,9 +237,5 @@ class _ProductHCardState extends State<ProductHCard> {
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: primaryColor,
     )..show(context);
-  }
-
-  void _onShareProduct() {
-    Share.share('Share my product');
   }
 }

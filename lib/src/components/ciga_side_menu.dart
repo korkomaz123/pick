@@ -1,5 +1,6 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -54,44 +55,79 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       color: primaryColor,
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: pageStyle.unitHeight * 40,
-                left: pageStyle.unitWidth * 30,
-              ),
-              child: SvgPicture.asset(
+          _buildHeaderLogo(),
+          _buildHeaderAuth(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderLogo() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: pageStyle.unitHeight * 40,
+          left: pageStyle.unitWidth * 30,
+        ),
+        child: user != null
+            ? Row(
+                children: [
+                  Container(
+                    width: pageStyle.unitWidth * 57,
+                    height: pageStyle.unitWidth * 57,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('lib/public/images/profile.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: pageStyle.unitWidth * 10),
+                  Text(
+                    'Hello, ' + user.firstName,
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              )
+            : SvgPicture.asset(
                 logoIcon,
                 width: pageStyle.unitWidth * 95,
                 height: pageStyle.unitHeight * 55,
               ),
-            ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderAuth() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: InkWell(
+        onTap: () => user != null ? _logout() : _login(),
+        child: Container(
+          padding: EdgeInsets.only(
+            left: pageStyle.unitWidth * 30,
+            bottom: pageStyle.unitHeight * 10,
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: EdgeInsets.only(
-                left: pageStyle.unitWidth * 30,
-                bottom: pageStyle.unitHeight * 10,
+          width: double.infinity,
+          child: Row(
+            children: [
+              SvgPicture.asset(sideLoginIcon),
+              SizedBox(width: pageStyle.unitWidth * 4),
+              Text(
+                user != null ? 'logout'.tr() : 'login'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: Colors.white,
+                  fontSize: pageStyle.unitFontSize * 14,
+                ),
               ),
-              width: double.infinity,
-              child: Row(
-                children: [
-                  SvgPicture.asset(sideLoginIcon),
-                  SizedBox(width: pageStyle.unitWidth * 4),
-                  Text(
-                    'login'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: Colors.white,
-                      fontSize: pageStyle.unitFontSize * 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -137,7 +173,6 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               width: double.infinity,
               padding: EdgeInsets.symmetric(
                 horizontal: pageStyle.unitWidth * 10,
-                // vertical: pageStyle.unitHeight * 4,
               ),
               child: Column(
                 children: List.generate(allCategories.length, (index) {
@@ -227,4 +262,11 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       ),
     );
   }
+
+  void _login() async {
+    await Navigator.pushNamed(context, Routes.signIn);
+    setState(() {});
+  }
+
+  void _logout() {}
 }

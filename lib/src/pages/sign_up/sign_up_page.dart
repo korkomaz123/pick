@@ -26,7 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: primarySwatchColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -220,7 +220,7 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Text(
                 'suffix_agree_terms'.tr(),
                 style: bookTextStyle.copyWith(
-                  color: primarySwatchColor,
+                  color: Colors.white54,
                   fontSize: pageStyle.unitFontSize * 16,
                 ),
               ),

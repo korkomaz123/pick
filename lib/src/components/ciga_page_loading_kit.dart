@@ -2,13 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+class PouringHourLoadingSpinner extends StatefulWidget {
+  @override
+  _PouringHourLoadingSpinnerState createState() =>
+      _PouringHourLoadingSpinnerState();
+}
+
+class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner>
+    with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitPouringHourglass(
+      controller: AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 1200),
+      ),
+      color: primaryColor,
+    );
+  }
+}
+
 class BounceLoadingSpinner extends StatefulWidget {
   @override
   _BounceLoadingSpinnerState createState() => _BounceLoadingSpinnerState();
 }
 
 class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitDoubleBounce(
@@ -27,7 +47,7 @@ class PulseLoadingSpinner extends StatefulWidget {
 }
 
 class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitPulse(
@@ -46,7 +66,7 @@ class RippleLoadingSpinner extends StatefulWidget {
 }
 
 class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitRipple(

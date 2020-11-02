@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -9,8 +10,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<BrandEntity> brands;
 
-  HomeDiscoverStores({this.pageStyle});
+  HomeDiscoverStores({this.pageStyle, this.brands});
 
   @override
   _HomeDiscoverStoresState createState() => _HomeDiscoverStoresState();
@@ -44,7 +46,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                   width: widget.pageStyle.deviceWidth,
                   height: widget.pageStyle.unitHeight * 380,
                   child: Swiper(
-                    itemCount: 8,
+                    itemCount: widget.brands.length,
                     autoplay: true,
                     curve: Curves.easeIn,
                     duration: 300,
@@ -55,11 +57,12 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                       });
                     },
                     itemBuilder: (context, index) {
+                      BrandEntity brand = widget.brands[index];
                       return Container(
                         width: widget.pageStyle.deviceWidth,
                         height: widget.pageStyle.unitHeight * 380,
-                        child: Image.asset(
-                          'lib/public/images/Image 57@3x.png',
+                        child: Image.network(
+                          brand.brandThumbnail,
                           width: widget.pageStyle.unitWidth * 217,
                           height: widget.pageStyle.unitHeight * 219,
                         ),
@@ -71,10 +74,11 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: EdgeInsets.only(
-                        bottom: widget.pageStyle.unitHeight * 20),
+                      bottom: widget.pageStyle.unitHeight * 20,
+                    ),
                     child: SmoothIndicator(
                       offset: activeIndex.toDouble(),
-                      count: 8,
+                      count: widget.brands.length,
                       axisDirection: Axis.horizontal,
                       effect: SlideEffect(
                         spacing: 8.0,

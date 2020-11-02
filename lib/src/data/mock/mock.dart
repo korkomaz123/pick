@@ -7,19 +7,19 @@ import 'package:ciga/src/data/models/order_entity.dart';
 /// category list for home screen
 final List<CategoryEntity> homeCategories = [
   CategoryEntity(
-    id: '1',
+    id: '41',
     name: 'Best Deal',
     products: products,
     subCategories: subCategories,
   ),
   CategoryEntity(
-    id: '3',
+    id: '42',
     name: 'New Arrivals',
     products: products,
     subCategories: subCategories,
   ),
   CategoryEntity(
-    id: '4',
+    id: '43',
     name: 'Perfumes',
     products: products,
     subCategories: subCategories,
@@ -146,7 +146,8 @@ List<CategoryMenuEntity> categoryMenu = List.generate(
           6,
           (subSubMenuIndex) => CategoryMenuEntity(
             id: '${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
-            title: 'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
+            title:
+                'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
             subMenu: [],
           ),
         ),
@@ -180,3 +181,7 @@ List<AddressEntity> shippingAddresses = List.generate(4, (index) {
     phoneNumber: '+9653373373',
   );
 }).toList();
+
+UserEntity user;
+
+String lang = 'en';

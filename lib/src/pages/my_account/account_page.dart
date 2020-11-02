@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -383,11 +384,13 @@ class _AccountPageState extends State<AccountPage> {
                                 EasyLocalization.of(context)
                                     .supportedLocales
                                     .first;
+                            lang = 'en';
                           } else {
                             EasyLocalization.of(context).locale =
                                 EasyLocalization.of(context)
                                     .supportedLocales
                                     .last;
+                            lang = 'ar';
                           }
                           setState(() {});
                         }

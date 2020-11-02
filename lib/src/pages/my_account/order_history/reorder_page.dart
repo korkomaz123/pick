@@ -8,6 +8,7 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
@@ -267,7 +268,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                     pageStyle: pageStyle,
                     cardWidth: pageStyle.unitWidth * 340,
                     cardHeight: pageStyle.unitHeight * 150,
-                    product: myCartItems[index].product,
+                    product: ProductModel(),
                   ),
                   Align(
                     alignment:

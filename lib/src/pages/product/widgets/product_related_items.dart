@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                   child: ProductVCard(
                     cardWidth: pageStyle.unitWidth * 150,
                     cardHeight: pageStyle.unitHeight * 256,
-                    product: products[index],
+                    product: ProductModel(),
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,

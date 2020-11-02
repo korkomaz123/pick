@@ -1,4 +1,3 @@
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,7 @@ class HomeRecent extends StatelessWidget {
           ),
           HomeProductsCarousel(
             pageStyle: pageStyle,
-            products: homeCategories[0].products,
+            products: [],
             crossAxisCount: 2,
           ),
           Divider(

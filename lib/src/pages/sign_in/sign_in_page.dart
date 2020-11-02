@@ -1,13 +1,22 @@
+import 'dart:io';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:string_validator/string_validator.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -17,65 +26,115 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   PageStyle pageStyle;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController userNameController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isShowPass = false;
+  SignInBloc signInBloc;
+  ProgressService progressService;
+  SnackBarService snackBarService;
+  LocalStorageInterface localStorage;
+
+  @override
+  void initState() {
+    super.initState();
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: _scaffoldKey,
+    );
+    signInBloc = context.bloc<SignInBloc>();
+  }
+
+  void _saveToken(UserEntity loggedInUser) async {
+    localStorage = await LocalStorage.getInstance();
+    user = loggedInUser;
+    await localStorage.setString('token', user.token);
+  }
 
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: pageStyle.unitHeight * 100,
-                ),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  logoIcon,
-                  width: pageStyle.unitWidth * 120,
-                  height: pageStyle.unitHeight * 80,
-                ),
+      body: BlocConsumer<SignInBloc, SignInState>(
+        listener: (context, state) {
+          if (state is SignInSubmittedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is SignInSubmittedSuccess) {
+            _saveToken(state.user);
+            progressService.hideProgress();
+            Navigator.pop(context);
+          }
+          if (state is SignInSubmittedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: pageStyle.unitHeight * 100,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      logoIcon,
+                      width: pageStyle.unitWidth * 120,
+                      height: pageStyle.unitHeight * 80,
+                    ),
+                  ),
+                  _buildEmail(),
+                  _buildPassword(),
+                  SizedBox(height: 40),
+                  _buildSignInButton(),
+                  SizedBox(height: 10),
+                  _buildForgotPassword(),
+                  SizedBox(height: 40),
+                  _buildOrDivider(),
+                  SizedBox(height: 40),
+                  _buildExternalSignInButtons(),
+                  SizedBox(height: 40),
+                  _buildSignUpPhase(),
+                ],
               ),
-              _buildUsername(),
-              _buildPassword(),
-              SizedBox(height: 40),
-              _buildSignInButton(),
-              SizedBox(height: 10),
-              _buildForgotPassword(),
-              SizedBox(height: 40),
-              _buildOrDivider(),
-              SizedBox(height: 40),
-              _buildExternalSignInButtons(),
-              SizedBox(height: 40),
-              _buildSignUpPhase(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildUsername() {
+  Widget _buildEmail() {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextFormField(
-        controller: userNameController,
+        controller: emailController,
         style: bookTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_email'.tr();
+          } else if (!isEmail(value)) {
+            return 'invalid_email'.tr();
+          }
+          return null;
+        },
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
-          hintText: 'username'.tr(),
+          hintText: 'email'.tr(),
           hintStyle: bookTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
@@ -107,6 +166,14 @@ class _SignInPageState extends State<SignInPage> {
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_password'.tr();
+          } else if (!isLength(value, 5)) {
+            return 'short_length_password'.tr();
+          }
+          return null;
+        },
         decoration: InputDecoration(
           hintText: 'password'.tr(),
           hintStyle: bookTextStyle.copyWith(
@@ -153,7 +220,7 @@ class _SignInPageState extends State<SignInPage> {
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _signIn(),
         radius: 20,
       ),
     );
@@ -215,8 +282,14 @@ class _SignInPageState extends State<SignInPage> {
           SvgPicture.asset(googleIcon),
           SizedBox(width: pageStyle.unitWidth * 20),
           SvgPicture.asset(twitterIcon),
-          SizedBox(width: pageStyle.unitWidth * 20),
-          SvgPicture.asset(appleIcon),
+          Platform.isIOS
+              ? Row(
+                  children: [
+                    SizedBox(width: pageStyle.unitWidth * 20),
+                    SvgPicture.asset(appleIcon),
+                  ],
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );
@@ -249,5 +322,14 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
+  }
+
+  void _signIn() {
+    if (_formKey.currentState.validate()) {
+      signInBloc.add(SignInSubmitted(
+        email: emailController.text,
+        password: passwordController.text,
+      ));
+    }
   }
 }

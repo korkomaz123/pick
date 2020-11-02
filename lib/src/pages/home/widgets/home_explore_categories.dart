@@ -1,4 +1,4 @@
-import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/pages/home/widgets/home_category_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -11,8 +11,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeExploreCategories extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<CategoryEntity> categories;
 
-  HomeExploreCategories({this.pageStyle});
+  HomeExploreCategories({this.pageStyle, this.categories});
 
   @override
   _HomeExploreCategoriesState createState() => _HomeExploreCategoriesState();
@@ -51,20 +52,21 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                   width: widget.pageStyle.deviceWidth,
                   height: widget.pageStyle.unitHeight * 460,
                   child: Swiper(
-                    itemCount: allCategories.length,
+                    itemCount: widget.categories.length > 8
+                        ? 8
+                        : widget.categories.length,
                     autoplay: true,
                     curve: Curves.easeIn,
                     duration: 300,
                     autoplayDelay: 5000,
                     onIndexChanged: (value) {
-                      setState(() {
-                        activeIndex = value;
-                      });
+                      activeIndex = value;
+                      setState(() {});
                     },
                     itemBuilder: (context, index) {
                       return HomeCategoryCard(
                         pageStyle: widget.pageStyle,
-                        category: allCategories[index],
+                        category: widget.categories[index],
                       );
                     },
                   ),
@@ -77,7 +79,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                     ),
                     child: SmoothIndicator(
                       offset: activeIndex.toDouble(),
-                      count: allCategories.length,
+                      count: widget.categories.length > 8
+                          ? 8
+                          : widget.categories.length,
                       axisDirection: Axis.horizontal,
                       effect: SlideEffect(
                         spacing: 8.0,

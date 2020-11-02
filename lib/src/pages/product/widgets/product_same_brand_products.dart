@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
                 return ProductHCard(
                   cardWidth: widget.pageStyle.unitWidth * 343,
                   cardHeight: widget.pageStyle.unitHeight * 208,
-                  product: products[index],
+                  product: ProductModel(),
                   pageStyle: widget.pageStyle,
                 );
               },
