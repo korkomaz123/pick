@@ -142,7 +142,7 @@ class CigaBottomBar extends StatelessWidget {
           Routes.home,
           (route) => false,
         );
-        Navigator.pushNamed(context, Routes.storeList);
+        Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
         Navigator.pushNamedAndRemoveUntil(

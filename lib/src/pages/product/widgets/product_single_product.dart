@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -16,7 +16,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final PageStyle pageStyle;
-  final ProductEntity product;
+  final ProductModel product;
 
   ProductSingleProduct({this.pageStyle, this.product});
 
@@ -24,9 +24,10 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct> with TickerProviderStateMixin {
+class _ProductSingleProductState extends State<ProductSingleProduct>
+    with TickerProviderStateMixin {
   PageStyle pageStyle;
-  ProductEntity product;
+  ProductModel product;
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
@@ -244,7 +245,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 ),
               ),
               Text(
-                product.store.name,
+                // product.store.name,
+                '',
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -315,7 +317,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               ),
               SizedBox(width: pageStyle.unitWidth * 10),
               Text(
-                product.discount.toString() + ' ' + 'currency'.tr(),
+                product.price + ' ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   decorationStyle: TextDecorationStyle.solid,
                   decoration: TextDecoration.lineThrough,
@@ -377,7 +379,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
     );
   }
 
-  void _onAddToCart(ProductEntity product) {
+  void _onAddToCart(ProductModel product) {
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _addToCartController.stop(canceled: true);

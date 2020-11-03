@@ -1,9 +1,11 @@
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -11,8 +13,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductSameBrandProducts extends StatefulWidget {
   final PageStyle pageStyle;
+  final ProductModel product;
 
-  ProductSameBrandProducts({this.pageStyle});
+  ProductSameBrandProducts({this.pageStyle, this.product});
 
   @override
   _ProductSameBrandProductsState createState() =>
@@ -21,12 +24,23 @@ class ProductSameBrandProducts extends StatefulWidget {
 
 class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   PageStyle pageStyle;
+  ProductModel product;
   int activeIndex = 0;
+  List<ProductModel> sameBrandProducts = [];
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    product = widget.product;
+    _getSameBrandProducts();
+  }
+
+  void _getSameBrandProducts() async {
+    sameBrandProducts = await context
+        .repository<ProductRepository>()
+        .getSameBrandProducts(product.productId, lang);
+    setState(() {});
   }
 
   @override
@@ -48,7 +62,9 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
-          _buildProductCarousel(),
+          sameBrandProducts.isNotEmpty
+              ? _buildProductCarousel()
+              : SizedBox.shrink(),
         ],
       ),
     );
@@ -64,7 +80,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
             width: widget.pageStyle.unitWidth * 350,
             height: widget.pageStyle.unitHeight * 220,
             child: Swiper(
-              itemCount: products.length,
+              itemCount: sameBrandProducts.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -78,7 +94,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
                 return ProductHCard(
                   cardWidth: widget.pageStyle.unitWidth * 343,
                   cardHeight: widget.pageStyle.unitHeight * 208,
-                  product: ProductModel(),
+                  product: sameBrandProducts[index],
                   pageStyle: widget.pageStyle,
                 );
               },
@@ -92,7 +108,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: products.length,
+                count: sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

@@ -10,7 +10,6 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
-import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -23,6 +22,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
+import 'bloc/product_list_bloc.dart';
 import 'widgets/product_list_view.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _ProductListPageState extends State<ProductListPage> {
   String selectedCategory;
   TabController tabController;
   CategoryBloc categoryBloc;
-  ProductBloc productBloc;
+  ProductListBloc productListBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
 
@@ -65,7 +65,7 @@ class _ProductListPageState extends State<ProductListPage> {
     subCategories = [category];
     selectedCategory = subCategories[activeSubcategoryIndex].name;
 
-    productBloc = context.bloc<ProductBloc>();
+    productListBloc = context.bloc<ProductListBloc>();
     categoryBloc = context.bloc<CategoryBloc>();
     categoryBloc.add(CategorySubCategoriesLoaded(categoryId: category.id));
 
@@ -112,6 +112,8 @@ class _ProductListPageState extends State<ProductListPage> {
                   activeIndex: widget.arguments.selectedSubCategoryIndex,
                   scaffoldKey: scaffoldKey,
                   pageStyle: pageStyle,
+                  isFromBrand: isFromBrand,
+                  brand: brand,
                   onChangeTab: (index) => _onChangeTab(index),
                 );
               } else {
@@ -229,7 +231,7 @@ class _ProductListPageState extends State<ProductListPage> {
     if (result != null) {
       if (sortByItem != result) {
         sortByItem = result;
-        productBloc.add(ProductListSorted(
+        productListBloc.add(ProductListSorted(
           categoryId: subCategories[activeSubcategoryIndex].id,
           lang: lang,
           sortItem: result,
@@ -240,7 +242,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onChangeTab(int index) {
     activeSubcategoryIndex = index;
-    productBloc.add(ProductListSorted(
+    productListBloc.add(ProductListLoaded(
       categoryId: subCategories[index].id,
       lang: lang,
     ));

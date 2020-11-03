@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -21,63 +21,28 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Stream<ProductState> mapEventToState(
     ProductEvent event,
   ) async* {
-    if (event is ProductListLoaded) {
-      yield* _mapProductListLoadedToState(
-        event.categoryId,
-        event.lang,
-      );
-    } else if (event is ProductListSorted) {
-      yield* _mapProductListSortedToState(
-        event.categoryId,
-        event.lang,
-        event.sortItem,
-      );
+    if (event is ProductDetailsLoaded) {
+      yield* _mapProductDetailsLoadedToState(event.productId, event.lang);
     }
   }
 
-  Stream<ProductState> _mapProductListLoadedToState(
-    String categoryId,
+  Stream<ProductState> _mapProductDetailsLoadedToState(
+    String productId,
     String lang,
   ) async* {
-    yield ProductListLoadedInProcess();
-    try {
-      final result = await _productRepository.getProducts(categoryId, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        List<ProductModel> products = [];
-        for (int i = 0; i < productList.length; i++) {
-          products.add(ProductModel.fromJson(productList[i]));
-        }
-        yield ProductListLoadedSuccess(products: products);
-      } else {
-        yield ProductListLoadedFailure(message: result['errorMessage']);
-      }
-    } catch (e) {
-      yield ProductListLoadedFailure(message: e.toString());
-    }
-  }
-
-  Stream<ProductState> _mapProductListSortedToState(
-    String categoryId,
-    String lang,
-    String sortItem,
-  ) async* {
-    yield ProductListLoadedInProcess();
+    yield ProductDetailsLoadedInProcess();
     try {
       final result =
-          await _productRepository.sortProducts(categoryId, sortItem, lang);
+          await _productRepository.getProductDetails(productId, lang);
+      print(result);
       if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        List<ProductModel> products = [];
-        for (int i = 0; i < productList.length; i++) {
-          products.add(ProductModel.fromJson(productList[i]));
-        }
-        yield ProductListLoadedSuccess(products: products);
+        final productEntity = ProductEntity.fromJson(result['product']);
+        yield ProductDetailsLoadedSuccess(productEntity: productEntity);
       } else {
-        yield ProductListLoadedFailure(message: result['errorMessage']);
+        yield ProductDetailsLoadedFailure(message: result['errorMessage']);
       }
     } catch (e) {
-      yield ProductListLoadedFailure(message: e.toString());
+      yield ProductDetailsLoadedFailure(message: e.toString());
     }
   }
 }

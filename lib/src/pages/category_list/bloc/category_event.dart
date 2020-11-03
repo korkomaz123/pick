@@ -16,3 +16,12 @@ class CategorySubCategoriesLoaded extends CategoryEvent {
   @override
   List<Object> get props => [categoryId, lang];
 }
+
+class CategoryListLoaded extends CategoryEvent {
+  final String lang;
+
+  CategoryListLoaded({this.lang});
+
+  @override
+  List<Object> get props => [lang];
+}

@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -9,9 +10,13 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'bloc/brand_bloc.dart';
 
 class BrandListPage extends StatefulWidget {
   final List<BrandEntity> brands;
@@ -23,14 +28,24 @@ class BrandListPage extends StatefulWidget {
 }
 
 class _BrandListPageState extends State<BrandListPage> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List<BrandEntity> brands;
   PageStyle pageStyle;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  BrandBloc brandBloc;
+  SnackBarService snackBarService;
 
   @override
   void initState() {
     super.initState();
     brands = widget.brands;
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    brandBloc = context.bloc<BrandBloc>();
+    if (brands == null) {
+      brandBloc.add(BrandListLoaded());
+    }
   }
 
   @override
@@ -45,16 +60,41 @@ class _BrandListPageState extends State<BrandListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: List.generate(
-                  brands.length,
-                  (index) => _buildBrandCard(index),
+          brands != null
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        brands.length,
+                        (index) => _buildBrandCard(index),
+                      ),
+                    ),
+                  ),
+                )
+              : BlocConsumer<BrandBloc, BrandState>(
+                  listener: (context, state) {
+                    if (state is BrandListLoadedFailure) {
+                      snackBarService.showErrorSnackBar(state.message);
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is BrandListLoadedSuccess) {
+                      brands = state.brands;
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: List.generate(
+                              brands.length,
+                              (index) => _buildBrandCard(index),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -71,25 +111,66 @@ class _BrandListPageState extends State<BrandListPage> {
       color: primarySwatchColor,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          InkWell(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: pageStyle.unitFontSize * 20,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          Text(
-            'brands_title'.tr(),
-            style: boldTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
-            ),
-          ),
-          SizedBox.shrink(),
+          _buildCategoryButton(),
+          _buildBrandButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => Navigator.pushReplacementNamed(
+          context,
+          Routes.categoryList,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(lang == 'en' ? 30 : 0),
+            bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
+            topRight: Radius.circular(lang == 'ar' ? 30 : 0),
+            bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
+          ),
+        ),
+        color: Colors.white,
+        elevation: 0,
+        child: Text(
+          'home_categories'.tr(),
+          style: boldTextStyle.copyWith(
+            color: greyColor,
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBrandButton() {
+    return Container(
+      width: pageStyle.unitWidth * 100,
+      child: MaterialButton(
+        onPressed: () => null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+            bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+            topRight: Radius.circular(lang == 'en' ? 30 : 0),
+            bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
+          ),
+        ),
+        color: Colors.white.withOpacity(0.4),
+        elevation: 0,
+        child: Text(
+          'brands_title'.tr(),
+          style: boldTextStyle.copyWith(
+            color: Colors.white,
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
+        ),
       ),
     );
   }

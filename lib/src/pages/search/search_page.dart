@@ -1,9 +1,14 @@
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -20,6 +25,16 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
   List<String> searchHistory = ['Arab Perfumes', 'Asia Perfumes', 'Body care'];
   String filterData;
+  Future<List<CategoryEntity>> futureCategories;
+  Future<List<BrandEntity>> futureBrands;
+
+  @override
+  void initState() {
+    super.initState();
+    futureCategories =
+        context.repository<CategoryRepository>().getAllCategories(lang);
+    futureBrands = context.repository<BrandRepository>().getAllBrands();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +262,31 @@ class _SearchPageState extends State<SearchPage> {
           positioning: SnapPositioning.relativeToAvailableSpace,
         ),
         builder: (context, state) {
-          return SearchFilterDialog(pageStyle: pageStyle);
+          return FutureBuilder(
+            future: futureCategories,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                List<CategoryEntity> categories = snapshot.data;
+                return FutureBuilder(
+                  future: futureBrands,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      List<BrandEntity> brands = snapshot.data;
+                      return SearchFilterDialog(
+                        pageStyle: pageStyle,
+                        categories: categories,
+                        brands: brands,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                );
+              } else {
+                return Container();
+              }
+            },
+          );
         },
       );
     });

@@ -1,3 +1,5 @@
+import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +8,10 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class SearchFilterDialog extends StatefulWidget {
   final PageStyle pageStyle;
+  final List<CategoryEntity> categories;
+  final List<BrandEntity> brands;
 
-  SearchFilterDialog({this.pageStyle});
+  SearchFilterDialog({this.pageStyle, this.categories, this.brands});
 
   @override
   _SearchFilterDialogState createState() => _SearchFilterDialogState();
@@ -17,6 +21,16 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   String category;
   String store;
   String gender;
+
+  List<CategoryEntity> categories;
+  List<BrandEntity> brands;
+
+  @override
+  void initState() {
+    super.initState();
+    categories = widget.categories;
+    brands = widget.brands;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +55,16 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
               width: double.infinity,
               height: widget.pageStyle.unitHeight * 60,
               child: SelectOptionCustomCustom(
-                items: List.generate(6, (index) => 'Category $index'),
+                items: List.generate(
+                  categories.length,
+                  (index) => categories[index].name,
+                ),
                 value: category,
-                titleSize: widget.pageStyle.unitFontSize * 16,
+                titleSize: widget.pageStyle.unitFontSize * 14,
                 itemSpace: widget.pageStyle.unitWidth * 0,
-                radius: widget.pageStyle.unitWidth * 6,
+                radius: widget.pageStyle.unitWidth * 10,
                 selectedColor: primaryColor,
-                unSelectedColor: Colors.grey.shade300,
+                unSelectedColor: Colors.grey.shade200,
                 selectedBorderColor: Colors.transparent,
                 unSelectedBorderColor: Colors.transparent,
                 selectedTitleColor: Colors.white,
@@ -59,7 +76,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             ),
             SizedBox(height: widget.pageStyle.unitHeight * 20),
             Text(
-              'bottom_store'.tr(),
+              'brands_title'.tr(),
               style: boldTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: widget.pageStyle.unitFontSize * 23,
@@ -69,13 +86,16 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
               width: double.infinity,
               height: widget.pageStyle.unitHeight * 60,
               child: SelectOptionCustomCustom(
-                items: List.generate(6, (index) => 'Store $index'),
+                items: List.generate(
+                  brands.length,
+                  (index) => brands[index].brandLabel,
+                ),
                 value: store,
-                titleSize: widget.pageStyle.unitFontSize * 16,
+                titleSize: widget.pageStyle.unitFontSize * 14,
                 itemSpace: widget.pageStyle.unitWidth * 0,
-                radius: widget.pageStyle.unitWidth * 6,
+                radius: widget.pageStyle.unitWidth * 10,
                 selectedColor: primaryColor,
-                unSelectedColor: Colors.grey.shade300,
+                unSelectedColor: Colors.grey.shade200,
                 selectedBorderColor: Colors.transparent,
                 unSelectedBorderColor: Colors.transparent,
                 selectedTitleColor: Colors.white,
@@ -99,11 +119,11 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
               child: SelectOptionCustomCustom(
                 items: List.generate(3, (index) => 'Gender $index'),
                 value: gender,
-                titleSize: widget.pageStyle.unitFontSize * 16,
+                titleSize: widget.pageStyle.unitFontSize * 14,
                 itemSpace: widget.pageStyle.unitWidth * 0,
-                radius: widget.pageStyle.unitWidth * 6,
+                radius: widget.pageStyle.unitWidth * 10,
                 selectedColor: primaryColor,
-                unSelectedColor: Colors.grey.shade300,
+                unSelectedColor: Colors.grey.shade200,
                 selectedBorderColor: Colors.transparent,
                 unSelectedBorderColor: Colors.transparent,
                 selectedTitleColor: Colors.white,

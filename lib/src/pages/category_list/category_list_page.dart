@@ -11,10 +11,14 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'bloc/category_bloc.dart';
 
 class CategoryListPage extends StatefulWidget {
   final List<CategoryEntity> categories;
@@ -31,11 +35,21 @@ class _CategoryListPageState extends State<CategoryListPage> {
   int activeIndex;
   List<CategoryEntity> categories;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  CategoryBloc categoryBloc;
+  SnackBarService snackBarService;
 
   @override
   void initState() {
     super.initState();
     categories = widget.categories;
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    categoryBloc = context.bloc<CategoryBloc>();
+    if (categories == null) {
+      categoryBloc.add(CategoryListLoaded(lang: lang));
+    }
   }
 
   @override
@@ -50,24 +64,58 @@ class _CategoryListPageState extends State<CategoryListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: List.generate(
-                  categories.length,
-                  (index) => Column(
-                    children: [
-                      _buildCategoryCard(categories[index]),
-                      activeIndex == index
-                          ? _buildSubcategoriesList(categories[index])
-                          : SizedBox.shrink(),
-                      SizedBox(height: pageStyle.unitHeight * 6),
-                    ],
+          categories != null
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        categories.length,
+                        (index) => Column(
+                          children: [
+                            _buildCategoryCard(categories[index]),
+                            activeIndex == index
+                                ? _buildSubcategoriesList(categories[index])
+                                : SizedBox.shrink(),
+                            SizedBox(height: pageStyle.unitHeight * 6),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
+                )
+              : BlocConsumer<CategoryBloc, CategoryState>(
+                  listener: (context, state) {
+                    if (state is CategoryListLoadedFailure) {
+                      snackBarService.showErrorSnackBar(state.message);
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is CategoryListLoadedSuccess) {
+                      categories = state.categories;
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: List.generate(
+                              categories.length,
+                              (index) => Column(
+                                children: [
+                                  _buildCategoryCard(categories[index]),
+                                  activeIndex == index
+                                      ? _buildSubcategoriesList(
+                                          categories[index])
+                                      : SizedBox.shrink(),
+                                  SizedBox(height: pageStyle.unitHeight * 6),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -187,18 +235,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
         onPressed: () => null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
-            ),
-            bottomLeft: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'en' ? 30 : 0,
-            ),
-            topRight: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
-            ),
-            bottomRight: Radius.circular(
-              EasyLocalization.of(context).locale.languageCode == 'ar' ? 30 : 0,
-            ),
+            topLeft: Radius.circular(lang == 'en' ? 30 : 0),
+            bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
+            topRight: Radius.circular(lang == 'ar' ? 30 : 0),
+            bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
           ),
         ),
         color: Colors.white.withOpacity(0.4),
@@ -220,7 +260,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
       child: MaterialButton(
         onPressed: () => Navigator.pushReplacementNamed(
           context,
-          Routes.storeList,
+          Routes.brandList,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(

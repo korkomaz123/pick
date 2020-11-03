@@ -1,11 +1,14 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
+import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
+import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_repository.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
+import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +30,7 @@ class CigaApp extends StatelessWidget {
   final SignInRepository signInRepository = SignInRepository();
   final CategoryRepository categoryRepository = CategoryRepository();
   final ProductRepository productRepository = ProductRepository();
+  final BrandRepository brandRepository = BrandRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -38,32 +42,48 @@ class CigaApp extends StatelessWidget {
           value: categoryRepository,
           child: RepositoryProvider.value(
             value: productRepository,
-            child: ChangeNotifierProvider<PlaceChangeNotifier>(
-              create: (context) => PlaceChangeNotifier(),
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) => HomeBloc(
-                      homeRepository: homeRepository,
+            child: RepositoryProvider.value(
+              value: brandRepository,
+              child: ChangeNotifierProvider<PlaceChangeNotifier>(
+                create: (context) => PlaceChangeNotifier(),
+                child: MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => HomeBloc(
+                        homeRepository: homeRepository,
+                        categoryRepository: categoryRepository,
+                        productRepository: productRepository,
+                        brandRepository: brandRepository,
+                      ),
                     ),
-                  ),
-                  BlocProvider(
-                    create: (context) => SignInBloc(
-                      signInRepository: signInRepository,
+                    BlocProvider(
+                      create: (context) => SignInBloc(
+                        signInRepository: signInRepository,
+                      ),
                     ),
-                  ),
-                  BlocProvider(
-                    create: (context) => CategoryBloc(
-                      categoryRepository: categoryRepository,
+                    BlocProvider(
+                      create: (context) => CategoryBloc(
+                        categoryRepository: categoryRepository,
+                      ),
                     ),
-                  ),
-                  BlocProvider(
-                    create: (context) => ProductBloc(
-                      productRepository: productRepository,
+                    BlocProvider(
+                      create: (context) => ProductBloc(
+                        productRepository: productRepository,
+                      ),
                     ),
-                  ),
-                ],
-                child: CigaAppView(),
+                    BlocProvider(
+                      create: (context) => BrandBloc(
+                        brandRepository: brandRepository,
+                      ),
+                    ),
+                    BlocProvider(
+                      create: (context) => ProductListBloc(
+                        productRepository: productRepository,
+                      ),
+                    ),
+                  ],
+                  child: CigaAppView(),
+                ),
               ),
             ),
           ),

@@ -27,6 +27,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         event.categoryId,
         event.lang,
       );
+    } else if (event is CategoryListLoaded) {
+      yield* _mapCategoryListLoadedToState(event.lang);
     }
   }
 
@@ -52,6 +54,16 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       }
     } catch (e) {
       yield CategorySubCategoriesLoadedFailure(message: e.toString());
+    }
+  }
+
+  Stream<CategoryState> _mapCategoryListLoadedToState(String lang) async* {
+    yield CategoryListLoadedInProcess();
+    try {
+      final categories = await _categoryRepository.getAllCategories(lang);
+      yield CategoryListLoadedSuccess(categories: categories);
+    } catch (e) {
+      yield CategoryListLoadedFailure(message: e.toString());
     }
   }
 }

@@ -1,15 +1,15 @@
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
-import 'package:ciga/src/data/models/slider_image_entity.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 
-class HomeRepository {
+class BrandRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<SliderImageEntity>> getHomeSliderImages() async {
-    String url = EndPoints.getHomeSliders;
+  Future<List<BrandEntity>> getAllBrands() async {
+    String url = EndPoints.getAllBrands;
     final result = await Api.getMethod(url);
-    List<dynamic> data = result['data'];
-    return data.map((e) => SliderImageEntity.fromJson(e)).toList();
+    List<dynamic> data = result['brand'];
+    return data.map((e) => BrandEntity.fromJson(e)).toList();
   }
 }

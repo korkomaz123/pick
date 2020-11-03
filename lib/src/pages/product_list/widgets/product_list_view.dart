@@ -1,8 +1,9 @@
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
+import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
@@ -12,11 +13,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
+import 'product_no_available.dart';
+
 class ProductListView extends StatefulWidget {
   final List<CategoryEntity> subCategories;
   final int activeIndex;
   final GlobalKey<ScaffoldState> scaffoldKey;
   final PageStyle pageStyle;
+  final bool isFromBrand;
+  final BrandEntity brand;
   final Function onChangeTab;
 
   ProductListView({
@@ -24,6 +29,8 @@ class ProductListView extends StatefulWidget {
     this.activeIndex,
     this.scaffoldKey,
     this.pageStyle,
+    this.isFromBrand,
+    this.brand,
     this.onChangeTab,
   });
 
@@ -36,12 +43,14 @@ class _ProductListViewState extends State<ProductListView>
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   List<ProductModel> products;
+  BrandEntity brand;
   int activeIndex;
+  bool isFromBrand;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   TabController tabController;
-  ProductBloc productBloc;
+  ProductListBloc productListBloc;
 
   @override
   void initState() {
@@ -50,6 +59,8 @@ class _ProductListViewState extends State<ProductListView>
     activeIndex = widget.activeIndex;
     scaffoldKey = widget.scaffoldKey;
     pageStyle = widget.pageStyle;
+    isFromBrand = widget.isFromBrand;
+    brand = widget.brand;
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
@@ -60,16 +71,23 @@ class _ProductListViewState extends State<ProductListView>
       initialIndex: activeIndex,
       vsync: this,
     );
-    productBloc = context.bloc<ProductBloc>();
-    productBloc.add(ProductListLoaded(
-      categoryId: subCategories[activeIndex].id,
-      lang: lang,
-    ));
+    productListBloc = context.bloc<ProductListBloc>();
+    if (isFromBrand) {
+      productListBloc.add(BrandProductListLoaded(
+        brandId: brand.optionId,
+        lang: lang,
+      ));
+    } else {
+      productListBloc.add(ProductListLoaded(
+        categoryId: subCategories[activeIndex].id,
+        lang: lang,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProductBloc, ProductState>(
+    return BlocConsumer<ProductListBloc, ProductListState>(
       listener: (context, productState) {
         if (productState is ProductListLoadedInProcess) {
           progressService.showProgress();
@@ -138,7 +156,9 @@ class _ProductListViewState extends State<ProductListView>
       controller: tabController,
       children: List.generate(
         subCategories.length,
-        (index) => _buildProductList(),
+        (index) => products.isEmpty
+            ? ProductNoAvailable(pageStyle: pageStyle)
+            : _buildProductList(),
       ),
     );
   }

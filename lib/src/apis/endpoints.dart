@@ -15,6 +15,7 @@ class EndPoints {
   static const String refreshToken = '$baseUrl/refreshtoken';
   static const String getProductDetails = '$baseUrl/getproductdetails';
   static const String getRelatedItems = '$baseUrl/getrelateditems';
+  static const String getSameBrandProducts = '$baseUrl/getsamebrandproducts';
   static const String getSortedProducts = '$baseUrl/getsortedproducts';
   static const String getHomeAds = '$baseUrl/getHomeAds';
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
@@ -27,4 +28,5 @@ class EndPoints {
   static const String submitOrder = '$baseUrl/SubmitOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String filterProducts = '$baseUrl/Filterproducts';
+  static const String getBrandProducts = '$baseUrl/getBrandProducts';
 }
