@@ -99,7 +99,7 @@ class _BrandListPageState extends State<BrandListPage> {
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
-        activeItem: BottomEnum.home,
+        activeItem: BottomEnum.store,
       ),
     );
   }

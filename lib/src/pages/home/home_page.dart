@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
             );
           } else {
             return Center(
-              child: PulseLoadingSpinner(),
+              child: ChasingDotsLoadingSpinner(),
             );
           }
         },

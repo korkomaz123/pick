@@ -91,7 +91,7 @@ class RouteGenerator {
         );
       case Routes.viewFullImage:
         return CupertinoPageRoute(
-          builder: (context) => ProductImage(arguments: params),
+          builder: (context) => ProductImage(images: params),
         );
       case Routes.searchAddress:
         return CupertinoPageRoute(

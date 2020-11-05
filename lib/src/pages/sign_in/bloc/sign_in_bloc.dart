@@ -24,6 +24,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     if (event is SignInSubmitted) {
       yield* _mapSignInSubmittedToState(event.email, event.password);
+    } else if (event is SignOutSubmitted) {
+      yield* _mapSignOutSubmittedToState(event.token);
     }
   }
 
@@ -42,6 +44,16 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SignInState> _mapSignOutSubmittedToState(String token) async* {
+    yield SignOutSubmittedInProcess();
+    try {
+      await _signInRepository.logout(token);
+      yield SignOutSubmittedSuccess();
+    } catch (e) {
+      yield SignOutSubmittedFailure(message: e.toString());
     }
   }
 }

@@ -26,6 +26,7 @@ dependencies:
   equatable: ^1.2.3
   flushbar: ^1.10.4
   flutter_bloc: ^6.0.1
+  flutter_html: ^1.0.2
   flutter_launcher_icons: ^0.7.5
   flutter_spinkit: ^4.1.2+1
   flutter_staggered_animations: ^0.1.2
@@ -38,6 +39,7 @@ dependencies:
   intl_phone_number_input: ^0.4.6+2
   lottie: ^0.6.0
   meta: ^1.1.8
+  photo_view: ^0.10.2
   progress_dialog: ^1.2.4
   share: ^0.6.5
   sliding_sheet: ^0.3.7

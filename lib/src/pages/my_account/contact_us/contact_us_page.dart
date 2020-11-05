@@ -2,12 +2,17 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
+import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:string_validator/string_validator.dart';
 
 class ContactUsPage extends StatefulWidget {
   @override
@@ -15,7 +20,6 @@ class ContactUsPage extends StatefulWidget {
 }
 
 class _ContactUsPageState extends State<ContactUsPage> {
-  PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -24,6 +28,22 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
+  SettingBloc settingBloc;
+  PageStyle pageStyle;
+  ProgressService progressService;
+  SnackBarService snackBarService;
+
+  @override
+  void initState() {
+    super.initState();
+    settingBloc = context.bloc<SettingBloc>();
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -31,11 +51,28 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          _buildContactUsForm(),
-        ],
+      body: BlocConsumer<SettingBloc, SettingState>(
+        listener: (context, state) {
+          if (state is ContactUsSubmittedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ContactUsSubmittedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+          if (state is ContactUsSubmittedSuccess) {
+            progressService.hideProgress();
+            Navigator.pushReplacementNamed(context, Routes.contactUsSuccess);
+          }
+        },
+        builder: (context, state) {
+          return Column(
+            children: [
+              _buildAppBar(),
+              _buildContactUsForm(),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
@@ -100,6 +137,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
           contentPadding: EdgeInsets.all(0),
           hintText: 'first_name'.tr(),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          }
+          return null;
+        },
         keyboardType: TextInputType.text,
       ),
     );
@@ -122,6 +165,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
           contentPadding: EdgeInsets.all(0),
           hintText: 'phone_number_hint'.tr(),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          }
+          return null;
+        },
         keyboardType: TextInputType.phone,
       ),
     );
@@ -144,6 +193,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
           contentPadding: EdgeInsets.all(0),
           hintText: 'email_hint'.tr(),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (!isEmail(value)) {
+            return 'invalid_email'.tr();
+          }
+          return null;
+        },
         keyboardType: TextInputType.emailAddress,
       ),
     );
@@ -174,7 +231,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         vertical: pageStyle.unitHeight * 10,
       ),
       child: TextFormField(
-        controller: phoneNumberController,
+        controller: messageController,
         style: mediumTextStyle.copyWith(
           color: greyColor,
           fontSize: pageStyle.unitFontSize * 14,
@@ -194,6 +251,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
             borderSide: BorderSide(color: greyColor),
           ),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          }
+          return null;
+        },
         keyboardType: TextInputType.text,
         maxLines: 6,
       ),
@@ -213,12 +276,20 @@ class _ContactUsPageState extends State<ContactUsPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushReplacementNamed(
-          context,
-          Routes.contactUsSuccess,
-        ),
+        onPressed: () => _onSubmit(),
         radius: 30,
       ),
     );
+  }
+
+  void _onSubmit() {
+    if (formKey.currentState.validate()) {
+      settingBloc.add(ContactUsSubmitted(
+        name: firstNameController.text,
+        phone: phoneNumberController.text,
+        email: emailController.text,
+        comment: messageController.text,
+      ));
+    }
   }
 }

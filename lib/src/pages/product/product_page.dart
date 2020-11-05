@@ -9,6 +9,8 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/widgets/product_more_about.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -31,11 +33,18 @@ class _ProductPageState extends State<ProductPage> {
   PageStyle pageStyle;
   ProductModel product;
   ProductBloc productBloc;
+  ProgressService progressService;
+  SnackBarService snackBarService;
 
   @override
   void initState() {
     super.initState();
     product = widget.arguments as ProductModel;
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
     productBloc = context.bloc<ProductBloc>();
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,
@@ -52,15 +61,48 @@ class _ProductPageState extends State<ProductPage> {
       backgroundColor: backgroundColor,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ProductSingleProduct(pageStyle: pageStyle, product: product),
-            ProductRelatedItems(pageStyle: pageStyle, product: product),
-            ProductSameBrandProducts(pageStyle: pageStyle, product: product),
-            ProductMoreAbout(pageStyle: pageStyle),
-          ],
-        ),
+      body: BlocConsumer<ProductBloc, ProductState>(
+        listener: (context, state) {
+          if (state is ProductDetailsLoadedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ProductDetailsLoadedSuccess) {
+            progressService.hideProgress();
+          }
+          if (state is ProductDetailsLoadedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is ProductDetailsLoadedSuccess) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  ProductSingleProduct(
+                    pageStyle: pageStyle,
+                    product: product,
+                    productEntity: state.productEntity,
+                  ),
+                  ProductRelatedItems(
+                    pageStyle: pageStyle,
+                    product: product,
+                  ),
+                  ProductSameBrandProducts(
+                    pageStyle: pageStyle,
+                    product: product,
+                  ),
+                  ProductMoreAbout(
+                    pageStyle: pageStyle,
+                    productEntity: state.productEntity,
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,

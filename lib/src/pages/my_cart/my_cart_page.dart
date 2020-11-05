@@ -235,7 +235,7 @@ class _MyCartPageState extends State<MyCartPage>
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      myCartItems[index].product.discount.toString() +
+                      myCartItems[index].product.price.toString() +
                           ' ' +
                           'currency'.tr(),
                       style: mediumTextStyle.copyWith(

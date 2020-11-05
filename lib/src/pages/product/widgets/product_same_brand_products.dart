@@ -86,9 +86,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
-                setState(() {
-                  activeIndex = value;
-                });
+                activeIndex = value;
+                setState(() {});
               },
               itemBuilder: (context, index) {
                 return ProductHCard(

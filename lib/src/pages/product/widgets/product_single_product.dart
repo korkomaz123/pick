@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -17,8 +18,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class ProductSingleProduct extends StatefulWidget {
   final PageStyle pageStyle;
   final ProductModel product;
+  final ProductEntity productEntity;
 
-  ProductSingleProduct({this.pageStyle, this.product});
+  ProductSingleProduct({
+    this.pageStyle,
+    this.product,
+    this.productEntity,
+  });
 
   @override
   _ProductSingleProductState createState() => _ProductSingleProductState();
@@ -28,6 +34,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     with TickerProviderStateMixin {
   PageStyle pageStyle;
   ProductModel product;
+  ProductEntity productEntity;
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
@@ -41,6 +48,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     super.initState();
     pageStyle = widget.pageStyle;
     product = widget.product;
+    productEntity = widget.productEntity;
 
     /// add to cart button animation
     _addToCartController = AnimationController(
@@ -155,7 +163,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 300,
             child: Swiper(
-              itemCount: 3,
+              itemCount: productEntity.gallery.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -170,10 +178,10 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   onTap: () => Navigator.pushNamed(
                     context,
                     Routes.viewFullImage,
-                    arguments: {'pageStyle': pageStyle},
+                    arguments: productEntity.gallery,
                   ),
-                  child: Image.asset(
-                    'lib/public/images/shutterstock_151558448-1.png',
+                  child: Image.network(
+                    productEntity.gallery[index],
                     width: pageStyle.unitWidth * 343,
                     height: pageStyle.unitHeight * 240.31,
                   ),
@@ -189,7 +197,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: 3,
+                count: productEntity.gallery.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,
@@ -226,9 +234,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
               SizedBox(width: pageStyle.unitWidth * 10),
               Text(
-                'In stock',
+                productEntity.inStock ? 'In stock' : 'Out stock',
                 style: mediumTextStyle.copyWith(
-                  color: succeedColor,
+                  color: productEntity.inStock ? succeedColor : dangerColor,
                   fontSize: pageStyle.unitFontSize * 11,
                 ),
               ),
@@ -245,8 +253,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 ),
               ),
               Text(
-                // product.store.name,
-                '',
+                productEntity.brandLabel,
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -266,14 +273,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         children: [
           isMore
               ? Text(
-                  product.description,
+                  productEntity.description,
                   style: bookTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 )
               : Text(
-                  product.description,
+                  productEntity.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: bookTextStyle.copyWith(
@@ -309,7 +316,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Row(
             children: [
               Text(
-                product.price.toString() + ' ' + 'currency'.tr(),
+                productEntity.price + ' ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   fontSize: pageStyle.unitFontSize * 14,
                   color: greyColor,
@@ -317,7 +324,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
               SizedBox(width: pageStyle.unitWidth * 10),
               Text(
-                product.price + ' ' + 'currency'.tr(),
+                productEntity.price + ' ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   decorationStyle: TextDecorationStyle.solid,
                   decoration: TextDecoration.lineThrough,
@@ -329,7 +336,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ],
           ),
           Text(
-            'suk'.tr() + ' ' + '2018',
+            'suk'.tr() + ' ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 10,
               color: greyColor,
@@ -407,14 +414,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.name,
+                  productEntity.name,
                   style: boldTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 15,
                   ),
                 ),
                 Text(
-                  product.name,
+                  productEntity.name,
                   style: mediumTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 12,

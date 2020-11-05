@@ -28,7 +28,7 @@ class SearchProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.store.name,
+                  product.brandLabel,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 10,

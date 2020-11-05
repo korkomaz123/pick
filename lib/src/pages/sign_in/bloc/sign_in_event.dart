@@ -35,3 +35,12 @@ class SocialSignInSubmitted extends SignInEvent {
   @override
   List<Object> get props => [firstName, lastName, email, loginType, lang];
 }
+
+class SignOutSubmitted extends SignInEvent {
+  final String token;
+
+  SignOutSubmitted({this.token});
+
+  @override
+  List<Object> get props => [token];
+}

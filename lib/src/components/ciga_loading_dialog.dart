@@ -8,7 +8,7 @@ class CigaLoadingDialog extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Center(
-        child: PouringHourLoadingSpinner(),
+        child: CircleLoadingSpinner(),
       ),
     );
   }

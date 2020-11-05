@@ -10,6 +10,8 @@ class CigaTextInput extends StatelessWidget {
   final String hint;
   final TextInputType inputType;
   final Function validator;
+  final bool readOnly;
+  final Function onTap;
 
   CigaTextInput({
     @required this.controller,
@@ -19,6 +21,8 @@ class CigaTextInput extends StatelessWidget {
     @required this.hint,
     @required this.inputType,
     @required this.validator,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -37,6 +41,8 @@ class CigaTextInput extends StatelessWidget {
         ),
         validator: (value) => validator(value),
         keyboardType: inputType,
+        readOnly: readOnly,
+        onTap: onTap,
       ),
     );
   }

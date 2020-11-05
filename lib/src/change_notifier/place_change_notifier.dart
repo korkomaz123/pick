@@ -16,7 +16,7 @@ class PlaceChangeNotifier with ChangeNotifier {
   Future<List<PlaceEntity>> search(String query) async {
     String url =
         "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=US&query=" +
-            Uri.encodeQueryComponent(query); //Uri.encodeQueryComponent(query)
+            Uri.encodeQueryComponent(query);
     Response response = await Dio().get(url);
     listPlace = PlaceEntity.parseLocationList(response.data);
     notifyListeners();

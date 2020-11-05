@@ -71,7 +71,7 @@ class WishlistProductCard extends StatelessWidget {
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      product.discount.toString() + ' ' + 'currency'.tr(),
+                      product.price.toString() + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,

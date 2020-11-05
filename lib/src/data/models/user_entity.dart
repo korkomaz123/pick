@@ -4,6 +4,7 @@ class UserEntity {
   final String firstName;
   final String lastName;
   final String email;
+  final String profileUrl;
 
   UserEntity({
     this.token,
@@ -11,6 +12,7 @@ class UserEntity {
     this.firstName,
     this.lastName,
     this.email,
+    this.profileUrl,
   });
 
   UserEntity.fromJson(Map<String, dynamic> json)
@@ -18,5 +20,6 @@ class UserEntity {
         customerId = json['customer_id'] ?? json['entity_id'],
         firstName = json['firstname'],
         lastName = json['lastname'],
-        email = json['email'];
+        email = json['email'],
+        profileUrl = json['profileUrl'] ?? '';
 }

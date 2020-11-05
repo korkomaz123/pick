@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,9 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ProductMoreAbout extends StatelessWidget {
   final PageStyle pageStyle;
+  final ProductEntity productEntity;
 
-  ProductMoreAbout({this.pageStyle});
+  ProductMoreAbout({this.pageStyle, this.productEntity});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class ProductMoreAbout extends StatelessWidget {
           ),
           SizedBox(height: pageStyle.unitFontSize * 4),
           Text(
-            'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+            productEntity.description,
             style: boldTextStyle.copyWith(
               color: greyColor,
               fontSize: pageStyle.unitFontSize * 12,
@@ -46,12 +48,17 @@ class ProductMoreAbout extends StatelessWidget {
             ),
           ),
           SizedBox(height: pageStyle.unitFontSize * 4),
-          Text(
-            'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness.',
-            style: bookTextStyle.copyWith(
-              color: greyColor,
-              fontSize: pageStyle.unitFontSize * 12,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: productEntity.reviews.map((review) {
+              return Text(
+                review.detail,
+                style: bookTextStyle.copyWith(
+                  color: greyColor,
+                  fontSize: pageStyle.unitFontSize * 12,
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),

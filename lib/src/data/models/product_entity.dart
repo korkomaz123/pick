@@ -1,33 +1,60 @@
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/review_entity.dart';
 
 class ProductEntity {
-  final String id;
-  final String name;
+  final String entityId;
+  final String typeId;
+  final String sku;
+  final bool inStock;
+  final String metaKeyword;
   final String description;
-  final String image;
-  final double price;
-  final double discount;
-  final String channel;
-  final StoreEntity store;
+  final String shortDescription;
+  final String name;
+  final String metaDescription;
+  final String price;
+  final String imageUrl;
+  final String hasOptions;
+  final String addCartUrl;
+  final String productId;
+  final String brandLabel;
+  final List<dynamic> gallery;
+  final List<ReviewEntity> reviews;
 
   ProductEntity({
-    this.id,
-    this.name,
+    this.entityId,
+    this.typeId,
+    this.sku,
+    this.inStock,
+    this.metaKeyword,
     this.description,
-    this.image,
+    this.shortDescription,
+    this.name,
+    this.metaDescription,
     this.price,
-    this.discount,
-    this.channel,
-    this.store,
+    this.imageUrl,
+    this.hasOptions,
+    this.addCartUrl,
+    this.productId,
+    this.brandLabel,
+    this.gallery,
+    this.reviews,
   });
 
   ProductEntity.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
+      : entityId = json['entity_id'],
+        typeId = json['type_id'],
+        sku = json['sku'],
+        inStock = json['in_stock'],
+        metaKeyword = json['meta_keyword'],
         description = json['description'],
-        image = json['image'],
-        price = json['price'],
-        discount = json['discount'],
-        channel = json['channel'],
-        store = json['store'];
+        shortDescription = json['short_description'],
+        name = json['name'],
+        metaDescription = json['meta_description'],
+        price = double.parse(json['price']).toStringAsFixed(2),
+        imageUrl = json['image_url'],
+        hasOptions = json['has_options'],
+        addCartUrl = json['add_cart_url'],
+        productId = json['product_id'],
+        brandLabel = json['brand_label'],
+        gallery = json['gallery'],
+        reviews = json['reviews'];
 }

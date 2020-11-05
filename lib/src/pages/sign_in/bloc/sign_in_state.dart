@@ -48,3 +48,16 @@ class SocialSignInSubmittedFailure extends SignInState {
   @override
   List<Object> get props => [message];
 }
+
+class SignOutSubmittedInProcess extends SignInState {}
+
+class SignOutSubmittedSuccess extends SignInState {}
+
+class SignOutSubmittedFailure extends SignInState {
+  final String message;
+
+  SignOutSubmittedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

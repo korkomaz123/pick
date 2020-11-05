@@ -7,14 +7,18 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,12 +30,33 @@ class WishlistPage extends StatefulWidget {
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
-  PageStyle pageStyle;
+class _WishlistPageState extends State<WishlistPage>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   bool isDeleting = false;
   bool isAdding = false;
+  PageStyle pageStyle;
+  SnackBarService snackBarService;
+  WishlistBloc wishlistBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    wishlistBloc = context.bloc<WishlistBloc>();
+    _triggerLoadWishlistEvent();
+  }
+
+  void _triggerLoadWishlistEvent() async {
+    final localStorageRepo = context.repository<LocalStorageRepository>();
+    String token = await localStorageRepo.getToken();
+    List<String> ids = await localStorageRepo.getWishlistIds();
+    wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,64 +72,24 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
           Column(
             children: [
               _buildAppBar(),
-              Expanded(
-                child: AnimatedList(
-                  key: listKey,
-                  initialItemCount: products.length,
-                  itemBuilder: (context, index, _) {
-                    return Container(
-                      width: pageStyle.deviceWidth,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 10,
-                      ),
-                      child: Column(
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.pushNamed(
-                              context,
-                              Routes.product,
-                              arguments: products[index],
-                            ),
-                            child: WishlistProductCard(
-                              pageStyle: pageStyle,
-                              product: products[index],
-                              onRemoveWishlist: () => _onRemoveWishlist(index),
-                              onAddToCart: () => _onAddToCart(index),
-                            ),
-                          ),
-                          index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+              BlocConsumer<WishlistBloc, WishlistState>(
+                listener: (context, state) {
+                  if (state is WishlistLoadedFailure) {
+                    snackBarService.showErrorSnackBar(state.message);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is WishlistLoadedSuccess) {
+                    return _buildWishlistItems();
+                  } else {
+                    return Container();
+                  }
+                },
               ),
             ],
           ),
-          isDeleting
-              ? Material(
-                  color: Colors.black.withOpacity(0),
-                  child: Center(
-                    child: Lottie.asset(
-                      'lib/public/animations/heart-break.json',
-                      width: pageStyle.unitWidth * 100,
-                      height: pageStyle.unitHeight * 100,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
-          isAdding
-              ? Material(
-                  color: Colors.black.withOpacity(0),
-                  child: Center(
-                    child: Lottie.asset(
-                      'lib/public/animations/add-to-cart-shopping.json',
-                      width: pageStyle.unitWidth * 200,
-                      height: pageStyle.unitHeight * 200,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
+          _buildLottieAnimationOnDelete(),
+          _buildLottieAnimationOnAdd(),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -142,6 +127,71 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
         ],
       ),
     );
+  }
+
+  Widget _buildWishlistItems() {
+    return Expanded(
+      child: AnimatedList(
+        key: listKey,
+        initialItemCount: products.length,
+        itemBuilder: (context, index, _) {
+          return Container(
+            width: pageStyle.deviceWidth,
+            padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    Routes.product,
+                    arguments: products[index],
+                  ),
+                  child: WishlistProductCard(
+                    pageStyle: pageStyle,
+                    product: products[index],
+                    onRemoveWishlist: () => _onRemoveWishlist(index),
+                    onAddToCart: () => _onAddToCart(index),
+                  ),
+                ),
+                index < (products.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLottieAnimationOnDelete() {
+    return isDeleting
+        ? Material(
+            color: Colors.black.withOpacity(0),
+            child: Center(
+              child: Lottie.asset(
+                'lib/public/animations/heart-break.json',
+                width: pageStyle.unitWidth * 100,
+                height: pageStyle.unitHeight * 100,
+              ),
+            ),
+          )
+        : SizedBox.shrink();
+  }
+
+  Widget _buildLottieAnimationOnAdd() {
+    return isAdding
+        ? Material(
+            color: Colors.black.withOpacity(0),
+            child: Center(
+              child: Lottie.asset(
+                'lib/public/animations/add-to-cart-shopping.json',
+                width: pageStyle.unitWidth * 200,
+                height: pageStyle.unitHeight * 200,
+              ),
+            ),
+          )
+        : SizedBox.shrink();
   }
 
   void _onRemoveWishlist(int index) async {
@@ -203,7 +253,9 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
                   onRemoveWishlist: () => null,
                   onAddToCart: () => null,
                 ),
-                index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                index < (products.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
               ],
             ),
           ),

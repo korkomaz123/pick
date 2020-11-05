@@ -6,17 +6,23 @@ import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_repository.dart';
+import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
+import 'package:ciga/src/pages/my_account/bloc/setting_repository.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/routes/generator.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,58 +37,92 @@ class CigaApp extends StatelessWidget {
   final CategoryRepository categoryRepository = CategoryRepository();
   final ProductRepository productRepository = ProductRepository();
   final BrandRepository brandRepository = BrandRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
+  final WishlistRepository wishlistRepository = WishlistRepository();
+  final SettingRepository settingRepository = SettingRepository();
+  final ShippingAddressRepository shippingAddressRepository =
+      ShippingAddressRepository();
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: homeRepository,
+      value: localStorageRepository,
       child: RepositoryProvider.value(
-        value: signInRepository,
+        value: homeRepository,
         child: RepositoryProvider.value(
-          value: categoryRepository,
+          value: signInRepository,
           child: RepositoryProvider.value(
-            value: productRepository,
+            value: categoryRepository,
             child: RepositoryProvider.value(
-              value: brandRepository,
-              child: ChangeNotifierProvider<PlaceChangeNotifier>(
-                create: (context) => PlaceChangeNotifier(),
-                child: MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (context) => HomeBloc(
-                        homeRepository: homeRepository,
-                        categoryRepository: categoryRepository,
-                        productRepository: productRepository,
-                        brandRepository: brandRepository,
+              value: productRepository,
+              child: RepositoryProvider.value(
+                value: brandRepository,
+                child: RepositoryProvider.value(
+                  value: wishlistRepository,
+                  child: RepositoryProvider.value(
+                    value: settingRepository,
+                    child: RepositoryProvider.value(
+                      value: shippingAddressRepository,
+                      child: ChangeNotifierProvider<PlaceChangeNotifier>(
+                        create: (context) => PlaceChangeNotifier(),
+                        child: MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (context) => HomeBloc(
+                                homeRepository: homeRepository,
+                                categoryRepository: categoryRepository,
+                                productRepository: productRepository,
+                                brandRepository: brandRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => SignInBloc(
+                                signInRepository: signInRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => CategoryBloc(
+                                categoryRepository: categoryRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => ProductBloc(
+                                productRepository: productRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => BrandBloc(
+                                brandRepository: brandRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => ProductListBloc(
+                                productRepository: productRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => WishlistBloc(
+                                wishlistRepository: wishlistRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => SettingBloc(
+                                settingRepository: settingRepository,
+                              ),
+                            ),
+                            BlocProvider(
+                              create: (context) => ShippingAddressBloc(
+                                shippingAddressRepository:
+                                    shippingAddressRepository,
+                              ),
+                            ),
+                          ],
+                          child: CigaAppView(),
+                        ),
                       ),
                     ),
-                    BlocProvider(
-                      create: (context) => SignInBloc(
-                        signInRepository: signInRepository,
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (context) => CategoryBloc(
-                        categoryRepository: categoryRepository,
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (context) => ProductBloc(
-                        productRepository: productRepository,
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (context) => BrandBloc(
-                        brandRepository: brandRepository,
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (context) => ProductListBloc(
-                        productRepository: productRepository,
-                      ),
-                    ),
-                  ],
-                  child: CigaAppView(),
+                  ),
                 ),
               ),
             ),
@@ -101,8 +141,6 @@ class CigaAppView extends StatefulWidget {
 class _CigaAppViewState extends State<CigaAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  LocalStorageInterface localStorage;
-
   @override
   void initState() {
     super.initState();
@@ -110,10 +148,8 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 
   void _getCurrentUser() async {
-    localStorage = await LocalStorage.getInstance();
-    String token = localStorage.getString('token') != null
-        ? localStorage.getString('token')
-        : '';
+    String token =
+        await context.repository<LocalStorageRepository>().getToken();
     if (token.isNotEmpty) {
       final signInRepo = context.repository<SignInRepository>();
       final result = await signInRepo.getCurrentUser(token);

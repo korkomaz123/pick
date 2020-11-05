@@ -1,6 +1,7 @@
 class EndPoints {
   static const String baseUrl = 'https://cigaon.com/customapi/api';
   static const String login = '$baseUrl/login';
+  static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
   static const String register = '$baseUrl/register';
   static const String getCurrentUser = '$baseUrl/getcurrentuser';
@@ -19,14 +20,24 @@ class EndPoints {
   static const String getSortedProducts = '$baseUrl/getsortedproducts';
   static const String getHomeAds = '$baseUrl/getHomeAds';
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
-  static const String getWishlist = '$baseUrl/getwishlist';
+  static const String getWishlist = '$baseUrl/getwishlists';
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';
   static const String getMyShippingAddresses =
       '$baseUrl/getMyShippingAddresses';
+  static const String addShippingAddress = '$baseUrl/addShippingAddress';
+  static const String deleteShippingAddress = '$baseUrl/deleteShippingAddress';
+  static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
   static const String submitOrder = '$baseUrl/SubmitOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String filterProducts = '$baseUrl/Filterproducts';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
+  static const String getAboutus = '$baseUrl/getaboutus';
+  static const String getNotificationSetting =
+      '$baseUrl/getNotificationSetting';
+  static const String changeNotificationSetting =
+      '$baseUrl/changeNotificationSetting';
+  static const String getTerms = '$baseUrl/getterms';
+  static const String submitContactUs = '$baseUrl/submitContactus';
 }

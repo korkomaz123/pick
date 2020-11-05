@@ -22,12 +22,21 @@ class ProductRelatedItems extends StatefulWidget {
 class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   PageStyle pageStyle;
   ProductModel product;
+  List<ProductModel> relatedItems = [];
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
     product = widget.product;
+    _getRelatedItems();
+  }
+
+  void _getRelatedItems() async {
+    relatedItems = await context
+        .repository<ProductRepository>()
+        .getRelatedProducts(product.productId, lang);
+    setState(() {});
   }
 
   @override
@@ -49,18 +58,13 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
             ),
           ),
           SizedBox(height: pageStyle.unitHeight * 4),
-          Container(
-            width: double.infinity,
-            height: pageStyle.unitHeight * 260,
-            child: FutureBuilder(
-              future: context
-                  .repository<ProductRepository>()
-                  .getRelatedProducts(product.productId, lang),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return ListView.builder(
+          relatedItems.isNotEmpty
+              ? Container(
+                  width: double.infinity,
+                  height: pageStyle.unitHeight * 260,
+                  child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: snapshot.data.length,
+                    itemCount: relatedItems.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.only(
@@ -69,7 +73,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                         child: ProductVCard(
                           cardWidth: pageStyle.unitWidth * 150,
                           cardHeight: pageStyle.unitHeight * 256,
-                          product: snapshot.data[index],
+                          product: relatedItems[index],
                           isShoppingCart: true,
                           isWishlist: true,
                           isShare: true,
@@ -77,13 +81,9 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                         ),
                       );
                     },
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
-          ),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -150,7 +151,11 @@ class CigaBottomBar extends StatelessWidget {
           Routes.home,
           (route) => false,
         );
-        Navigator.pushNamed(context, Routes.wishlist);
+        if (user?.token != null) {
+          Navigator.pushNamed(context, Routes.wishlist);
+        } else {
+          Navigator.pushNamed(context, Routes.signIn);
+        }
         break;
       case 4:
         Navigator.pushNamedAndRemoveUntil(
@@ -158,7 +163,11 @@ class CigaBottomBar extends StatelessWidget {
           Routes.home,
           (route) => false,
         );
-        Navigator.pushNamed(context, Routes.account);
+        if (user?.token != null) {
+          Navigator.pushNamed(context, Routes.account);
+        } else {
+          Navigator.pushNamed(context, Routes.signIn);
+        }
         break;
       default:
         Navigator.pushNamedAndRemoveUntil(

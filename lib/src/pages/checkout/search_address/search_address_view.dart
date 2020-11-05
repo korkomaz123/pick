@@ -37,7 +37,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       color: Colors.white,
       child: Column(
         children: <Widget>[
-          buildForm(widget?.placeChangeNotifier),
+          _buildForm(widget?.placeChangeNotifier),
           Container(
             height: 20,
             color: Color(0xfff5f5f5),
@@ -50,7 +50,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(
-                            widget?.placeChangeNotifier?.listPlace[index].name),
+                          widget?.placeChangeNotifier?.listPlace[index].name,
+                        ),
                         subtitle: Text(
                           widget?.placeChangeNotifier?.listPlace[index]
                               .formattedAddress,
@@ -80,7 +81,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     );
   }
 
-  Widget buildForm(PlaceChangeNotifier placeChangeNotifier) {
+  Widget _buildForm(PlaceChangeNotifier placeChangeNotifier) {
     return Container(
       padding: EdgeInsets.only(bottom: 20.0),
       color: Colors.white,
