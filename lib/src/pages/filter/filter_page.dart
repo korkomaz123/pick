@@ -3,21 +3,30 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'bloc/filter_bloc.dart';
 import 'widgets/filter_category_select.dart';
 import 'widgets/filter_color_select.dart';
 import 'widgets/filter_store_select_dialog.dart';
 
 class FilterPage extends StatefulWidget {
+  final String categoryId;
+
+  FilterPage({this.categoryId});
+
   @override
   _FilterPageState createState() => _FilterPageState();
 }
 
 class _FilterPageState extends State<FilterPage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   PageStyle pageStyle;
   double minPrice = 0;
   double maxPrice = 10;
@@ -30,10 +39,28 @@ class _FilterPageState extends State<FilterPage> {
   List<String> selectedSizes = [];
   List<String> selectedColors = [];
   Map<String, Color> colors = {};
+  ProgressService progressService;
+  SnackBarService snackBarService;
+  FilterBloc filterBloc;
+  List<Map<String, dynamic>> brandList = [];
+  List<Map<String, dynamic>> colorList = [];
+  List<Map<String, dynamic>> genderList = [];
+  List<Map<String, dynamic>> sizeList = [];
 
   @override
   void initState() {
     super.initState();
+    filterBloc = context.bloc<FilterBloc>();
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    filterBloc.add(FilterAttributesLoaded(
+      categoryId: widget.categoryId,
+      lang: lang,
+    ));
+
     for (int i = 0; i < colorItems.length; i++) {
       colors[colorItems[i]] = _getColorFromHex(colorItems[i]);
     }
@@ -54,23 +81,40 @@ class _FilterPageState extends State<FilterPage> {
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
-    return Material(
-      color: filterBackgroundColor,
-      child: Stack(
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: filterBackgroundColor,
+      body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildAppBar(),
-                _buildCategories(),
-                _buildPriceRange(),
-                _buildGender(),
-                _buildSizes(),
-                _buildColors(),
-                _buildStores(),
-                _buildSelectedBrands(),
-                SizedBox(height: pageStyle.unitHeight * 100),
-              ],
+            child: BlocConsumer<FilterBloc, FilterState>(
+              listener: (context, state) {
+                if (state is FilterAttributesLoadedInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is FilterAttributesLoadedSuccess) {
+                  progressService.hideProgress();
+                }
+                if (state is FilterAttributesLoadedFailure) {
+                  progressService.hideProgress();
+                  snackBarService.showErrorSnackBar(state.message);
+                }
+              },
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    _buildAppBar(),
+                    _buildCategories(),
+                    _buildPriceRange(),
+                    _buildGender(),
+                    _buildSizes(),
+                    _buildColors(),
+                    _buildStores(),
+                    _buildSelectedBrands(),
+                    SizedBox(height: pageStyle.unitHeight * 100),
+                  ],
+                );
+              },
             ),
           ),
           Align(

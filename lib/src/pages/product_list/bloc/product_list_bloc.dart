@@ -55,7 +55,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         }
         yield ProductListLoadedSuccess(products: products);
       } else {
-        yield ProductListLoadedFailure(message: result['errorMessage']);
+        yield ProductListLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield ProductListLoadedFailure(message: e.toString());
@@ -79,7 +79,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         }
         yield ProductListLoadedSuccess(products: products);
       } else {
-        yield ProductListLoadedFailure(message: result['errorMessage']);
+        yield ProductListLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield ProductListLoadedFailure(message: e.toString());
@@ -101,7 +101,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         }
         yield ProductListLoadedSuccess(products: products);
       } else {
-        yield ProductListLoadedFailure(message: result['errorMessage']);
+        yield ProductListLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield ProductListLoadedFailure(message: e.toString());

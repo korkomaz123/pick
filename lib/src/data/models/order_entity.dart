@@ -14,4 +14,11 @@ class OrderEntity {
     this.paymentMethod,
     this.totalPrice,
   });
+
+  OrderEntity.fromJson(Map<String, dynamic> json)
+      : orderNo = json['order_no'],
+        orderDate = json['order_date'],
+        status = json['status'],
+        paymentMethod = json['payment_method'],
+        totalPrice = json['total_price'];
 }

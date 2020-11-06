@@ -1,10 +1,10 @@
 class UserEntity {
   final String token;
   final String customerId;
-  final String firstName;
-  final String lastName;
+  String firstName;
+  String lastName;
   final String email;
-  final String profileUrl;
+  String profileUrl;
 
   UserEntity({
     this.token,

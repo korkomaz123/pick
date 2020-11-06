@@ -4,9 +4,9 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -15,6 +15,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -34,15 +35,21 @@ class _WishlistPageState extends State<WishlistPage>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  LocalStorageRepository localStorageRepo;
   bool isDeleting = false;
   bool isAdding = false;
   PageStyle pageStyle;
+  ProgressService progressService;
   SnackBarService snackBarService;
   WishlistBloc wishlistBloc;
+  List<ProductModel> wishlists = [];
+  List<String> ids = [];
 
   @override
   void initState() {
     super.initState();
+    localStorageRepo = context.repository<LocalStorageRepository>();
+    progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
@@ -52,10 +59,11 @@ class _WishlistPageState extends State<WishlistPage>
   }
 
   void _triggerLoadWishlistEvent() async {
-    final localStorageRepo = context.repository<LocalStorageRepository>();
     String token = await localStorageRepo.getToken();
-    List<String> ids = await localStorageRepo.getWishlistIds();
-    wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
+    ids = await localStorageRepo.getWishlistIds();
+    if (ids.isNotEmpty) {
+      wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
+    }
   }
 
   @override
@@ -74,12 +82,20 @@ class _WishlistPageState extends State<WishlistPage>
               _buildAppBar(),
               BlocConsumer<WishlistBloc, WishlistState>(
                 listener: (context, state) {
+                  if (state is WishlistLoadedInProcess) {
+                    progressService.showProgress();
+                  }
                   if (state is WishlistLoadedFailure) {
+                    progressService.hideProgress();
                     snackBarService.showErrorSnackBar(state.message);
+                  }
+                  if (state is WishlistLoadedSuccess) {
+                    progressService.hideProgress();
                   }
                 },
                 builder: (context, state) {
                   if (state is WishlistLoadedSuccess) {
+                    wishlists = state.wishlists;
                     return _buildWishlistItems();
                   } else {
                     return Container();
@@ -131,10 +147,9 @@ class _WishlistPageState extends State<WishlistPage>
 
   Widget _buildWishlistItems() {
     return Expanded(
-      child: AnimatedList(
-        key: listKey,
-        initialItemCount: products.length,
-        itemBuilder: (context, index, _) {
+      child: ListView.builder(
+        itemCount: wishlists.length,
+        itemBuilder: (context, index) {
           return Container(
             width: pageStyle.deviceWidth,
             padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -144,16 +159,16 @@ class _WishlistPageState extends State<WishlistPage>
                   onTap: () => Navigator.pushNamed(
                     context,
                     Routes.product,
-                    arguments: products[index],
+                    arguments: wishlists[index],
                   ),
                   child: WishlistProductCard(
                     pageStyle: pageStyle,
-                    product: products[index],
+                    product: wishlists[index],
                     onRemoveWishlist: () => _onRemoveWishlist(index),
                     onAddToCart: () => _onAddToCart(index),
                   ),
                 ),
-                index < (products.length - 1)
+                index < (wishlists.length - 1)
                     ? Divider(color: greyColor, thickness: 0.5)
                     : SizedBox.shrink(),
               ],
@@ -202,20 +217,16 @@ class _WishlistPageState extends State<WishlistPage>
       },
     );
     if (result != null) {
+      await localStorageRepo.removeWishlistItem(ids[index]);
+      ids.removeAt(index);
       Timer.periodic(
         AnimationDurations.removeFavoriteItemAniDuration,
         (timer) {
           timer.cancel();
           isDeleting = false;
+          wishlists.removeAt(index);
           setState(() {});
         },
-      );
-      listKey.currentState.removeItem(
-        index,
-        (context, animation) {
-          return Container();
-        },
-        duration: AnimationDurations.removeFavoriteItemAniDuration,
       );
       isDeleting = true;
       setState(() {});
@@ -249,11 +260,11 @@ class _WishlistPageState extends State<WishlistPage>
               children: [
                 WishlistProductCard(
                   pageStyle: pageStyle,
-                  product: products[index],
+                  product: wishlists[index],
                   onRemoveWishlist: () => null,
                   onAddToCart: () => null,
                 ),
-                index < (products.length - 1)
+                index < (wishlists.length - 1)
                     ? Divider(color: greyColor, thickness: 0.5)
                     : SizedBox.shrink(),
               ],
@@ -263,10 +274,10 @@ class _WishlistPageState extends State<WishlistPage>
       },
       duration: Duration(seconds: 2),
     );
-    _showFlashBar(products[index]);
+    _showFlashBar(wishlists[index]);
   }
 
-  void _showFlashBar(ProductEntity product) {
+  void _showFlashBar(ProductModel product) {
     Flushbar(
       messageText: Container(
         width: pageStyle.unitWidth * 300,

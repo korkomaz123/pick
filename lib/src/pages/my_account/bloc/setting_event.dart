@@ -33,3 +33,14 @@ class ContactUsSubmitted extends SettingEvent {
   @override
   List<Object> get props => [name, phone, email, comment];
 }
+
+class PasswordUpdated extends SettingEvent {
+  final String token;
+  final String oldPassword;
+  final String newPassword;
+
+  PasswordUpdated({this.token, this.oldPassword, this.newPassword});
+
+  @override
+  List<Object> get props => [token, oldPassword, newPassword];
+}

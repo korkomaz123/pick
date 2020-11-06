@@ -13,12 +13,17 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:lottie/lottie.dart';
 
+import 'bloc/my_cart_bloc.dart';
 import 'widgets/my_cart_coupon_code.dart';
 
 class MyCartPage extends StatefulWidget {
@@ -28,10 +33,35 @@ class MyCartPage extends StatefulWidget {
 
 class _MyCartPageState extends State<MyCartPage>
     with SingleTickerProviderStateMixin {
-  PageStyle pageStyle;
-  TextEditingController couponCodeController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
+  String cartId;
+  PageStyle pageStyle;
+  ProgressService progressService;
+  SnackBarService snackBarService;
+  MyCartBloc myCartBloc;
+  LocalStorageRepository localRepo;
+
+  @override
+  void initState() {
+    super.initState();
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    myCartBloc = context.bloc<MyCartBloc>();
+    localRepo = context.repository<LocalStorageRepository>();
+    _getMyCartId();
+  }
+
+  void _getMyCartId() async {
+    cartId = await localRepo.getCartId();
+    if (cartId.isNotEmpty) {
+      myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,18 +79,57 @@ class _MyCartPageState extends State<MyCartPage>
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildTitleBar(),
-                _buildTotalItemsTitle(),
-                _buildTotalItems(),
-                MyCartCouponCode(
-                  pageStyle: pageStyle,
-                  controller: couponCodeController,
-                ),
-                _buildTotalPrice(),
-                _buildCheckoutButton(),
-              ],
+            child: BlocConsumer<MyCartBloc, MyCartState>(
+              listener: (context, state) {
+                if (state is MyCartItemsLoadedInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is MyCartItemsLoadedSuccess) {
+                  progressService.hideProgress();
+                }
+                if (state is MyCartItemsLoadedFailure) {
+                  progressService.hideProgress();
+                  snackBarService.showErrorSnackBar(state.message);
+                }
+                if (state is MyCartItemUpdatedInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is MyCartItemUpdatedSuccess) {
+                  progressService.hideProgress();
+                }
+                if (state is MyCartItemUpdatedFailure) {
+                  progressService.hideProgress();
+                  snackBarService.showErrorSnackBar(state.message);
+                }
+                if (state is MyCartItemRemovedInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is MyCartItemRemovedSuccess) {
+                  progressService.hideProgress();
+                }
+                if (state is MyCartItemRemovedFailure) {
+                  progressService.hideProgress();
+                  snackBarService.showErrorSnackBar(state.message);
+                }
+              },
+              builder: (context, state) {
+                if (state is MyCartItemsLoadedSuccess) {
+                  myCartItems = state.cartItems;
+                }
+                return Column(
+                  children: [
+                    _buildTitleBar(),
+                    _buildTotalItemsTitle(),
+                    _buildTotalItems(),
+                    MyCartCouponCode(
+                      pageStyle: pageStyle,
+                      controller: couponCodeController,
+                    ),
+                    _buildTotalPrice(),
+                    _buildCheckoutButton(),
+                  ],
+                );
+              },
             ),
           ),
           isDeleting
@@ -196,8 +265,8 @@ class _MyCartPageState extends State<MyCartPage>
               color: greyDarkColor,
             ),
           ),
-          Image.asset(
-            'lib/public/images/shutterstock_151558448-1.png',
+          Image.network(
+            myCartItems[index].product.imageUrl,
             width: pageStyle.unitWidth * 134,
             height: pageStyle.unitHeight * 150,
           ),
@@ -207,7 +276,7 @@ class _MyCartPageState extends State<MyCartPage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Jazzia Group',
+                  myCartItems[index].product.sku,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 10,
@@ -225,9 +294,7 @@ class _MyCartPageState extends State<MyCartPage>
                 Row(
                   children: [
                     Text(
-                      myCartItems[index].product.price.toString() +
-                          ' ' +
-                          'currency'.tr(),
+                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -235,9 +302,7 @@ class _MyCartPageState extends State<MyCartPage>
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      myCartItems[index].product.price.toString() +
-                          ' ' +
-                          'currency'.tr(),
+                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -298,7 +363,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '2 ' + 'items'.tr(),
+                '${myCartItems.length} ' + 'items'.tr(),
                 style: boldTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -366,6 +431,7 @@ class _MyCartPageState extends State<MyCartPage>
         (timer) {
           timer.cancel();
           isDeleting = false;
+
           setState(() {});
         },
       );

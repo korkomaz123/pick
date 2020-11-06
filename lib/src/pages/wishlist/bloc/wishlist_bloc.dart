@@ -34,17 +34,16 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     try {
       final result = await _wishlistRepository.getWishlists(ids, token);
       if (result['code'] == 'SUCCESS') {
-        List<dynamic> wishlistList = result['wishlist'];
+        List<dynamic> wishlistList = result['wishlists'];
         List<ProductModel> wishlists = [];
         for (int i = 0; i < wishlistList.length; i++) {
           wishlists.add(ProductModel.fromJson(wishlistList[i]));
         }
         yield WishlistLoadedSuccess(wishlists: wishlists);
       } else {
-        yield WishlistLoadedFailure(message: result['errorMessage']);
+        yield WishlistLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
-      print(e.toString());
       yield WishlistLoadedFailure(message: e.toString());
     }
   }

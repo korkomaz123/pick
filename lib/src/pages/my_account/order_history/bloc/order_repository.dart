@@ -1,15 +1,13 @@
-import 'dart:convert';
-
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 
-class WishlistRepository {
+class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getWishlists(List<String> ids, String token) async {
-    String url = EndPoints.getWishlist;
-    final params = {'token': token, 'wishlists': json.encode(ids)};
+  Future<dynamic> getOrderHistory(String token) async {
+    String url = EndPoints.getOrderHistory;
+    final params = {'token': token};
     return await Api.postMethod(url, data: params);
   }
 }

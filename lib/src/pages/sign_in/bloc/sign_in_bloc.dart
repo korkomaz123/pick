@@ -37,7 +37,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final result = await _signInRepository.login(email, password);
       if (result['code'] == 'error') {
-        yield SignInSubmittedFailure(message: result['errorMessage']);
+        yield SignInSubmittedFailure(message: result['errMessage']);
       } else {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));

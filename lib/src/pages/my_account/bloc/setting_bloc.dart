@@ -33,6 +33,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         event.email,
         event.comment,
       );
+    } else if (event is PasswordUpdated) {
+      yield* _mapPasswordUpdatedToState(
+        event.token,
+        event.oldPassword,
+        event.newPassword,
+      );
     }
   }
 
@@ -61,6 +67,25 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       yield ContactUsSubmittedSuccess();
     } catch (e) {
       yield ContactUsSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SettingState> _mapPasswordUpdatedToState(
+    String token,
+    String oldPassword,
+    String newPassword,
+  ) async* {
+    yield PasswordUpdatedInProcess();
+    try {
+      final result = await _settingRepository.updatePassword(
+          token, oldPassword, newPassword);
+      if (result['code'] == 'SUCCESS') {
+        yield PasswordUpdatedSuccess();
+      } else {
+        yield PasswordUpdatedFailure(message: result['errMessage']);
+      }
+    } catch (e) {
+      yield PasswordUpdatedFailure(message: e.toString());
     }
   }
 }

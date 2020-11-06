@@ -31,7 +31,6 @@ class EndPoints {
   static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
   static const String submitOrder = '$baseUrl/SubmitOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
-  static const String filterProducts = '$baseUrl/Filterproducts';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
   static const String getAboutus = '$baseUrl/getaboutus';
   static const String getNotificationSetting =
@@ -40,4 +39,13 @@ class EndPoints {
       '$baseUrl/changeNotificationSetting';
   static const String getTerms = '$baseUrl/getterms';
   static const String submitContactUs = '$baseUrl/submitContactus';
+  static const String getOrderHistory = '$baseUrl/getOrderHistories';
+  static const String updateProfileImage = '$baseUrl/updateProfileImage';
+  static const String updateProfile = '$baseUrl/updateProfile';
+  static const String updatePassword = '$baseUrl/updatePassword';
+  static const String getFilterAttributes = '$baseUrl/Filter';
+  static const String filterProducts = '$baseUrl/Filterproducts';
+  static const String createCart = '$baseUrl/CreateCart';
+  static const String getCartItems = '$baseUrl/getMyCartItems';
+  static const String clearMyCartItems = '$baseUrl/clearMyCartItems';
 }

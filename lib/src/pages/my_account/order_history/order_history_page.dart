@@ -9,11 +9,16 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'bloc/order_bloc.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   @override
@@ -21,8 +26,24 @@ class OrderHistoryPage extends StatefulWidget {
 }
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
-  PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  PageStyle pageStyle;
+  ProgressService progressService;
+  SnackBarService snackBarService;
+  OrderBloc orderBloc;
+  List<OrderEntity> orders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    orderBloc = context.bloc<OrderBloc>();
+    orderBloc.add(OrderHistoryLoaded(token: user.token));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,39 +54,58 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       backgroundColor: Colors.white,
       appBar: CigaOrderHistoryAppBar(pageStyle: pageStyle),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: pageStyle.deviceWidth,
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 20,
-                vertical: pageStyle.unitHeight * 30,
-              ),
-              child: Text(
-                '2 ' + 'items'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+      body: BlocConsumer<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state is OrderHistoryLoadedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is OrderHistoryLoadedSuccess) {
+            progressService.hideProgress();
+          }
+          if (state is OrderHistoryLoadedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is OrderHistoryLoadedSuccess) {
+            orders = state.orders;
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: pageStyle.deviceWidth,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: pageStyle.unitWidth * 20,
+                    vertical: pageStyle.unitHeight * 30,
+                  ),
+                  child: Text(
+                    '${orders.length} ' + 'items'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 14,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              width: pageStyle.deviceWidth,
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 20,
-              ),
-              child: Column(
-                children: List.generate(
-                  orders.length,
-                  (index) {
-                    return _buildOrderItem(orders[index]);
-                  },
+                Container(
+                  width: pageStyle.deviceWidth,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: pageStyle.unitWidth * 20,
+                  ),
+                  child: Column(
+                    children: List.generate(
+                      orders.length,
+                      (index) {
+                        return _buildOrderItem(orders[index]);
+                      },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,

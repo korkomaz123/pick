@@ -89,7 +89,9 @@ class _AccountPageState extends State<AccountPage> {
             height: pageStyle.unitWidth * 107,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('lib/public/images/profile.png'),
+                image: user.profileUrl.isEmpty
+                    ? AssetImage('lib/public/images/profile.png')
+                    : NetworkImage(user.profileUrl),
                 fit: BoxFit.cover,
               ),
               shape: BoxShape.circle,

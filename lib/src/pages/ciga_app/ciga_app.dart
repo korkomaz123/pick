@@ -4,12 +4,20 @@ import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_repository.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_repository.dart';
 import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:ciga/src/pages/my_account/bloc/setting_repository.dart';
+import 'package:ciga/src/pages/my_account/order_history/bloc/order_bloc.dart';
+import 'package:ciga/src/pages/my_account/order_history/bloc/order_repository.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
+import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_repository.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
@@ -43,6 +51,10 @@ class CigaApp extends StatelessWidget {
   final SettingRepository settingRepository = SettingRepository();
   final ShippingAddressRepository shippingAddressRepository =
       ShippingAddressRepository();
+  final OrderRepository orderRepository = OrderRepository();
+  final ProfileRepository profileRepository = ProfileRepository();
+  final FilterRepository filterRepository = FilterRepository();
+  final MyCartRepository myCartRepository = MyCartRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -64,61 +76,94 @@ class CigaApp extends StatelessWidget {
                     value: settingRepository,
                     child: RepositoryProvider.value(
                       value: shippingAddressRepository,
-                      child: ChangeNotifierProvider<PlaceChangeNotifier>(
-                        create: (context) => PlaceChangeNotifier(),
-                        child: MultiBlocProvider(
-                          providers: [
-                            BlocProvider(
-                              create: (context) => HomeBloc(
-                                homeRepository: homeRepository,
-                                categoryRepository: categoryRepository,
-                                productRepository: productRepository,
-                                brandRepository: brandRepository,
+                      child: RepositoryProvider.value(
+                        value: orderRepository,
+                        child: RepositoryProvider.value(
+                          value: profileRepository,
+                          child: RepositoryProvider.value(
+                            value: filterRepository,
+                            child: RepositoryProvider.value(
+                              value: myCartRepository,
+                              child:
+                                  ChangeNotifierProvider<PlaceChangeNotifier>(
+                                create: (context) => PlaceChangeNotifier(),
+                                child: MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider(
+                                      create: (context) => HomeBloc(
+                                        homeRepository: homeRepository,
+                                        categoryRepository: categoryRepository,
+                                        productRepository: productRepository,
+                                        brandRepository: brandRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => SignInBloc(
+                                        signInRepository: signInRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => CategoryBloc(
+                                        categoryRepository: categoryRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => ProductBloc(
+                                        productRepository: productRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => BrandBloc(
+                                        brandRepository: brandRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => ProductListBloc(
+                                        productRepository: productRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => WishlistBloc(
+                                        wishlistRepository: wishlistRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => SettingBloc(
+                                        settingRepository: settingRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => ShippingAddressBloc(
+                                        shippingAddressRepository:
+                                            shippingAddressRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => OrderBloc(
+                                        orderRepository: orderRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => ProfileBloc(
+                                        profileRepository: profileRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => FilterBloc(
+                                        filterRepository: filterRepository,
+                                      ),
+                                    ),
+                                    BlocProvider(
+                                      create: (context) => MyCartBloc(
+                                        myCartRepository: myCartRepository,
+                                      ),
+                                    ),
+                                  ],
+                                  child: CigaAppView(),
+                                ),
                               ),
                             ),
-                            BlocProvider(
-                              create: (context) => SignInBloc(
-                                signInRepository: signInRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => CategoryBloc(
-                                categoryRepository: categoryRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => ProductBloc(
-                                productRepository: productRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => BrandBloc(
-                                brandRepository: brandRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => ProductListBloc(
-                                productRepository: productRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => WishlistBloc(
-                                wishlistRepository: wishlistRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => SettingBloc(
-                                settingRepository: settingRepository,
-                              ),
-                            ),
-                            BlocProvider(
-                              create: (context) => ShippingAddressBloc(
-                                shippingAddressRepository:
-                                    shippingAddressRepository,
-                              ),
-                            ),
-                          ],
-                          child: CigaAppView(),
+                          ),
                         ),
                       ),
                     ),

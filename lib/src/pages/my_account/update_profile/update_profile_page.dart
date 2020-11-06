@@ -1,18 +1,25 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/image_custom_picker_service.dart';
+import 'package:ciga/src/utils/progress_service.dart';
+import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'bloc/profile_bloc.dart';
 
 class UpdateProfilePage extends StatefulWidget {
   @override
@@ -20,15 +27,18 @@ class UpdateProfilePage extends StatefulWidget {
 }
 
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
-  PageStyle pageStyle;
-  TextEditingController displayNameController = TextEditingController();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController newPasswordController = TextEditingController();
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  File image;
+  File imageFile;
+  String imageString;
+  Uint8List image;
   ImageCustomPickerService imageCustomPickerService;
+  PageStyle pageStyle;
+  ProgressService progressService;
+  SnackBarService snackBarService;
+  ProfileBloc profileBloc;
 
   @override
   void initState() {
@@ -39,6 +49,14 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       titleColor: primaryColor,
       video: false,
     );
+    progressService = ProgressService(context: context);
+    snackBarService = SnackBarService(
+      context: context,
+      scaffoldKey: scaffoldKey,
+    );
+    profileBloc = context.bloc<ProfileBloc>();
+    firstNameController.text = user.firstName;
+    lastNameController.text = user.lastName;
   }
 
   @override
@@ -49,32 +67,58 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       key: scaffoldKey,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildProfilePicture(),
-                  _buildEmail(),
-                  _buildDisplayName(),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  _buildFirstName(),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  _buildLastName(),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  _buildPhoneNumber(),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  _buildNewPassword(),
-                  SizedBox(height: pageStyle.unitHeight * 50),
-                  _buildUpdateButton(),
-                  SizedBox(height: pageStyle.unitHeight * 30),
-                ],
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileImageUpdatedInProcess ||
+              state is ProfileInformationUpdatedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ProfileImageUpdatedSuccess) {
+            progressService.hideProgress();
+          }
+          if (state is ProfileImageUpdatedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+          if (state is ProfileInformationUpdatedSuccess) {
+            progressService.hideProgress();
+            user.firstName = firstNameController.text;
+            user.lastName = lastNameController.text;
+          }
+          if (state is ProfileInformationUpdatedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileImageUpdatedSuccess) {
+            user.profileUrl = state.url;
+          }
+          return Column(
+            children: [
+              _buildAppBar(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        _buildProfilePicture(),
+                        _buildEmail(),
+                        _buildFirstName(),
+                        SizedBox(height: pageStyle.unitHeight * 10),
+                        _buildLastName(),
+                        SizedBox(height: pageStyle.unitHeight * 10),
+                        _buildUpdateButton(),
+                        SizedBox(height: pageStyle.unitHeight * 30),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
@@ -114,8 +158,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: pageStyle.unitHeight * 140,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: image != null
-                      ? FileImage(image)
+                  image: user.profileUrl.isNotEmpty
+                      ? NetworkImage(user.profileUrl)
                       : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
@@ -154,31 +198,11 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           child: SvgPicture.asset(emailIcon),
         ),
         title: Text(
-          'okorkomaz1@gmail.com',
+          user.email,
           style: mediumTextStyle.copyWith(
             fontSize: pageStyle.unitFontSize * 16,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDisplayName() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: InputField(
-        width: double.infinity,
-        controller: displayNameController,
-        space: pageStyle.unitHeight * 4,
-        radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
-        fontColor: greyDarkColor,
-        label: 'display_name'.tr(),
-        labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
-        fillColor: Colors.grey.shade300,
-        bordered: false,
       ),
     );
   }
@@ -199,6 +223,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
         bordered: false,
+        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -219,48 +244,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
         bordered: false,
-      ),
-    );
-  }
-
-  Widget _buildPhoneNumber() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: InputField(
-        width: double.infinity,
-        controller: phoneNumberController,
-        space: pageStyle.unitHeight * 4,
-        radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
-        fontColor: greyDarkColor,
-        label: 'phone_number_hint'.tr(),
-        labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
-        fillColor: Colors.grey.shade300,
-        bordered: false,
-        keyboardType: TextInputType.phone,
-      ),
-    );
-  }
-
-  Widget _buildNewPassword() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: InputField(
-        width: double.infinity,
-        controller: newPasswordController,
-        space: pageStyle.unitHeight * 4,
-        radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
-        fontColor: greyDarkColor,
-        label: 'new_password'.tr(),
-        labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
-        fillColor: Colors.grey.shade300,
-        bordered: false,
-        obsecureText: true,
+        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -275,16 +259,25 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _onSave(),
         radius: 0,
       ),
     );
   }
 
   void _onChangeImage() async {
-    image = await imageCustomPickerService.getImageWithDialog();
-    if (image != null) {
-      setState(() {});
+    imageFile = await imageCustomPickerService.getImageWithDialog();
+    if (imageFile != null) {
+      image = imageFile.readAsBytesSync();
+      profileBloc.add(ProfileImageUpdated(token: user.token, image: image));
     }
+  }
+
+  void _onSave() {
+    profileBloc.add(ProfileInformationUpdated(
+      token: user.token,
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+    ));
   }
 }

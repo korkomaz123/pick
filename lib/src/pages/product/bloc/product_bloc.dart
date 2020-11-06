@@ -45,7 +45,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         final productEntity = ProductEntity.fromJson(result['moreAbout']);
         yield ProductDetailsLoadedSuccess(productEntity: productEntity);
       } else {
-        yield ProductDetailsLoadedFailure(message: result['errorMessage']);
+        yield ProductDetailsLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield ProductDetailsLoadedFailure(message: e.toString());

@@ -17,7 +17,7 @@ class SignInRepository {
   Future<dynamic> logout(String token) async {
     String url = EndPoints.logout;
     final params = {'token': token};
-    return await Api.getMethod(url, data: params);
+    return await Api.postMethod(url, data: params);
   }
 
   //////////////////////////////////////////////////////////////////////////////

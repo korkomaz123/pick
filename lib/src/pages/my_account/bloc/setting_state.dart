@@ -41,3 +41,16 @@ class ContactUsSubmittedFailure extends SettingState {
   @override
   List<Object> get props => [message];
 }
+
+class PasswordUpdatedInProcess extends SettingState {}
+
+class PasswordUpdatedSuccess extends SettingState {}
+
+class PasswordUpdatedFailure extends SettingState {
+  final String message;
+
+  PasswordUpdatedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

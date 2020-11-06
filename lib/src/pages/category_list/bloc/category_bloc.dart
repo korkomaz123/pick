@@ -49,7 +49,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         yield CategorySubCategoriesLoadedSuccess(subCategories: categories);
       } else {
         yield CategorySubCategoriesLoadedFailure(
-          message: result['errorMessage'],
+          message: result['errMessage'],
         );
       }
     } catch (e) {

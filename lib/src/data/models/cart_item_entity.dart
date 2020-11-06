@@ -1,7 +1,7 @@
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 
 class CartItemEntity {
-  final ProductEntity product;
+  final ProductModel product;
   int itemCount;
 
   CartItemEntity({this.product, this.itemCount});

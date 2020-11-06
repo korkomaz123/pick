@@ -73,7 +73,7 @@ class ShippingAddressBloc
         }
         yield ShippingAddressLoadedSuccess(addresses: addresses);
       } else {
-        yield ShippingAddressLoadedFailure(message: result['errorMessage']);
+        yield ShippingAddressLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield ShippingAddressLoadedFailure(message: e.toString());

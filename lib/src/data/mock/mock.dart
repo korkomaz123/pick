@@ -2,7 +2,6 @@ import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
 
 /// category list for home screen
 final List<CategoryEntity> homeCategories = [
@@ -101,42 +100,7 @@ final List<StoreEntity> stores = List.generate(
   ),
 );
 
-final List<CartItemEntity> myCartItems = [
-  CartItemEntity(product: products[0], itemCount: 3),
-  CartItemEntity(product: products[0], itemCount: 2),
-  CartItemEntity(product: products[0], itemCount: 4),
-];
-
-final List<OrderEntity> orders = [
-  OrderEntity(
-    orderNo: '129292',
-    orderDate: '18/11/2020',
-    status: OrderStatusEnum.pending,
-    paymentMethod: 'Cash On Delivery',
-    totalPrice: '2029',
-  ),
-  OrderEntity(
-    orderNo: '129293',
-    orderDate: '21/11/2020',
-    status: OrderStatusEnum.onProgress,
-    paymentMethod: 'Visa Card',
-    totalPrice: '882',
-  ),
-  OrderEntity(
-    orderNo: '129294',
-    orderDate: '3/12/2020',
-    status: OrderStatusEnum.delivered,
-    paymentMethod: 'KNet',
-    totalPrice: '1029',
-  ),
-  OrderEntity(
-    orderNo: '129295',
-    orderDate: '11/12/2020',
-    status: OrderStatusEnum.onProgress,
-    paymentMethod: 'Cash On Delivery',
-    totalPrice: '2726',
-  ),
-];
+List<CartItemEntity> myCartItems = [];
 
 List<String> sortByList = [
   'price_low_high',

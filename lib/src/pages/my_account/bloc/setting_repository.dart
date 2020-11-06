@@ -56,4 +56,21 @@ class SettingRepository {
     };
     return await Api.postMethod(url, data: params);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> updatePassword(
+    String token,
+    String oldPassword,
+    String newPassword,
+  ) async {
+    String url = EndPoints.updatePassword;
+    final params = {
+      'token': token,
+      'oldPassword': oldPassword,
+      'newPassword': newPassword,
+    };
+    return await Api.postMethod(url, data: params);
+  }
 }

@@ -1,4 +1,4 @@
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class WishlistProductCard extends StatelessWidget {
   final PageStyle pageStyle;
-  final ProductEntity product;
+  final ProductModel product;
   final Function onRemoveWishlist;
   final Function onAddToCart;
 
@@ -34,8 +34,8 @@ class WishlistProductCard extends StatelessWidget {
               color: greyDarkColor,
             ),
           ),
-          Image.asset(
-            'lib/public/images/shutterstock_151558448-1.png',
+          Image.network(
+            product.imageUrl,
             width: pageStyle.unitWidth * 134,
             height: pageStyle.unitHeight * 150,
           ),
@@ -63,7 +63,7 @@ class WishlistProductCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      product.price.toString() + ' ' + 'currency'.tr(),
+                      product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -71,7 +71,7 @@ class WishlistProductCard extends StatelessWidget {
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      product.price.toString() + ' ' + 'currency'.tr(),
+                      product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
