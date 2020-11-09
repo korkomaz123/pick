@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
+import 'package:ciga/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -35,6 +36,14 @@ class _ChangeNotificationSettingItemState
     getNotification = true;
     pageStyle = widget.pageStyle;
     settingBloc = context.bloc<SettingBloc>();
+    _getNotification();
+  }
+
+  void _getNotification() async {
+    getNotification = await context
+        .repository<SettingRepository>()
+        .getNotificationSetting(user.token);
+    setState(() {});
   }
 
   @override

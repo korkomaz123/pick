@@ -5,10 +5,15 @@ class SettingRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<void> getNotificationSetting(String token) async {
+  Future<bool> getNotificationSetting(String token) async {
     String url = EndPoints.getNotificationSetting;
     final params = {'token': token};
-    return await Api.getMethod(url, data: params);
+    final result = await Api.postMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return result['status'] == 'true';
+    } else {
+      return false;
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////

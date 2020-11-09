@@ -1,4 +1,4 @@
-package com.app.ciga
+package com.app.markaa
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity

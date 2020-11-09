@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -277,16 +278,28 @@ class _SignInPageState extends State<SignInPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(facebookIcon),
+          InkWell(
+            onTap: () => _onFacebookSign(),
+            child: SvgPicture.asset(facebookIcon),
+          ),
           SizedBox(width: pageStyle.unitWidth * 20),
-          SvgPicture.asset(googleIcon),
+          InkWell(
+            onTap: () => _onGoogleSign(),
+            child: SvgPicture.asset(googleIcon),
+          ),
           SizedBox(width: pageStyle.unitWidth * 20),
-          SvgPicture.asset(twitterIcon),
+          InkWell(
+            onTap: () => _onTwitterSign(),
+            child: SvgPicture.asset(twitterIcon),
+          ),
           Platform.isIOS
               ? Row(
                   children: [
                     SizedBox(width: pageStyle.unitWidth * 20),
-                    SvgPicture.asset(appleIcon),
+                    InkWell(
+                      onTap: () => _onAppleSign(),
+                      child: SvgPicture.asset(appleIcon),
+                    ),
                   ],
                 )
               : SizedBox.shrink(),
@@ -332,4 +345,30 @@ class _SignInPageState extends State<SignInPage> {
       ));
     }
   }
+
+  void _onFacebookSign() {}
+
+  void _onGoogleSign() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn();
+    try {
+      final googleAccount = await _googleSignIn.signIn();
+      String email = googleAccount.email;
+      String displayName = googleAccount.displayName;
+      String firstName = displayName.split(' ')[0];
+      String lastName = displayName.split(' ')[1];
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'Google Sign',
+        lang: lang,
+      ));
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _onTwitterSign() {}
+
+  void _onAppleSign() {}
 }

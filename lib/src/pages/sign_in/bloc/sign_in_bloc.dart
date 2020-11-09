@@ -26,6 +26,14 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       yield* _mapSignInSubmittedToState(event.email, event.password);
     } else if (event is SignOutSubmitted) {
       yield* _mapSignOutSubmittedToState(event.token);
+    } else if (event is SocialSignInSubmitted) {
+      yield* _mapSocialSignInSubmittedToState(
+        event.email,
+        event.firstName,
+        event.lastName,
+        event.loginType,
+        event.lang,
+      );
     }
   }
 
@@ -36,11 +44,11 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     yield SignInSubmittedInProcess();
     try {
       final result = await _signInRepository.login(email, password);
-      if (result['code'] == 'error') {
-        yield SignInSubmittedFailure(message: result['errMessage']);
-      } else {
+      if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
+      } else {
+        yield SignInSubmittedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
@@ -54,6 +62,29 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       yield SignOutSubmittedSuccess();
     } catch (e) {
       yield SignOutSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SignInState> _mapSocialSignInSubmittedToState(
+    String email,
+    String firstName,
+    String lastName,
+    String loginType,
+    String lang,
+  ) async* {
+    yield SignInSubmittedInProcess();
+    try {
+      final result = await _signInRepository.socialLogin(
+          email, firstName, lastName, loginType, lang);
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        result['user']['token'] = result['token'];
+        yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
+      } else {
+        yield SignInSubmittedFailure(message: result['errMessage']);
+      }
+    } catch (e) {
+      yield SignInSubmittedFailure(message: e.toString());
     }
   }
 }

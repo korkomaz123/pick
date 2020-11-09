@@ -15,6 +15,7 @@ import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,20 +54,20 @@ class _ReOrderPageState extends State<ReOrderPage> {
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
-      case OrderStatusEnum.onProgress:
+      case OrderStatusEnum.processing:
         icon = onProgressIcon;
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
-      case OrderStatusEnum.delivered:
+      case OrderStatusEnum.on_hold:
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
       default:
         icon = pendingIcon;
-        color = dangerColor;
-        status = 'order_pending'.tr();
+        color = orangeColor;
+        status = EnumToString.convertToString(order.status).tr();
     }
     setState(() {});
   }

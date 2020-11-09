@@ -8,9 +8,11 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
@@ -142,23 +144,19 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     Navigator.pop(context);
   }
 
-  void _onContinue() {
+  void _onContinue() async {
+    String cartId =
+        await context.repository<LocalStorageRepository>().getCartId();
     orderDetails['shipping'] = shippingMethodId;
+    orderDetails['cartId'] = cartId;
     int totalPrice = 0;
     int subtotalPrice = 0;
     int fees = myCartItems.length * serviceFees;
-    List<dynamic> products = [];
     for (int i = 0; i < myCartItems.length; i++) {
-      Map<String, dynamic> item = {
-        'productId': myCartItems[i].product.productId,
-        'count': myCartItems[i].itemCount.toString(),
-      };
-      products.add(json.encode(item));
       subtotalPrice += myCartItems[i].rowPrice;
     }
     totalPrice = subtotalPrice + fees;
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['products'] = json.encode(products);
     orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
     orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toString();
     orderDetails['orderDetails']['fees'] = fees.toString();

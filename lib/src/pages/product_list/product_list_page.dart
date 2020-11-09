@@ -67,7 +67,18 @@ class _ProductListPageState extends State<ProductListPage> {
 
     productListBloc = context.bloc<ProductListBloc>();
     categoryBloc = context.bloc<CategoryBloc>();
-    categoryBloc.add(CategorySubCategoriesLoaded(categoryId: category.id));
+    if (isFromBrand) {
+      print(brand.optionId);
+      categoryBloc.add(BrandSubCategoriesLoaded(
+        brandId: brand.optionId,
+        lang: lang,
+      ));
+    } else {
+      categoryBloc.add(CategorySubCategoriesLoaded(
+        categoryId: category.id,
+        lang: lang,
+      ));
+    }
 
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(

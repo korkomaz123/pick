@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "5336431605",
+    "firebase_url": "https://markaa-4c479.firebaseio.com",
+    "project_id": "markaa-4c479",
+    "storage_bucket": "markaa-4c479.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5336431605:android:aec9480229607d9c9a3ebc",
+        "android_client_info": {
+          "package_name": "com.app.markaa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5336431605-jcp12c56lo038ga3g66aq9aa9m9cpgmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.markaa",
+            "certificate_hash": "a13e1aa963b81f40f397ed5b5374c49382a3675a"
+          }
+        },
+        {
+          "client_id": "5336431605-9lfnuum9buacefchpmav90qfcqd9rbd0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIEKNRckkxYiRuUVzVt9gNF6ZHeJ_Uh0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5336431605-9lfnuum9buacefchpmav90qfcqd9rbd0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "5336431605-ga3jfvhneddhr1r02nqrnpbc3omvh7ao.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.markaa.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

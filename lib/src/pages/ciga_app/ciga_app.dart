@@ -136,6 +136,7 @@ class CigaApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CategoryBloc(
             categoryRepository: categoryRepository,
+            brandRepository: brandRepository,
           ),
         ),
         BlocProvider(

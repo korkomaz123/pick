@@ -25,3 +25,13 @@ class CategoryListLoaded extends CategoryEvent {
   @override
   List<Object> get props => [lang];
 }
+
+class BrandSubCategoriesLoaded extends CategoryEvent {
+  final String brandId;
+  final String lang;
+
+  BrandSubCategoriesLoaded({this.brandId, this.lang});
+
+  @override
+  List<Object> get props => [brandId, lang];
+}

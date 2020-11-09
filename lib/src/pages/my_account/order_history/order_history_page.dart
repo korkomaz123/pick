@@ -11,6 +11,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,20 +125,20 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
-      case OrderStatusEnum.onProgress:
+      case OrderStatusEnum.processing:
         icon = onProgressIcon;
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
-      case OrderStatusEnum.delivered:
+      case OrderStatusEnum.on_hold:
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
       default:
         icon = pendingIcon;
-        color = dangerColor;
-        status = 'order_pending'.tr();
+        color = orangeColor;
+        status = EnumToString.convertToString(order.status).tr();
     }
     return Container(
       width: double.infinity,
@@ -168,7 +169,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              vertical: pageStyle.unitHeight * 10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,7 +195,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              vertical: pageStyle.unitHeight * 10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,7 +221,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              vertical: pageStyle.unitHeight * 10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,7 +247,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              vertical: pageStyle.unitHeight * 10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -271,7 +272,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              vertical: pageStyle.unitHeight * 15,
+              vertical: pageStyle.unitHeight * 10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -295,49 +296,49 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         color: Colors.white54,
                         size: pageStyle.unitFontSize * 20,
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 4),
+                      SizedBox(width: pageStyle.unitWidth * 6),
                       Text(
                         'view_order_button_title'.tr(),
                         style: bookTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 17,
+                          fontSize: pageStyle.unitFontSize * 15,
                           color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: pageStyle.unitWidth * 5),
-                MaterialButton(
-                  onPressed: () => Navigator.pushNamed(
-                    context,
-                    Routes.reOrder,
-                    arguments: order,
-                  ),
-                  minWidth: pageStyle.unitWidth * 150,
-                  height: pageStyle.unitHeight * 45,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  color: primaryColor,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        FontAwesomeIcons.history,
-                        color: Colors.white54,
-                        size: pageStyle.unitFontSize * 20,
-                      ),
-                      SizedBox(width: pageStyle.unitWidth * 4),
-                      Text(
-                        'reorder_button_title'.tr(),
-                        style: bookTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 17,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(width: pageStyle.unitWidth * 5),
+                // MaterialButton(
+                //   onPressed: () => Navigator.pushNamed(
+                //     context,
+                //     Routes.reOrder,
+                //     arguments: order,
+                //   ),
+                //   minWidth: pageStyle.unitWidth * 150,
+                //   height: pageStyle.unitHeight * 45,
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(30),
+                //   ),
+                //   color: primaryColor,
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Icon(
+                //         FontAwesomeIcons.history,
+                //         color: Colors.white54,
+                //         size: pageStyle.unitFontSize * 20,
+                //       ),
+                //       SizedBox(width: pageStyle.unitWidth * 4),
+                //       Text(
+                //         'reorder_button_title'.tr(),
+                //         style: bookTextStyle.copyWith(
+                //           fontSize: pageStyle.unitFontSize * 17,
+                //           color: Colors.white,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),

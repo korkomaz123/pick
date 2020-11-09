@@ -70,7 +70,6 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     try {
       final result = await _filterRepository.filter(
           categoryIds, priceRanges, genders, colors, sizes, brands, lang);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> productList = result['products'];
         List<ProductModel> products = [];

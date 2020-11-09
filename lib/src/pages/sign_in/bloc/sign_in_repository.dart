@@ -14,6 +14,27 @@ class SignInRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> socialLogin(
+    String email,
+    String firstName,
+    String lastName,
+    String loginType,
+    String lang,
+  ) async {
+    String url = EndPoints.socialLogin;
+    final params = {
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'loginType': loginType,
+      'lang': lang,
+    };
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> logout(String token) async {
     String url = EndPoints.logout;
     final params = {'token': token};

@@ -7,15 +7,16 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/routes/routes.dart';
+// import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ViewOrderPage extends StatefulWidget {
@@ -47,20 +48,20 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
-      case OrderStatusEnum.onProgress:
+      case OrderStatusEnum.processing:
         icon = onProgressIcon;
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
-      case OrderStatusEnum.delivered:
+      case OrderStatusEnum.on_hold:
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
       default:
         icon = pendingIcon;
-        color = dangerColor;
-        status = 'order_pending'.tr();
+        color = orangeColor;
+        status = EnumToString.convertToString(order.status).tr();
     }
     setState(() {});
   }
@@ -145,7 +146,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              _buildReorderButton(),
+              // _buildReorderButton(),
             ],
           ),
         ),
@@ -405,37 +406,37 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     );
   }
 
-  Widget _buildReorderButton() {
-    return MaterialButton(
-      onPressed: () => Navigator.pushNamed(
-        context,
-        Routes.reOrder,
-        arguments: order,
-      ),
-      minWidth: pageStyle.unitWidth * 150,
-      height: pageStyle.unitHeight * 45,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-      color: primaryColor,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            FontAwesomeIcons.history,
-            color: Colors.white54,
-            size: pageStyle.unitFontSize * 20,
-          ),
-          SizedBox(width: pageStyle.unitWidth * 4),
-          Text(
-            'reorder_button_title'.tr(),
-            style: bookTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 17,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildReorderButton() {
+  //   return MaterialButton(
+  //     onPressed: () => Navigator.pushNamed(
+  //       context,
+  //       Routes.reOrder,
+  //       arguments: order,
+  //     ),
+  //     minWidth: pageStyle.unitWidth * 150,
+  //     height: pageStyle.unitHeight * 45,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(30),
+  //     ),
+  //     color: primaryColor,
+  //     child: Row(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Icon(
+  //           FontAwesomeIcons.history,
+  //           color: Colors.white54,
+  //           size: pageStyle.unitFontSize * 20,
+  //         ),
+  //         SizedBox(width: pageStyle.unitWidth * 4),
+  //         Text(
+  //           'reorder_button_title'.tr(),
+  //           style: bookTextStyle.copyWith(
+  //             fontSize: pageStyle.unitFontSize * 17,
+  //             color: Colors.white,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

@@ -273,7 +273,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   }
 
   void _initForm() {
-    print(defaultAddress.countryId);
     countryController.text = defaultAddress?.country;
     countryId = defaultAddress?.countryId;
     stateController.text = defaultAddress?.region;
