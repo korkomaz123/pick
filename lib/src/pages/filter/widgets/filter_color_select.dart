@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FilterColorSelect extends StatelessWidget {
-  final List<String> items;
-  final List<String> values;
+  final List<dynamic> items;
+  final List<dynamic> values;
   final Map<String, Color> colors;
   final double itemWidth;
   final double itemHeight;
@@ -20,6 +20,17 @@ class FilterColorSelect extends StatelessWidget {
     this.pageStyle,
   });
 
+  Color _getColorFromHex(String hexColor) {
+    hexColor = hexColor.replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    if (hexColor.length == 8) {
+      return Color(int.parse("0x$hexColor"));
+    }
+    return Colors.transparent;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -29,10 +40,11 @@ class FilterColorSelect extends StatelessWidget {
         return InkWell(
           onTap: () => onTap(item),
           child: Container(
-            width: values.contains(item) ? itemWidth * 1.2 : itemWidth,
-            height: values.contains(item) ? itemHeight * 1.2 : itemHeight,
+            width: values.contains(item['value']) ? itemWidth * 1.2 : itemWidth,
+            height:
+                values.contains(item['value']) ? itemHeight * 1.2 : itemHeight,
             decoration: BoxDecoration(
-              color: colors[item],
+              color: _getColorFromHex(item['color_code']),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

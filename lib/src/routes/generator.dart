@@ -79,7 +79,7 @@ class RouteGenerator {
         );
       case Routes.filter:
         return CupertinoPageRoute(
-          builder: (context) => FilterPage(),
+          builder: (context) => FilterPage(categoryId: params),
         );
       case Routes.product:
         return CupertinoPageRoute(

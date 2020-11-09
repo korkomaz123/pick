@@ -1,4 +1,3 @@
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -7,12 +6,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
+import 'filter_custom_option.dart';
+
 class FilterStoreSelectDialog extends StatefulWidget {
   final PageStyle pageStyle;
-  final List<String> values;
+  final List<dynamic> options;
+  final List<dynamic> values;
   final Function onChangedValue;
 
-  FilterStoreSelectDialog({this.pageStyle, this.values, this.onChangedValue});
+  FilterStoreSelectDialog({
+    this.pageStyle,
+    this.options,
+    this.values,
+    this.onChangedValue,
+  });
 
   @override
   _FilterStoreSelectDialogState createState() =>
@@ -106,8 +113,8 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
-      child: SelectOptionCustomStyle1(
-        items: stores.map((e) => e.name).toList(),
+      child: FilterCustomOption(
+        items: widget.options,
         values: widget.values,
         itemWidth: double.infinity,
         itemHeight: widget.pageStyle.unitHeight * 50,
@@ -118,7 +125,6 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
         unSelectedColor: Colors.transparent,
         unSelectedTitleColor: greyLightColor,
         unSelectedBorderColor: Colors.transparent,
-        // listStyle: true,
         onTap: (value) {
           widget.onChangedValue(value);
           setState(() {});

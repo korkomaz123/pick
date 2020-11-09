@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:ciga/src/data/models/product_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -23,6 +24,16 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
   ) async* {
     if (event is FilterAttributesLoaded) {
       yield* _mapFilterAttributesLoadedToState(event.categoryId, event.lang);
+    } else if (event is Filtered) {
+      yield* _mapFilteredToState(
+        event.categoryIds,
+        event.priceRanges,
+        event.genders,
+        event.colors,
+        event.sizes,
+        event.brands,
+        event.lang,
+      );
     }
   }
 
@@ -43,6 +54,35 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
       }
     } catch (e) {
       yield FilterAttributesLoadedFailure(message: e.toString());
+    }
+  }
+
+  Stream<FilterState> _mapFilteredToState(
+    List<dynamic> categoryIds,
+    List<dynamic> priceRanges,
+    List<dynamic> genders,
+    List<dynamic> colors,
+    List<dynamic> sizes,
+    List<dynamic> brands,
+    String lang,
+  ) async* {
+    yield FilteredInProcess();
+    try {
+      final result = await _filterRepository.filter(
+          categoryIds, priceRanges, genders, colors, sizes, brands, lang);
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        List<dynamic> productList = result['products'];
+        List<ProductModel> products = [];
+        for (int i = 0; i < productList.length; i++) {
+          products.add(ProductModel.fromJson(productList[i]));
+        }
+        yield FilteredSuccess(products: products);
+      } else {
+        yield FilteredFailure(message: result['errorMessage']);
+      }
+    } catch (e) {
+      yield FilteredFailure(message: e.toString());
     }
   }
 }

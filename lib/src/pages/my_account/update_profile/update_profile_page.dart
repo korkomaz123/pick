@@ -32,7 +32,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   File imageFile;
-  String imageString;
+  String name;
   Uint8List image;
   ImageCustomPickerService imageCustomPickerService;
   PageStyle pageStyle;
@@ -268,8 +268,13 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   void _onChangeImage() async {
     imageFile = await imageCustomPickerService.getImageWithDialog();
     if (imageFile != null) {
+      name = imageFile.path.split('/').last;
       image = imageFile.readAsBytesSync();
-      profileBloc.add(ProfileImageUpdated(token: user.token, image: image));
+      profileBloc.add(ProfileImageUpdated(
+        token: user.token,
+        image: image,
+        name: name,
+      ));
     }
   }
 

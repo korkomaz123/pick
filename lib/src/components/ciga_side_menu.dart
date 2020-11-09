@@ -78,7 +78,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                     height: pageStyle.unitWidth * 57,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('lib/public/images/profile.png'),
+                        image: user.profileUrl.isNotEmpty
+                            ? NetworkImage(user.profileUrl)
+                            : AssetImage('lib/public/images/profile.png'),
                         fit: BoxFit.cover,
                       ),
                       shape: BoxShape.circle,

@@ -1,17 +1,17 @@
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'bloc/filter_bloc.dart';
+import 'widgets/filter_basic_select.dart';
 import 'widgets/filter_category_select.dart';
 import 'widgets/filter_color_select.dart';
 import 'widgets/filter_store_select_dialog.dart';
@@ -19,7 +19,7 @@ import 'widgets/filter_store_select_dialog.dart';
 class FilterPage extends StatefulWidget {
   final String categoryId;
 
-  FilterPage({this.categoryId});
+  FilterPage({@required this.categoryId});
 
   @override
   _FilterPageState createState() => _FilterPageState();
@@ -29,23 +29,24 @@ class _FilterPageState extends State<FilterPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   PageStyle pageStyle;
   double minPrice = 0;
-  double maxPrice = 10;
+  double maxPrice = 100;
   List<String> selectedCategories = [];
   List<String> selectedGenders = [];
   List<String> selectedBrands = [];
+  List<dynamic> brands = [];
   bool isHideSizes = true;
   bool isHideColors = true;
   bool isHideStores = true;
   List<String> selectedSizes = [];
   List<String> selectedColors = [];
-  Map<String, Color> colors = {};
+  List<dynamic> brandList = [];
+  List<dynamic> colorList = [];
+  List<dynamic> genderList = [];
+  List<dynamic> sizeList = [];
+  FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
-  FilterBloc filterBloc;
-  List<Map<String, dynamic>> brandList = [];
-  List<Map<String, dynamic>> colorList = [];
-  List<Map<String, dynamic>> genderList = [];
-  List<Map<String, dynamic>> sizeList = [];
+  FlushBarService flushBarService;
 
   @override
   void initState() {
@@ -60,21 +61,7 @@ class _FilterPageState extends State<FilterPage> {
       categoryId: widget.categoryId,
       lang: lang,
     ));
-
-    for (int i = 0; i < colorItems.length; i++) {
-      colors[colorItems[i]] = _getColorFromHex(colorItems[i]);
-    }
-  }
-
-  Color _getColorFromHex(String hexColor) {
-    hexColor = hexColor.replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    if (hexColor.length == 8) {
-      return Color(int.parse("0x$hexColor"));
-    }
-    return Colors.transparent;
+    flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -99,8 +86,25 @@ class _FilterPageState extends State<FilterPage> {
                   progressService.hideProgress();
                   snackBarService.showErrorSnackBar(state.message);
                 }
+                if (state is FilteredInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is FilteredSuccess) {
+                  progressService.hideProgress();
+                  Navigator.pop(context, state.products);
+                }
+                if (state is FilteredFailure) {
+                  progressService.hideProgress();
+                  flushBarService.showErrorMessage(pageStyle, state.message);
+                }
               },
               builder: (context, state) {
+                if (state is FilterAttributesLoadedSuccess) {
+                  brandList = state.availableFilters['Brand'];
+                  colorList = state.availableFilters['Color'];
+                  genderList = state.availableFilters['Gender'];
+                  sizeList = state.availableFilters['Size'];
+                }
                 return Column(
                   children: [
                     _buildAppBar(),
@@ -109,7 +113,7 @@ class _FilterPageState extends State<FilterPage> {
                     _buildGender(),
                     _buildSizes(),
                     _buildColors(),
-                    _buildStores(),
+                    _buildBrands(),
                     _buildSelectedBrands(),
                     SizedBox(height: pageStyle.unitHeight * 100),
                   ],
@@ -175,16 +179,19 @@ class _FilterPageState extends State<FilterPage> {
         vertical: pageStyle.unitHeight * 20,
       ),
       child: FilterCategorySelect(
-        items: ['side_best_deals'.tr(), 'side_new_arrivals'.tr()],
+        items: [
+          {'display': 'side_best_deals', 'value': '41'},
+          {'display': 'side_new_arrivals', 'value': '42'}
+        ],
         itemWidth: pageStyle.unitWidth * 160,
         itemHeight: pageStyle.unitHeight * 40,
         values: selectedCategories,
         pageStyle: pageStyle,
         onTap: (value) {
-          if (selectedCategories.contains(value)) {
-            selectedCategories.remove(value);
+          if (selectedCategories.contains(value['value'])) {
+            selectedCategories.remove(value['value']);
           } else {
-            selectedCategories.add(value);
+            selectedCategories.add(value['value']);
           }
           setState(() {});
         },
@@ -213,7 +220,7 @@ class _FilterPageState extends State<FilterPage> {
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
-              '$minPrice KD - $maxPrice KD',
+              '${minPrice.toStringAsFixed(0)} KD - ${maxPrice.toStringAsFixed(0)} KD',
               style: boldTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 25,
@@ -229,13 +236,13 @@ class _FilterPageState extends State<FilterPage> {
               setState(() {});
             },
             min: 0,
-            max: 10,
+            max: 200,
             activeColor: Colors.white,
             inactiveColor: Colors.white70,
-            divisions: 20,
+            divisions: 200,
             labels: RangeLabels(
-              'KD ' + minPrice.toString(),
-              'KD ' + maxPrice.toString(),
+              'KD ' + minPrice.toStringAsFixed(0),
+              'KD ' + maxPrice.toStringAsFixed(0),
             ),
           )
         ],
@@ -261,34 +268,19 @@ class _FilterPageState extends State<FilterPage> {
             ),
           ),
           SizedBox(height: pageStyle.unitHeight * 20),
-          Container(
+          FilterBasicSelect(
+            pageStyle: pageStyle,
             width: double.infinity,
-            // height: pageStyle.unitHeight * 32,
-            child: SelectOptionCustom(
-              items: GenderEnum.values
-                  .map((e) => EnumToString.convertToString(e))
-                  .toList(),
-              itemWidth: pageStyle.unitWidth * 72,
-              itemHeight: pageStyle.unitHeight * 31,
-              values: selectedGenders,
-              itemSpace: pageStyle.unitWidth * 6,
-              titleSize: pageStyle.unitFontSize * 10,
-              radius: 30,
-              selectedColor: Colors.white,
-              selectedBorderColor: Colors.transparent,
-              selectedTitleColor: primaryColor,
-              unSelectedColor: Colors.transparent,
-              unSelectedBorderColor: Colors.white,
-              unSelectedTitleColor: Colors.white,
-              onTap: (value) {
-                if (selectedGenders.contains(value)) {
-                  selectedGenders.remove(value);
-                } else {
-                  selectedGenders.add(value);
-                }
-                setState(() {});
-              },
-            ),
+            options: genderList,
+            values: selectedGenders,
+            onSelectItem: (value) {
+              if (selectedGenders.contains(value['value'])) {
+                selectedGenders.remove(value['value']);
+              } else {
+                selectedGenders.add(value['value']);
+              }
+              setState(() {});
+            },
           ),
         ],
       ),
@@ -338,31 +330,19 @@ class _FilterPageState extends State<FilterPage> {
           ),
           isHideSizes
               ? SizedBox.shrink()
-              : Container(
+              : FilterBasicSelect(
+                  pageStyle: pageStyle,
                   width: double.infinity,
-                  child: SelectOptionCustom(
-                    items: ['S', 'M', 'L', 'XL', 'XXL'],
-                    itemWidth: pageStyle.unitWidth * 60,
-                    itemHeight: pageStyle.unitHeight * 31,
-                    values: selectedSizes,
-                    itemSpace: pageStyle.unitWidth * 6,
-                    titleSize: pageStyle.unitFontSize * 12,
-                    radius: 30,
-                    selectedColor: Colors.white,
-                    selectedBorderColor: Colors.transparent,
-                    selectedTitleColor: primaryColor,
-                    unSelectedColor: Colors.transparent,
-                    unSelectedBorderColor: Colors.white,
-                    unSelectedTitleColor: Colors.white,
-                    onTap: (value) {
-                      if (selectedSizes.contains(value)) {
-                        selectedSizes.remove(value);
-                      } else {
-                        selectedSizes.add(value);
-                      }
-                      setState(() {});
-                    },
-                  ),
+                  options: sizeList,
+                  values: selectedSizes,
+                  onSelectItem: (value) {
+                    if (selectedSizes.contains(value['value'])) {
+                      selectedSizes.remove(value['value']);
+                    } else {
+                      selectedSizes.add(value['value']);
+                    }
+                    setState(() {});
+                  },
                 ),
         ],
       ),
@@ -416,17 +396,16 @@ class _FilterPageState extends State<FilterPage> {
                   width: double.infinity,
                   padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
                   child: FilterColorSelect(
-                    items: colorItems,
+                    items: colorList,
                     itemWidth: pageStyle.unitWidth * 30,
                     itemHeight: pageStyle.unitHeight * 30,
                     values: selectedColors,
                     pageStyle: pageStyle,
-                    colors: colors,
                     onTap: (value) {
-                      if (selectedColors.contains(value)) {
-                        selectedColors.remove(value);
+                      if (selectedColors.contains(value['value'])) {
+                        selectedColors.remove(value['value']);
                       } else {
-                        selectedColors.add(value);
+                        selectedColors.add(value['value']);
                       }
                       setState(() {});
                     },
@@ -437,7 +416,7 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildStores() {
+  Widget _buildBrands() {
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
@@ -495,7 +474,7 @@ class _FilterPageState extends State<FilterPage> {
       child: Wrap(
         spacing: pageStyle.unitWidth * 6,
         runSpacing: pageStyle.unitHeight * 2,
-        children: selectedBrands.map((store) {
+        children: brands.map((brand) {
           return Container(
             padding: EdgeInsets.symmetric(
               horizontal: pageStyle.unitWidth * 10,
@@ -506,7 +485,7 @@ class _FilterPageState extends State<FilterPage> {
               color: Colors.white,
             ),
             child: Text(
-              store,
+              brand['display'],
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 12,
@@ -530,7 +509,7 @@ class _FilterPageState extends State<FilterPage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         radius: 0,
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _onFilter(),
       ),
     );
   }
@@ -550,6 +529,7 @@ class _FilterPageState extends State<FilterPage> {
           builder: (context, state) {
             return FilterStoreSelectDialog(
               pageStyle: pageStyle,
+              options: brandList,
               values: selectedBrands,
               onChangedValue: (value) => _onChangedValue(value),
             );
@@ -561,10 +541,12 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   void _onChangedValue(value) {
-    if (selectedBrands.contains(value)) {
-      selectedBrands.remove(value);
+    if (selectedBrands.contains(value['value'])) {
+      selectedBrands.remove(value['value']);
+      brands.remove(value);
     } else {
-      selectedBrands.add(value);
+      selectedBrands.add(value['value']);
+      brands.add(value);
     }
     setState(() {});
   }
@@ -581,5 +563,17 @@ class _FilterPageState extends State<FilterPage> {
     selectedSizes = [];
     selectedColors = [];
     setState(() {});
+  }
+
+  void _onFilter() {
+    filterBloc.add(Filtered(
+      categoryIds: selectedCategories,
+      priceRanges: [minPrice.toStringAsFixed(0), maxPrice.toStringAsFixed(0)],
+      genders: selectedGenders,
+      sizes: selectedSizes,
+      colors: selectedColors,
+      brands: selectedBrands,
+      lang: lang,
+    ));
   }
 }

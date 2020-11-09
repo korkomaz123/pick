@@ -1,6 +1,5 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -18,7 +17,6 @@ class CheckoutConfirmedPage extends StatefulWidget {
 class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   PageStyle pageStyle;
   TextEditingController noteController = TextEditingController();
-  PaymentEnum payment;
 
   @override
   Widget build(BuildContext context) {

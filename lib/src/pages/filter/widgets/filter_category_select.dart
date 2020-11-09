@@ -3,11 +3,12 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FilterCategorySelect extends StatelessWidget {
-  final List<String> items;
-  final List<String> values;
+  final List<dynamic> items;
+  final List<dynamic> values;
   final double itemWidth;
   final double itemHeight;
   final Function onTap;
@@ -35,16 +36,18 @@ class FilterCategorySelect extends StatelessWidget {
             height: itemHeight,
             padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 5),
             decoration: BoxDecoration(
-              color: values.contains(item) ? primaryColor : Colors.white,
+              color:
+                  values.contains(item['value']) ? primaryColor : Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color:
-                    values.contains(item) ? Colors.transparent : primaryColor,
+                color: values.contains(item['value'])
+                    ? Colors.transparent
+                    : primaryColor,
               ),
             ),
             child: Row(
               children: [
-                values.contains(item)
+                values.contains(item['value'])
                     ? SvgPicture.asset(
                         item == items[0] ? bestDealIcon : newArrivalIcon,
                         color: Colors.white,
@@ -54,9 +57,11 @@ class FilterCategorySelect extends StatelessWidget {
                       ),
                 SizedBox(width: pageStyle.unitWidth * 4),
                 Text(
-                  item,
+                  item['display'].toString().tr(),
                   style: mediumTextStyle.copyWith(
-                    color: values.contains(item) ? Colors.white : primaryColor,
+                    color: values.contains(item['value'])
+                        ? Colors.white
+                        : primaryColor,
                     fontSize: pageStyle.unitFontSize * 16,
                   ),
                 ),

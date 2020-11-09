@@ -23,7 +23,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileEvent event,
   ) async* {
     if (event is ProfileImageUpdated) {
-      yield* _mapProfileImageUpdatedToState(event.token, event.image);
+      yield* _mapProfileImageUpdatedToState(
+        event.token,
+        event.image,
+        event.name,
+      );
     } else if (event is ProfileInformationUpdated) {
       yield* _mapProfileInformationUpdatedToState(
         event.token,
@@ -36,15 +40,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Stream<ProfileState> _mapProfileImageUpdatedToState(
     String token,
     Uint8List image,
+    String name,
   ) async* {
     yield ProfileImageUpdatedInProcess();
     try {
-      final result = await _profileRepository.updateProfileImage(token, image);
+      final result =
+          await _profileRepository.updateProfileImage(token, image, name);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         String profileUrl = result['data']['profileUrl'];
         yield ProfileImageUpdatedSuccess(url: profileUrl);
       } else {
-        yield ProfileImageUpdatedFailure(message: result['errMessage']);
+        yield ProfileImageUpdatedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield ProfileImageUpdatedFailure(message: e.toString());
@@ -64,7 +71,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (result['code'] == 'SUCCESS') {
         yield ProfileInformationUpdatedSuccess();
       } else {
-        yield ProfileInformationUpdatedFailure(message: result['errMessage']);
+        yield ProfileInformationUpdatedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       print(e.toString());

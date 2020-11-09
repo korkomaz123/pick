@@ -4,9 +4,13 @@ import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
+import 'package:ciga/src/pages/search/bloc/search_bloc.dart';
+import 'package:ciga/src/pages/search/bloc/search_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -24,9 +28,13 @@ class _SearchPageState extends State<SearchPage> {
   PageStyle pageStyle;
   TextEditingController searchController = TextEditingController();
   List<String> searchHistory = ['Arab Perfumes', 'Asia Perfumes', 'Body care'];
+  Future<List<dynamic>> futureGenders;
   String filterData;
   Future<List<CategoryEntity>> futureCategories;
   Future<List<BrandEntity>> futureBrands;
+  SearchBloc searchBloc;
+  ProgressService progressService;
+  FlushBarService flushBarService;
 
   @override
   void initState() {
@@ -34,6 +42,8 @@ class _SearchPageState extends State<SearchPage> {
     futureCategories =
         context.repository<CategoryRepository>().getAllCategories(lang);
     futureBrands = context.repository<BrandRepository>().getAllBrands();
+    futureGenders = context.repository<SearchRepository>().getGenderOptions();
+    searchBloc = context.bloc<SearchBloc>();
   }
 
   @override
@@ -272,10 +282,22 @@ class _SearchPageState extends State<SearchPage> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       List<BrandEntity> brands = snapshot.data;
-                      return SearchFilterDialog(
-                        pageStyle: pageStyle,
-                        categories: categories,
-                        brands: brands,
+                      return FutureBuilder(
+                        future: futureGenders,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            List<dynamic> genders = snapshot.data;
+                            return SearchFilterDialog(
+                              pageStyle: pageStyle,
+                              categories: categories,
+                              brands: brands,
+                              genders: genders,
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
                       );
                     } else {
                       return Container();

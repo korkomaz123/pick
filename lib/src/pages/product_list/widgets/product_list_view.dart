@@ -22,6 +22,7 @@ class ProductListView extends StatefulWidget {
   final PageStyle pageStyle;
   final bool isFromBrand;
   final BrandEntity brand;
+  final List<ProductModel> products;
   final Function onChangeTab;
 
   ProductListView({
@@ -31,6 +32,7 @@ class ProductListView extends StatefulWidget {
     this.pageStyle,
     this.isFromBrand,
     this.brand,
+    this.products,
     this.onChangeTab,
   });
 
@@ -72,16 +74,21 @@ class _ProductListViewState extends State<ProductListView>
       vsync: this,
     );
     productListBloc = context.bloc<ProductListBloc>();
-    if (isFromBrand) {
-      productListBloc.add(BrandProductListLoaded(
-        brandId: brand.optionId,
-        lang: lang,
-      ));
+    if (widget.products != null) {
+      products = widget.products;
     } else {
-      productListBloc.add(ProductListLoaded(
-        categoryId: subCategories[activeIndex].id,
-        lang: lang,
-      ));
+      products = [];
+      if (isFromBrand) {
+        productListBloc.add(BrandProductListLoaded(
+          brandId: brand.optionId,
+          lang: lang,
+        ));
+      } else {
+        productListBloc.add(ProductListLoaded(
+          categoryId: subCategories[activeIndex].id,
+          lang: lang,
+        ));
+      }
     }
   }
 
@@ -103,17 +110,15 @@ class _ProductListViewState extends State<ProductListView>
       builder: (context, productState) {
         if (productState is ProductListLoadedSuccess) {
           products = productState.products;
-          return Expanded(
-            child: Column(
-              children: [
-                _buildCategoryTabBar(),
-                Expanded(child: _buildCategoryTabView()),
-              ],
-            ),
-          );
-        } else {
-          return Container();
         }
+        return Expanded(
+          child: Column(
+            children: [
+              _buildCategoryTabBar(),
+              Expanded(child: _buildCategoryTabView()),
+            ],
+          ),
+        );
       },
     );
   }

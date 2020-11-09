@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/shipping_method_entity.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -18,7 +21,15 @@ class CheckoutShippingPage extends StatefulWidget {
 
 class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   PageStyle pageStyle;
-  ShippingEnum shipping;
+  String shippingMethodId;
+  int serviceFees;
+
+  @override
+  void initState() {
+    super.initState();
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +56,11 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
                 ),
               ),
             ),
-            _buildFreeShipping(),
-            _buildFlatRateShipping(),
+            Column(
+              children: shippingMethods.map((method) {
+                return _buildShippingMethodCard(method);
+              }).toList(),
+            ),
             _buildContinueReviewButton(),
             _buildBackToAddressButton(),
           ],
@@ -55,7 +69,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     );
   }
 
-  Widget _buildFreeShipping() {
+  Widget _buildShippingMethodCard(ShippingMethodEntity method) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(
@@ -64,65 +78,29 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       padding: EdgeInsets.all(pageStyle.unitWidth * 10),
       color: greyLightColor,
       child: RadioListTile(
-        value: ShippingEnum.free,
-        groupValue: shipping,
+        value: method.id,
+        groupValue: shippingMethodId,
         onChanged: (value) {
-          setState(() {
-            shipping = value;
-          });
+          shippingMethodId = value;
+          serviceFees = method.serviceFees;
+          setState(() {});
         },
-        activeColor: darkColor,
+        activeColor: primaryColor,
         title: Text(
-          'checkout_free_shipping_title'.tr(),
-          style: bookTextStyle.copyWith(
+          method.title,
+          style: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
           ),
         ),
         subtitle: Text(
-          'checkout_free_shipping_text'.tr(),
+          method?.description,
           style: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 11,
           ),
         ),
         secondary: SvgPicture.asset(freeShippingIcon),
-      ),
-    );
-  }
-
-  Widget _buildFlatRateShipping() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      padding: EdgeInsets.all(pageStyle.unitWidth * 10),
-      color: greyLightColor,
-      child: RadioListTile(
-        value: ShippingEnum.rate,
-        groupValue: shipping,
-        onChanged: (value) {
-          setState(() {
-            shipping = value;
-          });
-        },
-        activeColor: darkColor,
-        title: Text(
-          'checkout_flat_rate_shipping_title'.tr(),
-          style: bookTextStyle.copyWith(
-            color: greyColor,
-            fontSize: pageStyle.unitFontSize * 14,
-          ),
-        ),
-        subtitle: Text(
-          'checkout_flat_rate_shipping_text'.tr(),
-          style: bookTextStyle.copyWith(
-            color: greyColor,
-            fontSize: pageStyle.unitFontSize * 11,
-          ),
-        ),
-        secondary: SvgPicture.asset(flatRateIcon),
       ),
     );
   }
@@ -137,7 +115,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushNamed(context, Routes.checkoutReview),
+        onPressed: () => _onContinue(),
         radius: 30,
       ),
     );
@@ -153,9 +131,37 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _onBack(),
         radius: 30,
       ),
     );
+  }
+
+  void _onBack() {
+    orderDetails['shipping'] = '';
+    Navigator.pop(context);
+  }
+
+  void _onContinue() {
+    orderDetails['shipping'] = shippingMethodId;
+    int totalPrice = 0;
+    int subtotalPrice = 0;
+    int fees = myCartItems.length * serviceFees;
+    List<dynamic> products = [];
+    for (int i = 0; i < myCartItems.length; i++) {
+      Map<String, dynamic> item = {
+        'productId': myCartItems[i].product.productId,
+        'count': myCartItems[i].itemCount.toString(),
+      };
+      products.add(json.encode(item));
+      subtotalPrice += myCartItems[i].rowPrice;
+    }
+    totalPrice = subtotalPrice + fees;
+    orderDetails['orderDetails'] = {};
+    orderDetails['orderDetails']['products'] = json.encode(products);
+    orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
+    orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toString();
+    orderDetails['orderDetails']['fees'] = fees.toString();
+    Navigator.pushNamed(context, Routes.checkoutReview);
   }
 }

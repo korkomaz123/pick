@@ -114,6 +114,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   pageStyle: pageStyle,
                   isFromBrand: isFromBrand,
                   brand: brand,
+                  products: products,
                   onChangeTab: (index) => _onChangeTab(index),
                 );
               } else {
@@ -202,14 +203,18 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  void _showFilterDialog() {
-    showDialog(
+  void _showFilterDialog() async {
+    final result = await showDialog(
       context: context,
       useSafeArea: false,
       builder: (context) {
-        return FilterPage();
+        return FilterPage(categoryId: subCategories[activeSubcategoryIndex].id);
       },
     );
+    if (result != null) {
+      products = result as List<ProductModel>;
+      setState(() {});
+    }
   }
 
   void _onSortBy() async {

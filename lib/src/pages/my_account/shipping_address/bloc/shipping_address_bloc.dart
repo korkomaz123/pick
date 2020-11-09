@@ -64,7 +64,6 @@ class ShippingAddressBloc
     try {
       final result =
           await _shippingAddressRepository.getShippingAddresses(token);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> shippingAddressesList = result['addresses'];
         List<AddressEntity> addresses = [];
@@ -93,7 +92,7 @@ class ShippingAddressBloc
   ) async* {
     yield ShippingAddressAddedInProcess();
     try {
-      await _shippingAddressRepository.addShippingAddress(
+      final result = await _shippingAddressRepository.addShippingAddress(
         token,
         firstName,
         lastName,
@@ -104,7 +103,11 @@ class ShippingAddressBloc
         zipCode,
         phoneNumber,
       );
-      yield ShippingAddressAddedSuccess();
+      if (result['code'] == 'SUCCESS') {
+        yield ShippingAddressAddedSuccess();
+      } else {
+        yield ShippingAddressAddedFailure(message: result['errorMessage']);
+      }
     } catch (e) {
       yield ShippingAddressAddedFailure(message: e.toString());
     }
@@ -126,7 +129,7 @@ class ShippingAddressBloc
   ) async* {
     yield ShippingAddressUpdatedInProcess();
     try {
-      await _shippingAddressRepository.updateShippingAddress(
+      final result = await _shippingAddressRepository.updateShippingAddress(
         token,
         addressId,
         firstName,
@@ -140,7 +143,11 @@ class ShippingAddressBloc
         isDefaultBilling,
         isDefaultShipping,
       );
-      yield ShippingAddressUpdatedSuccess();
+      if (result['code'] == 'SUCCESS') {
+        yield ShippingAddressUpdatedSuccess();
+      } else {
+        yield ShippingAddressUpdatedFailure(message: result['errorMessage']);
+      }
     } catch (e) {
       yield ShippingAddressUpdatedFailure(message: e.toString());
     }

@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:ciga/src/config/config.dart';
@@ -12,7 +11,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
@@ -37,21 +36,26 @@ class _MyCartPageState extends State<MyCartPage>
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
   String cartId;
+  int totalPrice = 0;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
+  FlushBarService flushBarService;
   MyCartBloc myCartBloc;
+  CigaAppBloc cigaAppBloc;
   LocalStorageRepository localRepo;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
     );
     myCartBloc = context.bloc<MyCartBloc>();
+    cigaAppBloc = context.bloc<CigaAppBloc>();
     localRepo = context.repository<LocalStorageRepository>();
     _getMyCartId();
   }
@@ -86,35 +90,56 @@ class _MyCartPageState extends State<MyCartPage>
                 }
                 if (state is MyCartItemsLoadedSuccess) {
                   progressService.hideProgress();
+                  cigaAppBloc.add(CartItemCountUpdated(
+                    cartItems: state.cartItems,
+                  ));
                 }
                 if (state is MyCartItemsLoadedFailure) {
                   progressService.hideProgress();
-                  snackBarService.showErrorSnackBar(state.message);
+                  flushBarService.showErrorMessage(pageStyle, state.message);
                 }
                 if (state is MyCartItemUpdatedInProcess) {
                   progressService.showProgress();
                 }
                 if (state is MyCartItemUpdatedSuccess) {
                   progressService.hideProgress();
+                  myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
                 }
                 if (state is MyCartItemUpdatedFailure) {
                   progressService.hideProgress();
-                  snackBarService.showErrorSnackBar(state.message);
+                  flushBarService.showErrorMessage(pageStyle, state.message);
                 }
                 if (state is MyCartItemRemovedInProcess) {
                   progressService.showProgress();
                 }
                 if (state is MyCartItemRemovedSuccess) {
                   progressService.hideProgress();
+                  myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
                 }
                 if (state is MyCartItemRemovedFailure) {
                   progressService.hideProgress();
-                  snackBarService.showErrorSnackBar(state.message);
+                  flushBarService.showErrorMessage(pageStyle, state.message);
+                }
+                if (state is MyCartItemsClearedInProcess) {
+                  progressService.showProgress();
+                }
+                if (state is MyCartItemsClearedSuccess) {
+                  progressService.hideProgress();
+                  cigaAppBloc.add(CartItemCountSet(cartItemCount: 0));
+                }
+                if (state is MyCartItemsClearedFailure) {
+                  progressService.hideProgress();
+                  flushBarService.showErrorMessage(pageStyle, state.message);
                 }
               },
               builder: (context, state) {
                 if (state is MyCartItemsLoadedSuccess) {
                   myCartItems = state.cartItems;
+                  _getTotalPrice();
+                }
+                if (state is MyCartItemsClearedSuccess) {
+                  myCartItems.clear();
+                  cartItemCount = 0;
                 }
                 return Column(
                   children: [
@@ -171,9 +196,7 @@ class _MyCartPageState extends State<MyCartPage>
             ),
           ),
           InkWell(
-            onTap: () => setState(() {
-              myCartItems.clear();
-            }),
+            onTap: () => _onClearCartItems(),
             child: Text(
               'my_cart_clear_cart'.tr(),
               style: bookTextStyle.copyWith(
@@ -318,13 +341,17 @@ class _MyCartPageState extends State<MyCartPage>
                   pageStyle: pageStyle,
                   value: myCartItems[index].itemCount,
                   onDecrement: () => myCartItems[index].itemCount > 0
-                      ? setState(() {
-                          myCartItems[index].itemCount -= 1;
-                        })
+                      ? myCartBloc.add(MyCartItemUpdated(
+                          cartId: cartId,
+                          itemId: myCartItems[index].itemId,
+                          qty: (myCartItems[index].itemCount - 1).toString(),
+                        ))
                       : null,
-                  onIncrement: () => setState(() {
-                    myCartItems[index].itemCount += 1;
-                  }),
+                  onIncrement: () => myCartBloc.add(MyCartItemUpdated(
+                    cartId: cartId,
+                    itemId: myCartItems[index].itemId,
+                    qty: (myCartItems[index].itemCount + 1).toString(),
+                  )),
                 ),
               ],
             ),
@@ -383,7 +410,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '240 ' + 'currency'.tr(),
+                '$totalPrice ' + 'currency'.tr(),
                 style: boldTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,
@@ -425,16 +452,31 @@ class _MyCartPageState extends State<MyCartPage>
     );
     if (result != null) {
       isDeleting = true;
-      setState(() {});
-      Timer.periodic(
-        AnimationDurations.removeItemAniDuration,
-        (timer) {
-          timer.cancel();
-          isDeleting = false;
+      // Timer.periodic(
+      //   AnimationDurations.removeItemAniDuration,
+      //   (timer) {
+      //     timer.cancel();
+      //     isDeleting = false;
+      //     setState(() {});
+      //   },
+      // );
+      myCartBloc.add(MyCartItemRemoved(
+        cartId: cartId,
+        itemId: myCartItems[index].itemId,
+      ));
+    }
+  }
 
-          setState(() {});
-        },
-      );
+  void _onClearCartItems() {
+    if (cartId.isNotEmpty) {
+      myCartBloc.add(MyCartItemsCleared(cartId: cartId));
+    }
+  }
+
+  void _getTotalPrice() {
+    totalPrice = 0;
+    for (int i = 0; i < myCartItems.length; i++) {
+      totalPrice += myCartItems[i].rowPrice;
     }
   }
 }

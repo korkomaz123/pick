@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -42,6 +47,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   AnimationController _favoriteController;
   Animation<double> _addToCartScaleAnimation;
   Animation<double> _favoriteScaleAnimation;
+  MyCartBloc cartBloc;
+  CigaAppBloc cigaAppBloc;
+  FlushBarService flushBarService;
+  LocalStorageRepository localStorageRepo;
+  bool isBuyNow = false;
 
   @override
   void initState() {
@@ -49,6 +59,10 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     pageStyle = widget.pageStyle;
     product = widget.product;
     productEntity = widget.productEntity;
+
+    cartBloc = context.bloc<MyCartBloc>();
+    cigaAppBloc = context.bloc<CigaAppBloc>();
+    localStorageRepo = context.repository<LocalStorageRepository>();
 
     /// add to cart button animation
     _addToCartController = AnimationController(
@@ -363,36 +377,83 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               buttonColor: Colors.white,
               borderColor: primaryColor,
               radius: 1,
-              onPressed: () => Navigator.pushNamed(context, Routes.myCart),
+              onPressed: () => _onBuyNow(),
             ),
           ),
-          RoundImageButton(
-            width: pageStyle.unitWidth * 58,
-            height: pageStyle.unitHeight * 50,
-            color: greyLightColor,
-            child: ScaleTransition(
-              scale: _addToCartScaleAnimation,
-              child: Container(
-                width: pageStyle.unitWidth * 25,
-                height: pageStyle.unitHeight * 25,
-                child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
-              ),
-            ),
-            onTap: () => _onAddToCart(product),
-            radius: 1,
+          BlocConsumer<MyCartBloc, MyCartState>(
+            listener: (context, state) {
+              if (state is MyCartCreatedSuccess) {
+                _addToCart(state.cartId);
+              }
+              if (state is MyCartCreatedFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+              if (state is MyCartItemAddedFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+              if (state is MyCartItemAddedSuccess) {
+                if (!isBuyNow) {
+                  _addedSuccess();
+                } else {
+                  Navigator.pushNamed(context, Routes.myCart);
+                }
+              }
+            },
+            builder: (context, state) {
+              return RoundImageButton(
+                width: pageStyle.unitWidth * 58,
+                height: pageStyle.unitHeight * 50,
+                color: greyLightColor,
+                child: ScaleTransition(
+                  scale: _addToCartScaleAnimation,
+                  child: Container(
+                    width: pageStyle.unitWidth * 25,
+                    height: pageStyle.unitHeight * 25,
+                    child: SvgPicture.asset(
+                      shoppingCartIcon,
+                      color: primaryColor,
+                    ),
+                  ),
+                ),
+                onTap: () => _onAddToCart(),
+                radius: 1,
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  void _onAddToCart(ProductModel product) {
+  void _addToCart(String cartId) async {
+    await localStorageRepo.setCartId(cartId);
+    cartBloc.add(MyCartItemAdded(
+      cartId: cartId,
+      productId: product.productId,
+      qty: '1',
+    ));
+  }
+
+  void _onAddToCart() async {
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    _showSnackbar();
+    String cartId = await localStorageRepo.getCartId();
+    if (cartId.isEmpty) {
+      cartBloc.add(MyCartCreated());
+    } else {
+      _addToCart(cartId);
+    }
+  }
+
+  void _addedSuccess() {
+    cartItemCount += 1;
+    cigaAppBloc.add(CartItemCountIncremented(
+      incrementedCount: cartItemCount,
+    ));
+    flushBarService.showAddCartMessage(pageStyle, product);
   }
 
   void _onFavorite() {
@@ -403,64 +464,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     });
   }
 
-  void _showSnackbar() {
-    Flushbar(
-      messageText: Container(
-        width: pageStyle.unitWidth * 300,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  productEntity.name,
-                  style: boldTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 15,
-                  ),
-                ),
-                Text(
-                  productEntity.name,
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Cart Total',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
-                  ),
-                ),
-                Text(
-                  'KD 460',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      icon: SvgPicture.asset(
-        orderedSuccessIcon,
-        width: pageStyle.unitWidth * 20,
-        height: pageStyle.unitHeight * 20,
-      ),
-      duration: Duration(seconds: 3),
-      leftBarIndicatorColor: Colors.blue[100],
-      flushbarPosition: FlushbarPosition.TOP,
-      backgroundColor: primaryColor,
-    )..show(context);
+  void _onBuyNow() async {
+    isBuyNow = true;
+    String cartId = await localStorageRepo.getCartId();
+    if (cartId.isEmpty) {
+      cartBloc.add(MyCartCreated());
+    } else {
+      _addToCart(cartId);
+    }
   }
 
   void _onShareProduct() {

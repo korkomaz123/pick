@@ -3,35 +3,41 @@ class AddressEntity {
   final String lastName;
   final String addressId;
   final String country;
+  final String countryId;
   final String region;
   final String city;
   final String street;
   final String zipCode;
   final String phoneNumber;
-  final String isActive;
+  final int defaultBillingAddress;
+  final int defaultShippingAddress;
 
   AddressEntity({
     this.firstName,
     this.lastName,
     this.addressId,
     this.country,
+    this.countryId,
     this.region,
     this.city,
     this.street,
     this.zipCode,
     this.phoneNumber,
-    this.isActive,
+    this.defaultBillingAddress,
+    this.defaultShippingAddress,
   });
 
   AddressEntity.fromJson(Map<String, dynamic> json)
       : firstName = json['firstname'],
         lastName = json['lastname'],
-        addressId = json['addressId'],
-        country = json['country'],
+        addressId = json['entity_id'],
+        country = json['country_name'],
+        countryId = json['country_id'],
         region = json['region'],
         city = json['city'],
         street = json['street'],
-        zipCode = json['zipCode'],
+        zipCode = json['postcode'],
         phoneNumber = json['telephone'],
-        isActive = json['isActive'];
+        defaultBillingAddress = json['DefaultBillingAddress'],
+        defaultShippingAddress = json['DefaultShippingAddress'];
 }

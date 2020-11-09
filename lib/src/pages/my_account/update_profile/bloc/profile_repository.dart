@@ -8,9 +8,13 @@ class ProfileRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> updateProfileImage(String token, Uint8List image) async {
+  Future<dynamic> updateProfileImage(
+    String token,
+    Uint8List image,
+    String name,
+  ) async {
     String url = EndPoints.updateProfileImage;
-    final params = {'token': token, 'image': base64Encode(image)};
+    final params = {'token': token, 'image': base64Encode(image), 'name': name};
     return await Api.postMethod(url, data: params);
   }
 

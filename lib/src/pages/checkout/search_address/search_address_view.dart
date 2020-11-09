@@ -50,11 +50,12 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(
-                          widget?.placeChangeNotifier?.listPlace[index].name,
+                          widget?.placeChangeNotifier?.listPlace[index]?.name,
                         ),
                         subtitle: Text(
                           widget?.placeChangeNotifier?.listPlace[index]
-                              .formattedAddress,
+                                  ?.formattedAddress ??
+                              '',
                         ),
                         onTap: () {
                           widget?.placeChangeNotifier
@@ -75,7 +76,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                     ),
                   ),
                 )
-              : addressDefault(),
+              : Container(),
         ],
       ),
     );
@@ -121,75 +122,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                     inputFrom = false;
                   });
                 },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget addressDefault() {
-    return Container(
-      color: Color(0xfff5f5f5),
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-      child: Row(
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {},
-            child: Material(
-              elevation: 1.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(Icons.home, color: greyColor),
-                    SizedBox(width: 10),
-                    Text(
-                      "Home",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {},
-            child: Material(
-              elevation: 1.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      Icons.work,
-                      color: greyColor,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      "Company",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
-                ),
               ),
             ),
           ),

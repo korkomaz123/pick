@@ -32,11 +32,15 @@ class CigaTextInput extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: padding),
       child: TextFormField(
         controller: controller,
-        style: bookTextStyle.copyWith(
-          color: greyColor,
+        style: mediumTextStyle.copyWith(
+          color: greyDarkColor,
           fontSize: fontSize,
         ),
         decoration: InputDecoration(
+          hintStyle: bookTextStyle.copyWith(
+            color: greyColor,
+            fontSize: fontSize,
+          ),
           hintText: hint,
         ),
         validator: (value) => validator(value),

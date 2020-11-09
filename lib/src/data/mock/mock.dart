@@ -2,6 +2,8 @@ import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
+import 'package:ciga/src/data/models/payment_method_entity.dart';
+import 'package:ciga/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
 final List<CategoryEntity> homeCategories = [
@@ -101,6 +103,13 @@ final List<StoreEntity> stores = List.generate(
 );
 
 List<CartItemEntity> myCartItems = [];
+int cartItemCount = 0;
+
+List<AddressEntity> addresses = [];
+AddressEntity defaultAddress;
+Map<String, dynamic> orderDetails = {};
+List<ShippingMethodEntity> shippingMethods = [];
+List<PaymentMethodEntity> paymentMethods = [];
 
 List<String> sortByList = [
   'price_low_high',

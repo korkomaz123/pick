@@ -85,8 +85,25 @@ class FlushBarService {
       icon: Icon(Icons.error, color: Colors.white),
       duration: Duration(seconds: 3),
       leftBarIndicatorColor: dangerColor.withOpacity(0.6),
-      flushbarPosition: FlushbarPosition.TOP,
+      flushbarPosition: FlushbarPosition.BOTTOM,
       backgroundColor: dangerColor,
+    )..show(context);
+  }
+
+  void showSuccessMessage(PageStyle pageStyle, String message) {
+    Flushbar(
+      messageText: Text(
+        message,
+        style: boldTextStyle.copyWith(
+          color: Colors.white,
+          fontSize: pageStyle.unitFontSize * 15,
+        ),
+      ),
+      icon: Icon(Icons.check, color: Colors.white),
+      duration: Duration(seconds: 3),
+      leftBarIndicatorColor: succeedColor.withOpacity(0.6),
+      flushbarPosition: FlushbarPosition.BOTTOM,
+      backgroundColor: succeedColor,
     )..show(context);
   }
 }

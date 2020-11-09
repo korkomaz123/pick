@@ -10,8 +10,14 @@ class SearchFilterDialog extends StatefulWidget {
   final PageStyle pageStyle;
   final List<CategoryEntity> categories;
   final List<BrandEntity> brands;
+  final List<dynamic> genders;
 
-  SearchFilterDialog({this.pageStyle, this.categories, this.brands});
+  SearchFilterDialog({
+    this.pageStyle,
+    this.categories,
+    this.brands,
+    this.genders,
+  });
 
   @override
   _SearchFilterDialogState createState() => _SearchFilterDialogState();

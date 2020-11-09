@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 
@@ -8,6 +10,7 @@ class ShippingAddressRepository {
   Future<dynamic> getShippingAddresses(String token) async {
     String url = EndPoints.getMyShippingAddresses;
     final params = {'token': token};
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 
@@ -28,16 +31,18 @@ class ShippingAddressRepository {
     String url = EndPoints.addShippingAddress;
     final params = {
       'token': token,
-      'firstname': firstName,
-      'lastname': lastName,
-      'country_id': countryId,
-      'region': region,
-      'city': city,
-      'street': streetName,
-      'post_code': zipCode,
-      'telephone': phoneNumber,
-      'isdefaultbilling': '0',
-      'isdefaultshipping': '0',
+      'address': json.encode({
+        'firstname': firstName,
+        'lastname': lastName,
+        'country_id': countryId,
+        'region': region,
+        'city': city,
+        'street': streetName,
+        'post_code': zipCode,
+        'telephone': phoneNumber,
+        'isdefaultbilling': '0',
+        'isdefaultshipping': '0'
+      }),
     };
     return await Api.postMethod(url, data: params);
   }
@@ -71,17 +76,19 @@ class ShippingAddressRepository {
     String url = EndPoints.updateShippingAddress;
     final params = {
       'token': token,
-      'address_id': addressId,
-      'firstname': firstName,
-      'lastname': lastName,
-      'country_id': countryId,
-      'region': region,
-      'city': city,
-      'street': streetName,
-      'post_code': zipCode,
-      'telephone': phoneNumber,
-      'isdefaultbilling': isDefaultBilling,
-      'isdefaultshipping': isDefaultShipping,
+      'address': json.encode({
+        'addressId': addressId,
+        'firstname': firstName,
+        'lastname': lastName,
+        'country_id': countryId,
+        'region': region,
+        'city': city,
+        'street': streetName,
+        'post_code': zipCode,
+        'telephone': phoneNumber,
+        'isdefaultbilling': isDefaultBilling,
+        'isdefaultshipping': isDefaultShipping
+      }),
     };
     return await Api.postMethod(url, data: params);
   }

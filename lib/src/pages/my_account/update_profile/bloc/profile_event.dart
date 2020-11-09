@@ -10,11 +10,12 @@ abstract class ProfileEvent extends Equatable {
 class ProfileImageUpdated extends ProfileEvent {
   final String token;
   final Uint8List image;
+  final String name;
 
-  ProfileImageUpdated({this.token, this.image});
+  ProfileImageUpdated({this.token, this.image, this.name});
 
   @override
-  List<Object> get props => [token, image];
+  List<Object> get props => [token, image, name];
 }
 
 class ProfileInformationUpdated extends ProfileEvent {

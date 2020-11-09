@@ -4,23 +4,24 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:lottie/lottie.dart';
@@ -35,15 +36,20 @@ class _WishlistPageState extends State<WishlistPage>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  LocalStorageRepository localStorageRepo;
   bool isDeleting = false;
   bool isAdding = false;
+  List<ProductModel> wishlists = [];
+  List<String> ids = [];
+  int selectedIndex;
+  String cartId;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
+  FlushBarService flushBarService;
   WishlistBloc wishlistBloc;
-  List<ProductModel> wishlists = [];
-  List<String> ids = [];
+  MyCartBloc cartBloc;
+  CigaAppBloc cigaAppBloc;
+  LocalStorageRepository localStorageRepo;
 
   @override
   void initState() {
@@ -54,8 +60,12 @@ class _WishlistPageState extends State<WishlistPage>
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    flushBarService = FlushBarService(context: context);
     wishlistBloc = context.bloc<WishlistBloc>();
+    cartBloc = context.bloc<MyCartBloc>();
+    cigaAppBloc = context.bloc<CigaAppBloc>();
     _triggerLoadWishlistEvent();
+    _getCartId();
   }
 
   void _triggerLoadWishlistEvent() async {
@@ -64,6 +74,15 @@ class _WishlistPageState extends State<WishlistPage>
     if (ids.isNotEmpty) {
       wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
     }
+  }
+
+  void _getCartId() async {
+    cartId = await localStorageRepo.getCartId();
+  }
+
+  void _setCartId(String newCartId) async {
+    cartId = newCartId;
+    await localStorageRepo.setCartId(newCartId);
   }
 
   @override
@@ -80,27 +99,59 @@ class _WishlistPageState extends State<WishlistPage>
           Column(
             children: [
               _buildAppBar(),
-              BlocConsumer<WishlistBloc, WishlistState>(
+              BlocListener<MyCartBloc, MyCartState>(
                 listener: (context, state) {
-                  if (state is WishlistLoadedInProcess) {
-                    progressService.showProgress();
+                  if (state is MyCartCreatedSuccess) {
+                    _setCartId(state.cartId);
+                    cartBloc.add(MyCartItemAdded(
+                      cartId: state.cartId,
+                      productId: wishlists[selectedIndex].productId,
+                      qty: '1',
+                    ));
                   }
-                  if (state is WishlistLoadedFailure) {
-                    progressService.hideProgress();
-                    snackBarService.showErrorSnackBar(state.message);
+                  if (state is MyCartCreatedFailure) {
+                    flushBarService.showErrorMessage(
+                      pageStyle,
+                      state.message,
+                    );
                   }
-                  if (state is WishlistLoadedSuccess) {
-                    progressService.hideProgress();
+                  if (state is MyCartItemAddedSuccess) {
+                    _onRemoveWishlist(selectedIndex, false);
+                    _updateCartItemCount();
+                    flushBarService.showAddCartMessage(
+                      pageStyle,
+                      wishlists[selectedIndex],
+                    );
+                  }
+                  if (state is MyCartItemAddedFailure) {
+                    flushBarService.showErrorMessage(
+                      pageStyle,
+                      state.message,
+                    );
                   }
                 },
-                builder: (context, state) {
-                  if (state is WishlistLoadedSuccess) {
-                    wishlists = state.wishlists;
-                    return _buildWishlistItems();
-                  } else {
-                    return Container();
-                  }
-                },
+                child: BlocConsumer<WishlistBloc, WishlistState>(
+                  listener: (context, state) {
+                    if (state is WishlistLoadedInProcess) {
+                      progressService.showProgress();
+                    }
+                    if (state is WishlistLoadedFailure) {
+                      progressService.hideProgress();
+                      snackBarService.showErrorSnackBar(state.message);
+                    }
+                    if (state is WishlistLoadedSuccess) {
+                      progressService.hideProgress();
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is WishlistLoadedSuccess) {
+                      wishlists = state.wishlists;
+                      return _buildWishlistItems();
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -164,7 +215,7 @@ class _WishlistPageState extends State<WishlistPage>
                   child: WishlistProductCard(
                     pageStyle: pageStyle,
                     product: wishlists[index],
-                    onRemoveWishlist: () => _onRemoveWishlist(index),
+                    onRemoveWishlist: () => _onRemoveWishlist(index, true),
                     onAddToCart: () => _onAddToCart(index),
                   ),
                 ),
@@ -209,14 +260,17 @@ class _WishlistPageState extends State<WishlistPage>
         : SizedBox.shrink();
   }
 
-  void _onRemoveWishlist(int index) async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return WishlistRemoveDialog(pageStyle: pageStyle);
-      },
-    );
-    if (result != null) {
+  void _onRemoveWishlist(int index, bool ask) async {
+    var result;
+    if (ask) {
+      result = await showDialog(
+        context: context,
+        builder: (context) {
+          return WishlistRemoveDialog(pageStyle: pageStyle);
+        },
+      );
+    }
+    if (result != null || !ask) {
       await localStorageRepo.removeWishlistItem(ids[index]);
       ids.removeAt(index);
       Timer.periodic(
@@ -234,106 +288,22 @@ class _WishlistPageState extends State<WishlistPage>
   }
 
   void _onAddToCart(int index) async {
-    isAdding = true;
-    setState(() {});
-    Timer.periodic(
-      AnimationDurations.addToCartAniDuration,
-      (timer) {
-        timer.cancel();
-        isAdding = false;
-        setState(() {});
-      },
-    );
-    listKey.currentState.removeItem(
-      index,
-      (context, animation) {
-        return Container(
-          width: pageStyle.deviceWidth,
-          height: pageStyle.unitHeight * 260,
-          padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
-          child: Container(
-            width: pageStyle.deviceWidth,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-            ),
-            child: Column(
-              children: [
-                WishlistProductCard(
-                  pageStyle: pageStyle,
-                  product: wishlists[index],
-                  onRemoveWishlist: () => null,
-                  onAddToCart: () => null,
-                ),
-                index < (wishlists.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
-              ],
-            ),
-          ),
-        );
-      },
-      duration: Duration(seconds: 2),
-    );
-    _showFlashBar(wishlists[index]);
+    selectedIndex = index;
+    if (cartId.isEmpty) {
+      cartBloc.add(MyCartCreated());
+    } else {
+      cartBloc.add(MyCartItemAdded(
+        cartId: cartId,
+        productId: wishlists[index].productId,
+        qty: '1',
+      ));
+    }
   }
 
-  void _showFlashBar(ProductModel product) {
-    Flushbar(
-      messageText: Container(
-        width: pageStyle.unitWidth * 300,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: boldTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 15,
-                  ),
-                ),
-                Text(
-                  product.name,
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Cart Total',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
-                  ),
-                ),
-                Text(
-                  'KD 460',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      icon: SvgPicture.asset(
-        orderedSuccessIcon,
-        width: pageStyle.unitWidth * 20,
-        height: pageStyle.unitHeight * 20,
-      ),
-      duration: Duration(seconds: 3),
-      leftBarIndicatorColor: Colors.blue[100],
-      flushbarPosition: FlushbarPosition.TOP,
-      backgroundColor: primaryColor,
-    )..show(context);
+  void _updateCartItemCount() {
+    cartItemCount = cartItemCount + 1;
+    cigaAppBloc.add(CartItemCountIncremented(
+      incrementedCount: cartItemCount,
+    ));
   }
 }

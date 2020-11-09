@@ -50,8 +50,6 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     yield MyCartCreatedInProcess();
     try {
       final result = await _myCartRepository.createCart();
-      print('create');
-      print(result);
       if (result['code'] == 'SUCCESS') {
         yield MyCartCreatedSuccess(cartId: result['cartId']);
       } else {
@@ -66,14 +64,17 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     yield MyCartItemsLoadedInProcess();
     try {
       final result = await _myCartRepository.getCartItems(cartId);
+
       if (result['code'] == 'SUCCESS') {
         List<dynamic> cartList = result['cart'];
         List<CartItemEntity> cartItems = [];
         for (int i = 0; i < cartList.length; i++) {
-          final cartItemJson = {};
+          Map<String, dynamic> cartItemJson = {};
           cartItemJson['product'] =
               ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['qty'] = cartList[i]['qty'];
+          cartItemJson['row_price'] = cartList[i]['row_price'];
+          cartItemJson['item_id'] = cartList[i]['itemid'];
           cartItems.add(CartItemEntity.fromJson(cartItemJson));
         }
         yield MyCartItemsLoadedSuccess(cartItems: cartItems);
@@ -119,6 +120,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
         yield MyCartItemUpdatedFailure(message: result['errMessage']);
       }
     } catch (e) {
+      print(e.toString());
       yield MyCartItemUpdatedFailure(message: e.toString());
     }
   }
@@ -147,9 +149,11 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
       if (result['code'] == 'SUCCESS') {
         yield MyCartItemsClearedSuccess();
       } else {
+        print(result['errMessage']);
         yield MyCartItemsClearedFailure(message: result['errMessage']);
       }
     } catch (e) {
+      print(e.toString());
       yield MyCartItemsClearedFailure(message: e.toString());
     }
   }

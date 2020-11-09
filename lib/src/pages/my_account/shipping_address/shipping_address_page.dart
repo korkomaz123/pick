@@ -2,13 +2,13 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
@@ -26,12 +26,12 @@ class ShippingAddressPage extends StatefulWidget {
 
 class _ShippingAddressPageState extends State<ShippingAddressPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  int defaultAddress;
+  String defaultAddressId;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
+  FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
-  List<AddressEntity> addresses = [];
 
   @override
   void initState() {
@@ -41,6 +41,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    flushBarService = FlushBarService(context: context);
     shippingAddressBloc = context.bloc<ShippingAddressBloc>();
     shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
   }
@@ -63,7 +64,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 50,
         margin: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 30,
+          horizontal: pageStyle.unitWidth * 10,
           vertical: pageStyle.unitHeight * 5,
         ),
         child: MaterialButton(
@@ -71,13 +72,13 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           color: primaryColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
             'add_new_address_button_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 21,
+              fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
         ),
@@ -117,7 +118,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             }
             if (state is ShippingAddressLoadedFailure) {
               progressService.hideProgress();
-              snackBarService.showErrorSnackBar(state.message);
+              flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressLoadedSuccess) {
               progressService.hideProgress();
@@ -127,11 +128,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             }
             if (state is ShippingAddressRemovedFailure) {
               progressService.hideProgress();
-              snackBarService.showErrorSnackBar(state.message);
+              flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedSuccess) {
               progressService.hideProgress();
-              snackBarService.showSuccessSnackBar('Removed successfully');
+              flushBarService.showSuccessMessage(
+                pageStyle,
+                'Removed successfully',
+              );
               shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
             }
             if (state is ShippingAddressUpdatedInProcess) {
@@ -139,16 +143,25 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             }
             if (state is ShippingAddressUpdatedFailure) {
               progressService.hideProgress();
-              snackBarService.showErrorSnackBar(state.message);
+              flushBarService.showErrorMessage(pageStyle, state.message);
             }
-            if (state is ShippingAddressUpdatedSuccess ||
-                state is ShippingAddressAddedSuccess) {
+            if (state is ShippingAddressUpdatedSuccess) {
+              progressService.hideProgress();
+              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+            }
+            if (state is ShippingAddressAddedSuccess) {
               shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
             }
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
               addresses = state.addresses;
+              for (int i = 0; i < addresses.length; i++) {
+                if (addresses[i].defaultShippingAddress == 1) {
+                  defaultAddressId = addresses[i].addressId;
+                  defaultAddress = addresses[i];
+                }
+              }
             }
             return Column(
               children: List.generate(
@@ -166,9 +179,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   Widget _buildAddressCard(int index) {
     return InkWell(
-      onTap: () => setState(() {
-        defaultAddress = index;
-      }),
+      onTap: () => _onUpdate(index),
       child: Container(
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 190,
@@ -231,11 +242,11 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             Align(
               alignment: Alignment.topLeft,
               child: Radio(
-                value: index,
-                groupValue: defaultAddress,
+                value: addresses[index].addressId,
+                groupValue: defaultAddressId,
                 activeColor: primaryColor,
                 onChanged: (value) {
-                  defaultAddress = value;
+                  defaultAddressId = value;
                   _onUpdate(index);
                 },
               ),
@@ -280,18 +291,19 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onUpdate(int index) async {
+    defaultAddress = shippingAddresses[index];
     shippingAddressBloc.add(ShippingAddressUpdated(
       token: user.token,
       addressId: addresses[index].addressId,
       firstName: addresses[index].firstName,
       lastName: addresses[index].lastName,
-      countryId: addresses[index].country,
+      countryId: addresses[index].countryId,
       region: addresses[index].region,
       city: addresses[index].city,
       streetName: addresses[index].street,
       zipCode: addresses[index].zipCode,
       phone: addresses[index].phoneNumber,
-      isDefaultBilling: '1',
+      isDefaultBilling: addresses[index].defaultBillingAddress.toString(),
       isDefaultShipping: '1',
     ));
   }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 
@@ -42,9 +40,11 @@ class MyCartRepository {
     String url = EndPoints.getCartItems;
     final params = {
       'cartId': cartId,
-      'products': json.encode({'productId': productId, 'qty': qty}),
+      'productId': productId,
+      'qty': qty,
       'type': 'add'
     };
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 

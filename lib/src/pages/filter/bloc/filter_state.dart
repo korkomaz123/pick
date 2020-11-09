@@ -28,3 +28,23 @@ class FilterAttributesLoadedFailure extends FilterState {
   @override
   List<Object> get props => [message];
 }
+
+class FilteredInProcess extends FilterState {}
+
+class FilteredSuccess extends FilterState {
+  final List<ProductModel> products;
+
+  FilteredSuccess({this.products});
+
+  @override
+  List<Object> get props => [products];
+}
+
+class FilteredFailure extends FilterState {
+  final String message;
+
+  FilteredFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

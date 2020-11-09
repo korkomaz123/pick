@@ -11,10 +11,12 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
+import 'update_profile/bloc/profile_bloc.dart';
 import 'widgets/about_us_item.dart';
 import 'widgets/change_notification_setting_item.dart';
 import 'widgets/contact_us_item.dart';
@@ -100,25 +102,29 @@ class _AccountPageState extends State<AccountPage> {
           Expanded(
             child: Container(
               padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.firstName,
-                    style: boldTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 23,
-                    ),
-                  ),
-                  SizedBox(height: pageStyle.unitHeight * 6),
-                  Text(
-                    user.lastName,
-                    style: boldTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 23,
-                    ),
-                  ),
-                ],
+              child: BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.firstName,
+                        style: boldTextStyle.copyWith(
+                          color: primaryColor,
+                          fontSize: pageStyle.unitFontSize * 23,
+                        ),
+                      ),
+                      SizedBox(height: pageStyle.unitHeight * 6),
+                      Text(
+                        user.lastName,
+                        style: boldTextStyle.copyWith(
+                          color: primaryColor,
+                          fontSize: pageStyle.unitFontSize * 23,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),

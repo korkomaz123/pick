@@ -8,6 +8,7 @@ import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
+  FlushBarService flushBarService;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -50,6 +52,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
   void initState() {
     super.initState();
     isNew = true;
+    firstNameController.text = user?.firstName;
+    lastNameController.text = user?.lastName;
     if (widget.address != null) {
       isNew = false;
       firstNameController.text = widget?.address?.firstName;
@@ -59,6 +63,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       streetController.text = widget?.address?.street;
       zipCodeController.text = widget?.address?.zipCode;
       phoneNumberController.text = widget?.address?.phoneNumber;
+      countryId = widget?.address?.countryId;
     }
     shippingAddressBloc = context.bloc<ShippingAddressBloc>();
     progressService = ProgressService(context: context);
@@ -66,6 +71,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -78,22 +84,27 @@ class _EditAddressPageState extends State<EditAddressPage> {
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: BlocListener<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
-          if (state is ShippingAddressUpdatedInProcess ||
-              state is ShippingAddressAddedInProcess) {
+          if (state is ShippingAddressAddedInProcess) {
             progressService.showProgress();
           }
-          if (state is ShippingAddressUpdatedFailure) {
+          if (state is ShippingAddressAddedSuccess) {
             progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            Navigator.pop(context);
           }
           if (state is ShippingAddressAddedFailure) {
             progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            flushBarService.showErrorMessage(pageStyle, state.message);
           }
-          if (state is ShippingAddressAddedSuccess ||
-              state is ShippingAddressUpdatedSuccess) {
+          if (state is ShippingAddressUpdatedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ShippingAddressUpdatedSuccess) {
             progressService.hideProgress();
             Navigator.pop(context);
+          }
+          if (state is ShippingAddressUpdatedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
           }
         },
         child: Column(
@@ -232,13 +243,13 @@ class _EditAddressPageState extends State<EditAddressPage> {
         color: primaryColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           'save_address_button_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 21,
+            fontSize: pageStyle.unitFontSize * 16,
           ),
         ),
       ),
@@ -264,7 +275,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
         shippingAddressBloc.add(ShippingAddressAdded(
           token: user.token,
           countryId: countryId,
-          region: countryController.text,
+          region: '',
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           city: cityController.text,
@@ -277,7 +288,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           token: user.token,
           addressId: widget.address.addressId,
           countryId: countryId,
-          region: countryController.text,
+          region: '',
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           city: cityController.text,

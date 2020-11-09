@@ -2,7 +2,6 @@ import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -54,10 +53,13 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                           pageStyle: pageStyle,
                           cardWidth: pageStyle.unitWidth * 340,
                           cardHeight: pageStyle.unitHeight * 150,
-                          product: ProductModel(),
+                          product: myCartItems[index].product,
                         ),
                         index < (myCartItems.length - 1)
-                            ? Divider(color: greyColor, thickness: 0.5)
+                            ? Divider(
+                                color: greyColor.withOpacity(0.3),
+                                thickness: 0.5,
+                              )
                             : SizedBox.shrink(),
                       ],
                     );
@@ -120,7 +122,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushNamed(context, Routes.checkoutPayment),
+        onPressed: () => _onContinue(),
         radius: 30,
       ),
     );
@@ -140,5 +142,9 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
         radius: 30,
       ),
     );
+  }
+
+  void _onContinue() {
+    Navigator.pushNamed(context, Routes.checkoutPayment);
   }
 }
