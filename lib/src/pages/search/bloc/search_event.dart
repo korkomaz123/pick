@@ -7,11 +7,13 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class SearchInitialized extends SearchEvent {}
+
 class Searched extends SearchEvent {
   final String query;
-  final String categories;
-  final String brands;
-  final String genders;
+  final List<dynamic> categories;
+  final List<dynamic> brands;
+  final List<dynamic> genders;
   final String lang;
 
   Searched({

@@ -29,14 +29,16 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         event.genders,
         event.lang,
       );
+    } else if (event is SearchInitialized) {
+      yield SearchInitial();
     }
   }
 
   Stream<SearchState> _mapSearchedToState(
     String query,
-    String categories,
-    String brands,
-    String genders,
+    List<dynamic> categories,
+    List<dynamic> brands,
+    List<dynamic> genders,
     String lang,
   ) async* {
     yield SearchedInProcess();
@@ -51,7 +53,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         }
         yield SearchedSuccess(products: products);
       } else {
-        yield SearchedFailure(message: result['errorMessage']);
+        print(result['errMessage']);
+        yield SearchedFailure(message: result['errMessage']);
       }
     } catch (e) {
       yield SearchedFailure(message: e.toString());

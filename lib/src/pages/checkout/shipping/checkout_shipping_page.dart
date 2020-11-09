@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';

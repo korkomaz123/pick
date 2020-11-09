@@ -30,7 +30,6 @@ import 'package:ciga/src/pages/search/search_page.dart';
 import 'package:ciga/src/pages/sign_in/sign_in_page.dart';
 import 'package:ciga/src/pages/sign_up/sign_up_page.dart';
 import 'package:ciga/src/pages/splash/splash_page.dart';
-import 'package:ciga/src/pages/store_list/store_list_page.dart';
 import 'package:ciga/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -68,10 +67,6 @@ class RouteGenerator {
       case Routes.categoryList:
         return CupertinoPageRoute(
           builder: (context) => CategoryListPage(categories: params),
-        );
-      case Routes.storeList:
-        return CupertinoPageRoute(
-          builder: (context) => StoreListPage(),
         );
       case Routes.brandList:
         return CupertinoPageRoute(

@@ -49,23 +49,21 @@ import 'bloc/ciga_app_bloc.dart';
 class CigaApp extends StatelessWidget {
   CigaApp({Key key}) : super(key: key);
 
-  final HomeRepository homeRepository = HomeRepository();
-  final SignInRepository signInRepository = SignInRepository();
-  final CategoryRepository categoryRepository = CategoryRepository();
-  final ProductRepository productRepository = ProductRepository();
-  final BrandRepository brandRepository = BrandRepository();
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
-  final WishlistRepository wishlistRepository = WishlistRepository();
-  final SettingRepository settingRepository = SettingRepository();
-  final ShippingAddressRepository shippingAddressRepository =
-      ShippingAddressRepository();
-  final OrderRepository orderRepository = OrderRepository();
-  final ProfileRepository profileRepository = ProfileRepository();
-  final FilterRepository filterRepository = FilterRepository();
-  final MyCartRepository myCartRepository = MyCartRepository();
-  final SearchRepository searchRepository = SearchRepository();
-  final CheckoutRepository checkoutRepository = CheckoutRepository();
+  final homeRepository = HomeRepository();
+  final signInRepository = SignInRepository();
+  final categoryRepository = CategoryRepository();
+  final productRepository = ProductRepository();
+  final brandRepository = BrandRepository();
+  final localStorageRepository = LocalStorageRepository();
+  final wishlistRepository = WishlistRepository();
+  final settingRepository = SettingRepository();
+  final shippingAddressRepository = ShippingAddressRepository();
+  final orderRepository = OrderRepository();
+  final profileRepository = ProfileRepository();
+  final filterRepository = FilterRepository();
+  final myCartRepository = MyCartRepository();
+  final searchRepository = SearchRepository();
+  final checkoutRepository = CheckoutRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +95,12 @@ class CigaApp extends StatelessWidget {
                               value: myCartRepository,
                               child: RepositoryProvider.value(
                                 value: checkoutRepository,
-                                child: ChangeNotifierProvider(
-                                  create: (context) => PlaceChangeNotifier(),
-                                  child: _buildMultiBlocProvider(),
+                                child: RepositoryProvider.value(
+                                  value: searchRepository,
+                                  child: ChangeNotifierProvider(
+                                    create: (context) => PlaceChangeNotifier(),
+                                    child: _buildMultiBlocProvider(),
+                                  ),
                                 ),
                               ),
                             ),

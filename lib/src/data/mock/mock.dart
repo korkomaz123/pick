@@ -84,24 +84,6 @@ final StoreEntity store1 = StoreEntity(
   products: [],
 );
 
-List<String> topCategoryItems = [
-  'All',
-  'French Perfumes',
-  'Arabian Perfumes',
-  'American Perfumes',
-  'Aisa Perfumes',
-];
-
-final List<StoreEntity> stores = List.generate(
-  10,
-  (index) => StoreEntity(
-    id: index.toString(),
-    name: 'Brand ${index + 1}',
-    imageUrl: 'lib/public/images/brand${index + 1}.png',
-    products: products,
-  ),
-);
-
 List<CartItemEntity> myCartItems = [];
 int cartItemCount = 0;
 
@@ -143,13 +125,6 @@ List<CategoryMenuEntity> categoryMenu = List.generate(
     ),
   ),
 );
-
-List<String> colorItems = ['#FD0000', '#F5FF00', '#00A7FF', '#853299'];
-
-String aboutUsText =
-    '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor''';
 
 MessageEntity message = MessageEntity(
   time: '28-09-2020',
