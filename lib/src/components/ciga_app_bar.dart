@@ -73,9 +73,8 @@ class _CigaAppBarState extends State<CigaAppBar> {
           (route) => false,
         ),
         child: Container(
-          width: logoWidth,
-          height: logoHeight,
-          child: SvgPicture.asset(logoIcon),
+          width: widget.pageStyle.unitWidth * 160,
+          child: SvgPicture.asset(hLogoIcon),
         ),
       ),
       leading: IconButton(

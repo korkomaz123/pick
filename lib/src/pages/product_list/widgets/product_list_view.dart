@@ -6,8 +6,8 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -50,7 +50,7 @@ class _ProductListViewState extends State<ProductListView>
   bool isFromBrand;
   PageStyle pageStyle;
   ProgressService progressService;
-  SnackBarService snackBarService;
+  FlushBarService flushBarService;
   TabController tabController;
   ProductListBloc productListBloc;
 
@@ -64,10 +64,7 @@ class _ProductListViewState extends State<ProductListView>
     isFromBrand = widget.isFromBrand;
     brand = widget.brand;
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: widget.scaffoldKey,
-    );
+    flushBarService = FlushBarService(context: context);
     tabController = TabController(
       length: subCategories.length,
       initialIndex: activeIndex,
@@ -101,7 +98,7 @@ class _ProductListViewState extends State<ProductListView>
         }
         if (productState is ProductListLoadedFailure) {
           progressService.hideProgress();
-          snackBarService.showErrorSnackBar(productState.message);
+          flushBarService.showErrorMessage(pageStyle, productState.message);
         }
         if (productState is ProductListLoadedSuccess) {
           progressService.hideProgress();

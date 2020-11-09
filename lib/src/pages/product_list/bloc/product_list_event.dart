@@ -39,3 +39,5 @@ class BrandProductListLoaded extends ProductListEvent {
   @override
   List<Object> get props => [brandId, lang];
 }
+
+class ProductListInitialized extends ProductListEvent {}

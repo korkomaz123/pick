@@ -54,6 +54,11 @@ dev_dependencies:
   dio: ^3.0.10
   provider: ^4.3.2+1
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/public/launcher/app-launcher-icon.png"
+
 flutter:
 
   uses-material-design: true
@@ -63,6 +68,7 @@ flutter:
     - lib/public/images/
     - lib/public/icons/
     - lib/public/animations/
+    - lib/public/launcher/
 
   fonts:
     - family: AvenirMedium

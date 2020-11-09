@@ -17,7 +17,12 @@ class ProductNoAvailable extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(greyLogoIcon),
+          SvgPicture.asset(
+            hLogoIcon,
+            color: greyColor.withOpacity(0.5),
+            width: pageStyle.unitWidth * 80,
+            height: pageStyle.unitHeight * 20,
+          ),
           SizedBox(height: pageStyle.unitHeight * 20),
           Text(
             'no_data_message'.tr(),

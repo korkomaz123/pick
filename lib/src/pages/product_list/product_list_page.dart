@@ -68,7 +68,6 @@ class _ProductListPageState extends State<ProductListPage> {
     productListBloc = context.bloc<ProductListBloc>();
     categoryBloc = context.bloc<CategoryBloc>();
     if (isFromBrand) {
-      print(brand.optionId);
       categoryBloc.add(BrandSubCategoriesLoaded(
         brandId: brand.optionId,
         lang: lang,
@@ -85,6 +84,12 @@ class _ProductListPageState extends State<ProductListPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+  }
+
+  @override
+  void dispose() {
+    productListBloc.add(ProductListInitialized());
+    super.dispose();
   }
 
   @override

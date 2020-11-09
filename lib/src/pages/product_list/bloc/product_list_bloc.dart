@@ -37,6 +37,8 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         event.brandId,
         event.lang,
       );
+    } else if (event is ProductListInitialized) {
+      yield ProductListInitial();
     }
   }
 

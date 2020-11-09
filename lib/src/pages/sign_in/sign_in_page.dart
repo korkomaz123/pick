@@ -87,9 +87,9 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
-                      logoIcon,
+                      hLogoIcon,
                       width: pageStyle.unitWidth * 120,
-                      height: pageStyle.unitHeight * 80,
+                      height: pageStyle.unitHeight * 45,
                     ),
                   ),
                   _buildEmail(),

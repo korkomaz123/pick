@@ -39,7 +39,7 @@ class _SplashPageState extends State<SplashPage> {
         child: Container(
           width: _pageStyle.unitWidth * 229.01,
           height: _pageStyle.unitHeight * 129.45,
-          child: SvgPicture.asset(logoIcon),
+          child: SvgPicture.asset(vLogoIcon),
         ),
       ),
     );

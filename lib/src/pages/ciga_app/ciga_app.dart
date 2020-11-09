@@ -311,6 +311,7 @@ class _CigaAppViewState extends State<CigaAppView> {
         locale: EasyLocalization.of(context).locale,
         debugShowCheckedModeBanner: false,
         theme: cigaAppTheme,
+        title: 'Markaa',
         initialRoute: '/',
         onGenerateRoute: (settings) {
           return RouteGenerator.generateRoute(settings);

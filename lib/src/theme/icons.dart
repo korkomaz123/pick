@@ -1,5 +1,6 @@
 const String iconsAssetPath = 'lib/public/icons';
-const String logoIcon = '$iconsAssetPath/logo-icon.svg';
+const String vLogoIcon = '$iconsAssetPath/vertical-logo.svg';
+const String hLogoIcon = '$iconsAssetPath/horizontal-logo.svg';
 const String loginIcon = '$iconsAssetPath/login-icon.svg';
 const String logoutIcon = '$iconsAssetPath/logout-icon.svg';
 const String shoppingBasketIcon = '$iconsAssetPath/shopping-basket-icon.svg';

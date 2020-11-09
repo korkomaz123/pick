@@ -96,10 +96,13 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   ),
                 ],
               )
-            : SvgPicture.asset(
-                logoIcon,
-                width: pageStyle.unitWidth * 95,
-                height: pageStyle.unitHeight * 55,
+            : Padding(
+                padding: EdgeInsets.only(top: pageStyle.unitHeight * 5),
+                child: SvgPicture.asset(
+                  hLogoIcon,
+                  width: pageStyle.unitWidth * 95,
+                  height: pageStyle.unitHeight * 35,
+                ),
               ),
       ),
     );
