@@ -26,6 +26,7 @@ dependencies:
   equatable: ^1.2.3
   flushbar: ^1.10.4
   flutter_bloc: ^6.0.1
+  flutter_facebook_login: ^3.0.0
   flutter_html: ^1.0.2
   flutter_launcher_icons: ^0.7.5
   flutter_spinkit: ^4.1.2+1

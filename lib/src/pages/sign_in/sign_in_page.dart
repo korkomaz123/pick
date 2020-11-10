@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
@@ -12,6 +14,7 @@ import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -346,7 +349,45 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _onFacebookSign() {}
+  void _onFacebookSign() async {
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        _loginWithFacebook(result);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print('/// Cancelled By User ///');
+        break;
+      case FacebookLoginStatus.error:
+        print('/// Facebook Login Error ///');
+        print(result.errorMessage);
+        break;
+    }
+  }
+
+  void _loginWithFacebook(FacebookLoginResult result) async {
+    try {
+      final token = result.accessToken.token;
+      final graphResponse = await http.get(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = json.decode(graphResponse.body);
+      String firstName = profile['first_name'];
+      String lastName = profile['last_name'];
+      String email = profile['email'];
+      print(profile);
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'Facebook Sign',
+        lang: lang,
+      ));
+    } catch (e) {
+      print('/// _loginWithFacebook Error ///');
+      print(e.toString());
+    }
+  }
 
   void _onGoogleSign() async {
     GoogleSignIn _googleSignIn = GoogleSignIn();
