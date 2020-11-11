@@ -195,5 +195,7 @@
     "name_za": "الاسم (ي - أ)",
     "default": "إفتراضي",
     "logout_confirm_dialog_title": "هل أنت واثق",
-    "logout_confirm_dialog_text": "تريد حقا الخروج من هذا التطبيق؟"
+    "logout_confirm_dialog_text": "تريد حقا الخروج من هذا التطبيق؟",
+    "my_cart_clear_dialog_title": "هل أنت واثق",
+    "my_cart_clear_dialog_text": "هل تريد حقًا مسح سلة التسوق الخاصة بك؟"
 }

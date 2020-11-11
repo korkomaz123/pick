@@ -1,6 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -45,7 +46,8 @@ class _ProductVCardState extends State<ProductVCard> {
   LocalStorageRepository localRepo;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
 
   @override
   void initState() {
@@ -53,7 +55,8 @@ class _ProductVCardState extends State<ProductVCard> {
     isWishlist = false;
     localRepo = context.repository<LocalStorageRepository>();
     myCartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
     _getMyCartId();
@@ -100,7 +103,7 @@ class _ProductVCardState extends State<ProductVCard> {
               widget.pageStyle,
               widget.product,
             );
-            cigaAppBloc.add(CartItemCountIncremented(
+            cartItemCountBloc.add(CartItemCountIncremented(
               incrementedCount: cartItemCount + 1,
             ));
           }
@@ -114,9 +117,6 @@ class _ProductVCardState extends State<ProductVCard> {
         builder: (context, state) {
           if (state is MyCartCreatedSuccess) {
             cartId = state.cartId;
-          }
-          if (state is MyCartItemAddedSuccess) {
-            cartItemCount += 1;
           }
           return Stack(
             children: [
@@ -159,7 +159,7 @@ class _ProductVCardState extends State<ProductVCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.product.sku,
+                  widget.product.brandLabel,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: widget.pageStyle.unitFontSize * 10,
@@ -263,13 +263,19 @@ class _ProductVCardState extends State<ProductVCard> {
 
   void _onWishlist() async {
     if (isWishlist) {
+      wishlistCount -= 1;
       myWishlists.removeAt(index);
       await localRepo.removeWishlistItem(widget.product.productId);
     } else {
+      wishlistCount += 1;
       myWishlists.add(widget.product.productId);
+      index = myWishlists.length - 1;
       await localRepo.addWishlistItem(widget.product.productId);
     }
     isWishlist = !isWishlist;
+    wishlistItemCountBloc.add(WishlistItemCountSet(
+      wishlistItemCount: wishlistCount,
+    ));
     setState(() {});
   }
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -48,7 +48,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   Animation<double> _addToCartScaleAnimation;
   Animation<double> _favoriteScaleAnimation;
   MyCartBloc cartBloc;
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cartItemCountBloc;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
   bool isBuyNow = false;
@@ -61,7 +61,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     productEntity = widget.productEntity;
 
     cartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
     localStorageRepo = context.repository<LocalStorageRepository>();
 
     /// add to cart button animation
@@ -450,7 +450,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   void _addedSuccess() {
     cartItemCount += 1;
-    cigaAppBloc.add(CartItemCountIncremented(
+    cartItemCountBloc.add(CartItemCountIncremented(
       incrementedCount: cartItemCount,
     ));
     flushBarService.showAddCartMessage(pageStyle, product);

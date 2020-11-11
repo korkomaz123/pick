@@ -100,6 +100,20 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                           ),
                           child: Row(
                             children: [
+                              Container(
+                                width: pageStyle.unitWidth * 30,
+                                height: pageStyle.unitHeight * 20,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      'lib/public/images/flags/${country['code'].toLowerCase()}.png',
+                                    ),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: pageStyle.unitWidth * 10),
                               Expanded(
                                 child: Text(
                                   country['name'] + ' (${country['code']})',

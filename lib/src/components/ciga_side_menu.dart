@@ -1,10 +1,14 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -21,8 +25,7 @@ class CigaSideMenu extends StatefulWidget {
 class _CigaSideMenuState extends State<CigaSideMenu> {
   PageStyle pageStyle;
   double menuWidth;
-  List<CategoryMenuEntity> activeMenu = [];
-  bool showMenu = false;
+  String activeMenu = '';
 
   @override
   void initState() {
@@ -51,7 +54,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   Widget _buildMenuHeader() {
     return Container(
       width: menuWidth,
-      height: pageStyle.unitHeight * 140,
+      height: pageStyle.unitHeight * 160,
       color: primaryColor,
       child: Stack(
         children: [
@@ -68,14 +71,14 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       child: Padding(
         padding: EdgeInsets.only(
           top: pageStyle.unitHeight * 40,
-          left: pageStyle.unitWidth * 30,
+          left: pageStyle.unitWidth * 20,
         ),
         child: user != null
             ? Row(
                 children: [
                   Container(
-                    width: pageStyle.unitWidth * 57,
-                    height: pageStyle.unitWidth * 57,
+                    width: pageStyle.unitWidth * 60,
+                    height: pageStyle.unitWidth * 60,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: user.profileUrl.isNotEmpty
@@ -90,7 +93,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   Text(
                     'Hello, ' + user.firstName,
                     style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 14,
+                      fontSize: pageStyle.unitFontSize * 18,
                       color: Colors.white,
                     ),
                   ),
@@ -121,7 +124,10 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
           width: double.infinity,
           child: Row(
             children: [
-              SvgPicture.asset(sideLoginIcon),
+              SvgPicture.asset(
+                sideLoginIcon,
+                height: pageStyle.unitHeight * 15,
+              ),
               SizedBox(width: pageStyle.unitWidth * 4),
               Text(
                 user != null ? 'logout'.tr() : 'login'.tr(),
@@ -142,130 +148,108 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
       child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 4,
-            ),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  bestDealIcon,
-                  width: pageStyle.unitWidth * 20,
-                  height: pageStyle.unitHeight * 20,
-                ),
-                SizedBox(width: pageStyle.unitWidth * 10),
-                Text(
-                  'side_best_deals'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
-                    color: greyDarkColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              showMenu = !showMenu;
-              activeMenu = categoryMenu;
-              setState(() {});
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
-              ),
-              child: Column(
-                children: List.generate(allCategories.length, (index) {
-                  return Column(
-                    children: [
-                      Divider(
-                        color: greyColor,
-                        thickness: pageStyle.unitHeight * 0.5,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: pageStyle.unitWidth * 10,
-                          vertical: pageStyle.unitHeight * 6,
-                        ),
-                        child: Text(
-                          allCategories[index].name,
-                          style: TextStyle(
-                            color: greyColor,
-                            fontSize: pageStyle.unitFontSize * 14,
-                          ),
-                        ),
-                      ),
-                      index == (allCategories.length - 1)
-                          ? Divider(
-                              color: greyColor,
-                              thickness: pageStyle.unitHeight * 0.5,
-                            )
-                          : SizedBox.shrink(),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 4,
-            ),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  shoppingBasketIcon,
-                  width: pageStyle.unitWidth * 20,
-                  height: pageStyle.unitHeight * 20,
-                ),
-                SizedBox(width: pageStyle.unitWidth * 10),
-                Text(
-                  'brands_title'.tr().toUpperCase(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
-                    color: greyDarkColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 4,
-            ),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  newArrivalIcon,
-                  width: pageStyle.unitWidth * 20,
-                  height: pageStyle.unitHeight * 20,
-                ),
-                SizedBox(width: pageStyle.unitWidth * 10),
-                Text(
-                  'side_new_arrivals'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
-                    color: greyDarkColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        children: sideMenus.map((menu) {
+          return Column(
+            children: [
+              _buildParentMenu(menu),
+              activeMenu == menu.id ? _buildSubmenu(menu) : SizedBox.shrink(),
+            ],
+          );
+        }).toList(),
       ),
     );
+  }
+
+  Widget _buildParentMenu(CategoryMenuEntity menu) {
+    return InkWell(
+      onTap: () =>
+          menu.subMenu.isNotEmpty ? _displaySubmenu(menu) : _viewCategory(menu),
+      child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(top: pageStyle.unitHeight * 15),
+        padding: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 20,
+          vertical: pageStyle.unitHeight * 4,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              menu.title.toUpperCase(),
+              style: bookTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 16,
+                color: darkColor,
+              ),
+            ),
+            menu.subMenu.isNotEmpty
+                ? Icon(
+                    activeMenu == menu.id
+                        ? Icons.arrow_drop_down
+                        : Icons.arrow_right,
+                    size: pageStyle.unitFontSize * 25,
+                    color: greyDarkColor,
+                  )
+                : SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmenu(CategoryMenuEntity menu) {
+    return AnimationLimiter(
+      child: Column(
+        children: List.generate(
+          menu.subMenu.length,
+          (index) => AnimationConfiguration.staggeredList(
+            position: index,
+            duration: Duration(milliseconds: 200),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: InkWell(
+                  onTap: () => _viewCategory(menu.subMenu[index]),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: pageStyle.unitWidth * 40,
+                      vertical: pageStyle.unitHeight * 10,
+                    ),
+                    child: Text(
+                      menu.subMenu[index].title,
+                      style: bookTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 14,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _displaySubmenu(CategoryMenuEntity menu) {
+    if (activeMenu == menu.id) {
+      activeMenu = '';
+    } else {
+      activeMenu = menu.id;
+    }
+    setState(() {});
+  }
+
+  void _viewCategory(CategoryMenuEntity menu) {
+    ProductListArguments arguments = ProductListArguments(
+      category: CategoryEntity(id: menu.id, name: menu.title),
+      brand: BrandEntity(),
+      subCategory: [],
+      selectedSubCategoryIndex: 0,
+      isFromBrand: false,
+    );
+    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
   }
 
   void _login() async {

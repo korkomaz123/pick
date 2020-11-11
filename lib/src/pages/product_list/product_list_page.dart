@@ -262,10 +262,19 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onChangeTab(int index) {
+    print('/// tab changed $index ///');
+
     activeSubcategoryIndex = index;
-    productListBloc.add(ProductListLoaded(
-      categoryId: subCategories[index].id,
-      lang: lang,
-    ));
+    if (isFromBrand) {
+      productListBloc.add(BrandProductListLoaded(
+        brandId: brand.optionId,
+        lang: lang,
+      ));
+    } else {
+      productListBloc.add(ProductListLoaded(
+        categoryId: subCategories[index].id,
+        lang: lang,
+      ));
+    }
   }
 }

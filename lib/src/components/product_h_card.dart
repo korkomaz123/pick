@@ -1,6 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -45,7 +46,8 @@ class _ProductHCardState extends State<ProductHCard> {
   LocalStorageRepository localRepo;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
 
   @override
   void initState() {
@@ -53,7 +55,8 @@ class _ProductHCardState extends State<ProductHCard> {
     isWishlist = false;
     localRepo = context.repository<LocalStorageRepository>();
     myCartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
     _getMyCartId();
@@ -100,8 +103,12 @@ class _ProductHCardState extends State<ProductHCard> {
               widget.pageStyle,
               widget.product,
             );
-            cigaAppBloc.add(CartItemCountIncremented(
-              incrementedCount: cartItemCount + 1,
+            print('////////////////////////////');
+            print(cartItemCount);
+            print(cartItemCount + 1);
+            print('////////////////////////////');
+            cartItemCountBloc.add(CartItemCountIncremented(
+              incrementedCount: (cartItemCount + 1),
             ));
           }
           if (state is MyCartItemAddedFailure) {
@@ -112,9 +119,6 @@ class _ProductHCardState extends State<ProductHCard> {
           }
         },
         builder: (context, state) {
-          if (state is MyCartItemAddedSuccess) {
-            cartItemCount += 1;
-          }
           return Stack(
             children: [
               _buildProductCard(),
@@ -145,7 +149,7 @@ class _ProductHCardState extends State<ProductHCard> {
             ),
             child: Image.network(
               widget.product.imageUrl,
-              width: widget.cardWidth * 0.4,
+              width: widget.cardWidth * 0.3,
               height: widget.cardHeight * 0.7,
               fit: BoxFit.fill,
             ),
@@ -156,7 +160,7 @@ class _ProductHCardState extends State<ProductHCard> {
               children: [
                 SizedBox(height: widget.cardHeight * 0.2),
                 Text(
-                  widget.product.sku,
+                  widget.product.brandLabel,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: widget.pageStyle.unitFontSize * 10,
@@ -263,13 +267,19 @@ class _ProductHCardState extends State<ProductHCard> {
 
   void _onWishlist() async {
     if (isWishlist) {
+      wishlistCount -= 1;
       myWishlists.removeAt(index);
       await localRepo.removeWishlistItem(widget.product.productId);
     } else {
+      wishlistCount += 1;
       myWishlists.add(widget.product.productId);
+      index = myWishlists.length - 1;
       await localRepo.addWishlistItem(widget.product.productId);
     }
     isWishlist = !isWishlist;
+    wishlistItemCountBloc.add(WishlistItemCountSet(
+      wishlistItemCount: wishlistCount,
+    ));
     setState(() {});
   }
 }

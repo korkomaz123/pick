@@ -10,82 +10,25 @@ final List<CategoryEntity> homeCategories = [
   CategoryEntity(
     id: '41',
     name: 'Best Deal',
-    products: products,
-    subCategories: subCategories,
+    subCategories: [],
   ),
   CategoryEntity(
     id: '42',
     name: 'New Arrivals',
-    products: products,
-    subCategories: subCategories,
+    subCategories: [],
   ),
   CategoryEntity(
     id: '43',
     name: 'Perfumes',
-    products: products,
-    subCategories: subCategories,
+    subCategories: [],
   ),
 ];
 
-final List<CategoryEntity> subCategories = [
-  CategoryEntity(id: 'all', name: 'All', products: products),
-  CategoryEntity(id: 'sub1', name: 'Sub1', products: products),
-  CategoryEntity(id: 'sub2', name: 'Sub2', products: products),
-  CategoryEntity(id: 'sub3', name: 'Sub3', products: products),
-  CategoryEntity(id: 'sub4', name: 'Sub4', products: products),
-  CategoryEntity(id: 'sub5', name: 'Sub5', products: products),
-  CategoryEntity(id: 'sub6', name: 'Sub6', products: products),
-  CategoryEntity(id: 'sub7', name: 'Sub7', products: products),
-];
-
-final List<CategoryEntity> allCategories = List.generate(
-  6,
-  (index) => CategoryEntity(
-    id: index.toString(),
-    name: 'Category ${index + 1}',
-    imageUrl: 'lib/public/images/category${index + 1}.png',
-    products: products,
-    subCategories: subCategories,
-  ),
-).toList();
-
-/// mockup products list
-final List<ProductEntity> products = List.generate(
-  10,
-  (index) => ProductEntity(
-    entityId: "213",
-    typeId: "simple",
-    sku: "MH11-XS-Orange",
-    inStock: true,
-    metaKeyword: null,
-    description:
-        "The Grayson Crewneck Sweatshirt gives you that ageless, classic look &ndash; a style that comes back around nearly every season. What's more, its performance and temp-control values are always in vogue.\r\n&bull; Cream crewneck sweatshirt with black accents.&bull; 80% cotton/20% polyester fleece. &bull; Patterned knit hood lining. &bull; Knit cuffs and waist. &bull; Pouch pocket. &bull; Curl edged seam detail",
-    shortDescription: null,
-    name: "Grayson Crewneck Sweatshirt -XS-Orange",
-    metaDescription: null,
-    price: "64.000000",
-    imageUrl:
-        "https://cigaon.com/pub/media/catalog/product/cache/19df025d6f373c8707648f08940f5077/m/h/mh11-orange_main_1.jpg",
-    hasOptions: "0",
-    addCartUrl:
-        "https://cigaon.com/checkout/cart/add/uenc/aHR0cHM6Ly9jaWdhb24uY29tL2N1c3RvbWFwaS9hcGkvZ2V0cHJvZHVjdGRldGFpbHM_cHJvZHVjdElkPTIxMyZsYW5nPWVu/product/213/",
-    productId: "213",
-    brandLabel: "Dar Alteeb",
-    gallery: [
-      "https://cigaon.com/pub/media/catalog/product/m/h/mh11-orange_main_1.jpg"
-    ],
-    reviews: [],
-  ),
-).toList();
-
-final StoreEntity store1 = StoreEntity(
-  id: '1',
-  name: 'Store1',
-  products: [],
-);
+List<CategoryMenuEntity> sideMenus = [];
 
 List<CartItemEntity> myCartItems = [];
 int cartItemCount = 0;
+int wishlistCount = 0;
 
 List<AddressEntity> addresses = [];
 AddressEntity defaultAddress;

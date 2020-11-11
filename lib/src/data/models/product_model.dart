@@ -12,6 +12,7 @@ class ProductModel {
   final String hasOptions;
   final String addCartUrl;
   final String productId;
+  final String brandLabel;
 
   ProductModel({
     this.entityId,
@@ -27,6 +28,7 @@ class ProductModel {
     this.hasOptions,
     this.addCartUrl,
     this.productId,
+    this.brandLabel,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -34,7 +36,7 @@ class ProductModel {
         typeId = json['type_id'],
         sku = json['sku'],
         metaKeyword = json['meta_keyword'],
-        description = json['description'],
+        description = json['description'] ?? '',
         shortDescription = json['short_description'],
         name = json['name'],
         metaDescription = json['meta_description'],
@@ -42,5 +44,6 @@ class ProductModel {
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
-        productId = json['product_id'];
+        productId = json['product_id'],
+        brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'];
 }

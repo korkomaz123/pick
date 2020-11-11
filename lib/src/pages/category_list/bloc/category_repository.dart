@@ -1,6 +1,7 @@
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/category_menu_entity.dart';
 
 class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -20,5 +21,24 @@ class CategoryRepository {
     final params = {'categoryId': categoryId, 'lang': lang};
     String url = EndPoints.getSubCategories;
     return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<List<CategoryMenuEntity>> getMenuCategories(String lang) async {
+    final params = {'lang': lang};
+    String url = EndPoints.getMenuCategories;
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> menuList = result['menuCategories'];
+      List<CategoryMenuEntity> menus = [];
+      for (int i = 0; i < menuList.length; i++) {
+        menus.add(CategoryMenuEntity.fromJson(menuList[i]));
+      }
+      return menus;
+    } else {
+      return <CategoryMenuEntity>[];
+    }
   }
 }

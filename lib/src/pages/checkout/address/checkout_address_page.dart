@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
+import 'package:ciga/src/components/ciga_country_input.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -96,7 +97,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'first_name'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
             readOnly: true,
           ),
@@ -106,7 +107,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'last_name'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
             readOnly: true,
           ),
@@ -146,7 +147,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'email_hint'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.emailAddress,
             readOnly: true,
           ),
@@ -155,8 +156,9 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           // SizedBox(height: pageStyle.unitHeight * 5),
           _buildSelectAddressButton(),
           SizedBox(height: pageStyle.unitHeight * 20),
-          CigaTextInput(
+          CigaCountryInput(
             controller: countryController,
+            countryCode: countryId,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
@@ -165,6 +167,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             inputType: TextInputType.text,
             readOnly: true,
             onTap: () => _onSelectCountry(),
+            pageStyle: pageStyle,
           ),
           CigaTextInput(
             controller: stateController,
@@ -172,7 +175,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'checkout_state_hint'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
           ),
           CigaTextInput(
@@ -181,7 +184,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'checkout_street_name_hint'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
           ),
           CigaTextInput(
@@ -190,7 +193,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'checkout_zip_code_hint'.tr(),
-            validator: (value) => null,
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.number,
           ),
           SizedBox(height: pageStyle.unitHeight * 30),
@@ -315,18 +318,20 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   }
 
   void _onContinue() {
-    orderDetails['token'] = user.token;
-    orderDetails['orderAddress'] = json.encode({
-      'firstname': firstNameController.text,
-      'lastname': lastNameController.text,
-      'city': cityController.text,
-      'street': streetController.text,
-      'country_id': countryId,
-      'region': '',
-      'postcode': zipCodeController.text,
-      'telephone': phoneNumberController.text,
-      'save_in_address_book': '0',
-    });
-    Navigator.pushNamed(context, Routes.checkoutShipping);
+    if (_formKey.currentState.validate()) {
+      orderDetails['token'] = user.token;
+      orderDetails['orderAddress'] = json.encode({
+        'firstname': firstNameController.text,
+        'lastname': lastNameController.text,
+        'city': cityController.text,
+        'street': streetController.text,
+        'country_id': countryId,
+        'region': '',
+        'postcode': zipCodeController.text,
+        'telephone': phoneNumberController.text,
+        'save_in_address_book': '0',
+      });
+      Navigator.pushNamed(context, Routes.checkoutShipping);
+    }
   }
 }

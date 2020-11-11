@@ -70,6 +70,7 @@ class _ProductListViewState extends State<ProductListView>
       initialIndex: activeIndex,
       vsync: this,
     );
+    tabController.addListener(() => widget.onChangeTab(tabController.index));
     productListBloc = context.bloc<ProductListBloc>();
     if (widget.products != null) {
       products = widget.products;

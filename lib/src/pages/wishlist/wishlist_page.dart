@@ -8,7 +8,8 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
@@ -48,7 +49,8 @@ class _WishlistPageState extends State<WishlistPage>
   FlushBarService flushBarService;
   WishlistBloc wishlistBloc;
   MyCartBloc cartBloc;
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localStorageRepo;
 
   @override
@@ -62,8 +64,9 @@ class _WishlistPageState extends State<WishlistPage>
     );
     flushBarService = FlushBarService(context: context);
     wishlistBloc = context.bloc<WishlistBloc>();
+    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     cartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
     _triggerLoadWishlistEvent();
     _getCartId();
   }
@@ -273,6 +276,9 @@ class _WishlistPageState extends State<WishlistPage>
     if (result != null || !ask) {
       await localStorageRepo.removeWishlistItem(ids[index]);
       ids.removeAt(index);
+      wishlistItemCountBloc.add(WishlistItemCountSet(
+        wishlistItemCount: ids.length,
+      ));
       Timer.periodic(
         AnimationDurations.removeFavoriteItemAniDuration,
         (timer) {
@@ -302,7 +308,7 @@ class _WishlistPageState extends State<WishlistPage>
 
   void _updateCartItemCount() {
     cartItemCount = cartItemCount + 1;
-    cigaAppBloc.add(CartItemCountIncremented(
+    cartItemCountBloc.add(CartItemCountIncremented(
       incrementedCount: cartItemCount,
     ));
   }

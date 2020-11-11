@@ -1,7 +1,7 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:ciga/src/config/config.dart';
@@ -23,6 +23,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:lottie/lottie.dart';
 
 import 'bloc/my_cart_bloc.dart';
+import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 
 class MyCartPage extends StatefulWidget {
@@ -42,7 +43,7 @@ class _MyCartPageState extends State<MyCartPage>
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cigaAppBloc;
   LocalStorageRepository localRepo;
 
   @override
@@ -55,7 +56,7 @@ class _MyCartPageState extends State<MyCartPage>
       scaffoldKey: scaffoldKey,
     );
     myCartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    cigaAppBloc = context.bloc<CartItemCountBloc>();
     localRepo = context.repository<LocalStorageRepository>();
     _getMyCartId();
   }
@@ -299,7 +300,7 @@ class _MyCartPageState extends State<MyCartPage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  myCartItems[index].product.sku,
+                  myCartItems[index].product.brandLabel,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 10,
@@ -467,9 +468,17 @@ class _MyCartPageState extends State<MyCartPage>
     }
   }
 
-  void _onClearCartItems() {
+  void _onClearCartItems() async {
     if (cartId.isNotEmpty) {
-      myCartBloc.add(MyCartItemsCleared(cartId: cartId));
+      final result = await showDialog(
+        context: context,
+        builder: (context) {
+          return MyCartClearDialog(pageStyle: pageStyle);
+        },
+      );
+      if (result != null) {
+        myCartBloc.add(MyCartItemsCleared(cartId: cartId));
+      }
     }
   }
 

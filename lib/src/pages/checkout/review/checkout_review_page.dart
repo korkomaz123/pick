@@ -52,7 +52,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                         ProductHCard(
                           pageStyle: pageStyle,
                           cardWidth: pageStyle.unitWidth * 340,
-                          cardHeight: pageStyle.unitHeight * 150,
+                          cardHeight: pageStyle.unitHeight * 180,
                           product: myCartItems[index].product,
                         ),
                         index < (myCartItems.length - 1)

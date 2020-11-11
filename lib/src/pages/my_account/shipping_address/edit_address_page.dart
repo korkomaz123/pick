@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_country_input.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
@@ -168,8 +169,9 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  CigaTextInput(
+                  CigaCountryInput(
                     controller: countryController,
+                    countryCode: countryId,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -179,6 +181,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
+                    pageStyle: pageStyle,
                   ),
                   CigaTextInput(
                     controller: cityController,
@@ -206,8 +209,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_zip_code_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => null,
                     inputType: TextInputType.number,
                   ),
                   CigaTextInput(
@@ -266,6 +268,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     if (result != null) {
       countryId = result['code'];
       countryController.text = result['name'];
+      setState(() {});
     }
   }
 

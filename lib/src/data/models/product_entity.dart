@@ -54,7 +54,7 @@ class ProductEntity {
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
         productId = json['product_id'],
-        brandLabel = json['brand_label'],
+        brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'],
         gallery = json['gallery'],
         reviews = json['reviews'];
 }

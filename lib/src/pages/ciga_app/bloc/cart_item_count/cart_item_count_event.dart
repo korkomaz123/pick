@@ -1,13 +1,13 @@
-part of 'ciga_app_bloc.dart';
+part of 'cart_item_count_bloc.dart';
 
-abstract class CigaAppEvent extends Equatable {
-  const CigaAppEvent();
+abstract class CartItemCountEvent extends Equatable {
+  const CartItemCountEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class CartItemCountIncremented extends CigaAppEvent {
+class CartItemCountIncremented extends CartItemCountEvent {
   final int incrementedCount;
 
   CartItemCountIncremented({this.incrementedCount});
@@ -16,7 +16,7 @@ class CartItemCountIncremented extends CigaAppEvent {
   List<Object> get props => [incrementedCount];
 }
 
-class CartItemCountDecremented extends CigaAppEvent {
+class CartItemCountDecremented extends CartItemCountEvent {
   final int decrementedCount;
 
   CartItemCountDecremented({this.decrementedCount});
@@ -25,7 +25,7 @@ class CartItemCountDecremented extends CigaAppEvent {
   List<Object> get props => [decrementedCount];
 }
 
-class CartItemCountSet extends CigaAppEvent {
+class CartItemCountSet extends CartItemCountEvent {
   final int cartItemCount;
 
   CartItemCountSet({this.cartItemCount});
@@ -34,7 +34,7 @@ class CartItemCountSet extends CigaAppEvent {
   List<Object> get props => [cartItemCount];
 }
 
-class CartItemCountUpdated extends CigaAppEvent {
+class CartItemCountUpdated extends CartItemCountEvent {
   final List<CartItemEntity> cartItems;
 
   CartItemCountUpdated({this.cartItems});

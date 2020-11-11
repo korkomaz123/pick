@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -5,9 +6,11 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 
 class CigaBottomBar extends StatelessWidget {
   final PageStyle pageStyle;
@@ -81,10 +84,30 @@ class CigaBottomBar extends StatelessWidget {
           ),
         ),
         BottomNavigationBarItem(
-          icon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(wishlistIcon),
+          icon: BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
+            builder: (context, state) {
+              int count = state.wishlistItemCount;
+              return Badge(
+                position: BadgePosition.topRight(
+                  top: -pageStyle.unitHeight * 10,
+                  right: -pageStyle.unitWidth * 5,
+                ),
+                badgeColor: orangeColor,
+                showBadge: count > 0,
+                badgeContent: Text(
+                  '$count',
+                  style: TextStyle(
+                    fontSize: pageStyle.unitFontSize * 8,
+                    color: Colors.white,
+                  ),
+                ),
+                child: Container(
+                  width: pageStyle.unitWidth * 28,
+                  height: pageStyle.unitHeight * 26,
+                  child: SvgPicture.asset(wishlistIcon),
+                ),
+              );
+            },
           ),
           title: Text(
             'bottom_wishlist'.tr(),
@@ -92,10 +115,31 @@ class CigaBottomBar extends StatelessWidget {
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
-          activeIcon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(wishlistIcon, color: primaryColor),
+          activeIcon:
+              BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
+            builder: (context, state) {
+              int count = state.wishlistItemCount;
+              return Badge(
+                position: BadgePosition.topRight(
+                  top: -pageStyle.unitHeight * 10,
+                  right: -pageStyle.unitWidth * 5,
+                ),
+                badgeColor: orangeColor,
+                showBadge: count > 0,
+                badgeContent: Text(
+                  '$count',
+                  style: TextStyle(
+                    fontSize: pageStyle.unitFontSize * 8,
+                    color: Colors.white,
+                  ),
+                ),
+                child: Container(
+                  width: pageStyle.unitWidth * 28,
+                  height: pageStyle.unitHeight * 26,
+                  child: SvgPicture.asset(wishlistIcon, color: primaryColor),
+                ),
+              );
+            },
           ),
         ),
         BottomNavigationBarItem(

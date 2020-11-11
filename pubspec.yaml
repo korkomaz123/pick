@@ -67,6 +67,7 @@ flutter:
   assets:
     - lib/public/languages/
     - lib/public/images/
+    - lib/public/images/flags/
     - lib/public/icons/
     - lib/public/animations/
     - lib/public/launcher/

@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/ciga_app_bloc.dart';
+import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -94,8 +95,9 @@ class _CigaAppBarState extends State<CigaAppBar> {
                 ? null
                 : Navigator.pushNamed(context, Routes.myCart),
             child: Center(
-              child: BlocBuilder<CigaAppBloc, CigaAppState>(
+              child: BlocBuilder<CartItemCountBloc, CartItemCountState>(
                 builder: (context, state) {
+                  cartItemCount = state.cartItemCount;
                   return Badge(
                     badgeColor: badgeColor,
                     badgeContent: Text(

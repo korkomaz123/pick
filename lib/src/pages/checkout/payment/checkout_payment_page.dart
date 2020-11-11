@@ -3,9 +3,11 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -25,6 +27,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   ProgressService progressService;
   FlushBarService flushBarService;
   CheckoutBloc checkoutBloc;
+  CartItemCountBloc cartItemCountBloc;
+  LocalStorageRepository localStorageRepo;
 
   @override
   void initState() {
@@ -33,6 +37,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     checkoutBloc = context.bloc<CheckoutBloc>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    localStorageRepo = context.repository<LocalStorageRepository>();
   }
 
   @override
@@ -49,7 +55,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
           }
           if (state is OrderSubmittedSuccess) {
             progressService.hideProgress();
-            Navigator.pushNamed(context, Routes.checkoutConfirmed);
+            _onOrderSubmittedSuccess();
           }
           if (state is OrderSubmittedFailure) {
             progressService.hideProgress();
@@ -228,5 +234,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       orderDetails: orderDetails,
       lang: lang,
     ));
+  }
+
+  void _onOrderSubmittedSuccess() async {
+    myCartItems = [];
+    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    await localStorageRepo.setCartId('');
+
+    Navigator.pushNamed(context, Routes.checkoutConfirmed);
   }
 }

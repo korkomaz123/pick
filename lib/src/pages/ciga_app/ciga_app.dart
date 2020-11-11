@@ -9,6 +9,7 @@ import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_repository.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/pages/filter/bloc/filter_repository.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
@@ -44,7 +45,7 @@ import 'package:flutter/material.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'bloc/ciga_app_bloc.dart';
+import 'bloc/cart_item_count/cart_item_count_bloc.dart';
 
 class CigaApp extends StatelessWidget {
   CigaApp({Key key}) : super(key: key);
@@ -196,7 +197,10 @@ class CigaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => CigaAppBloc(),
+          create: (context) => CartItemCountBloc(),
+        ),
+        BlocProvider(
+          create: (context) => WishlistItemCountBloc(),
         ),
         BlocProvider(
           create: (context) => CheckoutBloc(
@@ -216,22 +220,27 @@ class CigaAppView extends StatefulWidget {
 
 class _CigaAppViewState extends State<CigaAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  CigaAppBloc cigaAppBloc;
+  CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
+  LocalStorageRepository localRepo;
 
   @override
   void initState() {
     super.initState();
+    localRepo = context.repository<LocalStorageRepository>();
+    cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     _getCurrentUser();
     _getCartItems();
+    _getWishlists();
     _getShippingAddress();
     _getShippingMethod();
     _getPaymentMethod();
-    cigaAppBloc = context.bloc<CigaAppBloc>();
+    _getSideMenu();
   }
 
   void _getCurrentUser() async {
-    String token =
-        await context.repository<LocalStorageRepository>().getToken();
+    String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       final signInRepo = context.repository<SignInRepository>();
       final result = await signInRepo.getCurrentUser(token);
@@ -244,8 +253,7 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 
   void _getCartItems() async {
-    String cartId =
-        await context.repository<LocalStorageRepository>().getCartId();
+    String cartId = await localRepo.getCartId();
     if (cartId.isNotEmpty) {
       final result =
           await context.repository<MyCartRepository>().getCartItems(cartId);
@@ -263,14 +271,30 @@ class _CigaAppViewState extends State<CigaAppView> {
           count += cart.itemCount;
         }
         cartItemCount = count;
-        cigaAppBloc.add(CartItemCountSet(cartItemCount: count));
+        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
       }
     }
   }
 
+  void _getWishlists() async {
+    List<String> ids = await localRepo.getWishlistIds();
+    print('/// wishlist length ///');
+    print(ids);
+    print('/// wishlist length ///');
+    wishlistCount = ids.isEmpty ? 0 : ids.length;
+    if (ids.isNotEmpty) {
+      wishlistItemCountBloc.add(WishlistItemCountSet(
+        wishlistItemCount: ids.length,
+      ));
+    } else {
+      wishlistItemCountBloc.add(WishlistItemCountSet(
+        wishlistItemCount: 0,
+      ));
+    }
+  }
+
   void _getShippingAddress() async {
-    String token =
-        await context.repository<LocalStorageRepository>().getToken();
+    String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       final result = await context
           .repository<ShippingAddressRepository>()
@@ -292,6 +316,11 @@ class _CigaAppViewState extends State<CigaAppView> {
   void _getPaymentMethod() async {
     paymentMethods =
         await context.repository<CheckoutRepository>().getPaymentMethod();
+  }
+
+  void _getSideMenu() async {
+    sideMenus =
+        await context.repository<CategoryRepository>().getMenuCategories(lang);
   }
 
   @override

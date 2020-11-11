@@ -25,7 +25,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
       children: [
         Container(
           width: widget.pageStyle.deviceWidth,
-          height: widget.pageStyle.unitHeight * 163,
+          height: widget.pageStyle.unitHeight * 133,
           child: Swiper(
             itemCount: widget.sliderImages.length,
             autoplay: true,
@@ -38,7 +38,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
               String image = widget.sliderImages[index].bannerImage;
               return Container(
                 width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 163,
+                height: widget.pageStyle.unitHeight * 133,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(image),
@@ -51,7 +51,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         ),
         Center(
           child: Padding(
-            padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 140),
+            padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 120),
             child: SmoothIndicator(
               offset: activeIndex.toDouble(),
               count: widget.sliderImages.length,
