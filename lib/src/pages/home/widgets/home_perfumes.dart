@@ -73,7 +73,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            perfumes.name,
+            'home_perfumes'.tr(),
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

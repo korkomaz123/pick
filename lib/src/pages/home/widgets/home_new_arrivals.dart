@@ -38,7 +38,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 420,
+      height: widget.pageStyle.unitHeight * 320,
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
       margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
       color: Colors.white,

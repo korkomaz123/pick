@@ -74,7 +74,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                   onTap: () => Navigator.pushNamed(
                     context,
                     Routes.categoryList,
-                    arguments: categories,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

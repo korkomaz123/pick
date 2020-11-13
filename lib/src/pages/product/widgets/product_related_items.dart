@@ -41,25 +41,25 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 6,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'product_related_items'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyColor,
-              fontSize: pageStyle.unitFontSize * 16,
+    return relatedItems.isNotEmpty
+        ? Container(
+            width: pageStyle.deviceWidth,
+            padding: EdgeInsets.symmetric(
+              horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 6,
             ),
-          ),
-          SizedBox(height: pageStyle.unitHeight * 4),
-          relatedItems.isNotEmpty
-              ? Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'product_related_items'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: greyColor,
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+                SizedBox(height: pageStyle.unitHeight * 4),
+                Container(
                   width: double.infinity,
                   height: pageStyle.unitHeight * 260,
                   child: ListView.builder(
@@ -82,10 +82,10 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                       );
                     },
                   ),
-                )
-              : Container(),
-        ],
-      ),
-    );
+                ),
+              ],
+            ),
+          )
+        : Container();
   }
 }

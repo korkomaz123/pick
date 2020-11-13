@@ -9,6 +9,7 @@ class HomeState extends Equatable {
     this.categories,
     this.brands,
     this.message,
+    this.ads,
   });
 
   final List<SliderImageEntity> sliderImages;
@@ -17,6 +18,7 @@ class HomeState extends Equatable {
   final List<ProductModel> perfumesProducts;
   final List<CategoryEntity> categories;
   final List<BrandEntity> brands;
+  final String ads;
   final String message;
 
   HomeState init() {
@@ -27,6 +29,7 @@ class HomeState extends Equatable {
       perfumesProducts: [],
       categories: [],
       brands: [],
+      ads: '',
       message: '',
     );
   }
@@ -38,6 +41,7 @@ class HomeState extends Equatable {
     List<ProductModel> perfumesProducts,
     List<CategoryEntity> categories,
     List<BrandEntity> brands,
+    String ads,
     String message,
   }) {
     return HomeState(
@@ -47,6 +51,7 @@ class HomeState extends Equatable {
       perfumesProducts: perfumesProducts ?? this.perfumesProducts,
       categories: categories ?? this.categories,
       brands: brands ?? this.brands,
+      ads: ads ?? this.ads,
       message: message ?? this.message,
     );
   }
@@ -59,6 +64,7 @@ class HomeState extends Equatable {
         perfumesProducts,
         categories,
         brands,
+        ads,
         message,
       ];
 }

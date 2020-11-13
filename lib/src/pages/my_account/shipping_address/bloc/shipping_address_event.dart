@@ -7,6 +7,8 @@ abstract class ShippingAddressEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ShippingAddressInitialized extends ShippingAddressEvent {}
+
 class ShippingAddressLoaded extends ShippingAddressEvent {
   final String token;
 

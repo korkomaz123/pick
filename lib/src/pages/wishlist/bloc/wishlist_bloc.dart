@@ -23,6 +23,8 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   ) async* {
     if (event is WishlistLoaded) {
       yield* _mapWishlistLoadedToState(event.ids, event.token);
+    } else if (event is WishlistInitialized) {
+      yield WishlistInitial();
     }
   }
 

@@ -63,7 +63,7 @@ class _WishlistItemState extends State<WishlistItem> {
             ),
             Spacer(),
             Text(
-              '${myWishlists.length} ' + 'items'.tr(),
+              'items'.tr().replaceFirst('0', '${myWishlists.length}'),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 16,
                 color: primaryColor,

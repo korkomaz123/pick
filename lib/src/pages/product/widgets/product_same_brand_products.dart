@@ -45,29 +45,30 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'product_same_brand'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyColor,
-              fontSize: pageStyle.unitFontSize * 16,
+    return sameBrandProducts.isNotEmpty
+        ? Container(
+            width: pageStyle.deviceWidth,
+            color: Colors.white,
+            margin: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+            padding: EdgeInsets.symmetric(
+              horizontal: pageStyle.unitWidth * 10,
+              vertical: pageStyle.unitHeight * 15,
             ),
-          ),
-          sameBrandProducts.isNotEmpty
-              ? _buildProductCarousel()
-              : SizedBox.shrink(),
-        ],
-      ),
-    );
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'product_same_brand'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: greyColor,
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+                _buildProductCarousel(),
+              ],
+            ),
+          )
+        : Container();
   }
 
   Widget _buildProductCarousel() {

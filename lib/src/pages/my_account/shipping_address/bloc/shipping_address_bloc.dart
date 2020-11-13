@@ -54,6 +54,8 @@ class ShippingAddressBloc
       );
     } else if (event is ShippingAddressRemoved) {
       yield* _mapShippingAddressRemovedToState(event.token, event.addressId);
+    } else if (event is ShippingAddressInitialized) {
+      yield ShippingAddressInitial();
     }
   }
 

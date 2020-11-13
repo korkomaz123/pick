@@ -60,3 +60,5 @@ class HomeBrandsLoaded extends HomeEvent {
   @override
   List<Object> get props => [lang];
 }
+
+class HomeAdsLoaded extends HomeEvent {}

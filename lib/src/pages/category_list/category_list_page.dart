@@ -11,45 +11,51 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'bloc/category_bloc.dart';
 
 class CategoryListPage extends StatefulWidget {
-  final List<CategoryEntity> categories;
-
-  CategoryListPage({this.categories});
+  const CategoryListPage();
 
   @override
   _CategoryListPageState createState() => _CategoryListPageState();
 }
 
 class _CategoryListPageState extends State<CategoryListPage> {
-  PageStyle pageStyle;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _refreshController = RefreshController(initialRefresh: false);
   String category;
   int activeIndex;
-  List<CategoryEntity> categories;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  List<CategoryEntity> categories = [];
+  PageStyle pageStyle;
   CategoryBloc categoryBloc;
   SnackBarService snackBarService;
+  ProgressService progressService;
 
   @override
   void initState() {
     super.initState();
-    categories = widget.categories;
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    progressService = ProgressService(context: context);
     categoryBloc = context.bloc<CategoryBloc>();
-    if (categories == null) {
-      categoryBloc.add(CategoryListLoaded(lang: lang));
-    }
+    categoryBloc.add(CategoryListLoaded(lang: lang));
+  }
+
+  void _onRefresh() async {
+    categoryBloc.add(CategoryListLoaded(lang: lang));
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
   }
 
   @override
@@ -64,58 +70,53 @@ class _CategoryListPageState extends State<CategoryListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          categories != null
-              ? Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        categories.length,
-                        (index) => Column(
-                          children: [
-                            _buildCategoryCard(categories[index]),
-                            activeIndex == index
-                                ? _buildSubcategoriesList(categories[index])
-                                : SizedBox.shrink(),
-                            SizedBox(height: pageStyle.unitHeight * 6),
-                          ],
+          BlocConsumer<CategoryBloc, CategoryState>(
+            listener: (context, state) {
+              if (state is CategoryListLoadedInProcess) {
+                progressService.showProgress();
+              }
+              if (state is CategoryListLoadedSuccess) {
+                progressService.hideProgress();
+              }
+              if (state is CategoryListLoadedFailure) {
+                progressService.hideProgress();
+                snackBarService.showErrorSnackBar(state.message);
+              }
+            },
+            builder: (context, state) {
+              if (state is CategoryListLoadedSuccess) {
+                categories = state.categories;
+                return Expanded(
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    header: MaterialClassicHeader(color: primaryColor),
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: () => null,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                          categories.length,
+                          (index) => Column(
+                            children: [
+                              _buildCategoryCard(categories[index]),
+                              activeIndex == index
+                                  ? _buildSubcategoriesList(categories[index])
+                                  : SizedBox.shrink(),
+                              SizedBox(height: pageStyle.unitHeight * 6),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                )
-              : BlocConsumer<CategoryBloc, CategoryState>(
-                  listener: (context, state) {
-                    if (state is CategoryListLoadedFailure) {
-                      snackBarService.showErrorSnackBar(state.message);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is CategoryListLoadedSuccess) {
-                      categories = state.categories;
-                      return Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: List.generate(
-                              categories.length,
-                              (index) => Column(
-                                children: [
-                                  _buildCategoryCard(categories[index]),
-                                  activeIndex == index
-                                      ? _buildSubcategoriesList(
-                                          categories[index])
-                                      : SizedBox.shrink(),
-                                  SizedBox(height: pageStyle.unitHeight * 6),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
+                );
+              } else {
+                return Expanded(child: Container(color: Colors.white));
+              }
+            },
+          ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(

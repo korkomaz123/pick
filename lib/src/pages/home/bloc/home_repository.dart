@@ -12,4 +12,17 @@ class HomeRepository {
     List<dynamic> data = result['data'];
     return data.map((e) => SliderImageEntity.fromJson(e)).toList();
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<String> getHomeAds() async {
+    String url = EndPoints.getHomeAds;
+    final result = await Api.getMethod(url);
+    if (result['code'] == 'SUCCESS') {
+      return result['data']['image'];
+    } else {
+      return '';
+    }
+  }
 }

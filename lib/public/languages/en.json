@@ -37,13 +37,14 @@
     "search_items_hint": "Search for Items",
     "currency": "KD",
     "total": "Total",
-    "items": "Item(s)",
+    "items": "0 Item(s)",
     "products": "Products",
     "free": "Free",
     "apply_button_title": "Apply",
     "brands_title": "Brands",
     "home_best_deals": "Best Deals",
     "home_new_arrivals": "New Arrivals",
+    "home_perfumes": "Perfumes",
     "home_categories": "Categories",
     "home_discover_stores": "Discover our Stores",
     "home_discover_brands": "Discover our Brands",
@@ -197,5 +198,10 @@
     "logout_confirm_dialog_title": "Are You sure",
     "logout_confirm_dialog_text": "You really want to logout from the app?",
     "my_cart_clear_dialog_title": "Are You sure",
-    "my_cart_clear_dialog_text": "You really want to clear your cart?"
+    "my_cart_clear_dialog_text": "You really want to clear your cart?",
+    "view_products": "View Products",
+    "restart_app_title": "Restart Your App",
+    "restart_app_text": "You should restart markaa cuz the app language switched currently",
+    "restart_now": "Restart Now",
+    "no_cart_items_available": "Sorry, there is no items in your cart"
 }

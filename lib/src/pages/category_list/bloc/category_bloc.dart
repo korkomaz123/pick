@@ -37,6 +37,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       yield* _mapCategoryListLoadedToState(event.lang);
     } else if (event is BrandSubCategoriesLoaded) {
       yield* _mapBrandSubCategoriesLoadedToState(event.brandId, event.lang);
+    } else if (event is CategoryInitialized) {
+      yield CategoryInitial();
     }
   }
 

@@ -16,3 +16,5 @@ class WishlistLoaded extends WishlistEvent {
   @override
   List<Object> get props => [ids, token];
 }
+
+class WishlistInitialized extends WishlistEvent {}

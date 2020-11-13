@@ -77,7 +77,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            bestDeals.name,
+            'home_best_deals'.tr(),
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

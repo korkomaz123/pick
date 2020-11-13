@@ -53,6 +53,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield* _mapHomeCategoriesLoadedToState(event.lang);
     } else if (event is HomeBrandsLoaded) {
       yield* _mapHomeBrandsLoadedToState(event.lang);
+    } else if (event is HomeAdsLoaded) {
+      yield* _mapHomeAdsLoadedToState();
     }
   }
 
@@ -111,6 +113,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final brands = await _brandRepository.getAllBrands();
 
       yield state.copyWith(brands: brands);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeAdsLoadedToState() async* {
+    try {
+      final ads = await _homeRepository.getHomeAds();
+
+      yield state.copyWith(ads: ads);
     } catch (e) {
       yield state.copyWith(message: e.toString());
     }

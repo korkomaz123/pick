@@ -72,6 +72,12 @@ class _WishlistPageState extends State<WishlistPage>
     _getCartId();
   }
 
+  @override
+  void dispose() {
+    wishlistBloc.add(WishlistInitialized());
+    super.dispose();
+  }
+
   void _triggerLoadWishlistEvent() async {
     String token = await localStorageRepo.getToken();
     ids = await localStorageRepo.getWishlistIds();
@@ -150,14 +156,12 @@ class _WishlistPageState extends State<WishlistPage>
                   builder: (context, state) {
                     if (state is WishlistLoadedSuccess) {
                       wishlists = state.wishlists;
-                      return wishlists.isNotEmpty
-                          ? _buildWishlistItems()
-                          : Expanded(
-                              child: ProductNoAvailable(pageStyle: pageStyle),
-                            );
-                    } else {
-                      return Container();
                     }
+                    return ids.isNotEmpty
+                        ? _buildWishlistItems()
+                        : Expanded(
+                            child: ProductNoAvailable(pageStyle: pageStyle),
+                          );
                   },
                 ),
               ),

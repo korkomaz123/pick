@@ -89,6 +89,7 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void dispose() {
     productListBloc.add(ProductListInitialized());
+    categoryBloc.add(CategoryInitialized());
     super.dispose();
   }
 

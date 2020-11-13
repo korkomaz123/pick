@@ -3,13 +3,18 @@ import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/pages/my_account/widgets/logout_confirm_dialog.dart';
+import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -26,11 +31,17 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
+  SignInBloc signInBloc;
+  ProgressService progressService;
+  FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    signInBloc = context.bloc<SignInBloc>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -40,13 +51,35 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       width: menuWidth,
       height: pageStyle.deviceHeight,
       color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildMenuHeader(),
-            _buildMenuItems(),
-          ],
-        ),
+      child: BlocConsumer<SignInBloc, SignInState>(
+        listener: (context, state) {
+          if (state is SignOutSubmittedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is SignOutSubmittedSuccess) {
+            progressService.hideProgress();
+            user = null;
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.home,
+              (route) => false,
+            );
+          }
+          if (state is SignOutSubmittedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildMenuHeader(),
+                _buildMenuItems(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -72,6 +105,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
         padding: EdgeInsets.only(
           top: pageStyle.unitHeight * 40,
           left: pageStyle.unitWidth * 20,
+          right: pageStyle.unitWidth * 20,
         ),
         child: user != null
             ? Row(
@@ -119,6 +153,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
         child: Container(
           padding: EdgeInsets.only(
             left: pageStyle.unitWidth * 30,
+            right: pageStyle.unitWidth * 30,
             bottom: pageStyle.unitHeight * 10,
           ),
           width: double.infinity,
@@ -269,5 +304,15 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     setState(() {});
   }
 
-  void _logout() {}
+  void _logout() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return LogoutConfirmDialog(pageStyle: pageStyle);
+      },
+    );
+    if (result != null) {
+      signInBloc.add(SignOutSubmitted(token: user.token));
+    }
+  }
 }

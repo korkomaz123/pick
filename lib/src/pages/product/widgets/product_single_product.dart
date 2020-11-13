@@ -256,25 +256,27 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'product_brand'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 11,
-                ),
-              ),
-              Text(
-                productEntity.brandLabel,
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 13,
-                ),
-              ),
-            ],
-          ),
+          productEntity.brandLabel.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'product_brand'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: pageStyle.unitFontSize * 11,
+                      ),
+                    ),
+                    Text(
+                      productEntity.brandLabel,
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: pageStyle.unitFontSize * 13,
+                      ),
+                    ),
+                  ],
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );

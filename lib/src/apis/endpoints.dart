@@ -18,7 +18,7 @@ class EndPoints {
   static const String getRelatedItems = '$baseUrl/getrelateditems';
   static const String getSameBrandProducts = '$baseUrl/getsamebrandproducts';
   static const String getSortedProducts = '$baseUrl/getsortedproducts';
-  static const String getHomeAds = '$baseUrl/getHomeAds';
+  static const String getHomeAds = '$baseUrl/getAds';
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
   static const String getWishlist = '$baseUrl/getwishlists';
   static const String getHomeSliders = '$baseUrl/getHomeSliders';

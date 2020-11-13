@@ -1,5 +1,11 @@
+import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'bloc/home_bloc.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_discover_stores.dart';
@@ -19,12 +25,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _refreshController = RefreshController(initialRefresh: false);
+  HomeBloc homeBloc;
   PageStyle pageStyle;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    homeBloc = context.bloc<HomeBloc>();
+  }
+
+  void _onRefresh() async {
+    homeBloc.add(HomeSliderImagesLoaded(lang: lang));
+    homeBloc.add(HomeBestDealsLoaded(lang: lang));
+    homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
+    homeBloc.add(HomePerfumesLoaded(lang: lang));
+    homeBloc.add(HomeCategoriesLoaded(lang: lang));
+    homeBloc.add(HomeBrandsLoaded(lang: lang));
+    homeBloc.add(HomeAdsLoaded());
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
   }
 
   @override
@@ -35,21 +56,28 @@ class _HomePageState extends State<HomePage> {
       key: scaffoldKey,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            HomeHeaderCarousel(pageStyle: pageStyle),
-            HomeBestDeals(pageStyle: pageStyle),
-            HomeNewArrivals(pageStyle: pageStyle),
-            HomePerfumes(pageStyle: pageStyle),
-            HomeExploreCategories(pageStyle: pageStyle),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            HomeDiscoverStores(pageStyle: pageStyle),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            HomeAdvertise(pageStyle: pageStyle),
-            SizedBox(height: pageStyle.unitHeight * 10),
-            // HomeRecent(pageStyle: pageStyle),
-          ],
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: MaterialClassicHeader(color: primaryColor),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: () => null,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HomeHeaderCarousel(pageStyle: pageStyle),
+              HomeBestDeals(pageStyle: pageStyle),
+              HomeNewArrivals(pageStyle: pageStyle),
+              HomePerfumes(pageStyle: pageStyle),
+              HomeExploreCategories(pageStyle: pageStyle),
+              SizedBox(height: pageStyle.unitHeight * 10),
+              HomeDiscoverStores(pageStyle: pageStyle),
+              SizedBox(height: pageStyle.unitHeight * 10),
+              HomeAdvertise(pageStyle: pageStyle),
+              SizedBox(height: pageStyle.unitHeight * 10),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CigaBottomBar(

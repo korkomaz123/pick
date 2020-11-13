@@ -10,18 +10,18 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'bloc/brand_bloc.dart';
 
 class BrandListPage extends StatefulWidget {
-  final List<BrandEntity> brands;
-
-  BrandListPage({this.brands});
+  const BrandListPage();
 
   @override
   _BrandListPageState createState() => _BrandListPageState();
@@ -29,23 +29,29 @@ class BrandListPage extends StatefulWidget {
 
 class _BrandListPageState extends State<BrandListPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  List<BrandEntity> brands;
+  final _refreshController = RefreshController(initialRefresh: false);
+  List<BrandEntity> brands = [];
   PageStyle pageStyle;
   BrandBloc brandBloc;
   SnackBarService snackBarService;
+  ProgressService progressService;
 
   @override
   void initState() {
     super.initState();
-    brands = widget.brands;
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    progressService = ProgressService(context: context);
     brandBloc = context.bloc<BrandBloc>();
-    if (brands == null) {
-      brandBloc.add(BrandListLoaded());
-    }
+    brandBloc.add(BrandListLoaded());
+  }
+
+  void _onRefresh() async {
+    brandBloc.add(BrandListLoaded());
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
   }
 
   @override
@@ -60,41 +66,45 @@ class _BrandListPageState extends State<BrandListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          brands != null
-              ? Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        brands.length,
-                        (index) => _buildBrandCard(index),
+          BlocConsumer<BrandBloc, BrandState>(
+            listener: (context, state) {
+              if (state is BrandListLoadedInProcess) {
+                progressService.showProgress();
+              }
+              if (state is BrandListLoadedSuccess) {
+                progressService.hideProgress();
+              }
+              if (state is BrandListLoadedFailure) {
+                progressService.hideProgress();
+                snackBarService.showErrorSnackBar(state.message);
+              }
+            },
+            builder: (context, state) {
+              if (state is BrandListLoadedSuccess) {
+                brands = state.brands;
+                return Expanded(
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    header: MaterialClassicHeader(color: primaryColor),
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: () => null,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                          brands.length,
+                          (index) => _buildBrandCard(index),
+                        ),
                       ),
                     ),
                   ),
-                )
-              : BlocConsumer<BrandBloc, BrandState>(
-                  listener: (context, state) {
-                    if (state is BrandListLoadedFailure) {
-                      snackBarService.showErrorSnackBar(state.message);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is BrandListLoadedSuccess) {
-                      brands = state.brands;
-                      return Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: List.generate(
-                              brands.length,
-                              (index) => _buildBrandCard(index),
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
+                );
+              } else {
+                return Expanded(child: Container(color: Colors.white));
+              }
+            },
+          ),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -207,7 +217,7 @@ class _BrandListPageState extends State<BrandListPage> {
             Row(
               children: [
                 Text(
-                  'View Products',
+                  'view_products'.tr(),
                   style: bookTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 11,

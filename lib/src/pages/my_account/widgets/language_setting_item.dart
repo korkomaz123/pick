@@ -1,4 +1,5 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -6,6 +7,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'restart_mandatory_dialog.dart';
 
 class LanguageSettingItem extends StatefulWidget {
   final PageStyle pageStyle;
@@ -77,26 +80,35 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
                 unSelectedBorderColor: Colors.transparent,
                 isVertical: false,
                 listStyle: true,
-                onTap: (value) {
-                  if (language != value) {
-                    language = value;
-                    if (language == 'EN') {
-                      EasyLocalization.of(context).locale =
-                          EasyLocalization.of(context).supportedLocales.first;
-                      lang = 'en';
-                    } else {
-                      EasyLocalization.of(context).locale =
-                          EasyLocalization.of(context).supportedLocales.last;
-                      lang = 'ar';
-                    }
-                    setState(() {});
-                  }
-                },
+                onTap: (value) => _onChangeLanguage(value),
               ),
             )
           ],
         ),
       ),
     );
+  }
+
+  void _onChangeLanguage(String value) async {
+    if (language != value) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return RestartMandatoryDialog(pageStyle: pageStyle);
+        },
+      );
+      language = value;
+      if (language == 'EN') {
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.first;
+        lang = 'en';
+      } else {
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.last;
+        lang = 'ar';
+      }
+
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
+    }
   }
 }

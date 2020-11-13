@@ -14,6 +14,7 @@ import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
@@ -30,6 +31,7 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final _refreshController = RefreshController(initialRefresh: false);
   PageStyle pageStyle;
   ProductModel product;
   ProductBloc productBloc;
@@ -52,6 +54,13 @@ class _ProductPageState extends State<ProductPage> {
     ));
   }
 
+  void _onRefresh() async {
+    productBloc.add(ProductDetailsLoaded(
+      productId: product.productId,
+      lang: lang,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -68,39 +77,49 @@ class _ProductPageState extends State<ProductPage> {
           }
           if (state is ProductDetailsLoadedSuccess) {
             progressService.hideProgress();
+            _refreshController.refreshCompleted();
           }
           if (state is ProductDetailsLoadedFailure) {
             progressService.hideProgress();
             snackBarService.showErrorSnackBar(state.message);
+            _refreshController.refreshCompleted();
           }
         },
         builder: (context, state) {
           if (state is ProductDetailsLoadedSuccess) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  ProductSingleProduct(
-                    pageStyle: pageStyle,
-                    product: product,
-                    productEntity: state.productEntity,
-                  ),
-                  ProductRelatedItems(
-                    pageStyle: pageStyle,
-                    product: product,
-                  ),
-                  ProductSameBrandProducts(
-                    pageStyle: pageStyle,
-                    product: product,
-                  ),
-                  ProductMoreAbout(
-                    pageStyle: pageStyle,
-                    productEntity: state.productEntity,
-                  ),
-                ],
+            return SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: false,
+              header: MaterialClassicHeader(color: primaryColor),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: () => null,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ProductSingleProduct(
+                      pageStyle: pageStyle,
+                      product: product,
+                      productEntity: state.productEntity,
+                    ),
+                    ProductRelatedItems(
+                      pageStyle: pageStyle,
+                      product: product,
+                    ),
+                    ProductSameBrandProducts(
+                      pageStyle: pageStyle,
+                      product: product,
+                    ),
+                    ProductMoreAbout(
+                      pageStyle: pageStyle,
+                      productEntity: state.productEntity,
+                    ),
+                  ],
+                ),
               ),
             );
           } else {
-            return Container();
+            return Container(color: Colors.white);
           }
         },
       ),

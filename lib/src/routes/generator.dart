@@ -66,11 +66,11 @@ class RouteGenerator {
         );
       case Routes.categoryList:
         return CupertinoPageRoute(
-          builder: (context) => CategoryListPage(categories: params),
+          builder: (context) => CategoryListPage(),
         );
       case Routes.brandList:
         return CupertinoPageRoute(
-          builder: (context) => BrandListPage(brands: params),
+          builder: (context) => BrandListPage(),
         );
       case Routes.filter:
         return CupertinoPageRoute(

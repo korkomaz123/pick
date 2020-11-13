@@ -82,7 +82,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     vertical: pageStyle.unitHeight * 30,
                   ),
                   child: Text(
-                    '${orders.length} ' + 'items'.tr(),
+                    'items'.tr().replaceFirst('0', '${orders.length}'),
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 14,

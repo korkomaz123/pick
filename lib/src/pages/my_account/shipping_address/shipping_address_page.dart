@@ -2,8 +2,10 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
+import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'widgets/shipping_address_remove_dialog.dart';
 
@@ -26,12 +29,14 @@ class ShippingAddressPage extends StatefulWidget {
 
 class _ShippingAddressPageState extends State<ShippingAddressPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final _refreshController = RefreshController(initialRefresh: false);
   String defaultAddressId;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
+  List<AddressEntity> shippingAddresses = [];
 
   @override
   void initState() {
@@ -44,6 +49,18 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     flushBarService = FlushBarService(context: context);
     shippingAddressBloc = context.bloc<ShippingAddressBloc>();
     shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+  }
+
+  void _onRefresh() async {
+    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void dispose() {
+    shippingAddressBloc.add(ShippingAddressInitialized());
+    super.dispose();
   }
 
   @override
@@ -110,69 +127,81 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   Widget _buildAddressList() {
     return Expanded(
-      child: SingleChildScrollView(
-        child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
-          listener: (context, state) {
-            if (state is ShippingAddressLoadedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is ShippingAddressLoadedFailure) {
-              progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is ShippingAddressLoadedSuccess) {
-              progressService.hideProgress();
-            }
-            if (state is ShippingAddressRemovedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is ShippingAddressRemovedFailure) {
-              progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is ShippingAddressRemovedSuccess) {
-              progressService.hideProgress();
-              flushBarService.showSuccessMessage(
-                pageStyle,
-                'Removed successfully',
-              );
-              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-            }
-            if (state is ShippingAddressUpdatedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is ShippingAddressUpdatedFailure) {
-              progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is ShippingAddressUpdatedSuccess) {
-              progressService.hideProgress();
-              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-            }
-            if (state is ShippingAddressAddedSuccess) {
-              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-            }
-          },
-          builder: (context, state) {
-            if (state is ShippingAddressLoadedSuccess) {
-              addresses = state.addresses;
-              for (int i = 0; i < addresses.length; i++) {
-                if (addresses[i].defaultShippingAddress == 1) {
-                  defaultAddressId = addresses[i].addressId;
-                  defaultAddress = addresses[i];
-                }
+      child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
+        listener: (context, state) {
+          if (state is ShippingAddressLoadedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ShippingAddressLoadedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is ShippingAddressLoadedSuccess) {
+            progressService.hideProgress();
+          }
+          if (state is ShippingAddressRemovedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ShippingAddressRemovedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is ShippingAddressRemovedSuccess) {
+            progressService.hideProgress();
+            flushBarService.showSuccessMessage(
+              pageStyle,
+              'Removed successfully',
+            );
+            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+          }
+          if (state is ShippingAddressUpdatedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ShippingAddressUpdatedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is ShippingAddressUpdatedSuccess) {
+            progressService.hideProgress();
+            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+          }
+          if (state is ShippingAddressAddedSuccess) {
+            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+          }
+        },
+        builder: (context, state) {
+          if (state is ShippingAddressLoadedSuccess) {
+            addresses = state.addresses;
+            shippingAddresses = state.addresses;
+            for (int i = 0; i < shippingAddresses.length; i++) {
+              if (shippingAddresses[i].defaultShippingAddress == 1) {
+                defaultAddressId = shippingAddresses[i].addressId;
+                defaultAddress = shippingAddresses[i];
               }
             }
-            return Column(
-              children: List.generate(
-                addresses.length,
-                (index) {
-                  return _buildAddressCard(index);
-                },
-              ),
-            );
-          },
-        ),
+          }
+          return SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: false,
+            header: MaterialClassicHeader(color: primaryColor),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: () => null,
+            child: state is ShippingAddressLoadedSuccess &&
+                    shippingAddresses.isEmpty
+                ? ProductNoAvailable(pageStyle: pageStyle)
+                : SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        shippingAddresses.length,
+                        (index) {
+                          return _buildAddressCard(index);
+                        },
+                      ),
+                    ),
+                  ),
+          );
+        },
       ),
     );
   }

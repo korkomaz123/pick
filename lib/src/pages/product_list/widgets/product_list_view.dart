@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'product_no_available.dart';
 
@@ -42,6 +43,7 @@ class ProductListView extends StatefulWidget {
 
 class _ProductListViewState extends State<ProductListView>
     with TickerProviderStateMixin {
+  final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   List<ProductModel> products;
@@ -93,6 +95,23 @@ class _ProductListViewState extends State<ProductListView>
     }
   }
 
+  void _onRefresh() async {
+    if (isFromBrand) {
+      productListBloc.add(BrandProductListLoaded(
+        brandId: brand.optionId,
+        categoryId: widget.activeIndex == 0
+            ? 'all'
+            : subCategories[widget.activeIndex].id,
+        lang: lang,
+      ));
+    } else {
+      productListBloc.add(ProductListLoaded(
+        categoryId: subCategories[widget.activeIndex].id,
+        lang: lang,
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProductListBloc, ProductListState>(
@@ -106,6 +125,7 @@ class _ProductListViewState extends State<ProductListView>
         }
         if (productState is ProductListLoadedSuccess) {
           progressService.hideProgress();
+          _refreshController.refreshCompleted();
         }
       },
       builder: (context, productState) {
@@ -172,44 +192,52 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList() {
-    return SingleChildScrollView(
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        children: List.generate(
-          products.length,
-          (index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  right: lang == 'en' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  left: lang == 'ar' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  bottom: BorderSide(
-                    color: greyColor,
-                    width: pageStyle.unitWidth * 0.5,
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: false,
+      header: MaterialClassicHeader(color: primaryColor),
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      onLoading: () => null,
+      child: SingleChildScrollView(
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          children: List.generate(
+            products.length,
+            (index) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: lang == 'en' && index % 2 == 0
+                        ? BorderSide(
+                            color: greyColor,
+                            width: pageStyle.unitWidth * 0.5,
+                          )
+                        : BorderSide.none,
+                    left: lang == 'ar' && index % 2 == 0
+                        ? BorderSide(
+                            color: greyColor,
+                            width: pageStyle.unitWidth * 0.5,
+                          )
+                        : BorderSide.none,
+                    bottom: BorderSide(
+                      color: greyColor,
+                      width: pageStyle.unitWidth * 0.5,
+                    ),
                   ),
                 ),
-              ),
-              child: ProductVCard(
-                pageStyle: pageStyle,
-                product: products[index],
-                cardWidth: pageStyle.unitWidth * 186,
-                cardHeight: pageStyle.unitHeight * 253,
-                isShoppingCart: true,
-                isWishlist: true,
-                isShare: true,
-              ),
-            );
-          },
+                child: ProductVCard(
+                  pageStyle: pageStyle,
+                  product: products[index],
+                  cardWidth: pageStyle.unitWidth * 186,
+                  cardHeight: pageStyle.unitHeight * 253,
+                  isShoppingCart: true,
+                  isWishlist: true,
+                  isShare: true,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

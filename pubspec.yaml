@@ -43,6 +43,7 @@ dependencies:
   meta: ^1.1.8
   photo_view: ^0.10.2
   progress_dialog: ^1.2.4
+  pull_to_refresh: ^1.6.2
   share: ^0.6.5
   sliding_sheet: ^0.3.7
   smooth_page_indicator: ^0.2.0
