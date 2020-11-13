@@ -11,6 +11,7 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -149,7 +150,11 @@ class _WishlistPageState extends State<WishlistPage>
                   builder: (context, state) {
                     if (state is WishlistLoadedSuccess) {
                       wishlists = state.wishlists;
-                      return _buildWishlistItems();
+                      return wishlists.isNotEmpty
+                          ? _buildWishlistItems()
+                          : Expanded(
+                              child: ProductNoAvailable(pageStyle: pageStyle),
+                            );
                     } else {
                       return Container();
                     }

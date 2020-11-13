@@ -1,17 +1,20 @@
 class CategoryMenuEntity {
   final String id;
   final String title;
+  final String iconUrl;
   final List<CategoryMenuEntity> subMenu;
 
   CategoryMenuEntity({
     this.id,
     this.title,
+    this.iconUrl,
     this.subMenu,
   });
 
   CategoryMenuEntity.fromJson(Map<String, dynamic> json)
       : id = json['category_id'],
         title = json['label'],
+        iconUrl = json['icon_url'],
         subMenu = _getChildrenMenus(json['children']);
 
   static List<CategoryMenuEntity> _getChildrenMenus(dynamic childrens) {

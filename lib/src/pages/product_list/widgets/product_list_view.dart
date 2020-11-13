@@ -77,11 +77,14 @@ class _ProductListViewState extends State<ProductListView>
     } else {
       products = [];
       if (isFromBrand) {
+        print('/// isFromBrand ///');
         productListBloc.add(BrandProductListLoaded(
           brandId: brand.optionId,
+          categoryId: activeIndex == 0 ? 'all' : subCategories[activeIndex].id,
           lang: lang,
         ));
       } else {
+        print('/// isFromCategory ///');
         productListBloc.add(ProductListLoaded(
           categoryId: subCategories[activeIndex].id,
           lang: lang,
@@ -112,7 +115,9 @@ class _ProductListViewState extends State<ProductListView>
         return Expanded(
           child: Column(
             children: [
-              _buildCategoryTabBar(),
+              subCategories.length > 1
+                  ? _buildCategoryTabBar()
+                  : SizedBox.shrink(),
               Expanded(child: _buildCategoryTabView()),
             ],
           ),

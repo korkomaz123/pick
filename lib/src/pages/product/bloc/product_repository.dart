@@ -62,9 +62,13 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getBrandProducts(String brandId, String lang) async {
+  Future<dynamic> getBrandProducts(
+    String brandId,
+    String categoryId,
+    String lang,
+  ) async {
     String url = EndPoints.getBrandProducts;
-    final params = {'brandId': brandId, 'lang': lang};
+    final params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang};
     return await Api.getMethod(url, data: params);
   }
 

@@ -268,6 +268,7 @@ class _ProductListPageState extends State<ProductListPage> {
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
         brandId: brand.optionId,
+        categoryId: subCategories[index].id,
         lang: lang,
       ));
     } else {

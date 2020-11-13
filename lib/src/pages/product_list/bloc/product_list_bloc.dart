@@ -35,6 +35,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     } else if (event is BrandProductListLoaded) {
       yield* _mapBrandProductListLoadedToState(
         event.brandId,
+        event.categoryId,
         event.lang,
       );
     } else if (event is ProductListInitialized) {
@@ -90,11 +91,13 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   Stream<ProductListState> _mapBrandProductListLoadedToState(
     String brandId,
+    String categoryId,
     String lang,
   ) async* {
     yield ProductListLoadedInProcess();
     try {
-      final result = await _productRepository.getBrandProducts(brandId, lang);
+      final result =
+          await _productRepository.getBrandProducts(brandId, categoryId, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> productList = result['products'];
         List<ProductModel> products = [];

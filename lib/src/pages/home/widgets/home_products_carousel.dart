@@ -115,7 +115,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                           )
                         : ProductHCard(
                             cardWidth: widget.pageStyle.unitWidth * 355,
-                            cardHeight: widget.pageStyle.unitHeight * 360,
+                            cardHeight: widget.pageStyle.unitHeight * 280,
                             product: widget.products[index],
                             pageStyle: widget.pageStyle,
                             isShoppingCart: true,

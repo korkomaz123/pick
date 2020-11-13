@@ -28,8 +28,8 @@ class FilterPage extends StatefulWidget {
 class _FilterPageState extends State<FilterPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   PageStyle pageStyle;
-  double minPrice = 0;
-  double maxPrice = 100;
+  double minPrice;
+  double maxPrice;
   List<String> selectedCategories = [];
   List<String> selectedGenders = [];
   List<String> selectedBrands = [];
@@ -43,6 +43,7 @@ class _FilterPageState extends State<FilterPage> {
   List<dynamic> colorList = [];
   List<dynamic> genderList = [];
   List<dynamic> sizeList = [];
+  Map<String, dynamic> price = {};
   FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -77,24 +78,24 @@ class _FilterPageState extends State<FilterPage> {
             child: BlocConsumer<FilterBloc, FilterState>(
               listener: (context, state) {
                 if (state is FilterAttributesLoadedInProcess) {
-                  progressService.showProgress();
+                  // progressService.showProgress();
                 }
                 if (state is FilterAttributesLoadedSuccess) {
-                  progressService.hideProgress();
+                  // progressService.hideProgress();
                 }
                 if (state is FilterAttributesLoadedFailure) {
-                  progressService.hideProgress();
+                  // progressService.hideProgress();
                   snackBarService.showErrorSnackBar(state.message);
                 }
                 if (state is FilteredInProcess) {
-                  progressService.showProgress();
+                  // progressService.showProgress();
                 }
                 if (state is FilteredSuccess) {
-                  progressService.hideProgress();
+                  // progressService.hideProgress();
                   Navigator.pop(context, state.products);
                 }
                 if (state is FilteredFailure) {
-                  progressService.hideProgress();
+                  // progressService.hideProgress();
                   flushBarService.showErrorMessage(pageStyle, state.message);
                 }
               },
@@ -104,12 +105,17 @@ class _FilterPageState extends State<FilterPage> {
                   colorList = state.availableFilters['Color'];
                   genderList = state.availableFilters['Gender'];
                   sizeList = state.availableFilters['Size'];
+                  price = state.availableFilters['Price'];
+                  minPrice = minPrice ?? (price['min'] + .0);
+                  maxPrice = maxPrice ?? (price['max'] + .0);
                 }
                 return Column(
                   children: [
                     _buildAppBar(),
                     _buildCategories(),
-                    _buildPriceRange(),
+                    price.keys.toList().length > 0
+                        ? _buildPriceRange()
+                        : SizedBox.shrink(),
                     _buildGender(),
                     _buildSizes(),
                     _buildColors(),
@@ -235,8 +241,8 @@ class _FilterPageState extends State<FilterPage> {
               maxPrice = values.end;
               setState(() {});
             },
-            min: 0,
-            max: 200,
+            min: (price['min'] + .0),
+            max: (price['max'] + .0),
             activeColor: Colors.white,
             inactiveColor: Colors.white70,
             divisions: 200,
@@ -552,8 +558,8 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   void _onResetAll() {
-    minPrice = 0;
-    maxPrice = 10;
+    minPrice = price['min'] + .0;
+    maxPrice = price['max'] + .0;
     selectedCategories = [];
     selectedGenders = [];
     selectedBrands = [];

@@ -68,6 +68,7 @@ flutter:
     - lib/public/languages/
     - lib/public/images/
     - lib/public/images/flags/
+    - lib/public/images/loading/
     - lib/public/icons/
     - lib/public/animations/
     - lib/public/launcher/

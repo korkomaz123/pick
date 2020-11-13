@@ -32,12 +32,13 @@ class ProductListFiltered extends ProductListEvent {}
 
 class BrandProductListLoaded extends ProductListEvent {
   final String brandId;
+  final String categoryId;
   final String lang;
 
-  BrandProductListLoaded({this.brandId, this.lang});
+  BrandProductListLoaded({this.brandId, this.lang, this.categoryId});
 
   @override
-  List<Object> get props => [brandId, lang];
+  List<Object> get props => [brandId, lang, categoryId];
 }
 
 class ProductListInitialized extends ProductListEvent {}

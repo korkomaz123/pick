@@ -50,4 +50,6 @@ class EndPoints {
   static const String clearMyCartItems = '$baseUrl/clearMyCartItems';
   static const String getSearchAttrOptions = '$baseUrl/getAttributeOptions';
   static const String getBrandCategories = '$baseUrl/getBrandCategories';
+  static const String getSideMenus = '$baseUrl/SideMenu';
+  static const String getCategories = '$baseUrl/getCategories';
 }

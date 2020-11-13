@@ -174,12 +174,24 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              menu.title.toUpperCase(),
-              style: bookTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: darkColor,
-              ),
+            Row(
+              children: [
+                menu.iconUrl.isNotEmpty
+                    ? Row(
+                        children: [
+                          Image.network(menu.iconUrl, width: 25, height: 25),
+                          SizedBox(width: 6),
+                        ],
+                      )
+                    : SizedBox.shrink(),
+                Text(
+                  menu.title.toUpperCase(),
+                  style: bookTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
+                    color: darkColor,
+                  ),
+                ),
+              ],
             ),
             menu.subMenu.isNotEmpty
                 ? Icon(

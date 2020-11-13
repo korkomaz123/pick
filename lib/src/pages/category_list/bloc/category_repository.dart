@@ -8,7 +8,7 @@ class CategoryRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<List<CategoryEntity>> getAllCategories(String lang) async {
-    String url = EndPoints.getAllCategories;
+    String url = EndPoints.getCategories;
     final result = await Api.getMethod(url, data: {'lang': lang});
     List<dynamic> data = result['categories'];
     return data.map((e) => CategoryEntity.fromJson(e)).toList();
@@ -28,7 +28,7 @@ class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<List<CategoryMenuEntity>> getMenuCategories(String lang) async {
     final params = {'lang': lang};
-    String url = EndPoints.getMenuCategories;
+    String url = EndPoints.getSideMenus;
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> menuList = result['menuCategories'];

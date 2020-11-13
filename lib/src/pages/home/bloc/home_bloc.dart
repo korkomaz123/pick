@@ -30,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _categoryRepository = categoryRepository,
         _brandRepository = brandRepository,
         _productRepository = productRepository,
-        super(HomeInitial());
+        super(HomeState().init());
 
   final HomeRepository _homeRepository;
   final CategoryRepository _categoryRepository;
@@ -41,30 +41,78 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Stream<HomeState> mapEventToState(
     HomeEvent event,
   ) async* {
-    if (event is HomeDataFetched) {
-      yield* _mapHomeDataFetchedToState(event.lang);
+    if (event is HomeSliderImagesLoaded) {
+      yield* _mapHomeSliderImagesLoadedToState(event.lang);
+    } else if (event is HomeBestDealsLoaded) {
+      yield* _mapHomeBestDealsLoadedToState(event.lang);
+    } else if (event is HomeNewArrivalsLoaded) {
+      yield* _mapNewArrivalsLoadedToState(event.lang);
+    } else if (event is HomePerfumesLoaded) {
+      yield* _mapHomePerfumesLoadedToState(event.lang);
+    } else if (event is HomeCategoriesLoaded) {
+      yield* _mapHomeCategoriesLoadedToState(event.lang);
+    } else if (event is HomeBrandsLoaded) {
+      yield* _mapHomeBrandsLoadedToState(event.lang);
     }
   }
 
-  Stream<HomeState> _mapHomeDataFetchedToState(String lang) async* {
-    yield HomeDataFetchedInProcess();
+  Stream<HomeState> _mapHomeSliderImagesLoadedToState(String lang) async* {
     try {
       final sliderImages = await _homeRepository.getHomeSliderImages();
-      final bestDeals = await _productRepository.getBestDealsProducts(lang);
-      final newArrivals = await _productRepository.getNewArrivalsProducts(lang);
-      final perfumes = await _productRepository.getPerfumesProducts(lang);
-      final categories = await _categoryRepository.getAllCategories(lang);
-      final brands = await _brandRepository.getAllBrands();
-      yield HomeDataFetchedSuccess(
-        sliderImages: sliderImages,
-        bestDealsProducts: bestDeals,
-        newArrivalsProducts: newArrivals,
-        perfumesProducts: perfumes,
-        categories: categories,
-        brands: brands,
-      );
+
+      yield state.copyWith(sliderImages: sliderImages);
     } catch (e) {
-      yield HomeDataFetchedFailure(message: e.toString());
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeBestDealsLoadedToState(String lang) async* {
+    try {
+      final bestDeals = await _productRepository.getBestDealsProducts(lang);
+
+      yield state.copyWith(bestDealsProducts: bestDeals);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapNewArrivalsLoadedToState(String lang) async* {
+    try {
+      final newArrivals = await _productRepository.getNewArrivalsProducts(lang);
+
+      yield state.copyWith(newArrivalsProducts: newArrivals);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomePerfumesLoadedToState(String lang) async* {
+    try {
+      final perfumes = await _productRepository.getPerfumesProducts(lang);
+
+      yield state.copyWith(perfumesProducts: perfumes);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeCategoriesLoadedToState(String lang) async* {
+    try {
+      final categories = await _categoryRepository.getAllCategories(lang);
+
+      yield state.copyWith(categories: categories);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeBrandsLoadedToState(String lang) async* {
+    try {
+      final brands = await _brandRepository.getAllBrands();
+
+      yield state.copyWith(brands: brands);
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
     }
   }
 }
