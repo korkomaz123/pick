@@ -203,5 +203,15 @@
     "restart_app_title": "أعد تشغيل التطبيق الخاص بك",
     "restart_app_text": "يجب عليك إعادة تشغيل markaa لأن لغة التطبيق التي تم تبديلها حاليًا",
     "restart_now": "اعد البدء الان",
-    "no_cart_items_available": "عذراً ، لا توجد منتجات في سلة التسوق"
+    "no_cart_items_available": "عذراً ، لا توجد منتجات في سلة التسوق",
+    "wishlist_empty": "لا توجد منتجات في قائمة رغباتك !",
+    "thankyou": "شكرا لكم",
+    "update_success_message": "تم التحديث بنجاح",
+    "close": "أغلق",
+    "change_password_title": "غير كلمة السر",
+    "old_password_hint": "كلمة المرور القديمة",
+    "new_password_hint": "كلمة سر جديدة",
+    "confirm_password_hint": "تأكيد كلمة المرور",
+    "match_error": "قم بتأكيد كلمة المرور الجديدة الخاصة بك",
+    "new_password_sent_message": "لقد أرسلنا كلمة المرور الجديدة إلى عنوان بريدك الإلكتروني. يرجى التحقق من صندوق البريد الإلكتروني الخاص بك"
 }

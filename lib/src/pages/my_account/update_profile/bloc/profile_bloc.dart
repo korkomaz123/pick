@@ -33,6 +33,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.token,
         event.firstName,
         event.lastName,
+        event.phoneNumber,
+        event.email,
       );
     }
   }
@@ -46,7 +48,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final result =
           await _profileRepository.updateProfileImage(token, image, name);
-      print(result);
+
       if (result['code'] == 'SUCCESS') {
         String profileUrl = result['data']['profileUrl'];
         yield ProfileImageUpdatedSuccess(url: profileUrl);
@@ -62,12 +64,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     String token,
     String firstName,
     String lastName,
+    String phoneNumber,
+    String email,
   ) async* {
     yield ProfileInformationUpdatedInProcess();
     try {
-      final result =
-          await _profileRepository.updateProfile(token, firstName, lastName);
-      print(result);
+      final result = await _profileRepository.updateProfile(
+          token, firstName, lastName, phoneNumber, email);
+
       if (result['code'] == 'SUCCESS') {
         yield ProfileInformationUpdatedSuccess();
       } else {

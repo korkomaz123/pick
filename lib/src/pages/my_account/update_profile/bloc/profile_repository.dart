@@ -25,6 +25,8 @@ class ProfileRepository {
     String token,
     String firstName,
     String lastName,
+    String phoneNumber,
+    String email,
   ) async {
     String url = EndPoints.updateProfile;
     final params = {

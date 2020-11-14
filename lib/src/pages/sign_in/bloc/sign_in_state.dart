@@ -61,3 +61,36 @@ class SignOutSubmittedFailure extends SignInState {
   @override
   List<Object> get props => [message];
 }
+
+class SignUpSubmittedInProcess extends SignInState {}
+
+class SignUpSubmittedSuccess extends SignInState {
+  final UserEntity user;
+
+  SignUpSubmittedSuccess({this.user});
+
+  @override
+  List<Object> get props => [user];
+}
+
+class SignUpSubmittedFailure extends SignInState {
+  final String message;
+
+  SignUpSubmittedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class NewPasswordRequestSubmittedInProcess extends SignInState {}
+
+class NewPasswordRequestSubmittedSuccess extends SignInState {}
+
+class NewPasswordRequestSubmittedFailure extends SignInState {
+  final String message;
+
+  NewPasswordRequestSubmittedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

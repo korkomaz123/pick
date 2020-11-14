@@ -1,11 +1,18 @@
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/models/user_entity.dart';
+import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:string_validator/string_validator.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -13,13 +20,30 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  PageStyle pageStyle;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool agreeTerms = false;
+  SignInBloc signInBloc;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+  PageStyle pageStyle;
+  LocalStorageRepository localRepo;
+
+  @override
+  void initState() {
+    super.initState();
+    signInBloc = context.bloc<SignInBloc>();
+    localRepo = context.repository<LocalStorageRepository>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+  }
+
+  void _saveToken(UserEntity loggedInUser) async {
+    await localRepo.setToken(loggedInUser.token);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,35 +51,58 @@ class _SignUpPageState extends State<SignUpPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: pageStyle.unitHeight * 120,
-                ),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: pageStyle.unitWidth * 120,
-                  height: pageStyle.unitHeight * 45,
-                ),
+      body: BlocConsumer<SignInBloc, SignInState>(
+        listener: (context, state) {
+          if (state is SignUpSubmittedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is SignUpSubmittedSuccess) {
+            progressService.hideProgress();
+            _saveToken(state.user);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+          if (state is SignUpSubmittedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 100,
+                      bottom: pageStyle.unitHeight * 80,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      hLogoIcon,
+                      width: pageStyle.unitWidth * 120,
+                      height: pageStyle.unitHeight * 45,
+                    ),
+                  ),
+                  _buildFirstName(),
+                  SizedBox(height: 10),
+                  _buildLastName(),
+                  SizedBox(height: 10),
+                  _buildEmail(),
+                  SizedBox(height: 10),
+                  _buildPassword(),
+                  SizedBox(height: 40),
+                  _buildTermsAndConditions(),
+                  SizedBox(height: 40),
+                  _buildSignUpButton(),
+                  SizedBox(height: 40),
+                  _buildSignInPhase(),
+                ],
               ),
-              _buildFirstName(),
-              _buildLastName(),
-              _buildEmail(),
-              _buildPassword(),
-              SizedBox(height: 40),
-              _buildTermsAndConditions(),
-              SizedBox(height: 40),
-              _buildSignUpButton(),
-              SizedBox(height: 40),
-              _buildSignInPhase(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -78,6 +125,10 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -87,7 +138,15 @@ class _SignUpPageState extends State<SignUpPage> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
+          ),
         ),
+        validator: (value) =>
+            value.isNotEmpty ? null : 'required_first_name'.tr(),
       ),
     );
   }
@@ -110,6 +169,10 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -119,7 +182,15 @@ class _SignUpPageState extends State<SignUpPage> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
         ),
+        validator: (value) =>
+            value.isNotEmpty ? null : 'required_last_name'.tr(),
       ),
     );
   }
@@ -142,6 +213,10 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -151,7 +226,21 @@ class _SignUpPageState extends State<SignUpPage> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_email'.tr();
+          } else if (!isEmail(value)) {
+            return 'invalid_email'.tr();
+          }
+          return null;
+        },
         keyboardType: TextInputType.emailAddress,
       ),
     );
@@ -175,6 +264,10 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -184,11 +277,25 @@ class _SignUpPageState extends State<SignUpPage> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
           suffix: InkWell(
             onTap: () => null,
             child: Text('reset'.tr()),
           ),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_password'.tr();
+          } else if (!isLength(value, 6)) {
+            return 'short_length_password'.tr();
+          }
+          return null;
+        },
         obscureText: true,
       ),
     );
@@ -244,7 +351,7 @@ class _SignUpPageState extends State<SignUpPage> {
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => _onSignUp(),
         radius: 10,
       ),
     );
@@ -265,5 +372,16 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  void _onSignUp() {
+    if (_formKey.currentState.validate()) {
+      signInBloc.add(SignUpSubmitted(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      ));
+    }
   }
 }

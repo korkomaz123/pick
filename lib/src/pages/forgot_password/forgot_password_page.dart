@@ -1,12 +1,18 @@
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
+import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:string_validator/string_validator.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -16,7 +22,18 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   PageStyle pageStyle;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController userNameOrEmailController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  SignInBloc signInBloc;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+
+  @override
+  void initState() {
+    super.initState();
+    signInBloc = context.bloc<SignInBloc>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,42 +41,59 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: pageStyle.unitHeight * 120,
-                ),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: pageStyle.unitWidth * 120,
-                  height: pageStyle.unitHeight * 45,
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'forgot_password_title'.tr(),
-                  style: bookTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 14,
+      body: BlocConsumer<SignInBloc, SignInState>(
+        listener: (context, state) {
+          if (state is NewPasswordRequestSubmittedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is NewPasswordRequestSubmittedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is NewPasswordRequestSubmittedSuccess) {
+            progressService.hideProgress();
+            _showSuccessDialog();
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: pageStyle.unitHeight * 120,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      hLogoIcon,
+                      width: pageStyle.unitWidth * 120,
+                      height: pageStyle.unitHeight * 45,
+                    ),
                   ),
-                ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'forgot_password_title'.tr(),
+                      style: bookTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: pageStyle.unitFontSize * 14,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  _buildUsernameOrEmail(),
+                  SizedBox(height: 40),
+                  _buildGetNewPassButton(),
+                  SizedBox(height: 60),
+                  _buildAuthChoiceDivider(),
+                  SizedBox(height: 40),
+                ],
               ),
-              SizedBox(height: 30),
-              _buildUsernameOrEmail(),
-              SizedBox(height: 40),
-              _buildGetNewPassButton(),
-              SizedBox(height: 60),
-              _buildAuthChoiceDivider(),
-              SizedBox(height: 40),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -71,7 +105,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         horizontal: pageStyle.unitWidth * 20,
       ),
       child: TextFormField(
-        controller: userNameOrEmailController,
+        controller: emailController,
         textAlign: TextAlign.center,
         style: bookTextStyle.copyWith(
           color: greyDarkColor,
@@ -79,11 +113,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
-          hintText: 'username'.tr().toUpperCase() +
-              ' ' +
-              'or'.tr() +
-              ' ' +
-              'email'.tr().toUpperCase(),
+          hintText: 'email'.tr().toUpperCase(),
           hintStyle: bookTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
@@ -103,6 +133,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           fillColor: Colors.white,
           filled: true,
         ),
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_email'.tr();
+          } else if (!isEmail(value)) {
+            return 'invalid_email'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
@@ -120,7 +159,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
-        onPressed: () => null,
+        onPressed: () => _onGetNewPassword(),
         radius: 10,
       ),
     );
@@ -160,5 +199,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ],
       ),
     );
+  }
+
+  void _onGetNewPassword() {
+    if (_formKey.currentState.validate()) {
+      signInBloc.add(NewPasswordRequestSubmitted(email: emailController.text));
+    }
+  }
+
+  void _showSuccessDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return NewPasswordSentDialog(pageStyle: pageStyle);
+      },
+    );
+    Navigator.pop(context);
   }
 }
