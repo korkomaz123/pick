@@ -32,7 +32,9 @@ class ProfileRepository {
     final params = {
       'token': token,
       'firstName': firstName,
-      'lastName': lastName
+      'lastName': lastName,
+      'phoneNumber': phoneNumber,
+      'email': email,
     };
     return await Api.postMethod(url, data: params);
   }

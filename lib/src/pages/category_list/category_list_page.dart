@@ -20,7 +20,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'bloc/category_bloc.dart';
+import 'bloc/category_list/category_list_bloc.dart';
 
 class CategoryListPage extends StatefulWidget {
   const CategoryListPage();
@@ -36,7 +36,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   int activeIndex;
   List<CategoryEntity> categories = [];
   PageStyle pageStyle;
-  CategoryBloc categoryBloc;
+  CategoryListBloc categoryListBloc;
   SnackBarService snackBarService;
   ProgressService progressService;
 
@@ -48,12 +48,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
       scaffoldKey: scaffoldKey,
     );
     progressService = ProgressService(context: context);
-    categoryBloc = context.bloc<CategoryBloc>();
-    categoryBloc.add(CategoryListLoaded(lang: lang));
+    categoryListBloc = context.bloc<CategoryListBloc>();
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 
   void _onRefresh() async {
-    categoryBloc.add(CategoryListLoaded(lang: lang));
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
@@ -70,7 +70,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          BlocConsumer<CategoryBloc, CategoryState>(
+          BlocConsumer<CategoryListBloc, CategoryListState>(
             listener: (context, state) {
               if (state is CategoryListLoadedInProcess) {
                 progressService.showProgress();
@@ -182,10 +182,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
                     activeIndex = -1;
                     setState(() {});
                     ProductListArguments arguments = ProductListArguments(
-                      category: category,
-                      subCategory: category.subCategories,
+                      category: category.subCategories[index],
+                      subCategory: [],
                       brand: BrandEntity(),
-                      selectedSubCategoryIndex: index,
+                      selectedSubCategoryIndex: 0,
                       isFromBrand: false,
                     );
                     Navigator.pushNamed(

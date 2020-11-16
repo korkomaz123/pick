@@ -5,7 +5,8 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_repository.dart';
@@ -207,6 +208,11 @@ class CigaApp extends StatelessWidget {
             checkoutRepository: checkoutRepository,
           ),
         ),
+        BlocProvider(
+          create: (context) => CategoryListBloc(
+            categoryRepository: categoryRepository,
+          ),
+        ),
       ],
       child: CigaAppView(),
     );
@@ -344,6 +350,15 @@ class _CigaAppViewState extends State<CigaAppView> {
         initialRoute: '/',
         onGenerateRoute: (settings) {
           return RouteGenerator.generateRoute(settings);
+        },
+        builder: (ctx, child) {
+          return BlocConsumer<SignInBloc, SignInState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              print('///// builder ////');
+              return child;
+            },
+          );
         },
       ),
     );

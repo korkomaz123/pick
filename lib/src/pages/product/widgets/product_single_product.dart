@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
@@ -267,11 +268,27 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                         fontSize: pageStyle.unitFontSize * 11,
                       ),
                     ),
-                    Text(
-                      productEntity.brandLabel,
-                      style: mediumTextStyle.copyWith(
-                        color: primaryColor,
-                        fontSize: pageStyle.unitFontSize * 13,
+                    InkWell(
+                      onTap: () {
+                        ProductListArguments arguments = ProductListArguments(
+                          category: CategoryEntity(),
+                          subCategory: [],
+                          brand: productEntity.brandEntity,
+                          selectedSubCategoryIndex: 0,
+                          isFromBrand: true,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productList,
+                          arguments: arguments,
+                        );
+                      },
+                      child: Text(
+                        productEntity.brandLabel,
+                        style: mediumTextStyle.copyWith(
+                          color: primaryColor,
+                          fontSize: pageStyle.unitFontSize * 13,
+                        ),
                       ),
                     ),
                   ],
@@ -452,8 +469,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   void _addedSuccess() {
     cartItemCount += 1;
-    cartItemCountBloc.add(CartItemCountIncremented(
-      incrementedCount: cartItemCount,
+    cartItemCountBloc.add(CartItemCountSet(
+      cartItemCount: cartItemCount,
     ));
     flushBarService.showAddCartMessage(pageStyle, product);
   }

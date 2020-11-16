@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/no_available_data.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
@@ -143,7 +144,7 @@ class _MyCartPageState extends State<MyCartPage>
                 cartItemCount = 0;
                 totalPrice = 0;
               }
-              return myCartItems.isEmpty && state is MyCartItemsLoadedSuccess
+              return myCartItems.isEmpty
                   ? Center(
                       child: NoAvailableData(
                         pageStyle: pageStyle,
@@ -230,14 +231,14 @@ class _MyCartPageState extends State<MyCartPage>
       child: Row(
         children: [
           Text(
-            'total'.tr() + ' ${myCartItems.length} ',
+            'total'.tr() + ' ',
             style: boldTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
           Text(
-            'items'.tr(),
+            'items'.tr().replaceFirst('0', '${myCartItems.length}'),
             style: bookTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 13,
@@ -308,11 +309,29 @@ class _MyCartPageState extends State<MyCartPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  myCartItems[index].product.brandLabel,
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 10,
+                InkWell(
+                  onTap: () {
+                    if (myCartItems[index].product.brandId.isNotEmpty) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: myCartItems[index].product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    myCartItems[index].product.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 10,
+                    ),
                   ),
                 ),
                 Text(
@@ -447,7 +466,9 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => Navigator.pushNamed(context, Routes.checkoutAddress),
+        onPressed: () => user?.token != null
+            ? Navigator.pushNamed(context, Routes.checkoutAddress)
+            : Navigator.pushNamed(context, Routes.signIn),
         radius: 0,
       ),
     );

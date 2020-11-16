@@ -1,7 +1,8 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/pages/home/widgets/home_category_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -37,7 +38,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 380,
+      height: widget.pageStyle.unitHeight * 320,
       color: Colors.white,
       padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitWidth * 15),
       child: BlocConsumer<HomeBloc, HomeState>(
@@ -107,7 +108,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 460,
+            height: widget.pageStyle.unitHeight * 400,
             child: Swiper(
               itemCount: categories.length > 6 ? 6 : categories.length,
               autoplay: true,
@@ -119,9 +120,31 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                return HomeCategoryCard(
-                  pageStyle: widget.pageStyle,
-                  category: categories[index],
+                return InkWell(
+                  onTap: () {
+                    ProductListArguments arguments = ProductListArguments(
+                      category: categories[index],
+                      subCategory: [],
+                      brand: BrandEntity(),
+                      selectedSubCategoryIndex: 0,
+                      isFromBrand: false,
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      Routes.productList,
+                      arguments: arguments,
+                    );
+                  },
+                  child: Container(
+                    width: widget.pageStyle.deviceWidth,
+                    height: widget.pageStyle.unitHeight * 242,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(categories[index].imageUrl),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),

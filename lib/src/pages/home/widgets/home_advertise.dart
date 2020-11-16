@@ -32,7 +32,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         return ads.isNotEmpty
             ? Container(
                 width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 282,
+                height: widget.pageStyle.unitHeight * 240,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(ads),
@@ -40,10 +40,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                   ),
                 ),
               )
-            : Container(
-                width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 282,
-              );
+            : Container();
       },
     );
   }

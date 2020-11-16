@@ -49,6 +49,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _saveToken(UserEntity loggedInUser) async {
+    user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
   }
 

@@ -123,7 +123,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                   ),
                   SizedBox(width: pageStyle.unitWidth * 10),
                   Text(
-                    'Hello, ' + user.firstName,
+                    'Hello, ' + user?.firstName,
                     style: mediumTextStyle.copyWith(
                       fontSize: pageStyle.unitFontSize * 18,
                       color: Colors.white,

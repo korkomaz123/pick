@@ -1,3 +1,5 @@
+import 'brand_entity.dart';
+
 class ProductModel {
   final String entityId;
   final String typeId;
@@ -13,6 +15,8 @@ class ProductModel {
   final String addCartUrl;
   final String productId;
   final String brandLabel;
+  final String brandId;
+  final BrandEntity brandEntity;
 
   ProductModel({
     this.entityId,
@@ -29,6 +33,8 @@ class ProductModel {
     this.addCartUrl,
     this.productId,
     this.brandLabel,
+    this.brandId,
+    this.brandEntity,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -45,5 +51,12 @@ class ProductModel {
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
         productId = json['product_id'],
-        brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'];
+        brandId = json['brand_id'] ?? '',
+        brandLabel = json['brand_label'] == null || json['brand_label'] == 'no'
+            ? ''
+            : json['brand_label'],
+        brandEntity =
+            json['brand_entity'] != null && json['brand_entity'].isNotEmpty
+                ? BrandEntity.fromJson(json['brand_entity'])
+                : BrandEntity();
 }

@@ -61,7 +61,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     profileBloc = context.bloc<ProfileBloc>();
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
-    // phoneNumberController.text = user.
+    phoneNumberController.text = user?.phoneNumber;
     emailController.text = user.email;
   }
 
@@ -90,6 +90,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
             progressService.hideProgress();
             user.firstName = firstNameController.text;
             user.lastName = lastNameController.text;
+            user.phoneNumber = phoneNumberController.text;
             _showSuccessDialog();
           }
           if (state is ProfileInformationUpdatedFailure) {

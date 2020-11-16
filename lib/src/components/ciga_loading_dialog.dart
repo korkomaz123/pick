@@ -4,7 +4,7 @@ class CigaLoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.black.withOpacity(0.5),
       child: Center(
         child: Image.asset(
           'lib/public/images/loading/loading.gif',

@@ -1,5 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -95,13 +97,29 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
               },
               itemBuilder: (context, index) {
                 BrandEntity brand = brands[index];
-                return Container(
-                  width: widget.pageStyle.deviceWidth,
-                  height: widget.pageStyle.unitHeight * 380,
-                  child: Image.network(
-                    brand.brandThumbnail,
-                    width: widget.pageStyle.unitWidth * 217,
-                    height: widget.pageStyle.unitHeight * 219,
+                return InkWell(
+                  onTap: () {
+                    ProductListArguments arguments = ProductListArguments(
+                      category: CategoryEntity(),
+                      subCategory: [],
+                      brand: brands[index],
+                      selectedSubCategoryIndex: 0,
+                      isFromBrand: true,
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      Routes.productList,
+                      arguments: arguments,
+                    );
+                  },
+                  child: Container(
+                    width: widget.pageStyle.deviceWidth,
+                    height: widget.pageStyle.unitHeight * 380,
+                    child: Image.network(
+                      brand.brandThumbnail,
+                      width: widget.pageStyle.unitWidth * 217,
+                      height: widget.pageStyle.unitHeight * 219,
+                    ),
                   ),
                 );
               },

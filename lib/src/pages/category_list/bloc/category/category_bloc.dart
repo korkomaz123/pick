@@ -6,7 +6,7 @@ import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import 'category_repository.dart';
+import '../category_repository.dart';
 
 part 'category_event.dart';
 part 'category_state.dart';
@@ -33,8 +33,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         event.categoryId,
         event.lang,
       );
-    } else if (event is CategoryListLoaded) {
-      yield* _mapCategoryListLoadedToState(event.lang);
     } else if (event is BrandSubCategoriesLoaded) {
       yield* _mapBrandSubCategoriesLoadedToState(event.brandId, event.lang);
     } else if (event is CategoryInitialized) {
@@ -64,16 +62,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       }
     } catch (e) {
       yield CategorySubCategoriesLoadedFailure(message: e.toString());
-    }
-  }
-
-  Stream<CategoryState> _mapCategoryListLoadedToState(String lang) async* {
-    yield CategoryListLoadedInProcess();
-    try {
-      final categories = await _categoryRepository.getAllCategories(lang);
-      yield CategoryListLoadedSuccess(categories: categories);
-    } catch (e) {
-      yield CategoryListLoadedFailure(message: e.toString());
     }
   }
 

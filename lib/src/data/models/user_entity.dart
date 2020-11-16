@@ -3,6 +3,7 @@ class UserEntity {
   final String customerId;
   String firstName;
   String lastName;
+  String phoneNumber;
   final String email;
   String profileUrl;
 
@@ -20,6 +21,7 @@ class UserEntity {
         customerId = json['customer_id'] ?? json['entity_id'],
         firstName = json['firstname'],
         lastName = json['lastname'],
+        phoneNumber = json['phoneNumber'],
         email = json['email'],
         profileUrl = json['profileUrl'] ?? '';
 }

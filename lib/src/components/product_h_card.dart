@@ -1,4 +1,6 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
@@ -99,17 +101,15 @@ class _ProductHCardState extends State<ProductHCard> {
             );
           }
           if (state is MyCartItemAddedSuccess) {
-            flushBarService.showAddCartMessage(
-              widget.pageStyle,
-              widget.product,
-            );
-            print('////////////////////////////');
-            print(cartItemCount);
-            print(cartItemCount + 1);
-            print('////////////////////////////');
-            cartItemCountBloc.add(CartItemCountIncremented(
-              incrementedCount: (cartItemCount + 1),
-            ));
+            if (widget.isShoppingCart) {
+              flushBarService.showAddCartMessage(
+                widget.pageStyle,
+                widget.product,
+              );
+              cartItemCountBloc.add(CartItemCountIncremented(
+                incrementedCount: (cartItemCount + 1),
+              ));
+            }
           }
           if (state is MyCartItemAddedFailure) {
             flushBarService.showErrorMessage(
@@ -159,11 +159,29 @@ class _ProductHCardState extends State<ProductHCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: widget.cardHeight * 0.2),
-                Text(
-                  widget.product.brandLabel,
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: widget.pageStyle.unitFontSize * 10,
+                InkWell(
+                  onTap: () {
+                    if (widget.product.brandId.isNotEmpty) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: widget.product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    widget.product.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: widget.pageStyle.unitFontSize * 12,
+                    ),
                   ),
                 ),
                 Text(
