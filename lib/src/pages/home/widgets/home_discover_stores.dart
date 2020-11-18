@@ -1,8 +1,7 @@
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
+import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -24,14 +23,14 @@ class HomeDiscoverStores extends StatefulWidget {
 
 class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   int activeIndex = 0;
-  List<BrandEntity> brands;
-  HomeBloc homeBloc;
+  List<BrandEntity> brands = [];
+  BrandBloc brandBloc;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
-    homeBloc.add(HomeBrandsLoaded(lang: lang));
+    brandBloc = context.bloc<BrandBloc>();
+    brandBloc.add(BrandListLoaded());
   }
 
   @override
@@ -41,27 +40,30 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       height: widget.pageStyle.unitHeight * 395,
       color: Colors.white,
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 15),
-      child: BlocConsumer<HomeBloc, HomeState>(
+      child: BlocConsumer<BrandBloc, BrandState>(
         listener: (context, state) {},
         builder: (context, state) {
-          brands = state.brands;
-          if (brands.isEmpty) {
+          if (state is BrandListLoadedSuccess) {
+            brands = state.brands;
+          }
+          if (brands.isNotEmpty) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitle(),
+                SizedBox(height: widget.pageStyle.unitHeight * 20),
+                _buildStoresSlider(),
+                Divider(
+                  height: widget.pageStyle.unitHeight * 4,
+                  thickness: widget.pageStyle.unitHeight * 1.5,
+                  color: greyColor.withOpacity(0.4),
+                ),
+                _buildFooter(),
+              ],
+            );
+          } else {
             return Container();
           }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
-              _buildStoresSlider(),
-              Divider(
-                height: widget.pageStyle.unitHeight * 4,
-                thickness: widget.pageStyle.unitHeight * 1.5,
-                color: greyColor.withOpacity(0.4),
-              ),
-              _buildFooter(),
-            ],
-          );
         },
       ),
     );

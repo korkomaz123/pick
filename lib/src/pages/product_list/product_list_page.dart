@@ -108,19 +108,20 @@ class _ProductListPageState extends State<ProductListPage> {
           isFromBrand ? _buildBrandBar() : SizedBox.shrink(),
           BlocConsumer<CategoryBloc, CategoryState>(
             listener: (context, categoryState) {
-              if (categoryState is CategorySubCategoriesLoadedInProcess) {
-                progressService.showProgress();
-              }
-              if (categoryState is CategorySubCategoriesLoadedSuccess) {
-                progressService.hideProgress();
-              }
-              if (categoryState is CategorySubCategoriesLoadedFailure) {
-                progressService.hideProgress();
-                snackBarService.showErrorSnackBar(categoryState.message);
-              }
+              // if (categoryState is CategorySubCategoriesLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
+              // if (categoryState is CategorySubCategoriesLoadedSuccess) {
+              //   progressService.hideProgress();
+              // }
+              // if (categoryState is CategorySubCategoriesLoadedFailure) {
+              //   progressService.hideProgress();
+              //   snackBarService.showErrorSnackBar(categoryState.message);
+              // }
             },
             builder: (context, categoryState) {
               if (categoryState is CategorySubCategoriesLoadedSuccess) {
+                subCategories = [category];
                 for (int i = 0; i < categoryState.subCategories.length; i++) {
                   subCategories.add(categoryState.subCategories[i]);
                 }

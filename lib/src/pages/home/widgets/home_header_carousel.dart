@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
@@ -44,7 +45,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             ],
           );
         } else {
-          return Container();
+          return _buildShimmer();
         }
       },
     );
@@ -99,6 +100,49 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Column(
+      children: [
+        Container(
+          width: widget.pageStyle.deviceWidth,
+          height: widget.pageStyle.unitHeight * 113,
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade200,
+            highlightColor: Colors.white,
+            child: Container(
+              width: widget.pageStyle.deviceWidth,
+              height: widget.pageStyle.unitHeight * 113,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Container(
+          width: widget.pageStyle.deviceWidth,
+          height: widget.pageStyle.unitHeight * 20,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              3,
+              (index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey.shade300,
+                  highlightColor: Colors.white,
+                  child: Container(
+                    width: widget.pageStyle.unitWidth * 30,
+                    height: widget.pageStyle.unitHeight * 4,
+                    color: Colors.white,
+                    margin: EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -66,7 +66,7 @@ class _MyCartPageState extends State<MyCartPage>
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
     if (cartId.isNotEmpty) {
-      myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
+      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
     }
   }
 
@@ -87,17 +87,17 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           BlocConsumer<MyCartBloc, MyCartState>(
             listener: (context, state) {
-              if (state is MyCartItemsLoadedInProcess) {
-                progressService.showProgress();
-              }
+              // if (state is MyCartItemsLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
               if (state is MyCartItemsLoadedSuccess) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 cigaAppBloc.add(CartItemCountUpdated(
                   cartItems: state.cartItems,
                 ));
               }
               if (state is MyCartItemsLoadedFailure) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
               if (state is MyCartItemUpdatedInProcess) {

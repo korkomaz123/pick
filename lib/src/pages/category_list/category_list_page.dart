@@ -72,49 +72,47 @@ class _CategoryListPageState extends State<CategoryListPage> {
           _buildAppBar(),
           BlocConsumer<CategoryListBloc, CategoryListState>(
             listener: (context, state) {
-              if (state is CategoryListLoadedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is CategoryListLoadedSuccess) {
-                progressService.hideProgress();
-              }
+              // if (state is CategoryListLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
+              // if (state is CategoryListLoadedSuccess) {
+              //   progressService.hideProgress();
+              // }
               if (state is CategoryListLoadedFailure) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 snackBarService.showErrorSnackBar(state.message);
               }
             },
             builder: (context, state) {
               if (state is CategoryListLoadedSuccess) {
                 categories = state.categories;
-                return Expanded(
-                  child: SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    header: MaterialClassicHeader(color: primaryColor),
-                    controller: _refreshController,
-                    onRefresh: _onRefresh,
-                    onLoading: () => null,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: List.generate(
-                          categories.length,
-                          (index) => Column(
-                            children: [
-                              _buildCategoryCard(categories[index]),
-                              activeIndex == index
-                                  ? _buildSubcategoriesList(categories[index])
-                                  : SizedBox.shrink(),
-                              SizedBox(height: pageStyle.unitHeight * 6),
-                            ],
-                          ),
+              }
+              return Expanded(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  header: MaterialClassicHeader(color: primaryColor),
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  onLoading: () => null,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        categories.length,
+                        (index) => Column(
+                          children: [
+                            _buildCategoryCard(categories[index]),
+                            activeIndex == index
+                                ? _buildSubcategoriesList(categories[index])
+                                : SizedBox.shrink(),
+                            SizedBox(height: pageStyle.unitHeight * 6),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                );
-              } else {
-                return Expanded(child: Container(color: Colors.white));
-              }
+                ),
+              );
             },
           ),
         ],
@@ -231,7 +229,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _buildCategoryButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(
@@ -257,7 +255,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _buildBrandButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => Navigator.pushReplacementNamed(
           context,

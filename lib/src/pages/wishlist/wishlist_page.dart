@@ -5,11 +5,9 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/no_available_data.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
@@ -29,12 +27,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:lottie/lottie.dart';
 import 'widgets/wishlist_remove_dialog.dart';
 
-class WishlistPage extends StatefulWidget {
+class WishlistPage extends StatelessWidget {
   @override
-  _WishlistPageState createState() => _WishlistPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: context.bloc<MyCartBloc>(),
+      child: WishlistPageView(),
+    );
+  }
 }
 
-class _WishlistPageState extends State<WishlistPage>
+class WishlistPageView extends StatefulWidget {
+  @override
+  _WishlistPageViewState createState() => _WishlistPageViewState();
+}
+
+class _WishlistPageViewState extends State<WishlistPageView>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
@@ -50,7 +58,6 @@ class _WishlistPageState extends State<WishlistPage>
   FlushBarService flushBarService;
   WishlistBloc wishlistBloc;
   MyCartBloc cartBloc;
-  CartItemCountBloc cartItemCountBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localStorageRepo;
 
@@ -67,7 +74,6 @@ class _WishlistPageState extends State<WishlistPage>
     wishlistBloc = context.bloc<WishlistBloc>();
     wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     cartBloc = context.bloc<MyCartBloc>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
     _triggerLoadWishlistEvent();
     _getCartId();
   }
@@ -90,11 +96,6 @@ class _WishlistPageState extends State<WishlistPage>
     cartId = await localStorageRepo.getCartId();
   }
 
-  void _setCartId(String newCartId) async {
-    cartId = newCartId;
-    await localStorageRepo.setCartId(newCartId);
-  }
-
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -111,14 +112,6 @@ class _WishlistPageState extends State<WishlistPage>
               _buildAppBar(),
               BlocListener<MyCartBloc, MyCartState>(
                 listener: (context, state) {
-                  if (state is MyCartCreatedSuccess) {
-                    _setCartId(state.cartId);
-                    cartBloc.add(MyCartItemAdded(
-                      cartId: state.cartId,
-                      productId: wishlists[selectedIndex].productId,
-                      qty: '1',
-                    ));
-                  }
                   if (state is MyCartCreatedFailure) {
                     flushBarService.showErrorMessage(
                       pageStyle,
@@ -127,10 +120,9 @@ class _WishlistPageState extends State<WishlistPage>
                   }
                   if (state is MyCartItemAddedSuccess) {
                     _onRemoveWishlist(selectedIndex, false);
-                    _updateCartItemCount();
                     flushBarService.showAddCartMessage(
                       pageStyle,
-                      wishlists[selectedIndex],
+                      state.product,
                     );
                   }
                   if (state is MyCartItemAddedFailure) {
@@ -142,16 +134,16 @@ class _WishlistPageState extends State<WishlistPage>
                 },
                 child: BlocConsumer<WishlistBloc, WishlistState>(
                   listener: (context, state) {
-                    if (state is WishlistLoadedInProcess) {
-                      progressService.showProgress();
-                    }
+                    // if (state is WishlistLoadedInProcess) {
+                    //   progressService.showProgress();
+                    // }
                     if (state is WishlistLoadedFailure) {
-                      progressService.hideProgress();
+                      // progressService.hideProgress();
                       snackBarService.showErrorSnackBar(state.message);
                     }
-                    if (state is WishlistLoadedSuccess) {
-                      progressService.hideProgress();
-                    }
+                    // if (state is WishlistLoadedSuccess) {
+                    //   progressService.hideProgress();
+                    // }
                   },
                   builder: (context, state) {
                     if (state is WishlistLoadedSuccess) {
@@ -308,20 +300,15 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddToCart(int index) async {
     selectedIndex = index;
     if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated());
+      cartBloc.add(MyCartCreated(
+        product: wishlists[index],
+      ));
     } else {
       cartBloc.add(MyCartItemAdded(
         cartId: cartId,
-        productId: wishlists[index].productId,
+        product: wishlists[index],
         qty: '1',
       ));
     }
-  }
-
-  void _updateCartItemCount() {
-    cartItemCount = cartItemCount + 1;
-    cartItemCountBloc.add(CartItemCountIncremented(
-      incrementedCount: cartItemCount,
-    ));
   }
 }

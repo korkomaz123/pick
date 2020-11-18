@@ -7,11 +7,19 @@ class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<CategoryEntity>> getAllCategories(String lang) async {
+  Future<List<CategoryEntity>> getAllCategoriesEntity(String lang) async {
     String url = EndPoints.getCategories;
     final result = await Api.getMethod(url, data: {'lang': lang});
     List<dynamic> data = result['categories'];
     return data.map((e) => CategoryEntity.fromJson(e)).toList();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getAllCategories(String lang) async {
+    String url = EndPoints.getCategories;
+    return await Api.getMethod(url, data: {'lang': lang});
   }
 
   //////////////////////////////////////////////////////////////////////////////

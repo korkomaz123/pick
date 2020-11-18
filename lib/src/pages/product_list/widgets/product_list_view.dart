@@ -99,14 +99,14 @@ class _ProductListViewState extends State<ProductListView>
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
         brandId: brand.optionId,
-        categoryId: widget.activeIndex == 0
+        categoryId: tabController.index == 0
             ? 'all'
-            : subCategories[widget.activeIndex].id,
+            : subCategories[tabController.index].id,
         lang: lang,
       ));
     } else {
       productListBloc.add(ProductListLoaded(
-        categoryId: subCategories[widget.activeIndex].id,
+        categoryId: subCategories[tabController.index].id,
         lang: lang,
       ));
     }
@@ -116,15 +116,15 @@ class _ProductListViewState extends State<ProductListView>
   Widget build(BuildContext context) {
     return BlocConsumer<ProductListBloc, ProductListState>(
       listener: (context, productState) {
-        if (productState is ProductListLoadedInProcess) {
-          progressService.showProgress();
-        }
-        if (productState is ProductListLoadedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, productState.message);
-        }
+        // if (productState is ProductListLoadedInProcess) {
+        //   progressService.showProgress();
+        // }
+        // if (productState is ProductListLoadedFailure) {
+        //   progressService.hideProgress();
+        //   flushBarService.showErrorMessage(pageStyle, productState.message);
+        // }
         if (productState is ProductListLoadedSuccess) {
-          progressService.hideProgress();
+          // progressService.hideProgress();
           _refreshController.refreshCompleted();
         }
       },
@@ -161,7 +161,7 @@ class _ProductListViewState extends State<ProductListView>
         unselectedLabelColor: greyDarkColor,
         labelColor: Colors.white,
         isScrollable: true,
-        onTap: (index) => widget.onChangeTab(index),
+        // onTap: (index) => widget.onChangeTab(index),
         tabs: List.generate(
           subCategories.length,
           (index) {

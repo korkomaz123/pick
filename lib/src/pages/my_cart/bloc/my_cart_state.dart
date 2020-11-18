@@ -15,11 +15,12 @@ class MyCartCreatedInProcess extends MyCartState {}
 
 class MyCartCreatedSuccess extends MyCartState {
   final String cartId;
+  final ProductModel product;
 
-  MyCartCreatedSuccess({this.cartId});
+  MyCartCreatedSuccess({this.cartId, this.product});
 
   @override
-  List<Object> get props => [cartId];
+  List<Object> get props => [cartId, product];
 }
 
 class MyCartCreatedFailure extends MyCartState {
@@ -51,7 +52,14 @@ class MyCartItemsLoadedFailure extends MyCartState {
 
 class MyCartItemAddedInProcess extends MyCartState {}
 
-class MyCartItemAddedSuccess extends MyCartState {}
+class MyCartItemAddedSuccess extends MyCartState {
+  final ProductModel product;
+
+  MyCartItemAddedSuccess({this.product});
+
+  @override
+  List<Object> get props => [product];
+}
 
 class MyCartItemAddedFailure extends MyCartState {
   final String message;

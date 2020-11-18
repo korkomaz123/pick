@@ -54,6 +54,12 @@ class _ProductPageState extends State<ProductPage> {
     ));
   }
 
+  @override
+  void dispose() {
+    productBloc.add(ProductInitialized());
+    super.dispose();
+  }
+
   void _onRefresh() async {
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,

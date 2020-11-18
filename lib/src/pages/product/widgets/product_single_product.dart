@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -21,7 +19,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class ProductSingleProduct extends StatefulWidget {
+class ProductSingleProduct extends StatelessWidget {
   final PageStyle pageStyle;
   final ProductModel product;
   final ProductEntity productEntity;
@@ -33,10 +31,35 @@ class ProductSingleProduct extends StatefulWidget {
   });
 
   @override
-  _ProductSingleProductState createState() => _ProductSingleProductState();
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: context.bloc<MyCartBloc>(),
+      child: ProductSingleProductView(
+        pageStyle: pageStyle,
+        product: product,
+        productEntity: productEntity,
+      ),
+    );
+  }
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct>
+class ProductSingleProductView extends StatefulWidget {
+  final PageStyle pageStyle;
+  final ProductModel product;
+  final ProductEntity productEntity;
+
+  ProductSingleProductView({
+    this.pageStyle,
+    this.product,
+    this.productEntity,
+  });
+
+  @override
+  _ProductSingleProductViewState createState() =>
+      _ProductSingleProductViewState();
+}
+
+class _ProductSingleProductViewState extends State<ProductSingleProductView>
     with TickerProviderStateMixin {
   PageStyle pageStyle;
   ProductModel product;
@@ -49,7 +72,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   Animation<double> _addToCartScaleAnimation;
   Animation<double> _favoriteScaleAnimation;
   MyCartBloc cartBloc;
-  CartItemCountBloc cartItemCountBloc;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
   bool isBuyNow = false;
@@ -62,7 +84,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     productEntity = widget.productEntity;
 
     cartBloc = context.bloc<MyCartBloc>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    flushBarService = FlushBarService(context: context);
     localStorageRepo = context.repository<LocalStorageRepository>();
 
     /// add to cart button animation
@@ -401,21 +423,26 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
           BlocConsumer<MyCartBloc, MyCartState>(
             listener: (context, state) {
-              if (state is MyCartCreatedSuccess) {
-                _addToCart(state.cartId);
-              }
               if (state is MyCartCreatedFailure) {
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is MyCartItemAddedFailure) {
-                flushBarService.showErrorMessage(pageStyle, state.message);
+                flushBarService.showErrorMessage(
+                  widget.pageStyle,
+                  state.message,
+                );
               }
               if (state is MyCartItemAddedSuccess) {
-                if (!isBuyNow) {
-                  _addedSuccess();
-                } else {
+                if (isBuyNow) {
                   Navigator.pushNamed(context, Routes.myCart);
                 }
+                flushBarService.showAddCartMessage(
+                  widget.pageStyle,
+                  state.product,
+                );
+              }
+              if (state is MyCartItemAddedFailure) {
+                flushBarService.showErrorMessage(
+                  widget.pageStyle,
+                  state.message,
+                );
               }
             },
             builder: (context, state) {
@@ -448,7 +475,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     await localStorageRepo.setCartId(cartId);
     cartBloc.add(MyCartItemAdded(
       cartId: cartId,
-      productId: product.productId,
+      product: product,
       qty: '1',
     ));
   }
@@ -461,18 +488,10 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     });
     String cartId = await localStorageRepo.getCartId();
     if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated());
+      cartBloc.add(MyCartCreated(product: product));
     } else {
       _addToCart(cartId);
     }
-  }
-
-  void _addedSuccess() {
-    cartItemCount += 1;
-    cartItemCountBloc.add(CartItemCountSet(
-      cartItemCount: cartItemCount,
-    ));
-    flushBarService.showAddCartMessage(pageStyle, product);
   }
 
   void _onFavorite() {
@@ -487,13 +506,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     isBuyNow = true;
     String cartId = await localStorageRepo.getCartId();
     if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated());
+      cartBloc.add(MyCartCreated(product: product));
     } else {
       _addToCart(cartId);
     }
   }
 
   void _onShareProduct() {
-    Share.share('Share my product');
+    Share.share(product.imageUrl, subject: product.name);
   }
 }

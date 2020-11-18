@@ -16,3 +16,5 @@ class ProductDetailsLoaded extends ProductEvent {
   @override
   List<Object> get props => [productId, lang];
 }
+
+class ProductInitialized extends ProductEvent {}

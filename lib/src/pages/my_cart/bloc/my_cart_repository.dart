@@ -14,9 +14,9 @@ class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getCartItems(String cartId) async {
+  Future<dynamic> getCartItems(String cartId, String lang) async {
     String url = EndPoints.getCartItems;
-    final params = {'cartId': cartId};
+    final params = {'cartId': cartId, 'lang': lang};
     return await Api.postMethod(url, data: params);
   }
 

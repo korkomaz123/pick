@@ -1,10 +1,10 @@
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -91,12 +91,6 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
 
   void _onChangeLanguage(String value) async {
     if (language != value) {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return RestartMandatoryDialog(pageStyle: pageStyle);
-        },
-      );
       language = value;
       if (language == 'EN') {
         EasyLocalization.of(context).locale =
@@ -107,8 +101,14 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return RestartMandatoryDialog(pageStyle: pageStyle);
+        },
+      );
 
-      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
+      Phoenix.rebirth(context);
     }
   }
 }

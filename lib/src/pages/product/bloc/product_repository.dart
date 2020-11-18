@@ -15,31 +15,25 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ProductModel>> getPerfumesProducts(String lang) async {
+  Future<dynamic> getPerfumesProducts(String lang) async {
     String url = EndPoints.getPerfumes;
-    final result = await Api.getMethod(url, data: {'lang': lang});
-    List<dynamic> data = result['products'];
-    return data.map((e) => ProductModel.fromJson(e)).toList();
+    return await Api.getMethod(url, data: {'lang': lang});
   }
 
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ProductModel>> getNewArrivalsProducts(String lang) async {
+  Future<dynamic> getNewArrivalsProducts(String lang) async {
     String url = EndPoints.getNewArrivals;
-    final result = await Api.getMethod(url, data: {'lang': lang});
-    List<dynamic> data = result['products'];
-    return data.map((e) => ProductModel.fromJson(e)).toList();
+    return await Api.getMethod(url, data: {'lang': lang});
   }
 
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ProductModel>> getBestDealsProducts(String lang) async {
+  Future<dynamic> getBestDealsProducts(String lang) async {
     String url = EndPoints.getBestDeals;
-    final result = await Api.getMethod(url, data: {'lang': lang});
-    List<dynamic> data = result['products'];
-    return data.map((e) => ProductModel.fromJson(e)).toList();
+    return await Api.getMethod(url, data: {'lang': lang});
   }
 
   //////////////////////////////////////////////////////////////////////////////

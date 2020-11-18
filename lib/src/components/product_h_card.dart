@@ -2,7 +2,6 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -48,7 +47,6 @@ class _ProductHCardState extends State<ProductHCard> {
   LocalStorageRepository localRepo;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CartItemCountBloc cartItemCountBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
 
   @override
@@ -57,7 +55,6 @@ class _ProductHCardState extends State<ProductHCard> {
     isWishlist = false;
     localRepo = context.repository<LocalStorageRepository>();
     myCartBloc = context.bloc<MyCartBloc>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
     wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
@@ -75,10 +72,6 @@ class _ProductHCardState extends State<ProductHCard> {
     cartId = await localRepo.getCartId();
   }
 
-  void _setMyCartId(String cartId) async {
-    await localRepo.setCartId(cartId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -86,14 +79,6 @@ class _ProductHCardState extends State<ProductHCard> {
       height: widget.cardHeight,
       child: BlocConsumer<MyCartBloc, MyCartState>(
         listener: (context, state) {
-          if (state is MyCartCreatedSuccess) {
-            _setMyCartId(state.cartId);
-            myCartBloc.add(MyCartItemAdded(
-              cartId: state.cartId,
-              productId: widget.product.productId,
-              qty: '1',
-            ));
-          }
           if (state is MyCartCreatedFailure) {
             flushBarService.showErrorMessage(
               widget.pageStyle,
@@ -101,15 +86,10 @@ class _ProductHCardState extends State<ProductHCard> {
             );
           }
           if (state is MyCartItemAddedSuccess) {
-            if (widget.isShoppingCart) {
-              flushBarService.showAddCartMessage(
-                widget.pageStyle,
-                widget.product,
-              );
-              cartItemCountBloc.add(CartItemCountIncremented(
-                incrementedCount: (cartItemCount + 1),
-              ));
-            }
+            flushBarService.showAddCartMessage(
+              widget.pageStyle,
+              state.product,
+            );
           }
           if (state is MyCartItemAddedFailure) {
             flushBarService.showErrorMessage(
@@ -119,6 +99,9 @@ class _ProductHCardState extends State<ProductHCard> {
           }
         },
         builder: (context, state) {
+          if (state is MyCartCreatedSuccess) {
+            cartId = state.cartId;
+          }
           return Stack(
             children: [
               _buildProductCard(),
@@ -258,10 +241,7 @@ class _ProductHCardState extends State<ProductHCard> {
                       height: widget.pageStyle.unitHeight * 17,
                       child: isWishlist
                           ? SvgPicture.asset(wishlistedIcon)
-                          : SvgPicture.asset(
-                              wishlistIcon,
-                              color: greyColor,
-                            ),
+                          : SvgPicture.asset(wishlistIcon, color: greyColor),
                     ),
                   ),
                 ),
@@ -273,11 +253,13 @@ class _ProductHCardState extends State<ProductHCard> {
 
   void _onAddProductToCart(BuildContext context) {
     if (cartId.isEmpty) {
-      myCartBloc.add(MyCartCreated());
+      myCartBloc.add(MyCartCreated(
+        product: widget.product,
+      ));
     } else {
       myCartBloc.add(MyCartItemAdded(
         cartId: cartId,
-        productId: widget.product.productId,
+        product: widget.product,
         qty: '1',
       ));
     }

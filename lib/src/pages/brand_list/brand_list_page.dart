@@ -45,11 +45,11 @@ class _BrandListPageState extends State<BrandListPage> {
     );
     progressService = ProgressService(context: context);
     brandBloc = context.bloc<BrandBloc>();
-    brandBloc.add(BrandListLoaded());
+    brandBloc.add(BrandListLoaded(lang: lang));
   }
 
   void _onRefresh() async {
-    brandBloc.add(BrandListLoaded());
+    brandBloc.add(BrandListLoaded(lang: lang));
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
@@ -68,41 +68,39 @@ class _BrandListPageState extends State<BrandListPage> {
           _buildAppBar(),
           BlocConsumer<BrandBloc, BrandState>(
             listener: (context, state) {
-              if (state is BrandListLoadedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is BrandListLoadedSuccess) {
-                progressService.hideProgress();
-              }
+              // if (state is BrandListLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
+              // if (state is BrandListLoadedSuccess) {
+              //   progressService.hideProgress();
+              // }
               if (state is BrandListLoadedFailure) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 snackBarService.showErrorSnackBar(state.message);
               }
             },
             builder: (context, state) {
               if (state is BrandListLoadedSuccess) {
                 brands = state.brands;
-                return Expanded(
-                  child: SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    header: MaterialClassicHeader(color: primaryColor),
-                    controller: _refreshController,
-                    onRefresh: _onRefresh,
-                    onLoading: () => null,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: List.generate(
-                          brands.length,
-                          (index) => _buildBrandCard(index),
-                        ),
+              }
+              return Expanded(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  header: MaterialClassicHeader(color: primaryColor),
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  onLoading: () => null,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        brands.length,
+                        (index) => _buildBrandCard(index),
                       ),
                     ),
                   ),
-                );
-              } else {
-                return Expanded(child: Container(color: Colors.white));
-              }
+                ),
+              );
             },
           ),
         ],

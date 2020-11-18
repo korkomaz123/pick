@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:shimmer/shimmer.dart';
 import 'home_products_carousel.dart';
 
 class HomeBestDeals extends StatefulWidget {
@@ -63,7 +64,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
               ],
             );
           } else {
-            return Container();
+            return _buildShimmer();
           }
         },
       ),
@@ -124,6 +125,85 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 10),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.white,
+            child: Text(
+              'home_best_deals'.tr(),
+              style: boldTextStyle.copyWith(
+                fontSize: widget.pageStyle.unitFontSize * 23,
+                color: greyDarkColor,
+              ),
+            ),
+          ),
+          SizedBox(height: widget.pageStyle.unitHeight * 40),
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.white,
+            child: Center(
+              child: Container(
+                width: widget.pageStyle.unitWidth * 220,
+                height: widget.pageStyle.unitWidth * 160,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: widget.pageStyle.unitHeight * 20),
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.white,
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                height: widget.pageStyle.unitWidth * 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: widget.pageStyle.unitHeight * 20),
+          Container(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                3,
+                (index) {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.white,
+                    child: Container(
+                      width: widget.pageStyle.unitWidth * 10,
+                      height: widget.pageStyle.unitWidth * 10,
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
