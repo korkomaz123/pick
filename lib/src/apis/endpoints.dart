@@ -52,4 +52,7 @@ class EndPoints {
   static const String getBrandCategories = '$baseUrl/getBrandCategories';
   static const String getSideMenus = '$baseUrl/SideMenu';
   static const String getCategories = '$baseUrl/getCategories';
+  static const String getNewPassword = '$baseUrl/getNewPassword';
+  static const String applyCouponCode = '$baseUrl/applyCouponCode';
+  static const String getSearchSuggestion = '$baseUrl/getSearchSuggetion';
 }

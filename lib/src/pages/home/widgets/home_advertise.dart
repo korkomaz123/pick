@@ -1,6 +1,4 @@
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -31,21 +29,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
       listener: (context, state) {},
       builder: (context, state) {
         ads = state.ads;
-        return ads.isNotEmpty
-            ? Container(
-                width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 282,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(ads),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              )
-            : Container(
-                width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 282,
-              );
+        return ads.isNotEmpty ? Image.network(ads) : Container();
       },
     );
   }

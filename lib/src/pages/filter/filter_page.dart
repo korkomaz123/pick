@@ -101,13 +101,16 @@ class _FilterPageState extends State<FilterPage> {
               },
               builder: (context, state) {
                 if (state is FilterAttributesLoadedSuccess) {
-                  brandList = state.availableFilters['Brand'];
-                  colorList = state.availableFilters['Color'];
-                  genderList = state.availableFilters['Gender'];
-                  sizeList = state.availableFilters['Size'];
-                  price = state.availableFilters['Price'];
-                  minPrice = minPrice ?? (price['min'] + .0);
-                  maxPrice = maxPrice ?? (price['max'] + .0);
+                  Map<String, dynamic> data = state.availableFilters;
+                  brandList = data.containsKey('Brand') ? data['Brand'] : [];
+                  colorList = data.containsKey('Color') ? data['Color'] : [];
+                  genderList = data.containsKey('Gender') ? data['Gender'] : [];
+                  sizeList = data.containsKey('Size') ? data['Size'] : [];
+                  price = data.containsKey('Price')
+                      ? data['Price']
+                      : {'min': .0, 'max': .0};
+                  minPrice = minPrice ?? price['min'] + .0;
+                  maxPrice = maxPrice ?? price['max'] + .0;
                 }
                 return Column(
                   children: [
@@ -116,10 +119,10 @@ class _FilterPageState extends State<FilterPage> {
                     price.keys.toList().length > 0
                         ? _buildPriceRange()
                         : SizedBox.shrink(),
-                    _buildGender(),
-                    _buildSizes(),
-                    _buildColors(),
-                    _buildBrands(),
+                    genderList != null ? _buildGender() : SizedBox.shrink(),
+                    sizeList != null ? _buildSizes() : SizedBox.shrink(),
+                    colorList != null ? _buildColors() : SizedBox.shrink(),
+                    brandList != null ? _buildBrands() : SizedBox.shrink(),
                     _buildSelectedBrands(),
                     SizedBox(height: pageStyle.unitHeight * 100),
                   ],

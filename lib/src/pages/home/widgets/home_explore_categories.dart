@@ -1,7 +1,8 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/pages/home/widgets/home_category_card.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -23,80 +24,91 @@ class HomeExploreCategories extends StatefulWidget {
 
 class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
-  List<CategoryEntity> categories;
-  HomeBloc homeBloc;
+  List<CategoryEntity> categories = [];
+  CategoryListBloc categoryListBloc;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
-    homeBloc.add(HomeCategoriesLoaded(lang: lang));
+    categoryListBloc = context.bloc<CategoryListBloc>();
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 380,
+      height: widget.pageStyle.unitHeight * 320,
       color: Colors.white,
       padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitWidth * 15),
-      child: BlocConsumer<HomeBloc, HomeState>(
+      child: BlocConsumer<CategoryListBloc, CategoryListState>(
         listener: (context, state) {},
         builder: (context, state) {
-          categories = state.categories;
-          if (categories.isEmpty) {
+          if (state is CategoryListLoadedSuccess) {
+            categories = state.categories;
+          }
+          if (categories.isNotEmpty) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitle(),
+                SizedBox(height: widget.pageStyle.unitHeight * 20),
+                _buildCategorySliders(),
+                _buildFooter(),
+              ],
+            );
+          } else {
             return Container();
           }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 15,
-                ),
-                child: Text(
-                  'home_categories'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: widget.pageStyle.unitFontSize * 23,
-                  ),
-                ),
-              ),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
-              _buildCategorySliders(),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  vertical: widget.pageStyle.unitHeight * 4,
-                  horizontal: widget.pageStyle.unitWidth * 15,
-                ),
-                child: InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.categoryList,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'view_more_categories'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize * 15,
-                          color: primaryColor,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: primaryColor,
-                        size: widget.pageStyle.unitFontSize * 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
         },
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: widget.pageStyle.unitWidth * 15,
+      ),
+      child: Text(
+        'home_categories'.tr(),
+        style: mediumTextStyle.copyWith(
+          color: greyDarkColor,
+          fontSize: widget.pageStyle.unitFontSize * 23,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        vertical: widget.pageStyle.unitHeight * 4,
+        horizontal: widget.pageStyle.unitWidth * 15,
+      ),
+      child: InkWell(
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.categoryList,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'view_more_categories'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: widget.pageStyle.unitFontSize * 15,
+                color: primaryColor,
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: primaryColor,
+              size: widget.pageStyle.unitFontSize * 15,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -107,7 +119,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 460,
+            height: widget.pageStyle.unitHeight * 400,
             child: Swiper(
               itemCount: categories.length > 6 ? 6 : categories.length,
               autoplay: true,
@@ -119,9 +131,31 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                return HomeCategoryCard(
-                  pageStyle: widget.pageStyle,
-                  category: categories[index],
+                return InkWell(
+                  onTap: () {
+                    ProductListArguments arguments = ProductListArguments(
+                      category: categories[index],
+                      subCategory: [],
+                      brand: BrandEntity(),
+                      selectedSubCategoryIndex: 0,
+                      isFromBrand: false,
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      Routes.productList,
+                      arguments: arguments,
+                    );
+                  },
+                  child: Container(
+                    width: widget.pageStyle.deviceWidth,
+                    height: widget.pageStyle.unitHeight * 242,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(categories[index].imageUrl),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),

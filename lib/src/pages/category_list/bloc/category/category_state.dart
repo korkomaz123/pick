@@ -28,23 +28,3 @@ class CategorySubCategoriesLoadedFailure extends CategoryState {
   @override
   List<Object> get props => [message];
 }
-
-class CategoryListLoadedInProcess extends CategoryState {}
-
-class CategoryListLoadedSuccess extends CategoryState {
-  final List<CategoryEntity> categories;
-
-  CategoryListLoadedSuccess({this.categories});
-
-  @override
-  List<Object> get props => [categories];
-}
-
-class CategoryListLoadedFailure extends CategoryState {
-  final String message;
-
-  CategoryListLoadedFailure({this.message});
-
-  @override
-  List<Object> get props => [message];
-}

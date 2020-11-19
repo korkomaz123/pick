@@ -1,6 +1,7 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -46,7 +47,6 @@ class _ProductVCardState extends State<ProductVCard> {
   LocalStorageRepository localRepo;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CartItemCountBloc cartItemCountBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
 
   @override
@@ -55,7 +55,6 @@ class _ProductVCardState extends State<ProductVCard> {
     isWishlist = false;
     localRepo = context.repository<LocalStorageRepository>();
     myCartBloc = context.bloc<MyCartBloc>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
     wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
@@ -73,10 +72,6 @@ class _ProductVCardState extends State<ProductVCard> {
     cartId = await localRepo.getCartId();
   }
 
-  void _setMyCartId(String cartId) async {
-    await localRepo.setCartId(cartId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -84,14 +79,6 @@ class _ProductVCardState extends State<ProductVCard> {
       height: widget.cardHeight,
       child: BlocConsumer<MyCartBloc, MyCartState>(
         listener: (context, state) {
-          if (state is MyCartCreatedSuccess) {
-            _setMyCartId(state.cartId);
-            myCartBloc.add(MyCartItemAdded(
-              cartId: state.cartId,
-              productId: widget.product.productId,
-              qty: '1',
-            ));
-          }
           if (state is MyCartCreatedFailure) {
             flushBarService.showErrorMessage(
               widget.pageStyle,
@@ -101,11 +88,8 @@ class _ProductVCardState extends State<ProductVCard> {
           if (state is MyCartItemAddedSuccess) {
             flushBarService.showAddCartMessage(
               widget.pageStyle,
-              widget.product,
+              state.product,
             );
-            cartItemCountBloc.add(CartItemCountIncremented(
-              incrementedCount: cartItemCount + 1,
-            ));
           }
           if (state is MyCartItemAddedFailure) {
             flushBarService.showErrorMessage(
@@ -150,6 +134,13 @@ class _ProductVCardState extends State<ProductVCard> {
               child: Image.network(
                 widget.product.imageUrl,
                 fit: BoxFit.cover,
+                loadingBuilder: (_, child, chunkEvent) {
+                  return chunkEvent != null
+                      ? Image.asset(
+                          'lib/public/images/loading/image_loading.jpg',
+                        )
+                      : child;
+                },
               ),
             ),
           ),
@@ -158,11 +149,29 @@ class _ProductVCardState extends State<ProductVCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.product.brandLabel,
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: widget.pageStyle.unitFontSize * 10,
+                InkWell(
+                  onTap: () {
+                    if (widget.product.brandId.isNotEmpty) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: widget.product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    widget.product.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: widget.pageStyle.unitFontSize * 12,
+                    ),
                   ),
                 ),
                 Text(
@@ -187,7 +196,8 @@ class _ProductVCardState extends State<ProductVCard> {
                     ),
                     SizedBox(width: widget.pageStyle.unitWidth * 10),
                     Text(
-                      widget.product.price + ' ' + 'currency'.tr(),
+                      '',
+                      // widget.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -251,11 +261,13 @@ class _ProductVCardState extends State<ProductVCard> {
 
   void _onAddProductToCart(BuildContext context) {
     if (cartId.isEmpty) {
-      myCartBloc.add(MyCartCreated());
+      myCartBloc.add(MyCartCreated(
+        product: widget.product,
+      ));
     } else {
       myCartBloc.add(MyCartItemAdded(
         cartId: cartId,
-        productId: widget.product.productId,
+        product: widget.product,
         qty: '1',
       ));
     }

@@ -34,6 +34,15 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         event.loginType,
         event.lang,
       );
+    } else if (event is SignUpSubmitted) {
+      yield* _mapSignUpSubmittedToState(
+        event.firstName,
+        event.lastName,
+        event.email,
+        event.password,
+      );
+    } else if (event is NewPasswordRequestSubmitted) {
+      yield* _mapNewPasswordRequestSubmittedToState(event.email);
     }
   }
 
@@ -48,7 +57,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
-        yield SignInSubmittedFailure(message: result['errMessage']);
+        yield SignInSubmittedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
@@ -76,15 +85,49 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final result = await _signInRepository.socialLogin(
           email, firstName, lastName, loginType, lang);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
-        yield SignInSubmittedFailure(message: result['errMessage']);
+        yield SignInSubmittedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SignInState> _mapSignUpSubmittedToState(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async* {
+    yield SignUpSubmittedInProcess();
+    try {
+      final result = await _signInRepository.register(
+          firstName, lastName, email, password);
+      if (result['code'] == 'SUCCESS') {
+        result['user']['token'] = result['token'];
+        yield SignUpSubmittedSuccess(user: UserEntity.fromJson(result['user']));
+      } else {
+        yield SignUpSubmittedFailure(message: result['errorMessage']);
+      }
+    } catch (e) {
+      yield SignUpSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SignInState> _mapNewPasswordRequestSubmittedToState(String email,) async* {
+    yield NewPasswordRequestSubmittedInProcess();
+    try {
+      final result = await _signInRepository.getNewPassword(email);
+      if (result['code'] == 'SUCCESS') {
+        yield NewPasswordRequestSubmittedSuccess();
+      } else {
+        yield NewPasswordRequestSubmittedFailure(message: result['errorMessage'],);
+      }
+    } catch (e) {
+      yield NewPasswordRequestSubmittedFailure(message: e.toString());
     }
   }
 }

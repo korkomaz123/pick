@@ -25,12 +25,16 @@ class ProfileRepository {
     String token,
     String firstName,
     String lastName,
+    String phoneNumber,
+    String email,
   ) async {
     String url = EndPoints.updateProfile;
     final params = {
       'token': token,
       'firstName': firstName,
-      'lastName': lastName
+      'lastName': lastName,
+      'phoneNumber': phoneNumber,
+      'email': email,
     };
     return await Api.postMethod(url, data: params);
   }

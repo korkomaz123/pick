@@ -43,22 +43,4 @@ class HomePerfumesLoaded extends HomeEvent {
   List<Object> get props => [lang];
 }
 
-class HomeCategoriesLoaded extends HomeEvent {
-  final String lang;
-
-  HomeCategoriesLoaded({this.lang});
-
-  @override
-  List<Object> get props => [lang];
-}
-
-class HomeBrandsLoaded extends HomeEvent {
-  final String lang;
-
-  HomeBrandsLoaded({this.lang});
-
-  @override
-  List<Object> get props => [lang];
-}
-
 class HomeAdsLoaded extends HomeEvent {}

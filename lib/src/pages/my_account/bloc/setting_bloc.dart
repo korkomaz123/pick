@@ -82,7 +82,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       if (result['code'] == 'SUCCESS') {
         yield PasswordUpdatedSuccess();
       } else {
-        yield PasswordUpdatedFailure(message: result['errMessage']);
+        yield PasswordUpdatedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield PasswordUpdatedFailure(message: e.toString());

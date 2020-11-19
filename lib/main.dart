@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'src/pages/ciga_app/ciga_app.dart';
 
@@ -21,7 +22,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: CigaApp(),
+      child: Phoenix(child: CigaApp()),
     ),
   );
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -16,6 +17,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
         super(WishlistInitial());
 
   final WishlistRepository _wishlistRepository;
+  final localStorageRepository = LocalStorageRepository();
 
   @override
   Stream<WishlistState> mapEventToState(
@@ -34,8 +36,19 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   ) async* {
     yield WishlistLoadedInProcess();
     try {
+      String key = 'wishlists';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        List<dynamic> wishlistList = await localStorageRepository.getItem(key);
+        List<ProductModel> wishlists = [];
+        for (int i = 0; i < wishlistList.length; i++) {
+          wishlists.add(ProductModel.fromJson(wishlistList[i]));
+        }
+        yield WishlistLoadedSuccess(wishlists: wishlists);
+      }
       final result = await _wishlistRepository.getWishlists(ids, token);
       if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(key, result['wishlists']);
         List<dynamic> wishlistList = result['wishlists'];
         List<ProductModel> wishlists = [];
         for (int i = 0; i < wishlistList.length; i++) {

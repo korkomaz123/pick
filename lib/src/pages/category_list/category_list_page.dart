@@ -20,7 +20,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'bloc/category_bloc.dart';
+import 'bloc/category_list/category_list_bloc.dart';
 
 class CategoryListPage extends StatefulWidget {
   const CategoryListPage();
@@ -36,7 +36,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   int activeIndex;
   List<CategoryEntity> categories = [];
   PageStyle pageStyle;
-  CategoryBloc categoryBloc;
+  CategoryListBloc categoryListBloc;
   SnackBarService snackBarService;
   ProgressService progressService;
 
@@ -48,12 +48,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
       scaffoldKey: scaffoldKey,
     );
     progressService = ProgressService(context: context);
-    categoryBloc = context.bloc<CategoryBloc>();
-    categoryBloc.add(CategoryListLoaded(lang: lang));
+    categoryListBloc = context.bloc<CategoryListBloc>();
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 
   void _onRefresh() async {
-    categoryBloc.add(CategoryListLoaded(lang: lang));
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
@@ -70,51 +70,49 @@ class _CategoryListPageState extends State<CategoryListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          BlocConsumer<CategoryBloc, CategoryState>(
+          BlocConsumer<CategoryListBloc, CategoryListState>(
             listener: (context, state) {
-              if (state is CategoryListLoadedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is CategoryListLoadedSuccess) {
-                progressService.hideProgress();
-              }
+              // if (state is CategoryListLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
+              // if (state is CategoryListLoadedSuccess) {
+              //   progressService.hideProgress();
+              // }
               if (state is CategoryListLoadedFailure) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 snackBarService.showErrorSnackBar(state.message);
               }
             },
             builder: (context, state) {
               if (state is CategoryListLoadedSuccess) {
                 categories = state.categories;
-                return Expanded(
-                  child: SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    header: MaterialClassicHeader(color: primaryColor),
-                    controller: _refreshController,
-                    onRefresh: _onRefresh,
-                    onLoading: () => null,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: List.generate(
-                          categories.length,
-                          (index) => Column(
-                            children: [
-                              _buildCategoryCard(categories[index]),
-                              activeIndex == index
-                                  ? _buildSubcategoriesList(categories[index])
-                                  : SizedBox.shrink(),
-                              SizedBox(height: pageStyle.unitHeight * 6),
-                            ],
-                          ),
+              }
+              return Expanded(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  header: MaterialClassicHeader(color: primaryColor),
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  onLoading: () => null,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        categories.length,
+                        (index) => Column(
+                          children: [
+                            _buildCategoryCard(categories[index]),
+                            activeIndex == index
+                                ? _buildSubcategoriesList(categories[index])
+                                : SizedBox.shrink(),
+                            SizedBox(height: pageStyle.unitHeight * 6),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                );
-              } else {
-                return Expanded(child: Container(color: Colors.white));
-              }
+                ),
+              );
             },
           ),
         ],
@@ -182,10 +180,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
                     activeIndex = -1;
                     setState(() {});
                     ProductListArguments arguments = ProductListArguments(
-                      category: category,
-                      subCategory: category.subCategories,
+                      category: category.subCategories[index],
+                      subCategory: [],
                       brand: BrandEntity(),
-                      selectedSubCategoryIndex: index,
+                      selectedSubCategoryIndex: 0,
                       isFromBrand: false,
                     );
                     Navigator.pushNamed(
@@ -231,7 +229,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _buildCategoryButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(
@@ -257,7 +255,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   Widget _buildBrandButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => Navigator.pushReplacementNamed(
           context,

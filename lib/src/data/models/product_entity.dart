@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/review_entity.dart';
 
 class ProductEntity {
@@ -18,6 +19,7 @@ class ProductEntity {
   final String brandLabel;
   final List<dynamic> gallery;
   final List<ReviewEntity> reviews;
+  final BrandEntity brandEntity;
 
   ProductEntity({
     this.entityId,
@@ -37,6 +39,7 @@ class ProductEntity {
     this.brandLabel,
     this.gallery,
     this.reviews,
+    this.brandEntity,
   });
 
   ProductEntity.fromJson(Map<String, dynamic> json)
@@ -56,5 +59,9 @@ class ProductEntity {
         productId = json['product_id'],
         brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'],
         gallery = json['gallery'],
-        reviews = json['reviews'];
+        reviews = json['reviews'],
+        brandEntity =
+            json['brand_entity'] != null && json['brand_entity'] != null
+                ? BrandEntity.fromJson(json['brand_entity'])
+                : BrandEntity();
 }

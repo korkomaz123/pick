@@ -61,4 +61,5 @@ class Routes {
   static const String editAddress = '/edit-address';
   static const String viewOrder = '/view-order';
   static const String reOrder = '/re-order';
+  static const String changePassword = 'change-password';
 }

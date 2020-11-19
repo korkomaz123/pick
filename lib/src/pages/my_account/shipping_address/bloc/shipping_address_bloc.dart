@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -18,6 +19,7 @@ class ShippingAddressBloc
         super(ShippingAddressInitial());
 
   final ShippingAddressRepository _shippingAddressRepository;
+  final localStorageRepository = LocalStorageRepository();
 
   @override
   Stream<ShippingAddressState> mapEventToState(
@@ -64,9 +66,21 @@ class ShippingAddressBloc
   ) async* {
     yield ShippingAddressLoadedInProcess();
     try {
+      String key = '$token-shippingaddress';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        List<dynamic> shippingAddressesList =
+            await localStorageRepository.getItem(key);
+        List<AddressEntity> addresses = [];
+        for (int i = 0; i < shippingAddressesList.length; i++) {
+          addresses.add(AddressEntity.fromJson(shippingAddressesList[i]));
+        }
+        yield ShippingAddressLoadedSuccess(addresses: addresses);
+      }
       final result =
           await _shippingAddressRepository.getShippingAddresses(token);
       if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(key, result['addresses']);
         List<dynamic> shippingAddressesList = result['addresses'];
         List<AddressEntity> addresses = [];
         for (int i = 0; i < shippingAddressesList.length; i++) {

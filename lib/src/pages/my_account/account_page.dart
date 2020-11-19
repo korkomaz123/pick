@@ -19,6 +19,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'update_profile/bloc/profile_bloc.dart';
 import 'widgets/about_us_item.dart';
 import 'widgets/change_notification_setting_item.dart';
+import 'widgets/change_password_item.dart';
 import 'widgets/contact_us_item.dart';
 import 'widgets/get_notification_messages_item.dart';
 import 'widgets/language_setting_item.dart';
@@ -269,6 +270,8 @@ class _AccountPageState extends State<AccountPage> {
           TermsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
           AboutUsItem(pageStyle: pageStyle),
+          SizedBox(height: pageStyle.unitHeight * 5),
+          ChangePasswordItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
           ContactUsItem(pageStyle: pageStyle),
           LogoutItem(

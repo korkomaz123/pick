@@ -11,6 +11,7 @@ import 'package:ciga/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:ciga/src/pages/home/home_page.dart';
 import 'package:ciga/src/pages/my_account/about_us/about_us_page.dart';
 import 'package:ciga/src/pages/my_account/account_page.dart';
+import 'package:ciga/src/pages/my_account/change_password/change_password_page.dart';
 import 'package:ciga/src/pages/my_account/contact_us/contact_us_page.dart';
 import 'package:ciga/src/pages/my_account/contact_us/contact_us_success_page.dart';
 import 'package:ciga/src/pages/my_account/notification_messages/notification_message_details_page.dart';
@@ -171,6 +172,10 @@ class RouteGenerator {
       case Routes.reOrder:
         return CupertinoPageRoute(
           builder: (context) => ReOrderPage(order: params),
+        );
+      case Routes.changePassword:
+        return CupertinoPageRoute(
+          builder: (context) => ChangePasswordPage(),
         );
 
       default:

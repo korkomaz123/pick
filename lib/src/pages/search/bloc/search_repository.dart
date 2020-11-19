@@ -6,7 +6,7 @@ class SearchRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<List<dynamic>> getGenderOptions(String lang) async {
-    final String url = EndPoints.getSearchAttrOptions;
+    final url = EndPoints.getSearchAttrOptions;
     final params = {'attribute_code': 'gender', 'lang': lang};
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
@@ -20,7 +20,7 @@ class SearchRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<List<dynamic>> getCategoryOptions(String lang) async {
-    final String url = EndPoints.getSearchAttrOptions;
+    final url = EndPoints.getSearchAttrOptions;
     final params = {'attribute_code': 'category', 'lang': lang};
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
@@ -34,7 +34,7 @@ class SearchRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<List<dynamic>> getBrandOptions(String lang) async {
-    final String url = EndPoints.getSearchAttrOptions;
+    final url = EndPoints.getSearchAttrOptions;
     final params = {'attribute_code': 'brand', 'lang': lang};
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
@@ -47,6 +47,15 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getSearchSuggestion(String query, String lang) async {
+    final url = EndPoints.getSearchSuggestion;
+    final params = {'q': query, 'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> searchProducts(
     String query,
     List<dynamic> categories,
@@ -54,7 +63,7 @@ class SearchRepository {
     List<dynamic> genders,
     String lang,
   ) async {
-    final String url = EndPoints.getSearchedProducts;
+    final url = EndPoints.getSearchedProducts;
     String categoryString = '';
     String brandString = '';
     String genderString = '';

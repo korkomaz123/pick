@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -10,8 +12,6 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
-import 'package:cross_local_storage/cross_local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -36,24 +36,21 @@ class _SignInPageState extends State<SignInPage> {
   bool isShowPass = false;
   SignInBloc signInBloc;
   ProgressService progressService;
-  SnackBarService snackBarService;
-  LocalStorageInterface localStorage;
+  FlushBarService flushBarService;
+  LocalStorageRepository localRepo;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: _scaffoldKey,
-    );
+    flushBarService = FlushBarService(context: context);
     signInBloc = context.bloc<SignInBloc>();
+    localRepo = context.repository<LocalStorageRepository>();
   }
 
   void _saveToken(UserEntity loggedInUser) async {
-    localStorage = await LocalStorage.getInstance();
     user = loggedInUser;
-    await localStorage.setString('token', user.token);
+    await localRepo.setToken(loggedInUser.token);
   }
 
   @override
@@ -75,7 +72,7 @@ class _SignInPageState extends State<SignInPage> {
           }
           if (state is SignInSubmittedFailure) {
             progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            flushBarService.showErrorMessage(pageStyle, state.message);
           }
         },
         builder: (context, state) {
@@ -85,8 +82,21 @@ class _SignInPageState extends State<SignInPage> {
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: pageStyle.unitHeight * 100,
+                    width: pageStyle.deviceWidth,
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 30,
+                      bottom: pageStyle.unitHeight * 30,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 40,
+                      bottom: pageStyle.unitHeight * 100,
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
@@ -143,6 +153,10 @@ class _SignInPageState extends State<SignInPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -151,6 +165,12 @@ class _SignInPageState extends State<SignInPage> {
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
+          ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
           ),
         ),
       ),
@@ -184,6 +204,10 @@ class _SignInPageState extends State<SignInPage> {
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
@@ -192,6 +216,12 @@ class _SignInPageState extends State<SignInPage> {
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
           ),
           suffixIcon: InkWell(
             onTap: () {

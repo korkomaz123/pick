@@ -129,16 +129,16 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     return Expanded(
       child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
-          if (state is ShippingAddressLoadedInProcess) {
-            progressService.showProgress();
-          }
+          // if (state is ShippingAddressLoadedInProcess) {
+          //   progressService.showProgress();
+          // }
           if (state is ShippingAddressLoadedFailure) {
-            progressService.hideProgress();
+            // progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
-          if (state is ShippingAddressLoadedSuccess) {
-            progressService.hideProgress();
-          }
+          // if (state is ShippingAddressLoadedSuccess) {
+          //   progressService.hideProgress();
+          // }
           if (state is ShippingAddressRemovedInProcess) {
             progressService.showProgress();
           }

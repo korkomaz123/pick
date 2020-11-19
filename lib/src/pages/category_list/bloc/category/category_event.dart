@@ -17,15 +17,6 @@ class CategorySubCategoriesLoaded extends CategoryEvent {
   List<Object> get props => [categoryId, lang];
 }
 
-class CategoryListLoaded extends CategoryEvent {
-  final String lang;
-
-  CategoryListLoaded({this.lang});
-
-  @override
-  List<Object> get props => [lang];
-}
-
 class BrandSubCategoriesLoaded extends CategoryEvent {
   final String brandId;
   final String lang;

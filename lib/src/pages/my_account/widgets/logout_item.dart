@@ -4,6 +4,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _LogoutItemState extends State<LogoutItem> {
   SnackBarService snackBarService;
   ProgressService progressService;
   SignInBloc signInBloc;
+  LocalStorageRepository localRepo;
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _LogoutItemState extends State<LogoutItem> {
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
     signInBloc = context.bloc<SignInBloc>();
+    localRepo = context.repository<LocalStorageRepository>();
   }
 
   @override
@@ -49,12 +52,7 @@ class _LogoutItemState extends State<LogoutItem> {
         }
         if (state is SignOutSubmittedSuccess) {
           progressService.hideProgress();
-          user = null;
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.home,
-            (route) => false,
-          );
+          _logoutUser();
         }
         if (state is SignOutSubmittedFailure) {
           progressService.hideProgress();
@@ -109,5 +107,15 @@ class _LogoutItemState extends State<LogoutItem> {
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }
+  }
+
+  void _logoutUser() async {
+    user = null;
+    await localRepo.setToken('');
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.home,
+      (route) => false,
+    );
   }
 }

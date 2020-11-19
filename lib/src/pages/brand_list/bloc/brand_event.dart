@@ -7,4 +7,11 @@ abstract class BrandEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class BrandListLoaded extends BrandEvent {}
+class BrandListLoaded extends BrandEvent {
+  final String lang;
+
+  BrandListLoaded({this.lang});
+
+  @override
+  List<Object> get props => [lang];
+}

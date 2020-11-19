@@ -1,3 +1,4 @@
+import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/cart_item_entity.dart';
@@ -5,7 +6,8 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_repository.dart';
@@ -35,6 +37,7 @@ import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/routes/generator.dart';
@@ -68,6 +71,7 @@ class CigaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    lang = EasyLocalization.of(context).locale.languageCode;
     return RepositoryProvider.value(
       value: localStorageRepository,
       child: RepositoryProvider.value(
@@ -125,9 +129,7 @@ class CigaApp extends StatelessWidget {
         BlocProvider(
           create: (context) => HomeBloc(
             homeRepository: homeRepository,
-            categoryRepository: categoryRepository,
             productRepository: productRepository,
-            brandRepository: brandRepository,
           ),
         ),
         BlocProvider(
@@ -207,6 +209,11 @@ class CigaApp extends StatelessWidget {
             checkoutRepository: checkoutRepository,
           ),
         ),
+        BlocProvider(
+          create: (context) => CategoryListBloc(
+            categoryRepository: categoryRepository,
+          ),
+        ),
       ],
       child: CigaAppView(),
     );
@@ -222,13 +229,16 @@ class _CigaAppViewState extends State<CigaAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   CartItemCountBloc cartItemCountBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
+  MyCartBloc myCartBloc;
   LocalStorageRepository localRepo;
+  PageStyle pageStyle;
 
   @override
   void initState() {
     super.initState();
     localRepo = context.repository<LocalStorageRepository>();
     cartItemCountBloc = context.bloc<CartItemCountBloc>();
+    myCartBloc = context.bloc<MyCartBloc>();
     wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
     _getCurrentUser();
     _getCartItems();
@@ -255,8 +265,9 @@ class _CigaAppViewState extends State<CigaAppView> {
   void _getCartItems() async {
     String cartId = await localRepo.getCartId();
     if (cartId.isNotEmpty) {
-      final result =
-          await context.repository<MyCartRepository>().getCartItems(cartId);
+      final result = await context
+          .repository<MyCartRepository>()
+          .getCartItems(cartId, lang);
 
       if (result['code'] == 'SUCCESS') {
         List<dynamic> cartList = result['cart'];
@@ -274,6 +285,10 @@ class _CigaAppViewState extends State<CigaAppView> {
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
       }
     }
+  }
+
+  void _setMyCartId(String cartId) async {
+    await localRepo.setCartId(cartId);
   }
 
   void _getWishlists() async {
@@ -319,13 +334,13 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 
   void _getSideMenu() async {
+    print(lang);
     sideMenus =
         await context.repository<CategoryRepository>().getMenuCategories(lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    lang = EasyLocalization.of(context).locale.languageCode;
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
       child: MaterialApp(
@@ -344,6 +359,32 @@ class _CigaAppViewState extends State<CigaAppView> {
         initialRoute: '/',
         onGenerateRoute: (settings) {
           return RouteGenerator.generateRoute(settings);
+        },
+        builder: (ctx, child) {
+          pageStyle = PageStyle(ctx, designWidth, designHeight);
+          pageStyle.initializePageStyles();
+          return BlocListener<MyCartBloc, MyCartState>(
+            listener: (context, state) {
+              if (state is MyCartCreatedSuccess) {
+                _setMyCartId(state.cartId);
+                myCartBloc.add(MyCartItemAdded(
+                  cartId: state.cartId,
+                  product: state.product,
+                  qty: '1',
+                ));
+              }
+              if (state is MyCartCreatedFailure) {}
+              if (state is MyCartItemAddedSuccess) {
+                print('//// product v card ////');
+
+                cartItemCountBloc.add(CartItemCountIncremented(
+                  incrementedCount: cartItemCount + 1,
+                ));
+              }
+              if (state is MyCartItemAddedFailure) {}
+            },
+            child: child,
+          );
         },
       ),
     );

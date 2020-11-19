@@ -174,27 +174,27 @@ class CigaBottomBar extends StatelessWidget {
         );
         break;
       case 1:
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.home,
-          (route) => false,
-        );
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   Routes.home,
+        //   (route) => false,
+        // );
         Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.home,
-          (route) => false,
-        );
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   Routes.home,
+        //   (route) => false,
+        // );
         Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.home,
-          (route) => false,
-        );
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   Routes.home,
+        //   (route) => false,
+        // );
         if (user?.token != null) {
           Navigator.pushNamed(context, Routes.wishlist);
         } else {
@@ -202,11 +202,11 @@ class CigaBottomBar extends StatelessWidget {
         }
         break;
       case 4:
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.home,
-          (route) => false,
-        );
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   Routes.home,
+        //   (route) => false,
+        // );
         if (user?.token != null) {
           Navigator.pushNamed(context, Routes.account);
         } else {

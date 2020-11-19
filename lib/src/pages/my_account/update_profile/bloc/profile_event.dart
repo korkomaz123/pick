@@ -22,13 +22,17 @@ class ProfileInformationUpdated extends ProfileEvent {
   final String token;
   final String firstName;
   final String lastName;
+  final String phoneNumber;
+  final String email;
 
   ProfileInformationUpdated({
     this.token,
     this.firstName,
     this.lastName,
+    this.phoneNumber,
+    this.email,
   });
 
   @override
-  List<Object> get props => [token, firstName, lastName];
+  List<Object> get props => [token, firstName, lastName, phoneNumber, email];
 }

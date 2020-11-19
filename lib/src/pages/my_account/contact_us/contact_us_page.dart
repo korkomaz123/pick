@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -42,6 +43,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    firstNameController.text = user.firstName;
+    emailController.text = user.email;
+    
   }
 
   @override

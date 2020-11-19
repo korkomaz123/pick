@@ -3,6 +3,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -46,7 +47,7 @@ class _ProductListViewState extends State<ProductListView>
   final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
-  List<ProductModel> products;
+  Map<String, List<ProductModel>> productsMap = {};
   BrandEntity brand;
   int activeIndex;
   bool isFromBrand;
@@ -55,6 +56,7 @@ class _ProductListViewState extends State<ProductListView>
   FlushBarService flushBarService;
   TabController tabController;
   ProductListBloc productListBloc;
+  FilterBloc filterBloc;
 
   @override
   void initState() {
@@ -74,19 +76,22 @@ class _ProductListViewState extends State<ProductListView>
     );
     tabController.addListener(() => widget.onChangeTab(tabController.index));
     productListBloc = context.bloc<ProductListBloc>();
+    filterBloc = context.bloc<FilterBloc>();
+    for (int i = 0; i < widget.subCategories.length; i++) {
+      productsMap[widget.subCategories[i].id] = [];
+    }
     if (widget.products != null) {
-      products = widget.products;
+      productsMap[widget.subCategories[widget.activeIndex].id] =
+          widget.products;
     } else {
-      products = [];
+      productsMap[widget.subCategories[widget.activeIndex].id] = [];
       if (isFromBrand) {
-        print('/// isFromBrand ///');
         productListBloc.add(BrandProductListLoaded(
           brandId: brand.optionId,
           categoryId: activeIndex == 0 ? 'all' : subCategories[activeIndex].id,
           lang: lang,
         ));
       } else {
-        print('/// isFromCategory ///');
         productListBloc.add(ProductListLoaded(
           categoryId: subCategories[activeIndex].id,
           lang: lang,
@@ -96,17 +101,18 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   void _onRefresh() async {
+    filterBloc.add(FilterInitialized());
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
         brandId: brand.optionId,
-        categoryId: widget.activeIndex == 0
+        categoryId: tabController.index == 0
             ? 'all'
-            : subCategories[widget.activeIndex].id,
+            : subCategories[tabController.index].id,
         lang: lang,
       ));
     } else {
       productListBloc.add(ProductListLoaded(
-        categoryId: subCategories[widget.activeIndex].id,
+        categoryId: subCategories[tabController.index].id,
         lang: lang,
       ));
     }
@@ -116,21 +122,21 @@ class _ProductListViewState extends State<ProductListView>
   Widget build(BuildContext context) {
     return BlocConsumer<ProductListBloc, ProductListState>(
       listener: (context, productState) {
-        if (productState is ProductListLoadedInProcess) {
-          progressService.showProgress();
-        }
-        if (productState is ProductListLoadedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, productState.message);
-        }
+        // if (productState is ProductListLoadedInProcess) {
+        //   progressService.showProgress();
+        // }
+        // if (productState is ProductListLoadedFailure) {
+        //   progressService.hideProgress();
+        //   flushBarService.showErrorMessage(pageStyle, productState.message);
+        // }
         if (productState is ProductListLoadedSuccess) {
-          progressService.hideProgress();
+          // progressService.hideProgress();
           _refreshController.refreshCompleted();
         }
       },
       builder: (context, productState) {
         if (productState is ProductListLoadedSuccess) {
-          products = productState.products;
+          productsMap[productState.categoryId] = productState.products;
         }
         return Expanded(
           child: Column(
@@ -161,7 +167,7 @@ class _ProductListViewState extends State<ProductListView>
         unselectedLabelColor: greyDarkColor,
         labelColor: Colors.white,
         isScrollable: true,
-        onTap: (index) => widget.onChangeTab(index),
+        // onTap: (index) => widget.onChangeTab(index),
         tabs: List.generate(
           subCategories.length,
           (index) {
@@ -184,60 +190,83 @@ class _ProductListViewState extends State<ProductListView>
       controller: tabController,
       children: List.generate(
         subCategories.length,
-        (index) => products.isEmpty
-            ? ProductNoAvailable(pageStyle: pageStyle)
-            : _buildProductList(),
+        (index) {
+          return BlocConsumer<FilterBloc, FilterState>(
+            listener: (context, state) {
+              if (state is FilteredInProcess) {
+                progressService.showProgress();
+              }
+              if (state is FilteredSuccess) {
+                progressService.hideProgress();
+              }
+              if (state is FilteredFailure) {
+                progressService.hideProgress();
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+            },
+            builder: (context, state) {
+              if (state is FilteredSuccess) {
+                productsMap[subCategories[tabController.index].id] =
+                    state.products;
+              }
+              return SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: false,
+                header: MaterialClassicHeader(color: primaryColor),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: () => null,
+                child: productsMap[subCategories[index].id].isEmpty
+                    ? ProductNoAvailable(pageStyle: pageStyle)
+                    : _buildProductList(index),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProductList() {
-    return SmartRefresher(
-      enablePullDown: true,
-      enablePullUp: false,
-      header: MaterialClassicHeader(color: primaryColor),
-      controller: _refreshController,
-      onRefresh: _onRefresh,
-      onLoading: () => null,
-      child: SingleChildScrollView(
-        child: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          children: List.generate(
-            products.length,
-            (index) {
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: lang == 'en' && index % 2 == 0
-                        ? BorderSide(
-                            color: greyColor,
-                            width: pageStyle.unitWidth * 0.5,
-                          )
-                        : BorderSide.none,
-                    left: lang == 'ar' && index % 2 == 0
-                        ? BorderSide(
-                            color: greyColor,
-                            width: pageStyle.unitWidth * 0.5,
-                          )
-                        : BorderSide.none,
-                    bottom: BorderSide(
-                      color: greyColor,
-                      width: pageStyle.unitWidth * 0.5,
-                    ),
+  Widget _buildProductList(int index) {
+    List<ProductModel> products = productsMap[subCategories[index].id];
+    return SingleChildScrollView(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        children: List.generate(
+          products.length,
+          (index) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  right: lang == 'en' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  left: lang == 'ar' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  bottom: BorderSide(
+                    color: greyColor,
+                    width: pageStyle.unitWidth * 0.5,
                   ),
                 ),
-                child: ProductVCard(
-                  pageStyle: pageStyle,
-                  product: products[index],
-                  cardWidth: pageStyle.unitWidth * 186,
-                  cardHeight: pageStyle.unitHeight * 253,
-                  isShoppingCart: true,
-                  isWishlist: true,
-                  isShare: true,
-                ),
-              );
-            },
-          ),
+              ),
+              child: ProductVCard(
+                pageStyle: pageStyle,
+                product: products[index],
+                cardWidth: pageStyle.unitWidth * 186,
+                cardHeight: pageStyle.unitHeight * 253,
+                isShoppingCart: true,
+                isWishlist: true,
+                isShare: true,
+              ),
+            );
+          },
         ),
       ),
     );

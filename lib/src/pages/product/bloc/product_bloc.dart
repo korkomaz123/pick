@@ -24,6 +24,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async* {
     if (event is ProductDetailsLoaded) {
       yield* _mapProductDetailsLoadedToState(event.productId, event.lang);
+    } else if (event is ProductInitialized) {
+      yield ProductInitial();
     }
   }
 

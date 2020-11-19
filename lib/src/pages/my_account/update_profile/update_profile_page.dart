@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_input_field.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -20,6 +21,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'bloc/profile_bloc.dart';
+import 'widgets/update_profile_success_dialog.dart';
 
 class UpdateProfilePage extends StatefulWidget {
   @override
@@ -31,6 +33,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   final formKey = GlobalKey<FormState>();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   File imageFile;
   String name;
   Uint8List image;
@@ -57,6 +61,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     profileBloc = context.bloc<ProfileBloc>();
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
+    phoneNumberController.text = user?.phoneNumber;
+    emailController.text = user.email;
   }
 
   @override
@@ -84,6 +90,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
             progressService.hideProgress();
             user.firstName = firstNameController.text;
             user.lastName = lastNameController.text;
+            user.phoneNumber = phoneNumberController.text;
+            _showSuccessDialog();
           }
           if (state is ProfileInformationUpdatedFailure) {
             progressService.hideProgress();
@@ -108,6 +116,10 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                         _buildFirstName(),
                         SizedBox(height: pageStyle.unitHeight * 10),
                         _buildLastName(),
+                        SizedBox(height: pageStyle.unitHeight * 10),
+                        _buildPhoneNumber(),
+                        SizedBox(height: pageStyle.unitHeight * 10),
+                        _buildEmailAddress(),
                         SizedBox(height: pageStyle.unitHeight * 10),
                         _buildUpdateButton(),
                         SizedBox(height: pageStyle.unitHeight * 30),
@@ -189,20 +201,25 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildEmail() {
     return Container(
       width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(0),
-        leading: Container(
-          width: pageStyle.unitWidth * 22,
-          height: pageStyle.unitHeight * 22,
-          child: SvgPicture.asset(emailIcon),
-        ),
-        title: Text(
-          user.email,
-          style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 16,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 20,
+        vertical: pageStyle.unitHeight * 10,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: pageStyle.unitWidth * 22,
+            height: pageStyle.unitHeight * 22,
+            child: SvgPicture.asset(emailIcon),
           ),
-        ),
+          SizedBox(width: pageStyle.unitWidth * 10),
+          Text(
+            user.email,
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 16,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -211,7 +228,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: InputField(
+      child: CigaInputField(
         width: double.infinity,
         controller: firstNameController,
         space: pageStyle.unitHeight * 4,
@@ -232,7 +249,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: InputField(
+      child: CigaInputField(
         width: double.infinity,
         controller: lastNameController,
         space: pageStyle.unitHeight * 4,
@@ -240,6 +257,48 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
         label: 'last_name'.tr(),
+        labelColor: greyColor,
+        labelSize: pageStyle.unitFontSize * 16,
+        fillColor: Colors.grey.shade300,
+        bordered: false,
+        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+      ),
+    );
+  }
+
+  Widget _buildPhoneNumber() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      child: CigaInputField(
+        width: double.infinity,
+        controller: phoneNumberController,
+        space: pageStyle.unitHeight * 4,
+        radius: 4,
+        fontSize: pageStyle.unitFontSize * 16,
+        fontColor: greyDarkColor,
+        label: 'phone_number_hint'.tr(),
+        labelColor: greyColor,
+        labelSize: pageStyle.unitFontSize * 16,
+        fillColor: Colors.grey.shade300,
+        bordered: false,
+        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+      ),
+    );
+  }
+
+  Widget _buildEmailAddress() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      child: CigaInputField(
+        width: double.infinity,
+        controller: emailController,
+        space: pageStyle.unitHeight * 4,
+        radius: 4,
+        fontSize: pageStyle.unitFontSize * 16,
+        fontColor: greyDarkColor,
+        label: 'email_hint'.tr(),
         labelColor: greyColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.grey.shade300,
@@ -283,6 +342,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       token: user.token,
       firstName: firstNameController.text,
       lastName: lastNameController.text,
+      phoneNumber: phoneNumberController.text,
+      email: emailController.text,
     ));
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return UpdateProfileSuccessDialog(pageStyle: pageStyle);
+      },
+    );
   }
 }

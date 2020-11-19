@@ -43,3 +43,4 @@ const String flatRateIcon = '$iconsAssetPath/flat-rate-icon.svg';
 const String shippingAddressIcon = '$iconsAssetPath/shipping-address-icon.svg';
 const String editIcon = '$iconsAssetPath/edit-icon.svg';
 const String trashIcon = '$iconsAssetPath/trash-icon.svg';
+const String vpnIcon = '$iconsAssetPath/vpn-icon.svg';

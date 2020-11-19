@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/no_available_data.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
@@ -65,7 +66,7 @@ class _MyCartPageState extends State<MyCartPage>
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
     if (cartId.isNotEmpty) {
-      myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
+      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
     }
   }
 
@@ -86,17 +87,17 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           BlocConsumer<MyCartBloc, MyCartState>(
             listener: (context, state) {
-              if (state is MyCartItemsLoadedInProcess) {
-                progressService.showProgress();
-              }
+              // if (state is MyCartItemsLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
               if (state is MyCartItemsLoadedSuccess) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 cigaAppBloc.add(CartItemCountUpdated(
                   cartItems: state.cartItems,
                 ));
               }
               if (state is MyCartItemsLoadedFailure) {
-                progressService.hideProgress();
+                // progressService.hideProgress();
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
               if (state is MyCartItemUpdatedInProcess) {
@@ -132,10 +133,26 @@ class _MyCartPageState extends State<MyCartPage>
                 progressService.hideProgress();
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
+              if (state is CouponCodeAppliedSuccess) {
+                flushBarService.showSuccessMessage(pageStyle, 'Success');
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+              }
+              if (state is CouponCodeAppliedFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+              if (state is CouponCodeCancelledSuccess) {
+                flushBarService.showSuccessMessage(pageStyle, 'Success');
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+              }
+              if (state is CouponCodeCancelledFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
             },
             builder: (context, state) {
               if (state is MyCartItemsLoadedSuccess) {
                 myCartItems = state.cartItems;
+                couponCode = state.couponCode ?? couponCode;
+                discount = state.discount;
                 _getTotalPrice();
               }
               if (state is MyCartItemsClearedSuccess) {
@@ -143,7 +160,7 @@ class _MyCartPageState extends State<MyCartPage>
                 cartItemCount = 0;
                 totalPrice = 0;
               }
-              return myCartItems.isEmpty && state is MyCartItemsLoadedSuccess
+              return myCartItems.isEmpty
                   ? Center(
                       child: NoAvailableData(
                         pageStyle: pageStyle,
@@ -158,7 +175,8 @@ class _MyCartPageState extends State<MyCartPage>
                           _buildTotalItems(),
                           MyCartCouponCode(
                             pageStyle: pageStyle,
-                            controller: couponCodeController,
+                            cartId: cartId,
+                            couponCode: couponCode,
                           ),
                           _buildTotalPrice(),
                           _buildCheckoutButton(),
@@ -230,14 +248,14 @@ class _MyCartPageState extends State<MyCartPage>
       child: Row(
         children: [
           Text(
-            'total'.tr() + ' ${myCartItems.length} ',
+            'total'.tr() + ' ',
             style: boldTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
           Text(
-            'items'.tr(),
+            'items'.tr().replaceFirst('0', '${myCartItems.length}'),
             style: bookTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 13,
@@ -285,6 +303,11 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildMyCartProduct(int index) {
+    String priceString = myCartItems[index].product.price;
+    double price = double.parse(priceString);
+    print(discount);
+    double discountPrice = price * (100 - discount) / 100;
+    String discountPriceString = discountPrice.toStringAsFixed(2);
     return Container(
       width: double.infinity,
       child: Row(
@@ -308,11 +331,29 @@ class _MyCartPageState extends State<MyCartPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  myCartItems[index].product.brandLabel,
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 10,
+                InkWell(
+                  onTap: () {
+                    if (myCartItems[index].product.brandId.isNotEmpty) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: myCartItems[index].product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    myCartItems[index].product.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 10,
+                    ),
                   ),
                 ),
                 Text(
@@ -327,7 +368,7 @@ class _MyCartPageState extends State<MyCartPage>
                 Row(
                   children: [
                     Text(
-                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
+                      priceString + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -335,7 +376,9 @@ class _MyCartPageState extends State<MyCartPage>
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
+                      discount != 0
+                          ? discountPriceString + ' ' + 'currency'.tr()
+                          : '',
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -447,7 +490,9 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => Navigator.pushNamed(context, Routes.checkoutAddress),
+        onPressed: () => user?.token != null
+            ? Navigator.pushNamed(context, Routes.checkoutAddress)
+            : Navigator.pushNamed(context, Routes.signIn),
         radius: 0,
       ),
     );

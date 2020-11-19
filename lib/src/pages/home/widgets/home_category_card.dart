@@ -19,7 +19,7 @@ class HomeCategoryCard extends StatelessWidget {
       height: pageStyle.unitHeight * 282,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('lib/public/images/shutterstock_1068767300@3x.png'),
+          image: NetworkImage(category.imageUrl),
           fit: BoxFit.cover,
         ),
       ),

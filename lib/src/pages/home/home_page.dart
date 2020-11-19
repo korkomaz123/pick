@@ -1,4 +1,6 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,12 +30,16 @@ class _HomePageState extends State<HomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   HomeBloc homeBloc;
+  CategoryListBloc categoryListBloc;
+  BrandBloc brandBloc;
   PageStyle pageStyle;
 
   @override
   void initState() {
     super.initState();
     homeBloc = context.bloc<HomeBloc>();
+    categoryListBloc = context.bloc<CategoryListBloc>();
+    brandBloc = context.bloc<BrandBloc>();
   }
 
   void _onRefresh() async {
@@ -41,8 +47,8 @@ class _HomePageState extends State<HomePage> {
     homeBloc.add(HomeBestDealsLoaded(lang: lang));
     homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
     homeBloc.add(HomePerfumesLoaded(lang: lang));
-    homeBloc.add(HomeCategoriesLoaded(lang: lang));
-    homeBloc.add(HomeBrandsLoaded(lang: lang));
+    categoryListBloc.add(CategoryListLoaded(lang: lang));
+    brandBloc.add(BrandListLoaded());
     homeBloc.add(HomeAdsLoaded());
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();

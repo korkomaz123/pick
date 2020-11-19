@@ -14,6 +14,26 @@ class SignInRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> register(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
+    String url = EndPoints.register;
+    final params = {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'password': password,
+      'agreeTerms': 'true',
+    };
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> socialLogin(
     String email,
     String firstName,
@@ -48,5 +68,14 @@ class SignInRepository {
     String url = EndPoints.getCurrentUser;
     final params = {'token': token};
     return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getNewPassword(String email) async {
+    String url = EndPoints.getNewPassword;
+    final params = {'email': email};
+    return await Api.getMethod(url, data: params);
   }
 }

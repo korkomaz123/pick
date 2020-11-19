@@ -8,7 +8,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_bloc.dart';
+import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -108,19 +108,20 @@ class _ProductListPageState extends State<ProductListPage> {
           isFromBrand ? _buildBrandBar() : SizedBox.shrink(),
           BlocConsumer<CategoryBloc, CategoryState>(
             listener: (context, categoryState) {
-              if (categoryState is CategorySubCategoriesLoadedInProcess) {
-                progressService.showProgress();
-              }
-              if (categoryState is CategorySubCategoriesLoadedSuccess) {
-                progressService.hideProgress();
-              }
-              if (categoryState is CategorySubCategoriesLoadedFailure) {
-                progressService.hideProgress();
-                snackBarService.showErrorSnackBar(categoryState.message);
-              }
+              // if (categoryState is CategorySubCategoriesLoadedInProcess) {
+              //   progressService.showProgress();
+              // }
+              // if (categoryState is CategorySubCategoriesLoadedSuccess) {
+              //   progressService.hideProgress();
+              // }
+              // if (categoryState is CategorySubCategoriesLoadedFailure) {
+              //   progressService.hideProgress();
+              //   snackBarService.showErrorSnackBar(categoryState.message);
+              // }
             },
             builder: (context, categoryState) {
               if (categoryState is CategorySubCategoriesLoadedSuccess) {
+                subCategories = [category];
                 for (int i = 0; i < categoryState.subCategories.length; i++) {
                   subCategories.add(categoryState.subCategories[i]);
                 }
@@ -159,34 +160,36 @@ class _ProductListPageState extends State<ProductListPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                child: Icon(
+              IconButton(
+                icon: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
                   size: pageStyle.unitFontSize * 20,
                 ),
-                onTap: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => _onSortBy(),
-                    icon: Icon(
-                      Icons.sort,
-                      color: Colors.white,
-                      size: pageStyle.unitFontSize * 25,
+              isFromBrand
+                  ? SizedBox.shrink()
+                  : Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => _onSortBy(),
+                          icon: Icon(
+                            Icons.sort,
+                            color: Colors.white,
+                            size: pageStyle.unitFontSize * 25,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => _showFilterDialog(),
+                          child: Container(
+                            width: pageStyle.unitWidth * 20,
+                            height: pageStyle.unitHeight * 17,
+                            child: SvgPicture.asset(filterIcon),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  InkWell(
-                    onTap: () => _showFilterDialog(),
-                    child: Container(
-                      width: pageStyle.unitWidth * 20,
-                      height: pageStyle.unitHeight * 17,
-                      child: SvgPicture.asset(filterIcon),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
           Align(
@@ -235,6 +238,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onSortBy() async {
+    print('///////////////////// // /// / // // ');
     final result = await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,

@@ -40,7 +40,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
     sameBrandProducts = await context
         .repository<ProductRepository>()
         .getSameBrandProducts(product.productId, lang);
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
