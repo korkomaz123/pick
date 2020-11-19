@@ -33,3 +33,13 @@ class Searched extends SearchEvent {
         lang,
       ];
 }
+
+class SearchSuggestionLoaded extends SearchEvent {
+  final String query;
+  final String lang;
+
+  SearchSuggestionLoaded({this.query, this.lang});
+
+  @override
+  List<Object> get props => [query, lang];
+}

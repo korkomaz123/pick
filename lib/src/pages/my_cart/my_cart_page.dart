@@ -151,9 +151,8 @@ class _MyCartPageState extends State<MyCartPage>
             builder: (context, state) {
               if (state is MyCartItemsLoadedSuccess) {
                 myCartItems = state.cartItems;
-                couponCode = state.couponCode;
+                couponCode = state.couponCode ?? couponCode;
                 discount = state.discount;
-                couponCodeController.text = couponCode;
                 _getTotalPrice();
               }
               if (state is MyCartItemsClearedSuccess) {
@@ -176,7 +175,6 @@ class _MyCartPageState extends State<MyCartPage>
                           _buildTotalItems(),
                           MyCartCouponCode(
                             pageStyle: pageStyle,
-                            controller: couponCodeController,
                             cartId: cartId,
                             couponCode: couponCode,
                           ),

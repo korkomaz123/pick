@@ -240,7 +240,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     myCartItems = [];
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     await localStorageRepo.setCartId('');
-
+    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
     Navigator.pushNamed(context, Routes.checkoutConfirmed);
   }
 }

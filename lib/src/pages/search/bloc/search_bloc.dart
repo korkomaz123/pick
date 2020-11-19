@@ -31,6 +31,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       );
     } else if (event is SearchInitialized) {
       yield SearchInitial();
+    } else if (event is SearchSuggestionLoaded) {
+      yield* _mapSearchSuggestionLoadedToState(event.query, event.lang);
     }
   }
 
@@ -58,6 +60,28 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }
     } catch (e) {
       yield SearchedFailure(message: e.toString());
+    }
+  }
+
+  Stream<SearchState> _mapSearchSuggestionLoadedToState(
+    String query,
+    String lang,
+  ) async* {
+    yield SearchSuggestionLoadedInProcess();
+    try {
+      final result = await _searchRepository.getSearchSuggestion(query, lang);
+      if (result['code'] == 'SUCCESS') {
+        List<dynamic> suggestionList = result['products'];
+        List<ProductModel> suggestions = [];
+        for (int i = 0; i < suggestionList.length; i++) {
+          suggestions.add(ProductModel.fromJson(suggestionList[i]));
+        }
+        yield SearchSuggestionLoadedSuccess(suggestions: suggestions);
+      } else {
+        yield SearchSuggestionLoadedFailure(message: result['errorMessage']);
+      }
+    } catch (e) {
+      yield SearchSuggestionLoadedFailure(message: e.toString());
     }
   }
 }

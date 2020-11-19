@@ -11,13 +11,11 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartCouponCode extends StatefulWidget {
   final PageStyle pageStyle;
-  final TextEditingController controller;
   final String cartId;
   final String couponCode;
 
   MyCartCouponCode({
     this.pageStyle,
-    this.controller,
     this.cartId,
     this.couponCode,
   });
@@ -28,12 +26,14 @@ class MyCartCouponCode extends StatefulWidget {
 
 class _MyCartCouponCodeState extends State<MyCartCouponCode> {
   MyCartBloc myCartBloc;
+  TextEditingController couponCodeController = TextEditingController();
   final _couponFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     myCartBloc = context.bloc<MyCartBloc>();
+    
   }
 
   @override
@@ -53,7 +53,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
             Container(
               width: widget.pageStyle.unitWidth * 218,
               child: TextFormField(
-                controller: widget.controller,
+                controller: couponCodeController,
                 style: boldTextStyle.copyWith(
                   color: greyColor,
                   fontSize: widget.pageStyle.unitFontSize * 15,
@@ -100,7 +100,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                               ))
                             : myCartBloc.add(CouponCodeApplied(
                                 cartId: widget.cartId,
-                                couponCode: widget.controller.text,
+                                couponCode: couponCodeController.text,
                               ))
                         : null,
                     itemSpace: widget.pageStyle.unitWidth * 4,

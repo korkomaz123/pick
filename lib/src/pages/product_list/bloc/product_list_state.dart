@@ -13,11 +13,12 @@ class ProductListLoadedInProcess extends ProductListState {}
 
 class ProductListLoadedSuccess extends ProductListState {
   final List<ProductModel> products;
+  final String categoryId;
 
-  ProductListLoadedSuccess({this.products});
+  ProductListLoadedSuccess({this.products, this.categoryId});
 
   @override
-  List<Object> get props => [products];
+  List<Object> get props => [products, categoryId];
 }
 
 class ProductListLoadedFailure extends ProductListState {

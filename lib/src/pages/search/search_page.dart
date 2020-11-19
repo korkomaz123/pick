@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -39,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
+  List<ProductModel> suggestions = [];
   LocalStorageRepository localStorageRepository;
   SearchRepository searchRepository;
 
@@ -53,7 +55,17 @@ class _SearchPageState extends State<SearchPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     searchBloc = context.bloc<SearchBloc>();
+    searchController.addListener(_getSuggestion);
     _getSearchHistories();
+  }
+
+  void _getSuggestion() {
+    if (searchController.text.isNotEmpty && searchNode.hasFocus) {
+      searchBloc.add(SearchSuggestionLoaded(
+        query: searchController.text,
+        lang: lang,
+      ));
+    }
   }
 
   void _getSearchHistories() async {
@@ -129,25 +141,86 @@ class _SearchPageState extends State<SearchPage> {
           if (state is SearchedSuccess) {
             products = state.products;
           }
-          return InkWell(
-            onTap: () => setState(() {
-              isFiltering = !isFiltering;
-            }),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildSearchField(),
-                  products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
-                  _buildFilterButton(),
-                  isFiltering
-                      ? _buildFilterOptions()
-                      : searchHistory.isNotEmpty
-                          ? _buildSearchHistory()
-                          : SizedBox.shrink(),
-                ],
+          return Stack(
+            children: [
+              InkWell(
+                onTap: () => setState(() {
+                  isFiltering = !isFiltering;
+                }),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildSearchField(),
+                      products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
+                      _buildFilterButton(),
+                      isFiltering
+                          ? _buildFilterOptions()
+                          : searchHistory.isNotEmpty
+                              ? _buildSearchHistory()
+                              : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              searchController.text.isNotEmpty && searchNode.hasFocus
+                  ? _buildSuggestion()
+                  : SizedBox.shrink(),
+            ],
           );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSuggestion() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      margin: EdgeInsets.only(
+        left: pageStyle.unitWidth * 20,
+        right: pageStyle.unitWidth * 20,
+        top: pageStyle.unitHeight * 70,
+      ),
+      padding: EdgeInsets.all(pageStyle.unitWidth * 10),
+      color: Colors.white,
+      child: BlocConsumer<SearchBloc, SearchState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is SearchSuggestionLoadedInProcess) {
+            return CircularProgressIndicator(strokeWidth: 2);
+          }
+          if (state is SearchSuggestionLoadedSuccess) {
+            suggestions = state.suggestions;
+          }
+          return suggestions.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      suggestions.length,
+                      (index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                Routes.product,
+                                arguments: suggestions[index],
+                              ),
+                              child: SearchProductCard(
+                                pageStyle: pageStyle,
+                                product: suggestions[index],
+                              ),
+                            ),
+                            index < (suggestions.length - 1)
+                                ? Divider(color: greyColor, thickness: 0.5)
+                                : SizedBox.shrink(),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : Text('No result', textAlign: TextAlign.center);
         },
       ),
     );

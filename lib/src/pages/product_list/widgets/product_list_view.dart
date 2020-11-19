@@ -47,7 +47,7 @@ class _ProductListViewState extends State<ProductListView>
   final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
-  List<ProductModel> products;
+  Map<String, List<ProductModel>> productsMap = {};
   BrandEntity brand;
   int activeIndex;
   bool isFromBrand;
@@ -77,19 +77,21 @@ class _ProductListViewState extends State<ProductListView>
     tabController.addListener(() => widget.onChangeTab(tabController.index));
     productListBloc = context.bloc<ProductListBloc>();
     filterBloc = context.bloc<FilterBloc>();
+    for (int i = 0; i < widget.subCategories.length; i++) {
+      productsMap[widget.subCategories[i].id] = [];
+    }
     if (widget.products != null) {
-      products = widget.products;
+      productsMap[widget.subCategories[widget.activeIndex].id] =
+          widget.products;
     } else {
-      products = [];
+      productsMap[widget.subCategories[widget.activeIndex].id] = [];
       if (isFromBrand) {
-        print('/// isFromBrand ///');
         productListBloc.add(BrandProductListLoaded(
           brandId: brand.optionId,
           categoryId: activeIndex == 0 ? 'all' : subCategories[activeIndex].id,
           lang: lang,
         ));
       } else {
-        print('/// isFromCategory ///');
         productListBloc.add(ProductListLoaded(
           categoryId: subCategories[activeIndex].id,
           lang: lang,
@@ -134,7 +136,7 @@ class _ProductListViewState extends State<ProductListView>
       },
       builder: (context, productState) {
         if (productState is ProductListLoadedSuccess) {
-          products = productState.products;
+          productsMap[productState.categoryId] = productState.products;
         }
         return Expanded(
           child: Column(
@@ -204,7 +206,8 @@ class _ProductListViewState extends State<ProductListView>
             },
             builder: (context, state) {
               if (state is FilteredSuccess) {
-                products = state.products;
+                productsMap[subCategories[tabController.index].id] =
+                    state.products;
               }
               return SmartRefresher(
                 enablePullDown: true,
@@ -213,9 +216,9 @@ class _ProductListViewState extends State<ProductListView>
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: () => null,
-                child: products.isEmpty
+                child: productsMap[subCategories[index].id].isEmpty
                     ? ProductNoAvailable(pageStyle: pageStyle)
-                    : _buildProductList(),
+                    : _buildProductList(index),
               );
             },
           );
@@ -224,7 +227,8 @@ class _ProductListViewState extends State<ProductListView>
     );
   }
 
-  Widget _buildProductList() {
+  Widget _buildProductList(int index) {
+    List<ProductModel> products = productsMap[subCategories[index].id];
     return SingleChildScrollView(
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,

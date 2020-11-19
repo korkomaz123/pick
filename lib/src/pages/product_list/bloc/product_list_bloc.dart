@@ -60,7 +60,10 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         for (int i = 0; i < productList.length; i++) {
           products.add(ProductModel.fromJson(productList[i]));
         }
-        yield ProductListLoadedSuccess(products: products);
+        yield ProductListLoadedSuccess(
+          products: products,
+          categoryId: categoryId,
+        );
       }
       final result = await _productRepository.getProducts(categoryId, lang);
       if (result['code'] == 'SUCCESS') {
@@ -70,7 +73,10 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         for (int i = 0; i < productList.length; i++) {
           products.add(ProductModel.fromJson(productList[i]));
         }
-        yield ProductListLoadedSuccess(products: products);
+        yield ProductListLoadedSuccess(
+          products: products,
+          categoryId: categoryId,
+        );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);
       }
@@ -94,7 +100,10 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         for (int i = 0; i < productList.length; i++) {
           products.add(ProductModel.fromJson(productList[i]));
         }
-        yield ProductListLoadedSuccess(products: products);
+        yield ProductListLoadedSuccess(
+          products: products,
+          categoryId: categoryId,
+        );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);
       }
@@ -118,7 +127,10 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         for (int i = 0; i < productList.length; i++) {
           products.add(ProductModel.fromJson(productList[i]));
         }
-        yield ProductListLoadedSuccess(products: products);
+        yield ProductListLoadedSuccess(
+          products: products,
+          categoryId: categoryId,
+        );
       }
       final result =
           await _productRepository.getBrandProducts(brandId, categoryId, lang);
@@ -129,7 +141,10 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         for (int i = 0; i < productList.length; i++) {
           products.add(ProductModel.fromJson(productList[i]));
         }
-        yield ProductListLoadedSuccess(products: products);
+        yield ProductListLoadedSuccess(
+          products: products,
+          categoryId: categoryId,
+        );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);
       }
