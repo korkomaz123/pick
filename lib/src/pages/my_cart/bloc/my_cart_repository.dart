@@ -44,7 +44,6 @@ class MyCartRepository {
       'qty': qty,
       'type': 'add'
     };
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 
@@ -72,6 +71,24 @@ class MyCartRepository {
   Future<dynamic> deleteCartItem(String cartId, String itemId) async {
     String url = EndPoints.getCartItems;
     final params = {'cartId': cartId, 'itemId': itemId, 'type': 'delete'};
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> couponCode(
+    String cartId,
+    String couponCode,
+    String remove,
+  ) async {
+    String url = EndPoints.applyCouponCode;
+    final params = {
+      'cartId': cartId,
+      'coupon_code': couponCode,
+      'remove': remove
+    };
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

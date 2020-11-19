@@ -82,8 +82,21 @@ class _SignInPageState extends State<SignInPage> {
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: pageStyle.unitHeight * 100,
+                    width: pageStyle.deviceWidth,
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 30,
+                      bottom: pageStyle.unitHeight * 30,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 40,
+                      bottom: pageStyle.unitHeight * 100,
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(

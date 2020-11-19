@@ -29,18 +29,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
       listener: (context, state) {},
       builder: (context, state) {
         ads = state.ads;
-        return ads.isNotEmpty
-            ? Container(
-                width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 240,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(ads),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              )
-            : Container();
+        return ads.isNotEmpty ? Image.network(ads) : Container();
       },
     );
   }

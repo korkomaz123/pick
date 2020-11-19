@@ -34,6 +34,8 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         event.brands,
         event.lang,
       );
+    } else if (event is FilterInitialized) {
+      yield FilterInitial();
     }
   }
 

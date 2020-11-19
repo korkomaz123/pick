@@ -28,6 +28,8 @@ List<CategoryMenuEntity> sideMenus = [];
 
 List<CartItemEntity> myCartItems = [];
 int cartItemCount = 0;
+String couponCode = '';
+int discount = 0;
 int wishlistCount = 0;
 
 List<AddressEntity> addresses = [];
@@ -44,30 +46,6 @@ List<String> sortByList = [
   'name_az',
   'name_za',
 ];
-
-List<CategoryMenuEntity> categoryMenu = List.generate(
-  5,
-  (menuIndex) => CategoryMenuEntity(
-    id: '${menuIndex + 1}',
-    title: 'menu${menuIndex + 1}',
-    subMenu: List.generate(
-      4,
-      (subMenuIndex) => CategoryMenuEntity(
-        id: '${menuIndex + 1} - ${subMenuIndex + 1}',
-        title: 'submenu${menuIndex + 1}-${subMenuIndex + 1}',
-        subMenu: List.generate(
-          6,
-          (subSubMenuIndex) => CategoryMenuEntity(
-            id: '${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
-            title:
-                'subsubmenu${menuIndex + 1} - ${subMenuIndex + 1} - ${subSubMenuIndex + 1}',
-            subMenu: [],
-          ),
-        ),
-      ),
-    ),
-  ),
-);
 
 MessageEntity message = MessageEntity(
   time: '28-09-2020',

@@ -135,6 +135,13 @@ class _ProductHCardState extends State<ProductHCard> {
               width: widget.cardWidth * 0.3,
               height: widget.cardHeight * 0.7,
               fit: BoxFit.fill,
+              loadingBuilder: (_, child, chunkEvent) {
+                return chunkEvent != null
+                    ? Image.asset(
+                        'lib/public/images/loading/image_loading.jpg',
+                      )
+                    : child;
+              },
             ),
           ),
           Expanded(
@@ -191,7 +198,8 @@ class _ProductHCardState extends State<ProductHCard> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.product.price + ' ' + 'currency'.tr(),
+                        '',
+                        // widget.product.price + ' ' + 'currency'.tr(),
                         style: mediumTextStyle.copyWith(
                           decorationStyle: TextDecorationStyle.solid,
                           decoration: TextDecoration.lineThrough,

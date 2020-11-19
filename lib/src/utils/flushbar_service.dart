@@ -20,43 +20,47 @@ class FlushBarService {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: boldTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 15,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: boldTextStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: pageStyle.unitFontSize * 15,
+                    ),
                   ),
-                ),
-                Text(
-                  product.name,
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 12,
+                  Text(
+                    product.name,
+                    style: mediumTextStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: pageStyle.unitFontSize * 12,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Cart Total',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Cart Total',
+                    style: mediumTextStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: pageStyle.unitFontSize * 13,
+                    ),
                   ),
-                ),
-                Text(
-                  'KD 460',
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 13,
+                  Text(
+                    'KD 460',
+                    style: mediumTextStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: pageStyle.unitFontSize * 13,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

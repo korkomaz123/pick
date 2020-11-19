@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -221,6 +222,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     productEntity.gallery[index],
                     width: pageStyle.unitWidth * 343,
                     height: pageStyle.unitHeight * 240.31,
+                    loadingBuilder: (_, child, chunkEvent) {
+                      return chunkEvent != null
+                          ? Image.asset(
+                              'lib/public/images/loading/image_loading.jpg',
+                            )
+                          : child;
+                    },
                   ),
                 );
               },
@@ -403,50 +411,54 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   }
 
   Widget _buildToolbar() {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: pageStyle.unitWidth * 296,
-            height: pageStyle.unitHeight * 50,
-            child: TextButton(
-              title: 'product_buy_now'.tr(),
-              titleSize: pageStyle.unitFontSize * 23,
-              titleColor: primaryColor,
-              buttonColor: Colors.white,
-              borderColor: primaryColor,
-              radius: 1,
-              onPressed: () => _onBuyNow(),
-            ),
-          ),
-          BlocConsumer<MyCartBloc, MyCartState>(
-            listener: (context, state) {
-              if (state is MyCartCreatedFailure) {
-                flushBarService.showErrorMessage(
-                  widget.pageStyle,
-                  state.message,
-                );
-              }
-              if (state is MyCartItemAddedSuccess) {
-                if (isBuyNow) {
-                  Navigator.pushNamed(context, Routes.myCart);
-                }
-                flushBarService.showAddCartMessage(
-                  widget.pageStyle,
-                  state.product,
-                );
-              }
-              if (state is MyCartItemAddedFailure) {
-                flushBarService.showErrorMessage(
-                  widget.pageStyle,
-                  state.message,
-                );
-              }
-            },
-            builder: (context, state) {
-              return RoundImageButton(
+    return BlocConsumer<MyCartBloc, MyCartState>(
+      listener: (context, state) {
+        if (state is MyCartCreatedFailure) {
+          flushBarService.showErrorMessage(
+            widget.pageStyle,
+            state.message,
+          );
+        }
+        if (state is MyCartItemAddedSuccess) {
+          if (isBuyNow) {
+            Navigator.pushNamed(context, Routes.myCart);
+          }
+          flushBarService.showAddCartMessage(
+            widget.pageStyle,
+            state.product,
+          );
+        }
+        if (state is MyCartItemAddedFailure) {
+          flushBarService.showErrorMessage(
+            widget.pageStyle,
+            state.message,
+          );
+        }
+      },
+      builder: (context, state) {
+        return Container(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: pageStyle.unitWidth * 296,
+                height: pageStyle.unitHeight * 50,
+                child: isBuyNow &&
+                        (state is MyCartCreatedInProcess ||
+                            state is MyCartItemAddedInProcess)
+                    ? Center(child: CircleLoadingSpinner())
+                    : TextButton(
+                        title: 'product_buy_now'.tr(),
+                        titleSize: pageStyle.unitFontSize * 23,
+                        titleColor: primaryColor,
+                        buttonColor: Colors.white,
+                        borderColor: primaryColor,
+                        radius: 1,
+                        onPressed: () => _onBuyNow(),
+                      ),
+              ),
+              RoundImageButton(
                 width: pageStyle.unitWidth * 58,
                 height: pageStyle.unitHeight * 50,
                 color: greyLightColor,
@@ -463,11 +475,11 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                 ),
                 onTap: () => _onAddToCart(),
                 radius: 1,
-              );
-            },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +25,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   PageStyle pageStyle;
   TextEditingController searchController = TextEditingController();
-  List<String> searchHistory = ['Arab Perfumes', 'Asia Perfumes', 'Body care'];
+  List<dynamic> searchHistory = [];
   Future<List<dynamic>> futureGenders;
   String filterData;
   Future<List<dynamic>> futureCategories;
@@ -38,17 +39,44 @@ class _SearchPageState extends State<SearchPage> {
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
+  LocalStorageRepository localStorageRepository;
+  SearchRepository searchRepository;
 
   @override
   void initState() {
     super.initState();
-    final searchRepository = context.repository<SearchRepository>();
+    searchRepository = context.repository<SearchRepository>();
+    localStorageRepository = context.repository<LocalStorageRepository>();
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     searchBloc = context.bloc<SearchBloc>();
+    _getSearchHistories();
+  }
+
+  void _getSearchHistories() async {
+    bool isExist = await localStorageRepository.existItem('search_history');
+    searchHistory =
+        isExist ? await localStorageRepository.getItem('search_history') : [];
+    setState(() {});
+  }
+
+  void _saveSearchHistory() async {
+    int index = searchHistory.indexOf(searchController.text);
+    if (index >= 0) {
+      searchHistory.removeAt(index);
+    }
+    searchHistory.add(searchController.text);
+    await localStorageRepository.setItem('search_history', searchHistory);
+    setState(() {});
+  }
+
+  void _clearSearchHistory() async {
+    searchHistory.clear();
+    await localStorageRepository.setItem('search_history', searchHistory);
+    setState(() {});
   }
 
   @override
@@ -88,6 +116,9 @@ class _SearchPageState extends State<SearchPage> {
           }
           if (state is SearchedSuccess) {
             progressService.hideProgress();
+            if (state.products.isNotEmpty && searchController.text.isNotEmpty) {
+              _saveSearchHistory();
+            }
           }
           if (state is SearchedFailure) {
             progressService.hideProgress();
@@ -98,14 +129,23 @@ class _SearchPageState extends State<SearchPage> {
           if (state is SearchedSuccess) {
             products = state.products;
           }
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildSearchField(),
-                products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
-                _buildFilterButton(),
-                isFiltering ? _buildFilterOptions() : _buildSearchHistory(),
-              ],
+          return InkWell(
+            onTap: () => setState(() {
+              isFiltering = !isFiltering;
+            }),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildSearchField(),
+                  products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
+                  _buildFilterButton(),
+                  isFiltering
+                      ? _buildFilterOptions()
+                      : searchHistory.isNotEmpty
+                          ? _buildSearchHistory()
+                          : SizedBox.shrink(),
+                ],
+              ),
             ),
           );
         },
@@ -304,7 +344,9 @@ class _SearchPageState extends State<SearchPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: List.generate(
                               searchHistory.length,
-                              (index) => _buildHistoryItem(index),
+                              (index) => _buildHistoryItem(
+                                searchHistory.length - index - 1,
+                              ),
                             ),
                           ),
                         ),
@@ -333,9 +375,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           InkWell(
-            onTap: () => setState(() {
-              searchHistory = [];
-            }),
+            onTap: () => _clearSearchHistory(),
             child: Text(
               'search_clear_all'.tr(),
               style: bookTextStyle.copyWith(
@@ -354,9 +394,16 @@ class _SearchPageState extends State<SearchPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: () => setState(() {
-            filterData = searchHistory[index];
-          }),
+          onTap: () {
+            searchController.text = searchHistory[index];
+            searchBloc.add(Searched(
+              query: searchController.text,
+              categories: selectedCategories,
+              brands: selectedBrands,
+              genders: selectedGenders,
+              lang: lang,
+            ));
+          },
           child: Text(
             searchHistory[index],
             style: mediumTextStyle.copyWith(
@@ -365,7 +412,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        index < (searchHistory.length - 1)
+        index > 0
             ? Divider(
                 thickness: 0.5,
                 color: greyDarkColor,
@@ -382,6 +429,13 @@ class _SearchPageState extends State<SearchPage> {
       selectedCategories.add(value['value']);
     }
     setState(() {});
+    searchBloc.add(Searched(
+      query: searchController.text,
+      categories: selectedCategories,
+      brands: selectedBrands,
+      genders: selectedGenders,
+      lang: lang,
+    ));
   }
 
   void _onSelectBrand(dynamic value) {
@@ -391,6 +445,13 @@ class _SearchPageState extends State<SearchPage> {
       selectedBrands.add(value['value']);
     }
     setState(() {});
+    searchBloc.add(Searched(
+      query: searchController.text,
+      categories: selectedCategories,
+      brands: selectedBrands,
+      genders: selectedGenders,
+      lang: lang,
+    ));
   }
 
   void _onSelectGender(dynamic value) {
@@ -400,5 +461,12 @@ class _SearchPageState extends State<SearchPage> {
       selectedGenders.add(value['value']);
     }
     setState(() {});
+    searchBloc.add(Searched(
+      query: searchController.text,
+      categories: selectedCategories,
+      brands: selectedBrands,
+      genders: selectedGenders,
+      lang: lang,
+    ));
   }
 }

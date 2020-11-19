@@ -133,10 +133,27 @@ class _MyCartPageState extends State<MyCartPage>
                 progressService.hideProgress();
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
+              if (state is CouponCodeAppliedSuccess) {
+                flushBarService.showSuccessMessage(pageStyle, 'Success');
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+              }
+              if (state is CouponCodeAppliedFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+              if (state is CouponCodeCancelledSuccess) {
+                flushBarService.showSuccessMessage(pageStyle, 'Success');
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+              }
+              if (state is CouponCodeCancelledFailure) {
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
             },
             builder: (context, state) {
               if (state is MyCartItemsLoadedSuccess) {
                 myCartItems = state.cartItems;
+                couponCode = state.couponCode;
+                discount = state.discount;
+                couponCodeController.text = couponCode;
                 _getTotalPrice();
               }
               if (state is MyCartItemsClearedSuccess) {
@@ -160,6 +177,8 @@ class _MyCartPageState extends State<MyCartPage>
                           MyCartCouponCode(
                             pageStyle: pageStyle,
                             controller: couponCodeController,
+                            cartId: cartId,
+                            couponCode: couponCode,
                           ),
                           _buildTotalPrice(),
                           _buildCheckoutButton(),
@@ -286,6 +305,11 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildMyCartProduct(int index) {
+    String priceString = myCartItems[index].product.price;
+    double price = double.parse(priceString);
+    print(discount);
+    double discountPrice = price * (100 - discount) / 100;
+    String discountPriceString = discountPrice.toStringAsFixed(2);
     return Container(
       width: double.infinity,
       child: Row(
@@ -346,7 +370,7 @@ class _MyCartPageState extends State<MyCartPage>
                 Row(
                   children: [
                     Text(
-                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
+                      priceString + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: greyColor,
@@ -354,7 +378,9 @@ class _MyCartPageState extends State<MyCartPage>
                     ),
                     SizedBox(width: pageStyle.unitWidth * 20),
                     Text(
-                      myCartItems[index].product.price + ' ' + 'currency'.tr(),
+                      discount != 0
+                          ? discountPriceString + ' ' + 'currency'.tr()
+                          : '',
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,

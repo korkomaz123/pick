@@ -53,4 +53,5 @@ class EndPoints {
   static const String getSideMenus = '$baseUrl/SideMenu';
   static const String getCategories = '$baseUrl/getCategories';
   static const String getNewPassword = '$baseUrl/getNewPassword';
+  static const String applyCouponCode = '$baseUrl/applyCouponCode';
 }

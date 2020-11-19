@@ -134,6 +134,13 @@ class _ProductVCardState extends State<ProductVCard> {
               child: Image.network(
                 widget.product.imageUrl,
                 fit: BoxFit.cover,
+                loadingBuilder: (_, child, chunkEvent) {
+                  return chunkEvent != null
+                      ? Image.asset(
+                          'lib/public/images/loading/image_loading.jpg',
+                        )
+                      : child;
+                },
               ),
             ),
           ),
@@ -189,7 +196,8 @@ class _ProductVCardState extends State<ProductVCard> {
                     ),
                     SizedBox(width: widget.pageStyle.unitWidth * 10),
                     Text(
-                      widget.product.price + ' ' + 'currency'.tr(),
+                      '',
+                      // widget.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,

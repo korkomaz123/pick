@@ -41,6 +41,7 @@
     "products": "Products",
     "free": "Free",
     "apply_button_title": "Apply",
+    "cancel_button_title": "Cancel",
     "brands_title": "Brands",
     "home_best_deals": "Best Deals",
     "home_new_arrivals": "New Arrivals",
@@ -215,5 +216,6 @@
     "new_password_hint": "New Password",
     "confirm_password_hint": "Confirm Password",
     "match_error": "Confirm your new password",
-    "new_password_sent_message": "We have sent the new password to your email address. Please check your email box"
+    "new_password_sent_message": "We have sent the new password to your email address. Please check your email box",
+    "can_not_launch_url": "Can not launch url"
 }

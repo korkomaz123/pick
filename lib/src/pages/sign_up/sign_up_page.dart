@@ -14,6 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -76,9 +77,21 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   Container(
+                    width: pageStyle.deviceWidth,
                     padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 100,
-                      bottom: pageStyle.unitHeight * 80,
+                      top: pageStyle.unitHeight * 30,
+                      bottom: pageStyle.unitHeight * 30,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: pageStyle.unitHeight * 20,
+                      bottom: pageStyle.unitHeight * 60,
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
@@ -325,7 +338,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             InkWell(
-              onTap: () => null,
+              onTap: () => _onPrivacyPolicy(),
               child: Text(
                 'suffix_agree_terms'.tr(),
                 style: bookTextStyle.copyWith(
@@ -384,6 +397,15 @@ class _SignUpPageState extends State<SignUpPage> {
         email: emailController.text,
         password: passwordController.text,
       ));
+    }
+  }
+
+  void _onPrivacyPolicy() async {
+    String url = 'https://cigaon.com/privacy-policy';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      flushBarService.showErrorMessage(pageStyle, 'can_not_launch_url'.tr());
     }
   }
 }

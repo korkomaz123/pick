@@ -66,3 +66,23 @@ class MyCartItemsCleared extends MyCartEvent {
   @override
   List<Object> get props => [cartId];
 }
+
+class CouponCodeApplied extends MyCartEvent {
+  final String cartId;
+  final String couponCode;
+
+  CouponCodeApplied({this.cartId, this.couponCode});
+
+  @override
+  List<Object> get props => [cartId, couponCode];
+}
+
+class CouponCodeCancelled extends MyCartEvent {
+  final String cartId;
+  final String couponCode;
+
+  CouponCodeCancelled({this.cartId, this.couponCode});
+
+  @override
+  List<Object> get props => [cartId, couponCode];
+}

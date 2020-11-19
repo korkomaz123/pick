@@ -3,6 +3,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -55,6 +56,7 @@ class _ProductListViewState extends State<ProductListView>
   FlushBarService flushBarService;
   TabController tabController;
   ProductListBloc productListBloc;
+  FilterBloc filterBloc;
 
   @override
   void initState() {
@@ -74,6 +76,7 @@ class _ProductListViewState extends State<ProductListView>
     );
     tabController.addListener(() => widget.onChangeTab(tabController.index));
     productListBloc = context.bloc<ProductListBloc>();
+    filterBloc = context.bloc<FilterBloc>();
     if (widget.products != null) {
       products = widget.products;
     } else {
@@ -96,6 +99,7 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   void _onRefresh() async {
+    filterBloc.add(FilterInitialized());
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
         brandId: brand.optionId,
@@ -184,60 +188,81 @@ class _ProductListViewState extends State<ProductListView>
       controller: tabController,
       children: List.generate(
         subCategories.length,
-        (index) => products.isEmpty
-            ? ProductNoAvailable(pageStyle: pageStyle)
-            : _buildProductList(),
+        (index) {
+          return BlocConsumer<FilterBloc, FilterState>(
+            listener: (context, state) {
+              if (state is FilteredInProcess) {
+                progressService.showProgress();
+              }
+              if (state is FilteredSuccess) {
+                progressService.hideProgress();
+              }
+              if (state is FilteredFailure) {
+                progressService.hideProgress();
+                flushBarService.showErrorMessage(pageStyle, state.message);
+              }
+            },
+            builder: (context, state) {
+              if (state is FilteredSuccess) {
+                products = state.products;
+              }
+              return SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: false,
+                header: MaterialClassicHeader(color: primaryColor),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: () => null,
+                child: products.isEmpty
+                    ? ProductNoAvailable(pageStyle: pageStyle)
+                    : _buildProductList(),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
   Widget _buildProductList() {
-    return SmartRefresher(
-      enablePullDown: true,
-      enablePullUp: false,
-      header: MaterialClassicHeader(color: primaryColor),
-      controller: _refreshController,
-      onRefresh: _onRefresh,
-      onLoading: () => null,
-      child: SingleChildScrollView(
-        child: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          children: List.generate(
-            products.length,
-            (index) {
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: lang == 'en' && index % 2 == 0
-                        ? BorderSide(
-                            color: greyColor,
-                            width: pageStyle.unitWidth * 0.5,
-                          )
-                        : BorderSide.none,
-                    left: lang == 'ar' && index % 2 == 0
-                        ? BorderSide(
-                            color: greyColor,
-                            width: pageStyle.unitWidth * 0.5,
-                          )
-                        : BorderSide.none,
-                    bottom: BorderSide(
-                      color: greyColor,
-                      width: pageStyle.unitWidth * 0.5,
-                    ),
+    return SingleChildScrollView(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        children: List.generate(
+          products.length,
+          (index) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  right: lang == 'en' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  left: lang == 'ar' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  bottom: BorderSide(
+                    color: greyColor,
+                    width: pageStyle.unitWidth * 0.5,
                   ),
                 ),
-                child: ProductVCard(
-                  pageStyle: pageStyle,
-                  product: products[index],
-                  cardWidth: pageStyle.unitWidth * 186,
-                  cardHeight: pageStyle.unitHeight * 253,
-                  isShoppingCart: true,
-                  isWishlist: true,
-                  isShare: true,
-                ),
-              );
-            },
-          ),
+              ),
+              child: ProductVCard(
+                pageStyle: pageStyle,
+                product: products[index],
+                cardWidth: pageStyle.unitWidth * 186,
+                cardHeight: pageStyle.unitHeight * 253,
+                isShoppingCart: true,
+                isWishlist: true,
+                isShare: true,
+              ),
+            );
+          },
         ),
       ),
     );

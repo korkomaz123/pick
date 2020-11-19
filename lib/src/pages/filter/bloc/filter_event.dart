@@ -47,3 +47,5 @@ class Filtered extends FilterEvent {
         lang,
       ];
 }
+
+class FilterInitialized extends FilterEvent {}

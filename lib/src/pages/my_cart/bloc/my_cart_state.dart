@@ -34,11 +34,13 @@ class MyCartCreatedFailure extends MyCartState {
 
 class MyCartItemsLoadedSuccess extends MyCartState {
   final List<CartItemEntity> cartItems;
+  final String couponCode;
+  final int discount;
 
-  MyCartItemsLoadedSuccess({this.cartItems});
+  MyCartItemsLoadedSuccess({this.cartItems, this.couponCode, this.discount});
 
   @override
-  List<Object> get props => [cartItems];
+  List<Object> get props => [cartItems, couponCode, discount];
 }
 
 class MyCartItemsLoadedFailure extends MyCartState {
@@ -104,6 +106,32 @@ class MyCartItemsClearedFailure extends MyCartState {
   final String message;
 
   MyCartItemsClearedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class CouponCodeAppliedInProcess extends MyCartState {}
+
+class CouponCodeAppliedSuccess extends MyCartState {}
+
+class CouponCodeAppliedFailure extends MyCartState {
+  final String message;
+
+  CouponCodeAppliedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class CouponCodeCancelledInProcess extends MyCartState {}
+
+class CouponCodeCancelledSuccess extends MyCartState {}
+
+class CouponCodeCancelledFailure extends MyCartState {
+  final String message;
+
+  CouponCodeCancelledFailure({this.message});
 
   @override
   List<Object> get props => [message];

@@ -79,14 +79,14 @@ class _ProductPageState extends State<ProductPage> {
       body: BlocConsumer<ProductBloc, ProductState>(
         listener: (context, state) {
           if (state is ProductDetailsLoadedInProcess) {
-            progressService.showProgress();
+            // progressService.showProgress();
           }
           if (state is ProductDetailsLoadedSuccess) {
-            progressService.hideProgress();
+            // progressService.hideProgress();
             _refreshController.refreshCompleted();
           }
           if (state is ProductDetailsLoadedFailure) {
-            progressService.hideProgress();
+            // progressService.hideProgress();
             snackBarService.showErrorSnackBar(state.message);
             _refreshController.refreshCompleted();
           }

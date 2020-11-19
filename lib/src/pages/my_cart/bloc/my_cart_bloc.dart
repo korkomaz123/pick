@@ -45,6 +45,10 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
       yield* _mapMyCartItemRemovedToState(event.cartId, event.itemId);
     } else if (event is MyCartItemsCleared) {
       yield* _mapMyCartItemsClearedToState(event.cartId);
+    } else if (event is CouponCodeApplied) {
+      yield* _mapCouponCodeAppliedToState(event.cartId, event.couponCode);
+    } else if (event is CouponCodeCancelled) {
+      yield* _mapCouponCodeCancelledToState(event.cartId, event.couponCode);
     }
   }
 
@@ -82,7 +86,11 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
           cartItemJson['item_id'] = cartList[i]['itemid'];
           cartItems.add(CartItemEntity.fromJson(cartItemJson));
         }
-        yield MyCartItemsLoadedSuccess(cartItems: cartItems);
+        yield MyCartItemsLoadedSuccess(
+          cartItems: cartItems,
+          couponCode: '',
+          discount: 0,
+        );
       }
       final result = await _myCartRepository.getCartItems(cartId, lang);
       if (result['code'] == 'SUCCESS') {
@@ -98,7 +106,11 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
           cartItemJson['item_id'] = cartList[i]['itemid'];
           cartItems.add(CartItemEntity.fromJson(cartItemJson));
         }
-        yield MyCartItemsLoadedSuccess(cartItems: cartItems);
+        yield MyCartItemsLoadedSuccess(
+          cartItems: cartItems,
+          couponCode: result['coupon_code'],
+          discount: result['discount'],
+        );
       } else {
         yield MyCartItemsLoadedFailure(message: result['errMessage']);
       }
@@ -176,6 +188,43 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     } catch (e) {
       print(e.toString());
       yield MyCartItemsClearedFailure(message: e.toString());
+    }
+  }
+
+  Stream<MyCartState> _mapCouponCodeAppliedToState(
+    String cartId,
+    String couponCode,
+  ) async* {
+    yield CouponCodeAppliedInProcess();
+    try {
+      final result =
+          await _myCartRepository.couponCode(cartId, couponCode, '0');
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        yield CouponCodeAppliedSuccess();
+      } else {
+        yield CouponCodeAppliedFailure(message: result['errMessage']);
+      }
+    } catch (e) {
+      yield CouponCodeAppliedFailure(message: e.toString());
+    }
+  }
+
+  Stream<MyCartState> _mapCouponCodeCancelledToState(
+    String cartId,
+    String couponCode,
+  ) async* {
+    yield CouponCodeCancelledInProcess();
+    try {
+      final result =
+          await _myCartRepository.couponCode(cartId, couponCode, '1');
+      if (result['code'] == 'SUCCESS') {
+        yield CouponCodeCancelledSuccess();
+      } else {
+        yield CouponCodeCancelledFailure(message: result['errMessage']);
+      }
+    } catch (e) {
+      yield CouponCodeCancelledFailure(message: e.toString());
     }
   }
 }
