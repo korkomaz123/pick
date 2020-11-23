@@ -32,7 +32,7 @@ class BrandBloc extends Bloc<BrandEvent, BrandState> {
   Stream<BrandState> _mapBrandListLoadedToState(String lang) async* {
     yield BrandListLoadedInProcess();
     try {
-      String key = 'brands';
+      String key = 'brands-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> brandList = await localStorageRepository.getItem(key);

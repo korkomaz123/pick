@@ -280,6 +280,8 @@ class _CigaAppViewState extends State<CigaAppView> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
@@ -325,12 +327,12 @@ class _CigaAppViewState extends State<CigaAppView> {
 
   void _getShippingMethod() async {
     shippingMethods =
-        await context.repository<CheckoutRepository>().getShippingMethod();
+        await context.repository<CheckoutRepository>().getShippingMethod(lang);
   }
 
   void _getPaymentMethod() async {
     paymentMethods =
-        await context.repository<CheckoutRepository>().getPaymentMethod();
+        await context.repository<CheckoutRepository>().getPaymentMethod(lang);
   }
 
   void _getSideMenu() async {
@@ -376,7 +378,7 @@ class _CigaAppViewState extends State<CigaAppView> {
               if (state is MyCartCreatedFailure) {}
               if (state is MyCartItemAddedSuccess) {
                 print('//// product v card ////');
-
+                cartTotalPrice += double.parse(state.product.price).ceil();
                 cartItemCountBloc.add(CartItemCountIncremented(
                   incrementedCount: cartItemCount + 1,
                 ));

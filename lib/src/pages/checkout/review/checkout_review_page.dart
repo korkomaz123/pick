@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -10,6 +11,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutReviewPage extends StatefulWidget {
+  final OrderEntity reorder;
+
+  CheckoutReviewPage({this.reorder});
+
   @override
   _CheckoutReviewPageState createState() => _CheckoutReviewPageState();
 }
@@ -43,29 +48,54 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                   ),
                 ),
               ),
-              Column(
-                children: List.generate(
-                  myCartItems.length,
-                  (index) {
-                    return Column(
-                      children: [
-                        ProductHCard(
-                          pageStyle: pageStyle,
-                          cardWidth: pageStyle.unitWidth * 340,
-                          cardHeight: pageStyle.unitHeight * 180,
-                          product: myCartItems[index].product,
-                        ),
-                        index < (myCartItems.length - 1)
-                            ? Divider(
-                                color: greyColor.withOpacity(0.3),
-                                thickness: 0.5,
-                              )
-                            : SizedBox.shrink(),
-                      ],
-                    );
-                  },
-                ),
-              ),
+              widget.reorder != null
+                  ? Column(
+                      children: List.generate(
+                        widget.reorder.cartItems.length,
+                        (index) {
+                          return Column(
+                            children: [
+                              ProductHCard(
+                                pageStyle: pageStyle,
+                                cardWidth: pageStyle.unitWidth * 340,
+                                cardHeight: pageStyle.unitHeight * 180,
+                                product:
+                                    widget.reorder.cartItems[index].product,
+                              ),
+                              index < (widget.reorder.cartItems.length - 1)
+                                  ? Divider(
+                                      color: greyColor.withOpacity(0.3),
+                                      thickness: 0.5,
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
+                          );
+                        },
+                      ),
+                    )
+                  : Column(
+                      children: List.generate(
+                        myCartItems.length,
+                        (index) {
+                          return Column(
+                            children: [
+                              ProductHCard(
+                                pageStyle: pageStyle,
+                                cardWidth: pageStyle.unitWidth * 340,
+                                cardHeight: pageStyle.unitHeight * 180,
+                                product: myCartItems[index].product,
+                              ),
+                              index < (myCartItems.length - 1)
+                                  ? Divider(
+                                      color: greyColor.withOpacity(0.3),
+                                      thickness: 0.5,
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
               _buildNote(),
               SizedBox(height: pageStyle.unitHeight * 30),
               _buildContinuePaymentButton(),
@@ -145,6 +175,10 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
   }
 
   void _onContinue() {
-    Navigator.pushNamed(context, Routes.checkoutPayment);
+    Navigator.pushNamed(
+      context,
+      Routes.checkoutPayment,
+      arguments: widget.reorder,
+    );
   }
 }

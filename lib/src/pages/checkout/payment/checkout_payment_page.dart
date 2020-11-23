@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
@@ -16,6 +17,10 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
+  final OrderEntity reorder;
+
+  CheckoutPaymentPage({this.reorder});
+
   @override
   _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
 }
@@ -33,7 +38,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   @override
   void initState() {
     super.initState();
-    payment = paymentMethods[0].id;
+    if (widget.reorder != null) {
+      payment = widget.reorder.paymentMethod.id;
+    } else {
+      payment = paymentMethods[0].id;
+    }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     checkoutBloc = context.bloc<CheckoutBloc>();
@@ -55,7 +64,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
           }
           if (state is OrderSubmittedSuccess) {
             progressService.hideProgress();
-            _onOrderSubmittedSuccess();
+            _onOrderSubmittedSuccess(state.orderNo);
           }
           if (state is OrderSubmittedFailure) {
             progressService.hideProgress();
@@ -236,11 +245,16 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     ));
   }
 
-  void _onOrderSubmittedSuccess() async {
+  void _onOrderSubmittedSuccess(String orderNo) async {
     myCartItems = [];
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    await localStorageRepo.setCartId('');
+    if (widget.reorder != null) {
+      await localStorageRepo.setItem('reorderCartId', '');
+    } else {
+      await localStorageRepo.setCartId('');
+    }
+
     Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
-    Navigator.pushNamed(context, Routes.checkoutConfirmed);
+    Navigator.pushNamed(context, Routes.checkoutConfirmed, arguments: orderNo);
   }
 }

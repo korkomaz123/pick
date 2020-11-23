@@ -10,6 +10,10 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:ciga/src/routes/routes.dart';
 
 class CheckoutConfirmedPage extends StatefulWidget {
+  final String orderNo;
+
+  CheckoutConfirmedPage({this.orderNo});
+
   @override
   _CheckoutConfirmedPageState createState() => _CheckoutConfirmedPageState();
 }
@@ -56,7 +60,9 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 ),
                 color: greyLightColor,
                 child: Text(
-                  'checkout_ordered_success_text'.tr(),
+                  'checkout_ordered_success_text'
+                      .tr()
+                      .replaceFirst('0', widget.orderNo),
                   style: bookTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,

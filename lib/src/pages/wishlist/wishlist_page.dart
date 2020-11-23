@@ -5,6 +5,7 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/no_available_data.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -88,7 +89,7 @@ class _WishlistPageViewState extends State<WishlistPageView>
     String token = await localStorageRepo.getToken();
     ids = await localStorageRepo.getWishlistIds();
     if (ids.isNotEmpty) {
-      wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
+      wishlistBloc.add(WishlistLoaded(ids: ids, token: token, lang: lang));
     }
   }
 

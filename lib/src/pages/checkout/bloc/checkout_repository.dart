@@ -9,9 +9,10 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ShippingMethodEntity>> getShippingMethod() async {
+  Future<List<ShippingMethodEntity>> getShippingMethod(String lang) async {
     String url = EndPoints.getShippingMethod;
-    final result = await Api.getMethod(url);
+    final data = {'lang': lang};
+    final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> shippingMethodList = result['data'];
       List<ShippingMethodEntity> methods = [];
@@ -27,9 +28,10 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<PaymentMethodEntity>> getPaymentMethod() async {
+  Future<List<PaymentMethodEntity>> getPaymentMethod(String lang) async {
     String url = EndPoints.getPaymentMethod;
-    final result = await Api.getMethod(url);
+    final data = {'lang': lang};
+    final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
       List<String> keys =
           (result['data'] as Map<String, dynamic>).keys.toList();

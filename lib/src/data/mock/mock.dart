@@ -4,22 +4,23 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// category list for home screen
 final List<CategoryEntity> homeCategories = [
   CategoryEntity(
     id: '41',
-    name: 'Best Deal',
+    name: 'home_best_deals'.tr(),
     subCategories: [],
   ),
   CategoryEntity(
     id: '42',
-    name: 'New Arrivals',
+    name: 'home_new_arrivals'.tr(),
     subCategories: [],
   ),
   CategoryEntity(
     id: '43',
-    name: 'Perfumes',
+    name: 'home_Perfumes'.tr(),
     subCategories: [],
   ),
 ];
@@ -29,6 +30,7 @@ List<CategoryMenuEntity> sideMenus = [];
 List<CartItemEntity> myCartItems = [];
 int cartItemCount = 0;
 String couponCode = '';
+int cartTotalPrice = 0;
 int discount = 0;
 int wishlistCount = 0;
 

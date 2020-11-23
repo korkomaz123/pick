@@ -91,4 +91,18 @@ class MyCartRepository {
     print(params);
     return await Api.postMethod(url, data: params);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getReorderCartId(String orderCartId) async {
+    String url = EndPoints.getReorderCartId;
+    final params = {'cartId': orderCartId};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return result['cartId'];
+    } else {
+      return '';
+    }
+  }
 }

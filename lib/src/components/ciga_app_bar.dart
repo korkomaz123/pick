@@ -126,7 +126,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
           padding: EdgeInsets.symmetric(
             horizontal: widget.pageStyle.unitWidth * 10,
           ),
-          margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 5),
+          margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 20),
           width: double.infinity,
           height: widget.pageStyle.unitHeight * 40,
           child: TextFormField(

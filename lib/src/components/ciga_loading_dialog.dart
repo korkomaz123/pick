@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CigaLoadingDialog extends StatelessWidget {
   @override
@@ -6,11 +7,7 @@ class CigaLoadingDialog extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Center(
-        child: Image.asset(
-          'lib/public/images/loading/loading.gif',
-          width: 160,
-          height: 60,
-        ),
+        child: SvgPicture.asset('lib/public/icons/loading.svg'),
       ),
     );
   }

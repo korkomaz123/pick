@@ -135,6 +135,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           _buildTitlebar(),
           _buildImageCarousel(),
           _buildTitle(),
+          SizedBox(height: pageStyle.unitHeight * 10),
           _buildDescription(),
           _buildPrice(),
           SizedBox(height: pageStyle.unitHeight * 10),
@@ -268,24 +269,28 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Text(
-                'product_channel'.tr(),
-                style: boldTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 20,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  productEntity.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: boldTextStyle.copyWith(
+                    color: greyDarkColor,
+                    fontSize: pageStyle.unitFontSize * 20,
+                  ),
                 ),
-              ),
-              SizedBox(width: pageStyle.unitWidth * 10),
-              Text(
-                productEntity.inStock ? 'In stock' : 'Out stock',
-                style: mediumTextStyle.copyWith(
-                  color: productEntity.inStock ? succeedColor : dangerColor,
-                  fontSize: pageStyle.unitFontSize * 11,
+                SizedBox(width: pageStyle.unitWidth * 10),
+                Text(
+                  productEntity.inStock ? 'in_stock'.tr() : 'out_stock'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: productEntity.inStock ? succeedColor : dangerColor,
+                    fontSize: pageStyle.unitFontSize * 11,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           productEntity.brandLabel.isNotEmpty
               ? Column(
@@ -376,33 +381,18 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Text(
-                productEntity.price + ' ' + 'currency'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
-                  color: greyColor,
-                ),
-              ),
-              SizedBox(width: pageStyle.unitWidth * 10),
-              Text(
-                productEntity.price + ' ' + 'currency'.tr(),
-                style: mediumTextStyle.copyWith(
-                  decorationStyle: TextDecorationStyle.solid,
-                  decoration: TextDecoration.lineThrough,
-                  decorationColor: dangerColor,
-                  fontSize: pageStyle.unitFontSize * 14,
-                  color: greyColor,
-                ),
-              ),
-            ],
+          Text(
+            productEntity.price + ' ' + 'currency'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 14,
+              color: greyColor,
+            ),
           ),
           Text(
-            'suk'.tr() + ' ' + productEntity.sku,
+            'suk'.tr() + ': ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 10,
-              color: greyColor,
+              color: primaryColor,
             ),
           ),
         ],

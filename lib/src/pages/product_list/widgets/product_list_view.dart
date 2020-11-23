@@ -144,7 +144,11 @@ class _ProductListViewState extends State<ProductListView>
               subCategories.length > 1
                   ? _buildCategoryTabBar()
                   : SizedBox.shrink(),
-              Expanded(child: _buildCategoryTabView()),
+              Expanded(
+                child: productState is ProductListLoadedSuccess
+                    ? _buildCategoryTabView()
+                    : SizedBox.shrink(),
+              ),
             ],
           ),
         );

@@ -1,13 +1,12 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/cart_item_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-// import 'package:ciga/src/routes/routes.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -16,7 +15,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ViewOrderPage extends StatefulWidget {
@@ -67,13 +66,13 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   void _setPaymentWidget() {
-    if (order.paymentMethod == 'Visa Card') {
+    if (order.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
         width: pageStyle.unitWidth * 35,
         height: pageStyle.unitHeight * 20,
       );
-    } else if (order.paymentMethod == 'KNet') {
+    } else if (order.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
         width: pageStyle.unitWidth * 35,
@@ -146,7 +145,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              // _buildReorderButton(),
+              _buildReorderButton(),
             ],
           ),
         ),
@@ -237,22 +236,85 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Widget _buildOrderItems() {
     return Column(
       children: List.generate(
-        myCartItems.length,
+        order.cartItems.length,
         (index) {
           return Column(
             children: [
-              ProductHCard(
-                pageStyle: pageStyle,
-                cardWidth: pageStyle.unitWidth * 340,
-                cardHeight: pageStyle.unitHeight * 150,
-                product: ProductModel(),
-              ),
-              index < (myCartItems.length - 1)
+              _buildProductCard(order.cartItems[index]),
+              index < (order.cartItems.length - 1)
                   ? Divider(color: greyColor, thickness: 0.5)
                   : SizedBox.shrink(),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(CartItemEntity cartItem) {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 20,
+      ),
+      child: Row(
+        children: [
+          Image.network(
+            cartItem.product.imageUrl,
+            width: pageStyle.unitWidth * 90,
+            height: pageStyle.unitHeight * 120,
+            fit: BoxFit.fill,
+            loadingBuilder: (_, child, chunkEvent) {
+              return chunkEvent != null
+                  ? Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    )
+                  : child;
+            },
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  cartItem.product.name,
+                  style: boldTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+                Text(
+                  cartItem.product.description,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: bookTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                  ),
+                ),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      cartItem.itemCount.toString() + 'items'.tr(),
+                      style: bookTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 14,
+                        color: primaryColor,
+                      ),
+                    ),
+                    Text(
+                      cartItem.product.price + ' ' + 'currency'.tr(),
+                      style: boldTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 16,
+                        color: primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -277,7 +339,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             children: [
               paymentWidget,
               Text(
-                order.paymentMethod,
+                order.paymentMethod.title,
                 style: bookTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -308,7 +370,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.totalPrice}',
+            'currency'.tr() + ' ${order.subtotalPrice}',
             style: bookTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -320,6 +382,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildShippingCost() {
+    int totalQty = double.parse(order.totalQty).ceil();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -337,7 +400,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            '0 ' + 'currency'.tr(),
+            'currency'.tr() +
+                ' ' +
+                (totalQty * order.shippingMethod.serviceFees).toString(),
             style: bookTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -406,37 +471,37 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     );
   }
 
-  // Widget _buildReorderButton() {
-  //   return MaterialButton(
-  //     onPressed: () => Navigator.pushNamed(
-  //       context,
-  //       Routes.reOrder,
-  //       arguments: order,
-  //     ),
-  //     minWidth: pageStyle.unitWidth * 150,
-  //     height: pageStyle.unitHeight * 45,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(30),
-  //     ),
-  //     color: primaryColor,
-  //     child: Row(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Icon(
-  //           FontAwesomeIcons.history,
-  //           color: Colors.white54,
-  //           size: pageStyle.unitFontSize * 20,
-  //         ),
-  //         SizedBox(width: pageStyle.unitWidth * 4),
-  //         Text(
-  //           'reorder_button_title'.tr(),
-  //           style: bookTextStyle.copyWith(
-  //             fontSize: pageStyle.unitFontSize * 17,
-  //             color: Colors.white,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildReorderButton() {
+    return MaterialButton(
+      onPressed: () => Navigator.pushNamed(
+        context,
+        Routes.reOrder,
+        arguments: order,
+      ),
+      minWidth: pageStyle.unitWidth * 150,
+      height: pageStyle.unitHeight * 45,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      color: primaryColor,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            FontAwesomeIcons.history,
+            color: Colors.white54,
+            size: pageStyle.unitFontSize * 20,
+          ),
+          SizedBox(width: pageStyle.unitWidth * 4),
+          Text(
+            'reorder_button_title'.tr(),
+            style: bookTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 17,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

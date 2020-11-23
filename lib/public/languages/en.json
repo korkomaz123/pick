@@ -123,7 +123,7 @@
     "checkout_place_payment_button_title": "PLACE PAYMENT",
     "checkout_back_review_button_title": "BACK TO REVIEW",
     "checkout_ordered_success_title": "Thank You",
-    "checkout_ordered_success_text": "It's Ordered!\nOrder No.",
+    "checkout_ordered_success_text": "It's Ordered!\nOrder No.#0",
     "checkout_ordered_success_subtitle": "You've successfully placed the order",
     "checkout_ordered_success_subtext": "You can check status of your order by using our delivery status feature. You will receive an order confirmation e-mail with details of your order and a link to track its progress.",
     "checkout_ordered_success_account_title": "Your account",
@@ -135,7 +135,7 @@
     "order_status": "Status",
     "order_payment_method": "Payment Method",
     "search_title": "Search",
-    "search_items": "Search in items",
+    "search_items": "Search",
     "search_history_search": "History Search",
     "search_clear_all": "Clear All",
     "account_update_profile_title": "Update Profile",
@@ -217,5 +217,10 @@
     "confirm_password_hint": "Confirm Password",
     "match_error": "Confirm your new password",
     "new_password_sent_message": "We have sent the new password to your email address. Please check your email box",
-    "can_not_launch_url": "Can not launch url"
+    "can_not_launch_url": "Can not launch url",
+    "product_name": "Product Name",
+    "in_stock": "In Stock",
+    "out_stock": "Out of Stock",
+    "or_divider": "OR",
+    "cart_total": "Cart Total"
 }

@@ -37,7 +37,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     try {
       final result = await _checkoutRepository.placeOrder(orderDetails, lang);
       if (result['code'] == 'SUCCESS') {
-        yield OrderSubmittedSuccess();
+        yield OrderSubmittedSuccess(orderNo: result['orderNo']);
       } else {
         print(result['errorMessage']);
         yield OrderSubmittedFailure(message: result['errorMessage']);

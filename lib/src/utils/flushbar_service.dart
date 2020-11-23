@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -6,6 +7,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class FlushBarService {
@@ -21,24 +23,12 @@ class FlushBarService {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: boldTextStyle.copyWith(
-                      color: Colors.white,
-                      fontSize: pageStyle.unitFontSize * 15,
-                    ),
-                  ),
-                  Text(
-                    product.name,
-                    style: mediumTextStyle.copyWith(
-                      color: Colors.white,
-                      fontSize: pageStyle.unitFontSize * 12,
-                    ),
-                  ),
-                ],
+              child: Text(
+                product.name,
+                style: boldTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: pageStyle.unitFontSize * 15,
+                ),
               ),
             ),
             Expanded(
@@ -46,16 +36,16 @@ class FlushBarService {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'Cart Total',
+                    'cart_total'.tr(),
                     style: mediumTextStyle.copyWith(
-                      color: Colors.white,
+                      color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 13,
                     ),
                   ),
                   Text(
-                    'KD 460',
+                    'currency'.tr() + ' $cartTotalPrice',
                     style: mediumTextStyle.copyWith(
-                      color: Colors.white,
+                      color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 13,
                     ),
                   ),
@@ -73,7 +63,7 @@ class FlushBarService {
       duration: Duration(seconds: 3),
       leftBarIndicatorColor: Colors.blue[100],
       flushbarPosition: FlushbarPosition.TOP,
-      backgroundColor: primaryColor,
+      backgroundColor: Colors.white,
     )..show(context);
   }
 

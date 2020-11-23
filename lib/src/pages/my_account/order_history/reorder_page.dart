@@ -3,22 +3,26 @@ import 'dart:async';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/cart_item_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/animation_durations.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:lottie/lottie.dart';
 
@@ -34,20 +38,33 @@ class ReOrderPage extends StatefulWidget {
 }
 
 class _ReOrderPageState extends State<ReOrderPage> {
-  PageStyle pageStyle;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   OrderEntity order;
   String icon = '';
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
   bool isDeleting = false;
+  String reorderCartId;
+  PageStyle pageStyle;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+  LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
     super.initState();
-    order = widget.order;
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+    localRepo = context.repository<LocalStorageRepository>();
+    cartRepo = context.repository<MyCartRepository>();
+    _getReorderCartId();
+    _getOrderStatus();
+  }
 
+  void _getOrderStatus() {
+    order = widget.order;
     switch (order.status) {
       case OrderStatusEnum.pending:
         icon = pendingIcon;
@@ -72,14 +89,21 @@ class _ReOrderPageState extends State<ReOrderPage> {
     setState(() {});
   }
 
+  void _getReorderCartId() async {
+    reorderCartId = await cartRepo.getReorderCartId(widget.order.cartId);
+    if (reorderCartId.isNotEmpty) {
+      await localRepo.setItem('reorderCartId', reorderCartId);
+    }
+  }
+
   void _setPaymentWidget() {
-    if (order.paymentMethod == 'Visa Card') {
+    if (order.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
         width: pageStyle.unitWidth * 35,
         height: pageStyle.unitHeight * 20,
       );
-    } else if (order.paymentMethod == 'KNet') {
+    } else if (order.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
         width: pageStyle.unitWidth * 35,
@@ -259,18 +283,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildOrderItems() {
     return Column(
       children: List.generate(
-        myCartItems.length,
+        order.cartItems.length,
         (index) {
           return Column(
             children: [
               Stack(
                 children: [
-                  ProductHCard(
-                    pageStyle: pageStyle,
-                    cardWidth: pageStyle.unitWidth * 340,
-                    cardHeight: pageStyle.unitHeight * 150,
-                    product: ProductModel(),
-                  ),
+                  _buildProductCard(order.cartItems[index]),
                   Align(
                     alignment:
                         EasyLocalization.of(context).locale.languageCode == 'en'
@@ -283,12 +302,80 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   ),
                 ],
               ),
-              index < (myCartItems.length - 1)
+              index < (order.cartItems.length - 1)
                   ? Divider(color: greyColor, thickness: 0.5)
                   : SizedBox.shrink(),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(CartItemEntity cartItem) {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 30,
+      ),
+      child: Row(
+        children: [
+          Image.network(
+            cartItem.product.imageUrl,
+            width: pageStyle.unitWidth * 90,
+            height: pageStyle.unitHeight * 120,
+            fit: BoxFit.fill,
+            loadingBuilder: (_, child, chunkEvent) {
+              return chunkEvent != null
+                  ? Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    )
+                  : child;
+            },
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  cartItem.product.name,
+                  style: boldTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+                Text(
+                  cartItem.product.description,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: bookTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                  ),
+                ),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      cartItem.itemCount.toString() + 'items'.tr(),
+                      style: bookTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 14,
+                        color: primaryColor,
+                      ),
+                    ),
+                    Text(
+                      cartItem.product.price + ' ' + 'currency'.tr(),
+                      style: boldTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 16,
+                        color: primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -313,7 +400,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             children: [
               paymentWidget,
               Text(
-                order.paymentMethod,
+                order.paymentMethod.title,
                 style: bookTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -344,7 +431,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.totalPrice}',
+            'currency'.tr() + ' ${order.subtotalPrice}',
             style: bookTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -356,6 +443,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildShippingCost() {
+    int totalQty = double.parse(order.totalQty).ceil();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -373,7 +461,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            '0 ' + 'currency'.tr(),
+            'currency'.tr() +
+                ' ' +
+                (totalQty * order.shippingMethod.serviceFees).toString(),
             style: bookTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -447,6 +537,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       onPressed: () => Navigator.pushNamed(
         context,
         Routes.checkoutAddress,
+        arguments: order,
       ),
       minWidth: pageStyle.unitWidth * 150,
       height: pageStyle.unitHeight * 45,

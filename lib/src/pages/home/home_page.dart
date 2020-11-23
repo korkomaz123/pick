@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
     homeBloc.add(HomePerfumesLoaded(lang: lang));
     categoryListBloc.add(CategoryListLoaded(lang: lang));
-    brandBloc.add(BrandListLoaded());
+    brandBloc.add(BrandListLoaded(lang: lang));
     homeBloc.add(HomeAdsLoaded());
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
