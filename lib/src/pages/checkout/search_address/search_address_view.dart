@@ -259,6 +259,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
     String apiKey1 = 'AIzaSyD3NO4NWVI3KQPJ7sWgXtNSYIubT__X0fg';
+    print(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1');
     final result = await http.get(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1',
     );
@@ -275,6 +277,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         } else if (componentTypes.contains('administrative_area_level_1')) {
           formattedJson['city'] = componentAddresses[i]['long_name'];
         } else if (componentTypes.contains('street_number')) {
+          formattedJson['street'] = componentAddresses[i]['long_name'];
+        } else if (componentTypes.contains('route')) {
           formattedJson['street'] = componentAddresses[i]['long_name'];
         } else if (componentTypes.contains('administrative_area_level_2')) {
           if (formattedJson['street'] != null) {

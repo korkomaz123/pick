@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -9,12 +7,12 @@ import 'package:ciga/src/data/models/cart_item_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
@@ -24,7 +22,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:lottie/lottie.dart';
 
 import 'widgets/reorder_remove_dialog.dart';
 
@@ -51,6 +48,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  ReorderCartBloc reorderCartBloc;
+  List<CartItemEntity> reorderCartItems = [];
 
   @override
   void initState() {
@@ -59,6 +58,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     flushBarService = FlushBarService(context: context);
     localRepo = context.repository<LocalStorageRepository>();
     cartRepo = context.repository<MyCartRepository>();
+    reorderCartBloc = context.bloc<ReorderCartBloc>();
     _getReorderCartId();
     _getOrderStatus();
   }
@@ -90,9 +90,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _getReorderCartId() async {
-    reorderCartId = await cartRepo.getReorderCartId(widget.order.cartId);
+    reorderCartId = await cartRepo.getReorderCartId(widget.order.orderId, lang);
     if (reorderCartId.isNotEmpty) {
       await localRepo.setItem('reorderCartId', reorderCartId);
+      reorderCartBloc.add(ReorderCartItemsLoaded(
+        reorderCartId: reorderCartId,
+        lang: lang,
+      ));
     }
   }
 
@@ -129,18 +133,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
               _buildOrder(),
             ],
           ),
-          isDeleting
-              ? Material(
-                  color: Colors.black.withOpacity(0),
-                  child: Center(
-                    child: Lottie.asset(
-                      'lib/public/animations/trash-clean.json',
-                      width: pageStyle.unitWidth * 100,
-                      height: pageStyle.unitHeight * 100,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
@@ -281,34 +273,67 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildOrderItems() {
-    return Column(
-      children: List.generate(
-        order.cartItems.length,
-        (index) {
-          return Column(
-            children: [
-              Stack(
+    return BlocConsumer<ReorderCartBloc, ReorderCartState>(
+      listener: (context, state) {
+        if (state is ReorderCartItemsLoadedInProcess) {
+          progressService.showProgress();
+        }
+        if (state is ReorderCartItemsLoadedSuccess) {
+          progressService.hideProgress();
+        }
+        if (state is ReorderCartItemsLoadedFailure) {
+          progressService.hideProgress();
+          flushBarService.showErrorMessage(pageStyle, state.message);
+        }
+        if (state is ReorderCartItemRemovedInProcess) {
+          progressService.showProgress();
+        }
+        if (state is ReorderCartItemRemovedSuccess) {
+          progressService.hideProgress();
+          reorderCartBloc.add(ReorderCartItemsLoaded(
+            reorderCartId: reorderCartId,
+            lang: lang,
+          ));
+        }
+        if (state is ReorderCartItemRemovedFailure) {
+          progressService.hideProgress();
+          flushBarService.showErrorMessage(pageStyle, state.message);
+        }
+      },
+      builder: (context, state) {
+        if (state is ReorderCartItemsLoadedSuccess) {
+          reorderCartItems = state.cartItems;
+        }
+        return Column(
+          children: List.generate(
+            reorderCartItems.length,
+            (index) {
+              return Column(
                 children: [
-                  _buildProductCard(order.cartItems[index]),
-                  Align(
-                    alignment:
-                        EasyLocalization.of(context).locale.languageCode == 'en'
+                  Stack(
+                    children: [
+                      _buildProductCard(reorderCartItems[index]),
+                      Align(
+                        alignment: lang == 'en'
                             ? Alignment.topRight
                             : Alignment.topLeft,
-                    child: IconButton(
-                      onPressed: () => _onDeleteOrderItem(),
-                      icon: SvgPicture.asset(trashIcon),
-                    ),
+                        child: IconButton(
+                          onPressed: () =>
+                              _onDeleteOrderItem(reorderCartItems[index]),
+                          icon: SvgPicture.asset(trashIcon),
+                        ),
+                      ),
+                    ],
                   ),
+                  index < (reorderCartItems.length - 1)
+                      ? Divider(color: greyColor, thickness: 0.5)
+                      : SizedBox.shrink(),
                 ],
-              ),
-              index < (order.cartItems.length - 1)
-                  ? Divider(color: greyColor, thickness: 0.5)
-                  : SizedBox.shrink(),
-            ],
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -555,7 +580,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     );
   }
 
-  void _onDeleteOrderItem() async {
+  void _onDeleteOrderItem(CartItemEntity cartItem) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -563,16 +588,10 @@ class _ReOrderPageState extends State<ReOrderPage> {
       },
     );
     if (result != null) {
-      isDeleting = true;
-      Timer.periodic(
-        AnimationDurations.removeItemAniDuration,
-        (timer) {
-          timer.cancel();
-          isDeleting = false;
-          setState(() {});
-        },
-      );
-      setState(() {});
+      reorderCartBloc.add(ReorderCartItemRemoved(
+        cartId: reorderCartId,
+        itemId: cartItem.itemId,
+      ));
     }
   }
 }

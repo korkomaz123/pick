@@ -24,7 +24,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:lottie/lottie.dart';
 
-import 'bloc/my_cart_bloc.dart';
+import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 

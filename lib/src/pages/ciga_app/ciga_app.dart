@@ -24,8 +24,9 @@ import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
@@ -212,6 +213,11 @@ class CigaApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CategoryListBloc(
             categoryRepository: categoryRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ReorderCartBloc(
+            myCartRepository: myCartRepository,
           ),
         ),
       ],

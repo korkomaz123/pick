@@ -10,7 +10,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';

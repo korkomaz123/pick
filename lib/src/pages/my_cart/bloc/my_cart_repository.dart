@@ -95,10 +95,10 @@ class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getReorderCartId(String orderCartId) async {
+  Future<dynamic> getReorderCartId(String orderId, String lang) async {
     String url = EndPoints.getReorderCartId;
-    final params = {'cartId': orderCartId};
-    final result = await Api.getMethod(url, data: params);
+    final params = {'orderId': orderId, 'lang': lang};
+    final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       return result['cartId'];
     } else {

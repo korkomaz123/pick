@@ -286,7 +286,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 Text(
                   cartItem.product.description,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                  maxLines: 2,
                   style: bookTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 12,
                   ),

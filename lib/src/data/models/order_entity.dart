@@ -7,6 +7,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'enum.dart';
 
 class OrderEntity {
+  final String orderId;
   final String orderNo;
   final String orderDate;
   final OrderStatusEnum status;
@@ -19,6 +20,7 @@ class OrderEntity {
   final List<CartItemEntity> cartItems;
 
   OrderEntity({
+    this.orderId,
     this.orderNo,
     this.orderDate,
     this.status,
@@ -32,7 +34,8 @@ class OrderEntity {
   });
 
   OrderEntity.fromJson(Map<String, dynamic> json)
-      : orderNo = json['increment_id'],
+      : orderId = json['entity_id'],
+        orderNo = json['increment_id'],
         orderDate = json['created_at'],
         status = EnumToString.fromString(
           OrderStatusEnum.values,

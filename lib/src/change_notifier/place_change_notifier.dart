@@ -17,7 +17,6 @@ class PlaceChangeNotifier with ChangeNotifier {
     String url =
         "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=KW&query=" +
             Uri.encodeQueryComponent(query);
-    print(url);
     Response response = await Dio().get(url);
     listPlace = PlaceEntity.parseLocationList(response.data);
     notifyListeners();
