@@ -184,6 +184,7 @@ class _ProductVCardState extends State<ProductVCard> {
                     height: widget.pageStyle.unitHeight * 1.2,
                   ),
                 ),
+                SizedBox(height: widget.pageStyle.unitHeight * 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

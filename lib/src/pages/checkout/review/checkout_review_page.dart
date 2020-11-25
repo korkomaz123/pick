@@ -40,6 +40,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     localRepo = context.repository<LocalStorageRepository>();
+    reorderCartBloc = context.bloc<ReorderCartBloc>();
     if (widget.reorder != null) {
       _loadReorderCartItems();
     }

@@ -49,7 +49,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
   ReorderCartBloc reorderCartBloc;
-  List<CartItemEntity> reorderCartItems = [];
+  List<CartItemEntity> cartItems = [];
 
   @override
   void initState() {
@@ -302,30 +302,28 @@ class _ReOrderPageState extends State<ReOrderPage> {
       },
       builder: (context, state) {
         if (state is ReorderCartItemsLoadedSuccess) {
-          reorderCartItems = state.cartItems;
+          cartItems = state.cartItems;
+          reorderCartItems = cartItems;
         }
         return Column(
           children: List.generate(
-            reorderCartItems.length,
+            cartItems.length,
             (index) {
               return Column(
                 children: [
                   Stack(
                     children: [
-                      _buildProductCard(reorderCartItems[index]),
+                      _buildProductCard(cartItems[index]),
                       Align(
-                        alignment: lang == 'en'
-                            ? Alignment.topRight
-                            : Alignment.topLeft,
+                        alignment: Alignment.topRight,
                         child: IconButton(
-                          onPressed: () =>
-                              _onDeleteOrderItem(reorderCartItems[index]),
-                          icon: SvgPicture.asset(trashIcon),
+                          onPressed: () => _onDeleteOrderItem(cartItems[index]),
+                          icon: SvgPicture.asset(trashIcon, color: greyColor),
                         ),
                       ),
                     ],
                   ),
-                  index < (reorderCartItems.length - 1)
+                  index < (cartItems.length - 1)
                       ? Divider(color: greyColor, thickness: 0.5)
                       : SizedBox.shrink(),
                 ],
@@ -382,7 +380,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      cartItem.itemCount.toString() + 'items'.tr(),
+                      '(${cartItem.itemCount})' +
+                          'items'.tr().replaceFirst('0', ''),
                       style: bookTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
                         color: primaryColor,

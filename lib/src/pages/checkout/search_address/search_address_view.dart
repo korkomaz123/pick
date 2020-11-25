@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -259,8 +258,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
     String apiKey1 = 'AIzaSyD3NO4NWVI3KQPJ7sWgXtNSYIubT__X0fg';
-    print(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1');
     final result = await http.get(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1',
     );

@@ -112,7 +112,9 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
             fontSize: pageStyle.unitFontSize * 11,
           ),
         ),
-        secondary: SvgPicture.asset(freeShippingIcon),
+        secondary: SvgPicture.asset(
+          method.serviceFees > 0 ? flatRateIcon : freeShippingIcon,
+        ),
       ),
     );
   }
@@ -165,10 +167,19 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     orderDetails['cartId'] = cartId;
     int totalPrice = 0;
     int subtotalPrice = 0;
-    int fees = myCartItems.length * serviceFees;
-    for (int i = 0; i < myCartItems.length; i++) {
-      subtotalPrice += myCartItems[i].rowPrice;
+    int fees = 0;
+    if (widget.reorder != null) {
+      fees = reorderCartItems.length * serviceFees;
+      for (int i = 0; i < reorderCartItems.length; i++) {
+        subtotalPrice += reorderCartItems[i].rowPrice;
+      }
+    } else {
+      fees = myCartItems.length * serviceFees;
+      for (int i = 0; i < myCartItems.length; i++) {
+        subtotalPrice += myCartItems[i].rowPrice;
+      }
     }
+
     totalPrice = subtotalPrice + fees;
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();

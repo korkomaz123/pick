@@ -296,7 +296,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      cartItem.itemCount.toString() + 'items'.tr(),
+                      cartItem.itemCount.toString() +
+                          'items'.tr().replaceFirst('0', ''),
                       style: bookTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
                         color: primaryColor,

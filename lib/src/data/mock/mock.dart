@@ -28,6 +28,7 @@ final List<CategoryEntity> homeCategories = [
 List<CategoryMenuEntity> sideMenus = [];
 
 List<CartItemEntity> myCartItems = [];
+List<CartItemEntity> reorderCartItems = [];
 int cartItemCount = 0;
 String couponCode = '';
 int cartTotalPrice = 0;

@@ -174,9 +174,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
             }
           }
-          if (state is ShippingAddressAddedSuccess) {
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-          }
         },
         builder: (context, state) {
           if (state is ShippingAddressLoadedSuccess) {
