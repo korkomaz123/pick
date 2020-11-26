@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
@@ -39,7 +41,8 @@ class ProductHCard extends StatefulWidget {
   _ProductHCardState createState() => _ProductHCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard> {
+class _ProductHCardState extends State<ProductHCard>
+    with TickerProviderStateMixin {
   bool isWishlist;
   int index;
   String cartId;
@@ -48,6 +51,8 @@ class _ProductHCardState extends State<ProductHCard> {
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
+  AnimationController _addToCartController;
+  Animation<double> _addToCartScaleAnimation;
 
   @override
   void initState() {
@@ -59,6 +64,7 @@ class _ProductHCardState extends State<ProductHCard> {
     flushBarService = FlushBarService(context: context);
     _getWishlist();
     _getMyCartId();
+    _initAnimation();
   }
 
   void _getWishlist() async {
@@ -70,6 +76,22 @@ class _ProductHCardState extends State<ProductHCard> {
 
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
+  }
+
+  void _initAnimation() {
+    /// add to cart button animation
+    _addToCartController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addToCartScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _addToCartController,
+      curve: Curves.easeIn,
+    ));
   }
 
   @override
@@ -213,12 +235,15 @@ class _ProductHCardState extends State<ProductHCard> {
                     widget.isShoppingCart
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
-                            child: Container(
-                              width: widget.pageStyle.unitWidth * 18,
-                              height: widget.pageStyle.unitHeight * 17,
-                              child: SvgPicture.asset(
-                                shoppingCartIcon,
-                                color: primaryColor,
+                            child: ScaleTransition(
+                              scale: _addToCartScaleAnimation,
+                              child: Container(
+                                width: widget.pageStyle.unitWidth * 18,
+                                height: widget.pageStyle.unitHeight * 17,
+                                child: SvgPicture.asset(
+                                  shoppingCartIcon,
+                                  color: primaryColor,
+                                ),
                               ),
                             ),
                           )
@@ -260,6 +285,11 @@ class _ProductHCardState extends State<ProductHCard> {
   }
 
   void _onAddProductToCart(BuildContext context) {
+    _addToCartController.repeat(reverse: true);
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      _addToCartController.stop(canceled: true);
+      timer.cancel();
+    });
     if (cartId.isEmpty) {
       myCartBloc.add(MyCartCreated(
         product: widget.product,

@@ -65,7 +65,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
               ],
             );
           } else {
-            return _buildShimmer();
+            return Container();
           }
         },
       ),

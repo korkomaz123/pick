@@ -127,12 +127,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget _buildProductView() {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 460,
+      height: widget.pageStyle.unitHeight * 500,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ProductVCard(
-            cardWidth: widget.pageStyle.unitWidth * 155,
+            cardWidth: widget.pageStyle.unitWidth * 170,
             cardHeight: widget.pageStyle.unitHeight * 360,
             product: perfumesProducts[0],
             pageStyle: widget.pageStyle,
@@ -153,8 +152,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
           Column(
             children: [
               ProductVCard(
-                cardWidth: widget.pageStyle.unitWidth * 155,
-                cardHeight: widget.pageStyle.unitHeight * 220,
+                cardWidth: widget.pageStyle.unitWidth * 170,
+                cardHeight: widget.pageStyle.unitHeight * 236,
                 product: perfumesProducts[1],
                 pageStyle: widget.pageStyle,
                 isShoppingCart: true,
@@ -162,12 +161,12 @@ class _HomePerfumesState extends State<HomePerfumes> {
                 isShare: true,
               ),
               Container(
-                width: widget.pageStyle.unitWidth * 155,
+                width: widget.pageStyle.unitWidth * 170,
                 child: Divider(color: greyColor, thickness: 0.5),
               ),
               ProductVCard(
-                cardWidth: widget.pageStyle.unitWidth * 155,
-                cardHeight: widget.pageStyle.unitHeight * 220,
+                cardWidth: widget.pageStyle.unitWidth * 170,
+                cardHeight: widget.pageStyle.unitHeight * 236,
                 product: perfumesProducts[2],
                 pageStyle: widget.pageStyle,
                 isShoppingCart: true,

@@ -64,7 +64,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
               ],
             );
           } else {
-            return _buildShimmer();
+            return Container();
           }
         },
       ),

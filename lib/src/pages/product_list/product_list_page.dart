@@ -121,7 +121,11 @@ class _ProductListPageState extends State<ProductListPage> {
             },
             builder: (context, categoryState) {
               if (categoryState is CategorySubCategoriesLoadedSuccess) {
-                subCategories = [category];
+                if (isFromBrand) {
+                  subCategories = [CategoryEntity(id: 'all')];
+                } else {
+                  subCategories = [category];
+                }
                 for (int i = 0; i < categoryState.subCategories.length; i++) {
                   subCategories.add(categoryState.subCategories[i]);
                 }
