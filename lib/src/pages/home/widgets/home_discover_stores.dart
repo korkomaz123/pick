@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
@@ -30,7 +31,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   void initState() {
     super.initState();
     brandBloc = context.bloc<BrandBloc>();
-    brandBloc.add(BrandListLoaded());
+    brandBloc.add(BrandListLoaded(lang: lang));
   }
 
   @override

@@ -66,7 +66,7 @@ class ProductRepository {
     if (categoryId != 'all') {
       params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang};
     } else {
-      params = {'brandId': brandId, 'lang': lang};
+      params = {'brandId': brandId, 'categoryId': null, 'lang': lang};
     }
     return await Api.getMethod(url, data: params);
   }

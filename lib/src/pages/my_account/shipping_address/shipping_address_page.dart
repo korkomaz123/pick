@@ -23,6 +23,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'widgets/shipping_address_remove_dialog.dart';
 
 class ShippingAddressPage extends StatefulWidget {
+  final bool isCheckout;
+
+  ShippingAddressPage({this.isCheckout = false});
+
   @override
   _ShippingAddressPageState createState() => _ShippingAddressPageState();
 }
@@ -37,6 +41,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
   List<AddressEntity> shippingAddresses = [];
+  int selectedIndex;
 
   @override
   void initState() {
@@ -163,10 +168,11 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           }
           if (state is ShippingAddressUpdatedSuccess) {
             progressService.hideProgress();
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-          }
-          if (state is ShippingAddressAddedSuccess) {
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+            if (widget.isCheckout) {
+              Navigator.pop(context, addresses[selectedIndex]);
+            } else {
+              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+            }
           }
         },
         builder: (context, state) {
@@ -320,6 +326,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onUpdate(int index) async {
+    selectedIndex = index;
     defaultAddress = shippingAddresses[index];
     shippingAddressBloc.add(ShippingAddressUpdated(
       token: user.token,

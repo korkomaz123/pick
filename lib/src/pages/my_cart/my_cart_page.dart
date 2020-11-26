@@ -24,7 +24,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:lottie/lottie.dart';
 
-import 'bloc/my_cart_bloc.dart';
+import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 
@@ -105,7 +105,7 @@ class _MyCartPageState extends State<MyCartPage>
               }
               if (state is MyCartItemUpdatedSuccess) {
                 progressService.hideProgress();
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
               }
               if (state is MyCartItemUpdatedFailure) {
                 progressService.hideProgress();
@@ -116,7 +116,7 @@ class _MyCartPageState extends State<MyCartPage>
               }
               if (state is MyCartItemRemovedSuccess) {
                 progressService.hideProgress();
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId));
+                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
               }
               if (state is MyCartItemRemovedFailure) {
                 progressService.hideProgress();
@@ -159,8 +159,9 @@ class _MyCartPageState extends State<MyCartPage>
                 myCartItems.clear();
                 cartItemCount = 0;
                 totalPrice = 0;
+                cartTotalPrice = 0;
               }
-              return myCartItems.isEmpty
+              return state is MyCartItemsClearedSuccess && myCartItems.isEmpty
                   ? Center(
                       child: NoAvailableData(
                         pageStyle: pageStyle,
@@ -530,8 +531,10 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _getTotalPrice() {
     totalPrice = 0;
+    cartTotalPrice = 0;
     for (int i = 0; i < myCartItems.length; i++) {
       totalPrice += myCartItems[i].rowPrice;
     }
+    cartTotalPrice = totalPrice;
   }
 }

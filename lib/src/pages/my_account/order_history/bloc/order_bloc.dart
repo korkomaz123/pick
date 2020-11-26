@@ -30,7 +30,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     yield OrderHistoryLoadedInProcess();
     try {
       final result = await _orderRepository.getOrderHistory(token);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> ordersList = result['orders'];
         List<OrderEntity> orders = [];

@@ -287,18 +287,22 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: pageStyle.unitWidth * 100,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
-            'OR',
+            'or_divider'.tr(),
             style: boldTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 17,
               color: Colors.white,
             ),
           ),
           Container(
-            width: pageStyle.unitWidth * 100,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],

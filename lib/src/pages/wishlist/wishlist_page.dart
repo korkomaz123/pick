@@ -5,11 +5,12 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/no_available_data.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -88,7 +89,7 @@ class _WishlistPageViewState extends State<WishlistPageView>
     String token = await localStorageRepo.getToken();
     ids = await localStorageRepo.getWishlistIds();
     if (ids.isNotEmpty) {
-      wishlistBloc.add(WishlistLoaded(ids: ids, token: token));
+      wishlistBloc.add(WishlistLoaded(ids: ids, token: token, lang: lang));
     }
   }
 

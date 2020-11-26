@@ -24,7 +24,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     WishlistEvent event,
   ) async* {
     if (event is WishlistLoaded) {
-      yield* _mapWishlistLoadedToState(event.ids, event.token);
+      yield* _mapWishlistLoadedToState(event.ids, event.token, event.lang);
     } else if (event is WishlistInitialized) {
       yield WishlistInitial();
     }
@@ -33,10 +33,11 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   Stream<WishlistState> _mapWishlistLoadedToState(
     List<String> ids,
     String token,
+    String lang,
   ) async* {
     yield WishlistLoadedInProcess();
     try {
-      String key = 'wishlists';
+      String key = 'wishlists-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> wishlistList = await localStorageRepository.getItem(key);
@@ -46,7 +47,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
         }
         yield WishlistLoadedSuccess(wishlists: wishlists);
       }
-      final result = await _wishlistRepository.getWishlists(ids, token);
+      final result = await _wishlistRepository.getWishlists(ids, token, lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['wishlists']);
         List<dynamic> wishlistList = result['wishlists'];

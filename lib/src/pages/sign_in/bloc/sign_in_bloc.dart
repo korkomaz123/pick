@@ -53,6 +53,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     yield SignInSubmittedInProcess();
     try {
       final result = await _signInRepository.login(email, password);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
@@ -106,6 +107,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final result = await _signInRepository.register(
           firstName, lastName, email, password);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignUpSubmittedSuccess(user: UserEntity.fromJson(result['user']));
@@ -117,14 +119,18 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     }
   }
 
-  Stream<SignInState> _mapNewPasswordRequestSubmittedToState(String email,) async* {
+  Stream<SignInState> _mapNewPasswordRequestSubmittedToState(
+    String email,
+  ) async* {
     yield NewPasswordRequestSubmittedInProcess();
     try {
       final result = await _signInRepository.getNewPassword(email);
       if (result['code'] == 'SUCCESS') {
         yield NewPasswordRequestSubmittedSuccess();
       } else {
-        yield NewPasswordRequestSubmittedFailure(message: result['errorMessage'],);
+        yield NewPasswordRequestSubmittedFailure(
+          message: result['errorMessage'],
+        );
       }
     } catch (e) {
       yield NewPasswordRequestSubmittedFailure(message: e.toString());

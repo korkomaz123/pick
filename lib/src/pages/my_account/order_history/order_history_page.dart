@@ -234,7 +234,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   ),
                 ),
                 Text(
-                  order.paymentMethod,
+                  order.paymentMethod.title,
                   style: bookTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -307,38 +307,38 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     ],
                   ),
                 ),
-                // SizedBox(width: pageStyle.unitWidth * 5),
-                // MaterialButton(
-                //   onPressed: () => Navigator.pushNamed(
-                //     context,
-                //     Routes.reOrder,
-                //     arguments: order,
-                //   ),
-                //   minWidth: pageStyle.unitWidth * 150,
-                //   height: pageStyle.unitHeight * 45,
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(30),
-                //   ),
-                //   color: primaryColor,
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.min,
-                //     children: [
-                //       Icon(
-                //         FontAwesomeIcons.history,
-                //         color: Colors.white54,
-                //         size: pageStyle.unitFontSize * 20,
-                //       ),
-                //       SizedBox(width: pageStyle.unitWidth * 4),
-                //       Text(
-                //         'reorder_button_title'.tr(),
-                //         style: bookTextStyle.copyWith(
-                //           fontSize: pageStyle.unitFontSize * 17,
-                //           color: Colors.white,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
+                SizedBox(width: pageStyle.unitWidth * 5),
+                MaterialButton(
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    Routes.reOrder,
+                    arguments: order,
+                  ),
+                  minWidth: pageStyle.unitWidth * 150,
+                  height: pageStyle.unitHeight * 45,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: primaryColor,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.history,
+                        color: Colors.white54,
+                        size: pageStyle.unitFontSize * 20,
+                      ),
+                      SizedBox(width: pageStyle.unitWidth * 4),
+                      Text(
+                        'reorder_button_title'.tr(),
+                        style: bookTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

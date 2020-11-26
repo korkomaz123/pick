@@ -7,9 +7,19 @@ class WishlistRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getWishlists(List<String> ids, String token) async {
+  Future<dynamic> getWishlists(
+    List<String> ids,
+    String token,
+    String lang,
+  ) async {
     String url = EndPoints.getWishlist;
-    final params = {'token': token, 'wishlists': json.encode(ids)};
+    final params = {
+      'token': token,
+      'wishlists': json.encode(ids),
+      'lang': lang
+    };
+    print(url);
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

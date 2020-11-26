@@ -1,4 +1,3 @@
-import 'package:ciga/src/components/ciga_page_loading_kit.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';

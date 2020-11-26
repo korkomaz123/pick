@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -15,6 +16,10 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
 class CheckoutShippingPage extends StatefulWidget {
+  final OrderEntity reorder;
+
+  CheckoutShippingPage({this.reorder});
+
   @override
   _CheckoutShippingPageState createState() => _CheckoutShippingPageState();
 }
@@ -23,12 +28,19 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   PageStyle pageStyle;
   String shippingMethodId;
   int serviceFees;
+  LocalStorageRepository localRepo;
 
   @override
   void initState() {
     super.initState();
-    shippingMethodId = shippingMethods[0].id;
-    serviceFees = shippingMethods[0].serviceFees;
+    if (widget.reorder != null) {
+      shippingMethodId = widget.reorder.shippingMethod.id;
+      serviceFees = widget.reorder.shippingMethod.serviceFees;
+    } else {
+      shippingMethodId = shippingMethods[0].id;
+      serviceFees = shippingMethods[0].serviceFees;
+    }
+    localRepo = context.repository<LocalStorageRepository>();
   }
 
   @override
@@ -100,7 +112,9 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
             fontSize: pageStyle.unitFontSize * 11,
           ),
         ),
-        secondary: SvgPicture.asset(freeShippingIcon),
+        secondary: SvgPicture.asset(
+          method.serviceFees > 0 ? flatRateIcon : freeShippingIcon,
+        ),
       ),
     );
   }
@@ -143,21 +157,38 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   }
 
   void _onContinue() async {
-    String cartId =
-        await context.repository<LocalStorageRepository>().getCartId();
+    String cartId;
+    if (widget.reorder != null) {
+      cartId = await localRepo.getItem('reorderCartId');
+    } else {
+      cartId = await localRepo.getCartId();
+    }
     orderDetails['shipping'] = shippingMethodId;
     orderDetails['cartId'] = cartId;
     int totalPrice = 0;
     int subtotalPrice = 0;
-    int fees = myCartItems.length * serviceFees;
-    for (int i = 0; i < myCartItems.length; i++) {
-      subtotalPrice += myCartItems[i].rowPrice;
+    int fees = 0;
+    if (widget.reorder != null) {
+      fees = reorderCartItems.length * serviceFees;
+      for (int i = 0; i < reorderCartItems.length; i++) {
+        subtotalPrice += reorderCartItems[i].rowPrice;
+      }
+    } else {
+      fees = myCartItems.length * serviceFees;
+      for (int i = 0; i < myCartItems.length; i++) {
+        subtotalPrice += myCartItems[i].rowPrice;
+      }
     }
+
     totalPrice = subtotalPrice + fees;
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
     orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toString();
     orderDetails['orderDetails']['fees'] = fees.toString();
-    Navigator.pushNamed(context, Routes.checkoutReview);
+    Navigator.pushNamed(
+      context,
+      Routes.checkoutReview,
+      arguments: widget.reorder,
+    );
   }
 }

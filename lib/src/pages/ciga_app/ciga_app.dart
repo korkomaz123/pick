@@ -24,8 +24,9 @@ import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
@@ -214,6 +215,11 @@ class CigaApp extends StatelessWidget {
             categoryRepository: categoryRepository,
           ),
         ),
+        BlocProvider(
+          create: (context) => ReorderCartBloc(
+            myCartRepository: myCartRepository,
+          ),
+        ),
       ],
       child: CigaAppView(),
     );
@@ -280,6 +286,8 @@ class _CigaAppViewState extends State<CigaAppView> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
@@ -325,12 +333,12 @@ class _CigaAppViewState extends State<CigaAppView> {
 
   void _getShippingMethod() async {
     shippingMethods =
-        await context.repository<CheckoutRepository>().getShippingMethod();
+        await context.repository<CheckoutRepository>().getShippingMethod(lang);
   }
 
   void _getPaymentMethod() async {
     paymentMethods =
-        await context.repository<CheckoutRepository>().getPaymentMethod();
+        await context.repository<CheckoutRepository>().getPaymentMethod(lang);
   }
 
   void _getSideMenu() async {
@@ -376,7 +384,7 @@ class _CigaAppViewState extends State<CigaAppView> {
               if (state is MyCartCreatedFailure) {}
               if (state is MyCartItemAddedSuccess) {
                 print('//// product v card ////');
-
+                cartTotalPrice += double.parse(state.product.price).ceil();
                 cartItemCountBloc.add(CartItemCountIncremented(
                   incrementedCount: cartItemCount + 1,
                 ));

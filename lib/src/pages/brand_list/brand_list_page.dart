@@ -130,7 +130,7 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildCategoryButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => Navigator.pushReplacementNamed(
           context,
@@ -159,7 +159,7 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildBrandButton() {
     return Container(
-      width: pageStyle.unitWidth * 100,
+      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(

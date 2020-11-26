@@ -57,7 +57,28 @@ class CigaCountryInput extends StatelessWidget {
                     width: pageStyle.unitWidth * 30,
                   ),
                 )
-              : Container(),
+              : Container(
+                  width: pageStyle.unitWidth * 30,
+                  height: pageStyle.unitHeight * 30,
+                  margin: EdgeInsets.only(
+                    top: pageStyle.unitHeight * 10,
+                    bottom: pageStyle.unitHeight * 10,
+                    right: pageStyle.unitWidth * 10,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: greyColor.withOpacity(0.8),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '?',
+                    textAlign: TextAlign.center,
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
         ),
         validator: (value) => validator(value),
         keyboardType: inputType,

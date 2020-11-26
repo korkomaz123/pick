@@ -75,6 +75,18 @@ class _EditAddressPageState extends State<EditAddressPage> {
     flushBarService = FlushBarService(context: context);
   }
 
+  void _onSuccess() {
+    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    shippingAddressBloc.add(ShippingAddressInitialized());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -86,13 +98,16 @@ class _EditAddressPageState extends State<EditAddressPage> {
       body: BlocListener<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
           if (state is ShippingAddressAddedInProcess) {
+            print('process');
             progressService.showProgress();
           }
           if (state is ShippingAddressAddedSuccess) {
+            print('success');
             progressService.hideProgress();
-            Navigator.pop(context);
+            _onSuccess();
           }
           if (state is ShippingAddressAddedFailure) {
+            print('failure');
             progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }

@@ -69,14 +69,18 @@ class _ProductListViewState extends State<ProductListView>
     brand = widget.brand;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+    productListBloc = context.bloc<ProductListBloc>();
+    filterBloc = context.bloc<FilterBloc>();
     tabController = TabController(
       length: subCategories.length,
       initialIndex: activeIndex,
       vsync: this,
     );
     tabController.addListener(() => widget.onChangeTab(tabController.index));
-    productListBloc = context.bloc<ProductListBloc>();
-    filterBloc = context.bloc<FilterBloc>();
+    _loadInitialProducts();
+  }
+
+  void _loadInitialProducts() {
     for (int i = 0; i < widget.subCategories.length; i++) {
       productsMap[widget.subCategories[i].id] = [];
     }
@@ -88,7 +92,7 @@ class _ProductListViewState extends State<ProductListView>
       if (isFromBrand) {
         productListBloc.add(BrandProductListLoaded(
           brandId: brand.optionId,
-          categoryId: activeIndex == 0 ? 'all' : subCategories[activeIndex].id,
+          categoryId: subCategories[activeIndex].id,
           lang: lang,
         ));
       } else {
@@ -144,7 +148,11 @@ class _ProductListViewState extends State<ProductListView>
               subCategories.length > 1
                   ? _buildCategoryTabBar()
                   : SizedBox.shrink(),
-              Expanded(child: _buildCategoryTabView()),
+              Expanded(
+                child: productState is ProductListLoadedSuccess
+                    ? _buildCategoryTabView()
+                    : SizedBox.shrink(),
+              ),
             ],
           ),
         );

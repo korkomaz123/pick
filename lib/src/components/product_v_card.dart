@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -39,7 +41,8 @@ class ProductVCard extends StatefulWidget {
   _ProductVCardState createState() => _ProductVCardState();
 }
 
-class _ProductVCardState extends State<ProductVCard> {
+class _ProductVCardState extends State<ProductVCard>
+    with TickerProviderStateMixin {
   bool isWishlist;
   int index;
   String cartId;
@@ -48,6 +51,8 @@ class _ProductVCardState extends State<ProductVCard> {
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
+  AnimationController _addToCartController;
+  Animation<double> _addToCartScaleAnimation;
 
   @override
   void initState() {
@@ -59,6 +64,7 @@ class _ProductVCardState extends State<ProductVCard> {
     flushBarService = FlushBarService(context: context);
     _getWishlist();
     _getMyCartId();
+    _initAnimation();
   }
 
   void _getWishlist() async {
@@ -70,6 +76,22 @@ class _ProductVCardState extends State<ProductVCard> {
 
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
+  }
+
+  void _initAnimation() {
+    /// add to cart button animation
+    _addToCartController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addToCartScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _addToCartController,
+      curve: Curves.easeIn,
+    ));
   }
 
   @override
@@ -184,6 +206,7 @@ class _ProductVCardState extends State<ProductVCard> {
                     height: widget.pageStyle.unitHeight * 1.2,
                   ),
                 ),
+                SizedBox(height: widget.pageStyle.unitHeight * 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -210,12 +233,15 @@ class _ProductVCardState extends State<ProductVCard> {
                     widget.isShoppingCart
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
-                            child: Container(
-                              width: widget.pageStyle.unitWidth * 18,
-                              height: widget.pageStyle.unitHeight * 17,
-                              child: SvgPicture.asset(
-                                shoppingCartIcon,
-                                color: primaryColor,
+                            child: ScaleTransition(
+                              scale: _addToCartScaleAnimation,
+                              child: Container(
+                                width: widget.pageStyle.unitWidth * 18,
+                                height: widget.pageStyle.unitHeight * 17,
+                                child: SvgPicture.asset(
+                                  shoppingCartIcon,
+                                  color: primaryColor,
+                                ),
                               ),
                             ),
                           )
@@ -260,6 +286,11 @@ class _ProductVCardState extends State<ProductVCard> {
   }
 
   void _onAddProductToCart(BuildContext context) {
+    _addToCartController.repeat(reverse: true);
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      _addToCartController.stop(canceled: true);
+      timer.cancel();
+    });
     if (cartId.isEmpty) {
       myCartBloc.add(MyCartCreated(
         product: widget.product,

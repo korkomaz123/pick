@@ -7,7 +7,7 @@ import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import 'my_cart_repository.dart';
+import '../my_cart_repository.dart';
 
 part 'my_cart_event.dart';
 part 'my_cart_state.dart';

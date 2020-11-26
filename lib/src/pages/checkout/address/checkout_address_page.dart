@@ -5,6 +5,8 @@ import 'package:ciga/src/components/ciga_country_input.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/address_entity.dart';
+import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/widgets/select_country_dialog.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -18,6 +20,10 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutAddressPage extends StatefulWidget {
+  final OrderEntity reorder;
+
+  CheckoutAddressPage({this.reorder});
+
   @override
   _CheckoutAddressPageState createState() => _CheckoutAddressPageState();
 }
@@ -152,8 +158,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             readOnly: true,
           ),
           SizedBox(height: pageStyle.unitHeight * 30),
-          // _buildSearchingAddressButton(),
-          // SizedBox(height: pageStyle.unitHeight * 5),
+          _buildSearchingAddressButton(),
+          SizedBox(height: pageStyle.unitHeight * 5),
           _buildSelectAddressButton(),
           SizedBox(height: pageStyle.unitHeight * 20),
           CigaCountryInput(
@@ -204,22 +210,22 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     );
   }
 
-  // Widget _buildSearchingAddressButton() {
-  //   return Container(
-  //     width: pageStyle.deviceWidth,
-  //     height: pageStyle.unitHeight * 50,
-  //     padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-  //     child: TextButton(
-  //       title: 'checkout_searching_address_button_title'.tr(),
-  //       titleSize: pageStyle.unitFontSize * 12,
-  //       titleColor: greyDarkColor,
-  //       buttonColor: greyLightColor,
-  //       borderColor: Colors.transparent,
-  //       onPressed: () => Navigator.pushNamed(context, Routes.searchAddress),
-  //       radius: 0,
-  //     ),
-  //   );
-  // }
+  Widget _buildSearchingAddressButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 50,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      child: TextButton(
+        title: 'checkout_searching_address_button_title'.tr(),
+        titleSize: pageStyle.unitFontSize * 12,
+        titleColor: greyDarkColor,
+        buttonColor: greyLightColor,
+        borderColor: Colors.transparent,
+        onPressed: () => _onSearchAddress(),
+        radius: 0,
+      ),
+    );
+  }
 
   Widget _buildSelectAddressButton() {
     return Container(
@@ -275,20 +281,36 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     );
   }
 
-  void _initForm() {
-    print(defaultAddress?.countryId);
-    countryController.text = defaultAddress?.country;
-    countryId = defaultAddress?.countryId;
-    stateController.text = defaultAddress?.region;
-    cityController.text = defaultAddress?.city;
-    streetController.text = defaultAddress?.street;
-    zipCodeController.text = defaultAddress?.zipCode;
-    phoneNumberController.text = defaultAddress?.phoneNumber;
+  void _initForm([AddressEntity selectedAddress]) {
+    if (selectedAddress == null) {
+      selectedAddress = defaultAddress;
+    }
+    countryController.text = selectedAddress?.country;
+    countryId = selectedAddress?.countryId;
+    stateController.text = selectedAddress?.region;
+    cityController.text = selectedAddress?.city;
+    streetController.text = selectedAddress?.street;
+    zipCodeController.text = selectedAddress?.zipCode;
+    phoneNumberController.text = selectedAddress?.phoneNumber;
+    setState(() {});
   }
 
   void _onSelectAddress() async {
-    await Navigator.pushNamed(context, Routes.shippingAddress);
-    _initForm();
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.shippingAddress,
+      arguments: true,
+    );
+    if (result != null) {
+      _initForm(result as AddressEntity);
+    }
+  }
+
+  void _onSearchAddress() async {
+    final result = await Navigator.pushNamed(context, Routes.searchAddress);
+    if (result != null) {
+      _initForm(result as AddressEntity);
+    }
   }
 
   void _onSelectCountry() async {
@@ -305,17 +327,19 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   }
 
   void _onSaveAddress() {
-    shippingAddressBloc.add(ShippingAddressAdded(
-      token: user.token,
-      countryId: countryId,
-      region: '',
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      city: cityController.text,
-      streetName: streetController.text,
-      zipCode: zipCodeController.text,
-      phone: phoneNumberController.text,
-    ));
+    if (_formKey.currentState.validate()) {
+      shippingAddressBloc.add(ShippingAddressAdded(
+        token: user.token,
+        countryId: countryId,
+        region: '',
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        city: cityController.text,
+        streetName: streetController.text,
+        zipCode: zipCodeController.text,
+        phone: phoneNumberController.text,
+      ));
+    }
   }
 
   void _onContinue() {
@@ -332,7 +356,11 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         'telephone': phoneNumberController.text,
         'save_in_address_book': '0',
       });
-      Navigator.pushNamed(context, Routes.checkoutShipping);
+      Navigator.pushNamed(
+        context,
+        Routes.checkoutShipping,
+        arguments: widget.reorder,
+      );
     }
   }
 }

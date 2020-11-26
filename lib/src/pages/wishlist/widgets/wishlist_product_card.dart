@@ -60,27 +60,12 @@ class WishlistProductCard extends StatelessWidget {
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
-                        color: greyColor,
-                      ),
-                    ),
-                    SizedBox(width: pageStyle.unitWidth * 20),
-                    Text(
-                      product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        decorationStyle: TextDecorationStyle.solid,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: dangerColor,
-                        fontSize: pageStyle.unitFontSize * 12,
-                        color: greyColor,
-                      ),
-                    ),
-                  ],
+                Text(
+                  product.price + ' ' + 'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                    color: greyColor,
+                  ),
                 ),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 TextButton(

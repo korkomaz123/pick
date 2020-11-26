@@ -95,23 +95,23 @@ class RouteGenerator {
         );
       case Routes.checkoutAddress:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutAddressPage(),
+          builder: (context) => CheckoutAddressPage(reorder: params),
         );
       case Routes.checkoutShipping:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutShippingPage(),
+          builder: (context) => CheckoutShippingPage(reorder: params),
         );
       case Routes.checkoutReview:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutReviewPage(),
+          builder: (context) => CheckoutReviewPage(reorder: params),
         );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutPaymentPage(),
+          builder: (context) => CheckoutPaymentPage(reorder: params),
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutConfirmedPage(),
+          builder: (context) => CheckoutConfirmedPage(orderNo: params),
         );
       case Routes.search:
         return CupertinoPageRoute(
@@ -159,7 +159,7 @@ class RouteGenerator {
         );
       case Routes.shippingAddress:
         return CupertinoPageRoute(
-          builder: (context) => ShippingAddressPage(),
+          builder: (context) => ShippingAddressPage(isCheckout: params),
         );
       case Routes.editAddress:
         return CupertinoPageRoute(

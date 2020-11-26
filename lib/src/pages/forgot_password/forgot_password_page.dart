@@ -131,17 +131,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
           ),
+          errorStyle: bookTextStyle.copyWith(
+            color: Color(0xFF00F5FF),
+            fontSize: pageStyle.unitFontSize * 12,
+          ),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 0.5),
             borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 0.5),
             borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 0.5),
             borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Colors.white, width: 0.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
           ),
           fillColor: Colors.white,
           filled: true,
