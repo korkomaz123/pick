@@ -287,9 +287,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
@@ -300,9 +298,7 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],
@@ -456,13 +452,20 @@ class _SignInPageState extends State<SignInPage> {
       String email = credential.email;
       String firstName = credential.givenName;
       String lastName = credential.familyName;
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'Apple Sign',
-        lang: lang,
-      ));
+      if (email == null) {
+        flushBarService.showErrorMessage(
+          pageStyle,
+          'You should share your email when choose the option for apple sign-in',
+        );
+      } else {
+        signInBloc.add(SocialSignInSubmitted(
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          loginType: 'Apple Sign',
+          lang: lang,
+        ));
+      }
     } catch (error) {
       print(error);
     }
