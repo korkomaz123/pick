@@ -20,6 +20,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
 
 class SignInPage extends StatefulWidget {
@@ -399,8 +400,7 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       final profile = json.decode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
@@ -441,5 +441,26 @@ class _SignInPageState extends State<SignInPage> {
 
   void _onTwitterSign() {}
 
-  void _onAppleSign() {}
+  void _onAppleSign() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      String email = credential.email;
+      String firstName = credential.givenName;
+      String lastName = credential.familyName;
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'Apple Sign',
+        lang: lang,
+      ));
+    } catch (error) {
+      print(error);
+    }
+  }
 }

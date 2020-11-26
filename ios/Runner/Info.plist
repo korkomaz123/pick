@@ -18,8 +18,36 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.5336431605-ga3jfvhneddhr1r02nqrnpbc3omvh7ao</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb361840648405712</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAppID</key>
+	<string>361840648405712</string>
+	<key>FacebookDisplayName</key>
+	<string>Markaa</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
@@ -47,42 +75,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<!-- Google Sign-in Section -->
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-				<string>com.googleusercontent.apps.5336431605-ga3jfvhneddhr1r02nqrnpbc3omvh7ao</string>
-			</array>
-		</dict>
-		<!-- End of the Google Sign-in Section -->
-		<!-- Facebook Sign-in Section -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!--
-				Replace "000000000000" with your Facebook App ID here.
-				**NOTE**: The scheme needs to start with `fb` and then your ID.
-				-->
-				<string>fb361840648405712</string>
-			</array>
-		</dict>
-		<!-- End Facebook Sign-in Section -->
-	</array>
-	<key>FacebookAppID</key>
-	<string>361840648405712</string>
-	<key>FacebookDisplayName</key>
-	<string>Markaa</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fbapi</string>
-		<string>fb-messenger-share-api</string>
-		<string>fbauth2</string>
-		<string>fbshareextension</string>
-	</array>
 </dict>
 </plist>
