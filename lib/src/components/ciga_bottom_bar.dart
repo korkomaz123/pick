@@ -88,9 +88,9 @@ class CigaBottomBar extends StatelessWidget {
             builder: (context, state) {
               int count = state.wishlistItemCount;
               return Badge(
-                position: BadgePosition.topRight(
+                position: BadgePosition.topEnd(
                   top: -pageStyle.unitHeight * 10,
-                  right: -pageStyle.unitWidth * 5,
+                  end: -pageStyle.unitWidth * 5,
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,
@@ -120,9 +120,9 @@ class CigaBottomBar extends StatelessWidget {
             builder: (context, state) {
               int count = state.wishlistItemCount;
               return Badge(
-                position: BadgePosition.topRight(
+                position: BadgePosition.topEnd(
                   top: -pageStyle.unitHeight * 10,
-                  right: -pageStyle.unitWidth * 5,
+                  end: -pageStyle.unitWidth * 5,
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,

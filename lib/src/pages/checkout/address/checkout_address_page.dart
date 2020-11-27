@@ -51,7 +51,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     super.initState();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
-    shippingAddressBloc = context.bloc<ShippingAddressBloc>();
+    shippingAddressBloc = context.read<ShippingAddressBloc>();
     phoneNumber = PhoneNumber(dialCode: '+965', isoCode: 'KW');
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;

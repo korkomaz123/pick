@@ -37,8 +37,8 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
-    signInBloc = context.bloc<SignInBloc>();
-    localRepo = context.repository<LocalStorageRepository>();
+    signInBloc = context.read<SignInBloc>();
+    localRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }

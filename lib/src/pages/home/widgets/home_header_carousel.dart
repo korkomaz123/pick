@@ -27,7 +27,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
+    homeBloc = context.read<HomeBloc>();
     homeBloc.add(HomeSliderImagesLoaded(lang: lang));
   }
 

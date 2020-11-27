@@ -48,7 +48,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
       scaffoldKey: scaffoldKey,
     );
     progressService = ProgressService(context: context);
-    categoryListBloc = context.bloc<CategoryListBloc>();
+    categoryListBloc = context.read<CategoryListBloc>();
     categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 

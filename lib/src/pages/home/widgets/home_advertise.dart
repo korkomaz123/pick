@@ -19,7 +19,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
+    homeBloc = context.read<HomeBloc>();
     homeBloc.add(HomeAdsLoaded());
   }
 

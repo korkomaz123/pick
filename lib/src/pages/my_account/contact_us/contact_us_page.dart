@@ -37,7 +37,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   @override
   void initState() {
     super.initState();
-    settingBloc = context.bloc<SettingBloc>();
+    settingBloc = context.read<SettingBloc>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
@@ -45,7 +45,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
     );
     firstNameController.text = user.firstName;
     emailController.text = user.email;
-    
   }
 
   @override

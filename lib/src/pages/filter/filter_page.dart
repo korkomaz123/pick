@@ -52,7 +52,7 @@ class _FilterPageState extends State<FilterPage> {
   @override
   void initState() {
     super.initState();
-    filterBloc = context.bloc<FilterBloc>();
+    filterBloc = context.read<FilterBloc>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,

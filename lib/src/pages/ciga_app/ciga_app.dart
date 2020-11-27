@@ -242,10 +242,10 @@ class _CigaAppViewState extends State<CigaAppView> {
   @override
   void initState() {
     super.initState();
-    localRepo = context.repository<LocalStorageRepository>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
-    myCartBloc = context.bloc<MyCartBloc>();
-    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
+    localRepo = context.read<LocalStorageRepository>();
+    cartItemCountBloc = context.read<CartItemCountBloc>();
+    myCartBloc = context.read<MyCartBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     _getCurrentUser();
     _getCartItems();
     _getWishlists();
@@ -258,7 +258,7 @@ class _CigaAppViewState extends State<CigaAppView> {
   void _getCurrentUser() async {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
-      final signInRepo = context.repository<SignInRepository>();
+      final signInRepo = context.read<SignInRepository>();
       final result = await signInRepo.getCurrentUser(token);
       if (result['code'] == 'SUCCESS') {
         result['data']['customer']['token'] = token;
@@ -271,9 +271,8 @@ class _CigaAppViewState extends State<CigaAppView> {
   void _getCartItems() async {
     String cartId = await localRepo.getCartId();
     if (cartId.isNotEmpty) {
-      final result = await context
-          .repository<MyCartRepository>()
-          .getCartItems(cartId, lang);
+      final result =
+          await context.read<MyCartRepository>().getCartItems(cartId, lang);
 
       if (result['code'] == 'SUCCESS') {
         List<dynamic> cartList = result['cart'];
@@ -320,7 +319,7 @@ class _CigaAppViewState extends State<CigaAppView> {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       final result = await context
-          .repository<ShippingAddressRepository>()
+          .read<ShippingAddressRepository>()
           .getShippingAddresses(token);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> shippingAddressesList = result['addresses'];
@@ -333,18 +332,18 @@ class _CigaAppViewState extends State<CigaAppView> {
 
   void _getShippingMethod() async {
     shippingMethods =
-        await context.repository<CheckoutRepository>().getShippingMethod(lang);
+        await context.read<CheckoutRepository>().getShippingMethod(lang);
   }
 
   void _getPaymentMethod() async {
     paymentMethods =
-        await context.repository<CheckoutRepository>().getPaymentMethod(lang);
+        await context.read<CheckoutRepository>().getPaymentMethod(lang);
   }
 
   void _getSideMenu() async {
     print(lang);
     sideMenus =
-        await context.repository<CategoryRepository>().getMenuCategories(lang);
+        await context.read<CategoryRepository>().getMenuCategories(lang);
   }
 
   @override

@@ -35,13 +35,13 @@ class _ChangeNotificationSettingItemState
     super.initState();
     getNotification = true;
     pageStyle = widget.pageStyle;
-    settingBloc = context.bloc<SettingBloc>();
+    settingBloc = context.read<SettingBloc>();
     _getNotification();
   }
 
   void _getNotification() async {
     getNotification = await context
-        .repository<SettingRepository>()
+        .read<SettingRepository>()
         .getNotificationSetting(user.token);
     setState(() {});
   }

@@ -34,7 +34,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
 
   void _getRelatedItems() async {
     relatedItems = await context
-        .repository<ProductRepository>()
+        .read<ProductRepository>()
         .getRelatedProducts(product.productId, lang);
     if (mounted) setState(() {});
   }

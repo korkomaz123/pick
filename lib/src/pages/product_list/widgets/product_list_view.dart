@@ -69,8 +69,8 @@ class _ProductListViewState extends State<ProductListView>
     brand = widget.brand;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    productListBloc = context.bloc<ProductListBloc>();
-    filterBloc = context.bloc<FilterBloc>();
+    productListBloc = context.read<ProductListBloc>();
+    filterBloc = context.read<FilterBloc>();
     tabController = TabController(
       length: subCategories.length,
       initialIndex: activeIndex,

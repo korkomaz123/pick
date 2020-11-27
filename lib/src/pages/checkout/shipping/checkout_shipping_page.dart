@@ -40,7 +40,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       shippingMethodId = shippingMethods[0].id;
       serviceFees = shippingMethods[0].serviceFees;
     }
-    localRepo = context.repository<LocalStorageRepository>();
+    localRepo = context.read<LocalStorageRepository>();
   }
 
   @override

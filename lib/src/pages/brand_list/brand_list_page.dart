@@ -44,7 +44,7 @@ class _BrandListPageState extends State<BrandListPage> {
       scaffoldKey: scaffoldKey,
     );
     progressService = ProgressService(context: context);
-    brandBloc = context.bloc<BrandBloc>();
+    brandBloc = context.read<BrandBloc>();
     brandBloc.add(BrandListLoaded(lang: lang));
   }
 

@@ -57,9 +57,9 @@ class _MyCartPageState extends State<MyCartPage>
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    myCartBloc = context.bloc<MyCartBloc>();
-    cigaAppBloc = context.bloc<CartItemCountBloc>();
-    localRepo = context.repository<LocalStorageRepository>();
+    myCartBloc = context.read<MyCartBloc>();
+    cigaAppBloc = context.read<CartItemCountBloc>();
+    localRepo = context.read<LocalStorageRepository>();
     _getMyCartId();
   }
 

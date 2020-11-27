@@ -4,23 +4,22 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 /// category list for home screen
 final List<CategoryEntity> homeCategories = [
   CategoryEntity(
     id: '41',
-    name: 'home_best_deals'.tr(),
+    name: 'home_best_deals',
     subCategories: [],
   ),
   CategoryEntity(
     id: '42',
-    name: 'home_new_arrivals'.tr(),
+    name: 'home_new_arrivals',
     subCategories: [],
   ),
   CategoryEntity(
     id: '43',
-    name: 'home_Perfumes'.tr(),
+    name: 'home_perfumes',
     subCategories: [],
   ),
 ];

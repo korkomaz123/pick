@@ -52,7 +52,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       scaffoldKey: scaffoldKey,
     );
     flushBarService = FlushBarService(context: context);
-    shippingAddressBloc = context.bloc<ShippingAddressBloc>();
+    shippingAddressBloc = context.read<ShippingAddressBloc>();
     shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
   }
 

@@ -30,7 +30,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   @override
   void initState() {
     super.initState();
-    brandBloc = context.bloc<BrandBloc>();
+    brandBloc = context.read<BrandBloc>();
     brandBloc.add(BrandListLoaded(lang: lang));
   }
 

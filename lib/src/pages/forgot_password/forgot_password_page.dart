@@ -30,7 +30,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   void initState() {
     super.initState();
-    signInBloc = context.bloc<SignInBloc>();
+    signInBloc = context.read<SignInBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }

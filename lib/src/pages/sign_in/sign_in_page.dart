@@ -45,8 +45,8 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    signInBloc = context.bloc<SignInBloc>();
-    localRepo = context.repository<LocalStorageRepository>();
+    signInBloc = context.read<SignInBloc>();
+    localRepo = context.read<LocalStorageRepository>();
   }
 
   void _saveToken(UserEntity loggedInUser) async {
@@ -287,7 +287,9 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
@@ -298,7 +300,9 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],
@@ -400,7 +404,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse = await http.get(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       final profile = json.decode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

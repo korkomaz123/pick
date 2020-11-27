@@ -58,7 +58,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    profileBloc = context.bloc<ProfileBloc>();
+    profileBloc = context.read<ProfileBloc>();
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
     phoneNumberController.text = user?.phoneNumber;

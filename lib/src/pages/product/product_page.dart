@@ -47,7 +47,7 @@ class _ProductPageState extends State<ProductPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    productBloc = context.bloc<ProductBloc>();
+    productBloc = context.read<ProductBloc>();
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,
       lang: lang,

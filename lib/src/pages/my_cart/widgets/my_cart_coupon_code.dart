@@ -32,7 +32,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
   @override
   void initState() {
     super.initState();
-    myCartBloc = context.bloc<MyCartBloc>();
+    myCartBloc = context.read<MyCartBloc>();
   }
 
   @override

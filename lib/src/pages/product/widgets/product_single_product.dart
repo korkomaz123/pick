@@ -34,7 +34,7 @@ class ProductSingleProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.bloc<MyCartBloc>(),
+      value: context.read<MyCartBloc>(),
       child: ProductSingleProductView(
         pageStyle: pageStyle,
         product: product,
@@ -84,9 +84,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     product = widget.product;
     productEntity = widget.productEntity;
 
-    cartBloc = context.bloc<MyCartBloc>();
+    cartBloc = context.read<MyCartBloc>();
     flushBarService = FlushBarService(context: context);
-    localStorageRepo = context.repository<LocalStorageRepository>();
+    localStorageRepo = context.read<LocalStorageRepository>();
 
     /// add to cart button animation
     _addToCartController = AnimationController(

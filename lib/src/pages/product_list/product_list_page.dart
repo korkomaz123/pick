@@ -19,6 +19,7 @@ import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
@@ -65,8 +66,8 @@ class _ProductListPageState extends State<ProductListPage> {
     subCategories = [category];
     selectedCategory = subCategories[activeSubcategoryIndex].name;
 
-    productListBloc = context.bloc<ProductListBloc>();
-    categoryBloc = context.bloc<CategoryBloc>();
+    productListBloc = context.read<ProductListBloc>();
+    categoryBloc = context.read<CategoryBloc>();
     if (isFromBrand) {
       categoryBloc.add(BrandSubCategoriesLoaded(
         brandId: brand.optionId,
@@ -199,7 +200,11 @@ class _ProductListPageState extends State<ProductListPage> {
           Align(
             alignment: Alignment.center,
             child: Text(
-              isFromBrand ? brand.brandLabel : category.name,
+              isFromBrand
+                  ? brand.brandLabel
+                  : ['41', '42', '43'].contains(category.id)
+                      ? category.name.tr()
+                      : category.name,
               style: boldTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 17,

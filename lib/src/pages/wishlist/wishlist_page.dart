@@ -32,7 +32,7 @@ class WishlistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.bloc<MyCartBloc>(),
+      value: context.watch<MyCartBloc>(),
       child: WishlistPageView(),
     );
   }
@@ -65,16 +65,16 @@ class _WishlistPageViewState extends State<WishlistPageView>
   @override
   void initState() {
     super.initState();
-    localStorageRepo = context.repository<LocalStorageRepository>();
+    localStorageRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
     );
     flushBarService = FlushBarService(context: context);
-    wishlistBloc = context.bloc<WishlistBloc>();
-    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
-    cartBloc = context.bloc<MyCartBloc>();
+    wishlistBloc = context.read<WishlistBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    cartBloc = context.read<MyCartBloc>();
     _triggerLoadWishlistEvent();
     _getCartId();
   }

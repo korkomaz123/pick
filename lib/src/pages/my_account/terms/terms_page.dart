@@ -67,7 +67,7 @@ class _TermsPageState extends State<TermsPage> {
             Padding(
               padding: EdgeInsets.all(pageStyle.unitWidth * 15),
               child: FutureBuilder(
-                future: context.repository<SettingRepository>().getTerms(lang),
+                future: context.watch<SettingRepository>().getTerms(lang),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Html(data: snapshot.data['data']['html']);

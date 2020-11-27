@@ -31,7 +31,7 @@ class _WishlistItemState extends State<WishlistItem> {
     super.initState();
     pageStyle = widget.pageStyle;
     snackBarService = widget.snackBarService;
-    localRepo = context.repository<LocalStorageRepository>();
+    localRepo = context.read<LocalStorageRepository>();
     _getWishlist();
   }
 

@@ -67,8 +67,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
             Padding(
               padding: EdgeInsets.all(pageStyle.unitWidth * 15),
               child: FutureBuilder(
-                future:
-                    context.repository<SettingRepository>().getAboutUs(lang),
+                future: context.watch<SettingRepository>().getAboutUs(lang),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Html(data: snapshot.data['data']['html']);

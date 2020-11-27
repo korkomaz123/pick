@@ -46,14 +46,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    searchRepository = context.repository<SearchRepository>();
-    localStorageRepository = context.repository<LocalStorageRepository>();
+    searchRepository = context.read<SearchRepository>();
+    localStorageRepository = context.read<LocalStorageRepository>();
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    searchBloc = context.bloc<SearchBloc>();
+    searchBloc = context.read<SearchBloc>();
     searchController.addListener(_getSuggestion);
     _getSearchHistories();
   }
@@ -122,17 +122,17 @@ class _SearchPageState extends State<SearchPage> {
       ),
       body: BlocConsumer<SearchBloc, SearchState>(
         listener: (context, state) {
-          if (state is SearchedInProcess) {
-            progressService.showProgress();
-          }
+          // if (state is SearchedInProcess) {
+          //   progressService.showProgress();
+          // }
           if (state is SearchedSuccess) {
-            progressService.hideProgress();
+            // progressService.hideProgress();
             if (state.products.isNotEmpty && searchController.text.isNotEmpty) {
               _saveSearchHistory();
             }
           }
           if (state is SearchedFailure) {
-            progressService.hideProgress();
+            // progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
         },

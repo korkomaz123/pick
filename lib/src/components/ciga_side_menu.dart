@@ -41,8 +41,8 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
-    signInBloc = context.bloc<SignInBloc>();
-    localRepo = context.repository<LocalStorageRepository>();
+    signInBloc = context.read<SignInBloc>();
+    localRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }

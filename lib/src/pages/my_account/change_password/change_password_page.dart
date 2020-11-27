@@ -38,7 +38,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    settingBloc = context.bloc<SettingBloc>();
+    settingBloc = context.read<SettingBloc>();
   }
 
   @override

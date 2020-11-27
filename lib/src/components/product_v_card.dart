@@ -58,9 +58,9 @@ class _ProductVCardState extends State<ProductVCard>
   void initState() {
     super.initState();
     isWishlist = false;
-    localRepo = context.repository<LocalStorageRepository>();
-    myCartBloc = context.bloc<MyCartBloc>();
-    wishlistItemCountBloc = context.bloc<WishlistItemCountBloc>();
+    localRepo = context.read<LocalStorageRepository>();
+    myCartBloc = context.read<MyCartBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
     _getMyCartId();

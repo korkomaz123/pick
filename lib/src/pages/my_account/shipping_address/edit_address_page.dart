@@ -66,7 +66,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       phoneNumberController.text = widget?.address?.phoneNumber;
       countryId = widget?.address?.countryId;
     }
-    shippingAddressBloc = context.bloc<ShippingAddressBloc>();
+    shippingAddressBloc = context.read<ShippingAddressBloc>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,

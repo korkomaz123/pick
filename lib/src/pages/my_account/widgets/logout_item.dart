@@ -39,8 +39,8 @@ class _LogoutItemState extends State<LogoutItem> {
     pageStyle = widget.pageStyle;
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
-    signInBloc = context.bloc<SignInBloc>();
-    localRepo = context.repository<LocalStorageRepository>();
+    signInBloc = context.read<SignInBloc>();
+    localRepo = context.read<LocalStorageRepository>();
   }
 
   @override

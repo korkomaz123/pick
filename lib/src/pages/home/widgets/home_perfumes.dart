@@ -30,7 +30,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
+    homeBloc = context.read<HomeBloc>();
     homeBloc.add(HomePerfumesLoaded(lang: lang));
   }
 

@@ -30,7 +30,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   @override
   void initState() {
     super.initState();
-    categoryListBloc = context.bloc<CategoryListBloc>();
+    categoryListBloc = context.read<CategoryListBloc>();
     categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 

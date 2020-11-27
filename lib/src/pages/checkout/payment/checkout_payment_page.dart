@@ -45,9 +45,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    checkoutBloc = context.bloc<CheckoutBloc>();
-    cartItemCountBloc = context.bloc<CartItemCountBloc>();
-    localStorageRepo = context.repository<LocalStorageRepository>();
+    checkoutBloc = context.read<CheckoutBloc>();
+    cartItemCountBloc = context.read<CartItemCountBloc>();
+    localStorageRepo = context.read<LocalStorageRepository>();
   }
 
   @override

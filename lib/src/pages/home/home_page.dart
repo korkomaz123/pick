@@ -37,9 +37,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    homeBloc = context.bloc<HomeBloc>();
-    categoryListBloc = context.bloc<CategoryListBloc>();
-    brandBloc = context.bloc<BrandBloc>();
+    homeBloc = context.read<HomeBloc>();
+    categoryListBloc = context.read<CategoryListBloc>();
+    brandBloc = context.read<BrandBloc>();
   }
 
   void _onRefresh() async {

@@ -56,9 +56,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    localRepo = context.repository<LocalStorageRepository>();
-    cartRepo = context.repository<MyCartRepository>();
-    reorderCartBloc = context.bloc<ReorderCartBloc>();
+    localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
+    reorderCartBloc = context.read<ReorderCartBloc>();
     _getReorderCartId();
     _getOrderStatus();
   }
