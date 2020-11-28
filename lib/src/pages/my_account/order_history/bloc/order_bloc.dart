@@ -41,6 +41,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         yield OrderHistoryLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
+      print(e.toString());
       yield OrderHistoryLoadedFailure(message: e.toString());
     }
   }

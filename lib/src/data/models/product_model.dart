@@ -46,7 +46,9 @@ class ProductModel {
         shortDescription = json['short_description'],
         name = json['name'],
         metaDescription = json['meta_description'],
-        price = double.parse(json['price']).toStringAsFixed(2),
+        price = json['price'] != null
+            ? double.parse(json['price']).toStringAsFixed(2)
+            : '0.00',
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
