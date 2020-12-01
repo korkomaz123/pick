@@ -51,7 +51,7 @@ class _TermsPageState extends State<TermsPage> {
       centerTitle: true,
       title: Text(
         'account_terms_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:http/http.dart' as http;
@@ -135,7 +136,7 @@ class _SignInPageState extends State<SignInPage> {
       ),
       child: TextFormField(
         controller: emailController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
@@ -150,11 +151,11 @@ class _SignInPageState extends State<SignInPage> {
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           hintText: 'email'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -187,7 +188,7 @@ class _SignInPageState extends State<SignInPage> {
       ),
       child: TextFormField(
         controller: passwordController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
@@ -201,11 +202,11 @@ class _SignInPageState extends State<SignInPage> {
         },
         decoration: InputDecoration(
           hintText: 'password'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -249,7 +250,7 @@ class _SignInPageState extends State<SignInPage> {
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'sign_in'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
@@ -294,7 +295,7 @@ class _SignInPageState extends State<SignInPage> {
           ),
           Text(
             'or_divider'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 17,
               color: Colors.white,
             ),
@@ -355,7 +356,7 @@ class _SignInPageState extends State<SignInPage> {
         children: [
           Text(
             'ask_have_account'.tr() + ' ',
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
             ),
@@ -364,7 +365,7 @@ class _SignInPageState extends State<SignInPage> {
             onTap: () => Navigator.pushNamed(context, Routes.signUp),
             child: Text(
               'sign_up'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 17,
               ),

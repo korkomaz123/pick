@@ -53,7 +53,7 @@ class _NotificationMessageDetailsPageState
       centerTitle: true,
       title: Text(
         'account_notification_message_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -87,7 +87,7 @@ class _NotificationMessageDetailsPageState
                   ),
                   Text(
                     widget.message.time,
-                    style: boldTextStyle.copyWith(
+                    style: mediumTextStyle.copyWith(
                       fontSize: pageStyle.unitFontSize * 9,
                     ),
                   ),
@@ -96,7 +96,7 @@ class _NotificationMessageDetailsPageState
               SizedBox(height: pageStyle.unitHeight * 10),
               Text(
                 widget.message.content,
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   fontSize: pageStyle.unitFontSize * 13,
                   color: greyColor,
                 ),

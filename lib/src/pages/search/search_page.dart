@@ -114,7 +114,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
         title: Text(
           'search_title'.tr(),
-          style: boldTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 40,
           ),
@@ -234,7 +234,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
       child: TextFormField(
         controller: searchController,
-        style: bookTextStyle.copyWith(fontSize: pageStyle.unitFontSize * 19),
+        style: mediumTextStyle.copyWith(fontSize: pageStyle.unitFontSize * 19),
         decoration: InputDecoration(
           border: OutlineInputBorder(borderSide: BorderSide.none),
           enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
@@ -310,7 +310,7 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Text(
             'all'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 19,
             ),
           ),
@@ -321,7 +321,7 @@ class _SearchPageState extends State<SearchPage> {
             }),
             child: Text(
               '+ ' + 'filter_title'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 19,
               ),
             ),
@@ -441,7 +441,7 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Text(
             'search_history_search'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 21,
               color: greyColor,
             ),
@@ -450,7 +450,7 @@ class _SearchPageState extends State<SearchPage> {
             onTap: () => _clearSearchHistory(),
             child: Text(
               'search_clear_all'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 15,
               ),

@@ -37,7 +37,7 @@ class CigaTextInput extends StatelessWidget {
           fontSize: fontSize,
         ),
         decoration: InputDecoration(
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: fontSize,
           ),

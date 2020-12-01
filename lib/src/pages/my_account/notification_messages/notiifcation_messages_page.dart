@@ -49,7 +49,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
       centerTitle: true,
       title: Text(
         'account_notification_message_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -87,7 +87,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
                           children: [
                             Text(
                               messages[index].time,
-                              style: boldTextStyle.copyWith(
+                              style: mediumTextStyle.copyWith(
                                 fontSize: pageStyle.unitFontSize * 9,
                               ),
                             ),
@@ -102,7 +102,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
                               messages[index].content,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: bookTextStyle.copyWith(
+                              style: mediumTextStyle.copyWith(
                                 fontSize: pageStyle.unitFontSize * 13,
                                 color: greyColor,
                               ),

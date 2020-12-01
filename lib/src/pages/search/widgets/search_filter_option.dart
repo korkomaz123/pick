@@ -71,7 +71,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   child: FadeInAnimation(
                     child: Text(
                       'bottom_category'.tr(),
-                      style: boldTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: widget.pageStyle.unitFontSize * 23,
                       ),
@@ -104,7 +104,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   child: FadeInAnimation(
                     child: Text(
                       'brands_title'.tr(),
-                      style: boldTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: widget.pageStyle.unitFontSize * 23,
                       ),
@@ -137,7 +137,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   child: FadeInAnimation(
                     child: Text(
                       'filter_gender'.tr(),
-                      style: boldTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: widget.pageStyle.unitFontSize * 23,
                       ),

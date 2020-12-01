@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -94,7 +95,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       centerTitle: true,
       title: Text(
         'account_contact_us_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -273,7 +274,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         horizontal: pageStyle.unitWidth * 80,
         vertical: pageStyle.unitHeight * 20,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'send_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,

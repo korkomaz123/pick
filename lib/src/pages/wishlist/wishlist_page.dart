@@ -193,7 +193,7 @@ class _WishlistPageViewState extends State<WishlistPageView>
           ),
           Text(
             'account_wishlist_title'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 17,
             ),

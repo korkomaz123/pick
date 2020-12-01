@@ -52,10 +52,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
     categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 
-  void _onRefresh() async {
+  void _onRefresh() {
     categoryListBloc.add(CategoryListLoaded(lang: lang));
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.refreshCompleted();
   }
 
   @override
@@ -75,11 +73,13 @@ class _CategoryListPageState extends State<CategoryListPage> {
               // if (state is CategoryListLoadedInProcess) {
               //   progressService.showProgress();
               // }
-              // if (state is CategoryListLoadedSuccess) {
-              //   progressService.hideProgress();
-              // }
+              if (state is CategoryListLoadedSuccess) {
+                // progressService.hideProgress();
+                _refreshController.refreshCompleted();
+              }
               if (state is CategoryListLoadedFailure) {
                 // progressService.hideProgress();
+                _refreshController.refreshCompleted();
                 snackBarService.showErrorSnackBar(state.message);
               }
             },
@@ -167,10 +167,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
   Widget _buildSubcategoriesList(CategoryEntity category) {
     return AnimationLimiter(
       child: Column(
-        children: List.generate(
-          category.subCategories.length,
-          (index) => AnimationConfiguration.staggeredList(
-            position: index,
+        children: [
+          AnimationConfiguration.staggeredList(
+            position: 0,
             duration: Duration(milliseconds: 375),
             child: SlideAnimation(
               verticalOffset: 50.0,
@@ -180,7 +179,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                     activeIndex = -1;
                     setState(() {});
                     ProductListArguments arguments = ProductListArguments(
-                      category: category.subCategories[index],
+                      category: category,
                       subCategory: [],
                       brand: BrandEntity(),
                       selectedSubCategoryIndex: 0,
@@ -204,7 +203,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          category.subCategories[index].name,
+                          'all'.tr(),
                           style: mediumTextStyle.copyWith(
                             color: greyColor,
                             fontSize: pageStyle.unitFontSize * 18,
@@ -222,7 +221,65 @@ class _CategoryListPageState extends State<CategoryListPage> {
               ),
             ),
           ),
-        ),
+          Column(
+            children: List.generate(
+              category.subCategories.length,
+              (index) => AnimationConfiguration.staggeredList(
+                position: (index + 1),
+                duration: Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: InkWell(
+                      onTap: () {
+                        activeIndex = -1;
+                        setState(() {});
+                        ProductListArguments arguments = ProductListArguments(
+                          category: category.subCategories[index],
+                          subCategory: [],
+                          brand: BrandEntity(),
+                          selectedSubCategoryIndex: 0,
+                          isFromBrand: false,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productList,
+                          arguments: arguments,
+                        );
+                      },
+                      child: Container(
+                        width: pageStyle.deviceWidth,
+                        color: greyLightColor,
+                        margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: pageStyle.unitWidth * 20,
+                          vertical: pageStyle.unitHeight * 10,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              category.subCategories[index].name,
+                              style: mediumTextStyle.copyWith(
+                                color: greyColor,
+                                fontSize: pageStyle.unitFontSize * 18,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: pageStyle.unitFontSize * 22,
+                              color: primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -244,7 +301,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         elevation: 0,
         child: Text(
           'home_categories'.tr(),
-          style: boldTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -273,7 +330,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         elevation: 0,
         child: Text(
           'brands_title'.tr(),
-          style: boldTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 12,
           ),

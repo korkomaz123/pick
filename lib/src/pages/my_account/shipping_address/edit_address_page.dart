@@ -147,7 +147,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       centerTitle: true,
       title: Text(
         'shipping_address_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),

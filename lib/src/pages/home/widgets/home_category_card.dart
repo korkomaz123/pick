@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -47,7 +48,7 @@ class HomeCategoryCard extends StatelessWidget {
           Expanded(
             child: Container(
               alignment: Alignment.bottomLeft,
-              child: TextButton(
+              child: CigaTextButton(
                 title: 'view_all'.tr(),
                 titleSize: pageStyle.unitFontSize * 18,
                 titleColor: Colors.white,

@@ -8,8 +8,6 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-import 'restart_mandatory_dialog.dart';
-
 class LanguageSettingItem extends StatefulWidget {
   final PageStyle pageStyle;
 
@@ -101,13 +99,6 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return RestartMandatoryDialog(pageStyle: pageStyle);
-        },
-      );
-
       Phoenix.rebirth(context);
     }
   }

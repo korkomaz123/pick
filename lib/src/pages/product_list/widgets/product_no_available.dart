@@ -26,7 +26,7 @@ class ProductNoAvailable extends StatelessWidget {
           SizedBox(height: pageStyle.unitHeight * 20),
           Text(
             'no_data_message'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
               color: greyColor,
             ),

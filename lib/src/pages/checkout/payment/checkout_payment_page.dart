@@ -1,4 +1,5 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
@@ -141,7 +142,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             children: [
               Text(
                 'checkout_subtotal_title'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -149,7 +150,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               Text(
                 'currency'.tr() +
                     ' ${orderDetails['orderDetails']['subTotalPrice']}',
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -162,7 +163,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             children: [
               Text(
                 'checkout_shipping_cost_title'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -172,7 +173,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                     ? 'free'.tr()
                     : 'currency'.tr() +
                         ' ${orderDetails['orderDetails']['fees']}',
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -185,7 +186,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             children: [
               Text(
                 'total'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -209,7 +210,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_place_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
@@ -225,7 +226,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_back_review_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

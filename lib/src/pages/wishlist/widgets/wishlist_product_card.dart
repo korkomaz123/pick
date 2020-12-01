@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -46,18 +47,19 @@ class WishlistProductCard extends StatelessWidget {
               children: [
                 Text(
                   product.name,
-                  style: boldTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 17,
+                    fontSize: pageStyle.unitFontSize * 16,
                   ),
                 ),
+                SizedBox(height: pageStyle.unitHeight * 4),
                 Text(
                   product.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: pageStyle.unitFontSize * 12,
                   ),
                 ),
                 Text(
@@ -68,7 +70,7 @@ class WishlistProductCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: pageStyle.unitHeight * 10),
-                TextButton(
+                CigaTextButton(
                   title: 'wishlist_add_cart_button_title'.tr(),
                   titleSize: pageStyle.unitFontSize * 15,
                   titleColor: Colors.white,

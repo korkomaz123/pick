@@ -5,6 +5,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_input_field.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -149,7 +150,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       centerTitle: true,
       title: Text(
         'account_update_profile_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -312,7 +313,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'update_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,

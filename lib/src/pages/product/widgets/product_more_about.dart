@@ -26,7 +26,7 @@ class ProductMoreAbout extends StatelessWidget {
         children: [
           Text(
             'product_more_about'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 19,
             ),
@@ -34,7 +34,7 @@ class ProductMoreAbout extends StatelessWidget {
           SizedBox(height: pageStyle.unitFontSize * 4),
           Text(
             productEntity.description,
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyColor,
               fontSize: pageStyle.unitFontSize * 12,
             ),
@@ -42,7 +42,7 @@ class ProductMoreAbout extends StatelessWidget {
           SizedBox(height: pageStyle.unitFontSize * 15),
           Text(
             'product_reviews'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 19,
             ),
@@ -53,7 +53,7 @@ class ProductMoreAbout extends StatelessWidget {
             children: productEntity.reviews.map((review) {
               return Text(
                 review.detail,
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 12,
                 ),

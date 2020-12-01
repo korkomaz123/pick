@@ -1,4 +1,5 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -41,7 +42,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 children: [
                   Text(
                     'checkout_ordered_success_title'.tr(),
-                    style: boldTextStyle.copyWith(
+                    style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 34,
                     ),
@@ -63,7 +64,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                   'checkout_ordered_success_text'
                       .tr()
                       .replaceFirst('0', widget.orderNo),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -72,7 +73,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               SizedBox(height: pageStyle.unitHeight * 20),
               Text(
                 'checkout_ordered_success_subtitle'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
                 ),
@@ -82,7 +83,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 padding: EdgeInsets.only(left: pageStyle.unitWidth * 8),
                 child: Text(
                   'checkout_ordered_success_subtext'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -91,7 +92,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               _buildShowAllMyOrderedButton(),
               Text(
                 'checkout_ordered_success_account_title'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
                 ),
@@ -101,7 +102,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 padding: EdgeInsets.only(left: pageStyle.unitWidth * 8),
                 child: Text(
                   'checkout_ordered_success_account_text'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -119,7 +120,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_show_all_ordered_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white70,
@@ -135,7 +136,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_back_shop_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

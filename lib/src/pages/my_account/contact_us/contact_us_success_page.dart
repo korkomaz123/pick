@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -50,7 +51,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
       centerTitle: true,
       title: Text(
         'account_contact_us_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -71,7 +72,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
                 children: [
                   Text(
                     'checkout_ordered_success_title'.tr(),
-                    style: boldTextStyle.copyWith(
+                    style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 34,
                     ),
@@ -112,7 +113,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
         vertical: pageStyle.unitHeight * 30,
         horizontal: pageStyle.unitWidth * 30,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_back_shop_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 17,
         titleColor: greyColor,

@@ -23,7 +23,7 @@ class RestartMandatoryDialog extends StatelessWidget
           title: Text(
             'restart_app_title'.tr(),
             textAlign: TextAlign.center,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 26,
               color: Colors.black,
             ),
@@ -31,7 +31,7 @@ class RestartMandatoryDialog extends StatelessWidget
           content: Text(
             'restart_app_text'.tr(),
             textAlign: TextAlign.center,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 15,
               color: Colors.black87,
             ),
@@ -41,7 +41,7 @@ class RestartMandatoryDialog extends StatelessWidget
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'restart_now'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   fontSize: pageStyle.unitFontSize * 18,
                   color: primaryColor,
                 ),

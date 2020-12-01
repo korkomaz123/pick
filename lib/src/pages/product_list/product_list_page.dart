@@ -205,7 +205,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   : ['41', '42', '43'].contains(category.id)
                       ? category.name.tr()
                       : category.name,
-              style: boldTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 17,
               ),

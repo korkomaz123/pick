@@ -23,7 +23,7 @@ class UpdateProfileSuccessDialog extends StatelessWidget
           title: Text(
             'thankyou'.tr(),
             textAlign: TextAlign.center,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 26,
               color: Colors.black,
             ),
@@ -31,7 +31,7 @@ class UpdateProfileSuccessDialog extends StatelessWidget
           content: Text(
             'update_success_message'.tr(),
             textAlign: TextAlign.center,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 15,
               color: Colors.black87,
             ),
@@ -41,7 +41,7 @@ class UpdateProfileSuccessDialog extends StatelessWidget
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'close'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   fontSize: pageStyle.unitFontSize * 18,
                   color: primaryColor,
                 ),

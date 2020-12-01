@@ -37,7 +37,7 @@ class CigaBottomBar extends StatelessWidget {
           ),
           title: Text(
             'bottom_home'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
@@ -55,7 +55,7 @@ class CigaBottomBar extends StatelessWidget {
           ),
           title: Text(
             'bottom_category'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
@@ -73,7 +73,7 @@ class CigaBottomBar extends StatelessWidget {
           ),
           title: Text(
             'brands_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
@@ -111,7 +111,7 @@ class CigaBottomBar extends StatelessWidget {
           ),
           title: Text(
             'bottom_wishlist'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
@@ -150,7 +150,7 @@ class CigaBottomBar extends StatelessWidget {
           ),
           title: Text(
             'bottom_account'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
@@ -174,27 +174,12 @@ class CigaBottomBar extends StatelessWidget {
         );
         break;
       case 1:
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context,
-        //   Routes.home,
-        //   (route) => false,
-        // );
         Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context,
-        //   Routes.home,
-        //   (route) => false,
-        // );
         Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context,
-        //   Routes.home,
-        //   (route) => false,
-        // );
         if (user?.token != null) {
           Navigator.pushNamed(context, Routes.wishlist);
         } else {
@@ -202,16 +187,7 @@ class CigaBottomBar extends StatelessWidget {
         }
         break;
       case 4:
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context,
-        //   Routes.home,
-        //   (route) => false,
-        // );
-        if (user?.token != null) {
-          Navigator.pushNamed(context, Routes.account);
-        } else {
-          Navigator.pushNamed(context, Routes.signIn);
-        }
+        Navigator.pushNamed(context, Routes.account);
         break;
       default:
         Navigator.pushNamedAndRemoveUntil(

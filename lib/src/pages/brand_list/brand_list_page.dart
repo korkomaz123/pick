@@ -148,7 +148,7 @@ class _BrandListPageState extends State<BrandListPage> {
         elevation: 0,
         child: Text(
           'home_categories'.tr(),
-          style: boldTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -174,7 +174,7 @@ class _BrandListPageState extends State<BrandListPage> {
         elevation: 0,
         child: Text(
           'brands_title'.tr(),
-          style: boldTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -216,7 +216,7 @@ class _BrandListPageState extends State<BrandListPage> {
               children: [
                 Text(
                   'view_products'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 11,
                   ),

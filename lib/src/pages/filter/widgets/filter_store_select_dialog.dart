@@ -60,7 +60,7 @@ class _FilterStoreSelectDialogState extends State<FilterStoreSelectDialog> {
         children: [
           Text(
             'brands_title'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: widget.pageStyle.unitFontSize * 22,
             ),

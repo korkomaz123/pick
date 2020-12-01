@@ -56,7 +56,7 @@ class _SearchBasicSelectState extends State<SearchBasicSelect> {
                 alignment: Alignment.center,
                 child: Text(
                   item['label'],
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: isSelected ? Colors.white : greyDarkColor,
                     fontSize: widget.pageStyle.unitFontSize * 14,
                   ),

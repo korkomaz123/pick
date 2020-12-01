@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -156,7 +157,7 @@ class _FilterPageState extends State<FilterPage> {
           ),
           Text(
             'filter_title'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 25,
             ),
@@ -168,7 +169,7 @@ class _FilterPageState extends State<FilterPage> {
               onTap: () => _onResetAll(),
               child: Text(
                 'filter_reset_all'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 16,
                 ),
@@ -220,7 +221,7 @@ class _FilterPageState extends State<FilterPage> {
         children: [
           Text(
             'filter_price'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 22,
             ),
@@ -230,7 +231,7 @@ class _FilterPageState extends State<FilterPage> {
             alignment: Alignment.center,
             child: Text(
               '${minPrice.toStringAsFixed(0)} KD - ${maxPrice.toStringAsFixed(0)} KD',
-              style: boldTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 25,
               ),
@@ -271,7 +272,7 @@ class _FilterPageState extends State<FilterPage> {
         children: [
           Text(
             'filter_gender'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: Colors.white,
               fontSize: pageStyle.unitFontSize * 22,
             ),
@@ -317,7 +318,7 @@ class _FilterPageState extends State<FilterPage> {
               children: [
                 Text(
                   'filter_size'.tr(),
-                  style: boldTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
                   ),
@@ -379,7 +380,7 @@ class _FilterPageState extends State<FilterPage> {
               children: [
                 Text(
                   'filter_color'.tr(),
-                  style: boldTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
                   ),
@@ -450,7 +451,7 @@ class _FilterPageState extends State<FilterPage> {
               children: [
                 Text(
                   'brands_title'.tr(),
-                  style: boldTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: Colors.white,
                     fontSize: pageStyle.unitFontSize * 22,
                   ),
@@ -511,7 +512,7 @@ class _FilterPageState extends State<FilterPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 60,
       margin: EdgeInsets.only(top: pageStyle.unitHeight * 30),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'apply_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 24,
         titleColor: Colors.white,

@@ -25,7 +25,7 @@ class FlushBarService {
             Expanded(
               child: Text(
                 product.name,
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 15,
                 ),
@@ -71,7 +71,7 @@ class FlushBarService {
     Flushbar(
       messageText: Text(
         message,
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
@@ -88,7 +88,7 @@ class FlushBarService {
     Flushbar(
       messageText: Text(
         message,
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),

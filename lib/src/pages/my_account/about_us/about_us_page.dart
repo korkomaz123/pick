@@ -51,7 +51,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
       centerTitle: true,
       title: Text(
         'account_about_us_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),

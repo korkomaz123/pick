@@ -117,7 +117,7 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                               Expanded(
                                 child: Text(
                                   country['name'] + ' (${country['code']})',
-                                  style: bookTextStyle.copyWith(
+                                  style: mediumTextStyle.copyWith(
                                       fontSize: pageStyle.unitFontSize * 14,
                                       color: isSelected
                                           ? primarySwatchColor

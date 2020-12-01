@@ -1,6 +1,7 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/components/no_available_data.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
@@ -65,9 +66,7 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
-    if (cartId.isNotEmpty) {
-      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-    }
+    myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
   }
 
   @override
@@ -87,17 +86,21 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           BlocConsumer<MyCartBloc, MyCartState>(
             listener: (context, state) {
-              // if (state is MyCartItemsLoadedInProcess) {
-              //   progressService.showProgress();
-              // }
+              if (state is MyCartItemsLoadedInProcess) {
+                // print('inprocess');
+                // progressService.showProgress();
+              }
               if (state is MyCartItemsLoadedSuccess) {
                 // progressService.hideProgress();
+                // print(state.cartItems);
+                // print('success');
                 cigaAppBloc.add(CartItemCountUpdated(
                   cartItems: state.cartItems,
                 ));
               }
               if (state is MyCartItemsLoadedFailure) {
                 // progressService.hideProgress();
+                // print('failed');
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
               if (state is MyCartItemUpdatedInProcess) {
@@ -161,7 +164,7 @@ class _MyCartPageState extends State<MyCartPage>
                 totalPrice = 0;
                 cartTotalPrice = 0;
               }
-              return state is MyCartItemsClearedSuccess && myCartItems.isEmpty
+              return state is MyCartItemsLoadedSuccess && myCartItems.isEmpty
                   ? Center(
                       child: NoAvailableData(
                         pageStyle: pageStyle,
@@ -219,7 +222,7 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           Text(
             'my_cart_title'.tr(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 23,
             ),
@@ -228,7 +231,7 @@ class _MyCartPageState extends State<MyCartPage>
             onTap: () => _onClearCartItems(),
             child: Text(
               'my_cart_clear_cart'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: dangerColor,
                 fontSize: pageStyle.unitFontSize * 11,
               ),
@@ -250,14 +253,14 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           Text(
             'total'.tr() + ' ',
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
             ),
           ),
           Text(
             'items'.tr().replaceFirst('0', '${myCartItems.length}'),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 13,
             ),
@@ -438,14 +441,14 @@ class _MyCartPageState extends State<MyCartPage>
             children: [
               Text(
                 'products'.tr(),
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
                 ),
               ),
               Text(
                 'items'.tr().replaceFirst('0', '${myCartItems.length}'),
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
                 ),
@@ -458,14 +461,14 @@ class _MyCartPageState extends State<MyCartPage>
             children: [
               Text(
                 'total'.tr(),
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
                 ),
               ),
               Text(
                 '$totalPrice ' + 'currency'.tr(),
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,
                 ),
@@ -485,7 +488,7 @@ class _MyCartPageState extends State<MyCartPage>
         horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 15,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 23,
         titleColor: primaryColor,

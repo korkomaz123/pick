@@ -1,4 +1,5 @@
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -73,7 +74,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                 ),
                 child: Text(
                   'checkout_review_title'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -179,7 +180,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
           width: double.infinity,
           child: TextFormField(
             controller: noteController,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -203,7 +204,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_continue_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
@@ -219,7 +220,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_back_shipping_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

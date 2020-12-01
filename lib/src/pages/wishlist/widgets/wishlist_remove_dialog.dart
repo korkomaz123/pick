@@ -16,7 +16,7 @@ class WishlistRemoveDialog extends StatelessWidget {
       title: Text(
         'wishlist_remove_item_dialog_title'.tr(),
         textAlign: TextAlign.center,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 26,
           color: Colors.black,
         ),
@@ -24,7 +24,7 @@ class WishlistRemoveDialog extends StatelessWidget {
       content: Text(
         'wishlist_remove_item_dialog_text'.tr(),
         textAlign: TextAlign.center,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 15,
           color: Colors.black87,
         ),
@@ -34,7 +34,7 @@ class WishlistRemoveDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context, 'yes'),
           child: Text(
             'yes_button_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 18,
               color: primaryColor,
             ),
@@ -44,7 +44,7 @@ class WishlistRemoveDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           child: Text(
             'no_button_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 18,
               color: primaryColor,
             ),

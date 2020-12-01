@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/components/ciga_country_input.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -140,7 +141,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           //     autoValidate: false,
           //     hintText: 'phone_number_hint'.tr(),
           //     errorMessage: "",
-          //     textStyle: bookTextStyle.copyWith(
+          //     textStyle: mediumTextStyle.copyWith(
           //       fontSize: pageStyle.unitFontSize * 14,
           //     ),
           //     textFieldController: phoneNumberController,
@@ -215,7 +216,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_searching_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyDarkColor,
@@ -232,7 +233,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'checkout_select_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyDarkColor,
@@ -254,7 +255,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         children: [
           Container(
             width: pageStyle.unitWidth * 150,
-            child: TextButton(
+            child: CigaTextButton(
               title: 'checkout_save_address_button_title'.tr(),
               titleSize: pageStyle.unitFontSize * 12,
               titleColor: greyDarkColor,
@@ -266,7 +267,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           ),
           Container(
             width: pageStyle.unitWidth * 197,
-            child: TextButton(
+            child: CigaTextButton(
               title: 'checkout_continue_shipping_button_title'.tr(),
               titleSize: pageStyle.unitFontSize * 12,
               titleColor: Colors.white,

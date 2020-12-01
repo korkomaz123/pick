@@ -113,7 +113,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
       centerTitle: true,
       title: Text(
         'view_order_button_title'.tr(),
-        style: boldTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
         ),
@@ -166,7 +166,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'order_order_no'.tr() + ' #${order.orderNo}',
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -188,14 +188,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'order_order_date'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
           ),
           Text(
             order.orderDate,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -216,14 +216,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'order_status'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
           ),
           Text(
             status,
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: color,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -279,7 +279,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               children: [
                 Text(
                   cartItem.product.name,
-                  style: boldTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                   ),
                 ),
@@ -287,7 +287,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                   cartItem.product.description,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 12,
                   ),
                 ),
@@ -298,14 +298,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                     Text(
                       cartItem.itemCount.toString() +
                           'items'.tr().replaceFirst('0', ''),
-                      style: bookTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
                         color: primaryColor,
                       ),
                     ),
                     Text(
                       cartItem.product.price + ' ' + 'currency'.tr(),
-                      style: boldTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 16,
                         color: primaryColor,
                       ),
@@ -331,7 +331,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'order_payment_method'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -341,7 +341,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               paymentWidget,
               Text(
                 order.paymentMethod.title,
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 14,
                 ),
@@ -365,14 +365,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'checkout_subtotal_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
           ),
           Text(
             'currency'.tr() + ' ${order.subtotalPrice}',
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -395,7 +395,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'checkout_shipping_cost_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -404,7 +404,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'currency'.tr() +
                 ' ' +
                 (totalQty * order.shippingMethod.serviceFees).toString(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
             ),
@@ -426,7 +426,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         children: [
           Text(
             'total'.tr().toUpperCase(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 14,
               fontWeight: FontWeight.w600,
@@ -434,7 +434,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           ),
           Text(
             'currency'.tr() + ' ${order.totalPrice}',
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
               fontWeight: FontWeight.w600,
@@ -463,7 +463,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         child: Center(
           child: Text(
             'Address: ${shippingAddresses[0].city} ${shippingAddresses[0].street}',
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
             ),
           ),
@@ -496,7 +496,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           SizedBox(width: pageStyle.unitWidth * 4),
           Text(
             'reorder_button_title'.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 17,
               color: Colors.white,
             ),

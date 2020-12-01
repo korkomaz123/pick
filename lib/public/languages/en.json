@@ -222,5 +222,6 @@
     "in_stock": "In Stock",
     "out_stock": "Out of Stock",
     "or_divider": "OR",
-    "cart_total": "Cart Total"
+    "cart_total": "Cart Total",
+    "welcome": "Welcome"
 }

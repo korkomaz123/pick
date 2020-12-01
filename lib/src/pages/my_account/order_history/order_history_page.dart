@@ -156,7 +156,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               children: [
                 Text(
                   'order_order_no'.tr() + ' #${order.orderNo}',
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -176,14 +176,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               children: [
                 Text(
                   'order_order_date'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
                   order.orderDate,
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -202,14 +202,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               children: [
                 Text(
                   'order_status'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
                   status,
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: color,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -228,14 +228,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               children: [
                 Text(
                   'order_payment_method'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
                   order.paymentMethod.title,
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -254,14 +254,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               children: [
                 Text(
                   'total'.tr(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
                   'currency'.tr() + ' ${order.totalPrice}',
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -299,7 +299,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       SizedBox(width: pageStyle.unitWidth * 6),
                       Text(
                         'view_order_button_title'.tr(),
-                        style: bookTextStyle.copyWith(
+                        style: mediumTextStyle.copyWith(
                           fontSize: pageStyle.unitFontSize * 15,
                           color: Colors.white,
                         ),
@@ -331,7 +331,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       SizedBox(width: pageStyle.unitWidth * 4),
                       Text(
                         'reorder_button_title'.tr(),
-                        style: bookTextStyle.copyWith(
+                        style: mediumTextStyle.copyWith(
                           fontSize: pageStyle.unitFontSize * 17,
                           color: Colors.white,
                         ),

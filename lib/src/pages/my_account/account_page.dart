@@ -66,7 +66,7 @@ class _AccountPageState extends State<AccountPage> {
           children: [
             _buildAccountPicture(),
             Divider(color: greyColor, thickness: 0.5),
-            _buildAccountProfile(),
+            user != null ? _buildAccountProfile() : SizedBox.shrink(),
             _buildAccountGeneralSetting(),
           ],
         ),
@@ -87,48 +87,111 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Row(
         children: [
-          Container(
-            width: pageStyle.unitWidth * 107,
-            height: pageStyle.unitWidth * 107,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: user.profileUrl.isEmpty
-                    ? AssetImage('lib/public/images/profile.png')
-                    : NetworkImage(user.profileUrl),
-                fit: BoxFit.cover,
-              ),
-              shape: BoxShape.circle,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
-              child: BlocBuilder<ProfileBloc, ProfileState>(
-                builder: (context, state) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.firstName,
-                        style: boldTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: pageStyle.unitFontSize * 23,
-                        ),
-                      ),
-                      SizedBox(height: pageStyle.unitHeight * 6),
-                      Text(
-                        user.lastName,
-                        style: boldTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: pageStyle.unitFontSize * 23,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
+          user != null
+              ? Container(
+                  width: pageStyle.unitWidth * 107,
+                  height: pageStyle.unitWidth * 107,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: user.profileUrl.isEmpty
+                          ? AssetImage('lib/public/images/profile.png')
+                          : NetworkImage(user.profileUrl),
+                      fit: BoxFit.cover,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                )
+              : Container(
+                  width: pageStyle.unitWidth * 107,
+                  height: pageStyle.unitWidth * 107,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: SvgPicture.asset(
+                    'lib/public/icons/icon2.svg',
+                    width: pageStyle.unitWidth * 67,
+                  ),
+                ),
+          user != null
+              ? Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
+                    child: BlocBuilder<ProfileBloc, ProfileState>(
+                      builder: (context, state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.firstName,
+                              style: mediumTextStyle.copyWith(
+                                color: primaryColor,
+                                fontSize: pageStyle.unitFontSize * 23,
+                              ),
+                            ),
+                            SizedBox(height: pageStyle.unitHeight * 6),
+                            Text(
+                              user.lastName,
+                              style: mediumTextStyle.copyWith(
+                                color: primaryColor,
+                                fontSize: pageStyle.unitFontSize * 23,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
+                    child: BlocBuilder<ProfileBloc, ProfileState>(
+                      builder: (context, state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'welcome'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                color: primaryColor,
+                                fontSize: pageStyle.unitFontSize * 26,
+                              ),
+                            ),
+                            SizedBox(height: pageStyle.unitHeight * 6),
+                            InkWell(
+                              onTap: () => _login(),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  bottom: pageStyle.unitHeight * 10,
+                                ),
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      logoutIcon,
+                                      height: pageStyle.unitHeight * 15,
+                                    ),
+                                    SizedBox(width: pageStyle.unitWidth * 4),
+                                    Text(
+                                      user != null
+                                          ? 'logout'.tr()
+                                          : 'login'.tr(),
+                                      style: mediumTextStyle.copyWith(
+                                        fontSize: pageStyle.unitFontSize * 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
         ],
       ),
     );
@@ -244,43 +307,69 @@ class _AccountPageState extends State<AccountPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'account_general_setting_title'.tr(),
-            style: boldTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 18,
-            ),
-          ),
-          SizedBox(height: pageStyle.unitHeight * 10),
-          WishlistItem(
-            pageStyle: pageStyle,
-            snackBarService: snackBarService,
-          ),
-          ChangeNotificationSettingItem(
-            pageStyle: pageStyle,
-            snackBarService: snackBarService,
-          ),
-          GetNotificationMessagesItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
+          user != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'account_general_setting_title'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 18,
+                      ),
+                    ),
+                    SizedBox(height: pageStyle.unitHeight * 10),
+                    WishlistItem(
+                      pageStyle: pageStyle,
+                      snackBarService: snackBarService,
+                    ),
+                    ChangeNotificationSettingItem(
+                      pageStyle: pageStyle,
+                      snackBarService: snackBarService,
+                    ),
+                    GetNotificationMessagesItem(pageStyle: pageStyle),
+                    SizedBox(height: pageStyle.unitHeight * 5),
+                  ],
+                )
+              : SizedBox.shrink(),
           LanguageSettingItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
           RateAppItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
-          OrderHistoryItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
+          user != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    OrderHistoryItem(pageStyle: pageStyle),
+                    SizedBox(height: pageStyle.unitHeight * 5),
+                  ],
+                )
+              : SizedBox.shrink(),
           TermsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
           AboutUsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
-          ChangePasswordItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
-          ContactUsItem(pageStyle: pageStyle),
-          LogoutItem(
-            pageStyle: pageStyle,
-            snackBarService: snackBarService,
-            progressService: progressService,
-          ),
+          user != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ChangePasswordItem(pageStyle: pageStyle),
+                    SizedBox(height: pageStyle.unitHeight * 5),
+                    ContactUsItem(pageStyle: pageStyle),
+                    LogoutItem(
+                      pageStyle: pageStyle,
+                      snackBarService: snackBarService,
+                      progressService: progressService,
+                    ),
+                  ],
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );
+  }
+
+  void _login() async {
+    await Navigator.pushNamed(context, Routes.signIn);
+    setState(() {});
   }
 }

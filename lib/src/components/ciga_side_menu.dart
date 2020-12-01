@@ -219,7 +219,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                     : SizedBox.shrink(),
                 Text(
                   menu.title.toUpperCase(),
-                  style: bookTextStyle.copyWith(
+                  style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 14,
                     color: darkColor,
                   ),
@@ -262,7 +262,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                     ),
                     child: Text(
                       menu.subMenu[index].title,
-                      style: bookTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
                         color: darkColor,
                       ),

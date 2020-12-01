@@ -27,7 +27,7 @@ class NoAvailableData extends StatelessWidget {
           SizedBox(height: pageStyle.unitHeight * 20),
           Text(
             message.tr(),
-            style: bookTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
               color: greyColor,
             ),

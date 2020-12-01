@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
@@ -130,17 +131,17 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       child: TextFormField(
         controller: firstNameController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
           hintText: 'first_name'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -174,17 +175,17 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       child: TextFormField(
         controller: lastNameController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
           hintText: 'last_name'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -218,17 +219,17 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       child: TextFormField(
         controller: emailController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
           hintText: 'email_hint'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -269,17 +270,17 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       child: TextFormField(
         controller: passwordController,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
         decoration: InputDecoration(
           hintText: 'password_hint'.tr(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 15,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -332,7 +333,7 @@ class _SignUpPageState extends State<SignUpPage> {
           children: [
             Text(
               'prefix_agree_terms'.tr() + ' ',
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 16,
               ),
@@ -341,7 +342,7 @@ class _SignUpPageState extends State<SignUpPage> {
               onTap: () => _onPrivacyPolicy(),
               child: Text(
                 'suffix_agree_terms'.tr(),
-                style: bookTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: Colors.white54,
                   fontSize: pageStyle.unitFontSize * 16,
                 ),
@@ -360,7 +361,7 @@ class _SignUpPageState extends State<SignUpPage> {
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'create_account'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
@@ -380,7 +381,7 @@ class _SignUpPageState extends State<SignUpPage> {
         onPressed: () => Navigator.pop(context),
         child: Text(
           'login_account'.tr(),
-          style: bookTextStyle.copyWith(
+          style: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 17,
           ),

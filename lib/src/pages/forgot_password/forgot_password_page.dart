@@ -1,3 +1,4 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -89,7 +90,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     alignment: Alignment.center,
                     child: Text(
                       'forgot_password_title'.tr(),
-                      style: bookTextStyle.copyWith(
+                      style: mediumTextStyle.copyWith(
                         color: Colors.white,
                         fontSize: pageStyle.unitFontSize * 14,
                       ),
@@ -120,18 +121,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       child: TextFormField(
         controller: emailController,
         textAlign: TextAlign.center,
-        style: bookTextStyle.copyWith(
+        style: mediumTextStyle.copyWith(
           color: greyDarkColor,
           fontSize: pageStyle.unitFontSize * 14,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'email'.tr().toUpperCase(),
-          hintStyle: bookTextStyle.copyWith(
+          hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: pageStyle.unitFontSize * 14,
           ),
-          errorStyle: bookTextStyle.copyWith(
+          errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
             fontSize: pageStyle.unitFontSize * 12,
           ),
@@ -178,7 +179,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
-      child: TextButton(
+      child: CigaTextButton(
         title: 'get_new_password'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
@@ -201,7 +202,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             onTap: () => Navigator.pop(context),
             child: Text(
               'login'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 14,
               ),
@@ -215,7 +216,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             onTap: () => Navigator.pushReplacementNamed(context, Routes.signUp),
             child: Text(
               'register'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: Colors.white,
                 fontSize: pageStyle.unitFontSize * 14,
               ),

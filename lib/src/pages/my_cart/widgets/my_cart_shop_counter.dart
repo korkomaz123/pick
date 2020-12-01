@@ -103,7 +103,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
           alignment: Alignment.center,
           child: Text(
             widget.value.toString(),
-            style: boldTextStyle.copyWith(
+            style: mediumTextStyle.copyWith(
               color: primarySwatchColor,
               fontSize: widget.pageStyle.unitFontSize * 15,
             ),

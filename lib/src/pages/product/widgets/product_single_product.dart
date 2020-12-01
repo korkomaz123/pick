@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:ciga/src/components/ciga_page_loading_kit.dart';
+import 'package:ciga/src/components/ciga_text_button.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -34,7 +37,7 @@ class ProductSingleProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<MyCartBloc>(),
+      value: context.watch<MyCartBloc>(),
       child: ProductSingleProductView(
         pageStyle: pageStyle,
         product: product,
@@ -62,20 +65,24 @@ class ProductSingleProductView extends StatefulWidget {
 
 class _ProductSingleProductViewState extends State<ProductSingleProductView>
     with TickerProviderStateMixin {
-  PageStyle pageStyle;
-  ProductModel product;
-  ProductEntity productEntity;
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
+  bool isBuyNow = false;
+  bool isWishlist = false;
+  int index;
+  List<String> wishlistIds = [];
   AnimationController _addToCartController;
   AnimationController _favoriteController;
   Animation<double> _addToCartScaleAnimation;
   Animation<double> _favoriteScaleAnimation;
+  ProductModel product;
+  ProductEntity productEntity;
+  PageStyle pageStyle;
   MyCartBloc cartBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
-  bool isBuyNow = false;
 
   @override
   void initState() {
@@ -83,11 +90,22 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     pageStyle = widget.pageStyle;
     product = widget.product;
     productEntity = widget.productEntity;
-
     cartBloc = context.read<MyCartBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     localStorageRepo = context.read<LocalStorageRepository>();
+    _initFavorite();
+    _initAnimation();
+  }
 
+  void _initFavorite() async {
+    wishlistIds = await localStorageRepo.getWishlistIds();
+    index = wishlistIds.indexOf(product.productId);
+    isWishlist = index >= 0;
+    setState(() {});
+  }
+
+  void _initAnimation() {
     /// add to cart button animation
     _addToCartController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -133,7 +151,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       child: Column(
         children: [
           _buildTitlebar(),
-          _buildImageCarousel(),
+          productEntity.gallery.isNotEmpty
+              ? _buildImageCarousel()
+              : _buildImage(),
           _buildTitle(),
           SizedBox(height: pageStyle.unitHeight * 10),
           _buildDescription(),
@@ -168,19 +188,14 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               InkWell(
-                onTap: () {
-                  _onFavorite();
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  });
-                },
+                onTap: () => _onFavorite(),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
                     width: pageStyle.unitWidth * 22,
                     height: pageStyle.unitHeight * 22,
                     child: SvgPicture.asset(
-                      !isFavorite ? wishlistedIcon : wishlistIcon,
+                      isWishlist ? wishlistedIcon : wishlistIcon,
                     ),
                   ),
                 ),
@@ -263,6 +278,14 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     );
   }
 
+  Widget _buildImage() {
+    return Container(
+      width: double.infinity,
+      height: pageStyle.unitHeight * 300,
+      child: Image.asset('lib/public/images/loading/image_loading.jpg'),
+    );
+  }
+
   Widget _buildTitle() {
     return Container(
       width: double.infinity,
@@ -276,8 +299,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                 Text(
                   productEntity.name,
                   overflow: TextOverflow.ellipsis,
-                  style: boldTextStyle.copyWith(
-                    color: greyDarkColor,
+                  style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 20,
                   ),
                 ),
@@ -342,29 +364,26 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           isMore
               ? Text(
                   productEntity.description,
-                  style: bookTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
                   ),
                 )
               : Text(
                   productEntity.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: bookTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
                   ),
                 ),
           InkWell(
             onTap: () {
-              setState(() {
-                isMore = !isMore;
-              });
+              isMore = !isMore;
+              setState(() {});
             },
             child: Text(
               isMore ? 'product_less'.tr() : 'product_more'.tr(),
-              style: bookTextStyle.copyWith(
+              style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 14,
               ),
@@ -438,7 +457,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                         (state is MyCartCreatedInProcess ||
                             state is MyCartItemAddedInProcess)
                     ? Center(child: CircleLoadingSpinner())
-                    : TextButton(
+                    : CigaTextButton(
                         title: 'product_buy_now'.tr(),
                         titleSize: pageStyle.unitFontSize * 23,
                         titleColor: primaryColor,
@@ -496,12 +515,31 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     }
   }
 
-  void _onFavorite() {
+  void _onFavorite() async {
+    _updateWishlist();
     _favoriteController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _favoriteController.stop(canceled: true);
       timer.cancel();
     });
+  }
+
+  void _updateWishlist() async {
+    if (isWishlist) {
+      wishlistCount -= 1;
+      wishlistIds.removeAt(index);
+      await localStorageRepo.removeWishlistItem(product.productId);
+    } else {
+      wishlistCount += 1;
+      wishlistIds.add(widget.product.productId);
+      index = wishlistIds.length - 1;
+      await localStorageRepo.addWishlistItem(widget.product.productId);
+    }
+    isWishlist = !isWishlist;
+    wishlistItemCountBloc.add(WishlistItemCountSet(
+      wishlistItemCount: wishlistCount,
+    ));
+    setState(() {});
   }
 
   void _onBuyNow() async {

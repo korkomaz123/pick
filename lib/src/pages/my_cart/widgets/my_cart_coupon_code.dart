@@ -53,7 +53,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
               width: widget.pageStyle.unitWidth * 218,
               child: TextFormField(
                 controller: couponCodeController,
-                style: boldTextStyle.copyWith(
+                style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: widget.pageStyle.unitFontSize * 15,
                 ),
