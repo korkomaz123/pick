@@ -26,6 +26,7 @@ class ProductListView extends StatefulWidget {
   final BrandEntity brand;
   final List<ProductModel> products;
   final Function onChangeTab;
+  final ScrollController scrollController;
 
   ProductListView({
     this.subCategories,
@@ -36,6 +37,7 @@ class ProductListView extends StatefulWidget {
     this.brand,
     this.products,
     this.onChangeTab,
+    this.scrollController,
   });
 
   @override
@@ -142,19 +144,17 @@ class _ProductListViewState extends State<ProductListView>
         if (productState is ProductListLoadedSuccess) {
           productsMap[productState.categoryId] = productState.products;
         }
-        return Expanded(
-          child: Column(
-            children: [
-              subCategories.length > 1
-                  ? _buildCategoryTabBar()
+        return Column(
+          children: [
+            subCategories.length > 1
+                ? _buildCategoryTabBar()
+                : SizedBox.shrink(),
+            Expanded(
+              child: productState is ProductListLoadedSuccess
+                  ? _buildCategoryTabView()
                   : SizedBox.shrink(),
-              Expanded(
-                child: productState is ProductListLoadedSuccess
-                    ? _buildCategoryTabView()
-                    : SizedBox.shrink(),
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -222,6 +222,7 @@ class _ProductListViewState extends State<ProductListView>
                 enablePullUp: false,
                 header: MaterialClassicHeader(color: primaryColor),
                 controller: _refreshController,
+                scrollController: widget.scrollController,
                 onRefresh: _onRefresh,
                 onLoading: () => null,
                 child: productsMap[subCategories[index].id].isEmpty
@@ -237,45 +238,43 @@ class _ProductListViewState extends State<ProductListView>
 
   Widget _buildProductList(int index) {
     List<ProductModel> products = productsMap[subCategories[index].id];
-    return SingleChildScrollView(
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        children: List.generate(
-          products.length,
-          (index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  right: lang == 'en' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  left: lang == 'ar' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  bottom: BorderSide(
-                    color: greyColor,
-                    width: pageStyle.unitWidth * 0.5,
-                  ),
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      children: List.generate(
+        products.length,
+        (index) {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: lang == 'en' && index % 2 == 0
+                    ? BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      )
+                    : BorderSide.none,
+                left: lang == 'ar' && index % 2 == 0
+                    ? BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      )
+                    : BorderSide.none,
+                bottom: BorderSide(
+                  color: greyColor,
+                  width: pageStyle.unitWidth * 0.5,
                 ),
               ),
-              child: ProductVCard(
-                pageStyle: pageStyle,
-                product: products[index],
-                cardWidth: pageStyle.unitWidth * 186,
-                cardHeight: pageStyle.unitHeight * 253,
-                isShoppingCart: true,
-                isWishlist: true,
-                isShare: true,
-              ),
-            );
-          },
-        ),
+            ),
+            child: ProductVCard(
+              pageStyle: pageStyle,
+              product: products[index],
+              cardWidth: pageStyle.unitWidth * 186,
+              cardHeight: pageStyle.unitHeight * 253,
+              isShoppingCart: true,
+              isWishlist: true,
+              isShare: true,
+            ),
+          );
+        },
       ),
     );
   }

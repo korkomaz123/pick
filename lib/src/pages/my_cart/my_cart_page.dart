@@ -6,7 +6,6 @@ import 'package:ciga/src/components/no_available_data.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
-import 'package:ciga/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -28,6 +27,7 @@ import 'package:lottie/lottie.dart';
 import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
+import 'widgets/my_cart_qty_horizontal_picker.dart';
 
 class MyCartPage extends StatefulWidget {
   @override
@@ -309,7 +309,6 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildMyCartProduct(int index) {
     String priceString = myCartItems[index].product.price;
     double price = double.parse(priceString);
-    print(discount);
     double discountPrice = price * (100 - discount) / 100;
     String discountPriceString = discountPrice.toStringAsFixed(2);
     return Container(
@@ -394,21 +393,21 @@ class _MyCartPageState extends State<MyCartPage>
                   ],
                 ),
                 SizedBox(height: pageStyle.unitHeight * 10),
-                MyCartShopCounter(
-                  pageStyle: pageStyle,
-                  value: myCartItems[index].itemCount,
-                  onDecrement: () => myCartItems[index].itemCount > 0
-                      ? myCartBloc.add(MyCartItemUpdated(
-                          cartId: cartId,
-                          itemId: myCartItems[index].itemId,
-                          qty: (myCartItems[index].itemCount - 1).toString(),
-                        ))
-                      : null,
-                  onIncrement: () => myCartBloc.add(MyCartItemUpdated(
-                    cartId: cartId,
-                    itemId: myCartItems[index].itemId,
-                    qty: (myCartItems[index].itemCount + 1).toString(),
-                  )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () => null,
+                      child: Text(
+                        'save_for_later'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 12,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ),
+                    MyCartQtyHorizontalPicker(pageStyle: pageStyle, qty: 2),
+                  ],
                 ),
               ],
             ),

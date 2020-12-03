@@ -1,3 +1,4 @@
+import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
@@ -17,6 +18,7 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,7 +38,9 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  ScrollController scrollController = ScrollController();
+  TabController tabController;
   PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
@@ -47,16 +51,16 @@ class _ProductListPageState extends State<ProductListPage> {
   int activeSubcategoryIndex;
   bool isFromBrand;
   String selectedCategory;
-  TabController tabController;
   CategoryBloc categoryBloc;
   ProductListBloc productListBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
+  double scrollPosition = 0;
+  ScrollChangeNotifier scrollChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-
     sortByItem = '';
     arguments = widget.arguments;
     category = arguments.category;
@@ -85,6 +89,7 @@ class _ProductListPageState extends State<ProductListPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    scrollController.addListener(_onScroll);
   }
 
   @override
@@ -103,10 +108,16 @@ class _ProductListPageState extends State<ProductListPage> {
       backgroundColor: Colors.white,
       appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: Column(
+      body: Stack(
         children: [
-          _buildAppBar(),
-          isFromBrand ? _buildBrandBar() : SizedBox.shrink(),
+          isFromBrand
+              ? _buildBrandBar()
+              : Positioned(
+                  top: 0,
+                  left: 0,
+                  right: pageStyle.deviceWidth,
+                  child: Container(),
+                ),
           BlocConsumer<CategoryBloc, CategoryState>(
             listener: (context, categoryState) {
               // if (categoryState is CategorySubCategoriesLoadedInProcess) {
@@ -130,105 +141,136 @@ class _ProductListPageState extends State<ProductListPage> {
                 for (int i = 0; i < categoryState.subCategories.length; i++) {
                   subCategories.add(categoryState.subCategories[i]);
                 }
-                return ProductListView(
-                  subCategories: subCategories,
-                  activeIndex: widget.arguments.selectedSubCategoryIndex,
-                  scaffoldKey: scaffoldKey,
-                  pageStyle: pageStyle,
-                  isFromBrand: isFromBrand,
-                  brand: brand,
-                  products: products,
-                  onChangeTab: (index) => _onChangeTab(index),
+                return Consumer<ScrollChangeNotifier>(
+                  builder: (ctx, notifier, child) {
+                    return AnimatedPositioned(
+                      top: isFromBrand
+                          ? pageStyle.unitHeight * 140 - notifier.scrollPosition
+                          : pageStyle.unitHeight * 60,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      duration: Duration(milliseconds: 500),
+                      child: ProductListView(
+                        subCategories: subCategories,
+                        activeIndex: widget.arguments.selectedSubCategoryIndex,
+                        scaffoldKey: scaffoldKey,
+                        pageStyle: pageStyle,
+                        isFromBrand: isFromBrand,
+                        brand: brand,
+                        products: products,
+                        onChangeTab: (index) => _onChangeTab(index),
+                        scrollController: scrollController,
+                      ),
+                    );
+                  },
                 );
               } else {
                 return Container();
               }
             },
           ),
+          _buildAppBar(),
         ],
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
-        activeItem: BottomEnum.category,
+        activeItem: isFromBrand ? BottomEnum.store : BottomEnum.category,
       ),
     );
   }
 
   Widget _buildAppBar() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 60,
-      color: primarySwatchColor,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: Stack(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: pageStyle.unitFontSize * 20,
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        width: pageStyle.deviceWidth,
+        height: pageStyle.unitHeight * 60,
+        color: primarySwatchColor,
+        padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: pageStyle.unitFontSize * 20,
+                  ),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                onPressed: () => Navigator.pop(context),
-              ),
-              isFromBrand
-                  ? SizedBox.shrink()
-                  : Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => _onSortBy(),
-                          icon: Icon(
-                            Icons.sort,
-                            color: Colors.white,
-                            size: pageStyle.unitFontSize * 25,
+                isFromBrand
+                    ? SizedBox.shrink()
+                    : Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => _onSortBy(),
+                            icon: Icon(
+                              Icons.sort,
+                              color: Colors.white,
+                              size: pageStyle.unitFontSize * 25,
+                            ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () => _showFilterDialog(),
-                          child: Container(
-                            width: pageStyle.unitWidth * 20,
-                            height: pageStyle.unitHeight * 17,
-                            child: SvgPicture.asset(filterIcon),
+                          InkWell(
+                            onTap: () => _showFilterDialog(),
+                            child: Container(
+                              width: pageStyle.unitWidth * 20,
+                              height: pageStyle.unitHeight * 17,
+                              child: SvgPicture.asset(filterIcon),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-            ],
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Text(
-              isFromBrand
-                  ? brand.brandLabel
-                  : ['41', '42', '43'].contains(category.id)
-                      ? category.name.tr()
-                      : category.name,
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 17,
-              ),
+                        ],
+                      ),
+              ],
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                isFromBrand
+                    ? brand.brandLabel
+                    : ['41', '42', '43'].contains(category.id)
+                        ? category.name.tr()
+                        : category.name,
+                style: mediumTextStyle.copyWith(
+                  color: Colors.white,
+                  fontSize: pageStyle.unitFontSize * 17,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildBrandBar() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 80,
-      margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 8),
-      alignment: Alignment.center,
-      color: Colors.white,
-      child: Image.network(
-        brand.brandThumbnail,
-        width: pageStyle.unitWidth * 120,
-        height: pageStyle.unitHeight * 60,
-        fit: BoxFit.cover,
-      ),
+    return Consumer<ScrollChangeNotifier>(
+      builder: (ctx, notifier, child) {
+        scrollChangeNotifier = notifier;
+        return AnimatedPositioned(
+          top: pageStyle.unitHeight * 60 - notifier.scrollPosition,
+          left: 0,
+          right: 0,
+          duration: Duration(milliseconds: 500),
+          child: Container(
+            width: pageStyle.deviceWidth,
+            height: pageStyle.unitHeight * 80,
+            margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 8),
+            alignment: Alignment.center,
+            color: Colors.white,
+            child: Image.network(
+              brand.brandThumbnail,
+              width: pageStyle.unitWidth * 120,
+              height: pageStyle.unitHeight * 60,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -247,7 +289,6 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onSortBy() async {
-    print('///////////////////// // /// / // // ');
     final result = await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
@@ -277,7 +318,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onChangeTab(int index) {
     print('/// tab changed $index ///');
-
+    scrollChangeNotifier.updateScrollStatus(0.0);
     activeSubcategoryIndex = index;
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
@@ -291,5 +332,16 @@ class _ProductListPageState extends State<ProductListPage> {
         lang: lang,
       ));
     }
+  }
+
+  void _onScroll() {
+    scrollPosition = scrollController.position.pixels;
+    if (scrollPosition >= 0 && scrollPosition <= pageStyle.unitHeight * 80) {
+    } else if (scrollPosition < 0) {
+      scrollPosition = 0;
+    } else {
+      scrollPosition = pageStyle.unitHeight * 80;
+    }
+    scrollChangeNotifier.updateScrollStatus(scrollPosition);
   }
 }

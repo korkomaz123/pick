@@ -1,3 +1,4 @@
+import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
@@ -103,8 +104,17 @@ class CigaApp extends StatelessWidget {
                                 value: checkoutRepository,
                                 child: RepositoryProvider.value(
                                   value: searchRepository,
-                                  child: ChangeNotifierProvider(
-                                    create: (context) => PlaceChangeNotifier(),
+                                  child: MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
+                                        create: (context) =>
+                                            PlaceChangeNotifier(),
+                                      ),
+                                      ChangeNotifierProvider(
+                                        create: (context) =>
+                                            ScrollChangeNotifier(),
+                                      ),
+                                    ],
                                     child: _buildMultiBlocProvider(),
                                   ),
                                 ),

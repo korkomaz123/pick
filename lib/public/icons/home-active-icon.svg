@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.707" height="23.986" viewBox="0 0 21.707 23.986">
+  <g id="Group_2184" data-name="Group 2184" transform="translate(6640.6 -189.4)">
+    <g id="Icon_feather-home" data-name="Icon feather-home" transform="translate(-6637.959 192.267)">
+      <path id="Path_29" data-name="Path 29" d="M4.5,9.388,12.713,3l8.213,6.388V19.426A1.825,1.825,0,0,1,19.1,21.251H6.325A1.825,1.825,0,0,1,4.5,19.426Z" transform="translate(-4.5 -3)" fill="#0c5eed"/>
+      <path id="Path_30" data-name="Path 30" d="M13.5,27.125V18h5.475v9.125" transform="translate(-8.025 -8.875)" fill="#0c5eed"/>
+    </g>
+    <rect id="Rectangle_323" data-name="Rectangle 323" width="10" height="12" rx="2" transform="translate(-6635 200)" fill="#fff"/>
+    <rect id="Rectangle_322" data-name="Rectangle 322" width="7" height="12" transform="translate(-6633 201)" fill="#fff"/>
+    <g id="Icon_feather-home-2" data-name="Icon feather-home" transform="translate(-6640 190)">
+      <path id="Path_29-2" data-name="Path 29" d="M4.5,10.975,14.754,3l10.254,7.975V23.507a2.279,2.279,0,0,1-2.279,2.279H6.779A2.279,2.279,0,0,1,4.5,23.507Z" transform="translate(-4.5 -3)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+      <path id="Path_30-2" data-name="Path 30" d="M13.5,29.393V18h6.836V29.393" transform="translate(-6.664 -6.607)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+    </g>
+  </g>
+</svg>

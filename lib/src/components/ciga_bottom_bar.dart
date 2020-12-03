@@ -21,7 +21,7 @@ class CigaBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: bottomBarColor,
+      backgroundColor: Colors.white,
       type: BottomNavigationBarType.fixed,
       selectedItemColor: primaryColor,
       unselectedItemColor: Colors.black,
@@ -44,7 +44,7 @@ class CigaBottomBar extends StatelessWidget {
           activeIcon: Container(
             width: pageStyle.unitWidth * 28,
             height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(homeIcon, color: primaryColor),
+            child: SvgPicture.asset(homeActiveIcon),
           ),
         ),
         BottomNavigationBarItem(
@@ -62,7 +62,7 @@ class CigaBottomBar extends StatelessWidget {
           activeIcon: Container(
             width: pageStyle.unitWidth * 28,
             height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(categoryIcon, color: primaryColor),
+            child: SvgPicture.asset(categoryActiveIcon),
           ),
         ),
         BottomNavigationBarItem(
@@ -80,7 +80,7 @@ class CigaBottomBar extends StatelessWidget {
           activeIcon: Container(
             width: pageStyle.unitWidth * 28,
             height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(storeIcon, color: primaryColor),
+            child: SvgPicture.asset(storeActiveIcon),
           ),
         ),
         BottomNavigationBarItem(
@@ -136,7 +136,7 @@ class CigaBottomBar extends StatelessWidget {
                 child: Container(
                   width: pageStyle.unitWidth * 28,
                   height: pageStyle.unitHeight * 26,
-                  child: SvgPicture.asset(wishlistIcon, color: primaryColor),
+                  child: SvgPicture.asset(wishlistActiveIcon),
                 ),
               );
             },
@@ -157,7 +157,7 @@ class CigaBottomBar extends StatelessWidget {
           activeIcon: Container(
             width: pageStyle.unitWidth * 28,
             height: pageStyle.unitHeight * 26,
-            child: SvgPicture.asset(userIcon, color: primaryColor),
+            child: SvgPicture.asset(userActiveIcon),
           ),
         ),
       ],

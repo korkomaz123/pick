@@ -37,6 +37,9 @@ class _ProductImageState extends State<ProductImage> {
               width: pageStyle.deviceWidth,
               height: pageStyle.deviceHeight,
               child: PhotoView(
+                backgroundDecoration: BoxDecoration(
+                  color: Colors.white,
+                ),
                 imageProvider: NetworkImage(images[activeIndex]),
               ),
             ),
