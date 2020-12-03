@@ -2,6 +2,7 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
@@ -17,11 +18,13 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   PageStyle pageStyle;
+  int qty = 0;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    qty = widget.qty;
   }
 
   @override
@@ -40,7 +43,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
         child: Row(
           children: [
             Text(
-              widget.qty.toString() + ' QTY',
+              qty.toString() + ' ' + 'qty'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 8,
                 color: Colors.white,
@@ -65,6 +68,10 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
         return QtyDropdownDialog(pageStyle: pageStyle);
       },
     );
+    if (result != null) {
+      qty = result as int;
+      setState(() {});
+    }
   }
 }
 
@@ -109,27 +116,30 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                           children: List.generate(
                             10,
                             (index) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: widget.pageStyle.unitWidth * 10,
-                                  vertical: widget.pageStyle.unitHeight * 10,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: widget.pageStyle.unitWidth * 15,
-                                  vertical: widget.pageStyle.unitHeight * 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1,
+                              return InkWell(
+                                onTap: () => Navigator.pop(context, 10 - index),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: widget.pageStyle.unitWidth * 10,
+                                    vertical: widget.pageStyle.unitHeight * 10,
                                   ),
-                                ),
-                                child: Text(
-                                  (10 - index).toString(),
-                                  style: mediumTextStyle.copyWith(
-                                    fontSize:
-                                        widget.pageStyle.unitFontSize * 16,
-                                    color: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: widget.pageStyle.unitWidth * 15,
+                                    vertical: widget.pageStyle.unitHeight * 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    (10 - index).toString(),
+                                    style: mediumTextStyle.copyWith(
+                                      fontSize:
+                                          widget.pageStyle.unitFontSize * 16,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               );

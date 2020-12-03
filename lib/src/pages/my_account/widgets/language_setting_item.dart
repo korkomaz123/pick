@@ -99,6 +99,7 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
+      await Future.delayed(Duration(milliseconds: 2000));
       Phoenix.rebirth(context);
     }
   }
