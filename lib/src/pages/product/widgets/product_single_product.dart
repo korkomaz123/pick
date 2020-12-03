@@ -184,7 +184,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             children: [
               InkWell(
                 onTap: () => _onShareProduct(),
-                child: Icon(Icons.share, color: greyDarkColor),
+                child: SvgPicture.asset(shareIcon),
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               InkWell(
@@ -289,43 +289,14 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildTitle() {
     return Container(
       width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  productEntity.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 20,
-                  ),
-                ),
-                SizedBox(width: pageStyle.unitWidth * 10),
-                Text(
-                  productEntity.inStock ? 'in_stock'.tr() : 'out_stock'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: productEntity.inStock ? succeedColor : dangerColor,
-                    fontSize: pageStyle.unitFontSize * 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          productEntity.brandLabel.isNotEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'product_brand'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        color: primaryColor,
-                        fontSize: pageStyle.unitFontSize * 11,
-                      ),
-                    ),
-                    InkWell(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              productEntity.brandLabel.isNotEmpty
+                  ? InkWell(
                       onTap: () {
                         ProductListArguments arguments = ProductListArguments(
                           category: CategoryEntity(),
@@ -347,10 +318,26 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                           fontSize: pageStyle.unitFontSize * 13,
                         ),
                       ),
-                    ),
-                  ],
-                )
-              : SizedBox.shrink(),
+                    )
+                  : SizedBox.shrink(),
+              Text(
+                productEntity.inStock
+                    ? 'in_stock'.tr().toUpperCase()
+                    : 'out_stock'.tr().toUpperCase(),
+                style: mediumTextStyle.copyWith(
+                  color: productEntity.inStock ? succeedColor : dangerColor,
+                  fontSize: pageStyle.unitFontSize * 11,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            productEntity.name,
+            overflow: TextOverflow.ellipsis,
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 20,
+            ),
+          ),
         ],
       ),
     );
@@ -359,7 +346,8 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildDescription() {
     return Container(
       width: double.infinity,
-      child: Wrap(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           isMore
               ? Text(
@@ -408,7 +396,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             ),
           ),
           Text(
-            'suk'.tr() + ': ' + productEntity.sku,
+            'sku'.tr() + ': ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 10,
               color: primaryColor,

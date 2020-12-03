@@ -49,3 +49,4 @@ const String categoryActiveIcon = '$iconsAssetPath/category-active-icon.svg';
 const String storeActiveIcon = '$iconsAssetPath/store-active-icon.svg';
 const String wishlistActiveIcon = '$iconsAssetPath/wishlist-active-icon.svg';
 const String userActiveIcon = '$iconsAssetPath/user-active-icon.svg';
+const String shareIcon = '$iconsAssetPath/share.svg';
