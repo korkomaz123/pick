@@ -104,7 +104,11 @@ class _WishlistPageViewState extends State<WishlistPageView>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      appBar: CigaAppBar(
+        pageStyle: pageStyle,
+        scaffoldKey: scaffoldKey,
+        isCenter: false,
+      ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
@@ -177,9 +181,13 @@ class _WishlistPageViewState extends State<WishlistPageView>
   Widget _buildAppBar() {
     return Container(
       width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 60,
+      height: pageStyle.unitHeight * 40,
       color: primarySwatchColor,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      padding: EdgeInsets.only(
+        left: pageStyle.unitWidth * 10,
+        right: pageStyle.unitWidth * 10,
+        bottom: pageStyle.unitHeight * 10,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

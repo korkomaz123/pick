@@ -226,7 +226,9 @@ class _ProductListViewState extends State<ProductListView>
                 onRefresh: _onRefresh,
                 onLoading: () => null,
                 child: productsMap[subCategories[index].id].isEmpty
-                    ? ProductNoAvailable(pageStyle: pageStyle)
+                    ? tabController.index == index
+                        ? ProductNoAvailable(pageStyle: pageStyle)
+                        : SizedBox.shrink()
                     : _buildProductList(index),
               );
             },

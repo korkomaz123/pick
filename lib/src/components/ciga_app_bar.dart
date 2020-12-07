@@ -14,18 +14,20 @@ class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool isCartPage;
+  final bool isCenter;
 
   CigaAppBar({
     this.pageStyle,
     @required this.scaffoldKey,
     this.isCartPage = false,
+    this.isCenter = true,
   });
 
   @override
   _CigaAppBarState createState() => _CigaAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(110);
+  Size get preferredSize => Size.fromHeight(100);
 }
 
 class _CigaAppBarState extends State<CigaAppBar> {
@@ -126,7 +128,9 @@ class _CigaAppBarState extends State<CigaAppBar> {
           padding: EdgeInsets.symmetric(
             horizontal: widget.pageStyle.unitWidth * 10,
           ),
-          margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 20),
+          margin: EdgeInsets.only(
+            bottom: widget.pageStyle.unitHeight * (widget.isCenter ? 15 : 10),
+          ),
           width: double.infinity,
           height: widget.pageStyle.unitHeight * 40,
           child: TextFormField(

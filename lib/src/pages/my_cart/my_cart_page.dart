@@ -39,7 +39,7 @@ class _MyCartPageState extends State<MyCartPage>
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
-  String cartId;
+  String cartId = '';
   int totalPrice = 0;
   PageStyle pageStyle;
   ProgressService progressService;
@@ -66,7 +66,9 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _getMyCartId() async {
     cartId = await localRepo.getCartId();
-    myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+    if (cartId.isNotEmpty) {
+      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+    }
   }
 
   @override
@@ -164,7 +166,9 @@ class _MyCartPageState extends State<MyCartPage>
                 totalPrice = 0;
                 cartTotalPrice = 0;
               }
-              return state is MyCartItemsLoadedSuccess && myCartItems.isEmpty
+              return (state is MyCartItemsLoadedSuccess &&
+                          myCartItems.isEmpty) ||
+                      cartId.isEmpty
                   ? Center(
                       child: NoAvailableData(
                         pageStyle: pageStyle,
@@ -406,7 +410,11 @@ class _MyCartPageState extends State<MyCartPage>
                         ),
                       ),
                     ),
-                    MyCartQtyHorizontalPicker(pageStyle: pageStyle, qty: 2),
+                    MyCartQtyHorizontalPicker(
+                      pageStyle: pageStyle,
+                      cartItem: myCartItems[index],
+                      cartId: cartId,
+                    ),
                   ],
                 ),
               ],

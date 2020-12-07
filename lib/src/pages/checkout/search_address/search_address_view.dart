@@ -8,9 +8,11 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:location/location.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -60,7 +62,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
             },
           ),
           _buildForm(widget?.placeChangeNotifier),
-          // _buildUseMyLocationButton(),
+          _buildUseMyLocationButton(),
           widget?.placeChangeNotifier?.listPlace != null && searchNode.hasFocus
               ? _buildSearchedAddressList()
               : Container(),
@@ -194,63 +196,48 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     );
   }
 
-  // Widget _buildUseMyLocationButton() {
-  //   return Align(
-  //     alignment: Alignment.bottomCenter,
-  //     child: MaterialButton(
-  //       onPressed: () => _onCurrentLocation(),
-  //       child: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Icon(Icons.my_location, color: Colors.white),
-  //           SizedBox(width: 10),
-  //           Text(
-  //             'Current Location',
-  //             style: mediumTextStyle.copyWith(
-  //               fontSize: 14,
-  //               color: Colors.white,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //       color: primaryColor,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(30),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildUseMyLocationButton() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: MaterialButton(
+        onPressed: () => _onCurrentLocation(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.my_location, color: Colors.white),
+            SizedBox(width: 10),
+            Text(
+              'Current Location',
+              style: mediumTextStyle.copyWith(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        color: primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+    );
+  }
 
-  // void _onCurrentLocation() async {
-  //   Location location = new Location();
-
-  //   bool _serviceEnabled;
-  //   PermissionStatus _permissionGranted;
-  //   LocationData _locationData;
-
-  //   _serviceEnabled = await location.serviceEnabled();
-  //   if (!_serviceEnabled) {
-  //     _serviceEnabled = await location.requestService();
-  //     if (!_serviceEnabled) {
-  //       return;
-  //     }
-  //   }
-
-  //   _permissionGranted = await location.hasPermission();
-  //   if (_permissionGranted == PermissionStatus.denied) {
-  //     _permissionGranted = await location.requestPermission();
-  //     if (_permissionGranted != PermissionStatus.granted) {
-  //       return;
-  //     }
-  //   }
-
-  //   _locationData = await location.getLocation();
-  //   final myPosition = CameraPosition(
-  //     target: LatLng(_locationData.latitude, _locationData.longitude),
-  //     zoom: 14,
-  //   );
-  //   _updatePosition(myPosition);
-  // }
+  void _onCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        forceAndroidLocationManager: true,
+      );
+      final myPosition = CameraPosition(
+        target: LatLng(position.latitude, position.longitude),
+        zoom: 14,
+      );
+      _updatePosition(myPosition);
+    } catch (e) {
+      print('location error: >> $e');
+    }
+  }
 
   void _updatePosition(CameraPosition newPosition) async {
     final GoogleMapController controller = await _controller.future;

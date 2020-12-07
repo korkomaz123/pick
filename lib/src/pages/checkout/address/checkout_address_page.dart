@@ -349,7 +349,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       orderDetails['orderAddress'] = json.encode({
         'firstname': firstNameController.text,
         'lastname': lastNameController.text,
-        'city': cityController.text,
+        'city': stateController.text,
         'street': streetController.text,
         'country_id': countryId,
         'region': '',

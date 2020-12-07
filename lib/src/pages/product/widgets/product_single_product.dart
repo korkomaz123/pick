@@ -188,7 +188,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               InkWell(
-                onTap: () => _onFavorite(),
+                onTap: () => user != null
+                    ? _onFavorite()
+                    : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(

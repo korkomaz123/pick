@@ -105,4 +105,18 @@ class MyCartRepository {
       return '';
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<int> getProductAvailableCount(String productId) async {
+    String url = EndPoints.getProductAvailableCount;
+    final params = {'productId': productId};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return result['availableCount'];
+    } else {
+      return 0;
+    }
+  }
 }

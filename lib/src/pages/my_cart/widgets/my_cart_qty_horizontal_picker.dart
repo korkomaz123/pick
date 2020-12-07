@@ -1,15 +1,20 @@
+import 'package:ciga/src/data/models/cart_item_entity.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
   final PageStyle pageStyle;
-  final int qty;
+  final CartItemEntity cartItem;
+  final String cartId;
 
-  MyCartQtyHorizontalPicker({this.pageStyle, this.qty});
+  MyCartQtyHorizontalPicker({this.pageStyle, this.cartItem, this.cartId});
 
   @override
   _MyCartQtyHorizontalPickerState createState() =>
@@ -18,13 +23,13 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   PageStyle pageStyle;
-  int qty = 0;
+  MyCartBloc myCartBloc;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
-    qty = widget.qty;
+    myCartBloc = context.read<MyCartBloc>();
   }
 
   @override
@@ -43,7 +48,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
         child: Row(
           children: [
             Text(
-              qty.toString() + ' ' + 'qty'.tr(),
+              widget.cartItem.itemCount.toString() + ' ' + 'qty'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 8,
                 color: Colors.white,
@@ -65,31 +70,51 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
       barrierColor: Colors.white.withOpacity(0.0000000001),
       context: context,
       builder: (context) {
-        return QtyDropdownDialog(pageStyle: pageStyle);
+        return QtyDropdownDialog(
+          pageStyle: pageStyle,
+          cartItem: widget.cartItem,
+        );
       },
     );
     if (result != null) {
-      qty = result as int;
-      setState(() {});
+      myCartBloc.add(MyCartItemUpdated(
+        cartId: widget.cartId,
+        itemId: widget.cartItem.itemId,
+        qty: result.toString(),
+      ));
     }
   }
 }
 
 class QtyDropdownDialog extends StatefulWidget {
   final PageStyle pageStyle;
+  final CartItemEntity cartItem;
 
-  QtyDropdownDialog({this.pageStyle});
+  QtyDropdownDialog({this.pageStyle, this.cartItem});
 
   @override
   _QtyDropdownDialogState createState() => _QtyDropdownDialogState();
 }
 
 class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
+  int availableCount;
+  String productId;
+  PageStyle pageStyle;
+  MyCartRepository myCartRepo;
+
+  @override
+  void initState() {
+    super.initState();
+    myCartRepo = context.read<MyCartRepository>();
+    availableCount = 0;
+    pageStyle = widget.pageStyle;
+    productId = widget.cartItem.product.productId;
+  }
+
   @override
   Widget build(BuildContext context) {
-    double topPadding =
-        widget.pageStyle.appBarHeight + widget.pageStyle.unitHeight * 60;
-    double bottomPadding = widget.pageStyle.unitHeight * 60;
+    double topPadding = pageStyle.appBarHeight + pageStyle.unitHeight * 60;
+    double bottomPadding = pageStyle.unitHeight * 60;
     return Padding(
       padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
       child: Material(
@@ -99,52 +124,36 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: widget.pageStyle.deviceWidth,
-              height: widget.pageStyle.unitHeight * 95,
+              width: pageStyle.deviceWidth,
+              height: pageStyle.unitHeight * 95,
               child: Stack(
                 children: [
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      width: widget.pageStyle.deviceWidth,
+                      width: pageStyle.deviceWidth,
                       color: primarySwatchColor,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         reverse: true,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(
-                            10,
-                            (index) {
-                              return InkWell(
-                                onTap: () => Navigator.pop(context, 10 - index),
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: widget.pageStyle.unitWidth * 10,
-                                    vertical: widget.pageStyle.unitHeight * 10,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: widget.pageStyle.unitWidth * 15,
-                                    vertical: widget.pageStyle.unitHeight * 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    (10 - index).toString(),
-                                    style: mediumTextStyle.copyWith(
-                                      fontSize:
-                                          widget.pageStyle.unitFontSize * 16,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                        child: FutureBuilder(
+                          future:
+                              myCartRepo.getProductAvailableCount(productId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              availableCount = snapshot.data;
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(
+                                  availableCount,
+                                  (index) => _buildQtyItem(index),
                                 ),
                               );
-                            },
-                          ),
+                            } else {
+                              return Container();
+                            }
+                          },
                         ),
                       ),
                     ),
@@ -160,6 +169,32 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQtyItem(int index) {
+    return InkWell(
+      onTap: () => Navigator.pop(context, availableCount - index),
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: widget.pageStyle.unitWidth * 10,
+          vertical: widget.pageStyle.unitHeight * 10,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: widget.pageStyle.unitWidth * 15,
+          vertical: widget.pageStyle.unitHeight * 6,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white, width: 1),
+        ),
+        child: Text(
+          (availableCount - index).toString(),
+          style: mediumTextStyle.copyWith(
+            fontSize: widget.pageStyle.unitFontSize * 16,
+            color: Colors.white,
+          ),
         ),
       ),
     );

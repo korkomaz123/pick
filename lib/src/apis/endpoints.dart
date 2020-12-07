@@ -56,4 +56,6 @@ class EndPoints {
   static const String applyCouponCode = '$baseUrl/applyCouponCode';
   static const String getSearchSuggestion = '$baseUrl/getSearchSuggetion';
   static const String getReorderCartId = '$baseUrl/getReorderCartId';
+  static const String getProductAvailableCount =
+      '$baseUrl/getAvailableProductsCount';
 }

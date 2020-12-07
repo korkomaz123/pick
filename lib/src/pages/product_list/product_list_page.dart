@@ -10,6 +10,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -52,6 +53,7 @@ class _ProductListPageState extends State<ProductListPage> {
   bool isFromBrand;
   String selectedCategory;
   CategoryBloc categoryBloc;
+  FilterBloc filterBloc;
   ProductListBloc productListBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -72,6 +74,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
     productListBloc = context.read<ProductListBloc>();
     categoryBloc = context.read<CategoryBloc>();
+    filterBloc = context.read<FilterBloc>();
     if (isFromBrand) {
       categoryBloc.add(BrandSubCategoriesLoaded(
         brandId: brand.optionId,
@@ -106,7 +109,11 @@ class _ProductListPageState extends State<ProductListPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      appBar: CigaAppBar(
+        pageStyle: pageStyle,
+        scaffoldKey: scaffoldKey,
+        isCenter: false,
+      ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
@@ -187,45 +194,55 @@ class _ProductListPageState extends State<ProductListPage> {
       right: 0,
       child: Container(
         width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 60,
+        height: pageStyle.unitHeight * 40,
         color: primarySwatchColor,
-        padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(
+          left: pageStyle.unitWidth * 10,
+          right: pageStyle.unitWidth * 10,
+          bottom: pageStyle.unitHeight * 10,
+        ),
         child: Stack(
+          alignment: AlignmentDirectional.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: pageStyle.unitFontSize * 20,
+            Align(
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: pageStyle.unitFontSize * 20,
+                    ),
+                    onTap: () => Navigator.pop(context),
                   ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                isFromBrand
-                    ? SizedBox.shrink()
-                    : Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => _onSortBy(),
-                            icon: Icon(
-                              Icons.sort,
-                              color: Colors.white,
-                              size: pageStyle.unitFontSize * 25,
+                  isFromBrand
+                      ? SizedBox.shrink()
+                      : Row(
+                          children: [
+                            InkWell(
+                              onTap: () => _onSortBy(),
+                              child: Icon(
+                                Icons.sort,
+                                color: Colors.white,
+                                size: pageStyle.unitFontSize * 25,
+                              ),
                             ),
-                          ),
-                          InkWell(
-                            onTap: () => _showFilterDialog(),
-                            child: Container(
-                              width: pageStyle.unitWidth * 20,
-                              height: pageStyle.unitHeight * 17,
-                              child: SvgPicture.asset(filterIcon),
+                            SizedBox(width: pageStyle.unitWidth * 10),
+                            InkWell(
+                              onTap: () => _showFilterDialog(),
+                              child: Container(
+                                width: pageStyle.unitWidth * 20,
+                                height: pageStyle.unitHeight * 17,
+                                child: SvgPicture.asset(filterIcon),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-              ],
+                          ],
+                        ),
+                ],
+              ),
             ),
             Align(
               alignment: Alignment.center,
@@ -307,6 +324,7 @@ class _ProductListPageState extends State<ProductListPage> {
     if (result != null) {
       if (sortByItem != result) {
         sortByItem = result;
+        filterBloc.add(FilterInitialized());
         productListBloc.add(ProductListSorted(
           categoryId: subCategories[activeSubcategoryIndex].id,
           lang: lang,
@@ -317,7 +335,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onChangeTab(int index) {
-    print('/// tab changed $index ///');
+    productListBloc.add(ProductListInitialized());
     scrollChangeNotifier.updateScrollStatus(0.0);
     activeSubcategoryIndex = index;
     if (isFromBrand) {
@@ -335,13 +353,15 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onScroll() {
-    scrollPosition = scrollController.position.pixels;
-    if (scrollPosition >= 0 && scrollPosition <= pageStyle.unitHeight * 80) {
-    } else if (scrollPosition < 0) {
-      scrollPosition = 0;
-    } else {
-      scrollPosition = pageStyle.unitHeight * 80;
+    if (isFromBrand) {
+      scrollPosition = scrollController.position.pixels;
+      if (scrollPosition >= 0 && scrollPosition <= pageStyle.unitHeight * 80) {
+      } else if (scrollPosition < 0) {
+        scrollPosition = 0;
+      } else {
+        scrollPosition = pageStyle.unitHeight * 80;
+      }
+      scrollChangeNotifier.updateScrollStatus(scrollPosition);
     }
-    scrollChangeNotifier.updateScrollStatus(scrollPosition);
   }
 }

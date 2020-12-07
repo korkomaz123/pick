@@ -74,8 +74,12 @@ class _ProductVCardState extends State<ProductVCard>
     setState(() {});
   }
 
-  void _getMyCartId() async {
+  Future<void> _getMyCartId() async {
     cartId = await localRepo.getCartId();
+  }
+
+  void _saveCartId(String cartId) async {
+    await localRepo.setCartId(cartId);
   }
 
   void _initAnimation() {
@@ -118,6 +122,9 @@ class _ProductVCardState extends State<ProductVCard>
               widget.pageStyle,
               state.message,
             );
+          }
+          if (state is MyCartCreatedSuccess) {
+            _saveCartId(state.cartId);
           }
         },
         builder: (context, state) {
@@ -257,40 +264,52 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   Widget _buildToolbar() {
-    return Column(
-      children: [
-        widget.isWishlist
-            ? Align(
-                alignment:
-                    lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () => _onWishlist(),
-                    child: Container(
-                      width: widget.pageStyle.unitWidth * 18,
-                      height: widget.pageStyle.unitHeight * 17,
-                      child: isWishlist
-                          ? SvgPicture.asset(wishlistedIcon)
-                          : SvgPicture.asset(
-                              wishlistIcon,
-                              color: greyColor,
-                            ),
+    return BlocConsumer<WishlistItemCountBloc, WishlistItemCountState>(
+      listener: (context, state) {
+        if (myWishlists.length != state.wishlistItemCount) {
+          _getWishlist();
+        }
+      },
+      builder: (context, state) {
+        return Column(
+          children: [
+            widget.isWishlist
+                ? Align(
+                    alignment:
+                        lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: InkWell(
+                        onTap: () => user != null
+                            ? _onWishlist()
+                            : Navigator.pushNamed(context, Routes.signIn),
+                        child: Container(
+                          width: widget.pageStyle.unitWidth * 18,
+                          height: widget.pageStyle.unitHeight * 17,
+                          child: isWishlist
+                              ? SvgPicture.asset(wishlistedIcon)
+                              : SvgPicture.asset(
+                                  wishlistIcon,
+                                  color: greyColor,
+                                ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
-            : SizedBox.shrink(),
-      ],
+                  )
+                : SizedBox.shrink(),
+          ],
+        );
+      },
     );
   }
 
-  void _onAddProductToCart(BuildContext context) {
+  void _onAddProductToCart(BuildContext context) async {
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
+    await _getMyCartId();
     if (cartId.isEmpty) {
       myCartBloc.add(MyCartCreated(
         product: widget.product,
