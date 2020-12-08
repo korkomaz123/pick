@@ -123,7 +123,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
     _setPaymentWidget();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      appBar: CigaAppBar(
+        scaffoldKey: scaffoldKey,
+        pageStyle: pageStyle,
+        isCenter: false,
+      ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
@@ -145,6 +149,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),

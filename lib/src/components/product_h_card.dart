@@ -209,7 +209,7 @@ class _ProductHCardState extends State<ProductHCard>
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: widget.pageStyle.unitFontSize * 14,
+                    fontSize: widget.pageStyle.unitFontSize * 12,
                   ),
                 ),
                 SizedBox(height: widget.pageStyle.unitHeight * 10),

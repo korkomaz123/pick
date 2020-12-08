@@ -86,7 +86,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     return Container(
       width: menuWidth,
       height: pageStyle.unitHeight * 160,
-      color: primaryColor,
+      color: primarySwatchColor,
       child: Stack(
         children: [
           _buildHeaderLogo(),
@@ -98,13 +98,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
 
   Widget _buildHeaderLogo() {
     return Align(
-      alignment: Alignment.topLeft,
+      alignment: Alignment.topCenter,
       child: Padding(
-        padding: EdgeInsets.only(
-          top: pageStyle.unitHeight * 40,
-          left: pageStyle.unitWidth * 20,
-          right: pageStyle.unitWidth * 20,
-        ),
+        padding: EdgeInsets.only(top: pageStyle.unitHeight * 40),
         child: user != null
             ? Row(
                 children: [
@@ -182,9 +178,20 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
       padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
       child: Column(
         children: sideMenus.map((menu) {
+          // int index = sideMenus.indexOf(menu);
+          // int length = sideMenus.length;
           return Column(
             children: [
               _buildParentMenu(menu),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: pageStyle.unitHeight * 4,
+                ),
+                child: Divider(
+                  color: Colors.grey.shade400,
+                  height: pageStyle.unitHeight * 1,
+                ),
+              ),
               activeMenu == menu.id ? _buildSubmenu(menu) : SizedBox.shrink(),
             ],
           );

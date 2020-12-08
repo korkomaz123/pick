@@ -1,10 +1,6 @@
 import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/data/models/user_entity.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
@@ -244,7 +240,6 @@ class CigaAppView extends StatefulWidget {
 class _CigaAppViewState extends State<CigaAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   MyCartBloc myCartBloc;
   LocalStorageRepository localRepo;
   PageStyle pageStyle;
@@ -255,105 +250,10 @@ class _CigaAppViewState extends State<CigaAppView> {
     localRepo = context.read<LocalStorageRepository>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
     myCartBloc = context.read<MyCartBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
-    _getCurrentUser();
-    _getCartItems();
-    _getWishlists();
-    _getShippingAddress();
-    _getShippingMethod();
-    _getPaymentMethod();
-    _getSideMenu();
-  }
-
-  void _getCurrentUser() async {
-    String token = await localRepo.getToken();
-    if (token.isNotEmpty) {
-      final signInRepo = context.read<SignInRepository>();
-      final result = await signInRepo.getCurrentUser(token);
-      if (result['code'] == 'SUCCESS') {
-        result['data']['customer']['token'] = token;
-        result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
-        user = UserEntity.fromJson(result['data']['customer']);
-      }
-    }
-  }
-
-  void _getCartItems() async {
-    String cartId = await localRepo.getCartId();
-    if (cartId.isNotEmpty) {
-      final result =
-          await context.read<MyCartRepository>().getCartItems(cartId, lang);
-
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> cartList = result['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['qty'] = cartList[i]['qty'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
   }
 
   void _setMyCartId(String cartId) async {
     await localRepo.setCartId(cartId);
-  }
-
-  void _getWishlists() async {
-    List<String> ids = await localRepo.getWishlistIds();
-    print('/// wishlist length ///');
-    print(ids);
-    print('/// wishlist length ///');
-    wishlistCount = ids.isEmpty ? 0 : ids.length;
-    if (ids.isNotEmpty) {
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: ids.length,
-      ));
-    } else {
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: 0,
-      ));
-    }
-  }
-
-  void _getShippingAddress() async {
-    String token = await localRepo.getToken();
-    if (token.isNotEmpty) {
-      final result = await context
-          .read<ShippingAddressRepository>()
-          .getShippingAddresses(token);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> shippingAddressesList = result['addresses'];
-        for (int i = 0; i < shippingAddressesList.length; i++) {
-          addresses.add(AddressEntity.fromJson(shippingAddressesList[i]));
-        }
-      }
-    }
-  }
-
-  void _getShippingMethod() async {
-    shippingMethods =
-        await context.read<CheckoutRepository>().getShippingMethod(lang);
-  }
-
-  void _getPaymentMethod() async {
-    paymentMethods =
-        await context.read<CheckoutRepository>().getPaymentMethod(lang);
-  }
-
-  void _getSideMenu() async {
-    print(lang);
-    sideMenus =
-        await context.read<CategoryRepository>().getMenuCategories(lang);
   }
 
   @override

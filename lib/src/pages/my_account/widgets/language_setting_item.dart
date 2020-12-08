@@ -55,7 +55,7 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
               ],
             ),
             Container(
-              width: pageStyle.unitWidth * 100,
+              width: pageStyle.unitWidth * 120,
               height: pageStyle.unitHeight * 25,
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -65,7 +65,7 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
               child: SelectOptionCustom(
                 items: ['EN', 'AR'],
                 value: language,
-                itemWidth: pageStyle.unitWidth * 50,
+                itemWidth: pageStyle.unitWidth * 60,
                 itemHeight: pageStyle.unitHeight * 25,
                 itemSpace: 0,
                 titleSize: pageStyle.unitFontSize * 12,
