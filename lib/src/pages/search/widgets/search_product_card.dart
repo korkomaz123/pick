@@ -16,34 +16,21 @@ class SearchProductCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.network(
             product.imageUrl,
-            width: pageStyle.unitWidth * 90,
-            height: pageStyle.unitHeight * 90,
+            width: pageStyle.unitWidth * 50,
+            height: pageStyle.unitHeight * 50,
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.sku,
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 10,
-                  ),
-                ),
-                Text(
-                  product.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
-                  ),
-                ),
-              ],
+            child: Text(
+              product.name,
+              style: mediumTextStyle.copyWith(
+                color: Colors.black,
+                fontSize: pageStyle.unitFontSize * 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           SizedBox(width: pageStyle.unitWidth * 10),
@@ -51,7 +38,7 @@ class SearchProductCard extends StatelessWidget {
             product.price + ' ' + 'currency'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: pageStyle.unitFontSize * 12,
             ),
           ),
         ],

@@ -139,16 +139,9 @@ class _WishlistPageViewState extends State<WishlistPageView>
                 },
                 child: BlocConsumer<WishlistBloc, WishlistState>(
                   listener: (context, state) {
-                    // if (state is WishlistLoadedInProcess) {
-                    //   progressService.showProgress();
-                    // }
                     if (state is WishlistLoadedFailure) {
-                      // progressService.hideProgress();
                       snackBarService.showErrorSnackBar(state.message);
                     }
-                    // if (state is WishlistLoadedSuccess) {
-                    //   progressService.hideProgress();
-                    // }
                   },
                   builder: (context, state) {
                     if (state is WishlistLoadedSuccess) {

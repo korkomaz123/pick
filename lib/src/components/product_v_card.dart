@@ -204,7 +204,7 @@ class _ProductVCardState extends State<ProductVCard>
                   ),
                 ),
                 Text(
-                  widget.product.description,
+                  widget.product.shortDescription,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(

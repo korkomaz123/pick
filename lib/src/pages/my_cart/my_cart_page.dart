@@ -88,21 +88,12 @@ class _MyCartPageState extends State<MyCartPage>
         children: [
           BlocConsumer<MyCartBloc, MyCartState>(
             listener: (context, state) {
-              if (state is MyCartItemsLoadedInProcess) {
-                // print('inprocess');
-                // progressService.showProgress();
-              }
               if (state is MyCartItemsLoadedSuccess) {
-                // progressService.hideProgress();
-                // print(state.cartItems);
-                // print('success');
                 cigaAppBloc.add(CartItemCountUpdated(
                   cartItems: state.cartItems,
                 ));
               }
               if (state is MyCartItemsLoadedFailure) {
-                // progressService.hideProgress();
-                // print('failed');
                 flushBarService.showErrorMessage(pageStyle, state.message);
               }
               if (state is MyCartItemUpdatedInProcess) {
@@ -121,6 +112,7 @@ class _MyCartPageState extends State<MyCartPage>
               }
               if (state is MyCartItemRemovedSuccess) {
                 progressService.hideProgress();
+                flushBarService.showInformMessage(pageStyle, 'removed'.tr());
                 myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
               }
               if (state is MyCartItemRemovedFailure) {
@@ -364,7 +356,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  myCartItems[index].product.description,
+                  myCartItems[index].product.shortDescription,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(

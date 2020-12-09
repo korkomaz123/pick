@@ -54,6 +54,21 @@ class ShippingAddressBloc
         event.isDefaultBilling,
         event.isDefaultShipping,
       );
+    } else if (event is DefaultShippingAddressUpdated) {
+      yield* _mapDefaultShippingAddressUpdatedToState(
+        event.token,
+        event.addressId,
+        event.firstName,
+        event.lastName,
+        event.countryId,
+        event.region,
+        event.city,
+        event.streetName,
+        event.zipCode,
+        event.phone,
+        event.isDefaultBilling,
+        event.isDefaultShipping,
+      );
     } else if (event is ShippingAddressRemoved) {
       yield* _mapShippingAddressRemovedToState(event.token, event.addressId);
     } else if (event is ShippingAddressInitialized) {
@@ -166,6 +181,47 @@ class ShippingAddressBloc
       }
     } catch (e) {
       yield ShippingAddressUpdatedFailure(message: e.toString());
+    }
+  }
+
+  Stream<ShippingAddressState> _mapDefaultShippingAddressUpdatedToState(
+    String token,
+    String addressId,
+    String firstName,
+    String lastName,
+    String countryId,
+    String region,
+    String city,
+    String streetName,
+    String zipCode,
+    String phoneNumber,
+    String isDefaultBilling,
+    String isDefaultShipping,
+  ) async* {
+    yield DefaultShippingAddressUpdatedInProcess();
+    try {
+      final result = await _shippingAddressRepository.updateShippingAddress(
+        token,
+        addressId,
+        firstName,
+        lastName,
+        countryId,
+        region,
+        city,
+        streetName,
+        zipCode,
+        phoneNumber,
+        isDefaultBilling,
+        isDefaultShipping,
+      );
+      if (result['code'] == 'SUCCESS') {
+        yield DefaultShippingAddressUpdatedSuccess();
+      } else {
+        yield DefaultShippingAddressUpdatedFailure(
+            message: result['errorMessage']);
+      }
+    } catch (e) {
+      yield DefaultShippingAddressUpdatedFailure(message: e.toString());
     }
   }
 

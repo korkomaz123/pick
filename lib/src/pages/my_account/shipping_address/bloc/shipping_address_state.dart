@@ -67,3 +67,16 @@ class ShippingAddressUpdatedFailure extends ShippingAddressState {
   @override
   List<Object> get props => [message];
 }
+
+class DefaultShippingAddressUpdatedInProcess extends ShippingAddressState {}
+
+class DefaultShippingAddressUpdatedSuccess extends ShippingAddressState {}
+
+class DefaultShippingAddressUpdatedFailure extends ShippingAddressState {
+  final String message;
+
+  DefaultShippingAddressUpdatedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

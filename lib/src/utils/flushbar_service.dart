@@ -100,4 +100,21 @@ class FlushBarService {
       backgroundColor: succeedColor,
     )..show(context);
   }
+
+  void showInformMessage(PageStyle pageStyle, String message) {
+    Flushbar(
+      messageText: Text(
+        message,
+        style: mediumTextStyle.copyWith(
+          color: Colors.red,
+          fontSize: pageStyle.unitFontSize * 15,
+        ),
+      ),
+      icon: Icon(Icons.check, color: Colors.red),
+      duration: Duration(seconds: 3),
+      leftBarIndicatorColor: darkColor.withOpacity(0.6),
+      flushbarPosition: FlushbarPosition.BOTTOM,
+      backgroundColor: darkColor,
+    )..show(context);
+  }
 }

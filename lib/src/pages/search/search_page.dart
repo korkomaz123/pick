@@ -1,3 +1,4 @@
+import 'package:ciga/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -10,6 +11,7 @@ import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -42,6 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   List<ProductModel> suggestions = [];
   LocalStorageRepository localStorageRepository;
   SearchRepository searchRepository;
+  SuggestionChangeNotifier suggestionChangeNotifier;
 
   @override
   void initState() {
@@ -58,12 +61,10 @@ class _SearchPageState extends State<SearchPage> {
     _getSearchHistories();
   }
 
-  void _getSuggestion() {
+  void _getSuggestion() async {
     if (searchController.text.isNotEmpty && searchNode.hasFocus) {
-      searchBloc.add(SearchSuggestionLoaded(
-        query: searchController.text,
-        lang: lang,
-      ));
+      String query = searchController.text;
+      await suggestionChangeNotifier?.getSuggestions(query, lang);
     }
   }
 
@@ -161,9 +162,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
               ),
-              searchController.text.isNotEmpty && searchNode.hasFocus
-                  ? _buildSuggestion()
-                  : SizedBox.shrink(),
+              _buildSuggestion(),
             ],
           );
         },
@@ -181,20 +180,15 @@ class _SearchPageState extends State<SearchPage> {
       ),
       padding: EdgeInsets.all(pageStyle.unitWidth * 10),
       color: Colors.white,
-      child: BlocConsumer<SearchBloc, SearchState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is SearchSuggestionLoadedInProcess) {
-            return CircularProgressIndicator(strokeWidth: 2);
-          }
-          if (state is SearchSuggestionLoadedSuccess) {
-            suggestions = state.suggestions;
-          }
-          return suggestions.isNotEmpty
+      child: Consumer<SuggestionChangeNotifier>(
+        builder: (ctx, notifier, _) {
+          suggestionChangeNotifier = notifier;
+          return notifier.suggestions.isNotEmpty &&
+                  searchController.text.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: List.generate(
-                      suggestions.length,
+                      notifier.suggestions.length,
                       (index) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,14 +197,14 @@ class _SearchPageState extends State<SearchPage> {
                               onTap: () => Navigator.pushNamed(
                                 context,
                                 Routes.product,
-                                arguments: suggestions[index],
+                                arguments: notifier.suggestions[index],
                               ),
                               child: SearchProductCard(
                                 pageStyle: pageStyle,
-                                product: suggestions[index],
+                                product: notifier.suggestions[index],
                               ),
                             ),
-                            index < (suggestions.length - 1)
+                            index < (notifier.suggestions.length - 1)
                                 ? Divider(color: greyColor, thickness: 0.5)
                                 : SizedBox.shrink(),
                           ],
@@ -219,7 +213,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                 )
-              : Text('No result', textAlign: TextAlign.center);
+              : SizedBox.shrink();
         },
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
+import 'package:ciga/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
@@ -109,6 +110,10 @@ class CigaApp extends StatelessWidget {
                                       ChangeNotifierProvider(
                                         create: (context) =>
                                             ScrollChangeNotifier(),
+                                      ),
+                                      ChangeNotifierProvider(
+                                        create: (context) =>
+                                            SuggestionChangeNotifier(),
                                       ),
                                     ],
                                     child: _buildMultiBlocProvider(),

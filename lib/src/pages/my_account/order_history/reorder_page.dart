@@ -373,7 +373,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   ),
                 ),
                 Text(
-                  cartItem.product.description,
+                  cartItem.product.shortDescription,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                   style: mediumTextStyle.copyWith(

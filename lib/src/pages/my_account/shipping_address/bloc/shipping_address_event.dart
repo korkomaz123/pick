@@ -101,6 +101,52 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
       ];
 }
 
+class DefaultShippingAddressUpdated extends ShippingAddressEvent {
+  final String token;
+  final String addressId;
+  final String firstName;
+  final String lastName;
+  final String countryId;
+  final String region;
+  final String city;
+  final String streetName;
+  final String zipCode;
+  final String phone;
+  final String isDefaultBilling;
+  final String isDefaultShipping;
+
+  DefaultShippingAddressUpdated({
+    this.token,
+    this.addressId,
+    this.firstName,
+    this.lastName,
+    this.countryId,
+    this.region,
+    this.city,
+    this.streetName,
+    this.zipCode,
+    this.phone,
+    this.isDefaultBilling,
+    this.isDefaultShipping,
+  });
+
+  @override
+  List<Object> get props => [
+        token,
+        addressId,
+        firstName,
+        lastName,
+        countryId,
+        region,
+        city,
+        streetName,
+        zipCode,
+        phone,
+        isDefaultBilling,
+        isDefaultShipping,
+      ];
+}
+
 class ShippingAddressRemoved extends ShippingAddressEvent {
   final String token;
   final String addressId;

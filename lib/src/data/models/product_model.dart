@@ -43,7 +43,7 @@ class ProductModel {
         sku = json['sku'],
         metaKeyword = json['meta_keyword'],
         description = json['description'] ?? '',
-        shortDescription = json['short_description'],
+        shortDescription = json['short_description'] ?? '',
         name = json['name'],
         metaDescription = json['meta_description'],
         price = json['price'] != null

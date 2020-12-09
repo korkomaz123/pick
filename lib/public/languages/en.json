@@ -225,5 +225,6 @@
     "cart_total": "Cart Total",
     "welcome": "Welcome",
     "save_for_later": "Save for later",
-    "qty": "QTY"
+    "qty": "QTY",
+    "removed": "Removed"
 }

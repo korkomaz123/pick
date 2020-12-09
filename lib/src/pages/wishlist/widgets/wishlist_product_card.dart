@@ -23,7 +23,7 @@ class WishlistProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 15),
+      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -37,8 +37,8 @@ class WishlistProductCard extends StatelessWidget {
           ),
           Image.network(
             product.imageUrl,
-            width: pageStyle.unitWidth * 134,
-            height: pageStyle.unitHeight * 150,
+            width: pageStyle.unitWidth * 124,
+            height: pageStyle.unitHeight * 140,
           ),
           Expanded(
             child: Column(
@@ -49,12 +49,12 @@ class WishlistProductCard extends StatelessWidget {
                   product.name,
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 SizedBox(height: pageStyle.unitHeight * 4),
                 Text(
-                  product.description,
+                  product.shortDescription,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(

@@ -74,7 +74,11 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      appBar: CigaAppBar(
+        scaffoldKey: scaffoldKey,
+        pageStyle: pageStyle,
+        isCenter: false,
+      ),
       body: Column(
         children: [
           _buildAppBar(),
@@ -115,6 +119,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
@@ -134,16 +139,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     return Expanded(
       child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
-          // if (state is ShippingAddressLoadedInProcess) {
-          //   progressService.showProgress();
-          // }
           if (state is ShippingAddressLoadedFailure) {
-            // progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
-          // if (state is ShippingAddressLoadedSuccess) {
-          //   progressService.hideProgress();
-          // }
+          if (state is ShippingAddressUpdatedSuccess) {
+            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+          }
           if (state is ShippingAddressRemovedInProcess) {
             progressService.showProgress();
           }
@@ -153,20 +154,17 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           }
           if (state is ShippingAddressRemovedSuccess) {
             progressService.hideProgress();
-            flushBarService.showSuccessMessage(
-              pageStyle,
-              'Removed successfully',
-            );
+            flushBarService.showInformMessage(pageStyle, 'removed'.tr());
             shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
           }
-          if (state is ShippingAddressUpdatedInProcess) {
+          if (state is DefaultShippingAddressUpdatedInProcess) {
             progressService.showProgress();
           }
-          if (state is ShippingAddressUpdatedFailure) {
+          if (state is DefaultShippingAddressUpdatedFailure) {
             progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
-          if (state is ShippingAddressUpdatedSuccess) {
+          if (state is DefaultShippingAddressUpdatedSuccess) {
             progressService.hideProgress();
             if (widget.isCheckout) {
               Navigator.pop(context, addresses[selectedIndex]);
@@ -328,7 +326,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   void _onUpdate(int index) async {
     selectedIndex = index;
     defaultAddress = shippingAddresses[index];
-    shippingAddressBloc.add(ShippingAddressUpdated(
+    shippingAddressBloc.add(DefaultShippingAddressUpdated(
       token: user.token,
       addressId: addresses[index].addressId,
       firstName: addresses[index].firstName,

@@ -353,13 +353,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
         children: [
           isMore
               ? Text(
-                  productEntity.description,
+                  productEntity.shortDescription,
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 12,
                   ),
                 )
               : Text(
-                  productEntity.description,
+                  productEntity.shortDescription,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(

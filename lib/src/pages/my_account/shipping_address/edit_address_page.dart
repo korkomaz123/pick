@@ -93,7 +93,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      appBar: CigaAppBar(
+        scaffoldKey: scaffoldKey,
+        pageStyle: pageStyle,
+        isCenter: false,
+      ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
       body: BlocListener<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
@@ -140,6 +144,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
