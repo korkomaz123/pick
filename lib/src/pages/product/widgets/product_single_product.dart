@@ -218,25 +218,8 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           Container(
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 300,
-            child: Swiper(
-              itemCount: productEntity.gallery.length,
-              autoplay: true,
-              curve: Curves.easeIn,
-              duration: 300,
-              autoplayDelay: 5000,
-              onIndexChanged: (value) {
-                setState(() {
-                  activeIndex = value;
-                });
-              },
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.viewFullImage,
-                    arguments: productEntity.gallery,
-                  ),
-                  child: Image.network(
+            child: productEntity.gallery.length < 2
+                ? Image.network(
                     productEntity.gallery[index],
                     width: pageStyle.unitWidth * 343,
                     height: pageStyle.unitHeight * 240.31,
@@ -247,10 +230,40 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                             )
                           : child;
                     },
+                  )
+                : Swiper(
+                    itemCount: productEntity.gallery.length,
+                    autoplay: true,
+                    curve: Curves.easeIn,
+                    duration: 300,
+                    autoplayDelay: 5000,
+                    onIndexChanged: (value) {
+                      setState(() {
+                        activeIndex = value;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          Routes.viewFullImage,
+                          arguments: productEntity.gallery,
+                        ),
+                        child: Image.network(
+                          productEntity.gallery[index],
+                          width: pageStyle.unitWidth * 343,
+                          height: pageStyle.unitHeight * 240.31,
+                          loadingBuilder: (_, child, chunkEvent) {
+                            return chunkEvent != null
+                                ? Image.asset(
+                                    'lib/public/images/loading/image_loading.jpg',
+                                  )
+                                : child;
+                          },
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,

@@ -126,18 +126,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   child: Container(),
                 ),
           BlocConsumer<CategoryBloc, CategoryState>(
-            listener: (context, categoryState) {
-              // if (categoryState is CategorySubCategoriesLoadedInProcess) {
-              //   progressService.showProgress();
-              // }
-              // if (categoryState is CategorySubCategoriesLoadedSuccess) {
-              //   progressService.hideProgress();
-              // }
-              // if (categoryState is CategorySubCategoriesLoadedFailure) {
-              //   progressService.hideProgress();
-              //   snackBarService.showErrorSnackBar(categoryState.message);
-              // }
-            },
+            listener: (context, categoryState) {},
             builder: (context, categoryState) {
               if (categoryState is CategorySubCategoriesLoadedSuccess) {
                 if (isFromBrand) {
@@ -150,10 +139,11 @@ class _ProductListPageState extends State<ProductListPage> {
                 }
                 return Consumer<ScrollChangeNotifier>(
                   builder: (ctx, notifier, child) {
+                    scrollChangeNotifier = notifier;
                     return AnimatedPositioned(
                       top: isFromBrand
-                          ? pageStyle.unitHeight * 140 - notifier.scrollPosition
-                          : pageStyle.unitHeight * 60,
+                          ? pageStyle.unitHeight * 120 - notifier.scrollPosition
+                          : pageStyle.unitHeight * 40,
                       left: 0,
                       right: 0,
                       bottom: 0,
@@ -267,9 +257,8 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildBrandBar() {
     return Consumer<ScrollChangeNotifier>(
       builder: (ctx, notifier, child) {
-        scrollChangeNotifier = notifier;
         return AnimatedPositioned(
-          top: pageStyle.unitHeight * 60 - notifier.scrollPosition,
+          top: pageStyle.unitHeight * 40 - notifier.scrollPosition,
           left: 0,
           right: 0,
           duration: Duration(milliseconds: 500),

@@ -122,24 +122,14 @@ class _ProductListViewState extends State<ProductListView>
         lang: lang,
       ));
     }
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProductListBloc, ProductListState>(
-      listener: (context, productState) {
-        // if (productState is ProductListLoadedInProcess) {
-        //   progressService.showProgress();
-        // }
-        // if (productState is ProductListLoadedFailure) {
-        //   progressService.hideProgress();
-        //   flushBarService.showErrorMessage(pageStyle, productState.message);
-        // }
-        if (productState is ProductListLoadedSuccess) {
-          // progressService.hideProgress();
-          _refreshController.refreshCompleted();
-        }
-      },
+      listener: (context, productState) {},
       builder: (context, productState) {
         if (productState is ProductListLoadedSuccess) {
           productsMap[productState.categoryId] = productState.products;
