@@ -91,7 +91,10 @@ class _SplashPageState extends State<SplashPage> {
           Map<String, dynamic> cartItemJson = {};
           cartItemJson['product'] =
               ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['qty'] = cartList[i]['qty'];
+          cartItemJson['itemCount'] = cartList[i]['itemCount'];
+          cartItemJson['itemId'] = cartList[i]['itemid'];
+          cartItemJson['rowPrice'] = cartList[i]['row_price'];
+          cartItemJson['availableCount'] = cartList[i]['availableCount'];
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
@@ -196,30 +199,39 @@ class _SplashPageState extends State<SplashPage> {
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      padding:
-                          EdgeInsets.only(bottom: pageStyle.unitHeight * 30),
+                      padding: EdgeInsets.only(
+                        bottom: pageStyle.unitHeight * 30,
+                      ),
                       width: double.infinity,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CigaTextButton(
-                            title: 'English',
-                            titleSize: pageStyle.unitFontSize * 12,
-                            titleColor: Colors.white,
-                            buttonColor: Color(0xFFF7941D),
-                            borderColor: Colors.transparent,
-                            onPressed: () => _onEnglish(),
-                            radius: 10,
+                          Container(
+                            width: pageStyle.unitWidth * 160,
+                            height: pageStyle.unitHeight * 50,
+                            child: CigaTextButton(
+                              title: 'English',
+                              titleSize: pageStyle.unitFontSize * 20,
+                              titleColor: Colors.white,
+                              buttonColor: Color(0xFFF7941D),
+                              borderColor: Colors.transparent,
+                              onPressed: () => _onEnglish(),
+                              radius: 30,
+                            ),
                           ),
                           SizedBox(width: pageStyle.unitWidth * 20),
-                          CigaTextButton(
-                            title: 'عربى',
-                            titleSize: pageStyle.unitFontSize * 12,
-                            titleColor: Colors.white,
-                            buttonColor: Color(0xFFF7941D),
-                            borderColor: Colors.transparent,
-                            onPressed: () => _onArabic(),
-                            radius: 10,
+                          Container(
+                            width: pageStyle.unitWidth * 160,
+                            height: pageStyle.unitHeight * 50,
+                            child: CigaTextButton(
+                              title: 'عربى',
+                              titleSize: pageStyle.unitFontSize * 20,
+                              titleColor: Colors.white,
+                              buttonColor: Color(0xFFF7941D),
+                              borderColor: Colors.transparent,
+                              onPressed: () => _onArabic(),
+                              radius: 30,
+                            ),
                           ),
                         ],
                       ),

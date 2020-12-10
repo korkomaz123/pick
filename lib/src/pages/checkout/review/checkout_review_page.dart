@@ -146,12 +146,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
         (index) {
           return Column(
             children: [
-              ProductHCard(
-                pageStyle: pageStyle,
-                cardWidth: pageStyle.unitWidth * 340,
-                cardHeight: pageStyle.unitHeight * 180,
-                product: myCartItems[index].product,
-              ),
+              _buildProductCard(myCartItems[index]),
               index < (myCartItems.length - 1)
                   ? Divider(
                       color: greyColor.withOpacity(0.3),
@@ -161,6 +156,75 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(CartItemEntity cartItem) {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 20,
+      ),
+      child: Row(
+        children: [
+          Image.network(
+            cartItem.product.imageUrl,
+            width: pageStyle.unitWidth * 90,
+            height: pageStyle.unitHeight * 120,
+            fit: BoxFit.fill,
+            loadingBuilder: (_, child, chunkEvent) {
+              return chunkEvent != null
+                  ? Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    )
+                  : child;
+            },
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  cartItem.product.name,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
+                ),
+                Text(
+                  cartItem.product.shortDescription,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                  ),
+                ),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '(${cartItem.itemCount})' +
+                          'items'.tr().replaceFirst('0', ''),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 14,
+                        color: primaryColor,
+                      ),
+                    ),
+                    Text(
+                      cartItem.product.price + ' ' + 'currency'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 16,
+                        color: primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -193,7 +257,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
             ),
             validator: (value) => null,
             keyboardType: TextInputType.text,
-            maxLines: 6,
+            maxLines: 3,
           ),
         ),
       ],

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:string_validator/string_validator.dart';
 
 import 'bloc/shipping_address_bloc.dart';
 import 'widgets/select_country_dialog.dart';
@@ -36,18 +37,22 @@ class _EditAddressPageState extends State<EditAddressPage> {
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  ShippingAddressBloc shippingAddressBloc;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController countryController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
-
-  ShippingAddressBloc shippingAddressBloc;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController companyController = TextEditingController();
 
   @override
   void initState() {
@@ -55,16 +60,21 @@ class _EditAddressPageState extends State<EditAddressPage> {
     isNew = true;
     firstNameController.text = user?.firstName;
     lastNameController.text = user?.lastName;
+    emailController.text = user?.email;
     if (widget.address != null) {
       isNew = false;
       firstNameController.text = widget?.address?.firstName;
       lastNameController.text = widget?.address?.lastName;
+      emailController.text = widget?.address?.email;
+      titleController.text = widget?.address?.title;
       countryController.text = widget?.address?.country;
+      countryId = widget?.address?.countryId;
+      stateController.text = widget?.address?.region;
       cityController.text = widget?.address?.city;
+      companyController.text = widget?.address?.company;
       streetController.text = widget?.address?.street;
       zipCodeController.text = widget?.address?.zipCode;
       phoneNumberController.text = widget?.address?.phoneNumber;
-      countryId = widget?.address?.countryId;
     }
     shippingAddressBloc = context.read<ShippingAddressBloc>();
     progressService = ProgressService(context: context);
@@ -75,10 +85,10 @@ class _EditAddressPageState extends State<EditAddressPage> {
     flushBarService = FlushBarService(context: context);
   }
 
-  void _onSuccess() {
+  void _onSuccess() async {
+    Navigator.pop(context);
+    await Future.delayed(Duration(milliseconds: 500));
     shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-    Navigator.pop(context);
-    Navigator.pop(context);
   }
 
   @override
@@ -120,7 +130,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           }
           if (state is ShippingAddressUpdatedSuccess) {
             progressService.hideProgress();
-            Navigator.pop(context);
+            _onSuccess();
           }
           if (state is ShippingAddressUpdatedFailure) {
             progressService.hideProgress();
@@ -170,24 +180,63 @@ class _EditAddressPageState extends State<EditAddressPage> {
               Column(
                 children: [
                   CigaTextInput(
+                    controller: titleController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'address_title'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                  ),
+                  CigaTextInput(
                     controller: firstNameController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'firstName'.tr(),
+                    hint: 'first_name'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    readOnly: true,
                   ),
                   CigaTextInput(
                     controller: lastNameController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'lastName'.tr(),
+                    hint: 'last_name'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    readOnly: true,
+                  ),
+                  CigaTextInput(
+                    controller: phoneNumberController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'phone_number_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.phone,
+                  ),
+                  CigaTextInput(
+                    controller: emailController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'email'.tr(),
+                    readOnly: true,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'required_field'.tr();
+                      } else if (!isEmail(value)) {
+                        return 'invalid_field'.tr();
+                      }
+                      return null;
+                    },
+                    inputType: TextInputType.phone,
                   ),
                   CigaCountryInput(
                     controller: countryController,
@@ -195,7 +244,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'country'.tr(),
+                    hint: 'checkout_country_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
@@ -204,11 +253,21 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     pageStyle: pageStyle,
                   ),
                   CigaTextInput(
+                    controller: stateController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'checkout_state_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                  ),
+                  CigaTextInput(
                     controller: cityController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'city'.tr(),
+                    hint: 'checkout_city_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
@@ -224,6 +283,16 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     inputType: TextInputType.text,
                   ),
                   CigaTextInput(
+                    controller: companyController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'checkout_company_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                  ),
+                  CigaTextInput(
                     controller: zipCodeController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
@@ -231,16 +300,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     hint: 'checkout_zip_code_hint'.tr(),
                     validator: (value) => null,
                     inputType: TextInputType.number,
-                  ),
-                  CigaTextInput(
-                    controller: phoneNumberController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.phone,
                   ),
                 ],
               ),
@@ -297,19 +356,23 @@ class _EditAddressPageState extends State<EditAddressPage> {
       if (isNew) {
         shippingAddressBloc.add(ShippingAddressAdded(
           token: user.token,
+          title: titleController.text,
           countryId: countryId,
-          region: '',
+          region: stateController.text,
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           city: cityController.text,
           streetName: streetController.text,
           zipCode: zipCodeController.text,
           phone: phoneNumberController.text,
+          company: companyController.text,
+          email: emailController.text,
         ));
       } else {
         shippingAddressBloc.add(ShippingAddressUpdated(
           token: user.token,
           addressId: widget.address.addressId,
+          title: titleController.text,
           countryId: countryId,
           region: '',
           firstName: firstNameController.text,
@@ -318,6 +381,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
           streetName: streetController.text,
           zipCode: zipCodeController.text,
           phone: phoneNumberController.text,
+          company: companyController.text,
+          email: emailController.text,
         ));
       }
     }

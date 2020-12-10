@@ -71,8 +71,10 @@ class OrderEntity {
     return items.map((item) {
       Map<String, dynamic> itemJson = item;
       itemJson['product'] = ProductModel.fromJson(item['product']);
-      itemJson['qty'] = item['item_count'];
-      itemJson['item_id'] = '1';
+      itemJson['itemCount'] = item['item_count'];
+      itemJson['itemId'] = '1';
+      itemJson['availableCount'] = 0;
+      itemJson['rowPrice'] = 0;
       return CartItemEntity.fromJson(itemJson);
     }).toList();
   }

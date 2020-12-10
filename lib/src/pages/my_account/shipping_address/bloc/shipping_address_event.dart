@@ -20,6 +20,7 @@ class ShippingAddressLoaded extends ShippingAddressEvent {
 
 class ShippingAddressAdded extends ShippingAddressEvent {
   final String token;
+  final String title;
   final String firstName;
   final String lastName;
   final String countryId;
@@ -28,9 +29,12 @@ class ShippingAddressAdded extends ShippingAddressEvent {
   final String streetName;
   final String zipCode;
   final String phone;
+  final String company;
+  final String email;
 
   ShippingAddressAdded({
     this.token,
+    this.title,
     this.firstName,
     this.lastName,
     this.countryId,
@@ -39,11 +43,14 @@ class ShippingAddressAdded extends ShippingAddressEvent {
     this.streetName,
     this.zipCode,
     this.phone,
+    this.company,
+    this.email,
   });
 
   @override
   List<Object> get props => [
         token,
+        title,
         firstName,
         lastName,
         countryId,
@@ -52,11 +59,14 @@ class ShippingAddressAdded extends ShippingAddressEvent {
         streetName,
         zipCode,
         phone,
+        company,
+        email,
       ];
 }
 
 class ShippingAddressUpdated extends ShippingAddressEvent {
   final String token;
+  final String title;
   final String addressId;
   final String firstName;
   final String lastName;
@@ -66,11 +76,14 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
   final String streetName;
   final String zipCode;
   final String phone;
+  final String company;
+  final String email;
   final String isDefaultBilling;
   final String isDefaultShipping;
 
   ShippingAddressUpdated({
     this.token,
+    this.title,
     this.addressId,
     this.firstName,
     this.lastName,
@@ -80,6 +93,8 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
     this.streetName,
     this.zipCode,
     this.phone,
+    this.company,
+    this.email,
     this.isDefaultBilling,
     this.isDefaultShipping,
   });
@@ -87,6 +102,7 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
   @override
   List<Object> get props => [
         token,
+        title,
         addressId,
         firstName,
         lastName,
@@ -96,6 +112,8 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
         streetName,
         zipCode,
         phone,
+        company,
+        email,
         isDefaultBilling,
         isDefaultShipping,
       ];
@@ -103,6 +121,7 @@ class ShippingAddressUpdated extends ShippingAddressEvent {
 
 class DefaultShippingAddressUpdated extends ShippingAddressEvent {
   final String token;
+  final String title;
   final String addressId;
   final String firstName;
   final String lastName;
@@ -112,11 +131,14 @@ class DefaultShippingAddressUpdated extends ShippingAddressEvent {
   final String streetName;
   final String zipCode;
   final String phone;
+  final String email;
+  final String company;
   final String isDefaultBilling;
   final String isDefaultShipping;
 
   DefaultShippingAddressUpdated({
     this.token,
+    this.title,
     this.addressId,
     this.firstName,
     this.lastName,
@@ -126,6 +148,8 @@ class DefaultShippingAddressUpdated extends ShippingAddressEvent {
     this.streetName,
     this.zipCode,
     this.phone,
+    this.email,
+    this.company,
     this.isDefaultBilling,
     this.isDefaultShipping,
   });
@@ -133,6 +157,7 @@ class DefaultShippingAddressUpdated extends ShippingAddressEvent {
   @override
   List<Object> get props => [
         token,
+        title,
         addressId,
         firstName,
         lastName,
@@ -142,6 +167,8 @@ class DefaultShippingAddressUpdated extends ShippingAddressEvent {
         streetName,
         zipCode,
         phone,
+        email,
+        company,
         isDefaultBilling,
         isDefaultShipping,
       ];

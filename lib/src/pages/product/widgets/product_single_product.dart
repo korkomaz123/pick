@@ -22,6 +22,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:string_validator/string_validator.dart';
 
 class ProductSingleProduct extends StatelessWidget {
   final PageStyle pageStyle;
@@ -220,7 +221,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             height: widget.pageStyle.unitHeight * 300,
             child: productEntity.gallery.length < 2
                 ? Image.network(
-                    productEntity.gallery[index],
+                    productEntity.gallery[0],
                     width: pageStyle.unitWidth * 343,
                     height: pageStyle.unitHeight * 240.31,
                     loadingBuilder: (_, child, chunkEvent) {
@@ -371,27 +372,34 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     fontSize: pageStyle.unitFontSize * 12,
                   ),
                 )
-              : Text(
-                  productEntity.shortDescription,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+              : isLength(productEntity.shortDescription, 110)
+                  ? Text(
+                      productEntity.shortDescription.substring(0, 110) + ' ...',
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 12,
+                      ),
+                    )
+                  : Text(
+                      productEntity.shortDescription,
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 12,
+                      ),
+                    ),
+          isLength(productEntity.shortDescription, 110)
+              ? InkWell(
+                  onTap: () {
+                    isMore = !isMore;
+                    setState(() {});
+                  },
+                  child: Text(
+                    isMore ? 'product_less'.tr() : 'product_more'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 14,
+                    ),
                   ),
-                ),
-          InkWell(
-            onTap: () {
-              isMore = !isMore;
-              setState(() {});
-            },
-            child: Text(
-              isMore ? 'product_less'.tr() : 'product_more'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 14,
-              ),
-            ),
-          )
+                )
+              : SizedBox.shrink()
         ],
       ),
     );

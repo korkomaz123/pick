@@ -100,44 +100,51 @@ class _ProductHCardState extends State<ProductHCard>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.cardWidth,
-      height: widget.cardHeight,
-      child: BlocConsumer<MyCartBloc, MyCartState>(
-        listener: (context, state) {
-          if (state is MyCartCreatedFailure) {
-            flushBarService.showErrorMessage(
-              widget.pageStyle,
-              state.message,
+    return InkWell(
+      onTap: () => Navigator.pushNamed(
+        context,
+        Routes.product,
+        arguments: widget.product,
+      ),
+      child: Container(
+        width: widget.cardWidth,
+        height: widget.cardHeight,
+        child: BlocConsumer<MyCartBloc, MyCartState>(
+          listener: (context, state) {
+            if (state is MyCartCreatedFailure) {
+              flushBarService.showErrorMessage(
+                widget.pageStyle,
+                state.message,
+              );
+            }
+            if (state is MyCartItemAddedSuccess) {
+              flushBarService.showAddCartMessage(
+                widget.pageStyle,
+                state.product,
+              );
+            }
+            if (state is MyCartItemAddedFailure) {
+              flushBarService.showErrorMessage(
+                widget.pageStyle,
+                state.message,
+              );
+            }
+            if (state is MyCartCreatedSuccess) {
+              _saveCartId(state.cartId);
+            }
+          },
+          builder: (context, state) {
+            if (state is MyCartCreatedSuccess) {
+              cartId = state.cartId;
+            }
+            return Stack(
+              children: [
+                _buildProductCard(),
+                _buildToolbar(),
+              ],
             );
-          }
-          if (state is MyCartItemAddedSuccess) {
-            flushBarService.showAddCartMessage(
-              widget.pageStyle,
-              state.product,
-            );
-          }
-          if (state is MyCartItemAddedFailure) {
-            flushBarService.showErrorMessage(
-              widget.pageStyle,
-              state.message,
-            );
-          }
-          if (state is MyCartCreatedSuccess) {
-            _saveCartId(state.cartId);
-          }
-        },
-        builder: (context, state) {
-          if (state is MyCartCreatedSuccess) {
-            cartId = state.cartId;
-          }
-          return Stack(
-            children: [
-              _buildProductCard(),
-              _buildToolbar(),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -153,25 +160,18 @@ class _ProductHCardState extends State<ProductHCard>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          InkWell(
-            onTap: () => Navigator.pushNamed(
-              context,
-              Routes.product,
-              arguments: widget.product,
-            ),
-            child: Image.network(
-              widget.product.imageUrl,
-              width: widget.cardWidth * 0.3,
-              height: widget.cardHeight * 0.7,
-              fit: BoxFit.fill,
-              loadingBuilder: (_, child, chunkEvent) {
-                return chunkEvent != null
-                    ? Image.asset(
-                        'lib/public/images/loading/image_loading.jpg',
-                      )
-                    : child;
-              },
-            ),
+          Image.network(
+            widget.product.imageUrl,
+            width: widget.cardWidth * 0.3,
+            height: widget.cardHeight * 0.7,
+            fit: BoxFit.fill,
+            loadingBuilder: (_, child, chunkEvent) {
+              return chunkEvent != null
+                  ? Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    )
+                  : child;
+            },
           ),
           Expanded(
             child: Column(

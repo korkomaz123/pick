@@ -42,10 +42,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   ShippingAddressBloc shippingAddressBloc;
   List<AddressEntity> shippingAddresses = [];
   int selectedIndex;
+  bool isCheckout = false;
 
   @override
   void initState() {
     super.initState();
+    isCheckout = widget.isCheckout != null ? widget.isCheckout : false;
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
@@ -137,75 +139,71 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   Widget _buildAddressList() {
     return Expanded(
-      child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
-        listener: (context, state) {
-          if (state is ShippingAddressLoadedFailure) {
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-          if (state is ShippingAddressUpdatedSuccess) {
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-          }
-          if (state is ShippingAddressRemovedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is ShippingAddressRemovedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-          if (state is ShippingAddressRemovedSuccess) {
-            progressService.hideProgress();
-            flushBarService.showInformMessage(pageStyle, 'removed'.tr());
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-          }
-          if (state is DefaultShippingAddressUpdatedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is DefaultShippingAddressUpdatedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-          if (state is DefaultShippingAddressUpdatedSuccess) {
-            progressService.hideProgress();
-            if (widget.isCheckout) {
-              Navigator.pop(context, addresses[selectedIndex]);
-            } else {
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: MaterialClassicHeader(color: primaryColor),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: () => null,
+        child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
+          listener: (context, state) {
+            if (state is ShippingAddressLoadedFailure) {
+              flushBarService.showErrorMessage(pageStyle, state.message);
+            }
+            if (state is ShippingAddressRemovedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is ShippingAddressRemovedFailure) {
+              progressService.hideProgress();
+              flushBarService.showErrorMessage(pageStyle, state.message);
+            }
+            if (state is ShippingAddressRemovedSuccess) {
+              progressService.hideProgress();
+              flushBarService.showInformMessage(pageStyle, 'removed'.tr());
               shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
             }
-          }
-        },
-        builder: (context, state) {
-          if (state is ShippingAddressLoadedSuccess) {
-            addresses = state.addresses;
-            shippingAddresses = state.addresses;
-            for (int i = 0; i < shippingAddresses.length; i++) {
-              if (shippingAddresses[i].defaultShippingAddress == 1) {
-                defaultAddressId = shippingAddresses[i].addressId;
-                defaultAddress = shippingAddresses[i];
+            if (state is DefaultShippingAddressUpdatedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is DefaultShippingAddressUpdatedFailure) {
+              progressService.hideProgress();
+              flushBarService.showErrorMessage(pageStyle, state.message);
+            }
+            if (state is DefaultShippingAddressUpdatedSuccess) {
+              progressService.hideProgress();
+              if (isCheckout) {
+                Navigator.pop(context, addresses[selectedIndex]);
+              } else {
+                shippingAddressBloc
+                    .add(ShippingAddressLoaded(token: user.token));
               }
             }
-          }
-          return SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: false,
-            header: MaterialClassicHeader(color: primaryColor),
-            controller: _refreshController,
-            onRefresh: _onRefresh,
-            onLoading: () => null,
-            child: state is ShippingAddressLoadedSuccess &&
+          },
+          builder: (context, state) {
+            if (state is ShippingAddressLoadedSuccess) {
+              addresses = state.addresses;
+              shippingAddresses = state.addresses;
+              for (int i = 0; i < shippingAddresses.length; i++) {
+                if (shippingAddresses[i].defaultShippingAddress == 1) {
+                  defaultAddressId = shippingAddresses[i].addressId;
+                  defaultAddress = shippingAddresses[i];
+                }
+              }
+            }
+            return state is ShippingAddressLoadedSuccess &&
                     shippingAddresses.isEmpty
                 ? ProductNoAvailable(pageStyle: pageStyle)
                 : SingleChildScrollView(
                     child: Column(
                       children: List.generate(
                         shippingAddresses.length,
-                        (index) {
-                          return _buildAddressCard(index);
-                        },
+                        (index) => _buildAddressCard(index),
                       ),
                     ),
-                  ),
-          );
-        },
+                  );
+          },
+        ),
       ),
     );
   }
@@ -227,43 +225,54 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         child: Stack(
           children: [
             Align(
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(
                   horizontal: pageStyle.unitWidth * 60,
+                  vertical: pageStyle.unitHeight * 15,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
+                      addresses[index].title,
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: pageStyle.unitFontSize * 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: pageStyle.unitHeight * 6),
+                    Text(
                       addresses[index].country,
-                      style: TextStyle(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 10),
+                    SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
                       addresses[index].city,
-                      style: TextStyle(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 10),
+                    SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
                       addresses[index].street,
-                      style: TextStyle(
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 10),
+                    SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      addresses[index].phoneNumber,
-                      style: TextStyle(
+                      'phone_number_hint'.tr() +
+                          ': ' +
+                          addresses[index].phoneNumber,
+                      style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
                       ),
@@ -328,6 +337,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     defaultAddress = shippingAddresses[index];
     shippingAddressBloc.add(DefaultShippingAddressUpdated(
       token: user.token,
+      title: addresses[index].title,
       addressId: addresses[index].addressId,
       firstName: addresses[index].firstName,
       lastName: addresses[index].lastName,

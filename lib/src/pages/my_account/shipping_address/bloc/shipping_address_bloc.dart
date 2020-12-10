@@ -30,6 +30,7 @@ class ShippingAddressBloc
     } else if (event is ShippingAddressAdded) {
       yield* _mapShippingAddressAddedToState(
         event.token,
+        event.title,
         event.firstName,
         event.lastName,
         event.countryId,
@@ -38,10 +39,13 @@ class ShippingAddressBloc
         event.streetName,
         event.zipCode,
         event.phone,
+        event.company,
+        event.email,
       );
     } else if (event is ShippingAddressUpdated) {
       yield* _mapShippingAddressUpdatedToState(
         event.token,
+        event.title,
         event.addressId,
         event.firstName,
         event.lastName,
@@ -51,12 +55,15 @@ class ShippingAddressBloc
         event.streetName,
         event.zipCode,
         event.phone,
+        event.company,
+        event.email,
         event.isDefaultBilling,
         event.isDefaultShipping,
       );
     } else if (event is DefaultShippingAddressUpdated) {
       yield* _mapDefaultShippingAddressUpdatedToState(
         event.token,
+        event.title,
         event.addressId,
         event.firstName,
         event.lastName,
@@ -66,6 +73,8 @@ class ShippingAddressBloc
         event.streetName,
         event.zipCode,
         event.phone,
+        event.company,
+        event.email,
         event.isDefaultBilling,
         event.isDefaultShipping,
       );
@@ -112,6 +121,7 @@ class ShippingAddressBloc
 
   Stream<ShippingAddressState> _mapShippingAddressAddedToState(
     String token,
+    String title,
     String firstName,
     String lastName,
     String countryId,
@@ -120,11 +130,14 @@ class ShippingAddressBloc
     String streetName,
     String zipCode,
     String phoneNumber,
+    String company,
+    String email,
   ) async* {
     yield ShippingAddressAddedInProcess();
     try {
       final result = await _shippingAddressRepository.addShippingAddress(
         token,
+        title,
         firstName,
         lastName,
         countryId,
@@ -133,6 +146,8 @@ class ShippingAddressBloc
         streetName,
         zipCode,
         phoneNumber,
+        company,
+        email,
       );
       if (result['code'] == 'SUCCESS') {
         yield ShippingAddressAddedSuccess();
@@ -146,6 +161,7 @@ class ShippingAddressBloc
 
   Stream<ShippingAddressState> _mapShippingAddressUpdatedToState(
     String token,
+    String title,
     String addressId,
     String firstName,
     String lastName,
@@ -155,6 +171,8 @@ class ShippingAddressBloc
     String streetName,
     String zipCode,
     String phoneNumber,
+    String company,
+    String email,
     String isDefaultBilling,
     String isDefaultShipping,
   ) async* {
@@ -162,6 +180,7 @@ class ShippingAddressBloc
     try {
       final result = await _shippingAddressRepository.updateShippingAddress(
         token,
+        title,
         addressId,
         firstName,
         lastName,
@@ -171,6 +190,8 @@ class ShippingAddressBloc
         streetName,
         zipCode,
         phoneNumber,
+        company,
+        email,
         isDefaultBilling,
         isDefaultShipping,
       );
@@ -186,6 +207,7 @@ class ShippingAddressBloc
 
   Stream<ShippingAddressState> _mapDefaultShippingAddressUpdatedToState(
     String token,
+    String title,
     String addressId,
     String firstName,
     String lastName,
@@ -195,6 +217,8 @@ class ShippingAddressBloc
     String streetName,
     String zipCode,
     String phoneNumber,
+    String company,
+    String email,
     String isDefaultBilling,
     String isDefaultShipping,
   ) async* {
@@ -202,6 +226,7 @@ class ShippingAddressBloc
     try {
       final result = await _shippingAddressRepository.updateShippingAddress(
         token,
+        title,
         addressId,
         firstName,
         lastName,
@@ -211,6 +236,8 @@ class ShippingAddressBloc
         streetName,
         zipCode,
         phoneNumber,
+        company,
+        email,
         isDefaultBilling,
         isDefaultShipping,
       );

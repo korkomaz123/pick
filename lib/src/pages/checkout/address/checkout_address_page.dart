@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
 import 'package:ciga/src/components/ciga_country_input.dart';
 import 'package:ciga/src/components/ciga_text_button.dart';
+import 'package:ciga/src/components/ciga_text_icon_button.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -11,14 +12,19 @@ import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/widgets/select_country_dialog.dart';
 import 'package:ciga/src/routes/routes.dart';
+import 'package:ciga/src/theme/icons.dart';
+import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'widgets/checkout_add_address_title_dialog.dart';
 
 class CheckoutAddressPage extends StatefulWidget {
   final OrderEntity reorder;
@@ -44,8 +50,10 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
+  TextEditingController companyController = TextEditingController();
   PhoneNumber phoneNumber;
   String countryId;
+  bool isSave;
 
   @override
   void initState() {
@@ -57,6 +65,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
     emailController.text = user.email;
+    isSave = false;
     _initForm();
   }
 
@@ -169,7 +178,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
-            hint: 'country'.tr(),
+            hint: 'checkout_country_hint'.tr(),
             validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
             readOnly: true,
@@ -195,15 +204,35 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             inputType: TextInputType.text,
           ),
           CigaTextInput(
+            controller: companyController,
+            width: pageStyle.deviceWidth,
+            padding: pageStyle.unitWidth * 10,
+            fontSize: pageStyle.unitFontSize * 14,
+            hint: 'checkout_company_hint'.tr(),
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+            inputType: TextInputType.text,
+          ),
+          CigaTextInput(
+            controller: cityController,
+            width: pageStyle.deviceWidth,
+            padding: pageStyle.unitWidth * 10,
+            fontSize: pageStyle.unitFontSize * 14,
+            hint: 'checkout_city_hint'.tr(),
+            validator: (value) => null,
+            inputType: TextInputType.text,
+          ),
+          CigaTextInput(
             controller: zipCodeController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'checkout_zip_code_hint'.tr(),
-            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+            validator: (value) => null,
             inputType: TextInputType.number,
           ),
           SizedBox(height: pageStyle.unitHeight * 30),
+          _buildSaveAddressCheckbox(),
+          SizedBox(height: pageStyle.unitHeight * 10),
           _buildToolbarButtons(),
           SizedBox(height: pageStyle.unitHeight * 20),
         ],
@@ -216,14 +245,16 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: CigaTextButton(
+      child: CigaTextIconButton(
         title: 'checkout_searching_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 12,
-        titleColor: greyDarkColor,
+        titleSize: pageStyle.unitFontSize * 14,
+        titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
+        icon: SvgPicture.asset(searchAddrIcon),
         onPressed: () => _onSearchAddress(),
         radius: 0,
+        pageStyle: pageStyle,
       ),
     );
   }
@@ -233,51 +264,56 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: CigaTextButton(
+      child: CigaTextIconButton(
         title: 'checkout_select_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 12,
-        titleColor: greyDarkColor,
+        titleSize: pageStyle.unitFontSize * 14,
+        titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
+        icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onSelectAddress(),
         radius: 0,
+        pageStyle: pageStyle,
+      ),
+    );
+  }
+
+  Widget _buildSaveAddressCheckbox() {
+    return Container(
+      width: double.infinity,
+      child: InkWell(
+        onTap: () => setState(() {
+          isSave = !isSave;
+        }),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(isSave ? selectedIcon : unSelectedIcon),
+            SizedBox(width: pageStyle.unitWidth * 10),
+            Text(
+              'checkout_save_address_button_title'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: greyColor,
+                fontSize: pageStyle.unitFontSize * 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildToolbarButtons() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: pageStyle.unitWidth * 150,
-            child: CigaTextButton(
-              title: 'checkout_save_address_button_title'.tr(),
-              titleSize: pageStyle.unitFontSize * 12,
-              titleColor: greyDarkColor,
-              buttonColor: greyLightColor,
-              borderColor: Colors.transparent,
-              onPressed: () => _onSaveAddress(),
-              radius: 30,
-            ),
-          ),
-          Container(
-            width: pageStyle.unitWidth * 197,
-            child: CigaTextButton(
-              title: 'checkout_continue_shipping_button_title'.tr(),
-              titleSize: pageStyle.unitFontSize * 12,
-              titleColor: Colors.white,
-              buttonColor: primaryColor,
-              borderColor: Colors.transparent,
-              onPressed: () => _onContinue(),
-              radius: 30,
-            ),
-          ),
-        ],
+      width: pageStyle.unitWidth * 210,
+      child: CigaTextButton(
+        title: 'checkout_continue_shipping_button_title'.tr(),
+        titleSize: pageStyle.unitFontSize * 12,
+        titleColor: Colors.white,
+        buttonColor: primaryColor,
+        borderColor: Colors.transparent,
+        onPressed: () => _onContinue(),
+        radius: 30,
       ),
     );
   }
@@ -324,44 +360,64 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     if (result != null) {
       countryId = result['code'];
       countryController.text = result['name'];
+      setState(() {});
     }
   }
 
-  void _onSaveAddress() {
-    if (_formKey.currentState.validate()) {
-      shippingAddressBloc.add(ShippingAddressAdded(
-        token: user.token,
-        countryId: countryId,
-        region: '',
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        city: cityController.text,
-        streetName: streetController.text,
-        zipCode: zipCodeController.text,
-        phone: phoneNumberController.text,
-      ));
-    }
-  }
+  // void _onSaveAddress() {
+  //   if (_formKey.currentState.validate()) {
+  //     shippingAddressBloc.add(ShippingAddressAdded(
+  //       token: user.token,
+  //       countryId: countryId,
+  //       region: '',
+  //       firstName: firstNameController.text,
+  //       lastName: lastNameController.text,
+  //       city: cityController.text,
+  //       streetName: streetController.text,
+  //       zipCode: zipCodeController.text,
+  //       phone: phoneNumberController.text,
+  //     ));
+  //   }
+  // }
 
-  void _onContinue() {
+  void _onContinue() async {
     if (_formKey.currentState.validate()) {
-      orderDetails['token'] = user.token;
-      orderDetails['orderAddress'] = json.encode({
-        'firstname': firstNameController.text,
-        'lastname': lastNameController.text,
-        'city': stateController.text,
-        'street': streetController.text,
-        'country_id': countryId,
-        'region': '',
-        'postcode': zipCodeController.text,
-        'telephone': phoneNumberController.text,
-        'save_in_address_book': '0',
-      });
-      Navigator.pushNamed(
-        context,
-        Routes.checkoutShipping,
-        arguments: widget.reorder,
-      );
+      String addressTitle = '';
+      if (isSave) {
+        final result = await showDialog(
+          context: context,
+          builder: (context) {
+            return CheckoutAddAddressTitleDialog(
+              pageStyle: pageStyle,
+            );
+          },
+        );
+        if (result != null) {
+          addressTitle = result;
+        }
+      }
+      if (!isSave || addressTitle.isNotEmpty) {
+        orderDetails['token'] = user.token;
+        orderDetails['orderAddress'] = json.encode({
+          'firstname': firstNameController.text,
+          'lastname': lastNameController.text,
+          'email': emailController.text,
+          'region': stateController.text,
+          'street': streetController.text,
+          'country_id': countryId,
+          'city': cityController.text,
+          'company': companyController.text,
+          'postcode': zipCodeController.text,
+          'telephone': phoneNumberController.text,
+          'save_in_address_book': '${isSave ? 1 : 0}',
+          'prefix': addressTitle,
+        });
+        Navigator.pushNamed(
+          context,
+          Routes.checkoutShipping,
+          arguments: widget.reorder,
+        );
+      }
     }
   }
 }

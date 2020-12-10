@@ -330,6 +330,12 @@ class _MyCartPageState extends State<MyCartPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  myCartItems[index].product.name,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
+                  ),
+                ),
                 InkWell(
                   onTap: () {
                     if (myCartItems[index].product.brandId.isNotEmpty) {
@@ -360,8 +366,8 @@ class _MyCartPageState extends State<MyCartPage>
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    color: greyColor,
+                    fontSize: pageStyle.unitFontSize * 12,
                   ),
                 ),
                 Row(

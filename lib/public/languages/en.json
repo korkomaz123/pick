@@ -99,9 +99,11 @@
     "checkout_select_address_button_title": "SELECT ADDRESS",
     "checkout_country_hint": "Country",
     "checkout_state_hint": "State / Province",
-    "checkout_city_hint": "City",
+    "checkout_city_hint": "House / Apartment",
     "checkout_street_name_hint": "Street Name",
-    "checkout_zip_code_hint": "Zip - Code",
+    "checkout_company_hint": "Block / Jada",
+    "checkout_zip_code_hint": "Paci No.",
+    "checkout_your_address_title": "Your Address Title",
     "checkout_address_serial_number_hint": "Address Serial Number",
     "checkout_save_address_button_title": "SAVE ADDRESS",
     "checkout_continue_shipping_button_title": "CONTINUE TO SHIPPING",
@@ -185,6 +187,7 @@
     "product_brand": "Brand",
     "sku": "SKU",
     "required_field": "Required field",
+    "invalid_field": "Invalid field",
     "required_email": "Email is required",
     "required_first_name": "First Name is required",
     "required_last_name": "Last Name is required",
@@ -209,6 +212,7 @@
     "no_cart_items_available": "Sorry, there is no items in your cart",
     "wishlist_empty": "Your Wishlist is empty!",
     "thankyou": "Thank You",
+    "address_saved": "Your address has been saved",
     "update_success_message": "The update has been successful",
     "close": "Close",
     "change_password_title": "Change Password",
@@ -226,5 +230,7 @@
     "welcome": "Welcome",
     "save_for_later": "Save for later",
     "qty": "QTY",
-    "removed": "Removed"
+    "removed": "Removed",
+    "address_title": "Address Title",
+    "save_button_title": "Save"
 }

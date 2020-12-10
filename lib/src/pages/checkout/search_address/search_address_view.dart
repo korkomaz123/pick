@@ -12,7 +12,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:location/location.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -224,6 +223,28 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   }
 
   void _onCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permantly denied, we cannot request permissions.');
+    }
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        return Future.error(
+            'Location permissions are denied (actual value: $permission).');
+      }
+    }
     try {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,

@@ -81,9 +81,10 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
           Map<String, dynamic> cartItemJson = {};
           cartItemJson['product'] =
               ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['qty'] = cartList[i]['qty'];
-          cartItemJson['row_price'] = cartList[i]['row_price'];
-          cartItemJson['item_id'] = cartList[i]['itemid'];
+          cartItemJson['itemCount'] = cartList[i]['itemCount'];
+          cartItemJson['rowPrice'] = cartList[i]['row_price'];
+          cartItemJson['itemId'] = cartList[i]['itemid'];
+          cartItemJson['availableCount'] = cartList[i]['availableCount'];
           cartItems.add(CartItemEntity.fromJson(cartItemJson));
         }
         yield MyCartItemsLoadedSuccess(
@@ -101,9 +102,10 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
           Map<String, dynamic> cartItemJson = {};
           cartItemJson['product'] =
               ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['qty'] = cartList[i]['qty'];
-          cartItemJson['row_price'] = cartList[i]['row_price'];
-          cartItemJson['item_id'] = cartList[i]['itemid'];
+          cartItemJson['itemCount'] = cartList[i]['itemCount'];
+          cartItemJson['rowPrice'] = cartList[i]['row_price'];
+          cartItemJson['itemId'] = cartList[i]['itemid'];
+          cartItemJson['availableCount'] = cartList[i]['availableCount'];
           cartItems.add(CartItemEntity.fromJson(cartItemJson));
         }
         yield MyCartItemsLoadedSuccess(

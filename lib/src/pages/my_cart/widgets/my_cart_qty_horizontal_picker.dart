@@ -136,24 +136,12 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         reverse: true,
-                        child: FutureBuilder(
-                          future:
-                              myCartRepo.getProductAvailableCount(productId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              availableCount = snapshot.data;
-                              return Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
-                                  availableCount,
-                                  (index) => _buildQtyItem(index),
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
+                            widget.cartItem.availableCount,
+                            (index) => _buildQtyItem(index),
+                          ),
                         ),
                       ),
                     ),
@@ -176,7 +164,10 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
 
   Widget _buildQtyItem(int index) {
     return InkWell(
-      onTap: () => Navigator.pop(context, availableCount - index),
+      onTap: () => Navigator.pop(
+        context,
+        widget.cartItem.availableCount - index,
+      ),
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: widget.pageStyle.unitWidth * 10,
@@ -190,7 +181,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
           border: Border.all(color: Colors.white, width: 1),
         ),
         child: Text(
-          (availableCount - index).toString(),
+          (widget.cartItem.availableCount - index).toString(),
           style: mediumTextStyle.copyWith(
             fontSize: widget.pageStyle.unitFontSize * 16,
             color: Colors.white,

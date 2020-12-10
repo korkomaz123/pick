@@ -50,3 +50,7 @@ const String storeActiveIcon = '$iconsAssetPath/store-active-icon.svg';
 const String wishlistActiveIcon = '$iconsAssetPath/wishlist-active-icon.svg';
 const String userActiveIcon = '$iconsAssetPath/user-active-icon.svg';
 const String shareIcon = '$iconsAssetPath/share.svg';
+const String searchAddrIcon = '$iconsAssetPath/search-address-icon.svg';
+const String selectAddrIcon = '$iconsAssetPath/select-address-icon.svg';
+const String selectedIcon = '$iconsAssetPath/select.svg';
+const String unSelectedIcon = '$iconsAssetPath/unselect.svg';
