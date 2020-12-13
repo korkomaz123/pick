@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:ciga/src/data/models/region_entity.dart';
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 
 class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
-  ///
+  /// [GET SHIPPING ADDRESSES LIST]
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getShippingAddresses(String token) async {
     String url = EndPoints.getMyShippingAddresses;
@@ -15,7 +16,7 @@ class ShippingAddressRepository {
   }
 
   //////////////////////////////////////////////////////////////////////////////
-  ///
+  /// [ADD SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> addShippingAddress(
     String token,
@@ -54,7 +55,7 @@ class ShippingAddressRepository {
   }
 
   //////////////////////////////////////////////////////////////////////////////
-  ///
+  /// [DELETE SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> deleteShippingAddress(String token, String addressId) async {
     String url = EndPoints.deleteShippingAddress;
@@ -63,7 +64,7 @@ class ShippingAddressRepository {
   }
 
   //////////////////////////////////////////////////////////////////////////////
-  ///
+  /// [UPDATE SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> updateShippingAddress(
     String token,
@@ -103,5 +104,26 @@ class ShippingAddressRepository {
       }),
     };
     return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  /// [GET REGIONS LIST]
+  //////////////////////////////////////////////////////////////////////////////
+  Future<List<RegionEntity>> getRegions(
+    String lang, [
+    String countryCode = 'KW',
+  ]) async {
+    String url = EndPoints.getRegions;
+    final params = {'lang': lang, 'country_code': countryCode};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> regionsList = result['regions'];
+      List<RegionEntity> regions = [];
+      regions =
+          regionsList.map((region) => RegionEntity.fromJson(region)).toList();
+      return regions;
+    } else {
+      return <RegionEntity>[];
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/region_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
@@ -19,7 +20,9 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:string_validator/string_validator.dart';
 
 import 'bloc/shipping_address_bloc.dart';
+import 'bloc/shipping_address_repository.dart';
 import 'widgets/select_country_dialog.dart';
+import 'widgets/select_region_dialog.dart';
 
 class EditAddressPage extends StatefulWidget {
   final AddressEntity address;
@@ -33,11 +36,13 @@ class EditAddressPage extends StatefulWidget {
 class _EditAddressPageState extends State<EditAddressPage> {
   bool isNew;
   String countryId;
+  String regionId;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
+  ShippingAddressRepository shippingRepo;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -70,11 +75,15 @@ class _EditAddressPageState extends State<EditAddressPage> {
       countryController.text = widget?.address?.country;
       countryId = widget?.address?.countryId;
       stateController.text = widget?.address?.region;
+      regionId = widget?.address?.region;
       cityController.text = widget?.address?.city;
       companyController.text = widget?.address?.company;
       streetController.text = widget?.address?.street;
       zipCodeController.text = widget?.address?.zipCode;
       phoneNumberController.text = widget?.address?.phoneNumber;
+    } else {
+      countryId = 'KW';
+      countryController.text = 'Kuwait';
     }
     shippingAddressBloc = context.read<ShippingAddressBloc>();
     progressService = ProgressService(context: context);
@@ -83,6 +92,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       scaffoldKey: scaffoldKey,
     );
     flushBarService = FlushBarService(context: context);
+    shippingRepo = context.read<ShippingAddressRepository>();
   }
 
   void _onSuccess() async {
@@ -93,6 +103,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   @override
   void dispose() {
+    _onRetrieveRegions();
     shippingAddressBloc.add(ShippingAddressInitialized());
     super.dispose();
   }
@@ -261,6 +272,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    readOnly: true,
+                    onTap: () => _onSelectState(),
                   ),
                   CigaTextInput(
                     controller: cityController,
@@ -344,11 +357,33 @@ class _EditAddressPageState extends State<EditAddressPage> {
         return SelectCountryDialog(pageStyle: pageStyle, value: countryId);
       },
     );
-    if (result != null) {
+    if (result != null && countryId != result['code']) {
       countryId = result['code'];
       countryController.text = result['name'];
+      regionId = '';
+      stateController.clear();
+      regions = await shippingRepo.getRegions(lang, countryId);
       setState(() {});
     }
+  }
+
+  void _onSelectState() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return SelectRegionDialog(pageStyle: pageStyle, value: regionId);
+      },
+    );
+    if (result != null) {
+      RegionEntity selectedRegion = result as RegionEntity;
+      regionId = selectedRegion.regionId;
+      stateController.text = selectedRegion.defaultName;
+      setState(() {});
+    }
+  }
+
+  void _onRetrieveRegions() async {
+    regions = await shippingRepo.getRegions(lang);
   }
 
   void _onSave() async {
@@ -358,7 +393,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           token: user.token,
           title: titleController.text,
           countryId: countryId,
-          region: stateController.text,
+          region: regionId,
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           city: cityController.text,
@@ -374,7 +409,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           addressId: widget.address.addressId,
           title: titleController.text,
           countryId: countryId,
-          region: '',
+          region: regionId,
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           city: cityController.text,

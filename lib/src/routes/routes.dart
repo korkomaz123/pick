@@ -28,6 +28,12 @@ class Routes {
   /// single product
   static const String product = '/product-single';
 
+  /// view product reviews
+  static const String productReviews = '/product-reviews';
+
+  /// add review for the product
+  static const String addProductReview = '/add-product-review';
+
   /// filter
   static const String filter = '/filter';
 
@@ -61,5 +67,6 @@ class Routes {
   static const String editAddress = '/edit-address';
   static const String viewOrder = '/view-order';
   static const String reOrder = '/re-order';
+  static const String cancelOrder = '/cancel-order';
   static const String changePassword = 'change-password';
 }

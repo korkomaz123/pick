@@ -58,4 +58,7 @@ class EndPoints {
   static const String getReorderCartId = '$baseUrl/getReorderCartId';
   static const String getProductAvailableCount =
       '$baseUrl/getAvailableProductsCount';
+  static const String getRegions = '$baseUrl/getRegions';
+  static const String getProductReviews = '$baseUrl/getProductReviews';
+  static const String addProductReview = '$baseUrl/addProductReview';
 }

@@ -3,6 +3,7 @@ import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/message_entity.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
+import 'package:ciga/src/data/models/region_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
@@ -25,7 +26,7 @@ final List<CategoryEntity> homeCategories = [
 ];
 
 List<CategoryMenuEntity> sideMenus = [];
-
+List<RegionEntity> regions = [];
 List<CartItemEntity> myCartItems = [];
 List<CartItemEntity> reorderCartItems = [];
 int cartItemCount = 0;

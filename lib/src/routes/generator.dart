@@ -19,6 +19,7 @@ import 'package:ciga/src/pages/my_account/notification_messages/notiifcation_mes
 import 'package:ciga/src/pages/my_account/order_history/order_history_page.dart';
 import 'package:ciga/src/pages/my_account/order_history/reorder_page.dart';
 import 'package:ciga/src/pages/my_account/order_history/view_order_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/cancel_order_page.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/edit_address_page.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/shipping_address_page.dart';
 import 'package:ciga/src/pages/my_account/terms/terms_page.dart';
@@ -27,6 +28,8 @@ import 'package:ciga/src/pages/my_cart/my_cart_page.dart';
 import 'package:ciga/src/pages/product/product_image.dart';
 import 'package:ciga/src/pages/product/product_page.dart';
 import 'package:ciga/src/pages/product_list/product_list_page.dart';
+import 'package:ciga/src/pages/product_review/product_review_page.dart';
+import 'package:ciga/src/pages/product_review/add_product_review_page.dart';
 import 'package:ciga/src/pages/search/search_page.dart';
 import 'package:ciga/src/pages/sign_in/sign_in_page.dart';
 import 'package:ciga/src/pages/sign_up/sign_up_page.dart';
@@ -173,11 +176,22 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (context) => ReOrderPage(order: params),
         );
+      case Routes.cancelOrder:
+        return CupertinoPageRoute(
+          builder: (context) => CancelOrderPage(order: params),
+        );
       case Routes.changePassword:
         return CupertinoPageRoute(
           builder: (context) => ChangePasswordPage(),
         );
-
+      case Routes.productReviews:
+        return CupertinoPageRoute(
+          builder: (context) => ProductReviewPage(product: params),
+        );
+      case Routes.addProductReview:
+        return CupertinoPageRoute(
+          builder: (context) => AddProductReviewPage(product: params),
+        );
       default:
         return CupertinoPageRoute(
           builder: (context) => SplashPage(),

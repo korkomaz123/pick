@@ -1,6 +1,7 @@
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/data/models/review_entity.dart';
 
 class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -122,5 +123,46 @@ class ProductRepository {
     } else {
       return [];
     }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<List<ReviewEntity>> getProductReviews(String productId) async {
+    String url = EndPoints.getProductReviews;
+    final params = {'product_id': productId};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> reviewList = result['reviews'];
+      List<ReviewEntity> reviews = [];
+      for (int i = 0; i < reviewList.length; i++) {
+        reviews.add(ReviewEntity.fromJson(reviewList[i]));
+      }
+      return reviews;
+    } else {
+      return <ReviewEntity>[];
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<bool> addReview(
+    String productId,
+    String title,
+    String detail,
+    String rate,
+    String token,
+  ) async {
+    final url = EndPoints.addProductReview;
+    final params = {
+      'product_id': productId,
+      'title': title,
+      'detail': detail,
+      'rating_value': rate,
+      'token': token,
+    };
+    final result = await Api.postMethod(url, data: params);
+    return result['code'] == 'SUCCESS';
   }
 }

@@ -83,7 +83,14 @@
     "product_related_items": "Related Items",
     "product_same_brand": "Products with Same Brand",
     "product_more_about": "More About Product",
-    "product_reviews": "Reviews",
+    "product_reviews": "Product Review",
+    "first_review": "Be the first to review",
+    "reviews_count": "0 REVIEWS",
+    "add_review_page_title": "Add Your Review",
+    "add_review_subtitle": "You're reviewing",
+    "add_review_rate_title": "Your Rating",
+    "add_review_form_review_title": "Review Title",
+    "add_review_form_review_comment": "Your comment",
     "my_cart_title": "My Cart",
     "my_cart_clear_cart": "CLEAR CART",
     "my_cart_coupon_code_hint": "Coupon code",
@@ -232,5 +239,10 @@
     "qty": "QTY",
     "removed": "Removed",
     "address_title": "Address Title",
-    "save_button_title": "Save"
+    "save_button_title": "Save",
+    "submit_button_title": "Submit",
+    "cancel_order_button_title": "Cancel Order",
+    "select_quantity": "Select Quantity",
+    "search_region_hint": "Search Region",
+    "no_available_regions": "No available regions"
 }

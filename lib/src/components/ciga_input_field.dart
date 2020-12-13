@@ -130,7 +130,7 @@ class CigaInputField extends StatelessWidget {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 10,
-                      vertical: 0,
+                      vertical: 10,
                     ),
                     border: bordered
                         ? OutlineInputBorder(
@@ -210,7 +210,7 @@ class CigaInputField extends StatelessWidget {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 10,
-                      vertical: 0,
+                      vertical: 10,
                     ),
                     border: bordered
                         ? OutlineInputBorder(

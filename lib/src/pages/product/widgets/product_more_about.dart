@@ -39,27 +39,6 @@ class ProductMoreAbout extends StatelessWidget {
               fontSize: pageStyle.unitFontSize * 12,
             ),
           ),
-          SizedBox(height: pageStyle.unitFontSize * 15),
-          Text(
-            'product_reviews'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 19,
-            ),
-          ),
-          SizedBox(height: pageStyle.unitFontSize * 4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: productEntity.reviews.map((review) {
-              return Text(
-                review.detail,
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 12,
-                ),
-              );
-            }).toList(),
-          ),
         ],
       ),
     );

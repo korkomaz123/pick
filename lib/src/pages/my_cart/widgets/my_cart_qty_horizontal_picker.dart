@@ -13,8 +13,16 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
   final PageStyle pageStyle;
   final CartItemEntity cartItem;
   final String cartId;
+  final Function onChange;
+  final bool isDefaultValue;
 
-  MyCartQtyHorizontalPicker({this.pageStyle, this.cartItem, this.cartId});
+  MyCartQtyHorizontalPicker({
+    this.pageStyle,
+    this.cartItem,
+    this.cartId,
+    this.onChange,
+    this.isDefaultValue = true,
+  });
 
   @override
   _MyCartQtyHorizontalPickerState createState() =>
@@ -35,7 +43,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _onChangeQty(),
+      onTap: widget.onChange ?? () => _onChangeQty(),
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 6,
@@ -48,7 +56,9 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
         child: Row(
           children: [
             Text(
-              widget.cartItem.itemCount.toString() + ' ' + 'qty'.tr(),
+              widget.isDefaultValue
+                  ? (widget.cartItem.itemCount.toString() + ' ' + 'qty'.tr())
+                  : 'select_quantity'.tr(),
               style: mediumTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 8,
                 color: Colors.white,

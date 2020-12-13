@@ -62,6 +62,7 @@ class _SplashPageState extends State<SplashPage> {
     _getShippingMethod();
     _getPaymentMethod();
     _getSideMenu();
+    _getRegions();
     _navigator();
   }
 
@@ -150,6 +151,10 @@ class _SplashPageState extends State<SplashPage> {
     print(lang);
     sideMenus =
         await context.read<CategoryRepository>().getMenuCategories(lang);
+  }
+
+  void _getRegions() async {
+    regions = await context.read<ShippingAddressRepository>().getRegions(lang);
   }
 
   void _navigator() {

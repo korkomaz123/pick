@@ -83,7 +83,14 @@
     "product_related_items": "الأصناف المتعلقة",
     "product_same_brand": "منتجات بنفس الماركة",
     "product_more_about": "المزيد عن المنتج",
-    "product_reviews": "التقيمات",
+    "product_reviews": "تقييم المنتج",
+    "first_review": "كن الاول في المعاينة",
+    "reviews_count": "0 المراجعات",
+    "add_review_page_title": "إضافة تقييمك",
+    "add_review_subtitle": "أنت تراجع",
+    "add_review_rate_title": "تقييمك",
+    "add_review_form_review_title": "مراجعة العنوان",
+    "add_review_form_review_comment": "تعليقك",
     "my_cart_title": "عربة التسوق",
     "my_cart_clear_cart": "مسح الكل",
     "my_cart_coupon_code_hint": "رمز الكوبون",
@@ -230,5 +237,10 @@
     "qty": "الكمية",
     "removed": "منزوع",
     "address_title": "عنوان عنوان",
-    "save_button_title": "حفظ"
+    "save_button_title": "حفظ",
+    "submit_button_title": "إرسال",
+    "cancel_order_button_title": "الغاء الطلب",
+    "select_quantity": "حدد الكمية",
+    "search_region_hint": "منطقة البحث",
+    "no_available_regions": "لا توجد مناطق متاحة"
 }

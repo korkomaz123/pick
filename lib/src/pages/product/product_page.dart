@@ -8,6 +8,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/widgets/product_more_about.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
@@ -19,6 +20,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
+import 'widgets/product_review.dart';
+import 'widgets/product_review_total.dart';
 
 class ProductPage extends StatefulWidget {
   final Object arguments;
@@ -108,6 +111,12 @@ class _ProductPageState extends State<ProductPage> {
                       product: product,
                       productEntity: state.productEntity,
                     ),
+                    ProductReviewTotal(
+                      pageStyle: pageStyle,
+                      product: state.productEntity,
+                      onFirstReview: () => _onFirstReview(state.productEntity),
+                      onReviews: () => _onReviews(state.productEntity),
+                    ),
                     ProductRelatedItems(
                       pageStyle: pageStyle,
                       product: product,
@@ -119,6 +128,10 @@ class _ProductPageState extends State<ProductPage> {
                     ProductMoreAbout(
                       pageStyle: pageStyle,
                       productEntity: state.productEntity,
+                    ),
+                    ProductReview(
+                      pageStyle: pageStyle,
+                      product: state.productEntity,
                     ),
                   ],
                 ),
@@ -134,5 +147,23 @@ class _ProductPageState extends State<ProductPage> {
         activeItem: BottomEnum.home,
       ),
     );
+  }
+
+  void _onFirstReview(ProductEntity product) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.addProductReview,
+      arguments: product,
+    );
+    setState(() {});
+  }
+
+  void _onReviews(ProductEntity product) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.productReviews,
+      arguments: product,
+    );
+    setState(() {});
   }
 }
