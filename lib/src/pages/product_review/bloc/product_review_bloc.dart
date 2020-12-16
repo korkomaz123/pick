@@ -27,6 +27,7 @@ class ProductReviewBloc extends Bloc<ProductReviewEvent, ProductReviewState> {
         event.detail,
         event.rate,
         event.token,
+        event.username,
       );
     }
   }
@@ -37,10 +38,12 @@ class ProductReviewBloc extends Bloc<ProductReviewEvent, ProductReviewState> {
     String detail,
     String rate,
     String token,
+    String username,
   ) async* {
     yield ProductReviewAddedInProcess();
     try {
-      await _productRepository.addReview(productId, title, detail, rate, token);
+      await _productRepository.addReview(
+          productId, title, detail, rate, token, username);
       yield ProductReviewAddedSuccess();
     } catch (e) {
       yield ProductReviewAddedFailure(message: e.toString());

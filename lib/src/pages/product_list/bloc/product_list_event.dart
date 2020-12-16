@@ -10,11 +10,12 @@ abstract class ProductListEvent extends Equatable {
 class ProductListLoaded extends ProductListEvent {
   final String categoryId;
   final String lang;
+  final int page;
 
-  ProductListLoaded({this.categoryId, this.lang});
+  ProductListLoaded({this.categoryId, this.lang, this.page});
 
   @override
-  List<Object> get props => [categoryId, lang];
+  List<Object> get props => [categoryId, lang, page];
 }
 
 class ProductListSorted extends ProductListEvent {
@@ -34,11 +35,12 @@ class BrandProductListLoaded extends ProductListEvent {
   final String brandId;
   final String categoryId;
   final String lang;
+  final int page;
 
-  BrandProductListLoaded({this.brandId, this.lang, this.categoryId});
+  BrandProductListLoaded({this.brandId, this.lang, this.categoryId, this.page});
 
   @override
-  List<Object> get props => [brandId, lang, categoryId];
+  List<Object> get props => [brandId, lang, categoryId, page];
 }
 
 class ProductListInitialized extends ProductListEvent {}

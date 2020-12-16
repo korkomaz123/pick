@@ -6,8 +6,8 @@ import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bl
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -120,6 +120,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
           Container(
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 400,
+            color: Colors.white,
             child: Swiper(
               itemCount: categories.length > 6 ? 6 : categories.length,
               autoplay: true,
@@ -148,11 +149,11 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                   },
                   child: Container(
                     width: widget.pageStyle.deviceWidth,
-                    height: widget.pageStyle.unitHeight * 242,
+                    // height: widget.pageStyle.unitHeight * 242,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: NetworkImage(categories[index].imageUrl),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                   ),

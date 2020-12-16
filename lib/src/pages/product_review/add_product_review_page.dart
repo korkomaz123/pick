@@ -1,18 +1,17 @@
+import 'package:ciga/src/components/ciga_input_field.dart';
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/components/ciga_text_input.dart';
-import 'package:ciga/src/components/ciga_input_field.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/product_entity.dart';
 import 'package:ciga/src/pages/product_review/bloc/product_review_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-
-import 'package:ciga/src/data/models/product_entity.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -28,6 +27,7 @@ class AddProductReviewPage extends StatefulWidget {
 class _AddProductReviewPageState extends State<AddProductReviewPage> {
   final formKey = GlobalKey<FormState>();
   double rate = 0;
+  TextEditingController usernameController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController commentController = TextEditingController();
   PageStyle pageStyle;
@@ -143,6 +143,24 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 setState(() {});
               },
             ),
+            user?.token == null
+                ? Container(
+                    width: pageStyle.deviceWidth,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: pageStyle.unitFontSize * 20,
+                    ),
+                    child: CigaTextInput(
+                      width: double.infinity,
+                      controller: usernameController,
+                      fontSize: pageStyle.unitFontSize * 16,
+                      hint: 'username'.tr(),
+                      validator: (value) =>
+                          value.isEmpty ? 'required_field'.tr() : null,
+                      inputType: TextInputType.text,
+                      padding: 0,
+                    ),
+                  )
+                : SizedBox.shrink(),
             Container(
               width: pageStyle.deviceWidth,
               padding: EdgeInsets.symmetric(
@@ -207,8 +225,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
         productId: widget.product.productId,
         title: titleController.text,
         detail: commentController.text,
-        rate: rate.toString(),
-        token: user.token,
+        rate: int.parse(rate.toStringAsFixed(0)).toString(),
+        token: user?.token ?? '',
+        username: usernameController.text,
       ));
     }
   }

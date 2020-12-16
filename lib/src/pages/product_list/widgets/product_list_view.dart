@@ -9,9 +9,10 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -59,6 +60,8 @@ class _ProductListViewState extends State<ProductListView>
   TabController tabController;
   ProductListBloc productListBloc;
   FilterBloc filterBloc;
+  int page = 1;
+  bool isReachedMax = false;
 
   @override
   void initState() {
@@ -96,11 +99,13 @@ class _ProductListViewState extends State<ProductListView>
           brandId: brand.optionId,
           categoryId: subCategories[activeIndex].id,
           lang: lang,
+          page: 1,
         ));
       } else {
         productListBloc.add(ProductListLoaded(
           categoryId: subCategories[activeIndex].id,
           lang: lang,
+          page: 1,
         ));
       }
     }
@@ -108,6 +113,7 @@ class _ProductListViewState extends State<ProductListView>
 
   void _onRefresh() async {
     filterBloc.add(FilterInitialized());
+    page = 1;
     if (isFromBrand) {
       productListBloc.add(BrandProductListLoaded(
         brandId: brand.optionId,
@@ -115,38 +121,111 @@ class _ProductListViewState extends State<ProductListView>
             ? 'all'
             : subCategories[tabController.index].id,
         lang: lang,
+        page: page,
       ));
     } else {
       productListBloc.add(ProductListLoaded(
         categoryId: subCategories[tabController.index].id,
         lang: lang,
+        page: page,
       ));
     }
-    await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
+  }
+
+  void _onLoadMore() async {
+    filterBloc.add(FilterInitialized());
+    page += 1;
+    if (isFromBrand) {
+      productListBloc.add(BrandProductListLoaded(
+        brandId: brand.optionId,
+        categoryId: tabController.index == 0
+            ? 'all'
+            : subCategories[tabController.index].id,
+        lang: lang,
+        page: page,
+      ));
+    } else {
+      productListBloc.add(ProductListLoaded(
+        categoryId: subCategories[tabController.index].id,
+        lang: lang,
+        page: page,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProductListBloc, ProductListState>(
-      listener: (context, productState) {},
-      builder: (context, productState) {
-        if (productState is ProductListLoadedSuccess) {
-          productsMap[productState.categoryId] = productState.products;
-        }
-        return Column(
-          children: [
-            subCategories.length > 1
-                ? _buildCategoryTabBar()
-                : SizedBox.shrink(),
-            Expanded(
-              child: productState is ProductListLoadedSuccess
-                  ? _buildCategoryTabView()
-                  : SizedBox.shrink(),
+    return Column(
+      children: [
+        subCategories.length > 1 ? _buildCategoryTabBar() : SizedBox.shrink(),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: List.generate(
+              subCategories.length,
+              (index) {
+                return SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: page != null && !isReachedMax,
+                  header: MaterialClassicHeader(color: primaryColor),
+                  controller: _refreshController,
+                  scrollController: widget.scrollController,
+                  onRefresh: _onRefresh,
+                  onLoading: page != null && !isReachedMax ? _onLoadMore : null,
+                  footer: CustomFooter(
+                    builder: (BuildContext context, LoadStatus mode) {
+                      Widget body;
+                      if (mode == LoadStatus.idle) {
+                        body = Text("pull up load");
+                      } else if (mode == LoadStatus.loading) {
+                        body = CupertinoActivityIndicator();
+                      } else if (mode == LoadStatus.failed) {
+                        body = Text("Load Failed!Click retry!");
+                      } else if (mode == LoadStatus.canLoading) {
+                        body = Text("release to load more");
+                      } else {
+                        body = Text("No more Data");
+                      }
+                      return Container(
+                        height: 55.0,
+                        child: Center(child: body),
+                      );
+                    },
+                  ),
+                  child: BlocConsumer<ProductListBloc, ProductListState>(
+                    listener: (context, productState) {},
+                    builder: (context, productState) {
+                      if (productState is ProductListLoadedSuccess) {
+                        if (productState.page == 1 ||
+                            productState.page == null) {
+                          productsMap[productState.categoryId] =
+                              productState.products;
+                        } else if (productState.page > 1) {
+                          for (int i = 0;
+                              i < productState.products.length;
+                              i++) {
+                            productsMap[productState.categoryId]
+                                .add(productState.products[i]);
+                          }
+                        }
+                        page = productState.page;
+                        isReachedMax = productState.isReachedMax;
+                        if (isReachedMax) {
+                          _refreshController.loadNoData();
+                        } else {
+                          _refreshController.loadComplete();
+                        }
+                      }
+                      return _buildCategoryTabView(index, productState);
+                    },
+                  ),
+                );
+              },
             ),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
     );
   }
 
@@ -183,48 +262,36 @@ class _ProductListViewState extends State<ProductListView>
     );
   }
 
-  Widget _buildCategoryTabView() {
-    return TabBarView(
-      controller: tabController,
-      children: List.generate(
-        subCategories.length,
-        (index) {
-          return BlocConsumer<FilterBloc, FilterState>(
-            listener: (context, state) {
-              if (state is FilteredInProcess) {
-                progressService.showProgress();
-              }
-              if (state is FilteredSuccess) {
-                progressService.hideProgress();
-              }
-              if (state is FilteredFailure) {
-                progressService.hideProgress();
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-            },
-            builder: (context, state) {
-              if (state is FilteredSuccess) {
-                productsMap[subCategories[tabController.index].id] =
-                    state.products;
-              }
-              return SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: false,
-                header: MaterialClassicHeader(color: primaryColor),
-                controller: _refreshController,
-                scrollController: widget.scrollController,
-                onRefresh: _onRefresh,
-                onLoading: () => null,
-                child: productsMap[subCategories[index].id].isEmpty
-                    ? tabController.index == index
-                        ? ProductNoAvailable(pageStyle: pageStyle)
-                        : SizedBox.shrink()
-                    : _buildProductList(index),
-              );
-            },
-          );
-        },
-      ),
+  Widget _buildCategoryTabView(int index, ProductListState productState) {
+    return BlocConsumer<FilterBloc, FilterState>(
+      listener: (context, state) {
+        if (state is FilteredInProcess) {
+          progressService.showProgress();
+        }
+        if (state is FilteredSuccess) {
+          progressService.hideProgress();
+        }
+        if (state is FilteredFailure) {
+          progressService.hideProgress();
+          flushBarService.showErrorMessage(pageStyle, state.message);
+        }
+      },
+      builder: (context, state) {
+        if (state is FilteredSuccess) {
+          productsMap[subCategories[tabController.index].id] = state.products;
+          return productsMap[subCategories[index].id].isEmpty
+              ? tabController.index == index
+                  ? ProductNoAvailable(pageStyle: pageStyle)
+                  : SizedBox.shrink()
+              : _buildProductList(index);
+        }
+        return productsMap[subCategories[index].id].isEmpty
+            ? tabController.index == index &&
+                    productState == ProductListLoadedSuccess
+                ? ProductNoAvailable(pageStyle: pageStyle)
+                : SizedBox.shrink()
+            : _buildProductList(index);
+      },
     );
   }
 

@@ -9,6 +9,7 @@ class ReviewEntity {
   final String nickname;
   final String customerId;
   final String entityCode;
+  final double ratingValue;
 
   ReviewEntity({
     this.reviewId,
@@ -21,6 +22,7 @@ class ReviewEntity {
     this.nickname,
     this.customerId,
     this.entityCode,
+    this.ratingValue,
   });
 
   ReviewEntity.fromJson(Map<String, dynamic> json)
@@ -33,5 +35,6 @@ class ReviewEntity {
         detail = json['detail'],
         nickname = json['nickname'],
         customerId = json['customer_id'],
-        entityCode = json['entity_code'];
+        entityCode = json['entity_code'],
+        ratingValue = int.parse(json['rating_value']) + .0;
 }

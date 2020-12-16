@@ -9,16 +9,18 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
+import 'package:ciga/src/data/models/region_entity.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/widgets/select_country_dialog.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/widgets/select_region_dialog.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -53,6 +55,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   TextEditingController companyController = TextEditingController();
   PhoneNumber phoneNumber;
   String countryId;
+  String regionId;
   bool isSave;
 
   @override
@@ -193,6 +196,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             hint: 'checkout_state_hint'.tr(),
             validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
+            readOnly: true,
+            onTap: () => _onSelectState(),
           ),
           CigaTextInput(
             controller: streetController,
@@ -418,6 +423,21 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           arguments: widget.reorder,
         );
       }
+    }
+  }
+
+  void _onSelectState() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return SelectRegionDialog(pageStyle: pageStyle, value: regionId);
+      },
+    );
+    if (result != null) {
+      RegionEntity selectedRegion = result as RegionEntity;
+      regionId = selectedRegion.regionId;
+      stateController.text = selectedRegion.defaultName;
+      setState(() {});
     }
   }
 }

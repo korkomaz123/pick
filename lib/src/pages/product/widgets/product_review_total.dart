@@ -65,9 +65,9 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                 if (reviews.isEmpty) {
                   return _buildFirstReview();
                 } else {
-                  int total = 0;
+                  double total = 0;
                   for (int i = 0; i < reviews.length; i++) {
-                    total += int.parse(reviews[i].detailId);
+                    total += reviews[i].ratingValue;
                   }
                   average = total / reviews.length;
                   return _buildTotalReview();

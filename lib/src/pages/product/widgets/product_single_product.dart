@@ -14,11 +14,11 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -478,24 +478,26 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                         onPressed: () => _onBuyNow(),
                       ),
               ),
-              RoundImageButton(
-                width: pageStyle.unitWidth * 58,
-                height: pageStyle.unitHeight * 50,
-                color: greyLightColor,
-                child: ScaleTransition(
-                  scale: _addToCartScaleAnimation,
-                  child: Container(
-                    width: pageStyle.unitWidth * 25,
-                    height: pageStyle.unitHeight * 25,
-                    child: SvgPicture.asset(
-                      shoppingCartIcon,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
-                onTap: () => _onAddToCart(),
-                radius: 1,
-              ),
+              productEntity.inStock
+                  ? RoundImageButton(
+                      width: pageStyle.unitWidth * 58,
+                      height: pageStyle.unitHeight * 50,
+                      color: greyLightColor,
+                      child: ScaleTransition(
+                        scale: _addToCartScaleAnimation,
+                        child: Container(
+                          width: pageStyle.unitWidth * 25,
+                          height: pageStyle.unitHeight * 25,
+                          child: SvgPicture.asset(
+                            shoppingCartIcon,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ),
+                      onTap: () => _onAddToCart(),
+                      radius: 1,
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
         );

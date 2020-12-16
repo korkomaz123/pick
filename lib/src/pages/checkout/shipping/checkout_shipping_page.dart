@@ -9,10 +9,10 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
@@ -99,19 +99,24 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
           setState(() {});
         },
         activeColor: primaryColor,
-        title: Text(
-          method.title,
-          style: mediumTextStyle.copyWith(
-            color: greyColor,
-            fontSize: pageStyle.unitFontSize * 14,
-          ),
-        ),
-        subtitle: Text(
-          method?.description,
-          style: mediumTextStyle.copyWith(
-            color: greyColor,
-            fontSize: pageStyle.unitFontSize * 11,
-          ),
+        title: Row(
+          children: [
+            Text(
+              'currency'.tr() + ' ${method.serviceFees}',
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+            SizedBox(width: pageStyle.unitWidth * 15),
+            Text(
+              method.title,
+              style: mediumTextStyle.copyWith(
+                color: greyColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ],
         ),
         secondary: SvgPicture.asset(
           method.serviceFees > 0 ? flatRateIcon : freeShippingIcon,

@@ -14,11 +14,18 @@ class ProductListLoadedInProcess extends ProductListState {}
 class ProductListLoadedSuccess extends ProductListState {
   final List<ProductModel> products;
   final String categoryId;
+  final int page;
+  final bool isReachedMax;
 
-  ProductListLoadedSuccess({this.products, this.categoryId});
+  ProductListLoadedSuccess({
+    this.products,
+    this.categoryId,
+    this.page,
+    this.isReachedMax,
+  });
 
   @override
-  List<Object> get props => [products, categoryId];
+  List<Object> get props => [products, categoryId, page, isReachedMax];
 }
 
 class ProductListLoadedFailure extends ProductListState {

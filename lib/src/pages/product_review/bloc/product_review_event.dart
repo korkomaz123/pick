@@ -13,6 +13,7 @@ class ProductReviewAdded extends ProductReviewEvent {
   final String title;
   final String detail;
   final String token;
+  final String username;
 
   ProductReviewAdded({
     this.productId,
@@ -20,8 +21,9 @@ class ProductReviewAdded extends ProductReviewEvent {
     this.title,
     this.detail,
     this.token,
+    this.username,
   });
 
   @override
-  List<Object> get props => [productId, rate, title, detail, token];
+  List<Object> get props => [productId, rate, title, detail, token, username];
 }

@@ -3,10 +3,10 @@ import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
@@ -76,6 +76,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   }
 
   void _onChangeQty() async {
+    print(widget.cartItem.availableCount);
     final result = await showDialog(
       barrierColor: Colors.white.withOpacity(0.0000000001),
       context: context,

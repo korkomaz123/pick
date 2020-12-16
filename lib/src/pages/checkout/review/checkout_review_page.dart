@@ -4,7 +4,9 @@ import 'package:ciga/src/components/product_h_card.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/cart_item_entity.dart';
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -12,9 +14,9 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutReviewPage extends StatefulWidget {
@@ -186,6 +188,31 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                InkWell(
+                  onTap: () {
+                    if (cartItem.product.brandId.isNotEmpty) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: cartItem.product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    cartItem.product.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 12,
+                    ),
+                  ),
+                ),
                 Text(
                   cartItem.product.name,
                   style: mediumTextStyle.copyWith(

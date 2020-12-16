@@ -103,7 +103,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
                 ),
               ),
               RatingBar(
-                initialRating: int.parse(review.detailId) + .0,
+                initialRating: review.ratingValue,
                 minRating: 1,
                 direction: Axis.horizontal,
                 allowHalfRating: true,

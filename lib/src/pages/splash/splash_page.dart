@@ -15,11 +15,11 @@ import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
 
 class SplashPage extends StatefulWidget {
@@ -193,10 +193,11 @@ class _SplashPageState extends State<SplashPage> {
         child: Stack(
           children: [
             Align(
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               child: Container(
-                width: pageStyle.unitWidth * 229.01,
-                height: pageStyle.unitHeight * 129.45,
+                width: pageStyle.unitWidth * 250,
+                height: pageStyle.unitHeight * 150,
+                margin: EdgeInsets.only(top: pageStyle.unitHeight * 280),
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
@@ -205,14 +206,14 @@ class _SplashPageState extends State<SplashPage> {
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       padding: EdgeInsets.only(
-                        bottom: pageStyle.unitHeight * 30,
+                        bottom: pageStyle.unitHeight * 80,
                       ),
                       width: double.infinity,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: pageStyle.unitWidth * 160,
+                            width: pageStyle.unitWidth * 150,
                             height: pageStyle.unitHeight * 50,
                             child: CigaTextButton(
                               title: 'English',
@@ -226,7 +227,7 @@ class _SplashPageState extends State<SplashPage> {
                           ),
                           SizedBox(width: pageStyle.unitWidth * 20),
                           Container(
-                            width: pageStyle.unitWidth * 160,
+                            width: pageStyle.unitWidth * 150,
                             height: pageStyle.unitHeight * 50,
                             child: CigaTextButton(
                               title: 'عربى',

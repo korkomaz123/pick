@@ -7,9 +7,9 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getProducts(String categoryId, String lang) async {
+  Future<dynamic> getProducts(String categoryId, String lang, int page) async {
     String url = EndPoints.getCategoryProducts;
-    final params = {'categoryId': categoryId, 'lang': lang};
+    final params = {'categoryId': categoryId, 'lang': lang, 'page': '$page'};
     return await Api.getMethod(url, data: params);
   }
 
@@ -61,13 +61,24 @@ class ProductRepository {
     String brandId,
     String categoryId,
     String lang,
+    int page,
   ) async {
     String url = EndPoints.getBrandProducts;
     Map<String, dynamic> params = {};
     if (categoryId != 'all') {
-      params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang};
+      params = {
+        'brandId': brandId,
+        'categoryId': categoryId,
+        'lang': lang,
+        'page': '$page'
+      };
     } else {
-      params = {'brandId': brandId, 'categoryId': null, 'lang': lang};
+      params = {
+        'brandId': brandId,
+        'categoryId': null,
+        'lang': lang,
+        'page': '$page'
+      };
     }
     return await Api.getMethod(url, data: params);
   }
@@ -153,6 +164,7 @@ class ProductRepository {
     String detail,
     String rate,
     String token,
+    String username,
   ) async {
     final url = EndPoints.addProductReview;
     final params = {
@@ -161,6 +173,7 @@ class ProductRepository {
       'detail': detail,
       'rating_value': rate,
       'token': token,
+      'nickname': username,
     };
     final result = await Api.postMethod(url, data: params);
     return result['code'] == 'SUCCESS';

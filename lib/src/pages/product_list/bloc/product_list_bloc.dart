@@ -28,6 +28,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       yield* _mapProductListLoadedToState(
         event.categoryId,
         event.lang,
+        event.page,
       );
     } else if (event is ProductListSorted) {
       yield* _mapProductListSortedToState(
@@ -40,6 +41,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         event.brandId,
         event.categoryId,
         event.lang,
+        event.page,
       );
     } else if (event is ProductListInitialized) {
       yield ProductListInitial();
@@ -49,10 +51,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   Stream<ProductListState> _mapProductListLoadedToState(
     String categoryId,
     String lang,
+    int page,
   ) async* {
     yield ProductListLoadedInProcess();
     try {
-      String key = 'cat-products-$categoryId-$lang';
+      String key = 'cat-products-$categoryId-$lang-$page';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> productList = await localStorageRepository.getItem(key);
@@ -63,9 +66,12 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         yield ProductListLoadedSuccess(
           products: products,
           categoryId: categoryId,
+          page: page,
+          isReachedMax: products.isEmpty,
         );
       }
-      final result = await _productRepository.getProducts(categoryId, lang);
+      final result =
+          await _productRepository.getProducts(categoryId, lang, page);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         List<dynamic> productList = result['products'];
@@ -76,6 +82,8 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         yield ProductListLoadedSuccess(
           products: products,
           categoryId: categoryId,
+          page: page,
+          isReachedMax: products.isEmpty,
         );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);
@@ -103,6 +111,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         yield ProductListLoadedSuccess(
           products: products,
           categoryId: categoryId,
+          isReachedMax: true,
         );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);
@@ -116,10 +125,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     String brandId,
     String categoryId,
     String lang,
+    int page,
   ) async* {
     yield ProductListLoadedInProcess();
     try {
-      String key = 'brand-products-$brandId-$categoryId-$lang';
+      String key = 'brand-products-$brandId-$categoryId-$lang-$page';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> productList = await localStorageRepository.getItem(key);
@@ -130,10 +140,12 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         yield ProductListLoadedSuccess(
           products: products,
           categoryId: categoryId,
+          page: page,
+          isReachedMax: products.isNotEmpty,
         );
       }
-      final result =
-          await _productRepository.getBrandProducts(brandId, categoryId, lang);
+      final result = await _productRepository.getBrandProducts(
+          brandId, categoryId, lang, page);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         List<dynamic> productList = result['products'];
@@ -144,6 +156,8 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         yield ProductListLoadedSuccess(
           products: products,
           categoryId: categoryId,
+          page: page,
+          isReachedMax: products.isEmpty,
         );
       } else {
         yield ProductListLoadedFailure(message: result['errMessage']);

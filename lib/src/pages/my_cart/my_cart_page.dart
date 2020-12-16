@@ -3,13 +3,13 @@ import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/components/no_available_data.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -17,12 +17,11 @@ import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:lottie/lottie.dart';
 
 import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
@@ -84,120 +83,104 @@ class _MyCartPageState extends State<MyCartPage>
         isCartPage: true,
       ),
       drawer: CigaSideMenu(pageStyle: pageStyle),
-      body: Stack(
-        children: [
-          BlocConsumer<MyCartBloc, MyCartState>(
-            listener: (context, state) {
-              if (state is MyCartItemsLoadedSuccess) {
-                cigaAppBloc.add(CartItemCountUpdated(
-                  cartItems: state.cartItems,
-                ));
-              }
-              if (state is MyCartItemsLoadedFailure) {
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is MyCartItemUpdatedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is MyCartItemUpdatedSuccess) {
-                progressService.hideProgress();
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-              }
-              if (state is MyCartItemUpdatedFailure) {
-                progressService.hideProgress();
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is MyCartItemRemovedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is MyCartItemRemovedSuccess) {
-                progressService.hideProgress();
-                flushBarService.showInformMessage(pageStyle, 'removed'.tr());
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-              }
-              if (state is MyCartItemRemovedFailure) {
-                progressService.hideProgress();
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is MyCartItemsClearedInProcess) {
-                progressService.showProgress();
-              }
-              if (state is MyCartItemsClearedSuccess) {
-                progressService.hideProgress();
-                cigaAppBloc.add(CartItemCountSet(cartItemCount: 0));
-              }
-              if (state is MyCartItemsClearedFailure) {
-                progressService.hideProgress();
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is CouponCodeAppliedSuccess) {
-                flushBarService.showSuccessMessage(pageStyle, 'Success');
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-              }
-              if (state is CouponCodeAppliedFailure) {
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-              if (state is CouponCodeCancelledSuccess) {
-                flushBarService.showSuccessMessage(pageStyle, 'Success');
-                myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-              }
-              if (state is CouponCodeCancelledFailure) {
-                flushBarService.showErrorMessage(pageStyle, state.message);
-              }
-            },
-            builder: (context, state) {
-              if (state is MyCartItemsLoadedSuccess) {
-                myCartItems = state.cartItems;
-                couponCode = state.couponCode ?? couponCode;
-                discount = state.discount;
-                _getTotalPrice();
-              }
-              if (state is MyCartItemsClearedSuccess) {
-                myCartItems.clear();
-                cartItemCount = 0;
-                totalPrice = 0;
-                cartTotalPrice = 0;
-              }
-              return (state is MyCartItemsLoadedSuccess &&
-                          myCartItems.isEmpty) ||
-                      cartId.isEmpty
-                  ? Center(
-                      child: NoAvailableData(
-                        pageStyle: pageStyle,
-                        message: 'no_cart_items_available',
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTitleBar(),
-                          _buildTotalItemsTitle(),
-                          _buildTotalItems(),
-                          MyCartCouponCode(
-                            pageStyle: pageStyle,
-                            cartId: cartId,
-                            couponCode: couponCode,
-                          ),
-                          _buildTotalPrice(),
-                          _buildCheckoutButton(),
-                        ],
-                      ),
-                    );
-            },
-          ),
-          isDeleting
-              ? Material(
-                  color: Colors.black.withOpacity(0),
-                  child: Center(
-                    child: Lottie.asset(
-                      'lib/public/animations/trash-clean.json',
-                      width: pageStyle.unitWidth * 100,
-                      height: pageStyle.unitHeight * 100,
-                    ),
+      body: BlocConsumer<MyCartBloc, MyCartState>(
+        listener: (context, state) {
+          if (state is MyCartItemsLoadedSuccess) {
+            cigaAppBloc.add(CartItemCountUpdated(
+              cartItems: state.cartItems,
+            ));
+          }
+          if (state is MyCartItemsLoadedFailure) {
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is MyCartItemUpdatedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is MyCartItemUpdatedSuccess) {
+            progressService.hideProgress();
+            myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+          }
+          if (state is MyCartItemUpdatedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is MyCartItemRemovedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is MyCartItemRemovedSuccess) {
+            progressService.hideProgress();
+            flushBarService.showInformMessage(pageStyle, 'removed'.tr());
+            myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+          }
+          if (state is MyCartItemRemovedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is MyCartItemsClearedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is MyCartItemsClearedSuccess) {
+            progressService.hideProgress();
+            cigaAppBloc.add(CartItemCountSet(cartItemCount: 0));
+            myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+          }
+          if (state is MyCartItemsClearedFailure) {
+            progressService.hideProgress();
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is CouponCodeAppliedSuccess) {
+            flushBarService.showSuccessMessage(pageStyle, 'Success');
+            myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+          }
+          if (state is CouponCodeAppliedFailure) {
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+          if (state is CouponCodeCancelledSuccess) {
+            flushBarService.showSuccessMessage(pageStyle, 'Success');
+            myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+          }
+          if (state is CouponCodeCancelledFailure) {
+            flushBarService.showErrorMessage(pageStyle, state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is MyCartItemsLoadedSuccess) {
+            myCartItems = state.cartItems;
+            couponCode = state.couponCode ?? couponCode;
+            discount = state.discount;
+            _getTotalPrice();
+          }
+          if (state is MyCartItemsClearedSuccess) {
+            myCartItems.clear();
+            cartItemCount = 0;
+            totalPrice = 0;
+            cartTotalPrice = 0;
+          }
+          return (state is MyCartItemsLoadedSuccess && myCartItems.isEmpty) ||
+                  cartId.isEmpty
+              ? Center(
+                  child: NoAvailableData(
+                    pageStyle: pageStyle,
+                    message: 'no_cart_items_available',
                   ),
                 )
-              : SizedBox.shrink(),
-        ],
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildTitleBar(),
+                      _buildTotalItemsTitle(),
+                      _buildTotalItems(),
+                      MyCartCouponCode(
+                        pageStyle: pageStyle,
+                        cartId: cartId,
+                        couponCode: couponCode,
+                      ),
+                      _buildTotalPrice(),
+                      _buildCheckoutButton(),
+                    ],
+                  ),
+                );
+        },
       ),
       bottomNavigationBar: CigaBottomBar(
         pageStyle: pageStyle,
@@ -330,12 +313,6 @@ class _MyCartPageState extends State<MyCartPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  myCartItems[index].product.name,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                  ),
-                ),
                 InkWell(
                   onTap: () {
                     if (myCartItems[index].product.brandId.isNotEmpty) {
@@ -359,6 +336,12 @@ class _MyCartPageState extends State<MyCartPage>
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 10,
                     ),
+                  ),
+                ),
+                Text(
+                  myCartItems[index].product.name,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
                 Text(
@@ -408,11 +391,13 @@ class _MyCartPageState extends State<MyCartPage>
                         ),
                       ),
                     ),
-                    MyCartQtyHorizontalPicker(
-                      pageStyle: pageStyle,
-                      cartItem: myCartItems[index],
-                      cartId: cartId,
-                    ),
+                    myCartItems[index].availableCount > 0
+                        ? MyCartQtyHorizontalPicker(
+                            pageStyle: pageStyle,
+                            cartItem: myCartItems[index],
+                            cartId: cartId,
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
               ],

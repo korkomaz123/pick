@@ -3,10 +3,10 @@ import 'package:ciga/src/data/models/review_entity.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ProductReview extends StatefulWidget {
@@ -35,7 +35,7 @@ class _ProductReviewState extends State<ProductReview> {
           .getProductReviews(widget.product.productId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          reviews = snapshot.data;
+          reviews = snapshot.data ?? [];
           return reviews.isNotEmpty
               ? Container(
                   width: widget.pageStyle.deviceWidth,
@@ -90,7 +90,7 @@ class _ProductReviewState extends State<ProductReview> {
                 ),
               ),
               RatingBar(
-                initialRating: int.parse(review.detailId) + .0,
+                initialRating: review.ratingValue,
                 minRating: 1,
                 direction: Axis.horizontal,
                 allowHalfRating: true,
