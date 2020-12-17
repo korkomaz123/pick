@@ -11,11 +11,11 @@ import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CancelOrderPage extends StatefulWidget {
@@ -30,6 +30,7 @@ class CancelOrderPage extends StatefulWidget {
 class _CancelOrderPageState extends State<CancelOrderPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   PageStyle pageStyle;
+  FlushBarService flushBarService;
   OrderEntity order;
   String icon = '';
   Color color;
@@ -40,6 +41,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   @override
   void initState() {
     super.initState();
+    flushBarService = FlushBarService(context: context);
     order = widget.order;
     switch (order.status) {
       case OrderStatusEnum.pending:
@@ -149,7 +151,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               _buildSubtotal(),
               _buildShippingCost(),
               _buildTotal(),
-              _buildReorderButton(),
+              _buildNextButton(),
             ],
           ),
         ),
@@ -242,13 +244,36 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       children: List.generate(
         order.cartItems.length,
         (index) {
-          if (order.cartItems[index].availableCount == null) {
+          if (order.cartItems[index].availableCount == null ||
+              order.cartItems[index].availableCount == 0) {
             order.cartItems[index].availableCount =
                 order.cartItems[index].itemCount;
           }
+          String key = order.cartItems[index].product.productId.toString();
+          bool isSelected = cancelItemsMap.containsKey(key);
           return Column(
             children: [
-              _buildProductCard(order.cartItems[index], index),
+              Stack(
+                children: [
+                  _buildProductCard(order.cartItems[index], index),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: SvgPicture.asset(
+                          isSelected ? selectedIcon : unSelectedIcon),
+                      onPressed: () {
+                        if (isSelected) {
+                          cancelItemsMap.remove(key);
+                        } else {
+                          cancelItemsMap[key] =
+                              order.cartItems[index].itemCount;
+                        }
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ],
+              ),
               index < (order.cartItems.length - 1)
                   ? Divider(color: greyColor, thickness: 0.5)
                   : SizedBox.shrink(),
@@ -261,7 +286,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
     bool isDefaultValue =
-        cancelItemsMap.containsKey(cartItem.product.productId);
+        cancelItemsMap.containsKey(cartItem.product.productId.toString());
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
@@ -454,36 +479,21 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     );
   }
 
-  Widget _buildReorderButton() {
+  Widget _buildNextButton() {
     return MaterialButton(
-      onPressed: () => Navigator.pushNamed(
-        context,
-        Routes.reOrder,
-        arguments: order,
-      ),
+      onPressed: () => _onNext(),
       minWidth: pageStyle.unitWidth * 150,
       height: pageStyle.unitHeight * 45,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
       color: primaryColor,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            FontAwesomeIcons.history,
-            color: Colors.white54,
-            size: pageStyle.unitFontSize * 20,
-          ),
-          SizedBox(width: pageStyle.unitWidth * 4),
-          Text(
-            'reorder_button_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 17,
-              color: Colors.white,
-            ),
-          ),
-        ],
+      child: Text(
+        'next_button_title'.tr(),
+        style: mediumTextStyle.copyWith(
+          fontSize: pageStyle.unitFontSize * 17,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -505,6 +515,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       final key = order.cartItems[index].product.productId;
       cancelItemsMap[key] = count;
       setState(() {});
+    }
+  }
+
+  void _onNext() {
+    List<String> keys = cancelItemsMap.keys.toList();
+    if (keys.isNotEmpty) {
+      final params = {'order': order, 'items': cancelItemsMap};
+      Navigator.pushNamed(context, Routes.cancelOrderInfo, arguments: params);
+    } else {
+      String message = 'cancel_order_no_selected_item'.tr();
+      flushBarService.showErrorMessage(pageStyle, message);
     }
   }
 }

@@ -242,5 +242,10 @@
     "cancel_order_button_title": "الغاء الطلب",
     "select_quantity": "حدد الكمية",
     "search_region_hint": "منطقة البحث",
-    "no_available_regions": "لا توجد مناطق متاحة"
+    "no_available_regions": "لا توجد مناطق متاحة",
+    "cancel_order_no_selected_item": "الرجاء تحديد عنصر واحد على الأقل لإلغاء الطلب",
+    "cancel_order_additional_info_title": "معلومة اضافية",
+    "cancel_order_image_for_product_title": "صورة للمنتج",
+    "cancel_order_image_required": "الرجاء التقاط صورة للمنتج",
+    "success": "نجاح"
 }

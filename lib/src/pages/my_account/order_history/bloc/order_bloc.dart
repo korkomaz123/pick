@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
@@ -23,6 +24,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async* {
     if (event is OrderHistoryLoaded) {
       yield* _mapOrderHistoryLoadedToState(event.token);
+    } else if (event is OrderCancelled) {
+      yield* _mapOrderCancelledToState(
+        event.orderId,
+        event.items,
+        event.additionalInfo,
+        event.reason,
+        event.imageForProduct,
+        event.imageName,
+      );
     }
   }
 
@@ -43,6 +53,30 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     } catch (e) {
       print(e.toString());
       yield OrderHistoryLoadedFailure(message: e.toString());
+    }
+  }
+
+  Stream<OrderState> _mapOrderCancelledToState(
+    String orderId,
+    List<Map<String, dynamic>> items,
+    String additionalInfo,
+    String reason,
+    Uint8List product,
+    String imageName,
+  ) async* {
+    yield OrderCancelledInProcess();
+    try {
+      final result = await _orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, product, imageName);
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        yield OrderCancelledSuccess();
+      } else {
+        yield OrderCancelledFailure(message: result['errorMessage']);
+      }
+    } catch (e) {
+      print(e.toString());
+      yield OrderCancelledFailure(message: e.toString());
     }
   }
 }

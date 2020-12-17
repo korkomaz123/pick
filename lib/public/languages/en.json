@@ -244,5 +244,10 @@
     "cancel_order_button_title": "Cancel Order",
     "select_quantity": "Select Quantity",
     "search_region_hint": "Search Region",
-    "no_available_regions": "No available regions"
+    "no_available_regions": "No available regions",
+    "cancel_order_no_selected_item": "Please select at least one item to cancel the order",
+    "cancel_order_additional_info_title": "Additional Information",
+    "cancel_order_image_for_product_title": "Image for Product",
+    "cancel_order_image_required": "Please take an image for product",
+    "success": "Success"
 }

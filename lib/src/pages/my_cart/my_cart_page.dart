@@ -129,14 +129,14 @@ class _MyCartPageState extends State<MyCartPage>
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
           if (state is CouponCodeAppliedSuccess) {
-            flushBarService.showSuccessMessage(pageStyle, 'Success');
+            flushBarService.showSuccessMessage(pageStyle, 'success'.tr());
             myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
           }
           if (state is CouponCodeAppliedFailure) {
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
           if (state is CouponCodeCancelledSuccess) {
-            flushBarService.showSuccessMessage(pageStyle, 'Success');
+            flushBarService.showSuccessMessage(pageStyle, 'success'.tr());
             myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
           }
           if (state is CouponCodeCancelledFailure) {

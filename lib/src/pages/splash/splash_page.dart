@@ -195,9 +195,9 @@ class _SplashPageState extends State<SplashPage> {
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                width: pageStyle.unitWidth * 250,
-                height: pageStyle.unitHeight * 150,
-                margin: EdgeInsets.only(top: pageStyle.unitHeight * 280),
+                width: pageStyle.unitWidth * 260.94,
+                height: pageStyle.unitHeight * 180,
+                margin: EdgeInsets.only(top: pageStyle.unitHeight * 262.7),
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
@@ -206,15 +206,15 @@ class _SplashPageState extends State<SplashPage> {
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       padding: EdgeInsets.only(
-                        bottom: pageStyle.unitHeight * 80,
+                        bottom: pageStyle.unitHeight * 141,
                       ),
                       width: double.infinity,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: pageStyle.unitWidth * 150,
-                            height: pageStyle.unitHeight * 50,
+                            width: pageStyle.unitWidth * 145,
+                            height: pageStyle.unitHeight * 49,
                             child: CigaTextButton(
                               title: 'English',
                               titleSize: pageStyle.unitFontSize * 20,
@@ -225,10 +225,10 @@ class _SplashPageState extends State<SplashPage> {
                               radius: 30,
                             ),
                           ),
-                          SizedBox(width: pageStyle.unitWidth * 20),
+                          SizedBox(width: pageStyle.unitWidth * 13),
                           Container(
-                            width: pageStyle.unitWidth * 150,
-                            height: pageStyle.unitHeight * 50,
+                            width: pageStyle.unitWidth * 145,
+                            height: pageStyle.unitHeight * 49,
                             child: CigaTextButton(
                               title: 'عربى',
                               titleSize: pageStyle.unitFontSize * 20,

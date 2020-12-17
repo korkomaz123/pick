@@ -28,3 +28,16 @@ class OrderHistoryLoadedFailure extends OrderState {
   @override
   List<Object> get props => [message];
 }
+
+class OrderCancelledInProcess extends OrderState {}
+
+class OrderCancelledSuccess extends OrderState {}
+
+class OrderCancelledFailure extends OrderState {
+  final String message;
+
+  OrderCancelledFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

@@ -88,7 +88,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             progressService.hideProgress();
             flushBarService.showSuccessMessage(
               pageStyle,
-              'Address added successfully',
+              'success'.tr(),
             );
           }
           if (state is ShippingAddressAddedFailure) {

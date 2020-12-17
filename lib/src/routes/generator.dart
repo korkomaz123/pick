@@ -1,11 +1,11 @@
 import 'package:ciga/src/pages/brand_list/brand_list_page.dart';
 import 'package:ciga/src/pages/category_list/category_list_page.dart';
 import 'package:ciga/src/pages/checkout/address/checkout_address_page.dart';
+import 'package:ciga/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:ciga/src/pages/checkout/payment/checkout_payment_page.dart';
 import 'package:ciga/src/pages/checkout/review/checkout_review_page.dart';
 import 'package:ciga/src/pages/checkout/search_address/search_address_screen.dart';
 import 'package:ciga/src/pages/checkout/shipping/checkout_shipping_page.dart';
-import 'package:ciga/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:ciga/src/pages/home/home_page.dart';
@@ -16,10 +16,11 @@ import 'package:ciga/src/pages/my_account/contact_us/contact_us_page.dart';
 import 'package:ciga/src/pages/my_account/contact_us/contact_us_success_page.dart';
 import 'package:ciga/src/pages/my_account/notification_messages/notification_message_details_page.dart';
 import 'package:ciga/src/pages/my_account/notification_messages/notiifcation_messages_page.dart';
-import 'package:ciga/src/pages/my_account/order_history/order_history_page.dart';
-import 'package:ciga/src/pages/my_account/order_history/reorder_page.dart';
-import 'package:ciga/src/pages/my_account/order_history/view_order_page.dart';
-import 'package:ciga/src/pages/my_account/order_history/cancel_order_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/cancel_order/cancel_order_info_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/cancel_order/cancel_order_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/order_history/order_history_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/reorder/reorder_page.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/view_order/view_order_page.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/edit_address_page.dart';
 import 'package:ciga/src/pages/my_account/shipping_address/shipping_address_page.dart';
 import 'package:ciga/src/pages/my_account/terms/terms_page.dart';
@@ -28,15 +29,15 @@ import 'package:ciga/src/pages/my_cart/my_cart_page.dart';
 import 'package:ciga/src/pages/product/product_image.dart';
 import 'package:ciga/src/pages/product/product_page.dart';
 import 'package:ciga/src/pages/product_list/product_list_page.dart';
-import 'package:ciga/src/pages/product_review/product_review_page.dart';
 import 'package:ciga/src/pages/product_review/add_product_review_page.dart';
+import 'package:ciga/src/pages/product_review/product_review_page.dart';
 import 'package:ciga/src/pages/search/search_page.dart';
 import 'package:ciga/src/pages/sign_in/sign_in_page.dart';
 import 'package:ciga/src/pages/sign_up/sign_up_page.dart';
 import 'package:ciga/src/pages/splash/splash_page.dart';
 import 'package:ciga/src/pages/wishlist/wishlist_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'routes.dart';
 
@@ -179,6 +180,10 @@ class RouteGenerator {
       case Routes.cancelOrder:
         return CupertinoPageRoute(
           builder: (context) => CancelOrderPage(order: params),
+        );
+      case Routes.cancelOrderInfo:
+        return CupertinoPageRoute(
+          builder: (context) => CancelOrderInfoPage(params: params),
         );
       case Routes.changePassword:
         return CupertinoPageRoute(

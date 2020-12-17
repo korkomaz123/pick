@@ -68,5 +68,6 @@ class Routes {
   static const String viewOrder = '/view-order';
   static const String reOrder = '/re-order';
   static const String cancelOrder = '/cancel-order';
+  static const String cancelOrderInfo = '/cancel-order-info';
   static const String changePassword = 'change-password';
 }

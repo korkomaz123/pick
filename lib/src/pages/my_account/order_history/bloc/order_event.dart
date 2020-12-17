@@ -15,3 +15,31 @@ class OrderHistoryLoaded extends OrderEvent {
   @override
   List<Object> get props => [token];
 }
+
+class OrderCancelled extends OrderEvent {
+  final String orderId;
+  final List<Map<String, dynamic>> items;
+  final String reason;
+  final String additionalInfo;
+  final Uint8List imageForProduct;
+  final String imageName;
+
+  OrderCancelled({
+    this.orderId,
+    this.items,
+    this.reason,
+    this.additionalInfo,
+    this.imageForProduct,
+    this.imageName,
+  });
+
+  @override
+  List<Object> get props => [
+        orderId,
+        items,
+        reason,
+        additionalInfo,
+        imageForProduct,
+        imageName,
+      ];
+}

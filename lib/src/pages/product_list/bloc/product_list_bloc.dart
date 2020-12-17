@@ -86,9 +86,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           isReachedMax: products.isEmpty,
         );
       } else {
+        print(result['errMessage']);
         yield ProductListLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
+      print(e.toString());
       yield ProductListLoadedFailure(message: e.toString());
     }
   }

@@ -61,4 +61,5 @@ class EndPoints {
   static const String getRegions = '$baseUrl/getRegions';
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';
+  static const String cancelOrder = '$baseUrl/cancelOrder';
 }

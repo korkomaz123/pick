@@ -1,3 +1,4 @@
+import 'package:ciga/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 
 class CigaInputField extends StatelessWidget {
@@ -114,7 +115,10 @@ class CigaInputField extends StatelessWidget {
         children: <Widget>[
           Text(
             label,
-            style: TextStyle(color: labelColor, fontSize: labelSize),
+            style: mediumTextStyle.copyWith(
+              color: labelColor,
+              fontSize: labelSize,
+            ),
           ),
           SizedBox(height: space),
           obsecureText

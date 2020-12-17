@@ -175,22 +175,7 @@ class _ProductListViewState extends State<ProductListView>
                   onLoading: page != null && !isReachedMax ? _onLoadMore : null,
                   footer: CustomFooter(
                     builder: (BuildContext context, LoadStatus mode) {
-                      Widget body;
-                      if (mode == LoadStatus.idle) {
-                        body = Text("pull up load");
-                      } else if (mode == LoadStatus.loading) {
-                        body = CupertinoActivityIndicator();
-                      } else if (mode == LoadStatus.failed) {
-                        body = Text("Load Failed!Click retry!");
-                      } else if (mode == LoadStatus.canLoading) {
-                        body = Text("release to load more");
-                      } else {
-                        body = Text("No more Data");
-                      }
-                      return Container(
-                        height: 55.0,
-                        child: Center(child: body),
-                      );
+                      return SizedBox.shrink();
                     },
                   ),
                   child: BlocConsumer<ProductListBloc, ProductListState>(
@@ -287,7 +272,7 @@ class _ProductListViewState extends State<ProductListView>
         }
         return productsMap[subCategories[index].id].isEmpty
             ? tabController.index == index &&
-                    productState == ProductListLoadedSuccess
+                    productState is ProductListLoadedSuccess
                 ? ProductNoAvailable(pageStyle: pageStyle)
                 : SizedBox.shrink()
             : _buildProductList(index);
