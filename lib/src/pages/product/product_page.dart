@@ -7,9 +7,11 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
+import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product/widgets/product_more_about.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +42,8 @@ class _ProductPageState extends State<ProductPage> {
   ProductBloc productBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
+  LocalStorageRepository localStorageRepository;
+  ProductRepository productRepository;
 
   @override
   void initState() {
@@ -50,11 +54,23 @@ class _ProductPageState extends State<ProductPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
+    productRepository = context.read<ProductRepository>();
+    localStorageRepository = context.read<LocalStorageRepository>();
     productBloc = context.read<ProductBloc>();
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,
       lang: lang,
     ));
+    _sendViewedProduct();
+  }
+
+  void _sendViewedProduct() async {
+    if (user?.token != null) {
+      await productRepository.setRecentlyViewedCustomerProduct(
+          user.token, product.productId, lang);
+    } else {
+      await localStorageRepository.addRecentlyViewedItem(product.productId);
+    }
   }
 
   @override

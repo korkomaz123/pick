@@ -2,6 +2,7 @@ import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/user_entity.dart';
+import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -30,6 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController passwordController = TextEditingController();
   bool agreeTerms = false;
   SignInBloc signInBloc;
+  HomeBloc homeBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   PageStyle pageStyle;
@@ -38,6 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
+    homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
@@ -47,6 +50,10 @@ class _SignUpPageState extends State<SignUpPage> {
   void _saveToken(UserEntity loggedInUser) async {
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
+    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
+      token: user.token,
+      lang: lang,
+    ));
   }
 
   @override

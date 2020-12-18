@@ -62,11 +62,12 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
               size: pageStyle.unitFontSize * 25,
               color: greyColor,
             ),
-            onPressed: () => Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.home,
-              (route) => false,
-            ),
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                (route) => route.settings.name == Routes.myCart,
+              );
+            },
           ),
         ),
       ],

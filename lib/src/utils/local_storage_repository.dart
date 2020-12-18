@@ -12,6 +12,13 @@ class LocalStorageRepository {
     return wishlists;
   }
 
+  Future<List<String>> getRecentlyViewedIds() async {
+    List<String> recentlyViews = (await prefs).containsKey('recently-viewed')
+        ? (await prefs).getStringList('recently-viewed')
+        : [];
+    return recentlyViews;
+  }
+
   Future<String> getToken() async {
     String token = (await prefs).containsKey('token')
         ? (await prefs).getString('token')
@@ -45,6 +52,19 @@ class LocalStorageRepository {
     int index = wishlists.indexOf(id);
     if (index != -1) wishlists.removeAt(index);
     await (await prefs).setStringList('wishlist', wishlists);
+  }
+
+  Future<void> addRecentlyViewedItem(String id) async {
+    List<String> recentlyViews = await getRecentlyViewedIds();
+    recentlyViews.add(id);
+    await (await prefs).setStringList('recently-viewed', recentlyViews);
+  }
+
+  Future<void> removeRecentlyViewedItem(String id) async {
+    List<String> recentlyViews = await getRecentlyViewedIds();
+    int index = recentlyViews.indexOf(id);
+    if (index != -1) recentlyViews.removeAt(index);
+    await (await prefs).setStringList('recently-viewed', recentlyViews);
   }
 
   Future<void> clearWishlistItem() async {

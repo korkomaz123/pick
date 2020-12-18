@@ -62,4 +62,7 @@ class EndPoints {
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';
   static const String cancelOrder = '$baseUrl/cancelOrder';
+  static const String getViewedProducts = '$baseUrl/getViewedProducts';
+  static const String sendProductViewed = '$baseUrl/sendProductViewed';
+  static const String getViewedGuestProducts = '$baseUrl/getRecentView';
 }

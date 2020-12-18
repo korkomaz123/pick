@@ -3,6 +3,7 @@ import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -32,6 +33,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
+  HomeBloc homeBloc;
   SignInBloc signInBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -41,6 +43,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
@@ -324,10 +327,18 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   void _logoutUser() async {
     user = null;
     await localRepo.setToken('');
-    Navigator.pushNamedAndRemoveUntil(
+    List<String> ids = await localRepo.getRecentlyViewedIds();
+    homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+    Navigator.popUntil(
       context,
-      Routes.home,
-      (route) => false,
+      (route) {
+        print('///////////////');
+        print(route.settings.name);
+        if (route.settings.name == Routes.home) {
+          return true;
+        }
+        return false;
+      },
     );
   }
 }

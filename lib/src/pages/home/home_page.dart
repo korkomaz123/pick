@@ -2,12 +2,14 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'bloc/home_bloc.dart';
+import 'widgets/home_recent.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_discover_stores.dart';
@@ -33,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   CategoryListBloc categoryListBloc;
   BrandBloc brandBloc;
   PageStyle pageStyle;
+  LocalStorageRepository localStorageRepository;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     homeBloc = context.read<HomeBloc>();
     categoryListBloc = context.read<CategoryListBloc>();
     brandBloc = context.read<BrandBloc>();
+    localStorageRepository = context.read<LocalStorageRepository>();
   }
 
   void _onRefresh() async {
@@ -50,8 +54,21 @@ class _HomePageState extends State<HomePage> {
     categoryListBloc.add(CategoryListLoaded(lang: lang));
     brandBloc.add(BrandListLoaded(lang: lang));
     homeBloc.add(HomeAdsLoaded());
+    if (user?.token != null) {
+      homeBloc.add(HomeRecentlyViewedCustomerLoaded(
+        token: user.token,
+        lang: lang,
+      ));
+    } else {
+      _loadGuestViewed();
+    }
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
+  }
+
+  void _loadGuestViewed() async {
+    List<String> ids = await localStorageRepository.getRecentlyViewedIds();
+    homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
   }
 
   @override
@@ -82,6 +99,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: pageStyle.unitHeight * 10),
               HomeAdvertise(pageStyle: pageStyle),
               SizedBox(height: pageStyle.unitHeight * 10),
+              HomeRecent(pageStyle: pageStyle),
             ],
           ),
         ),

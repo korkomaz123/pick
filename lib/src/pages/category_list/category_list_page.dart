@@ -322,10 +322,13 @@ class _CategoryListPageState extends State<CategoryListPage> {
     return Container(
       // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
-        onPressed: () => Navigator.pushReplacementNamed(
-          context,
-          Routes.brandList,
-        ),
+        onPressed: () {
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == Routes.home,
+          );
+          Navigator.pushNamed(context, Routes.brandList);
+        },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(lang == 'ar' ? 30 : 0),

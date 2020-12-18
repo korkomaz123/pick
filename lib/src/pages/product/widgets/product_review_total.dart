@@ -61,7 +61,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                 .getProductReviews(widget.product.productId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                reviews = snapshot.data;
+                reviews = snapshot.data ?? [];
                 if (reviews.isEmpty) {
                   return _buildFirstReview();
                 } else {

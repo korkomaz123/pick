@@ -175,9 +175,7 @@ class _AccountPageState extends State<AccountPage> {
                                     ),
                                     SizedBox(width: pageStyle.unitWidth * 4),
                                     Text(
-                                      user != null
-                                          ? 'logout'.tr()
-                                          : 'login'.tr(),
+                                      'login'.tr(),
                                       style: mediumTextStyle.copyWith(
                                         fontSize: pageStyle.unitFontSize * 16,
                                       ),

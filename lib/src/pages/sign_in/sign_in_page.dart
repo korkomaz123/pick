@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:ciga/src/components/ciga_text_button.dart';
+import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:http/http.dart' as http;
@@ -37,6 +38,7 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController passwordController = TextEditingController();
   bool isShowPass = false;
   SignInBloc signInBloc;
+  HomeBloc homeBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
@@ -46,6 +48,7 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+    homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
   }
@@ -53,6 +56,10 @@ class _SignInPageState extends State<SignInPage> {
   void _saveToken(UserEntity loggedInUser) async {
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
+    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
+      token: user.token,
+      lang: lang,
+    ));
   }
 
   @override

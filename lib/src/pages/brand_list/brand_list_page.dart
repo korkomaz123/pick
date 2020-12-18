@@ -138,12 +138,14 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildCategoryButton() {
     return Container(
-      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
-        onPressed: () => Navigator.pushReplacementNamed(
-          context,
-          Routes.categoryList,
-        ),
+        onPressed: () {
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == Routes.home,
+          );
+          Navigator.pushNamed(context, Routes.categoryList);
+        },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(lang == 'en' ? 30 : 0),

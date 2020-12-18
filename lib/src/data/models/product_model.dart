@@ -17,6 +17,7 @@ class ProductModel {
   final String brandLabel;
   final String brandId;
   final BrandEntity brandEntity;
+  final int stockQty;
 
   ProductModel({
     this.entityId,
@@ -35,6 +36,7 @@ class ProductModel {
     this.brandLabel,
     this.brandId,
     this.brandEntity,
+    this.stockQty,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -60,5 +62,6 @@ class ProductModel {
         brandEntity =
             json['brand_entity'] != null && json['brand_entity'].isNotEmpty
                 ? BrandEntity.fromJson(json['brand_entity'])
-                : BrandEntity();
+                : BrandEntity(),
+        stockQty = json['stockQty'];
 }

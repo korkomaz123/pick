@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 import 'package:ciga/src/data/models/product_model.dart';
@@ -35,6 +37,55 @@ class ProductRepository {
   Future<dynamic> getBestDealsProducts(String lang) async {
     String url = EndPoints.getBestDeals;
     return await Api.getMethod(url, data: {'lang': lang});
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeRecentlyViewedGuestProducts(
+    List<String> ids,
+    String lang,
+  ) async {
+    String url = EndPoints.getViewedGuestProducts;
+    List<int> viewedIds = ids.map((id) => int.parse(id)).toList();
+    return await Api.postMethod(
+      url,
+      data: {'viewedIds': json.encode(viewedIds), 'lang': lang},
+    );
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeRecentlyViewedCustomerProducts(
+    String token,
+    String lang,
+  ) async {
+    String url = EndPoints.getViewedProducts;
+    return await Api.postMethod(
+      url,
+      data: {'token': token, 'lang': lang},
+    );
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> setRecentlyViewedCustomerProduct(
+    String token,
+    String productId,
+    String lang,
+  ) async {
+    String url = EndPoints.sendProductViewed;
+    try {
+      final result = await Api.postMethod(
+        url,
+        data: {'token': token, 'productId': productId, 'lang': lang},
+      );
+      print(result);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////

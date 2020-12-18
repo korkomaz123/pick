@@ -44,3 +44,23 @@ class HomePerfumesLoaded extends HomeEvent {
 }
 
 class HomeAdsLoaded extends HomeEvent {}
+
+class HomeRecentlyViewedGuestLoaded extends HomeEvent {
+  final List<String> ids;
+  final String lang;
+
+  HomeRecentlyViewedGuestLoaded({this.ids, this.lang});
+
+  @override
+  List<Object> get props => [ids, lang];
+}
+
+class HomeRecentlyViewedCustomerLoaded extends HomeEvent {
+  final String token;
+  final String lang;
+
+  HomeRecentlyViewedCustomerLoaded({this.token, this.lang});
+
+  @override
+  List<Object> get props => [token, lang];
+}

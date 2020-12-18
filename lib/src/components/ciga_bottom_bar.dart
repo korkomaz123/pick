@@ -167,33 +167,47 @@ class CigaBottomBar extends StatelessWidget {
   void _onChangedTab(int index, BuildContext context) {
     switch (index) {
       case 0:
-        Navigator.pushNamedAndRemoveUntil(
+        Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         );
         break;
       case 1:
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == Routes.home,
+        );
         Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == Routes.home,
+        );
         Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
         if (user?.token != null) {
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == Routes.home,
+          );
           Navigator.pushNamed(context, Routes.wishlist);
         } else {
           Navigator.pushNamed(context, Routes.signIn);
         }
         break;
       case 4:
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == Routes.home,
+        );
         Navigator.pushNamed(context, Routes.account);
         break;
       default:
-        Navigator.pushNamedAndRemoveUntil(
+        Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         );
         break;
     }

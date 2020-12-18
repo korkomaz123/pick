@@ -141,6 +141,7 @@ class _ProductHCardState extends State<ProductHCard>
               children: [
                 _buildProductCard(),
                 _buildToolbar(),
+                _buildOutofStock(),
               ],
             );
           },
@@ -301,6 +302,28 @@ class _ProductHCardState extends State<ProductHCard>
         );
       },
     );
+  }
+
+  Widget _buildOutofStock() {
+    return widget.product.stockQty == 0
+        ? Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.pageStyle.unitWidth * 20,
+                vertical: widget.pageStyle.unitHeight * 10,
+              ),
+              color: primarySwatchColor.withOpacity(0.4),
+              child: Text(
+                'out_stock'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: widget.pageStyle.unitFontSize * 18,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          )
+        : SizedBox.shrink();
   }
 
   void _onAddProductToCart(BuildContext context) async {
