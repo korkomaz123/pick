@@ -16,3 +16,5 @@ enum OrderStatusEnum {
   pending_paypal,
   processing
 }
+
+enum ProductViewEnum { category, brand, filter, sort }

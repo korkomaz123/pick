@@ -1,3 +1,5 @@
+import 'package:ciga/src/change_notifier/place_change_notifier.dart';
+import 'package:ciga/src/change_notifier/product_change_notifier.dart';
 import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:ciga/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:ciga/src/config/config.dart';
@@ -35,18 +37,17 @@ import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/routes/generator.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:provider/provider.dart';
 
 import 'bloc/cart_item_count/cart_item_count_bloc.dart';
 
@@ -102,23 +103,7 @@ class CigaApp extends StatelessWidget {
                                 value: checkoutRepository,
                                 child: RepositoryProvider.value(
                                   value: searchRepository,
-                                  child: MultiProvider(
-                                    providers: [
-                                      ChangeNotifierProvider(
-                                        create: (context) =>
-                                            PlaceChangeNotifier(),
-                                      ),
-                                      ChangeNotifierProvider(
-                                        create: (context) =>
-                                            ScrollChangeNotifier(),
-                                      ),
-                                      ChangeNotifierProvider(
-                                        create: (context) =>
-                                            SuggestionChangeNotifier(),
-                                      ),
-                                    ],
-                                    child: _buildMultiBlocProvider(),
-                                  ),
+                                  child: _buildMultiProvider(),
                                 ),
                               ),
                             ),
@@ -133,6 +118,29 @@ class CigaApp extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMultiProvider() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => PlaceChangeNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ScrollChangeNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SuggestionChangeNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProductChangeNotifier(
+            productRepository: productRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+      ],
+      child: _buildMultiBlocProvider(),
     );
   }
 

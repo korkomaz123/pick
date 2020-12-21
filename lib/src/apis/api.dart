@@ -17,6 +17,7 @@ class Api {
     Map<String, dynamic> data,
   }) async {
     final response = await http.post(url, headers: _getHeader(), body: data);
+    print(data);
     return jsonDecode(response.body);
   }
 

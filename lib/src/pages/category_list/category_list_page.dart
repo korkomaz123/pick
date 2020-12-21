@@ -159,15 +159,18 @@ class _CategoryListPageState extends State<CategoryListPage> {
           }
         });
       },
-      child: Container(
+      child: Image.network(
+        category.imageUrl,
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 128,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(category.imageUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) {
+          return Container(
+            width: pageStyle.deviceWidth,
+            height: pageStyle.unitHeight * 128,
+            color: Colors.grey,
+          );
+        },
       ),
     );
   }

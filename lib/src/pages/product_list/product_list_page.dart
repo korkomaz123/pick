@@ -1,3 +1,4 @@
+import 'package:ciga/src/change_notifier/product_change_notifier.dart';
 import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
@@ -59,6 +60,7 @@ class _ProductListPageState extends State<ProductListPage> {
   SnackBarService snackBarService;
   double scrollPosition = 0;
   ScrollChangeNotifier scrollChangeNotifier;
+  ProductChangeNotifier productChangeNotifier;
 
   @override
   void initState() {
@@ -71,10 +73,10 @@ class _ProductListPageState extends State<ProductListPage> {
     isFromBrand = arguments.isFromBrand;
     subCategories = [category];
     selectedCategory = subCategories[activeSubcategoryIndex].name;
-
     productListBloc = context.read<ProductListBloc>();
     categoryBloc = context.read<CategoryBloc>();
     filterBloc = context.read<FilterBloc>();
+    productChangeNotifier = context.read<ProductChangeNotifier>();
     if (isFromBrand) {
       categoryBloc.add(BrandSubCategoriesLoaded(
         brandId: brand.optionId,
@@ -92,7 +94,6 @@ class _ProductListPageState extends State<ProductListPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    scrollController.addListener(_onScroll);
   }
 
   @override
@@ -137,31 +138,50 @@ class _ProductListPageState extends State<ProductListPage> {
                 for (int i = 0; i < categoryState.subCategories.length; i++) {
                   subCategories.add(categoryState.subCategories[i]);
                 }
-                return Consumer<ScrollChangeNotifier>(
-                  builder: (ctx, notifier, child) {
-                    scrollChangeNotifier = notifier;
-                    return AnimatedPositioned(
-                      top: isFromBrand
-                          ? pageStyle.unitHeight * 120 - notifier.scrollPosition
-                          : pageStyle.unitHeight * 40,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      duration: Duration(milliseconds: 500),
-                      child: ProductListView(
-                        subCategories: subCategories,
-                        activeIndex: widget.arguments.selectedSubCategoryIndex,
-                        scaffoldKey: scaffoldKey,
-                        pageStyle: pageStyle,
-                        isFromBrand: isFromBrand,
-                        brand: brand,
-                        products: products,
-                        onChangeTab: (index) => _onChangeTab(index),
-                        scrollController: scrollController,
-                      ),
-                    );
-                  },
+                return AnimatedPositioned(
+                  top: pageStyle.unitHeight * 40,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  duration: Duration(milliseconds: 500),
+                  child: ProductListView(
+                    subCategories: subCategories,
+                    activeIndex: widget.arguments.selectedSubCategoryIndex,
+                    scaffoldKey: scaffoldKey,
+                    pageStyle: pageStyle,
+                    isFromBrand: isFromBrand,
+                    brand: brand,
+                    products: products,
+                    onChangeTab: (index) => _onChangeTab(index),
+                    scrollController: scrollController,
+                  ),
                 );
+                // return Consumer<ScrollChangeNotifier>(
+                //   builder: (ctx, scrollNotifier, child) {
+                //     scrollChangeNotifier = scrollNotifier;
+                //     return AnimatedPositioned(
+                //       top: isFromBrand
+                //           ? pageStyle.unitHeight * 120 -
+                //               scrollNotifier.scrollPosition
+                //           : pageStyle.unitHeight * 40,
+                //       left: 0,
+                //       right: 0,
+                //       bottom: 0,
+                //       duration: Duration(milliseconds: 500),
+                //       child: ProductListView(
+                //         subCategories: subCategories,
+                //         activeIndex: widget.arguments.selectedSubCategoryIndex,
+                //         scaffoldKey: scaffoldKey,
+                //         pageStyle: pageStyle,
+                //         isFromBrand: isFromBrand,
+                //         brand: brand,
+                //         products: products,
+                //         onChangeTab: (index) => _onChangeTab(index),
+                //         scrollController: scrollController,
+                //       ),
+                //     );
+                //   },
+                // );
               } else {
                 return Container();
               }
@@ -323,36 +343,11 @@ class _ProductListPageState extends State<ProductListPage> {
     }
   }
 
-  void _onChangeTab(int index) {
-    productListBloc.add(ProductListInitialized());
-    scrollChangeNotifier.updateScrollStatus(0.0);
+  void _onChangeTab(int index) async {
+    print('//// change tab ///');
     activeSubcategoryIndex = index;
-    if (isFromBrand) {
-      productListBloc.add(BrandProductListLoaded(
-        brandId: brand.optionId,
-        categoryId: subCategories[index].id,
-        lang: lang,
-        page: 1,
-      ));
-    } else {
-      productListBloc.add(ProductListLoaded(
-        categoryId: subCategories[index].id,
-        lang: lang,
-        page: 1,
-      ));
-    }
-  }
-
-  void _onScroll() {
-    if (isFromBrand) {
-      scrollPosition = scrollController.position.pixels;
-      if (scrollPosition >= 0 && scrollPosition <= pageStyle.unitHeight * 80) {
-      } else if (scrollPosition < 0) {
-        scrollPosition = 0;
-      } else {
-        scrollPosition = pageStyle.unitHeight * 80;
-      }
-      scrollChangeNotifier.updateScrollStatus(scrollPosition);
-    }
+    await productChangeNotifier.initialLoadCategoryProducts(
+      subCategories[index].id,
+    );
   }
 }
