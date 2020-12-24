@@ -4,6 +4,7 @@ import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 
+import 'address_entity.dart';
 import 'enum.dart';
 
 class OrderEntity {
@@ -18,6 +19,7 @@ class OrderEntity {
   final ShippingMethodEntity shippingMethod;
   final String cartId;
   final List<CartItemEntity> cartItems;
+  final AddressEntity address;
 
   OrderEntity({
     this.orderId,
@@ -31,6 +33,7 @@ class OrderEntity {
     this.shippingMethod,
     this.cartId,
     this.cartItems,
+    this.address,
   });
 
   OrderEntity.fromJson(Map<String, dynamic> json)
@@ -54,7 +57,8 @@ class OrderEntity {
           serviceFees: _getServiceFees(json),
         ),
         cartId = json['cartid'],
-        cartItems = _getCartItems(json['products']);
+        cartItems = _getCartItems(json['products']),
+        address = AddressEntity.fromJson(json['shippingAddress']);
 
   static int _getServiceFees(Map<String, dynamic> json) {
     String totalPriceStr = json['grand_total'];

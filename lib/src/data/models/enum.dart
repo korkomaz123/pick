@@ -17,4 +17,4 @@ enum OrderStatusEnum {
   processing
 }
 
-enum ProductViewEnum { category, brand, filter, sort }
+enum ProductViewModeEnum { category, brand, filter, sort }

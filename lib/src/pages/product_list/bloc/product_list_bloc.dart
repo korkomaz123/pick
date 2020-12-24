@@ -30,12 +30,6 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         event.lang,
         event.page,
       );
-    } else if (event is ProductListSorted) {
-      yield* _mapProductListSortedToState(
-        event.categoryId,
-        event.lang,
-        event.sortItem,
-      );
     } else if (event is BrandProductListLoaded) {
       yield* _mapBrandProductListLoadedToState(
         event.brandId,
@@ -91,34 +85,6 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       }
     } catch (e) {
       print(e.toString());
-      yield ProductListLoadedFailure(message: e.toString());
-    }
-  }
-
-  Stream<ProductListState> _mapProductListSortedToState(
-    String categoryId,
-    String lang,
-    String sortItem,
-  ) async* {
-    yield ProductListLoadedInProcess();
-    try {
-      final result =
-          await _productRepository.sortProducts(categoryId, sortItem, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        List<ProductModel> products = [];
-        for (int i = 0; i < productList.length; i++) {
-          products.add(ProductModel.fromJson(productList[i]));
-        }
-        yield ProductListLoadedSuccess(
-          products: products,
-          categoryId: categoryId,
-          isReachedMax: true,
-        );
-      } else {
-        yield ProductListLoadedFailure(message: result['errMessage']);
-      }
-    } catch (e) {
       yield ProductListLoadedFailure(message: e.toString());
     }
   }

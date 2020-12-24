@@ -452,28 +452,39 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildAddressBar() {
-    return Padding(
+    return Container(
+      width: pageStyle.deviceWidth,
+      margin: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 30,
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 30,
       ),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 30,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(2),
-          color: Colors.grey.shade300,
-        ),
-        child: Center(
-          child: Text(
-            'Address: ${shippingAddresses[0].city} ${shippingAddresses[0].street}',
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(2),
+        color: Colors.grey.shade300,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            order.address.title.isNotEmpty
+                ? '${order.address.title}: '
+                : 'Unnamed title: ',
+            style: boldTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 14,
+              color: primaryColor,
+            ),
+          ),
+          Text(
+            '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
             ),
           ),
-        ),
+        ],
       ),
     );
   }

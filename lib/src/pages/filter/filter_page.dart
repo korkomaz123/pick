@@ -6,11 +6,12 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'bloc/filter_bloc.dart';
 import 'widgets/filter_basic_select.dart';
 import 'widgets/filter_category_select.dart';
@@ -87,17 +88,6 @@ class _FilterPageState extends State<FilterPage> {
                 if (state is FilterAttributesLoadedFailure) {
                   // progressService.hideProgress();
                   snackBarService.showErrorSnackBar(state.message);
-                }
-                if (state is FilteredInProcess) {
-                  // progressService.showProgress();
-                }
-                if (state is FilteredSuccess) {
-                  // progressService.hideProgress();
-                  Navigator.pop(context, state.products);
-                }
-                if (state is FilteredFailure) {
-                  // progressService.hideProgress();
-                  flushBarService.showErrorMessage(pageStyle, state.message);
                 }
               },
               builder: (context, state) {

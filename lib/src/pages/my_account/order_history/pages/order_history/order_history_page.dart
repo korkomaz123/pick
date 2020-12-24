@@ -135,6 +135,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = Colors.grey;
+        status = 'order_cancelled'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = orangeColor;

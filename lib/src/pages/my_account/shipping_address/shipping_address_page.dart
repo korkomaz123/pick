@@ -347,6 +347,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       streetName: addresses[index].street,
       zipCode: addresses[index].zipCode,
       phone: addresses[index].phoneNumber,
+      company: addresses[index].company,
       isDefaultBilling: addresses[index].defaultBillingAddress.toString(),
       isDefaultShipping: '1',
     ));

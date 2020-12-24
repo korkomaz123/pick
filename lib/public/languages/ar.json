@@ -171,6 +171,7 @@
     "order_pending": "قيد الانتظار",
     "order_on_progress": "قيد التقدم",
     "order_delivered": "تم التوصيل",
+    "order_cancelled": "ألغيت",
     "my_orders": "طلباتي",
     "message_title": "رسالة",
     "message_hint": "الرجاء كتابة رسالتك",

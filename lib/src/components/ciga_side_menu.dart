@@ -331,14 +331,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
     Navigator.popUntil(
       context,
-      (route) {
-        print('///////////////');
-        print(route.settings.name);
-        if (route.settings.name == Routes.home) {
-          return true;
-        }
-        return false;
-      },
+      (route) => route.settings.name == Routes.home,
     );
   }
 }

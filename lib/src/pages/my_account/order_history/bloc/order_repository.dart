@@ -28,12 +28,13 @@ class OrderRepository {
   ) async {
     String url = EndPoints.cancelOrder;
     final params = {
+      'token': user.token,
       'orderId': orderId,
       'items': json.encode(items),
       'reason': reason,
-      'imageForProduct': product.toString(),
       'imageName': imageName,
       'lang': lang,
+      'imageForProduct': product.toString(),
     };
     return await Api.postMethod(url, data: params);
   }

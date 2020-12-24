@@ -2,6 +2,7 @@ import 'package:ciga/src/change_notifier/product_change_notifier.dart';
 import 'package:ciga/src/components/product_v_card.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -23,9 +24,10 @@ class ProductListView extends StatefulWidget {
   final PageStyle pageStyle;
   final bool isFromBrand;
   final BrandEntity brand;
-  final List<ProductModel> products;
   final Function onChangeTab;
   final ScrollController scrollController;
+  final ProductViewModeEnum viewMode;
+  final String sortByItem;
 
   ProductListView({
     this.subCategories,
@@ -34,9 +36,10 @@ class ProductListView extends StatefulWidget {
     this.pageStyle,
     this.isFromBrand,
     this.brand,
-    this.products,
     this.onChangeTab,
     this.scrollController,
+    this.viewMode,
+    this.sortByItem,
   });
 
   @override
@@ -82,29 +85,78 @@ class _ProductListViewState extends State<ProductListView>
 
   void _initLoadProducts() async {
     print('//// initial load ////');
-    await productChangeNotifier.initialLoadCategoryProducts(
-      subCategories[activeIndex].id,
-    );
+    if (widget.viewMode == ProductViewModeEnum.category) {
+      await productChangeNotifier.initialLoadCategoryProducts(
+        subCategories[activeIndex].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.brand) {
+      await productChangeNotifier.initialLoadBrandProducts(
+        brand.optionId,
+        subCategories[activeIndex].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.sort) {
+      await productChangeNotifier.initialLoadSortedProducts(
+        brand.optionId ?? '',
+        subCategories[activeIndex].id,
+        widget.sortByItem,
+      );
+    }
   }
 
   void _onRefresh() async {
     print('///// refresh ////');
-    await productChangeNotifier.refreshCategoryProducts(
-      subCategories[tabController.index].id,
-    );
+    if (widget.viewMode == ProductViewModeEnum.category) {
+      await productChangeNotifier.refreshCategoryProducts(
+        subCategories[tabController.index].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.brand) {
+      await productChangeNotifier.refreshBrandProducts(
+        brand.optionId,
+        subCategories[tabController.index].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.sort) {
+      await productChangeNotifier.refreshSortedProducts(
+        brand.optionId ?? '',
+        subCategories[tabController.index].id,
+        widget.sortByItem,
+      );
+    }
     _refreshController.refreshCompleted();
   }
 
   void _onLoadMore() async {
     print('///// load more ////');
-    page = productChangeNotifier.pages[subCategories[tabController.index].id];
-    page += 1;
-    print(page);
-    print(subCategories[tabController.index].id);
-    await productChangeNotifier.loadMoreCategoryProducts(
-      page,
-      subCategories[tabController.index].id,
-    );
+    if (widget.viewMode == ProductViewModeEnum.category) {
+      page = productChangeNotifier.pages[subCategories[tabController.index].id];
+      page += 1;
+      await productChangeNotifier.loadMoreBrandProducts(
+        page,
+        brand.optionId,
+        subCategories[tabController.index].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.brand) {
+      page = productChangeNotifier
+          .pages[brand.optionId + '_' + subCategories[tabController.index].id];
+      page += 1;
+      await productChangeNotifier.loadMoreBrandProducts(
+        page,
+        brand.optionId ?? '',
+        subCategories[tabController.index].id,
+      );
+    } else if (widget.viewMode == ProductViewModeEnum.sort) {
+      page = productChangeNotifier.pages[widget.sortByItem +
+          '_' +
+          brand.optionId +
+          '_' +
+          subCategories[tabController.index].id];
+      page += 1;
+      await productChangeNotifier.loadMoreSortedProducts(
+        page,
+        brand.optionId,
+        subCategories[tabController.index].id,
+        widget.sortByItem,
+      );
+    }
     _refreshController.loadComplete();
   }
 
@@ -133,14 +185,26 @@ class _ProductListViewState extends State<ProductListView>
                 ),
                 child: Consumer<ProductChangeNotifier>(
                   builder: (ctx, notifier, _) {
-                    if (!productChangeNotifier.data.containsKey(cat.id) ||
-                        productChangeNotifier.data[cat.id] == null) {
+                    String index;
+                    if (widget.viewMode == ProductViewModeEnum.category) {
+                      index = cat.id;
+                    } else if (widget.viewMode == ProductViewModeEnum.brand) {
+                      index = brand.optionId + '_' + cat.id;
+                    } else if (widget.viewMode == ProductViewModeEnum.sort) {
+                      index = widget.sortByItem +
+                          '_' +
+                          brand.optionId +
+                          '_' +
+                          cat.id;
+                    }
+                    if (!productChangeNotifier.data.containsKey(index) ||
+                        productChangeNotifier.data[index] == null) {
                       return Container();
-                    } else if (productChangeNotifier.data[cat.id].isEmpty) {
+                    } else if (productChangeNotifier.data[index].isEmpty) {
                       return ProductNoAvailable(pageStyle: pageStyle);
                     } else {
                       return _buildProductList(
-                          productChangeNotifier.data[cat.id]);
+                          productChangeNotifier.data[index]);
                     }
                   },
                 ),

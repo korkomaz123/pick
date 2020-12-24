@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class Api {
@@ -16,8 +17,9 @@ class Api {
     String url, {
     Map<String, dynamic> data,
   }) async {
-    final response = await http.post(url, headers: _getHeader(), body: data);
+    print(url);
     print(data);
+    final response = await http.post(url, headers: _getHeader(), body: data);
     return jsonDecode(response.body);
   }
 

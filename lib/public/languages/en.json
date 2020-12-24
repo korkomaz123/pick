@@ -171,6 +171,7 @@
     "order_pending": "Pending",
     "order_on_progress": "On Progress",
     "order_delivered": "Delivered",
+    "order_cancelled": "Cancelled",
     "my_orders": "My Orders",
     "message_title": "Message",
     "message_hint": "Please write your message",

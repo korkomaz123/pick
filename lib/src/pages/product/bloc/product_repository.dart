@@ -93,14 +93,18 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> sortProducts(
     String categoryId,
+    String brandId,
     String sortItem,
     String lang,
+    int page,
   ) async {
     String url = EndPoints.getSortedProducts;
     final params = {
+      'brandId': brandId,
       'currentCategoryId': categoryId,
       'lang': lang,
       'sortItem': sortItem,
+      'page': page.toString(),
     };
     return await Api.getMethod(url, data: params);
   }
