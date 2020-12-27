@@ -81,6 +81,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = Colors.grey;
+        status = 'order_cancelled'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = orangeColor;
@@ -549,13 +554,25 @@ class _ReOrderPageState extends State<ReOrderPage> {
           borderRadius: BorderRadius.circular(2),
           color: Colors.grey.shade300,
         ),
-        child: Center(
-          child: Text(
-            'Address: ${shippingAddresses[0].city} ${shippingAddresses[0].street}',
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 14,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              order.address.title.isNotEmpty
+                  ? '${order.address.title}: '
+                  : 'Unnamed title: ',
+              style: boldTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+                color: primaryColor,
+              ),
             ),
-          ),
+            Text(
+              '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -563,11 +580,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   Widget _buildNextButton() {
     return MaterialButton(
-      onPressed: () => Navigator.pushNamed(
-        context,
-        Routes.checkoutAddress,
-        arguments: order,
-      ),
+      onPressed: () => _onNext(),
       minWidth: pageStyle.unitWidth * 150,
       height: pageStyle.unitHeight * 45,
       shape: RoundedRectangleBorder(
@@ -596,6 +609,15 @@ class _ReOrderPageState extends State<ReOrderPage> {
         cartId: reorderCartId,
         itemId: cartItem.itemId,
       ));
+    }
+  }
+
+  void _onNext() {
+    if (cartItems.isNotEmpty) {
+      defaultAddress = widget.order.address;
+      Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
+    } else {
+      flushBarService.showErrorMessage(pageStyle, 'reorder_items_error'.tr());
     }
   }
 }

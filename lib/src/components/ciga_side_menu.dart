@@ -2,9 +2,13 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/category_menu_entity.dart';
+import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
+import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/my_account/widgets/logout_confirm_dialog.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
@@ -13,11 +17,11 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CigaSideMenu extends StatefulWidget {
@@ -35,9 +39,11 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   String activeMenu = '';
   HomeBloc homeBloc;
   SignInBloc signInBloc;
+  CartItemCountBloc cartItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
@@ -45,7 +51,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     pageStyle = widget.pageStyle;
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
+    cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -328,10 +336,43 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     user = null;
     await localRepo.setToken('');
     List<String> ids = await localRepo.getRecentlyViewedIds();
+    myCartItems.clear();
+    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    await _loadViewerCartItems();
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,
     );
+  }
+
+  Future<void> _loadViewerCartItems() async {
+    final cartId = await localRepo.getCartId();
+    if (cartId.isNotEmpty) {
+      print('/// logged out ///');
+      print('/// cartId: $cartId ///');
+      final result = await cartRepo.getCartItems(cartId, lang);
+      if (result['code'] == 'SUCCESS') {
+        print('/// get cart item ///');
+        List<dynamic> cartList = result['cart'];
+        int count = 0;
+        for (int i = 0; i < cartList.length; i++) {
+          Map<String, dynamic> cartItemJson = {};
+          cartItemJson['product'] =
+              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['itemCount'] = cartList[i]['itemCount'];
+          cartItemJson['itemId'] = cartList[i]['itemid'];
+          cartItemJson['rowPrice'] = cartList[i]['row_price'];
+          cartItemJson['availableCount'] = cartList[i]['availableCount'];
+          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
+          myCartItems.add(cart);
+          count += cart.itemCount;
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
+        }
+        cartItemCount = count;
+        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
+      }
+    }
   }
 }

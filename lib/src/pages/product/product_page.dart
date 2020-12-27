@@ -6,6 +6,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
 import 'package:ciga/src/pages/product/bloc/product_repository.dart';
 import 'package:ciga/src/pages/product/widgets/product_more_about.dart';
@@ -44,6 +45,7 @@ class _ProductPageState extends State<ProductPage> {
   SnackBarService snackBarService;
   LocalStorageRepository localStorageRepository;
   ProductRepository productRepository;
+  HomeBloc homeBloc;
 
   @override
   void initState() {
@@ -56,6 +58,7 @@ class _ProductPageState extends State<ProductPage> {
     );
     productRepository = context.read<ProductRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
+    homeBloc = context.read<HomeBloc>();
     productBloc = context.read<ProductBloc>();
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,
@@ -68,8 +71,14 @@ class _ProductPageState extends State<ProductPage> {
     if (user?.token != null) {
       await productRepository.setRecentlyViewedCustomerProduct(
           user.token, product.productId, lang);
+      homeBloc.add(HomeRecentlyViewedCustomerLoaded(
+        lang: lang,
+        token: user.token,
+      ));
     } else {
       await localStorageRepository.addRecentlyViewedItem(product.productId);
+      List<String> ids = await localStorageRepository.getRecentlyViewedIds();
+      homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
     }
   }
 

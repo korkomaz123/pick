@@ -5,7 +5,6 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -38,11 +37,15 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
       builder: (context, state) {
         sliderImages = state.sliderImages;
         if (sliderImages.isNotEmpty) {
-          return Stack(
-            children: [
-              _buildImageSlider(),
-              _buildIndicator(),
-            ],
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            height: widget.pageStyle.deviceWidth * 579 / 1125,
+            child: Stack(
+              children: [
+                _buildImageSlider(),
+                _buildIndicator(),
+              ],
+            ),
           );
         } else {
           return _buildShimmer();
@@ -54,7 +57,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   Widget _buildImageSlider() {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 133,
+      height: widget.pageStyle.deviceWidth * 579 / 1125,
       child: Swiper(
         itemCount: sliderImages.length,
         autoplay: true,
@@ -67,8 +70,9 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           String image = sliderImages[index].bannerImage;
           return Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 133,
+            height: widget.pageStyle.deviceWidth * 579 / 1125,
             decoration: BoxDecoration(
+              color: Colors.black,
               image: DecorationImage(
                 image: NetworkImage(image),
                 fit: BoxFit.fill,
@@ -81,9 +85,11 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   }
 
   Widget _buildIndicator() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 120),
+    return Positioned(
+      bottom: widget.pageStyle.unitWidth * 20,
+      left: 0,
+      right: 0,
+      child: Center(
         child: SmoothIndicator(
           offset: activeIndex.toDouble(),
           count: sliderImages.length,

@@ -8,8 +8,8 @@ import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -25,6 +25,7 @@ class HomePerfumes extends StatefulWidget {
 class _HomePerfumesState extends State<HomePerfumes> {
   CategoryEntity perfumes = homeCategories[2];
   List<ProductModel> perfumesProducts;
+  String title;
   HomeBloc homeBloc;
 
   @override
@@ -45,6 +46,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
         listener: (context, state) {},
         builder: (context, state) {
           perfumesProducts = state.perfumesProducts;
+          title = state.perfumesTitle;
           if (perfumesProducts.isNotEmpty) {
             return Column(
               children: [
@@ -73,7 +75,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'home_perfumes'.tr(),
+            title ?? '',
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

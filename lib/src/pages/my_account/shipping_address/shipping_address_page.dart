@@ -13,9 +13,9 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -96,7 +96,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           vertical: pageStyle.unitHeight * 5,
         ),
         child: MaterialButton(
-          onPressed: () => Navigator.pushNamed(context, Routes.editAddress),
+          onPressed: () async {
+            Navigator.pushNamed(context, Routes.editAddress);
+            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+          },
           color: primaryColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -148,6 +151,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
+            if (state is ShippingAddressLoadedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is ShippingAddressLoadedSuccess) {
+              progressService.hideProgress();
+            }
             if (state is ShippingAddressLoadedFailure) {
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
@@ -182,6 +191,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
+              print('loaded success');
               addresses = state.addresses;
               shippingAddresses = state.addresses;
               for (int i = 0; i < shippingAddresses.length; i++) {
@@ -191,17 +201,21 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 }
               }
             }
-            return state is ShippingAddressLoadedSuccess &&
-                    shippingAddresses.isEmpty
-                ? ProductNoAvailable(pageStyle: pageStyle)
-                : SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        shippingAddresses.length,
-                        (index) => _buildAddressCard(index),
-                      ),
-                    ),
-                  );
+            if (state is ShippingAddressLoadedSuccess &&
+                shippingAddresses.isEmpty) {
+              return ProductNoAvailable(pageStyle: pageStyle);
+            }
+            return SingleChildScrollView(
+              child: Column(
+                children: List.generate(
+                  shippingAddresses.length,
+                  (index) {
+                    int i = shippingAddresses.length - index - 1;
+                    return _buildAddressCard(i);
+                  },
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -297,11 +311,15 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: SvgPicture.asset(editIcon),
-                onPressed: () => Navigator.pushNamed(
-                  context,
-                  Routes.editAddress,
-                  arguments: addresses[index],
-                ),
+                onPressed: () async {
+                  await Navigator.pushNamed(
+                    context,
+                    Routes.editAddress,
+                    arguments: addresses[index],
+                  );
+                  shippingAddressBloc
+                      .add(ShippingAddressLoaded(token: user.token));
+                },
               ),
             ),
             Align(

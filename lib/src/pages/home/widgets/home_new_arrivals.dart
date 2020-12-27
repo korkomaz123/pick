@@ -7,10 +7,11 @@ import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
 import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatefulWidget {
@@ -25,6 +26,7 @@ class HomeNewArrivals extends StatefulWidget {
 class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   CategoryEntity newArrivals = homeCategories[1];
   List<ProductModel> newArrivalsProducts;
+  String title;
   HomeBloc homeBloc;
 
   @override
@@ -46,6 +48,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
         listener: (context, state) {},
         builder: (context, state) {
           newArrivalsProducts = state.bestDealsProducts;
+          title = state.newArrivalsTitle;
           if (newArrivalsProducts.isNotEmpty) {
             return Column(
               children: [
@@ -78,7 +81,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'home_new_arrivals'.tr(),
+            title ?? '',
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

@@ -7,10 +7,11 @@ import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
 import 'home_products_carousel.dart';
 
 class HomeBestDeals extends StatefulWidget {
@@ -25,6 +26,7 @@ class HomeBestDeals extends StatefulWidget {
 class _HomeBestDealsState extends State<HomeBestDeals> {
   CategoryEntity bestDeals = homeCategories[0];
   List<ProductModel> bestDealsProducts;
+  String title;
   HomeBloc homeBloc;
 
   @override
@@ -46,6 +48,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
         listener: (context, state) {},
         builder: (context, state) {
           bestDealsProducts = state.bestDealsProducts;
+          title = state.bestDealsTitle;
           if (bestDealsProducts.isNotEmpty) {
             return Column(
               children: [
@@ -77,7 +80,8 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'home_best_deals'.tr(),
+            // 'home_best_deals'.tr(),
+            title ?? '',
             style: mediumTextStyle.copyWith(
               fontSize: widget.pageStyle.unitFontSize * 23,
               color: greyDarkColor,

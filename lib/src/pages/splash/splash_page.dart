@@ -12,6 +12,7 @@ import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_c
 import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -31,12 +32,16 @@ class _SplashPageState extends State<SplashPage> {
   CartItemCountBloc cartItemCountBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
+  WishlistRepository wishlistRepo;
   PageStyle pageStyle;
   bool isFirstTime;
 
   @override
   void initState() {
     super.initState();
+    cartRepo = context.read<MyCartRepository>();
+    wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
@@ -54,8 +59,8 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
-  void _loadAssets() {
-    _getCurrentUser();
+  void _loadAssets() async {
+    await _getCurrentUser();
     _getCartItems();
     _getWishlists();
     _getShippingAddress();
@@ -66,7 +71,7 @@ class _SplashPageState extends State<SplashPage> {
     _navigator();
   }
 
-  void _getCurrentUser() async {
+  Future<void> _getCurrentUser() async {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       final signInRepo = context.read<SignInRepository>();
@@ -80,11 +85,17 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getCartItems() async {
-    String cartId = await localRepo.getCartId();
+    String cartId = '';
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
+    } else {
+      cartId = await localRepo.getCartId();
+    }
     if (cartId.isNotEmpty) {
-      final result =
-          await context.read<MyCartRepository>().getCartItems(cartId, lang);
-
+      final result = await cartRepo.getCartItems(cartId, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> cartList = result['cart'];
         int count = 0;
@@ -109,16 +120,15 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getWishlists() async {
-    List<String> ids = await localRepo.getWishlistIds();
-    wishlistCount = ids.isEmpty ? 0 : ids.length;
-    if (ids.isNotEmpty) {
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: ids.length,
-      ));
-    } else {
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: 0,
-      ));
+    if (user?.token != null) {
+      final result = await wishlistRepo.getWishlists(user.token, lang);
+      if (result['code'] == 'SUCCESS') {
+        List<dynamic> lists = result['wishlists'];
+        wishlistCount = lists.isEmpty ? 0 : lists.length;
+        wishlistItemCountBloc.add(WishlistItemCountSet(
+          wishlistItemCount: wishlistCount,
+        ));
+      }
     }
   }
 

@@ -24,32 +24,24 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     WishlistEvent event,
   ) async* {
     if (event is WishlistLoaded) {
-      yield* _mapWishlistLoadedToState(event.ids, event.token, event.lang);
+      yield* _mapWishlistLoadedToState(event.token, event.lang);
     } else if (event is WishlistInitialized) {
       yield WishlistInitial();
+    } else if (event is WishlistAdded) {
+      yield* _mapWishlistAddedToState(event.token, event.productId);
+    } else if (event is WishlistRemoved) {
+      yield* _mapWishlistRemovedToState(event.token, event.productId);
     }
   }
 
   Stream<WishlistState> _mapWishlistLoadedToState(
-    List<String> ids,
     String token,
     String lang,
   ) async* {
     yield WishlistLoadedInProcess();
     try {
-      String key = 'wishlists-$lang';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        List<dynamic> wishlistList = await localStorageRepository.getItem(key);
-        List<ProductModel> wishlists = [];
-        for (int i = 0; i < wishlistList.length; i++) {
-          wishlists.add(ProductModel.fromJson(wishlistList[i]));
-        }
-        yield WishlistLoadedSuccess(wishlists: wishlists);
-      }
-      final result = await _wishlistRepository.getWishlists(ids, token, lang);
+      final result = await _wishlistRepository.getWishlists(token, lang);
       if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['wishlists']);
         List<dynamic> wishlistList = result['wishlists'];
         List<ProductModel> wishlists = [];
         for (int i = 0; i < wishlistList.length; i++) {
@@ -61,6 +53,44 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       }
     } catch (e) {
       yield WishlistLoadedFailure(message: e.toString());
+    }
+  }
+
+  Stream<WishlistState> _mapWishlistAddedToState(
+    String token,
+    String productId,
+  ) async* {
+    yield WishlistAddedInProcess();
+    try {
+      bool succeed =
+          await _wishlistRepository.changeWishlist(token, productId, 'add');
+      if (succeed) {
+        yield WishlistAddedSuccess();
+      } else {
+        yield WishlistAddedFailure(message: 'Something went wrong');
+      }
+    } catch (e) {
+      print('catch error');
+      print(e.toString());
+      yield WishlistAddedFailure(message: e.toString());
+    }
+  }
+
+  Stream<WishlistState> _mapWishlistRemovedToState(
+    String token,
+    String productId,
+  ) async* {
+    yield WishlistRemovedInProcess();
+    try {
+      final result =
+          await _wishlistRepository.changeWishlist(token, productId, 'delete');
+      if (result) {
+        yield WishlistRemovedSuccess();
+      } else {
+        yield WishlistRemovedFailure(message: 'Something went wrong');
+      }
+    } catch (e) {
+      yield WishlistRemovedFailure(message: e.toString());
     }
   }
 }

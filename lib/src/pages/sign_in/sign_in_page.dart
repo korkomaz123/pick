@@ -1,26 +1,30 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:http/http.dart' as http;
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
@@ -39,9 +43,11 @@ class _SignInPageState extends State<SignInPage> {
   bool isShowPass = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
+  CartItemCountBloc cartItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
@@ -50,16 +56,63 @@ class _SignInPageState extends State<SignInPage> {
     flushBarService = FlushBarService(context: context);
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
+    cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
   }
 
   void _saveToken(UserEntity loggedInUser) async {
     user = loggedInUser;
-    await localRepo.setToken(loggedInUser.token);
+    await localRepo.setToken(user.token);
+    await _transferCartItems();
+    await _loadCustomerCartItems();
     homeBloc.add(HomeRecentlyViewedCustomerLoaded(
       token: user.token,
       lang: lang,
     ));
+    Navigator.pop(context);
+  }
+
+  Future<void> _transferCartItems() async {
+    String viewerCartId = await localRepo.getCartId();
+    final result = await cartRepo.getCartId(user.token);
+    String customerCartId = result['cartId'];
+    if (viewerCartId.isNotEmpty && customerCartId.isNotEmpty) {
+      await cartRepo.transferCart(viewerCartId, customerCartId);
+    }
+  }
+
+  Future<void> _loadCustomerCartItems() async {
+    final result = await cartRepo.getCartId(user.token);
+    myCartItems.clear();
+    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    if (result['code'] == 'SUCCESS') {
+      String cartId = result['cartId'];
+      print('/// logged in ///');
+      print('/// cartId: $cartId ///');
+      final response = await cartRepo.getCartItems(cartId, lang);
+      if (response['code'] == 'SUCCESS') {
+        print('/// get cart item ///');
+        List<dynamic> cartList = response['cart'];
+        int count = 0;
+        for (int i = 0; i < cartList.length; i++) {
+          Map<String, dynamic> cartItemJson = {};
+          cartItemJson['product'] =
+              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['itemCount'] = cartList[i]['itemCount'];
+          cartItemJson['itemId'] = cartList[i]['itemid'];
+          cartItemJson['rowPrice'] = cartList[i]['row_price'];
+          cartItemJson['availableCount'] = cartList[i]['availableCount'];
+          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
+          myCartItems.add(cart);
+          count += cart.itemCount;
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
+        }
+        cartItemCount = count;
+        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
+      }
+    }
   }
 
   @override
@@ -75,9 +128,8 @@ class _SignInPageState extends State<SignInPage> {
             progressService.showProgress();
           }
           if (state is SignInSubmittedSuccess) {
-            _saveToken(state.user);
             progressService.hideProgress();
-            Navigator.pop(context);
+            _saveToken(state.user);
           }
           if (state is SignInSubmittedFailure) {
             progressService.hideProgress();

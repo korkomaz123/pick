@@ -43,20 +43,22 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onChange ?? () => _onChangeQty(),
+      onTap: widget.cartItem.availableCount > 0
+          ? (widget.onChange ?? () => _onChangeQty())
+          : () => null,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 6,
           vertical: pageStyle.unitHeight * 5,
         ),
         decoration: BoxDecoration(
-          color: primaryColor,
+          color: widget.cartItem.availableCount > 0 ? primaryColor : greyColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
             Text(
-              widget.isDefaultValue
+              widget.isDefaultValue && widget.cartItem.availableCount > 0
                   ? (widget.cartItem.itemCount.toString() + ' ' + 'qty'.tr())
                   : 'select_quantity'.tr(),
               style: mediumTextStyle.copyWith(

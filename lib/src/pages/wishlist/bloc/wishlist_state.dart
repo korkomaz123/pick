@@ -28,3 +28,29 @@ class WishlistLoadedFailure extends WishlistState {
   @override
   List<Object> get props => [message];
 }
+
+class WishlistAddedInProcess extends WishlistState {}
+
+class WishlistAddedSuccess extends WishlistState {}
+
+class WishlistAddedFailure extends WishlistState {
+  final String message;
+
+  WishlistAddedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class WishlistRemovedInProcess extends WishlistState {}
+
+class WishlistRemovedSuccess extends WishlistState {}
+
+class WishlistRemovedFailure extends WishlistState {
+  final String message;
+
+  WishlistRemovedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

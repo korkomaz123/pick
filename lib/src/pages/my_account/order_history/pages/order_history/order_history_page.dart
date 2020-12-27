@@ -98,7 +98,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     children: List.generate(
                       orders.length,
                       (index) {
-                        return _buildOrderItem(orders[index]);
+                        return orders[index].status == OrderStatusEnum.canceled
+                            ? SizedBox.shrink()
+                            : _buildOrderItem(orders[index]);
                       },
                     ),
                   ),

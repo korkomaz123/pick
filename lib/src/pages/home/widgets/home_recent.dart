@@ -30,11 +30,13 @@ class _HomeRecentState extends State<HomeRecent> {
     localStorageRepository = context.read<LocalStorageRepository>();
     homeBloc = context.read<HomeBloc>();
     if (user?.token != null) {
+      print('customer');
       homeBloc.add(HomeRecentlyViewedCustomerLoaded(
         token: user.token,
         lang: lang,
       ));
     } else {
+      print('guest');
       _loadGuestViewed();
     }
   }

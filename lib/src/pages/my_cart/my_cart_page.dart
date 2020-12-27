@@ -9,6 +9,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -47,6 +48,7 @@ class _MyCartPageState extends State<MyCartPage>
   MyCartBloc myCartBloc;
   CartItemCountBloc cigaAppBloc;
   LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
@@ -60,11 +62,19 @@ class _MyCartPageState extends State<MyCartPage>
     myCartBloc = context.read<MyCartBloc>();
     cigaAppBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
     _getMyCartId();
   }
 
   void _getMyCartId() async {
-    cartId = await localRepo.getCartId();
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
+    } else {
+      cartId = await localRepo.getCartId();
+    }
     if (cartId.isNotEmpty) {
       myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
     }
@@ -391,13 +401,11 @@ class _MyCartPageState extends State<MyCartPage>
                         ),
                       ),
                     ),
-                    myCartItems[index].availableCount > 0
-                        ? MyCartQtyHorizontalPicker(
-                            pageStyle: pageStyle,
-                            cartItem: myCartItems[index],
-                            cartId: cartId,
-                          )
-                        : SizedBox.shrink(),
+                    MyCartQtyHorizontalPicker(
+                      pageStyle: pageStyle,
+                      cartItem: myCartItems[index],
+                      cartId: cartId,
+                    ),
                   ],
                 ),
               ],

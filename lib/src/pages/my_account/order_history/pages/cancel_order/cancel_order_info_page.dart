@@ -5,6 +5,7 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_input_field.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_account/order_history/bloc/order_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -77,6 +78,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
           }
           if (state is OrderCancelledSuccess) {
             progressService.hideProgress();
+            orderBloc.add(OrderHistoryLoaded(token: user.token));
             Navigator.popUntil(
               context,
               (route) => route.settings.name == Routes.orderHistory,

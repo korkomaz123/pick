@@ -1,6 +1,12 @@
+import 'package:ciga/src/components/ciga_app_bar.dart';
+import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
+import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
+import 'package:ciga/src/pages/home/widgets/home_explore_categories.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,20 +14,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'bloc/home_bloc.dart';
-import 'widgets/home_recent.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_discover_stores.dart';
 import 'widgets/home_header_carousel.dart';
 import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_perfumes.dart';
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/pages/home/widgets/home_explore_categories.dart';
+import 'widgets/home_recent.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -55,11 +56,13 @@ class _HomePageState extends State<HomePage> {
     brandBloc.add(BrandListLoaded(lang: lang));
     homeBloc.add(HomeAdsLoaded());
     if (user?.token != null) {
+      print('customer recently view');
       homeBloc.add(HomeRecentlyViewedCustomerLoaded(
         token: user.token,
         lang: lang,
       ));
     } else {
+      print('guest view');
       _loadGuestViewed();
     }
     await Future.delayed(Duration(milliseconds: 1000));
@@ -86,21 +89,27 @@ class _HomePageState extends State<HomePage> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: () => null,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              HomeHeaderCarousel(pageStyle: pageStyle),
-              HomeBestDeals(pageStyle: pageStyle),
-              HomeNewArrivals(pageStyle: pageStyle),
-              HomePerfumes(pageStyle: pageStyle),
-              HomeExploreCategories(pageStyle: pageStyle),
-              SizedBox(height: pageStyle.unitHeight * 10),
-              HomeDiscoverStores(pageStyle: pageStyle),
-              SizedBox(height: pageStyle.unitHeight * 10),
-              HomeAdvertise(pageStyle: pageStyle),
-              SizedBox(height: pageStyle.unitHeight * 10),
-              HomeRecent(pageStyle: pageStyle),
-            ],
+        child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (notification) {
+            notification.disallowGlow();
+            return true;
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                HomeHeaderCarousel(pageStyle: pageStyle),
+                HomeBestDeals(pageStyle: pageStyle),
+                HomeNewArrivals(pageStyle: pageStyle),
+                HomePerfumes(pageStyle: pageStyle),
+                HomeExploreCategories(pageStyle: pageStyle),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                HomeDiscoverStores(pageStyle: pageStyle),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                HomeAdvertise(pageStyle: pageStyle),
+                SizedBox(height: pageStyle.unitHeight * 10),
+                HomeRecent(pageStyle: pageStyle),
+              ],
+            ),
           ),
         ),
       ),

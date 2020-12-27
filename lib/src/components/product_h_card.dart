@@ -6,16 +6,19 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class ProductHCard extends StatefulWidget {
@@ -46,10 +49,12 @@ class _ProductHCardState extends State<ProductHCard>
   bool isWishlist;
   int index;
   String cartId;
-  List<String> myWishlists;
+  MyCartRepository cartRepo;
+  WishlistRepository wishlistRepo;
   LocalStorageRepository localRepo;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
+  WishlistBloc wishlistBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
@@ -58,8 +63,11 @@ class _ProductHCardState extends State<ProductHCard>
   void initState() {
     super.initState();
     isWishlist = false;
+    cartRepo = context.read<MyCartRepository>();
+    wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
     myCartBloc = context.read<MyCartBloc>();
+    wishlistBloc = context.read<WishlistBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     _getWishlist();
@@ -68,14 +76,24 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   void _getWishlist() async {
-    myWishlists = await localRepo.getWishlistIds();
-    index = myWishlists.indexOf(widget.product.productId);
-    isWishlist = index != -1;
-    setState(() {});
+    if (user?.token != null) {
+      isWishlist = await wishlistRepo.checkWishlistStatus(
+        user.token,
+        widget.product.productId,
+      );
+      if (mounted) setState(() {});
+    }
   }
 
   Future<void> _getMyCartId() async {
-    cartId = await localRepo.getCartId();
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
+    } else {
+      cartId = await localRepo.getCartId();
+    }
   }
 
   void _saveCartId(cartId) async {
@@ -129,9 +147,11 @@ class _ProductHCardState extends State<ProductHCard>
                 state.message,
               );
             }
-            if (state is MyCartCreatedSuccess) {
-              _saveCartId(state.cartId);
-            }
+            // if (state is MyCartCreatedSuccess) {
+            //   if (user == null) {
+            //     _saveCartId(state.cartId);
+            //   }
+            // }
           },
           builder: (context, state) {
             if (state is MyCartCreatedSuccess) {
@@ -269,9 +289,7 @@ class _ProductHCardState extends State<ProductHCard>
   Widget _buildToolbar() {
     return BlocConsumer<WishlistItemCountBloc, WishlistItemCountState>(
       listener: (context, state) {
-        if (myWishlists.length != state.wishlistItemCount) {
-          _getWishlist();
-        }
+        _getWishlist();
       },
       builder: (context, state) {
         return Column(
@@ -305,7 +323,7 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    return widget.product.stockQty == 0
+    return widget.product.stockQty == null || widget.product.stockQty == 0
         ? Align(
             alignment: Alignment.centerRight,
             child: Container(
@@ -332,30 +350,41 @@ class _ProductHCardState extends State<ProductHCard>
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    await _getMyCartId();
-    if (cartId.isEmpty) {
-      myCartBloc.add(MyCartCreated(
-        product: widget.product,
-      ));
+    if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+      await _getMyCartId();
+      if (cartId.isEmpty) {
+        myCartBloc.add(MyCartCreated(
+          product: widget.product,
+        ));
+      } else {
+        myCartBloc.add(MyCartItemAdded(
+          cartId: cartId,
+          product: widget.product,
+          qty: '1',
+        ));
+      }
     } else {
-      myCartBloc.add(MyCartItemAdded(
-        cartId: cartId,
-        product: widget.product,
-        qty: '1',
-      ));
+      flushBarService.showErrorMessage(
+        widget.pageStyle,
+        'out_of_stock_error'.tr(),
+      );
     }
   }
 
   void _onWishlist() async {
     if (isWishlist) {
       wishlistCount -= 1;
-      myWishlists.removeAt(index);
+      wishlistBloc.add(WishlistRemoved(
+        token: user.token,
+        productId: widget.product.productId,
+      ));
       await localRepo.removeWishlistItem(widget.product.productId);
     } else {
       wishlistCount += 1;
-      myWishlists.add(widget.product.productId);
-      index = myWishlists.length - 1;
-      await localRepo.addWishlistItem(widget.product.productId);
+      wishlistBloc.add(WishlistAdded(
+        token: user.token,
+        productId: widget.product.productId,
+      ));
     }
     isWishlist = !isWishlist;
     wishlistItemCountBloc.add(WishlistItemCountSet(

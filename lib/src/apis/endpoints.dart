@@ -21,6 +21,7 @@ class EndPoints {
   static const String getHomeAds = '$baseUrl/getAds';
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
   static const String getWishlist = '$baseUrl/getwishlists';
+  static const String addWishlist = '$baseUrl/addWishlistItem';
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';
@@ -65,4 +66,6 @@ class EndPoints {
   static const String getViewedProducts = '$baseUrl/getViewedProducts';
   static const String sendProductViewed = '$baseUrl/sendProductViewed';
   static const String getViewedGuestProducts = '$baseUrl/getRecentView';
+  static const String checkWishlistStatus = '$baseUrl/checkWishlistStatus';
+  static const String transferCart = '$baseUrl/transferCart';
 }

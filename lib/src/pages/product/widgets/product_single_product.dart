@@ -8,6 +8,9 @@ import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -72,7 +75,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   bool isBuyNow = false;
   bool isWishlist = false;
   int index;
-  List<String> wishlistIds = [];
   AnimationController _addToCartController;
   AnimationController _favoriteController;
   Animation<double> _addToCartScaleAnimation;
@@ -84,6 +86,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   WishlistItemCountBloc wishlistItemCountBloc;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
+  WishlistRepository wishlistRepo;
+  MyCartRepository cartRepo;
+  WishlistBloc wishlistBloc;
 
   @override
   void initState() {
@@ -92,17 +97,21 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     product = widget.product;
     productEntity = widget.productEntity;
     cartBloc = context.read<MyCartBloc>();
+    wishlistBloc = context.read<WishlistBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
     localStorageRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
+    wishlistRepo = context.read<WishlistRepository>();
     _initFavorite();
     _initAnimation();
   }
 
   void _initFavorite() async {
-    wishlistIds = await localStorageRepo.getWishlistIds();
-    index = wishlistIds.indexOf(product.productId);
-    isWishlist = index >= 0;
+    isWishlist = await wishlistRepo.checkWishlistStatus(
+      user.token,
+      widget.product.entityId,
+    );
     setState(() {});
   }
 
@@ -471,9 +480,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     : CigaTextButton(
                         title: 'product_buy_now'.tr(),
                         titleSize: pageStyle.unitFontSize * 23,
-                        titleColor: primaryColor,
-                        buttonColor: Colors.white,
-                        borderColor: primaryColor,
+                        titleColor: Colors.white,
+                        buttonColor: Color(0xFFFF8B00),
+                        borderColor: Colors.transparent,
                         radius: 1,
                         onPressed: () => _onBuyNow(),
                       ),
@@ -482,7 +491,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                   ? RoundImageButton(
                       width: pageStyle.unitWidth * 58,
                       height: pageStyle.unitHeight * 50,
-                      color: greyLightColor,
+                      color: primarySwatchColor,
                       child: ScaleTransition(
                         scale: _addToCartScaleAnimation,
                         child: Container(
@@ -490,7 +499,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                           height: pageStyle.unitHeight * 25,
                           child: SvgPicture.asset(
                             shoppingCartIcon,
-                            color: primaryColor,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -506,7 +515,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   }
 
   void _addToCart(String cartId) async {
-    await localStorageRepo.setCartId(cartId);
     cartBloc.add(MyCartItemAdded(
       cartId: cartId,
       product: product,
@@ -520,7 +528,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    String cartId = await localStorageRepo.getCartId();
+    String cartId = '';
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
+    } else {
+      cartId = await localStorageRepo.getCartId();
+    }
     if (cartId.isEmpty) {
       cartBloc.add(MyCartCreated(product: product));
     } else {
@@ -540,13 +556,16 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   void _updateWishlist() async {
     if (isWishlist) {
       wishlistCount -= 1;
-      wishlistIds.removeAt(index);
-      await localStorageRepo.removeWishlistItem(product.productId);
+      wishlistBloc.add(WishlistRemoved(
+        token: user.token,
+        productId: widget.product.entityId,
+      ));
     } else {
       wishlistCount += 1;
-      wishlistIds.add(widget.product.productId);
-      index = wishlistIds.length - 1;
-      await localStorageRepo.addWishlistItem(widget.product.productId);
+      wishlistBloc.add(WishlistAdded(
+        token: user.token,
+        productId: widget.product.entityId,
+      ));
     }
     isWishlist = !isWishlist;
     wishlistItemCountBloc.add(WishlistItemCountSet(
@@ -557,7 +576,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   void _onBuyNow() async {
     isBuyNow = true;
-    String cartId = await localStorageRepo.getCartId();
+    String cartId = '';
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
+    } else {
+      cartId = await localStorageRepo.getCartId();
+    }
     if (cartId.isEmpty) {
       cartBloc.add(MyCartCreated(product: product));
     } else {

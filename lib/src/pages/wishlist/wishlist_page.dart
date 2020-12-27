@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
@@ -11,21 +9,21 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/animation_durations.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:lottie/lottie.dart';
+
 import 'widgets/wishlist_remove_dialog.dart';
 
 class WishlistPage extends StatelessWidget {
@@ -50,7 +48,6 @@ class _WishlistPageViewState extends State<WishlistPageView>
   bool isDeleting = false;
   bool isAdding = false;
   List<ProductModel> wishlists = [];
-  List<String> ids = [];
   int selectedIndex;
   String cartId;
   PageStyle pageStyle;
@@ -60,12 +57,11 @@ class _WishlistPageViewState extends State<WishlistPageView>
   WishlistBloc wishlistBloc;
   MyCartBloc cartBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
-  LocalStorageRepository localStorageRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
     super.initState();
-    localStorageRepo = context.read<LocalStorageRepository>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
@@ -73,9 +69,10 @@ class _WishlistPageViewState extends State<WishlistPageView>
     );
     flushBarService = FlushBarService(context: context);
     wishlistBloc = context.read<WishlistBloc>();
+    wishlistBloc.add(WishlistLoaded(token: user.token, lang: lang));
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     cartBloc = context.read<MyCartBloc>();
-    _triggerLoadWishlistEvent();
+    cartRepo = context.read<MyCartRepository>();
     _getCartId();
   }
 
@@ -85,16 +82,11 @@ class _WishlistPageViewState extends State<WishlistPageView>
     super.dispose();
   }
 
-  void _triggerLoadWishlistEvent() async {
-    String token = await localStorageRepo.getToken();
-    ids = await localStorageRepo.getWishlistIds();
-    if (ids.isNotEmpty) {
-      wishlistBloc.add(WishlistLoaded(ids: ids, token: token, lang: lang));
-    }
-  }
-
   void _getCartId() async {
-    cartId = await localStorageRepo.getCartId();
+    final result = await cartRepo.getCartId(user.token);
+    if (result['code'] == 'SUCCESS') {
+      cartId = result['cartId'];
+    }
   }
 
   @override
@@ -139,22 +131,58 @@ class _WishlistPageViewState extends State<WishlistPageView>
                 },
                 child: BlocConsumer<WishlistBloc, WishlistState>(
                   listener: (context, state) {
+                    if (state is WishlistLoadedSuccess) {
+                      wishlistItemCountBloc.add(WishlistItemCountSet(
+                        wishlistItemCount: state.wishlists.length,
+                      ));
+                    }
                     if (state is WishlistLoadedFailure) {
-                      snackBarService.showErrorSnackBar(state.message);
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
+                    }
+                    if (state is WishlistAddedInProcess) {
+                      progressService.showProgress();
+                    }
+                    if (state is WishlistAddedFailure) {
+                      progressService.hideProgress();
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
+                    }
+                    if (state is WishlistRemovedInProcess) {
+                      progressService.showProgress();
+                    }
+                    if (state is WishlistRemovedFailure) {
+                      progressService.hideProgress();
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
+                    }
+                    if (state is WishlistAddedSuccess) {
+                      progressService.hideProgress();
+                      wishlistBloc.add(WishlistLoaded(
+                        token: user.token,
+                        lang: lang,
+                      ));
+                    }
+                    if (state is WishlistRemovedSuccess) {
+                      progressService.hideProgress();
+                      wishlistBloc.add(WishlistLoaded(
+                        token: user.token,
+                        lang: lang,
+                      ));
                     }
                   },
                   builder: (context, state) {
                     if (state is WishlistLoadedSuccess) {
                       wishlists = state.wishlists;
                     }
-                    return ids.isNotEmpty
-                        ? _buildWishlistItems()
-                        : Expanded(
+                    return wishlists.isEmpty && state is WishlistLoadedSuccess
+                        ? Expanded(
                             child: NoAvailableData(
                               pageStyle: pageStyle,
                               message: 'wishlist_empty',
                             ),
-                          );
+                          )
+                        : _buildWishlistItems();
                   },
                 ),
               ),
@@ -280,22 +308,13 @@ class _WishlistPageViewState extends State<WishlistPageView>
       );
     }
     if (result != null || !ask) {
-      await localStorageRepo.removeWishlistItem(ids[index]);
-      ids.removeAt(index);
       wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: ids.length,
+        wishlistItemCount: wishlists.length,
       ));
-      Timer.periodic(
-        AnimationDurations.removeFavoriteItemAniDuration,
-        (timer) {
-          timer.cancel();
-          isDeleting = false;
-          wishlists.removeAt(index);
-          setState(() {});
-        },
-      );
-      isDeleting = true;
-      setState(() {});
+      wishlistBloc.add(WishlistRemoved(
+        token: user.token,
+        productId: wishlists[index].entityId,
+      ));
     }
   }
 

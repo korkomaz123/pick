@@ -1,5 +1,6 @@
 import 'package:ciga/src/change_notifier/product_change_notifier.dart';
 import 'package:ciga/src/components/product_v_card.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
@@ -129,9 +130,8 @@ class _ProductListViewState extends State<ProductListView>
     if (widget.viewMode == ProductViewModeEnum.category) {
       page = productChangeNotifier.pages[subCategories[tabController.index].id];
       page += 1;
-      await productChangeNotifier.loadMoreBrandProducts(
+      await productChangeNotifier.loadMoreCategoryProducts(
         page,
-        brand.optionId,
         subCategories[tabController.index].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
@@ -254,14 +254,36 @@ class _ProductListViewState extends State<ProductListView>
       children: List.generate(
         products.length,
         (index) {
-          return ProductVCard(
-            pageStyle: pageStyle,
-            product: products[index],
-            cardWidth: pageStyle.unitWidth * 186,
-            cardHeight: pageStyle.unitHeight * 253,
-            isShoppingCart: true,
-            isWishlist: true,
-            isShare: true,
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: lang == 'en' && index % 2 == 0
+                    ? BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      )
+                    : BorderSide.none,
+                left: lang == 'ar' && index % 2 == 0
+                    ? BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      )
+                    : BorderSide.none,
+                bottom: BorderSide(
+                  color: greyColor,
+                  width: pageStyle.unitWidth * 0.5,
+                ),
+              ),
+            ),
+            child: ProductVCard(
+              pageStyle: pageStyle,
+              product: products[index],
+              cardWidth: pageStyle.unitWidth * 186,
+              cardHeight: pageStyle.unitHeight * 253,
+              isShoppingCart: true,
+              isWishlist: true,
+              isShare: true,
+            ),
           );
         },
       ),

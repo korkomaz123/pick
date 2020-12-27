@@ -86,22 +86,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String key = 'bestdeals';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
+        String title = await localStorageRepository.getItem(key + 'title');
         List<dynamic> bestDealsList = await localStorageRepository.getItem(key);
         List<ProductModel> bestDeals = [];
         for (int i = 0; i < bestDealsList.length; i++) {
           bestDeals.add(ProductModel.fromJson(bestDealsList[i]));
         }
-        yield state.copyWith(bestDealsProducts: bestDeals);
+        yield state.copyWith(
+          bestDealsProducts: bestDeals,
+          bestDealsTitle: title,
+        );
       }
       final result = await _productRepository.getBestDealsProducts(lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
+        await localStorageRepository.setItem(key + 'title', result['title']);
         List<dynamic> bestDealsList = result['products'];
         List<ProductModel> bestDeals = [];
         for (int i = 0; i < bestDealsList.length; i++) {
           bestDeals.add(ProductModel.fromJson(bestDealsList[i]));
         }
-        yield state.copyWith(bestDealsProducts: bestDeals);
+        yield state.copyWith(
+          bestDealsProducts: bestDeals,
+          bestDealsTitle: result['title'],
+        );
       } else {
         yield state.copyWith(message: result['errorMessage']);
       }
@@ -115,23 +123,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String key = 'newarrivals';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
+        String title = await localStorageRepository.getItem(key + 'title');
         List<dynamic> newArrivalsList =
             await localStorageRepository.getItem(key);
         List<ProductModel> newArrivals = [];
         for (int i = 0; i < newArrivalsList.length; i++) {
           newArrivals.add(ProductModel.fromJson(newArrivalsList[i]));
         }
-        yield state.copyWith(newArrivalsProducts: newArrivals);
+        yield state.copyWith(
+          newArrivalsProducts: newArrivals,
+          newArrivalsTitle: title,
+        );
       }
       final result = await _productRepository.getNewArrivalsProducts(lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
+        await localStorageRepository.setItem(key + 'title', result['title']);
         List<dynamic> newArrivalsList = result['products'];
         List<ProductModel> newArrivals = [];
         for (int i = 0; i < newArrivalsList.length; i++) {
           newArrivals.add(ProductModel.fromJson(newArrivalsList[i]));
         }
-        yield state.copyWith(newArrivalsProducts: newArrivals);
+        yield state.copyWith(
+          newArrivalsProducts: newArrivals,
+          newArrivalsTitle: result['title'],
+        );
       } else {
         yield state.copyWith(message: result['errorMessage']);
       }
@@ -145,22 +161,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String key = 'perfumes';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
+        String title = await localStorageRepository.getItem(key + 'title');
         List<dynamic> perfumesList = await localStorageRepository.getItem(key);
         List<ProductModel> perfumes = [];
         for (int i = 0; i < perfumesList.length; i++) {
           perfumes.add(ProductModel.fromJson(perfumesList[i]));
         }
-        yield state.copyWith(perfumesProducts: perfumes);
+        yield state.copyWith(
+          perfumesProducts: perfumes,
+          perfumesTitle: title,
+        );
       }
       final result = await _productRepository.getPerfumesProducts(lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
+        await localStorageRepository.setItem(key + 'title', result['title']);
         List<dynamic> perfumesList = result['products'];
         List<ProductModel> perfumes = [];
         for (int i = 0; i < perfumesList.length; i++) {
           perfumes.add(ProductModel.fromJson(perfumesList[i]));
         }
-        yield state.copyWith(perfumesProducts: perfumes);
+        yield state.copyWith(
+          perfumesProducts: perfumes,
+          perfumesTitle: result['title'],
+        );
       } else {
         yield state.copyWith(message: result['errorMessage']);
       }
@@ -190,22 +214,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String lang,
   ) async* {
     try {
-      String key = 'recently-viewed-guest';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        List<dynamic> recentlyViewedList =
-            await localStorageRepository.getItem(key);
-        List<ProductModel> recentlyViewedProducts = [];
-        for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts
-              .add(ProductModel.fromJson(recentlyViewedList[i]));
-        }
-        yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
-      }
+      // String key = 'recently-viewed-guest';
+      // final exist = await localStorageRepository.existItem(key);
+      // if (exist) {
+      //   List<dynamic> recentlyViewedList =
+      //       await localStorageRepository.getItem(key);
+      //   List<ProductModel> recentlyViewedProducts = [];
+      //   for (int i = 0; i < recentlyViewedList.length; i++) {
+      //     recentlyViewedProducts
+      //         .add(ProductModel.fromJson(recentlyViewedList[i]));
+      //   }
+      //   yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
+      // }
       final result = await _productRepository
           .getHomeRecentlyViewedGuestProducts(ids, lang);
       if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['items']);
+        // await localStorageRepository.setItem(key, result['items']);
         List<dynamic> recentlyViewedList = result['items'];
         List<ProductModel> recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
@@ -228,24 +252,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String lang,
   ) async* {
     try {
-      String key = 'recently-viewed-customer';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        List<dynamic> recentlyViewedList =
-            await localStorageRepository.getItem(key);
-        List<ProductModel> recentlyViewedProducts = [];
-        for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts
-              .add(ProductModel.fromJson(recentlyViewedList[i]));
-        }
-        yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
-      }
+      // String key = 'recently-viewed-customer';
+      // final exist = await localStorageRepository.existItem(key);
+      // if (exist) {
+      //   List<dynamic> recentlyViewedList =
+      //       await localStorageRepository.getItem(key);
+      //   List<ProductModel> recentlyViewedProducts = [];
+      //   for (int i = 0; i < recentlyViewedList.length; i++) {
+      //     recentlyViewedProducts
+      //         .add(ProductModel.fromJson(recentlyViewedList[i]));
+      //   }
+      //   yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
+      // }
       final result = await _productRepository
           .getHomeRecentlyViewedCustomerProducts(token, lang);
-
       if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['recentViewed']);
-        List<dynamic> recentlyViewedList = result['recentViewed'];
+        // await localStorageRepository.setItem(key, result['recentViewed']);
+        List<dynamic> recentlyViewedList = result['products'];
         List<ProductModel> recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
           recentlyViewedProducts

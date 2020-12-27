@@ -84,7 +84,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignInSubmittedInProcess();
     try {
-      final result = await _signInRepository.socialLogin(email, firstName, lastName, loginType, lang);
+      final result = await _signInRepository.socialLogin(
+          email, firstName, lastName, loginType, lang);
       print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
@@ -105,7 +106,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignUpSubmittedInProcess();
     try {
-      final result = await _signInRepository.register(firstName, lastName, email, password);
+      final result = await _signInRepository.register(
+          firstName, lastName, email, password);
       print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
@@ -128,7 +130,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         yield NewPasswordRequestSubmittedSuccess();
       } else {
         yield NewPasswordRequestSubmittedFailure(
-          message: result['errorMessage'],
+          message: result['errMessage'],
         );
       }
     } catch (e) {

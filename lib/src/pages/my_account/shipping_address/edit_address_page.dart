@@ -95,8 +95,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     shippingRepo = context.read<ShippingAddressRepository>();
   }
 
-  void _onSuccess() async {
-    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+  void _onSuccess() {
     Navigator.pop(context);
   }
 
@@ -139,6 +138,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
             progressService.showProgress();
           }
           if (state is ShippingAddressUpdatedSuccess) {
+            print('updated success');
             progressService.hideProgress();
             _onSuccess();
           }

@@ -272,7 +272,9 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 
   void _setMyCartId(String cartId) async {
-    await localRepo.setCartId(cartId);
+    if (user == null) {
+      await localRepo.setCartId(cartId);
+    }
   }
 
   @override

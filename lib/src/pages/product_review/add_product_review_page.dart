@@ -128,7 +128,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
             ),
             RatingBar(
               initialRating: rate,
-              minRating: 0,
+              minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: false,
               itemCount: 5,
@@ -221,14 +221,18 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
 
   void _onAddReview() {
     if (formKey.currentState.validate()) {
-      productReviewBloc.add(ProductReviewAdded(
-        productId: widget.product.productId,
-        title: titleController.text,
-        detail: commentController.text,
-        rate: int.parse(rate.toStringAsFixed(0)).toString(),
-        token: user?.token ?? '',
-        username: usernameController.text,
-      ));
+      if (rate > 0) {
+        productReviewBloc.add(ProductReviewAdded(
+          productId: widget.product.productId,
+          title: titleController.text,
+          detail: commentController.text,
+          rate: int.parse(rate.toStringAsFixed(0)).toString(),
+          token: user?.token ?? '',
+          username: usernameController.text,
+        ));
+      } else {
+        flushBarService.showErrorMessage(pageStyle, 'rating_required'.tr());
+      }
     }
   }
 }

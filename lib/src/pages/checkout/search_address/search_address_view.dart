@@ -6,12 +6,12 @@ import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/formatted_address_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'package:easy_localization/easy_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -39,6 +39,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   void initState() {
     super.initState();
     formLocation = widget?.placeChangeNotifier?.formLocation?.name;
+    _onCurrentLocation();
   }
 
   @override
@@ -269,6 +270,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     final result = await http.get(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1',
     );
+    print(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey1');
     final response = jsonDecode(result.body);
     List<dynamic> addressList = response['results'];
     formattedAddresses = addressList.map((address) {

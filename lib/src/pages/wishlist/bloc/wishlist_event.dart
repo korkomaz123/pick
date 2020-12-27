@@ -8,14 +8,33 @@ abstract class WishlistEvent extends Equatable {
 }
 
 class WishlistLoaded extends WishlistEvent {
-  final List<String> ids;
   final String token;
   final String lang;
 
-  WishlistLoaded({this.ids, this.token, this.lang});
+  WishlistLoaded({this.token, this.lang});
 
   @override
-  List<Object> get props => [ids, token, lang];
+  List<Object> get props => [token, lang];
+}
+
+class WishlistAdded extends WishlistEvent {
+  final String token;
+  final String productId;
+
+  WishlistAdded({this.token, this.productId});
+
+  @override
+  List<Object> get props => [token, productId];
+}
+
+class WishlistRemoved extends WishlistEvent {
+  final String token;
+  final String productId;
+
+  WishlistRemoved({this.token, this.productId});
+
+  @override
+  List<Object> get props => [token, productId];
 }
 
 class WishlistInitialized extends WishlistEvent {}
