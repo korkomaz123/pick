@@ -6,16 +6,17 @@ import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/data/models/payment_method_entity.dart';
 import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:ciga/src/routes/routes.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
   final OrderEntity reorder;
@@ -35,6 +36,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   CheckoutBloc checkoutBloc;
   CartItemCountBloc cartItemCountBloc;
   LocalStorageRepository localStorageRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     checkoutBloc = context.read<CheckoutBloc>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
     localStorageRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
   }
 
   @override
@@ -254,8 +257,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     } else {
       await localStorageRepo.setCartId('');
     }
-
-    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
-    Navigator.pushNamed(context, Routes.checkoutConfirmed, arguments: orderNo);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.checkoutConfirmed,
+      (route) => route.settings.name == Routes.home,
+      arguments: orderNo,
+    );
   }
 }

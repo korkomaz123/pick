@@ -94,11 +94,18 @@ class _ProductHCardState extends State<ProductHCard>
     } else {
       cartId = await localRepo.getCartId();
     }
+    if (cartId.isEmpty) {
+      final result = await cartRepo.createCart();
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+        await localRepo.setCartId(cartId);
+      }
+    }
   }
 
-  void _saveCartId(cartId) async {
-    await localRepo.setCartId(cartId);
-  }
+  // void _saveCartId(cartId) async {
+  //   await localRepo.setCartId(cartId);
+  // }
 
   void _initAnimation() {
     /// add to cart button animation

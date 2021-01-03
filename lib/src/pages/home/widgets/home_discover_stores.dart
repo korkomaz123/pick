@@ -6,10 +6,10 @@ import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -72,10 +72,10 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
 
   Widget _buildTitle() {
     return Text(
-      'home_discover_brands'.tr(),
+      'brands_title'.tr(),
       style: mediumTextStyle.copyWith(
         color: greyDarkColor,
-        fontSize: widget.pageStyle.unitFontSize * 23,
+        fontSize: widget.pageStyle.unitFontSize * 26,
       ),
     );
   }

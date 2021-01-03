@@ -151,13 +151,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
-            if (state is ShippingAddressLoadedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is ShippingAddressLoadedSuccess) {
-              progressService.hideProgress();
-            }
+            // if (state is ShippingAddressLoadedInProcess) {
+            //   progressService.showProgress();
+            // }
+            // if (state is ShippingAddressLoadedSuccess) {
+            //   progressService.hideProgress();
+            // }
             if (state is ShippingAddressLoadedFailure) {
+              // progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedInProcess) {
@@ -191,7 +192,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
-              print('loaded success');
               addresses = state.addresses;
               shippingAddresses = state.addresses;
               for (int i = 0; i < shippingAddresses.length; i++) {
@@ -205,6 +205,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 shippingAddresses.isEmpty) {
               return ProductNoAvailable(pageStyle: pageStyle);
             }
+            print(shippingAddresses.length);
             return SingleChildScrollView(
               child: Column(
                 children: List.generate(

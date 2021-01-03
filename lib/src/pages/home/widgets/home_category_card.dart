@@ -1,10 +1,12 @@
 import 'package:ciga/src/components/ciga_text_button.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeCategoryCard extends StatelessWidget {
@@ -17,7 +19,7 @@ class HomeCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 282,
+      height: pageStyle.unitHeight * 249,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: NetworkImage(category.imageUrl),
@@ -25,8 +27,8 @@ class HomeCategoryCard extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 30,
+        horizontal: pageStyle.unitWidth * 18,
+        vertical: pageStyle.unitHeight * 23,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,31 +36,43 @@ class HomeCategoryCard extends StatelessWidget {
           Text(
             category.name,
             style: mediumTextStyle.copyWith(
-              color: Colors.white,
+              color: darkColor,
               fontSize: pageStyle.unitFontSize * 23,
             ),
           ),
-          Text(
-            'Lorem ipsum dolor sit amet,\nLorem ipsum…',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 10,
+          Container(
+            width: pageStyle.deviceWidth / 2,
+            padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+            child: Text(
+              category.description ?? '',
+              style: mediumTextStyle.copyWith(
+                color: greyDarkColor,
+                fontSize: pageStyle.unitFontSize * 10,
+              ),
             ),
           ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.bottomLeft,
-              child: CigaTextButton(
-                title: 'view_all'.tr(),
-                titleSize: pageStyle.unitFontSize * 18,
-                titleColor: Colors.white,
-                buttonColor: Colors.transparent,
-                borderColor: Colors.white,
-                onPressed: () => Navigator.pushNamed(
+          Container(
+            padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
+            child: CigaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: pageStyle.unitFontSize * 18,
+              titleColor: Colors.white,
+              buttonColor: Colors.transparent,
+              borderColor: Colors.white,
+              onPressed: () {
+                ProductListArguments arguments = ProductListArguments(
+                  category: category,
+                  subCategory: [],
+                  brand: BrandEntity(),
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
                   context,
-                  Routes.categoryList,
-                ),
-              ),
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              },
             ),
           )
         ],

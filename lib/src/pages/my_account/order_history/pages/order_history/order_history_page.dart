@@ -12,7 +12,6 @@ import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -98,9 +97,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     children: List.generate(
                       orders.length,
                       (index) {
-                        return orders[index].status == OrderStatusEnum.canceled
-                            ? SizedBox.shrink()
-                            : _buildOrderItem(orders[index]);
+                        return _buildOrderItem(orders[index]);
                       },
                     ),
                   ),
@@ -144,8 +141,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         break;
       default:
         icon = pendingIcon;
-        color = orangeColor;
-        status = EnumToString.convertToString(order.status).tr();
+        color = dangerColor;
+        status = 'order_pending'.tr();
     }
     return Container(
       width: double.infinity,
@@ -316,17 +313,21 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 ),
                 SizedBox(width: pageStyle.unitWidth * 5),
                 MaterialButton(
-                  onPressed: () => Navigator.pushNamed(
-                    context,
-                    Routes.reOrder,
-                    arguments: order,
-                  ),
+                  onPressed: () => order.status == OrderStatusEnum.canceled
+                      ? null
+                      : Navigator.pushNamed(
+                          context,
+                          Routes.reOrder,
+                          arguments: order,
+                        ),
                   minWidth: pageStyle.unitWidth * 150,
                   height: pageStyle.unitHeight * 45,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: primaryColor,
+                  color: order.status == OrderStatusEnum.canceled
+                      ? greyColor
+                      : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

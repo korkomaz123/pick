@@ -80,10 +80,9 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            // 'home_best_deals'.tr(),
             title ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 23,
+              fontSize: widget.pageStyle.unitFontSize * 26,
               color: greyDarkColor,
             ),
           ),

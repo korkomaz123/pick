@@ -72,7 +72,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.deviceWidth * 579 / 1125,
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: Colors.white,
               image: DecorationImage(
                 image: NetworkImage(image),
                 fit: BoxFit.fill,

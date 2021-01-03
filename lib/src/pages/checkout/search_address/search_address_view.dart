@@ -299,6 +299,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
           formattedJson['street'] = componentAddresses[i]['long_name'];
         } else if (componentTypes.contains('postal_code')) {
           formattedJson['postal_code'] = componentAddresses[i]['long_name'];
+        } else if (componentTypes.contains('locality')) {
+          formattedJson['state'] = componentAddresses[i]['state'];
         }
       }
       formattedJson['formatted_address'] = address['formatted_address'];
@@ -312,6 +314,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     AddressEntity addressEntity = AddressEntity(
       country: address.country,
       countryId: address.countryCode,
+      region: address.state,
       city: address.city,
       street: address.street,
       zipCode: address.postalCode,

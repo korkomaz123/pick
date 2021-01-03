@@ -68,7 +68,7 @@ class OrderEntity {
     int subtotalPrice =
         int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
     int qty = int.parse(double.parse(qtyStr).toStringAsFixed(0));
-    return ((totalPrice - subtotalPrice) / qty).ceil();
+    return qty == 0 ? 0 : ((totalPrice - subtotalPrice) / qty).ceil();
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {
@@ -76,6 +76,7 @@ class OrderEntity {
       Map<String, dynamic> itemJson = item;
       itemJson['product'] = ProductModel.fromJson(item['product']);
       itemJson['itemCount'] = item['item_count'];
+      itemJson['itemCountCanceled'] = item['item_count_canceled'] ?? '0';
       itemJson['itemId'] = '1';
       itemJson['availableCount'] = 0;
       itemJson['rowPrice'] = 0;

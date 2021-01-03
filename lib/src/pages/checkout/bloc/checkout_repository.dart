@@ -61,6 +61,7 @@ class CheckoutRepository {
     params['lang'] = lang;
     params['cartId'] = orderDetails['cartId'];
     params['orderDetails'] = json.encode(orderDetails['orderDetails']);
+    print(params);
     final result = await Api.postMethod(url, data: params);
     return result;
   }

@@ -5,9 +5,9 @@ import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeRecent extends StatefulWidget {
@@ -65,7 +65,7 @@ class _HomeRecentState extends State<HomeRecent> {
                 Text(
                   'home_recently_view'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 23,
+                    fontSize: widget.pageStyle.unitFontSize * 26,
                     color: greyDarkColor,
                   ),
                 ),

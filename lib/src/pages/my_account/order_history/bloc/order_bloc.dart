@@ -68,7 +68,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       final result = await _orderRepository.cancelOrder(
           orderId, items, additionalInfo, reason, product, imageName);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         yield OrderCancelledSuccess();
       } else {

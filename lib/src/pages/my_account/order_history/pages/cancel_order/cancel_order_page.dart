@@ -13,7 +13,6 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -61,8 +60,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         break;
       default:
         icon = cancelledIcon;
-        color = orangeColor;
-        status = EnumToString.convertToString(order.status).tr();
+        color = dangerColor;
+        status = 'order_pending'.tr();
     }
     setState(() {});
   }
@@ -313,7 +312,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  cartItem.product.name,
+                  cartItem.product.name ?? '',
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                   ),

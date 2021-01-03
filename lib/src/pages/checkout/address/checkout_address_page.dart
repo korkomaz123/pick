@@ -327,12 +327,15 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     if (selectedAddress == null) {
       selectedAddress = defaultAddress;
     }
+    print(selectedAddress?.company);
     countryController.text = selectedAddress?.country;
     countryId = selectedAddress?.countryId;
     stateController.text = selectedAddress?.region;
+    // regionId = selectedAddress?.region;
     cityController.text = selectedAddress?.city;
     streetController.text = selectedAddress?.street;
     zipCodeController.text = selectedAddress?.zipCode;
+    companyController.text = selectedAddress?.company;
     phoneNumberController.text = selectedAddress?.phoneNumber;
     setState(() {});
   }

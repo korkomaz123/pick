@@ -13,9 +13,9 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -159,18 +159,39 @@ class _CategoryListPageState extends State<CategoryListPage> {
           }
         });
       },
-      child: Image.network(
-        category.imageUrl,
+      child: Container(
         width: pageStyle.deviceWidth,
         height: pageStyle.unitHeight * 128,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) {
-          return Container(
-            width: pageStyle.deviceWidth,
-            height: pageStyle.unitHeight * 128,
-            color: Colors.grey,
-          );
-        },
+        child: Stack(
+          children: [
+            Image.network(
+              category.imageUrl,
+              width: pageStyle.deviceWidth,
+              height: pageStyle.unitHeight * 128,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) {
+                return Container(
+                  width: pageStyle.deviceWidth,
+                  height: pageStyle.unitHeight * 128,
+                  color: Colors.grey,
+                );
+              },
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: pageStyle.unitWidth * 31),
+                child: Text(
+                  category.name,
+                  style: boldTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 30,
+                    color: greyDarkColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

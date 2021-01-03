@@ -251,6 +251,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
       if (file != null) {
         List<Map<String, dynamic>> items = [];
         List<String> keys = cancelledItemsMap.keys.toList();
+        print(keys);
         items = keys.map((key) {
           return {
             'productId': int.parse(key),

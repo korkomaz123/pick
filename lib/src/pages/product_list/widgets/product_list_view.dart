@@ -249,43 +249,45 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList(List<ProductModel> products) {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      children: List.generate(
-        products.length,
-        (index) {
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(
-                right: lang == 'en' && index % 2 == 0
-                    ? BorderSide(
-                        color: greyColor,
-                        width: pageStyle.unitWidth * 0.5,
-                      )
-                    : BorderSide.none,
-                left: lang == 'ar' && index % 2 == 0
-                    ? BorderSide(
-                        color: greyColor,
-                        width: pageStyle.unitWidth * 0.5,
-                      )
-                    : BorderSide.none,
-                bottom: BorderSide(
-                  color: greyColor,
-                  width: pageStyle.unitWidth * 0.5,
+    return SingleChildScrollView(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        children: List.generate(
+          products.length,
+          (index) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  right: lang == 'en' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  left: lang == 'ar' && index % 2 == 0
+                      ? BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        )
+                      : BorderSide.none,
+                  bottom: BorderSide(
+                    color: greyColor,
+                    width: pageStyle.unitWidth * 0.5,
+                  ),
                 ),
               ),
-            ),
-            child: ProductVCard(
-              pageStyle: pageStyle,
-              product: products[index],
-              cardWidth: pageStyle.unitWidth * 186,
-              cardHeight: pageStyle.unitHeight * 253,
-              isShoppingCart: true,
-              isWishlist: true,
-              isShare: true,
-            ),
-          );
-        },
+              child: ProductVCard(
+                pageStyle: pageStyle,
+                product: products[index],
+                cardWidth: pageStyle.unitWidth * 186,
+                cardHeight: pageStyle.unitHeight * 253,
+                isShoppingCart: true,
+                isWishlist: true,
+                isShare: true,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

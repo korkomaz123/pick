@@ -20,6 +20,7 @@ class ProductEntity {
   final List<dynamic> gallery;
   final List<ReviewEntity> reviews;
   final BrandEntity brandEntity;
+  final int stockQty;
 
   ProductEntity({
     this.entityId,
@@ -40,6 +41,7 @@ class ProductEntity {
     this.gallery,
     this.reviews,
     this.brandEntity,
+    this.stockQty,
   });
 
   ProductEntity.fromJson(Map<String, dynamic> json)
@@ -63,5 +65,6 @@ class ProductEntity {
         brandEntity =
             json['brand_entity'] != null && json['brand_entity'] != null
                 ? BrandEntity.fromJson(json['brand_entity'])
-                : BrandEntity();
+                : BrandEntity(),
+        stockQty = json['stockQty'];
 }

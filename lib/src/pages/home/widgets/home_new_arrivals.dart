@@ -83,7 +83,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
           Text(
             title ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 23,
+              fontSize: widget.pageStyle.unitFontSize * 26,
               color: greyDarkColor,
             ),
           ),

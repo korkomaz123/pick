@@ -85,37 +85,33 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getCartItems() async {
-    String cartId = '';
-    if (user?.token != null) {
+    String cartId = await localRepo.getCartId();
+    if (cartId.isEmpty) {
       final result = await cartRepo.getCartId(user.token);
       if (result['code'] == 'SUCCESS') {
         cartId = result['cartId'];
+        await localRepo.setCartId(cartId);
       }
-    } else {
-      cartId = await localRepo.getCartId();
     }
-    if (cartId.isNotEmpty) {
-      final result = await cartRepo.getCartItems(cartId, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> cartList = result['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
+    final result = await cartRepo.getCartItems(cartId, lang);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> cartList = result['cart'];
+      int count = 0;
+      for (int i = 0; i < cartList.length; i++) {
+        Map<String, dynamic> cartItemJson = {};
+        cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
+        cartItemJson['itemCount'] = cartList[i]['itemCount'];
+        cartItemJson['itemId'] = cartList[i]['itemid'];
+        cartItemJson['rowPrice'] = cartList[i]['row_price'];
+        cartItemJson['availableCount'] = cartList[i]['availableCount'];
+        CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
+        myCartItems.add(cart);
+        count += cart.itemCount;
+        cartTotalPrice +=
+            cart.itemCount * double.parse(cart.product.price).ceil();
       }
+      cartItemCount = count;
+      cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
     }
   }
 

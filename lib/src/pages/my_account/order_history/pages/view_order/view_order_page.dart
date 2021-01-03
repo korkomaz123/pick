@@ -2,17 +2,16 @@ import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
 import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
+import 'package:ciga/src/pages/my_account/order_history/pages/widgets/order_item_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -63,8 +62,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         break;
       default:
         icon = pendingIcon;
-        color = orangeColor;
-        status = EnumToString.convertToString(order.status).tr();
+        color = dangerColor;
+        status = 'order_pending'.tr();
     }
     setState(() {});
   }
@@ -154,8 +153,12 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              _buildReorderButton(),
-              _buildCancelOrderButton(),
+              order.status == OrderStatusEnum.canceled
+                  ? SizedBox.shrink()
+                  : _buildReorderButton(),
+              order.status == OrderStatusEnum.canceled
+                  ? SizedBox.shrink()
+                  : _buildCancelOrderButton(),
             ],
           ),
         ),
@@ -250,82 +253,32 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         (index) {
           return Column(
             children: [
-              _buildProductCard(order.cartItems[index]),
+              order.cartItems[index].itemCount > 0
+                  ? OrderItemCard(
+                      pageStyle: pageStyle,
+                      cartItem: order.cartItems[index],
+                    )
+                  : SizedBox.shrink(),
+              order.cartItems[index].itemCountCanceled > 0
+                  ? Column(
+                      children: [
+                        order.cartItems[index].itemCount > 0
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
+                        OrderItemCard(
+                          pageStyle: pageStyle,
+                          cartItem: order.cartItems[index],
+                          canceled: true,
+                        ),
+                      ],
+                    )
+                  : SizedBox.shrink(),
               index < (order.cartItems.length - 1)
                   ? Divider(color: greyColor, thickness: 0.5)
                   : SizedBox.shrink(),
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildProductCard(CartItemEntity cartItem) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 20,
-      ),
-      child: Row(
-        children: [
-          Image.network(
-            cartItem.product.imageUrl,
-            width: pageStyle.unitWidth * 90,
-            height: pageStyle.unitHeight * 120,
-            fit: BoxFit.fill,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                    )
-                  : child;
-            },
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cartItem.product.name,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
-                  ),
-                ),
-                Text(
-                  cartItem.product.shortDescription,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                ),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      cartItem.itemCount.toString() +
-                          'items'.tr().replaceFirst('0', ''),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 14,
-                        color: primaryColor,
-                      ),
-                    ),
-                    Text(
-                      cartItem.product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
-                        color: primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -470,8 +423,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         borderRadius: BorderRadius.circular(2),
         color: Colors.grey.shade300,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             order.address.title.isNotEmpty

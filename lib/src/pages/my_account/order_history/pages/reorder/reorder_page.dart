@@ -8,6 +8,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
+import 'package:ciga/src/pages/checkout/review/widgets/review_product_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
@@ -17,7 +18,6 @@ import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -88,8 +88,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
         break;
       default:
         icon = pendingIcon;
-        color = orangeColor;
-        status = EnumToString.convertToString(order.status).tr();
+        color = dangerColor;
+        status = 'order_pending'.tr();
     }
     setState(() {});
   }
@@ -323,14 +323,21 @@ class _ReOrderPageState extends State<ReOrderPage> {
                 children: [
                   Stack(
                     children: [
-                      _buildProductCard(cartItems[index]),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                          onPressed: () => _onDeleteOrderItem(cartItems[index]),
-                          icon: SvgPicture.asset(trashIcon, color: greyColor),
-                        ),
+                      ReviewProductCard(
+                        pageStyle: pageStyle,
+                        cartItem: cartItems[index],
                       ),
+                      cartItems.length > 1
+                          ? Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                onPressed: () =>
+                                    _onDeleteOrderItem(cartItems[index]),
+                                icon: SvgPicture.asset(trashIcon,
+                                    color: greyColor),
+                              ),
+                            )
+                          : SizedBox.shrink(),
                     ],
                   ),
                   index < (cartItems.length - 1)
@@ -342,75 +349,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildProductCard(CartItemEntity cartItem) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 30,
-      ),
-      child: Row(
-        children: [
-          Image.network(
-            cartItem.product.imageUrl,
-            width: pageStyle.unitWidth * 90,
-            height: pageStyle.unitHeight * 120,
-            fit: BoxFit.fill,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                    )
-                  : child;
-            },
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cartItem.product.name,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
-                  ),
-                ),
-                Text(
-                  cartItem.product.shortDescription,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                ),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '(${cartItem.itemCount})' +
-                          'items'.tr().replaceFirst('0', ''),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 14,
-                        color: primaryColor,
-                      ),
-                    ),
-                    Text(
-                      cartItem.product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
-                        color: primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 

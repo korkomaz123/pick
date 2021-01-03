@@ -4,6 +4,7 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
+import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -30,6 +31,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   String shippingMethodId;
   int serviceFees;
   LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
       serviceFees = shippingMethods[0].serviceFees;
     }
     localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
   }
 
   @override
@@ -167,7 +170,10 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     if (widget.reorder != null) {
       cartId = await localRepo.getItem('reorderCartId');
     } else {
-      cartId = await localRepo.getCartId();
+      final result = await cartRepo.getCartId(user.token);
+      if (result['code'] == 'SUCCESS') {
+        cartId = result['cartId'];
+      }
     }
     orderDetails['shipping'] = shippingMethodId;
     orderDetails['cartId'] = cartId;

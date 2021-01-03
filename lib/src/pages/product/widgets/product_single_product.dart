@@ -346,11 +346,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     )
                   : SizedBox.shrink(),
               Text(
-                productEntity.inStock
+                productEntity.stockQty != null && productEntity.stockQty > 0
                     ? 'in_stock'.tr().toUpperCase()
                     : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
-                  color: productEntity.inStock ? succeedColor : dangerColor,
+                  color: product.stockQty != null && product.stockQty > 0
+                      ? succeedColor
+                      : dangerColor,
                   fontSize: pageStyle.unitFontSize * 11,
                 ),
               ),
@@ -481,32 +483,42 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                         title: 'product_buy_now'.tr(),
                         titleSize: pageStyle.unitFontSize * 23,
                         titleColor: Colors.white,
-                        buttonColor: Color(0xFFFF8B00),
+                        buttonColor: productEntity.stockQty != null &&
+                                productEntity.stockQty > 0
+                            ? Color(0xFFFF8B00)
+                            : greyColor,
                         borderColor: Colors.transparent,
                         radius: 1,
-                        onPressed: () => _onBuyNow(),
+                        onPressed: () => productEntity.stockQty != null &&
+                                productEntity.stockQty > 0
+                            ? _onBuyNow()
+                            : null,
                       ),
               ),
-              productEntity.inStock
-                  ? RoundImageButton(
-                      width: pageStyle.unitWidth * 58,
-                      height: pageStyle.unitHeight * 50,
-                      color: primarySwatchColor,
-                      child: ScaleTransition(
-                        scale: _addToCartScaleAnimation,
-                        child: Container(
-                          width: pageStyle.unitWidth * 25,
-                          height: pageStyle.unitHeight * 25,
-                          child: SvgPicture.asset(
-                            shoppingCartIcon,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      onTap: () => _onAddToCart(),
-                      radius: 1,
-                    )
-                  : SizedBox.shrink(),
+              RoundImageButton(
+                width: pageStyle.unitWidth * 58,
+                height: pageStyle.unitHeight * 50,
+                color:
+                    productEntity.stockQty != null && productEntity.stockQty > 0
+                        ? primarySwatchColor
+                        : greyColor,
+                child: ScaleTransition(
+                  scale: _addToCartScaleAnimation,
+                  child: Container(
+                    width: pageStyle.unitWidth * 25,
+                    height: pageStyle.unitHeight * 25,
+                    child: SvgPicture.asset(
+                      shoppingCartIcon,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onTap: () =>
+                    productEntity.stockQty != null && productEntity.stockQty > 0
+                        ? _onAddToCart()
+                        : null,
+                radius: 1,
+              ),
             ],
           ),
         );
@@ -576,20 +588,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   void _onBuyNow() async {
     isBuyNow = true;
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
+    String cartId = await localStorageRepo.getCartId();
+    if (cartId.isEmpty) {
+      final result = await cartRepo.createCart();
       if (result['code'] == 'SUCCESS') {
         cartId = result['cartId'];
+        await localStorageRepo.setCartId(cartId);
       }
-    } else {
-      cartId = await localStorageRepo.getCartId();
     }
-    if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated(product: product));
-    } else {
-      _addToCart(cartId);
-    }
+    _addToCart(cartId);
   }
 
   void _onShareProduct() {

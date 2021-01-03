@@ -2,8 +2,8 @@ import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class WishlistProductCard extends StatelessWidget {
@@ -74,9 +74,14 @@ class WishlistProductCard extends StatelessWidget {
                   title: 'wishlist_add_cart_button_title'.tr(),
                   titleSize: pageStyle.unitFontSize * 15,
                   titleColor: Colors.white,
-                  buttonColor: primaryColor,
+                  buttonColor: product.stockQty != null && product.stockQty > 0
+                      ? primaryColor
+                      : greyColor,
                   borderColor: Colors.transparent,
-                  onPressed: onAddToCart,
+                  onPressed: () =>
+                      product.stockQty != null && product.stockQty > 0
+                          ? onAddToCart()
+                          : null,
                   radius: 10,
                 ),
               ],

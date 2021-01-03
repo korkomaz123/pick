@@ -91,7 +91,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
             bool isSelected = widget.value == region.regionId;
             int index = regions.indexOf(region);
             bool contain = searchController.text.isEmpty ||
-                region
+                region.defaultName
                     .toString()
                     .toUpperCase()
                     .contains(searchController.text.toUpperCase());

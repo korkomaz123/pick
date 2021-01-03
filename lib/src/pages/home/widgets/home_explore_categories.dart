@@ -1,7 +1,5 @@
 import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -12,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'home_category_card.dart';
 
 class HomeExploreCategories extends StatefulWidget {
   final PageStyle pageStyle;
@@ -38,9 +38,8 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 320,
+      height: widget.pageStyle.unitHeight * 340,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitWidth * 15),
       child: BlocConsumer<CategoryListBloc, CategoryListState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -52,7 +51,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildTitle(),
-                SizedBox(height: widget.pageStyle.unitHeight * 20),
                 _buildCategorySliders(),
                 _buildFooter(),
               ],
@@ -67,14 +65,17 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildTitle() {
     return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(
         horizontal: widget.pageStyle.unitWidth * 15,
       ),
+      alignment: Alignment.centerLeft,
       child: Text(
         'home_categories'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
-          fontSize: widget.pageStyle.unitFontSize * 23,
+          fontSize: widget.pageStyle.unitFontSize * 26,
         ),
       ),
     );
@@ -82,17 +83,19 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildFooter() {
     return Container(
-      width: double.infinity,
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 40,
       padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 4,
         horizontal: widget.pageStyle.unitWidth * 15,
       ),
+      alignment: Alignment.centerLeft,
       child: InkWell(
         onTap: () => Navigator.pushNamed(
           context,
           Routes.categoryList,
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
@@ -119,7 +122,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 400,
+            height: widget.pageStyle.unitHeight * 250,
             color: Colors.white,
             child: Swiper(
               itemCount: categories.length > 6 ? 6 : categories.length,
@@ -132,31 +135,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    ProductListArguments arguments = ProductListArguments(
-                      category: categories[index],
-                      subCategory: [],
-                      brand: BrandEntity(),
-                      selectedSubCategoryIndex: 0,
-                      isFromBrand: false,
-                    );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
-                  },
-                  child: Container(
-                    width: widget.pageStyle.deviceWidth,
-                    // height: widget.pageStyle.unitHeight * 242,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(categories[index].imageUrl),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
+                return HomeCategoryCard(
+                  pageStyle: widget.pageStyle,
+                  category: categories[index],
                 );
               },
             ),
