@@ -36,6 +36,7 @@ class OrderRepository {
       'lang': lang,
       'imageForProduct': product.toString(),
     };
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

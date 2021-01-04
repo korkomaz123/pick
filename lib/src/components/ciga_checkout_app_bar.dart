@@ -65,7 +65,7 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
             onPressed: () {
               Navigator.popUntil(
                 context,
-                (route) => route.settings.name == Routes.myCart,
+                (route) => route.settings.name == Routes.home,
               );
             },
           ),

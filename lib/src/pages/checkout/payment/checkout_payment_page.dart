@@ -243,6 +243,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onPlaceOrder() {
     orderDetails['paymentMethod'] = payment;
+    print(orderDetails);
     checkoutBloc.add(OrderSubmitted(
       orderDetails: orderDetails,
       lang: lang,

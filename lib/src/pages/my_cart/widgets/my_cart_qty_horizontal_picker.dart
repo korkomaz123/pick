@@ -119,7 +119,9 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
   void initState() {
     super.initState();
     myCartRepo = context.read<MyCartRepository>();
-    availableCount = 0;
+    availableCount = widget.cartItem.availableCount > 20
+        ? 20
+        : widget.cartItem.availableCount;
     pageStyle = widget.pageStyle;
     productId = widget.cartItem.product.productId;
   }
@@ -134,7 +136,6 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
         color: Colors.white.withOpacity(0.6),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: pageStyle.deviceWidth,
@@ -150,9 +151,8 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                         scrollDirection: Axis.horizontal,
                         reverse: true,
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: List.generate(
-                            widget.cartItem.availableCount,
+                            availableCount,
                             (index) => _buildQtyItem(index),
                           ),
                         ),
@@ -179,7 +179,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
     return InkWell(
       onTap: () => Navigator.pop(
         context,
-        widget.cartItem.availableCount - index,
+        availableCount - index,
       ),
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -194,7 +194,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
           border: Border.all(color: Colors.white, width: 1),
         ),
         child: Text(
-          (widget.cartItem.availableCount - index).toString(),
+          (availableCount - index).toString(),
           style: mediumTextStyle.copyWith(
             fontSize: widget.pageStyle.unitFontSize * 16,
             color: Colors.white,
