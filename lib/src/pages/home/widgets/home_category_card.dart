@@ -45,6 +45,8 @@ class HomeCategoryCard extends StatelessWidget {
             padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
             child: Text(
               category.description ?? '',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: pageStyle.unitFontSize * 10,

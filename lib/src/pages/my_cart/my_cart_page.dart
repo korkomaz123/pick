@@ -7,7 +7,6 @@ import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
@@ -27,7 +26,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
-import 'widgets/my_cart_qty_horizontal_picker.dart';
+import 'widgets/my_cart_item.dart';
 
 class MyCartPage extends StatefulWidget {
   @override
@@ -40,7 +39,7 @@ class _MyCartPageState extends State<MyCartPage>
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
   String cartId = '';
-  int totalPrice = 0;
+  double totalPrice = 0;
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -279,7 +278,13 @@ class _MyCartPageState extends State<MyCartPage>
                   child: FadeInAnimation(
                     child: Column(
                       children: [
-                        _buildMyCartProduct(index),
+                        MyCartItem(
+                          pageStyle: pageStyle,
+                          cartItem: myCartItems[index],
+                          discount: discount,
+                          cartId: cartId,
+                          onRemoveCartItem: () => _onRemoveCartItem(index),
+                        ),
                         index < (myCartItems.length - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
                             : SizedBox.shrink(),
@@ -291,127 +296,6 @@ class _MyCartPageState extends State<MyCartPage>
             },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMyCartProduct(int index) {
-    String priceString = myCartItems[index].product.price;
-    double price = double.parse(priceString);
-    double discountPrice = price * (100 - discount) / 100;
-    String discountPriceString = discountPrice.toStringAsFixed(2);
-    return Container(
-      width: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            onTap: () => _onRemoveCartItem(index),
-            child: Icon(
-              Icons.remove_circle_outline,
-              size: pageStyle.unitFontSize * 22,
-              color: greyDarkColor,
-            ),
-          ),
-          Image.network(
-            myCartItems[index].product.imageUrl,
-            width: pageStyle.unitWidth * 134,
-            height: pageStyle.unitHeight * 150,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    if (myCartItems[index].product.brandId.isNotEmpty) {
-                      ProductListArguments arguments = ProductListArguments(
-                        category: CategoryEntity(),
-                        subCategory: [],
-                        brand: myCartItems[index].product.brandEntity,
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    }
-                  },
-                  child: Text(
-                    myCartItems[index].product.brandLabel,
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 10,
-                    ),
-                  ),
-                ),
-                Text(
-                  myCartItems[index].product.name,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                  ),
-                ),
-                Text(
-                  myCartItems[index].product.shortDescription,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      priceString + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
-                        color: greyColor,
-                      ),
-                    ),
-                    SizedBox(width: pageStyle.unitWidth * 20),
-                    Text(
-                      discount != 0
-                          ? discountPriceString + ' ' + 'currency'.tr()
-                          : '',
-                      style: mediumTextStyle.copyWith(
-                        decorationStyle: TextDecorationStyle.solid,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: dangerColor,
-                        fontSize: pageStyle.unitFontSize * 12,
-                        color: greyColor,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () => null,
-                      child: Text(
-                        'save_for_later'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 12,
-                          color: primaryColor,
-                        ),
-                      ),
-                    ),
-                    MyCartQtyHorizontalPicker(
-                      pageStyle: pageStyle,
-                      cartItem: myCartItems[index],
-                      cartId: cartId,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -493,7 +377,7 @@ class _MyCartPageState extends State<MyCartPage>
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
         onPressed: () => user?.token != null
-            ? Navigator.pushNamed(context, Routes.checkoutAddress)
+            ? _onCheckout()
             : Navigator.pushNamed(context, Routes.signIn),
         radius: 0,
       ),
@@ -537,5 +421,21 @@ class _MyCartPageState extends State<MyCartPage>
       totalPrice += myCartItems[i].rowPrice;
     }
     cartTotalPrice = totalPrice;
+  }
+
+  void _onCheckout() {
+    bool isStock = true;
+    for (int i = 0; i < myCartItems.length; i++) {
+      if (myCartItems[i].availableCount == 0) {
+        isStock = false;
+        flushBarService.showErrorMessage(
+          pageStyle,
+          'out_stock_items_error'.tr(),
+        );
+      }
+    }
+    if (isStock) {
+      Navigator.pushNamed(context, Routes.checkoutAddress);
+    }
   }
 }

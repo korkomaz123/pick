@@ -177,8 +177,8 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     }
     orderDetails['shipping'] = shippingMethodId;
     orderDetails['cartId'] = cartId;
-    int totalPrice = 0;
-    int subtotalPrice = 0;
+    double totalPrice = 0;
+    double subtotalPrice = 0;
     int fees = 0;
     if (widget.reorder != null) {
       fees = reorderCartItems.length * serviceFees;

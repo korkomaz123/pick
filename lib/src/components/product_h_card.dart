@@ -190,7 +190,7 @@ class _ProductHCardState extends State<ProductHCard>
         children: [
           Image.network(
             widget.product.imageUrl,
-            width: widget.cardWidth * 0.3,
+            width: widget.cardHeight * 0.7,
             height: widget.cardHeight * 0.7,
             fit: BoxFit.fill,
             loadingBuilder: (_, child, chunkEvent) {
@@ -267,7 +267,9 @@ class _ProductHCardState extends State<ProductHCard>
                       ),
                     ),
                     Spacer(),
-                    widget.isShoppingCart
+                    widget.isShoppingCart &&
+                            widget.product.stockQty != null &&
+                            widget.product.stockQty > 0
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(

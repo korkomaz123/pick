@@ -1,8 +1,8 @@
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
 import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,22 +22,11 @@ class WishlistItem extends StatefulWidget {
 
 class _WishlistItemState extends State<WishlistItem> {
   PageStyle pageStyle;
-  SnackBarService snackBarService;
-  LocalStorageRepository localRepo;
-  List<String> myWishlists = [];
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
-    snackBarService = widget.snackBarService;
-    localRepo = context.read<LocalStorageRepository>();
-    _getWishlist();
-  }
-
-  void _getWishlist() async {
-    myWishlists = await localRepo.getWishlistIds();
-    setState(() {});
   }
 
   @override
@@ -62,12 +51,16 @@ class _WishlistItemState extends State<WishlistItem> {
               ),
             ),
             Spacer(),
-            Text(
-              'items'.tr().replaceFirst('0', '${myWishlists.length}'),
-              style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 16,
-                color: primaryColor,
-              ),
+            BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
+              builder: (context, state) {
+                return Text(
+                  'items'.tr().replaceFirst('0', '${state.wishlistItemCount}'),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 16,
+                    color: primaryColor,
+                  ),
+                );
+              },
             ),
             Icon(
               Icons.arrow_forward_ios,

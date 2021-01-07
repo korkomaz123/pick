@@ -6,7 +6,7 @@ class CartItemEntity {
   int itemCountCanceled;
   int availableCount;
   String itemId;
-  int rowPrice;
+  double rowPrice;
 
   CartItemEntity({
     this.product,
@@ -21,10 +21,10 @@ class CartItemEntity {
       : product = json['product'],
         itemCount = _getIntValueFromString(json['itemCount']),
         itemCountCanceled =
-            _getIntValueFromString(json['itemCountCanceled'] ?? '0'),
+            _getIntValueFromString(json['itemCountCanceled'] ?? '0.00'),
         availableCount = json['availableCount'],
         itemId = json['itemId'],
-        rowPrice = json['rowPrice'];
+        rowPrice = json['rowPrice'] + .0;
 
   static int _getIntValueFromString(String qty) {
     double doubleQty = double.parse(qty);

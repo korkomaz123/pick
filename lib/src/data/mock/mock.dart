@@ -31,7 +31,7 @@ List<CartItemEntity> myCartItems = [];
 List<CartItemEntity> reorderCartItems = [];
 int cartItemCount = 0;
 String couponCode = '';
-int cartTotalPrice = 0;
+double cartTotalPrice = .0;
 int discount = 0;
 int wishlistCount = 0;
 

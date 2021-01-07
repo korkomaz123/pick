@@ -76,7 +76,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
-      case OrderStatusEnum.on_hold:
+      case OrderStatusEnum.complete:
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();

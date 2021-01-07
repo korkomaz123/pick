@@ -183,8 +183,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
                 padding: EdgeInsets.only(left: pageStyle.unitWidth * 31),
                 child: Text(
                   category.name,
-                  style: boldTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 30,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 36,
                     color: greyDarkColor,
                   ),
                 ),

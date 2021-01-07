@@ -479,46 +479,39 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                         (state is MyCartCreatedInProcess ||
                             state is MyCartItemAddedInProcess)
                     ? Center(child: CircleLoadingSpinner())
-                    : CigaTextButton(
-                        title: 'product_buy_now'.tr(),
-                        titleSize: pageStyle.unitFontSize * 23,
-                        titleColor: Colors.white,
-                        buttonColor: productEntity.stockQty != null &&
-                                productEntity.stockQty > 0
-                            ? Color(0xFFFF8B00)
-                            : greyColor,
-                        borderColor: Colors.transparent,
-                        radius: 1,
-                        onPressed: () => productEntity.stockQty != null &&
-                                productEntity.stockQty > 0
-                            ? _onBuyNow()
-                            : null,
+                    : productEntity.stockQty != null &&
+                            productEntity.stockQty > 0
+                        ? CigaTextButton(
+                            title: 'product_buy_now'.tr(),
+                            titleSize: pageStyle.unitFontSize * 23,
+                            titleColor: Colors.white,
+                            buttonColor: Color(0xFFFF8B00),
+                            borderColor: Colors.transparent,
+                            radius: 1,
+                            onPressed: () => _onBuyNow(),
+                          )
+                        : SizedBox.shrink(),
+              ),
+              productEntity.stockQty != null && productEntity.stockQty > 0
+                  ? RoundImageButton(
+                      width: pageStyle.unitWidth * 58,
+                      height: pageStyle.unitHeight * 50,
+                      color: primarySwatchColor,
+                      child: ScaleTransition(
+                        scale: _addToCartScaleAnimation,
+                        child: Container(
+                          width: pageStyle.unitWidth * 25,
+                          height: pageStyle.unitHeight * 25,
+                          child: SvgPicture.asset(
+                            shoppingCartIcon,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-              ),
-              RoundImageButton(
-                width: pageStyle.unitWidth * 58,
-                height: pageStyle.unitHeight * 50,
-                color:
-                    productEntity.stockQty != null && productEntity.stockQty > 0
-                        ? primarySwatchColor
-                        : greyColor,
-                child: ScaleTransition(
-                  scale: _addToCartScaleAnimation,
-                  child: Container(
-                    width: pageStyle.unitWidth * 25,
-                    height: pageStyle.unitHeight * 25,
-                    child: SvgPicture.asset(
-                      shoppingCartIcon,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                onTap: () =>
-                    productEntity.stockQty != null && productEntity.stockQty > 0
-                        ? _onAddToCart()
-                        : null,
-                radius: 1,
-              ),
+                      onTap: () => _onAddToCart(),
+                      radius: 1,
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
         );

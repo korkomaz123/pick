@@ -254,5 +254,6 @@
     "out_of_stock_error": "This product is out of stock",
     "reorder_items_error": "This reorder can not be processed without any available items",
     "rating_required": "Please rate to review",
-    "item_canceled": "Item Canceled"
+    "item_canceled": "Item Canceled",
+    "out_stock_items_error": "Some items are out of stock"
 }

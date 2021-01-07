@@ -154,11 +154,6 @@ class _ProductVCardState extends State<ProductVCard>
                 state.message,
               );
             }
-            // if (state is MyCartCreatedSuccess) {
-            //   if (user == null) {
-            //     _saveCartId(state.cartId);
-            //   }
-            // }
           },
           builder: (context, state) {
             if (state is MyCartCreatedSuccess) {
@@ -187,22 +182,20 @@ class _ProductVCardState extends State<ProductVCard>
       ),
       child: Column(
         children: [
-          Expanded(
-            flex: 2,
-            child: Image.network(
-              widget.product.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (_, child, chunkEvent) {
-                return chunkEvent != null
-                    ? Image.asset(
-                        'lib/public/images/loading/image_loading.jpg',
-                      )
-                    : child;
-              },
-            ),
+          Image.network(
+            widget.product.imageUrl,
+            width: widget.cardHeight * 0.6,
+            height: widget.cardHeight * 0.6,
+            fit: BoxFit.fill,
+            loadingBuilder: (_, child, chunkEvent) {
+              return chunkEvent != null
+                  ? Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    )
+                  : child;
+            },
           ),
           Expanded(
-            flex: 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -265,7 +258,9 @@ class _ProductVCardState extends State<ProductVCard>
                       ),
                     ),
                     Spacer(),
-                    widget.isShoppingCart
+                    widget.isShoppingCart &&
+                            widget.product.stockQty != null &&
+                            widget.product.stockQty > 0
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(

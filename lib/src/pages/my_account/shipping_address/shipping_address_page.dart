@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
@@ -75,12 +76,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CigaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),

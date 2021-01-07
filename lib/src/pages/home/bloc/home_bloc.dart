@@ -53,7 +53,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> _mapHomeSliderImagesLoadedToState(String lang) async* {
     try {
-      String key = 'slider-images';
+      String key = 'slider-images-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> sliderImageList =
@@ -64,7 +64,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         yield state.copyWith(sliderImages: sliderImages);
       }
-      final result = await _homeRepository.getHomeSliderImages();
+      final result = await _homeRepository.getHomeSliderImages(lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['data']);
         List<dynamic> sliderImageList = result['data'];

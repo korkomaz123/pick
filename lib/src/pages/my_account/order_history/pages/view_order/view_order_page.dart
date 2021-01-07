@@ -4,7 +4,7 @@ import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/pages/my_account/order_history/pages/widgets/order_item_card.dart';
+import 'package:ciga/src/pages/my_account/order_history/widgets/order_item_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/images.dart';
@@ -33,6 +33,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
+  bool isStock = false;
 
   @override
   void initState() {
@@ -50,7 +51,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
-      case OrderStatusEnum.on_hold:
+      case OrderStatusEnum.complete:
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
@@ -65,7 +66,18 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = dangerColor;
         status = 'order_pending'.tr();
     }
+    _checkOrderItems();
     setState(() {});
+  }
+
+  void _checkOrderItems() {
+    for (int i = 0; i < order.cartItems.length; i++) {
+      if (order.cartItems[i].product.stockQty != null &&
+          order.cartItems[i].product.stockQty > 0) {
+        isStock = true;
+        break;
+      }
+    }
   }
 
   void _setPaymentWidget() {
@@ -153,7 +165,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              order.status == OrderStatusEnum.canceled
+              !isStock || order.status == OrderStatusEnum.canceled
                   ? SizedBox.shrink()
                   : _buildReorderButton(),
               order.status == OrderStatusEnum.canceled

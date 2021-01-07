@@ -125,7 +125,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             height: widget.pageStyle.unitHeight * 250,
             color: Colors.white,
             child: Swiper(
-              itemCount: categories.length > 6 ? 6 : categories.length,
+              itemCount: categories.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -150,7 +150,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: categories.length > 6 ? 6 : categories.length,
+                count: categories.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

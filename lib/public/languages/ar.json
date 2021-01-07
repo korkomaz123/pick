@@ -252,5 +252,6 @@
     "out_of_stock_error": "نفد هذا المنتج من المخازن",
     "reorder_items_error": "لا يمكن معالجة عملية إعادة الطلب هذه بدون أي عناصر متاحة",
     "rating_required": "يرجى تقييم للمراجعة",
-    "item_canceled": "تم إلغاء العنصر"
+    "item_canceled": "تم إلغاء العنصر",
+    "out_stock_items_error": "بعض العناصر غير متوفرة في المخزون"
 }
