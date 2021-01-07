@@ -50,6 +50,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
       if (result['code'] == 'SUCCESS') {
         final availableFilters =
             result['filter']['availablefilter'] as Map<String, dynamic>;
+        result['filter']['prices']['attribute_code'] = 'price';
         availableFilters['Price'] = result['filter']['prices'];
         yield FilterAttributesLoadedSuccess(availableFilters: availableFilters);
       } else {

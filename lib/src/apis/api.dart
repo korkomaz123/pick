@@ -9,6 +9,7 @@ class Api {
     Map<String, dynamic> data,
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
+    print(requestUrl);
     final response = await http.get(requestUrl, headers: _getHeader());
     return jsonDecode(response.body);
   }

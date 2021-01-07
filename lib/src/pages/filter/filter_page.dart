@@ -10,13 +10,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
 
 import 'bloc/filter_bloc.dart';
 import 'widgets/filter_basic_select.dart';
 import 'widgets/filter_category_select.dart';
-import 'widgets/filter_color_select.dart';
-import 'widgets/filter_store_select_dialog.dart';
+import 'widgets/filter_option_select_dialog.dart';
 
 class FilterPage extends StatefulWidget {
   final String categoryId;
@@ -32,20 +30,12 @@ class _FilterPageState extends State<FilterPage> {
   PageStyle pageStyle;
   double minPrice;
   double maxPrice;
+  Map<String, dynamic> filters = {};
   List<String> selectedCategories = [];
   List<String> selectedGenders = [];
-  List<String> selectedBrands = [];
-  List<dynamic> brands = [];
-  bool isHideSizes = true;
-  bool isHideColors = true;
-  bool isHideStores = true;
-  List<String> selectedSizes = [];
-  List<String> selectedColors = [];
-  List<dynamic> brandList = [];
-  List<dynamic> colorList = [];
   List<dynamic> genderList = [];
-  List<dynamic> sizeList = [];
   Map<String, dynamic> price = {};
+  Map<String, dynamic> selectedValues = {};
   FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -67,6 +57,16 @@ class _FilterPageState extends State<FilterPage> {
     flushBarService = FlushBarService(context: context);
   }
 
+  void _setSelectedValues(Map<String, dynamic> availableFilters) {
+    List<String> keys = availableFilters.keys.toList();
+    for (int i = 0; i < keys.length; i++) {
+      String code = availableFilters[keys[i]]['attribute_code'];
+      if (!['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)) {
+        selectedValues[code] = [];
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -74,100 +74,93 @@ class _FilterPageState extends State<FilterPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: filterBackgroundColor,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: BlocConsumer<FilterBloc, FilterState>(
-              listener: (context, state) {
-                if (state is FilterAttributesLoadedInProcess) {
-                  // progressService.showProgress();
-                }
-                if (state is FilterAttributesLoadedSuccess) {
-                  // progressService.hideProgress();
-                }
-                if (state is FilterAttributesLoadedFailure) {
-                  // progressService.hideProgress();
-                  snackBarService.showErrorSnackBar(state.message);
-                }
-              },
-              builder: (context, state) {
-                if (state is FilterAttributesLoadedSuccess) {
-                  Map<String, dynamic> data = state.availableFilters;
-                  brandList = data.containsKey('Brand') ? data['Brand'] : [];
-                  colorList = data.containsKey('Color') ? data['Color'] : [];
-                  genderList = data.containsKey('Gender') ? data['Gender'] : [];
-                  sizeList = data.containsKey('Size') ? data['Size'] : [];
-                  price = data.containsKey('Price')
-                      ? data['Price']
-                      : {'min': .0, 'max': .0};
-                  minPrice = minPrice ?? price['min'] + .0;
-                  maxPrice = maxPrice ?? price['max'] + .0;
-                }
-                return Column(
-                  children: [
-                    _buildAppBar(),
-                    _buildCategories(),
-                    price.keys.toList().length > 0
-                        ? _buildPriceRange()
-                        : SizedBox.shrink(),
-                    genderList != null ? _buildGender() : SizedBox.shrink(),
-                    sizeList != null ? _buildSizes() : SizedBox.shrink(),
-                    colorList != null ? _buildColors() : SizedBox.shrink(),
-                    brandList != null ? _buildBrands() : SizedBox.shrink(),
-                    _buildSelectedBrands(),
-                    SizedBox(height: pageStyle.unitHeight * 100),
-                  ],
-                );
-              },
-            ),
+      appBar: AppBar(
+        backgroundColor: filterBackgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: primaryColor,
+            size: pageStyle.unitFontSize * 22,
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildApplyButton(),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'filter_title'.tr(),
+          style: mediumTextStyle.copyWith(
+            color: primaryColor,
+            fontSize: pageStyle.unitFontSize * 25,
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Container(
-      color: filterBackgroundColor,
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.only(top: pageStyle.unitHeight * 30),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: pageStyle.unitFontSize * 22,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          Text(
-            'filter_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 25,
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: EdgeInsets.only(right: pageStyle.unitWidth * 8.0),
-            child: InkWell(
-              onTap: () => _onResetAll(),
-              child: Text(
-                'filter_reset_all'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: pageStyle.unitFontSize * 16,
+        ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: EdgeInsets.only(right: pageStyle.unitWidth * 8.0),
+              child: InkWell(
+                onTap: () => null,
+                child: Text(
+                  'filter_reset_all'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 16,
+                  ),
                 ),
               ),
             ),
           ),
         ],
       ),
+      body: SingleChildScrollView(
+        child: BlocConsumer<FilterBloc, FilterState>(
+          listener: (context, state) {
+            if (state is FilterAttributesLoadedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is FilterAttributesLoadedSuccess) {
+              progressService.hideProgress();
+              _setSelectedValues(state.availableFilters);
+            }
+            if (state is FilterAttributesLoadedFailure) {
+              progressService.hideProgress();
+              snackBarService.showErrorSnackBar(state.message);
+            }
+          },
+          builder: (context, state) {
+            if (state is FilterAttributesLoadedSuccess) {
+              filters = state.availableFilters;
+              genderList = filters.containsKey('Gender')
+                  ? filters['Gender']['values']
+                  : [];
+              price = filters.containsKey('Price')
+                  ? filters['Price']
+                  : {'min': .0, 'max': .0};
+              minPrice = minPrice ?? price['min'] + .0;
+              maxPrice = maxPrice ?? price['max'] + .0;
+              return Column(
+                children: [
+                  _buildCategories(),
+                  price.keys.toList().length > 0
+                      ? _buildPriceRange()
+                      : SizedBox.shrink(),
+                  genderList != null ? _buildGender() : SizedBox.shrink(),
+                  Column(
+                    children: filters.keys.map((key) {
+                      String code = filters[key]['attribute_code'];
+                      return ['price', 'gender', 'rating', 'cat', 'new', 'sale']
+                              .contains(code)
+                          ? SizedBox.shrink()
+                          : _buildFilterOption(key, filters[key]);
+                    }).toList(),
+                  ),
+                ],
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
+      ),
+      bottomSheet: _buildApplyButton(),
     );
   }
 
@@ -212,8 +205,9 @@ class _FilterPageState extends State<FilterPage> {
           Text(
             'filter_price'.tr(),
             style: mediumTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 22,
+              color: primaryColor,
+              fontSize: pageStyle.unitFontSize * 20,
+              fontWeight: FontWeight.w700,
             ),
           ),
           Container(
@@ -222,12 +216,12 @@ class _FilterPageState extends State<FilterPage> {
             child: Text(
               '${minPrice.toStringAsFixed(0)} KD - ${maxPrice.toStringAsFixed(0)} KD',
               style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 25,
+                color: primaryColor,
+                fontSize: pageStyle.unitFontSize * 18,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 10),
           RangeSlider(
             values: RangeValues(minPrice, maxPrice),
             onChanged: (RangeValues values) {
@@ -237,13 +231,9 @@ class _FilterPageState extends State<FilterPage> {
             },
             min: (price['min'] + .0),
             max: (price['max'] + .0),
-            activeColor: Colors.white,
-            inactiveColor: Colors.white70,
+            activeColor: primaryColor,
+            inactiveColor: primaryColor.withOpacity(0.6),
             divisions: 200,
-            labels: RangeLabels(
-              'KD ' + minPrice.toStringAsFixed(0),
-              'KD ' + maxPrice.toStringAsFixed(0),
-            ),
           )
         ],
       ),
@@ -263,11 +253,12 @@ class _FilterPageState extends State<FilterPage> {
           Text(
             'filter_gender'.tr(),
             style: mediumTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 22,
+              color: primaryColor,
+              fontSize: pageStyle.unitFontSize * 20,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 20),
+          SizedBox(height: pageStyle.unitHeight * 10),
           FilterBasicSelect(
             pageStyle: pageStyle,
             width: double.infinity,
@@ -287,212 +278,38 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildSizes() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: greyLightColor, width: 0.5),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'filter_size'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 22,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    isHideSizes = !isHideSizes;
-                  }),
-                  icon: Icon(
-                    isHideSizes
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Colors.white,
-                    size: pageStyle.unitFontSize * 25,
-                  ),
-                ),
-              ],
-            ),
+  Widget _buildFilterOption(String title, Map<String, dynamic> filterOption) {
+    return InkWell(
+      onTap: () => _onSelectOption(title, filterOption),
+      child: Container(
+        width: pageStyle.deviceWidth,
+        margin: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 30,
+          vertical: pageStyle.unitHeight * 10,
+        ),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: primaryColor, width: 0.5),
           ),
-          isHideSizes
-              ? SizedBox.shrink()
-              : FilterBasicSelect(
-                  pageStyle: pageStyle,
-                  width: double.infinity,
-                  options: sizeList,
-                  values: selectedSizes,
-                  onSelectItem: (value) {
-                    if (selectedSizes.contains(value['value'])) {
-                      selectedSizes.remove(value['value']);
-                    } else {
-                      selectedSizes.add(value['value']);
-                    }
-                    setState(() {});
-                  },
-                ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColors() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: greyLightColor, width: 0.5),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'filter_color'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 22,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    isHideColors = !isHideColors;
-                  }),
-                  icon: Icon(
-                    isHideColors
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Colors.white,
-                    size: pageStyle.unitFontSize * 25,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          isHideColors
-              ? SizedBox.shrink()
-              : Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
-                  child: FilterColorSelect(
-                    items: colorList,
-                    itemWidth: pageStyle.unitWidth * 30,
-                    itemHeight: pageStyle.unitHeight * 30,
-                    values: selectedColors,
-                    pageStyle: pageStyle,
-                    onTap: (value) {
-                      if (selectedColors.contains(value['value'])) {
-                        selectedColors.remove(value['value']);
-                      } else {
-                        selectedColors.add(value['value']);
-                      }
-                      setState(() {});
-                    },
-                  ),
-                ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBrands() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: greyLightColor, width: 0.5),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'brands_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: pageStyle.unitFontSize * 22,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => _onStore(),
-                  icon: Icon(
-                    isHideStores
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Colors.white,
-                    size: pageStyle.unitFontSize * 25,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectedBrands() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 2,
-      ),
-      child: Wrap(
-        spacing: pageStyle.unitWidth * 6,
-        runSpacing: pageStyle.unitHeight * 2,
-        children: brands.map((brand) {
-          return Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 6,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              color: Colors.white,
-            ),
-            child: Text(
-              brand['display'],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 12,
+                fontSize: pageStyle.unitFontSize * 20,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          );
-        }).toList(),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: primaryColor,
+              size: pageStyle.unitFontSize * 20,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -501,7 +318,6 @@ class _FilterPageState extends State<FilterPage> {
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 60,
-      margin: EdgeInsets.only(top: pageStyle.unitHeight * 30),
       child: CigaTextButton(
         title: 'apply_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 24,
@@ -509,71 +325,26 @@ class _FilterPageState extends State<FilterPage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         radius: 0,
-        onPressed: () => _onFilter(),
+        onPressed: () => null,
       ),
     );
   }
 
-  void _onStore() async {
-    final result = await showSlidingBottomSheet(
-      context,
+  void _onSelectOption(String title, Map<String, dynamic> option) async {
+    final result = await showDialog(
+      context: context,
       builder: (context) {
-        return SlidingSheetDialog(
-          elevation: 8,
-          cornerRadius: 16,
-          snapSpec: SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToAvailableSpace,
-          ),
-          builder: (context, state) {
-            return FilterStoreSelectDialog(
-              pageStyle: pageStyle,
-              options: brandList,
-              values: selectedBrands,
-              onChangedValue: (value) => _onChangedValue(value),
-            );
-          },
+        return FilterOptionSelectDialog(
+          pageStyle: pageStyle,
+          title: title,
+          code: option['attribute_code'],
+          options: option['values'],
+          values: selectedValues[option['attribute_code']],
         );
       },
     );
-    print(result);
-  }
-
-  void _onChangedValue(value) {
-    if (selectedBrands.contains(value['value'])) {
-      selectedBrands.remove(value['value']);
-      brands.remove(value);
-    } else {
-      selectedBrands.add(value['value']);
-      brands.add(value);
+    if (result != null) {
+      selectedValues[option['attribute_code']] = result;
     }
-    setState(() {});
-  }
-
-  void _onResetAll() {
-    minPrice = price['min'] + .0;
-    maxPrice = price['max'] + .0;
-    selectedCategories = [];
-    selectedGenders = [];
-    selectedBrands = [];
-    isHideSizes = true;
-    isHideColors = true;
-    isHideStores = true;
-    selectedSizes = [];
-    selectedColors = [];
-    setState(() {});
-  }
-
-  void _onFilter() {
-    filterBloc.add(Filtered(
-      categoryIds: selectedCategories,
-      priceRanges: [minPrice.toStringAsFixed(0), maxPrice.toStringAsFixed(0)],
-      genders: selectedGenders,
-      sizes: selectedSizes,
-      colors: selectedColors,
-      brands: selectedBrands,
-      lang: lang,
-    ));
   }
 }

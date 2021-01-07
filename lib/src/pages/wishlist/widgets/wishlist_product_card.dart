@@ -102,14 +102,14 @@ class WishlistProductCard extends StatelessWidget {
       right: 0,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 20,
-          vertical: pageStyle.unitHeight * 10,
+          horizontal: pageStyle.unitWidth * 15,
+          vertical: pageStyle.unitHeight * 5,
         ),
         color: primarySwatchColor.withOpacity(0.4),
         child: Text(
           'out_stock'.tr(),
           style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 18,
+            fontSize: pageStyle.unitFontSize * 14,
             color: Colors.white70,
           ),
         ),

@@ -61,8 +61,9 @@ class FilterCategorySelect extends StatelessWidget {
                   style: mediumTextStyle.copyWith(
                     color: values.contains(item['value'])
                         ? Colors.white
-                        : primaryColor,
+                        : darkColor,
                     fontSize: pageStyle.unitFontSize * 16,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],

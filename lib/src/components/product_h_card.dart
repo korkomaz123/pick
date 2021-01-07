@@ -337,14 +337,14 @@ class _ProductHCardState extends State<ProductHCard>
             alignment: Alignment.centerRight,
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 20,
-                vertical: widget.pageStyle.unitHeight * 10,
+                horizontal: widget.pageStyle.unitWidth * 15,
+                vertical: widget.pageStyle.unitHeight * 5,
               ),
               color: primarySwatchColor.withOpacity(0.4),
               child: Text(
                 'out_stock'.tr(),
                 style: mediumTextStyle.copyWith(
-                  fontSize: widget.pageStyle.unitFontSize * 18,
+                  fontSize: widget.pageStyle.unitFontSize * 14,
                   color: Colors.white70,
                 ),
               ),

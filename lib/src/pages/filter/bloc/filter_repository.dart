@@ -37,8 +37,6 @@ class FilterRepository {
         'manufacturer': brands,
       })
     };
-    print(url);
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

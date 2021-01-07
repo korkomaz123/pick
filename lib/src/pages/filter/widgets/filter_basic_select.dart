@@ -47,16 +47,17 @@ class _FilterBasicSelectState extends State<FilterBasicSelect> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
-                    color: isSelected ? Colors.transparent : Colors.white,
+                    color: isSelected ? Colors.transparent : primaryColor,
                   ),
-                  color: isSelected ? Colors.white : Colors.transparent,
+                  color: isSelected ? primaryColor : Colors.transparent,
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  item['display'],
+                  item['display'].toString().toUpperCase(),
                   style: mediumTextStyle.copyWith(
-                    color: isSelected ? primaryColor : Colors.white,
-                    fontSize: widget.pageStyle.unitFontSize * 14,
+                    color: isSelected ? Colors.white : primaryColor,
+                    fontSize: widget.pageStyle.unitFontSize * 12,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
