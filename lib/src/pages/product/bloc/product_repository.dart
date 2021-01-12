@@ -235,4 +235,28 @@ class ProductRepository {
     final result = await Api.postMethod(url, data: params);
     return result['code'] == 'SUCCESS';
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> filterProducts(
+    String categoryId,
+    String brandId,
+    Map<String, dynamic> filterValues,
+    String lang,
+    int page,
+  ) async {
+    String url = EndPoints.filterProducts;
+    final params = {
+      'selectedCategoryId': categoryId,
+      'selectedBrandId': brandId,
+      'lang': json.encode(lang),
+      'categoryIds': json.encode(filterValues['selectedCategories']),
+      'priceRanges':
+          json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
+      'filter': json.encode(filterValues['selectedValues']),
+      'page': page,
+    };
+    return await Api.postMethod(url, data: params);
+  }
 }

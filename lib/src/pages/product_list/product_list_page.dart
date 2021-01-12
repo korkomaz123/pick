@@ -289,10 +289,10 @@ class _ProductListPageState extends State<ProductListPage> {
           brandId: brand.optionId,
           minPrice: filterValues.containsKey('minPrice')
               ? filterValues['minPrice']
-              : 0,
+              : null,
           maxPrice: filterValues.containsKey('maxPrice')
               ? filterValues['maxPrice']
-              : 0,
+              : null,
           selectedCategories: filterValues.containsKey('selectedCategories')
               ? filterValues['selectedCategories']
               : [],
@@ -306,8 +306,13 @@ class _ProductListPageState extends State<ProductListPage> {
       },
     );
     if (result != null) {
+      viewMode = ProductViewModeEnum.filter;
       filterValues = result;
-      setState(() {});
+      await productChangeNotifier.initialLoadFilteredProducts(
+        brand.optionId,
+        category.id,
+        filterValues,
+      );
     }
   }
 

@@ -9,7 +9,7 @@ class Api {
     Map<String, dynamic> data,
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
-    print(requestUrl);
+    // print(requestUrl);
     final response = await http.get(requestUrl, headers: _getHeader());
     return jsonDecode(response.body);
   }
@@ -18,6 +18,7 @@ class Api {
     String url, {
     Map<String, dynamic> data,
   }) async {
+    // print(url);
     // print(data);
     final response = await http.post(url, headers: _getHeader(), body: data);
     return jsonDecode(response.body);

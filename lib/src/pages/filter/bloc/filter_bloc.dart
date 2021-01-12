@@ -28,16 +28,6 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         event.brandId,
         event.lang,
       );
-    } else if (event is Filtered) {
-      yield* _mapFilteredToState(
-        event.categoryIds,
-        event.priceRanges,
-        event.genders,
-        event.colors,
-        event.sizes,
-        event.brands,
-        event.lang,
-      );
     } else if (event is FilterInitialized) {
       yield FilterInitial();
     }
@@ -63,34 +53,6 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
       }
     } catch (e) {
       yield FilterAttributesLoadedFailure(message: e.toString());
-    }
-  }
-
-  Stream<FilterState> _mapFilteredToState(
-    List<dynamic> categoryIds,
-    List<dynamic> priceRanges,
-    List<dynamic> genders,
-    List<dynamic> colors,
-    List<dynamic> sizes,
-    List<dynamic> brands,
-    String lang,
-  ) async* {
-    yield FilteredInProcess();
-    try {
-      final result = await _filterRepository.filter(
-          categoryIds, priceRanges, genders, colors, sizes, brands, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        List<ProductModel> products = [];
-        for (int i = 0; i < productList.length; i++) {
-          products.add(ProductModel.fromJson(productList[i]));
-        }
-        yield FilteredSuccess(products: products);
-      } else {
-        yield FilteredFailure(message: result['errorMessage']);
-      }
-    } catch (e) {
-      yield FilteredFailure(message: e.toString());
     }
   }
 }

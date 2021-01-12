@@ -44,11 +44,11 @@ class _FilterPageState extends State<FilterPage> {
   double minPrice;
   double maxPrice;
   Map<String, dynamic> filters = {};
-  List<String> selectedCategories = [];
-  List<String> selectedGenders = [];
+  List<String> selectedCategories;
+  List<String> selectedGenders;
   List<dynamic> genderList = [];
   Map<String, dynamic> price = {};
-  Map<String, dynamic> selectedValues = {};
+  Map<String, dynamic> selectedValues;
   FilterBloc filterBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -76,7 +76,9 @@ class _FilterPageState extends State<FilterPage> {
     for (int i = 0; i < keys.length; i++) {
       String code = availableFilters[keys[i]]['attribute_code'];
       if (!['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)) {
-        selectedValues[code] = [];
+        if (!selectedValues.containsKey(code)) {
+          selectedValues[code] = [];
+        }
       }
     }
   }
@@ -156,7 +158,7 @@ class _FilterPageState extends State<FilterPage> {
                   price.keys.toList().length > 0
                       ? _buildPriceRange()
                       : SizedBox.shrink(),
-                  genderList != null ? _buildGender() : SizedBox.shrink(),
+                  genderList.isNotEmpty ? _buildGender() : SizedBox.shrink(),
                   Column(
                     children: filters.keys.map((key) {
                       String code = filters[key]['attribute_code'];

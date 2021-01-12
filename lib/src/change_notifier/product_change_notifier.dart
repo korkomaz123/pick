@@ -193,4 +193,68 @@ class ProductChangeNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// filter products
+  Future<void> initialLoadFilteredProducts(
+    String brandId,
+    String categoryId,
+    Map<String, dynamic> filterValues,
+  ) async {
+    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    if (!data.containsKey(index)) {
+      pages[index] = 1;
+      await loadFilteredProducts(1, brandId, categoryId, filterValues);
+    } else {
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMoreFilteredProducts(
+    int page,
+    String brandId,
+    String categoryId,
+    Map<String, dynamic> filterValues,
+  ) async {
+    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    pages[index] = page;
+    print(page);
+    await loadFilteredProducts(page, brandId, categoryId, filterValues);
+  }
+
+  Future<void> refreshFilteredProducts(
+    String brandId,
+    String categoryId,
+    Map<String, dynamic> filterValues,
+  ) async {
+    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    data[index] = <ProductModel>[];
+    pages[index] = 1;
+    await loadFilteredProducts(1, brandId, categoryId, filterValues);
+  }
+
+  Future<void> loadFilteredProducts(
+    int page,
+    String brandId,
+    String categoryId,
+    Map<String, dynamic> filterValues,
+  ) async {
+    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    final result = await productRepository.filterProducts(
+      categoryId == 'all' ? null : categoryId,
+      brandId,
+      filterValues,
+      lang,
+      page,
+    );
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> productList = result['products'];
+      if (!data.containsKey(index)) {
+        data[index] = [];
+      }
+      for (int i = 0; i < productList.length; i++) {
+        data[index].add(ProductModel.fromJson(productList[i]));
+      }
+      notifyListeners();
+    }
+  }
 }
