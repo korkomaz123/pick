@@ -70,6 +70,7 @@ class _SignInPageState extends State<SignInPage> {
       token: user.token,
       lang: lang,
     ));
+    progressService.hideProgress();
     Navigator.pop(context);
   }
 
@@ -88,11 +89,8 @@ class _SignInPageState extends State<SignInPage> {
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     if (result['code'] == 'SUCCESS') {
       String cartId = result['cartId'];
-      print('/// logged in ///');
-      print('/// cartId: $cartId ///');
       final response = await cartRepo.getCartItems(cartId, lang);
       if (response['code'] == 'SUCCESS') {
-        print('/// get cart item ///');
         List<dynamic> cartList = response['cart'];
         int count = 0;
         for (int i = 0; i < cartList.length; i++) {
@@ -128,7 +126,6 @@ class _SignInPageState extends State<SignInPage> {
             progressService.showProgress();
           }
           if (state is SignInSubmittedSuccess) {
-            progressService.hideProgress();
             _saveToken(state.user);
           }
           if (state is SignInSubmittedFailure) {
@@ -452,7 +449,7 @@ class _SignInPageState extends State<SignInPage> {
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        print('/// Cancelled By User ///');
+        print('/// Canceled By User ///');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');

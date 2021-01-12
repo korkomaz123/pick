@@ -17,67 +17,83 @@ class HomeCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 249,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(category.imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 18,
-        vertical: pageStyle.unitHeight * 23,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            category.name,
-            style: mediumTextStyle.copyWith(
-              color: darkColor,
-              fontSize: pageStyle.unitFontSize * 23,
-            ),
+    return InkWell(
+      onTap: () {
+        ProductListArguments arguments = ProductListArguments(
+          category: category,
+          subCategory: [],
+          brand: BrandEntity(),
+          selectedSubCategoryIndex: 0,
+          isFromBrand: false,
+        );
+        Navigator.pushNamed(
+          context,
+          Routes.productList,
+          arguments: arguments,
+        );
+      },
+      child: Container(
+        width: pageStyle.deviceWidth,
+        height: pageStyle.unitHeight * 249,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(category.imageUrl),
+            fit: BoxFit.cover,
           ),
-          Container(
-            width: pageStyle.deviceWidth / 2,
-            padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
-            child: Text(
-              category.description ?? '',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 18,
+          vertical: pageStyle.unitHeight * 23,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              category.name,
               style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: pageStyle.unitFontSize * 10,
+                color: darkColor,
+                fontSize: pageStyle.unitFontSize * 23,
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
-            child: CigaTextButton(
-              title: 'view_all'.tr(),
-              titleSize: pageStyle.unitFontSize * 18,
-              titleColor: Colors.white,
-              buttonColor: Colors.transparent,
-              borderColor: Colors.white,
-              onPressed: () {
-                ProductListArguments arguments = ProductListArguments(
-                  category: category,
-                  subCategory: [],
-                  brand: BrandEntity(),
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: false,
-                );
-                Navigator.pushNamed(
-                  context,
-                  Routes.productList,
-                  arguments: arguments,
-                );
-              },
+            Container(
+              width: pageStyle.deviceWidth / 2,
+              padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+              child: Text(
+                category.description ?? '',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: mediumTextStyle.copyWith(
+                  color: greyDarkColor,
+                  fontSize: pageStyle.unitFontSize * 10,
+                ),
+              ),
             ),
-          )
-        ],
+            Container(
+              padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
+              child: CigaTextButton(
+                title: 'view_all'.tr(),
+                titleSize: pageStyle.unitFontSize * 18,
+                titleColor: greyDarkColor,
+                buttonColor: Colors.transparent,
+                borderColor: greyDarkColor,
+                onPressed: () {
+                  ProductListArguments arguments = ProductListArguments(
+                    category: category,
+                    subCategory: [],
+                    brand: BrandEntity(),
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: false,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

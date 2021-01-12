@@ -213,8 +213,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
 
   Widget _buildParentMenu(CategoryMenuEntity menu) {
     return InkWell(
-      onTap: () =>
-          menu.subMenu.isNotEmpty ? _displaySubmenu(menu) : _viewCategory(menu),
+      onTap: () => menu.subMenu.isNotEmpty
+          ? _displaySubmenu(menu)
+          : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: pageStyle.unitHeight * 15),
@@ -271,7 +272,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
               verticalOffset: 50.0,
               child: FadeInAnimation(
                 child: InkWell(
-                  onTap: () => _viewCategory(menu.subMenu[index]),
+                  onTap: () => _viewCategory(menu, index),
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
@@ -304,20 +305,24 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     setState(() {});
   }
 
-  void _viewCategory(CategoryMenuEntity menu) {
+  void _viewCategory(CategoryMenuEntity parentMenu, int index) {
     ProductListArguments arguments = ProductListArguments(
-      category: CategoryEntity(id: menu.id, name: menu.title),
+      category: CategoryEntity(id: parentMenu.id, name: parentMenu.title),
       brand: BrandEntity(),
       subCategory: [],
-      selectedSubCategoryIndex: 0,
+      selectedSubCategoryIndex: index + 1,
       isFromBrand: false,
     );
-    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+    Navigator.popAndPushNamed(
+      context,
+      Routes.productList,
+      arguments: arguments,
+    );
   }
 
   void _login() async {
     await Navigator.pushNamed(context, Routes.signIn);
-    setState(() {});
+    Navigator.pop(context);
   }
 
   void _logout() async {

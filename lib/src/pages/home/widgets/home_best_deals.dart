@@ -38,19 +38,19 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 420,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-      color: Colors.white,
-      child: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          bestDealsProducts = state.bestDealsProducts;
-          title = state.bestDealsTitle;
-          if (bestDealsProducts.isNotEmpty) {
-            return Column(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        bestDealsProducts = state.bestDealsProducts;
+        title = state.bestDealsTitle;
+        if (bestDealsProducts.isNotEmpty) {
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            height: widget.pageStyle.unitHeight * 420,
+            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+            color: Colors.white,
+            child: Column(
               children: [
                 _buildHeadline(),
                 HomeProductsCarousel(
@@ -64,12 +64,12 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
                 ),
                 _buildFooter(context),
               ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 

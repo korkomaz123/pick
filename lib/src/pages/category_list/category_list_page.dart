@@ -267,10 +267,10 @@ class _CategoryListPageState extends State<CategoryListPage> {
                         activeIndex = -1;
                         setState(() {});
                         ProductListArguments arguments = ProductListArguments(
-                          category: category.subCategories[index],
+                          category: category,
                           subCategory: [],
                           brand: BrandEntity(),
-                          selectedSubCategoryIndex: 0,
+                          selectedSubCategoryIndex: index + 1,
                           isFromBrand: false,
                         );
                         Navigator.pushNamed(

@@ -10,13 +10,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class HomeProductsCarousel extends StatefulWidget {
   final PageStyle pageStyle;
   final List<ProductModel> products;
-  final int crossAxisCount;
   final bool isVerticalCard;
 
   HomeProductsCarousel({
     this.pageStyle,
     this.products,
-    this.crossAxisCount = 1,
     this.isVerticalCard = true,
   });
 
@@ -39,7 +37,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 : widget.pageStyle.unitHeight * 460,
             child: Swiper(
               itemCount:
-                  (widget.products.length / widget.crossAxisCount).ceil(),
+                  widget.products.length > 10 ? 10 : widget.products.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -50,88 +48,25 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 });
               },
               itemBuilder: (context, index) {
-                return widget.crossAxisCount == 2
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          widget.isVerticalCard
-                              ? ProductVCard(
-                                  cardWidth: widget.pageStyle.unitWidth * 155,
-                                  cardHeight: widget.pageStyle.unitHeight * 360,
-                                  product: widget.products[index],
-                                  pageStyle: widget.pageStyle,
-                                  isShoppingCart: true,
-                                  isWishlist: true,
-                                  isShare: true,
-                                )
-                              : ProductHCard(
-                                  cardWidth: widget.pageStyle.unitWidth * 155,
-                                  cardHeight: widget.pageStyle.unitHeight * 360,
-                                  product: widget.products[index],
-                                  pageStyle: widget.pageStyle,
-                                  isShoppingCart: true,
-                                  isWishlist: true,
-                                  isShare: true,
-                                ),
-                          widget.products.length > index + 1
-                              ? Padding(
-                                  padding: EdgeInsets.only(
-                                    top: widget.pageStyle.unitHeight * 2,
-                                    bottom: widget.pageStyle.unitHeight * 100,
-                                  ),
-                                  child: VerticalDivider(
-                                    width: widget.pageStyle.unitWidth * 4,
-                                    thickness: widget.pageStyle.unitWidth * 1,
-                                    color: greyColor.withOpacity(0.4),
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                          widget.products.length > index + 1
-                              ? (widget.isVerticalCard
-                                  ? ProductVCard(
-                                      cardWidth:
-                                          widget.pageStyle.unitWidth * 155,
-                                      cardHeight:
-                                          widget.pageStyle.unitHeight * 360,
-                                      product: widget.products[index + 1],
-                                      pageStyle: widget.pageStyle,
-                                      isShoppingCart: true,
-                                      isWishlist: true,
-                                      isShare: true,
-                                    )
-                                  : ProductHCard(
-                                      cardWidth:
-                                          widget.pageStyle.unitWidth * 155,
-                                      cardHeight:
-                                          widget.pageStyle.unitHeight * 360,
-                                      product: widget.products[index + 1],
-                                      pageStyle: widget.pageStyle,
-                                      isShoppingCart: true,
-                                      isWishlist: true,
-                                      isShare: true,
-                                    ))
-                              : Container(),
-                        ],
+                return widget.isVerticalCard
+                    ? ProductVCard(
+                        cardWidth: widget.pageStyle.unitWidth * 355,
+                        cardHeight: widget.pageStyle.unitHeight * 360,
+                        product: widget.products[index],
+                        pageStyle: widget.pageStyle,
+                        isShoppingCart: true,
+                        isWishlist: true,
+                        isShare: true,
                       )
-                    : widget.isVerticalCard
-                        ? ProductVCard(
-                            cardWidth: widget.pageStyle.unitWidth * 355,
-                            cardHeight: widget.pageStyle.unitHeight * 360,
-                            product: widget.products[index],
-                            pageStyle: widget.pageStyle,
-                            isShoppingCart: true,
-                            isWishlist: true,
-                            isShare: true,
-                          )
-                        : ProductHCard(
-                            cardWidth: widget.pageStyle.unitWidth * 355,
-                            cardHeight: widget.pageStyle.unitHeight * 220,
-                            product: widget.products[index],
-                            pageStyle: widget.pageStyle,
-                            isShoppingCart: true,
-                            isWishlist: true,
-                            isShare: true,
-                          );
+                    : ProductHCard(
+                        cardWidth: widget.pageStyle.unitWidth * 355,
+                        cardHeight: widget.pageStyle.unitHeight * 220,
+                        product: widget.products[index],
+                        pageStyle: widget.pageStyle,
+                        isShoppingCart: true,
+                        isWishlist: true,
+                        isShare: true,
+                      );
               },
             ),
           ),
@@ -143,7 +78,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: (widget.products.length / widget.crossAxisCount).ceil(),
+                count:
+                    widget.products.length > 10 ? 10 : widget.products.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

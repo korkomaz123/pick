@@ -81,7 +81,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
             width: widget.pageStyle.unitWidth * 350,
             height: widget.pageStyle.unitHeight * 220,
             child: Swiper(
-              itemCount: sameBrandProducts.length,
+              itemCount:
+                  sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -108,7 +109,9 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: sameBrandProducts.length,
+                count: sameBrandProducts.length > 10
+                    ? 10
+                    : sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

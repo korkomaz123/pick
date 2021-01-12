@@ -37,18 +37,18 @@ class _HomePerfumesState extends State<HomePerfumes> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.pageStyle.deviceWidth,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-      color: Colors.white,
-      child: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          perfumesProducts = state.perfumesProducts;
-          title = state.perfumesTitle;
-          if (perfumesProducts.isNotEmpty) {
-            return Column(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        perfumesProducts = state.perfumesProducts;
+        title = state.perfumesTitle;
+        if (perfumesProducts.isNotEmpty) {
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+            color: Colors.white,
+            child: Column(
               children: [
                 _buildHeadline(),
                 _buildProductView(),
@@ -59,12 +59,12 @@ class _HomePerfumesState extends State<HomePerfumes> {
                 ),
                 _buildFooter(context),
               ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 

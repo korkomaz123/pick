@@ -214,18 +214,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String lang,
   ) async* {
     try {
-      // String key = 'recently-viewed-guest';
-      // final exist = await localStorageRepository.existItem(key);
-      // if (exist) {
-      //   List<dynamic> recentlyViewedList =
-      //       await localStorageRepository.getItem(key);
-      //   List<ProductModel> recentlyViewedProducts = [];
-      //   for (int i = 0; i < recentlyViewedList.length; i++) {
-      //     recentlyViewedProducts
-      //         .add(ProductModel.fromJson(recentlyViewedList[i]));
-      //   }
-      //   yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
-      // }
       final result = await _productRepository
           .getHomeRecentlyViewedGuestProducts(ids, lang);
       if (result['code'] == 'SUCCESS') {
@@ -241,7 +229,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield state.copyWith(message: result['errorMessage']);
       }
     } catch (e) {
-      print('error');
+      print('error guest');
       print(e.toString());
       yield state.copyWith(message: e.toString());
     }
@@ -252,20 +240,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String lang,
   ) async* {
     try {
-      // String key = 'recently-viewed-customer';
-      // final exist = await localStorageRepository.existItem(key);
-      // if (exist) {
-      //   List<dynamic> recentlyViewedList =
-      //       await localStorageRepository.getItem(key);
-      //   List<ProductModel> recentlyViewedProducts = [];
-      //   for (int i = 0; i < recentlyViewedList.length; i++) {
-      //     recentlyViewedProducts
-      //         .add(ProductModel.fromJson(recentlyViewedList[i]));
-      //   }
-      //   yield state.copyWith(recentlyViewedProducts: recentlyViewedProducts);
-      // }
       final result = await _productRepository
           .getHomeRecentlyViewedCustomerProducts(token, lang);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         // await localStorageRepository.setItem(key, result['recentViewed']);
         List<dynamic> recentlyViewedList = result['products'];
@@ -279,7 +256,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield state.copyWith(message: result['errorMessage']);
       }
     } catch (e) {
-      print('error');
+      print('error customer');
       print(e.toString());
       yield state.copyWith(message: e.toString());
     }

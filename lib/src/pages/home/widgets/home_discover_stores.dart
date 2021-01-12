@@ -88,7 +88,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 380,
             child: Swiper(
-              itemCount: brands.length,
+              itemCount: brands.length > 10 ? 10 : brands.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -136,7 +136,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: brands.length,
+                count: brands.length > 10 ? 10 : brands.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

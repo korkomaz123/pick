@@ -62,6 +62,8 @@ class ProductRepository {
     String lang,
   ) async {
     String url = EndPoints.getViewedProducts;
+    print(url);
+    print({'token': token, 'lang': lang});
     return await Api.postMethod(
       url,
       data: {'token': token, 'lang': lang},

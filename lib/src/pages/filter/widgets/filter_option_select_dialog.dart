@@ -1,7 +1,7 @@
+import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,11 +36,10 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
   @override
   void initState() {
     super.initState();
-    print(widget.values);
     title = widget.title;
     code = widget.code;
-    options = widget.options;
-    values = widget.values;
+    options = widget.options.map((option) => option).toList();
+    values = widget.values.map((value) => value).toList();
   }
 
   @override
@@ -80,6 +79,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           _buildOptionsList(),
         ],
       ),
+      bottomSheet: _buildApplyButton(),
     );
   }
 
@@ -187,6 +187,22 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                 )
               : SizedBox.shrink();
         },
+      ),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 60,
+      child: CigaTextButton(
+        title: 'apply_button_title'.tr(),
+        titleSize: widget.pageStyle.unitFontSize * 24,
+        titleColor: Colors.white,
+        buttonColor: primaryColor,
+        borderColor: Colors.transparent,
+        radius: 0,
+        onPressed: () => Navigator.pop(context, values),
       ),
     );
   }

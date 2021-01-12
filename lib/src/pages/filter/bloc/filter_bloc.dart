@@ -23,7 +23,11 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     FilterEvent event,
   ) async* {
     if (event is FilterAttributesLoaded) {
-      yield* _mapFilterAttributesLoadedToState(event.categoryId, event.lang);
+      yield* _mapFilterAttributesLoadedToState(
+        event.categoryId,
+        event.brandId,
+        event.lang,
+      );
     } else if (event is Filtered) {
       yield* _mapFilteredToState(
         event.categoryIds,
@@ -41,12 +45,13 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
 
   Stream<FilterState> _mapFilterAttributesLoadedToState(
     String categoryId,
+    String brandId,
     String lang,
   ) async* {
     yield FilterAttributesLoadedInProcess();
     try {
-      final result =
-          await _filterRepository.getFilterAttributes(categoryId, lang);
+      final result = await _filterRepository.getFilterAttributes(
+          categoryId, brandId, lang);
       if (result['code'] == 'SUCCESS') {
         final availableFilters =
             result['filter']['availablefilter'] as Map<String, dynamic>;

@@ -5,7 +5,6 @@ import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +17,22 @@ import 'widgets/filter_option_select_dialog.dart';
 
 class FilterPage extends StatefulWidget {
   final String categoryId;
+  final String brandId;
+  final double minPrice;
+  final double maxPrice;
+  final List<String> selectedCategories;
+  final List<String> selectedGenders;
+  final Map<String, dynamic> selectedValues;
 
-  FilterPage({@required this.categoryId});
+  FilterPage({
+    @required this.categoryId,
+    @required this.brandId,
+    this.minPrice,
+    this.maxPrice,
+    this.selectedCategories,
+    this.selectedGenders,
+    this.selectedValues,
+  });
 
   @override
   _FilterPageState createState() => _FilterPageState();
@@ -38,23 +51,24 @@ class _FilterPageState extends State<FilterPage> {
   Map<String, dynamic> selectedValues = {};
   FilterBloc filterBloc;
   ProgressService progressService;
-  SnackBarService snackBarService;
   FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
+    minPrice = widget.minPrice;
+    maxPrice = widget.maxPrice;
+    selectedCategories = widget.selectedCategories ?? [];
+    selectedGenders = widget.selectedGenders ?? [];
+    selectedValues = widget.selectedValues ?? {};
     filterBloc = context.read<FilterBloc>();
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
+    flushBarService = FlushBarService(context: context);
     filterBloc.add(FilterAttributesLoaded(
-      categoryId: widget.categoryId,
+      categoryId: widget.categoryId == 'all' ? null : widget.categoryId,
+      brandId: widget.brandId,
       lang: lang,
     ));
-    flushBarService = FlushBarService(context: context);
   }
 
   void _setSelectedValues(Map<String, dynamic> availableFilters) {
@@ -122,7 +136,7 @@ class _FilterPageState extends State<FilterPage> {
             }
             if (state is FilterAttributesLoadedFailure) {
               progressService.hideProgress();
-              snackBarService.showErrorSnackBar(state.message);
+              flushBarService.showErrorMessage(pageStyle, state.message);
             }
           },
           builder: (context, state) {
@@ -325,7 +339,13 @@ class _FilterPageState extends State<FilterPage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         radius: 0,
-        onPressed: () => null,
+        onPressed: () => Navigator.pop(context, {
+          'selectedCategories': selectedCategories,
+          'selectedGenders': selectedGenders,
+          'minPrice': minPrice,
+          'maxPrice': maxPrice,
+          'selectedValues': selectedValues,
+        }),
       ),
     );
   }

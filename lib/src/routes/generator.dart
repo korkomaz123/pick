@@ -43,7 +43,7 @@ import 'routes.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final Object params = settings.arguments;
+    final params = settings.arguments;
     switch (settings.name) {
       case Routes.start:
         return CupertinoPageRoute(
@@ -87,7 +87,10 @@ class RouteGenerator {
         );
       case Routes.filter:
         return CupertinoPageRoute(
-          builder: (context) => FilterPage(categoryId: params),
+          builder: (context) => FilterPage(
+            categoryId: params,
+            brandId: params,
+          ),
           settings: RouteSettings(name: Routes.filter),
         );
       case Routes.product:

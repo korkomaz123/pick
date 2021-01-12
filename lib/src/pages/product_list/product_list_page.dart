@@ -51,7 +51,6 @@ class _ProductListPageState extends State<ProductListPage> {
   BrandEntity brand;
   int activeSubcategoryIndex;
   bool isFromBrand;
-  String selectedCategory;
   CategoryBloc categoryBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -59,6 +58,7 @@ class _ProductListPageState extends State<ProductListPage> {
   ScrollChangeNotifier scrollChangeNotifier;
   ProductChangeNotifier productChangeNotifier;
   ProductViewModeEnum viewMode;
+  Map<String, dynamic> filterValues = {};
 
   @override
   void initState() {
@@ -70,7 +70,6 @@ class _ProductListPageState extends State<ProductListPage> {
     activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
     isFromBrand = arguments.isFromBrand;
     subCategories = [category];
-    selectedCategory = subCategories[activeSubcategoryIndex].name;
     categoryBloc = context.read<CategoryBloc>();
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
@@ -158,6 +157,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         scrollController: scrollController,
                         viewMode: viewMode,
                         sortByItem: sortByItem,
+                        filterValues: filterValues,
                       ),
                     );
                   },
@@ -284,10 +284,29 @@ class _ProductListPageState extends State<ProductListPage> {
       context: context,
       useSafeArea: false,
       builder: (context) {
-        return FilterPage(categoryId: subCategories[activeSubcategoryIndex].id);
+        return FilterPage(
+          categoryId: subCategories[activeSubcategoryIndex].id,
+          brandId: brand.optionId,
+          minPrice: filterValues.containsKey('minPrice')
+              ? filterValues['minPrice']
+              : 0,
+          maxPrice: filterValues.containsKey('maxPrice')
+              ? filterValues['maxPrice']
+              : 0,
+          selectedCategories: filterValues.containsKey('selectedCategories')
+              ? filterValues['selectedCategories']
+              : [],
+          selectedGenders: filterValues.containsKey('selectedGenders')
+              ? filterValues['selectedGenders']
+              : [],
+          selectedValues: filterValues.containsKey('selectedValues')
+              ? filterValues['selectedValues']
+              : {},
+        );
       },
     );
     if (result != null) {
+      filterValues = result;
       setState(() {});
     }
   }

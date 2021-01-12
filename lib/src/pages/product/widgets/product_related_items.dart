@@ -64,7 +64,8 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                   height: pageStyle.unitHeight * 260,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: relatedItems.length,
+                    itemCount:
+                        relatedItems.length > 10 ? 10 : relatedItems.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.only(

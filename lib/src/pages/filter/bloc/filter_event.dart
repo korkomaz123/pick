@@ -9,12 +9,13 @@ abstract class FilterEvent extends Equatable {
 
 class FilterAttributesLoaded extends FilterEvent {
   final String categoryId;
+  final String brandId;
   final String lang;
 
-  FilterAttributesLoaded({this.categoryId, this.lang});
+  FilterAttributesLoaded({this.categoryId, this.brandId, this.lang});
 
   @override
-  List<Object> get props => [categoryId, lang];
+  List<Object> get props => [categoryId, brandId, lang];
 }
 
 class Filtered extends FilterEvent {

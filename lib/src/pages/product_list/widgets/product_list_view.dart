@@ -29,6 +29,7 @@ class ProductListView extends StatefulWidget {
   final ScrollController scrollController;
   final ProductViewModeEnum viewMode;
   final String sortByItem;
+  final Map<String, dynamic> filterValues;
 
   ProductListView({
     this.subCategories,
@@ -41,6 +42,7 @@ class ProductListView extends StatefulWidget {
     this.scrollController,
     this.viewMode,
     this.sortByItem,
+    this.filterValues,
   });
 
   @override

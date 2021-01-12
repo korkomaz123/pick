@@ -38,19 +38,19 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 320,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-      color: Colors.white,
-      child: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          newArrivalsProducts = state.bestDealsProducts;
-          title = state.newArrivalsTitle;
-          if (newArrivalsProducts.isNotEmpty) {
-            return Column(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        newArrivalsProducts = state.bestDealsProducts;
+        title = state.newArrivalsTitle;
+        if (newArrivalsProducts.isNotEmpty) {
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            height: widget.pageStyle.unitHeight * 320,
+            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+            color: Colors.white,
+            child: Column(
               children: [
                 _buildHeadline(),
                 HomeProductsCarousel(
@@ -65,12 +65,12 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
                 ),
                 _buildFooter(context),
               ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 
