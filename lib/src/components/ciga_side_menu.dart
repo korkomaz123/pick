@@ -6,6 +6,7 @@ import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -40,6 +41,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
   HomeBloc homeBloc;
   SignInBloc signInBloc;
   CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
@@ -54,6 +56,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -343,6 +346,7 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
     List<String> ids = await localRepo.getRecentlyViewedIds();
     myCartItems.clear();
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
     await _loadViewerCartItems();
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
     Navigator.popUntil(

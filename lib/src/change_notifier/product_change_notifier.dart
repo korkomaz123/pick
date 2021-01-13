@@ -141,7 +141,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String sortItem,
   ) async {
-    final index = sortItem + '_' + (brandId ?? '') + '_' + categoryId;
+    final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     if (!data.containsKey(index)) {
       pages[index] = 1;
       await loadSortedProducts(1, brandId, categoryId, sortItem);
@@ -156,7 +156,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String sortItem,
   ) async {
-    final index = sortItem + '_' + (brandId ?? '') + '_' + categoryId;
+    final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     pages[index] = page;
     print(page);
     await loadSortedProducts(page, brandId, categoryId, sortItem);
@@ -167,7 +167,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String sortItem,
   ) async {
-    final index = sortItem + '_' + (brandId ?? '') + '_' + categoryId;
+    final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     data[index] = <ProductModel>[];
     pages[index] = 1;
     await loadSortedProducts(1, brandId, categoryId, sortItem);
@@ -179,7 +179,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String sortItem,
   ) async {
-    final index = sortItem + '_' + (brandId ?? '') + '_' + categoryId;
+    final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     final result = await productRepository.sortProducts(
         categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
@@ -200,13 +200,10 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
-    if (!data.containsKey(index)) {
-      pages[index] = 1;
-      await loadFilteredProducts(1, brandId, categoryId, filterValues);
-    } else {
-      notifyListeners();
-    }
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
+    data[index] = <ProductModel>[];
+    pages[index] = 1;
+    await loadFilteredProducts(1, brandId, categoryId, filterValues);
   }
 
   Future<void> loadMoreFilteredProducts(
@@ -215,7 +212,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
     pages[index] = page;
     print(page);
     await loadFilteredProducts(page, brandId, categoryId, filterValues);
@@ -226,7 +223,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
     data[index] = <ProductModel>[];
     pages[index] = 1;
     await loadFilteredProducts(1, brandId, categoryId, filterValues);
@@ -238,23 +235,27 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + categoryId;
-    final result = await productRepository.filterProducts(
-      categoryId == 'all' ? null : categoryId,
-      brandId,
-      filterValues,
-      lang,
-      page,
-    );
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> productList = result['products'];
-      if (!data.containsKey(index)) {
-        data[index] = [];
+    try {
+      final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
+      final result = await productRepository.filterProducts(
+        categoryId == 'all' ? null : categoryId,
+        brandId,
+        filterValues,
+        lang,
+        page,
+      );
+      if (result['code'] == 'SUCCESS') {
+        List<dynamic> productList = result['products'];
+        if (!data.containsKey(index)) {
+          data[index] = [];
+        }
+        for (int i = 0; i < productList.length; i++) {
+          data[index].add(ProductModel.fromJson(productList[i]));
+        }
+        notifyListeners();
       }
-      for (int i = 0; i < productList.length; i++) {
-        data[index].add(ProductModel.fromJson(productList[i]));
-      }
-      notifyListeners();
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

@@ -108,11 +108,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   }
 
   void _initFavorite() async {
-    isWishlist = await wishlistRepo.checkWishlistStatus(
-      user.token,
-      widget.product.entityId,
-    );
-    setState(() {});
+    if (user?.token != null) {
+      isWishlist = await wishlistRepo.checkWishlistStatus(
+        user.token,
+        widget.product.entityId,
+      );
+      setState(() {});
+    }
   }
 
   void _initAnimation() {

@@ -2,6 +2,7 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -36,6 +37,7 @@ class _LogoutItemState extends State<LogoutItem> {
   ProgressService progressService;
   SignInBloc signInBloc;
   CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
 
@@ -47,6 +49,7 @@ class _LogoutItemState extends State<LogoutItem> {
     progressService = widget.progressService;
     signInBloc = context.read<SignInBloc>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
   }
@@ -122,6 +125,7 @@ class _LogoutItemState extends State<LogoutItem> {
     await localRepo.setToken('');
     myCartItems.clear();
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
     await _loadViewerCartItems();
     Navigator.pushNamedAndRemoveUntil(
       context,

@@ -171,8 +171,10 @@ class _ProductListViewState extends State<ProductListView>
         widget.sortByItem,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      page = productChangeNotifier.pages['filter_' + brand.optionId ??
-          '' + '_' + subCategories[tabController.index].id];
+      page = productChangeNotifier.pages['filter_' +
+          (brand.optionId ?? '') +
+          '_' +
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreFilteredProducts(
         page,
@@ -221,8 +223,12 @@ class _ProductListViewState extends State<ProductListView>
                           '_' +
                           cat.id;
                     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-                      index = 'filter_' + brand.optionId ?? '' + '_' + cat.id;
+                      index = 'filter_' +
+                          (brand.optionId ?? '') +
+                          '_' +
+                          (cat.id ?? '');
                     }
+                    print('reload');
                     if (!productChangeNotifier.data.containsKey(index) ||
                         productChangeNotifier.data[index] == null) {
                       return Container();

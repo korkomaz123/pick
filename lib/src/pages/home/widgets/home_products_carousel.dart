@@ -43,9 +43,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
-                setState(() {
-                  activeIndex = value;
-                });
+                activeIndex = value;
+                setState(() {});
               },
               itemBuilder: (context, index) {
                 return widget.isVerticalCard

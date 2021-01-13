@@ -306,8 +306,9 @@ class _ProductListPageState extends State<ProductListPage> {
       },
     );
     if (result != null) {
-      viewMode = ProductViewModeEnum.filter;
       filterValues = result;
+      viewMode = ProductViewModeEnum.filter;
+      setState(() {});
       await productChangeNotifier.initialLoadFilteredProducts(
         brand.optionId,
         category.id,

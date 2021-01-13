@@ -128,7 +128,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: Alignment.centerLeft,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),

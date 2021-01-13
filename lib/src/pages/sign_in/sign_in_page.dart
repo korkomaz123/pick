@@ -7,9 +7,11 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
+import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
 import 'package:ciga/src/theme/styles.dart';
@@ -44,10 +46,12 @@ class _SignInPageState extends State<SignInPage> {
   SignInBloc signInBloc;
   HomeBloc homeBloc;
   CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  WishlistRepository wishlistRepo;
 
   @override
   void initState() {
@@ -57,8 +61,10 @@ class _SignInPageState extends State<SignInPage> {
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    wishlistRepo = context.read<WishlistRepository>();
   }
 
   void _saveToken(UserEntity loggedInUser) async {
@@ -66,12 +72,24 @@ class _SignInPageState extends State<SignInPage> {
     await localRepo.setToken(user.token);
     await _transferCartItems();
     await _loadCustomerCartItems();
+    await _getWishlists();
     homeBloc.add(HomeRecentlyViewedCustomerLoaded(
       token: user.token,
       lang: lang,
     ));
     progressService.hideProgress();
     Navigator.pop(context);
+  }
+
+  Future<void> _getWishlists() async {
+    final result = await wishlistRepo.getWishlists(user.token, lang);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> lists = result['wishlists'];
+      wishlistCount = lists.isEmpty ? 0 : lists.length;
+      wishlistItemCountBloc.add(WishlistItemCountSet(
+        wishlistItemCount: wishlistCount,
+      ));
+    }
   }
 
   Future<void> _transferCartItems() async {
@@ -145,7 +163,9 @@ class _SignInPageState extends State<SignInPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: Alignment.centerLeft,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),

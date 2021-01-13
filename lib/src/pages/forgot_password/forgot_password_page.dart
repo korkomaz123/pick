@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
@@ -68,7 +69,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: Alignment.centerLeft,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),

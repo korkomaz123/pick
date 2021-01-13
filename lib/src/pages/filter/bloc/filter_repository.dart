@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ciga/src/apis/api.dart';
 import 'package:ciga/src/apis/endpoints.dart';
 
@@ -14,6 +12,7 @@ class FilterRepository {
   ) async {
     String url = EndPoints.getFilterAttributes;
     final params = {'categoryId': categoryId, 'brandId': brandId, 'lang': lang};
+    print(params);
     return await Api.getMethod(url, data: params);
   }
 }

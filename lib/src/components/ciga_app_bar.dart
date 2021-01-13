@@ -110,6 +110,13 @@ class _CigaAppBarState extends State<CigaAppBar> {
                       ),
                     ),
                     showBadge: state.cartItemCount > 0,
+                    position: lang == 'ar'
+                        ? BadgePosition.topStart(
+                            start: -widget.pageStyle.unitWidth * 8,
+                          )
+                        : BadgePosition.topEnd(
+                            end: -widget.pageStyle.unitWidth * 8,
+                          ),
                     child: Container(
                       width: widget.pageStyle.unitWidth * 25,
                       height: widget.pageStyle.unitHeight * 25,

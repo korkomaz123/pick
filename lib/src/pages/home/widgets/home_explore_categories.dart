@@ -70,7 +70,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       padding: EdgeInsets.symmetric(
         horizontal: widget.pageStyle.unitWidth * 15,
       ),
-      alignment: Alignment.centerLeft,
       child: Text(
         'home_categories'.tr(),
         style: mediumTextStyle.copyWith(
