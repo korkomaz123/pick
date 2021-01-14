@@ -5,6 +5,7 @@ import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/category_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:ciga/src/utils/flushbar_service.dart';
@@ -55,7 +56,6 @@ class _ProductListViewState extends State<ProductListView>
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   BrandEntity brand;
-  int activeIndex;
   bool isFromBrand;
   PageStyle pageStyle;
   ProgressService progressService;
@@ -64,12 +64,12 @@ class _ProductListViewState extends State<ProductListView>
   int page = 1;
   bool isReachedMax = false;
   ProductChangeNotifier productChangeNotifier;
+  FilterBloc filterBloc;
 
   @override
   void initState() {
     super.initState();
     subCategories = widget.subCategories;
-    activeIndex = widget.activeIndex;
     scaffoldKey = widget.scaffoldKey;
     pageStyle = widget.pageStyle;
     isFromBrand = widget.isFromBrand;
@@ -77,10 +77,11 @@ class _ProductListViewState extends State<ProductListView>
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     productChangeNotifier = context.read<ProductChangeNotifier>();
+    filterBloc = context.read<FilterBloc>();
     _initLoadProducts();
     tabController = TabController(
       length: subCategories.length,
-      initialIndex: activeIndex,
+      initialIndex: widget.activeIndex,
       vsync: this,
     );
     tabController.addListener(() => widget.onChangeTab(tabController.index));
@@ -90,14 +91,22 @@ class _ProductListViewState extends State<ProductListView>
     print('//// initial load ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.initialLoadCategoryProducts(
-        subCategories[activeIndex].id,
+        subCategories[widget.activeIndex].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       await productChangeNotifier.initialLoadBrandProducts(
         brand.optionId,
-        subCategories[activeIndex].id,
+        subCategories[widget.activeIndex].id,
       );
     }
+    filterBloc.add(FilterAttributesLoaded(
+      categoryId: subCategories[widget.activeIndex].id == 'all'
+          ? null
+          : subCategories[widget.activeIndex].id,
+      brandId: brand.optionId,
+      lang: lang,
+    ));
+
     //  else if (widget.viewMode == ProductViewModeEnum.sort) {
     //   await productChangeNotifier.initialLoadSortedProducts(
     //     brand.optionId ?? '',
@@ -190,6 +199,7 @@ class _ProductListViewState extends State<ProductListView>
   @override
   Widget build(BuildContext context) {
     print('/////////// build ////////////');
+    tabController.index = widget.activeIndex;
     return Column(
       children: [
         subCategories.length > 1 ? _buildCategoryTabBar() : SizedBox.shrink(),

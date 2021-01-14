@@ -80,7 +80,7 @@ class ProductRepository {
   ) async {
     String url = EndPoints.sendProductViewed;
     try {
-      final result = await Api.postMethod(
+      await Api.postMethod(
         url,
         data: {'token': token, 'productId': productId, 'lang': lang},
       );

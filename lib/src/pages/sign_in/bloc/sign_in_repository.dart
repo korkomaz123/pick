@@ -67,6 +67,8 @@ class SignInRepository {
   Future<dynamic> getCurrentUser(String token) async {
     String url = EndPoints.getCurrentUser;
     final params = {'token': token};
+    print(url);
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 

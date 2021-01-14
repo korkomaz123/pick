@@ -17,6 +17,8 @@ class MyCartRepository {
   Future<dynamic> getCartId(String token) async {
     String url = EndPoints.createCart;
     final params = {'token': token};
+    // print(url);
+    // print(params);
     return await Api.postMethod(url, data: params);
   }
 
@@ -26,8 +28,8 @@ class MyCartRepository {
   Future<dynamic> getCartItems(String cartId, String lang) async {
     String url = EndPoints.getCartItems;
     final params = {'cartId': cartId, 'lang': lang};
-    print(url);
-    print(params);
+    // print(url);
+    // print(params);
     return await Api.postMethod(url, data: params);
   }
 

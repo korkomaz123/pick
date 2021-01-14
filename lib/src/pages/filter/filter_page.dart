@@ -130,14 +130,14 @@ class _FilterPageState extends State<FilterPage> {
         child: BlocConsumer<FilterBloc, FilterState>(
           listener: (context, state) {
             if (state is FilterAttributesLoadedInProcess) {
-              progressService.showProgress();
+              // progressService.showProgress();
             }
             if (state is FilterAttributesLoadedSuccess) {
-              progressService.hideProgress();
+              // progressService.hideProgress();
               _setSelectedValues(state.availableFilters);
             }
             if (state is FilterAttributesLoadedFailure) {
-              progressService.hideProgress();
+              // progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
           },

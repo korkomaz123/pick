@@ -10,6 +10,7 @@ import 'package:ciga/src/data/models/enum.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:ciga/src/pages/filter/filter_page.dart';
 // import 'package:ciga/src/pages/filter/filter_page.dart';
 import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
@@ -52,6 +53,7 @@ class _ProductListPageState extends State<ProductListPage> {
   int activeSubcategoryIndex;
   bool isFromBrand;
   CategoryBloc categoryBloc;
+  FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
   double scrollPosition = 0;
@@ -73,6 +75,7 @@ class _ProductListPageState extends State<ProductListPage> {
     categoryBloc = context.read<CategoryBloc>();
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
+    filterBloc = context.read<FilterBloc>();
     if (isFromBrand) {
       viewMode = ProductViewModeEnum.brand;
       categoryBloc.add(BrandSubCategoriesLoaded(
@@ -371,6 +374,12 @@ class _ProductListPageState extends State<ProductListPage> {
         subCategories[index].id,
       );
     }
+    filterBloc.add(FilterAttributesLoaded(
+      categoryId:
+          subCategories[index].id == 'all' ? null : subCategories[index].id,
+      brandId: brand.optionId,
+      lang: lang,
+    ));
   }
 
   void _onScrolling() {

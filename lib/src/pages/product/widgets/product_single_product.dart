@@ -583,15 +583,20 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   void _onBuyNow() async {
     isBuyNow = true;
-    String cartId = await localStorageRepo.getCartId();
-    if (cartId.isEmpty) {
-      final result = await cartRepo.createCart();
+    String cartId = '';
+    if (user?.token != null) {
+      final result = await cartRepo.getCartId(user.token);
       if (result['code'] == 'SUCCESS') {
         cartId = result['cartId'];
-        await localStorageRepo.setCartId(cartId);
       }
+    } else {
+      cartId = await localStorageRepo.getCartId();
     }
-    _addToCart(cartId);
+    if (cartId.isEmpty) {
+      cartBloc.add(MyCartCreated(product: product));
+    } else {
+      _addToCart(cartId);
+    }
   }
 
   void _onShareProduct() {

@@ -73,6 +73,7 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> _getCurrentUser() async {
     String token = await localRepo.getToken();
+
     if (token.isNotEmpty) {
       final signInRepo = context.read<SignInRepository>();
       final result = await signInRepo.getCurrentUser(token);

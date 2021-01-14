@@ -88,6 +88,7 @@ class _ProductVCardState extends State<ProductVCard>
   Future<void> _getMyCartId() async {
     if (user?.token != null) {
       final result = await cartRepo.getCartId(user.token);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
         cartId = result['cartId'];
       }

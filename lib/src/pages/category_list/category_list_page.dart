@@ -178,16 +178,17 @@ class _CategoryListPageState extends State<CategoryListPage> {
               },
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment:
+                  lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: pageStyle.unitWidth * 31,
-                  right: pageStyle.unitWidth * 150,
+                  left: pageStyle.unitWidth * (lang == 'en' ? 31 : 150),
+                  right: pageStyle.unitWidth * (lang == 'en' ? 150 : 31),
                 ),
                 child: Text(
                   category.name,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 30,
+                    fontSize: pageStyle.unitFontSize * 26,
                     color: greyDarkColor,
                   ),
                 ),

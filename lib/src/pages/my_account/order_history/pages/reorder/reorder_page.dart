@@ -66,11 +66,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
   void _getOrderStatus() {
     order = widget.order;
     switch (order.status) {
-      case OrderStatusEnum.order_approval_pending:
-        icon = onProgressIcon;
-        color = primaryColor;
-        status = 'order_on_progress'.tr();
-        break;
       case OrderStatusEnum.pending:
         icon = cancelledIcon;
         color = dangerColor;

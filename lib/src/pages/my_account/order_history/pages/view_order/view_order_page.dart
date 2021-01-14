@@ -7,7 +7,6 @@ import 'package:ciga/src/data/models/order_entity.dart';
 import 'package:ciga/src/pages/my_account/order_history/widgets/order_item_card.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/images.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -40,10 +39,10 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     super.initState();
     order = widget.order;
     switch (order.status) {
-      case OrderStatusEnum.order_approval_pending:
-        icon = onProgressIcon;
-        color = primaryColor;
-        status = 'order_on_progress'.tr();
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = greyDarkColor;
+        status = 'order_cancelled'.tr();
         break;
       case OrderStatusEnum.pending:
         icon = cancelledIcon;
