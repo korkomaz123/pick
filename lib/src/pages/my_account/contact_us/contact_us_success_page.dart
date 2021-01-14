@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -26,8 +27,10 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),

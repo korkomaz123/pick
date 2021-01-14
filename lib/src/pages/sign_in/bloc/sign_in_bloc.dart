@@ -53,7 +53,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     yield SignInSubmittedInProcess();
     try {
       final result = await _signInRepository.login(email, password);
-      print(result);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
@@ -86,7 +86,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final result = await _signInRepository.socialLogin(
           email, firstName, lastName, loginType, lang);
-      print(result);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
@@ -108,7 +108,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final result = await _signInRepository.register(
           firstName, lastName, email, password);
-      print(result);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignUpSubmittedSuccess(user: UserEntity.fromJson(result['user']));

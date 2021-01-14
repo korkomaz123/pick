@@ -180,11 +180,14 @@ class _CategoryListPageState extends State<CategoryListPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: pageStyle.unitWidth * 31),
+                padding: EdgeInsets.only(
+                  left: pageStyle.unitWidth * 31,
+                  right: pageStyle.unitWidth * 150,
+                ),
                 child: Text(
                   category.name,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 36,
+                    fontSize: pageStyle.unitFontSize * 30,
                     color: greyDarkColor,
                   ),
                 ),

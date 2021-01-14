@@ -66,8 +66,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
   void _getOrderStatus() {
     order = widget.order;
     switch (order.status) {
+      case OrderStatusEnum.order_approval_pending:
+        icon = onProgressIcon;
+        color = primaryColor;
+        status = 'order_on_progress'.tr();
+        break;
       case OrderStatusEnum.pending:
-        icon = pendingIcon;
+        icon = cancelledIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
@@ -80,11 +85,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
-        break;
-      case OrderStatusEnum.canceled:
-        icon = cancelledIcon;
-        color = Colors.grey;
-        status = 'order_cancelled'.tr();
         break;
       default:
         icon = pendingIcon;
@@ -128,6 +128,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     _setPaymentWidget();
     return Scaffold(
       backgroundColor: Colors.white,
+      key: scaffoldKey,
       appBar: CigaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,

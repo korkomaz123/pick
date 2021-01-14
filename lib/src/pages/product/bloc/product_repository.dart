@@ -84,7 +84,6 @@ class ProductRepository {
         url,
         data: {'token': token, 'productId': productId, 'lang': lang},
       );
-      print(result);
     } catch (e) {
       print(e.toString());
     }
@@ -257,10 +256,6 @@ class ProductRepository {
       'filter': json.encode(filterValues['selectedValues']),
       'page': page.toString(),
     };
-    print(url);
-    print(params);
-    final result = await Api.postMethod(url, data: params);
-    print(result);
-    return result;
+    return await Api.postMethod(url, data: params);
   }
 }

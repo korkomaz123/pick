@@ -113,7 +113,7 @@ class _FilterPageState extends State<FilterPage> {
             child: Padding(
               padding: EdgeInsets.only(right: pageStyle.unitWidth * 8.0),
               child: InkWell(
-                onTap: () => null,
+                onTap: () => _onResetAll(),
                 child: Text(
                   'filter_reset_all'.tr(),
                   style: mediumTextStyle.copyWith(
@@ -130,14 +130,14 @@ class _FilterPageState extends State<FilterPage> {
         child: BlocConsumer<FilterBloc, FilterState>(
           listener: (context, state) {
             if (state is FilterAttributesLoadedInProcess) {
-              // progressService.showProgress();
+              progressService.showProgress();
             }
             if (state is FilterAttributesLoadedSuccess) {
-              // progressService.hideProgress();
+              progressService.hideProgress();
               _setSelectedValues(state.availableFilters);
             }
             if (state is FilterAttributesLoadedFailure) {
-              // progressService.hideProgress();
+              progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
           },
@@ -152,6 +152,8 @@ class _FilterPageState extends State<FilterPage> {
                   : {'min': .0, 'max': .0};
               minPrice = minPrice ?? price['min'] + .0;
               maxPrice = maxPrice ?? price['max'] + .0;
+              print(minPrice);
+              print(maxPrice);
               return Column(
                 children: [
                   _buildCategories(),
@@ -368,5 +370,14 @@ class _FilterPageState extends State<FilterPage> {
     if (result != null) {
       selectedValues[option['attribute_code']] = result;
     }
+  }
+
+  void _onResetAll() {
+    selectedCategories.clear();
+    selectedGenders.clear();
+    selectedValues = {};
+    minPrice = null;
+    maxPrice = null;
+    setState(() {});
   }
 }

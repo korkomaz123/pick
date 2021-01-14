@@ -52,6 +52,7 @@ class _MyCartPageState extends State<MyCartPage>
   @override
   void initState() {
     super.initState();
+    myCartItems = null;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     snackBarService = SnackBarService(
@@ -76,6 +77,9 @@ class _MyCartPageState extends State<MyCartPage>
     }
     if (cartId.isNotEmpty) {
       myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+    } else {
+      myCartItems = [];
+      setState(() {});
     }
   }
 
@@ -165,30 +169,32 @@ class _MyCartPageState extends State<MyCartPage>
             totalPrice = 0;
             cartTotalPrice = 0;
           }
-          return (state is MyCartItemsLoadedSuccess && myCartItems.isEmpty) ||
-                  cartId.isEmpty
-              ? Center(
-                  child: NoAvailableData(
-                    pageStyle: pageStyle,
-                    message: 'no_cart_items_available',
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildTitleBar(),
-                      _buildTotalItemsTitle(),
-                      _buildTotalItems(),
-                      MyCartCouponCode(
-                        pageStyle: pageStyle,
-                        cartId: cartId,
-                        couponCode: couponCode,
-                      ),
-                      _buildTotalPrice(),
-                      _buildCheckoutButton(),
-                    ],
-                  ),
-                );
+          if (myCartItems == null) {
+            return Container();
+          } else if (myCartItems.isEmpty) {
+            return Center(
+              child: NoAvailableData(
+                pageStyle: pageStyle,
+                message: 'no_cart_items_available',
+              ),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTitleBar(),
+                _buildTotalItemsTitle(),
+                _buildTotalItems(),
+                MyCartCouponCode(
+                  pageStyle: pageStyle,
+                  cartId: cartId,
+                  couponCode: couponCode,
+                ),
+                _buildTotalPrice(),
+                _buildCheckoutButton(),
+              ],
+            ),
+          );
         },
       ),
       bottomNavigationBar: CigaBottomBar(

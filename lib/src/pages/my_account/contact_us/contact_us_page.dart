@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
@@ -54,6 +55,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
+      key: scaffoldKey,
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {

@@ -68,11 +68,15 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _saveToken(UserEntity loggedInUser) async {
-    user = loggedInUser;
-    await localRepo.setToken(user.token);
-    await _transferCartItems();
-    await _loadCustomerCartItems();
-    await _getWishlists();
+    try {
+      user = loggedInUser;
+      await localRepo.setToken(user.token);
+      await _transferCartItems();
+      await _loadCustomerCartItems();
+      await _getWishlists();
+    } catch (e) {
+      print(e.toString());
+    }
     homeBloc.add(HomeRecentlyViewedCustomerLoaded(
       token: user.token,
       lang: lang,

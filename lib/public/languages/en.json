@@ -168,6 +168,7 @@
     "my_cart_remove_item_dialog_text": "You want to remove this item from your cart?",
     "yes_button_title": "YES",
     "no_button_title": "NO",
+    "order_approval_pending": "Order Approval Pending",
     "order_pending": "Pending",
     "order_on_progress": "On Progress",
     "order_delivered": "Delivered",

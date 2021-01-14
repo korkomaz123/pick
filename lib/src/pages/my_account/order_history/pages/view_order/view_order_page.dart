@@ -39,10 +39,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   void initState() {
     super.initState();
     order = widget.order;
-
     switch (order.status) {
+      case OrderStatusEnum.order_approval_pending:
+        icon = onProgressIcon;
+        color = primaryColor;
+        status = 'order_on_progress'.tr();
+        break;
       case OrderStatusEnum.pending:
-        icon = pendingIcon;
+        icon = cancelledIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
@@ -55,11 +59,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
-        break;
-      case OrderStatusEnum.canceled:
-        icon = cancelledIcon;
-        color = Colors.grey;
-        status = 'order_cancelled'.tr();
         break;
       default:
         icon = pendingIcon;
@@ -80,28 +79,12 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     }
   }
 
-  void _setPaymentWidget() {
-    if (order.paymentMethod.title == 'Visa Card') {
-      paymentWidget = Image.asset(
-        visaImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
-      );
-    } else if (order.paymentMethod.title == 'KNet') {
-      paymentWidget = Image.asset(
-        knetImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
-    _setPaymentWidget();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CigaAppBar(
         scaffoldKey: scaffoldKey,
@@ -168,7 +151,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               !isStock || order.status == OrderStatusEnum.canceled
                   ? SizedBox.shrink()
                   : _buildReorderButton(),
-              order.status == OrderStatusEnum.canceled
+              order.status != OrderStatusEnum.pending
                   ? SizedBox.shrink()
                   : _buildCancelOrderButton(),
             ],

@@ -83,7 +83,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> _mapHomeBestDealsLoadedToState(String lang) async* {
     try {
-      String key = 'bestdeals';
+      String key = 'bestdeals-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         String title = await localStorageRepository.getItem(key + 'title');
@@ -120,7 +120,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> _mapNewArrivalsLoadedToState(String lang) async* {
     try {
-      String key = 'newarrivals';
+      String key = 'newarrivals-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         String title = await localStorageRepository.getItem(key + 'title');
@@ -158,7 +158,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> _mapHomePerfumesLoadedToState(String lang) async* {
     try {
-      String key = 'perfumes';
+      String key = 'perfumes-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         String title = await localStorageRepository.getItem(key + 'title');
@@ -217,7 +217,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final result = await _productRepository
           .getHomeRecentlyViewedGuestProducts(ids, lang);
       if (result['code'] == 'SUCCESS') {
-        // await localStorageRepository.setItem(key, result['items']);
         List<dynamic> recentlyViewedList = result['items'];
         List<ProductModel> recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
@@ -242,9 +241,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final result = await _productRepository
           .getHomeRecentlyViewedCustomerProducts(token, lang);
-      print(result);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
-        // await localStorageRepository.setItem(key, result['recentViewed']);
         List<dynamic> recentlyViewedList = result['products'];
         List<ProductModel> recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {

@@ -6,6 +6,7 @@ import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/formatted_address_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String formLocation;
   String toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
+  ProgressService progressService;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -38,6 +40,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   @override
   void initState() {
     super.initState();
+    progressService = ProgressService(context: context);
     formLocation = widget?.placeChangeNotifier?.formLocation?.name;
     _onCurrentLocation();
   }
@@ -224,6 +227,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   }
 
   void _onCurrentLocation() async {
+    // progressService.showProgress();
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -255,6 +259,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         target: LatLng(position.latitude, position.longitude),
         zoom: 14,
       );
+      // progressService.hideProgress();
       _updatePosition(myPosition);
     } catch (e) {
       print('location error: >> $e');

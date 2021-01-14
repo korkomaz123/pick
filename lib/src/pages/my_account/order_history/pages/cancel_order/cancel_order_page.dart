@@ -43,23 +43,28 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     flushBarService = FlushBarService(context: context);
     order = widget.order;
     switch (order.status) {
+      case OrderStatusEnum.order_approval_pending:
+        icon = onProgressIcon;
+        color = primaryColor;
+        status = 'order_on_progress'.tr();
+        break;
       case OrderStatusEnum.pending:
         icon = cancelledIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
       case OrderStatusEnum.processing:
-        icon = cancelledIcon;
+        icon = onProgressIcon;
         color = primaryColor;
         status = 'order_on_progress'.tr();
         break;
       case OrderStatusEnum.complete:
-        icon = cancelledIcon;
+        icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
       default:
-        icon = cancelledIcon;
+        icon = pendingIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
     }
@@ -89,6 +94,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     _setPaymentWidget();
     return Scaffold(
       backgroundColor: Colors.white,
+      key: scaffoldKey,
       appBar: CigaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,

@@ -200,8 +200,9 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    data[index] = <ProductModel>[];
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
+    print(index);
+    data[index] = null;
     pages[index] = 1;
     await loadFilteredProducts(1, brandId, categoryId, filterValues);
   }
@@ -212,9 +213,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     pages[index] = page;
-    print(page);
     await loadFilteredProducts(page, brandId, categoryId, filterValues);
   }
 
@@ -223,7 +223,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
-    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
+    final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     data[index] = <ProductModel>[];
     pages[index] = 1;
     await loadFilteredProducts(1, brandId, categoryId, filterValues);
@@ -236,7 +236,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     Map<String, dynamic> filterValues,
   ) async {
     try {
-      final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? '');
+      final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
       final result = await productRepository.filterProducts(
         categoryId == 'all' ? null : categoryId,
         brandId,
@@ -246,7 +246,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       );
       if (result['code'] == 'SUCCESS') {
         List<dynamic> productList = result['products'];
-        if (!data.containsKey(index)) {
+        if (!data.containsKey(index) || data[index] == null) {
           data[index] = [];
         }
         for (int i = 0; i < productList.length; i++) {

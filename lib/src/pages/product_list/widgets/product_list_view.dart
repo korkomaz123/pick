@@ -97,19 +97,20 @@ class _ProductListViewState extends State<ProductListView>
         brand.optionId,
         subCategories[activeIndex].id,
       );
-    } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      await productChangeNotifier.initialLoadSortedProducts(
-        brand.optionId ?? '',
-        subCategories[activeIndex].id,
-        widget.sortByItem,
-      );
-    } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      await productChangeNotifier.initialLoadFilteredProducts(
-        brand.optionId,
-        subCategories[tabController.index].id,
-        widget.filterValues,
-      );
     }
+    //  else if (widget.viewMode == ProductViewModeEnum.sort) {
+    //   await productChangeNotifier.initialLoadSortedProducts(
+    //     brand.optionId ?? '',
+    //     subCategories[activeIndex].id,
+    //     widget.sortByItem,
+    //   );
+    // } else if (widget.viewMode == ProductViewModeEnum.filter) {
+    //   await productChangeNotifier.initialLoadFilteredProducts(
+    //     brand.optionId,
+    //     subCategories[tabController.index].id,
+    //     widget.filterValues,
+    //   );
+    // }
   }
 
   void _onRefresh() async {
@@ -126,7 +127,7 @@ class _ProductListViewState extends State<ProductListView>
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier.refreshSortedProducts(
         brand.optionId ?? '',
-        subCategories[tabController.index].id,
+        (subCategories[tabController.index].id ?? ''),
         widget.sortByItem,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
@@ -160,9 +161,9 @@ class _ProductListViewState extends State<ProductListView>
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       page = productChangeNotifier.pages[widget.sortByItem +
           '_' +
-          brand.optionId +
+          (brand.optionId ?? '') +
           '_' +
-          subCategories[tabController.index].id];
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreSortedProducts(
         page,
@@ -219,9 +220,9 @@ class _ProductListViewState extends State<ProductListView>
                     } else if (widget.viewMode == ProductViewModeEnum.sort) {
                       index = widget.sortByItem +
                           '_' +
-                          brand.optionId +
+                          (brand.optionId ?? '') +
                           '_' +
-                          cat.id;
+                          (cat.id ?? '');
                     } else if (widget.viewMode == ProductViewModeEnum.filter) {
                       index = 'filter_' +
                           (brand.optionId ?? '') +
@@ -229,6 +230,8 @@ class _ProductListViewState extends State<ProductListView>
                           (cat.id ?? '');
                     }
                     print('reload');
+                    print(index);
+
                     if (!productChangeNotifier.data.containsKey(index) ||
                         productChangeNotifier.data[index] == null) {
                       return Container();

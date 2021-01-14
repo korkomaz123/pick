@@ -148,7 +148,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       duration: Duration(milliseconds: 500),
                       child: ProductListView(
                         subCategories: subCategories,
-                        activeIndex: widget.arguments.selectedSubCategoryIndex,
+                        activeIndex: activeSubcategoryIndex,
                         scaffoldKey: scaffoldKey,
                         pageStyle: pageStyle,
                         isFromBrand: isFromBrand,
@@ -308,10 +308,13 @@ class _ProductListPageState extends State<ProductListPage> {
     if (result != null) {
       filterValues = result;
       viewMode = ProductViewModeEnum.filter;
+      if (filterValues['selectedCategories'].isNotEmpty) {
+        activeSubcategoryIndex = 0;
+      }
       setState(() {});
       await productChangeNotifier.initialLoadFilteredProducts(
         brand.optionId,
-        category.id,
+        subCategories[activeSubcategoryIndex].id,
         filterValues,
       );
     }

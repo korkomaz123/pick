@@ -26,6 +26,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       body: Column(

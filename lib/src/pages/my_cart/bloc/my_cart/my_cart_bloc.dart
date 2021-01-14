@@ -201,7 +201,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     try {
       final result =
           await _myCartRepository.couponCode(cartId, couponCode, '0');
-      print(result);
+      // print(result);
       if (result['code'] == 'SUCCESS') {
         yield CouponCodeAppliedSuccess();
       } else {

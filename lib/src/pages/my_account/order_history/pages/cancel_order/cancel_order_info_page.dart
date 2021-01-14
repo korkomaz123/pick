@@ -65,6 +65,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
+      key: scaffoldKey,
       appBar: CigaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,

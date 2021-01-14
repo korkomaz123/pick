@@ -1,5 +1,6 @@
 import 'package:ciga/src/components/ciga_app_bar.dart';
 import 'package:ciga/src/components/ciga_bottom_bar.dart';
+import 'package:ciga/src/components/ciga_side_menu.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/enum.dart';
@@ -25,7 +26,9 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
     return Scaffold(
+      key: scaffoldKey,
       appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: CigaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),

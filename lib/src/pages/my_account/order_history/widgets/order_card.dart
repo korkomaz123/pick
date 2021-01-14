@@ -50,8 +50,13 @@ class _OrderCardState extends State<OrderCard> {
     Color color;
     String status = '';
     switch (order.status) {
+      case OrderStatusEnum.order_approval_pending:
+        icon = onProgressIcon;
+        color = primaryColor;
+        status = 'order_on_progress'.tr();
+        break;
       case OrderStatusEnum.pending:
-        icon = pendingIcon;
+        icon = cancelledIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
@@ -64,11 +69,6 @@ class _OrderCardState extends State<OrderCard> {
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
-        break;
-      case OrderStatusEnum.canceled:
-        icon = cancelledIcon;
-        color = Colors.grey;
-        status = 'order_cancelled'.tr();
         break;
       default:
         icon = pendingIcon;

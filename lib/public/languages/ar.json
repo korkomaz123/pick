@@ -169,6 +169,7 @@
     "yes_button_title": "نعم",
     "no_button_title": "لا",
     "order_pending": "قيد الانتظار",
+    "order_approval_pending": "الموافقة على الطلب معلقة",
     "order_on_progress": "قيد التقدم",
     "order_delivered": "تم التوصيل",
     "order_cancelled": "ألغيت",
