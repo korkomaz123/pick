@@ -136,3 +136,5 @@ class CouponCodeCancelledFailure extends MyCartState {
   @override
   List<Object> get props => [message];
 }
+
+class MyCartItemsInitialized extends MyCartState {}

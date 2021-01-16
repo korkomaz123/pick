@@ -18,6 +18,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'bloc/home_bloc.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
+import 'widgets/home_best_deals_banner.dart';
+import 'widgets/home_new_arrivals_banner.dart';
 import 'widgets/home_discover_stores.dart';
 import 'widgets/home_header_carousel.dart';
 import 'widgets/home_new_arrivals.dart';
@@ -49,6 +51,8 @@ class _HomePageState extends State<HomePage> {
 
   void _onRefresh() async {
     homeBloc.add(HomeSliderImagesLoaded(lang: lang));
+    homeBloc.add(HomeBestDealsLoaded(lang: lang));
+    homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
     homeBloc.add(HomeBestDealsLoaded(lang: lang));
     homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
     homeBloc.add(HomePerfumesLoaded(lang: lang));
@@ -99,7 +103,9 @@ class _HomePageState extends State<HomePage> {
               children: [
                 HomeHeaderCarousel(pageStyle: pageStyle),
                 HomeBestDeals(pageStyle: pageStyle),
+                HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),
+                HomeNewArrivalsBanner(pageStyle: pageStyle),
                 HomePerfumes(pageStyle: pageStyle),
                 HomeExploreCategories(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),

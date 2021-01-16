@@ -49,6 +49,8 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
       yield* _mapCouponCodeAppliedToState(event.cartId, event.couponCode);
     } else if (event is CouponCodeCancelled) {
       yield* _mapCouponCodeCancelledToState(event.cartId, event.couponCode);
+    } else if (event is MyCartItemsInitialize) {
+      yield MyCartItemsInitialized();
     }
   }
 

@@ -68,4 +68,7 @@ class EndPoints {
   static const String getViewedGuestProducts = '$baseUrl/getRecentView';
   static const String checkWishlistStatus = '$baseUrl/checkWishlistStatus';
   static const String transferCart = '$baseUrl/transferCart';
+  static const String getBestdealsBanner = '$baseUrl/getBestdealsBanner';
+  static const String getNewarrivalBanner = '$baseUrl/getNewarrivalBanner';
+  static const String getHomeCategories = '$baseUrl/getHomeCategories';
 }

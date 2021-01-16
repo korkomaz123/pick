@@ -191,8 +191,14 @@ class _FilterPageState extends State<FilterPage> {
       ),
       child: FilterCategorySelect(
         items: [
-          {'display': 'side_best_deals', 'value': '41'},
-          {'display': 'side_new_arrivals', 'value': '42'}
+          {
+            'display': homeCategories[0].name,
+            'value': '${homeCategories[0].id}'
+          },
+          {
+            'display': homeCategories[1].name,
+            'value': '${homeCategories[1].id}'
+          },
         ],
         itemWidth: pageStyle.unitWidth * 160,
         itemHeight: pageStyle.unitHeight * 40,

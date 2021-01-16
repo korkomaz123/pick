@@ -48,6 +48,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         event.token,
         event.lang,
       );
+    } else if (event is HomeBestDealsBannersLoaded) {
+      yield* _mapHomeBestDealsBannersLoadedToState(event.lang);
+    } else if (event is HomeNewArrivalsBannersLoaded) {
+      yield* _mapHomeNewArrivalsBannersLoadedToState(event.lang);
     }
   }
 
@@ -256,6 +260,92 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       print('error customer');
       print(e.toString());
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeBestDealsBannersLoadedToState(
+    String lang,
+  ) async* {
+    try {
+      String key = 'best-deals-banners-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        String title = data['title'];
+        List<dynamic> sliderImageList = data['banners'];
+        List<SliderImageEntity> sliderImages = [];
+        for (int i = 0; i < sliderImageList.length; i++) {
+          sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
+        }
+        yield state.copyWith(
+          bestDealsBanners: sliderImages,
+          bestDealsBannerTitle: title,
+        );
+      }
+      final result = await _homeRepository.getHomeBestDealsBanners(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {'title': result['title'], 'banners': result['data']},
+        );
+        String title = result['title'];
+        List<dynamic> sliderImageList = result['data'];
+        List<SliderImageEntity> sliderImages = [];
+        for (int i = 0; i < sliderImageList.length; i++) {
+          sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
+        }
+        yield state.copyWith(
+          bestDealsBanners: sliderImages,
+          bestDealsBannerTitle: title,
+        );
+      } else {
+        yield state.copyWith(message: result['errorMessage']);
+      }
+    } catch (e) {
+      yield state.copyWith(message: e.toString());
+    }
+  }
+
+  Stream<HomeState> _mapHomeNewArrivalsBannersLoadedToState(
+    String lang,
+  ) async* {
+    try {
+      String key = 'new-arrivals-banners-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        String title = data['title'];
+        List<dynamic> sliderImageList = data['banners'];
+        List<SliderImageEntity> sliderImages = [];
+        for (int i = 0; i < sliderImageList.length; i++) {
+          sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
+        }
+        yield state.copyWith(
+          newArrivalsBanners: sliderImages,
+          newArrivalsBannerTitle: title,
+        );
+      }
+      final result = await _homeRepository.getHomeNewArrivalsBanners(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {'title': result['title'], 'banners': result['data']},
+        );
+        String title = result['title'];
+        List<dynamic> sliderImageList = result['data'];
+        List<SliderImageEntity> sliderImages = [];
+        for (int i = 0; i < sliderImageList.length; i++) {
+          sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
+        }
+        yield state.copyWith(
+          newArrivalsBanners: sliderImages,
+          newArrivalsBannerTitle: title,
+        );
+      } else {
+        yield state.copyWith(message: result['errorMessage']);
+      }
+    } catch (e) {
       yield state.copyWith(message: e.toString());
     }
   }

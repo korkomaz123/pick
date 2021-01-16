@@ -417,7 +417,6 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildShippingCost() {
-    int totalQty = double.parse(order.totalQty).ceil();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -435,9 +434,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ' +
-                (totalQty * order.shippingMethod.serviceFees).toString(),
+            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,

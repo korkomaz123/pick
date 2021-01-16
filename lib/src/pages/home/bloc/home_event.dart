@@ -64,3 +64,21 @@ class HomeRecentlyViewedCustomerLoaded extends HomeEvent {
   @override
   List<Object> get props => [token, lang];
 }
+
+class HomeBestDealsBannersLoaded extends HomeEvent {
+  final String lang;
+
+  HomeBestDealsBannersLoaded({this.lang});
+
+  @override
+  List<Object> get props => [lang];
+}
+
+class HomeNewArrivalsBannersLoaded extends HomeEvent {
+  final String lang;
+
+  HomeNewArrivalsBannersLoaded({this.lang});
+
+  @override
+  List<Object> get props => [lang];
+}

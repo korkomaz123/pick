@@ -149,6 +149,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   @override
   void dispose() {
+    isBuyNow = false;
     _addToCartController.dispose();
     _favoriteController.dispose();
     super.dispose();
@@ -454,6 +455,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
         }
         if (state is MyCartItemAddedSuccess) {
           if (isBuyNow) {
+            isBuyNow = false;
             Navigator.pushNamed(context, Routes.myCart);
           }
           flushBarService.showAddCartMessage(

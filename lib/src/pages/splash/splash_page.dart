@@ -34,6 +34,7 @@ class _SplashPageState extends State<SplashPage> {
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
+  CategoryRepository categoryRepo;
   PageStyle pageStyle;
   bool isFirstTime;
 
@@ -43,6 +44,7 @@ class _SplashPageState extends State<SplashPage> {
     cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
+    categoryRepo = context.read<CategoryRepository>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     _checkAppUsage();
@@ -61,6 +63,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _loadAssets() async {
     await _getCurrentUser();
+    _getHomeCategories();
     _getCartItems();
     _getWishlists();
     _getShippingAddress();
@@ -69,6 +72,10 @@ class _SplashPageState extends State<SplashPage> {
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> _getHomeCategories() async {
+    homeCategories = await categoryRepo.getHomeCategories(lang);
   }
 
   Future<void> _getCurrentUser() async {

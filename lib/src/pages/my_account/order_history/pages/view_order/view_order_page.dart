@@ -150,7 +150,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               !isStock || order.status == OrderStatusEnum.canceled
                   ? SizedBox.shrink()
                   : _buildReorderButton(),
-              order.status != OrderStatusEnum.pending
+              order.status != OrderStatusEnum.pending &&
+                      order.status != OrderStatusEnum.order_approval_pending
                   ? SizedBox.shrink()
                   : _buildCancelOrderButton(),
             ],
@@ -340,7 +341,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildShippingCost() {
-    int totalQty = double.parse(order.totalQty).ceil();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -358,9 +358,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ' +
-                (totalQty * order.shippingMethod.serviceFees).toString(),
+            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,

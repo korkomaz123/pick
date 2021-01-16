@@ -179,24 +179,21 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     orderDetails['cartId'] = cartId;
     double totalPrice = 0;
     double subtotalPrice = 0;
-    int fees = 0;
     if (widget.reorder != null) {
-      fees = reorderCartItems.length * serviceFees;
       for (int i = 0; i < reorderCartItems.length; i++) {
         subtotalPrice += reorderCartItems[i].rowPrice;
       }
     } else {
-      fees = myCartItems.length * serviceFees;
       for (int i = 0; i < myCartItems.length; i++) {
         subtotalPrice += myCartItems[i].rowPrice;
       }
     }
 
-    totalPrice = subtotalPrice + fees;
+    totalPrice = subtotalPrice + serviceFees;
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
     orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toString();
-    orderDetails['orderDetails']['fees'] = fees.toString();
+    orderDetails['orderDetails']['fees'] = serviceFees.toString();
     Navigator.pushNamed(
       context,
       Routes.checkoutReview,

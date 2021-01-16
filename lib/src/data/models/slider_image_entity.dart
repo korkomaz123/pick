@@ -11,6 +11,8 @@ class SliderImageEntity {
   final String labelButtonText;
   final String position;
   final String isActive;
+  final String categoryId;
+  final String categoryName;
 
   SliderImageEntity({
     this.bannerId,
@@ -25,6 +27,8 @@ class SliderImageEntity {
     this.labelButtonText,
     this.position,
     this.isActive,
+    this.categoryId,
+    this.categoryName,
   });
 
   SliderImageEntity.fromJson(Map<String, dynamic> json)
@@ -39,5 +43,7 @@ class SliderImageEntity {
         endDate = json['end_date'],
         labelButtonText = json['label_button_text'],
         position = json['position'],
-        isActive = json['is_active'];
+        isActive = json['is_active'],
+        categoryId = json['category_id'],
+        categoryName = json['category_name'];
 }

@@ -66,6 +66,12 @@ class _MyCartPageState extends State<MyCartPage>
     _getMyCartId();
   }
 
+  @override
+  void dispose() {
+    myCartBloc.add(MyCartItemsInitialize());
+    super.dispose();
+  }
+
   void _getMyCartId() async {
     if (user?.token != null) {
       final result = await cartRepo.getCartId(user.token);

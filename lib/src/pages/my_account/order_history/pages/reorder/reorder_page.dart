@@ -411,7 +411,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildShippingCost() {
-    int totalQty = double.parse(order.totalQty).ceil();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -429,9 +428,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ' +
-                (totalQty * order.shippingMethod.serviceFees).toString(),
+            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,

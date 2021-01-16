@@ -3,6 +3,8 @@ part of 'home_bloc.dart';
 class HomeState extends Equatable {
   HomeState({
     this.sliderImages,
+    this.bestDealsBanners,
+    this.newArrivalsBanners,
     this.bestDealsProducts,
     this.newArrivalsProducts,
     this.perfumesProducts,
@@ -12,9 +14,13 @@ class HomeState extends Equatable {
     this.bestDealsTitle,
     this.newArrivalsTitle,
     this.perfumesTitle,
+    this.newArrivalsBannerTitle,
+    this.bestDealsBannerTitle,
   });
 
   final List<SliderImageEntity> sliderImages;
+  final List<SliderImageEntity> newArrivalsBanners;
+  final List<SliderImageEntity> bestDealsBanners;
   final List<ProductModel> bestDealsProducts;
   final List<ProductModel> newArrivalsProducts;
   final List<ProductModel> perfumesProducts;
@@ -24,10 +30,14 @@ class HomeState extends Equatable {
   final String bestDealsTitle;
   final String newArrivalsTitle;
   final String perfumesTitle;
+  final String bestDealsBannerTitle;
+  final String newArrivalsBannerTitle;
 
   HomeState init() {
     return HomeState(
       sliderImages: [],
+      bestDealsBanners: [],
+      newArrivalsBanners: [],
       bestDealsProducts: [],
       newArrivalsProducts: [],
       perfumesProducts: [],
@@ -37,11 +47,15 @@ class HomeState extends Equatable {
       bestDealsTitle: '',
       newArrivalsTitle: '',
       perfumesTitle: '',
+      bestDealsBannerTitle: '',
+      newArrivalsBannerTitle: '',
     );
   }
 
   HomeState copyWith({
     List<SliderImageEntity> sliderImages,
+    List<SliderImageEntity> bestDealsBanners,
+    List<SliderImageEntity> newArrivalsBanners,
     List<ProductModel> bestDealsProducts,
     List<ProductModel> newArrivalsProducts,
     List<ProductModel> perfumesProducts,
@@ -51,9 +65,13 @@ class HomeState extends Equatable {
     String bestDealsTitle,
     String newArrivalsTitle,
     String perfumesTitle,
+    String bestDealsBannerTitle,
+    String newArrivalsBannerTitle,
   }) {
     return HomeState(
       sliderImages: sliderImages ?? this.sliderImages,
+      bestDealsBanners: bestDealsBanners ?? this.bestDealsBanners,
+      newArrivalsBanners: newArrivalsBanners ?? this.newArrivalsBanners,
       bestDealsProducts: bestDealsProducts ?? this.bestDealsProducts,
       newArrivalsProducts: newArrivalsProducts ?? this.newArrivalsProducts,
       perfumesProducts: perfumesProducts ?? this.perfumesProducts,
@@ -64,12 +82,17 @@ class HomeState extends Equatable {
       bestDealsTitle: bestDealsTitle ?? this.bestDealsTitle,
       newArrivalsTitle: newArrivalsTitle ?? this.newArrivalsTitle,
       perfumesTitle: perfumesTitle ?? this.perfumesTitle,
+      bestDealsBannerTitle: bestDealsBannerTitle ?? this.bestDealsBannerTitle,
+      newArrivalsBannerTitle:
+          newArrivalsBannerTitle ?? this.newArrivalsBannerTitle,
     );
   }
 
   @override
   List<Object> get props => [
         sliderImages,
+        bestDealsBanners,
+        newArrivalsBanners,
         bestDealsProducts,
         newArrivalsProducts,
         perfumesProducts,
@@ -79,5 +102,7 @@ class HomeState extends Equatable {
         bestDealsTitle,
         newArrivalsTitle,
         perfumesTitle,
+        bestDealsBannerTitle,
+        newArrivalsBannerTitle,
       ];
 }

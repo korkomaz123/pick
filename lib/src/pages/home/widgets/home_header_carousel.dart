@@ -1,12 +1,15 @@
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:ciga/src/data/models/index.dart';
+import 'package:ciga/src/data/models/product_list_arguments.dart';
 import 'package:ciga/src/data/models/slider_image_entity.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
+import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
@@ -48,7 +51,10 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             ),
           );
         } else {
-          return _buildShimmer();
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            height: widget.pageStyle.deviceWidth * 579 / 1125,
+          );
         }
       },
     );
@@ -67,15 +73,36 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           setState(() {});
         },
         itemBuilder: (context, index) {
-          String image = sliderImages[index].bannerImage;
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.deviceWidth * 579 / 1125,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              image: DecorationImage(
-                image: NetworkImage(image),
-                fit: BoxFit.fill,
+          final banner = sliderImages[index];
+          return InkWell(
+            onTap: () {
+              if (banner.categoryId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(
+                    id: banner.categoryId,
+                    name: banner.categoryName,
+                  ),
+                  brand: BrandEntity(),
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              }
+            },
+            child: Container(
+              width: widget.pageStyle.deviceWidth,
+              height: widget.pageStyle.deviceWidth * 579 / 1125,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(
+                  image: NetworkImage(banner.bannerImage),
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           );
@@ -106,49 +133,6 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return Column(
-      children: [
-        Container(
-          width: widget.pageStyle.deviceWidth,
-          height: widget.pageStyle.unitHeight * 113,
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade200,
-            highlightColor: Colors.white,
-            child: Container(
-              width: widget.pageStyle.deviceWidth,
-              height: widget.pageStyle.unitHeight * 113,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        Container(
-          width: widget.pageStyle.deviceWidth,
-          height: widget.pageStyle.unitHeight * 20,
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              3,
-              (index) {
-                return Shimmer.fromColors(
-                  baseColor: Colors.grey.shade300,
-                  highlightColor: Colors.white,
-                  child: Container(
-                    width: widget.pageStyle.unitWidth * 30,
-                    height: widget.pageStyle.unitHeight * 4,
-                    color: Colors.white,
-                    margin: EdgeInsets.symmetric(horizontal: 2),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -86,3 +86,5 @@ class CouponCodeCancelled extends MyCartEvent {
   @override
   List<Object> get props => [cartId, couponCode];
 }
+
+class MyCartItemsInitialize extends MyCartEvent {}

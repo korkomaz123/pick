@@ -63,12 +63,10 @@ class OrderEntity {
   static int _getServiceFees(Map<String, dynamic> json) {
     String totalPriceStr = json['grand_total'];
     String subtotalPriceStr = json['subtotal'];
-    String qtyStr = json['total_qty_ordered'];
     int totalPrice = int.parse(double.parse(totalPriceStr).toStringAsFixed(0));
     int subtotalPrice =
         int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
-    int qty = int.parse(double.parse(qtyStr).toStringAsFixed(0));
-    return qty == 0 ? 0 : ((totalPrice - subtotalPrice) / qty).ceil();
+    return totalPrice - subtotalPrice;
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {

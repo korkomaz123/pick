@@ -179,6 +179,8 @@ class ProductRepository {
   ) async {
     String url = EndPoints.getSameBrandProducts;
     final params = {'productId': productId, 'lang': lang};
+    print(url);
+    print(params);
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
@@ -246,6 +248,7 @@ class ProductRepository {
     int page,
   ) async {
     String url = EndPoints.filterProducts;
+    filterValues['selectedValues']['gender'] = filterValues['selectedGenders'];
     final params = {
       'selectedCategoryId': categoryId.toString(),
       'selectedBrandId': brandId.toString(),

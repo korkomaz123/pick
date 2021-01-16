@@ -23,4 +23,22 @@ class HomeRepository {
       return '';
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeBestDealsBanners(String lang) async {
+    String url = EndPoints.getBestdealsBanner;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeNewArrivalsBanners(String lang) async {
+    String url = EndPoints.getNewarrivalBanner;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
 }

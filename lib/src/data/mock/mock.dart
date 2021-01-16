@@ -7,7 +7,7 @@ import 'package:ciga/src/data/models/region_entity.dart';
 import 'package:ciga/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
-final List<CategoryEntity> homeCategories = [
+List<CategoryEntity> homeCategories = [
   CategoryEntity(
     id: '41',
     name: 'home_best_deals',
