@@ -342,16 +342,23 @@ class _AccountPageState extends State<AccountPage> {
                   ],
                 )
               : SizedBox.shrink(),
-          TermsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
+          user != null
+              ? Column(
+                  children: [
+                    ChangePasswordItem(pageStyle: pageStyle),
+                    SizedBox(height: pageStyle.unitHeight * 5),
+                  ],
+                )
+              : SizedBox.shrink(),
           AboutUsItem(pageStyle: pageStyle),
+          SizedBox(height: pageStyle.unitHeight * 5),
+          TermsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
           user != null
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ChangePasswordItem(pageStyle: pageStyle),
-                    SizedBox(height: pageStyle.unitHeight * 5),
                     ContactUsItem(pageStyle: pageStyle),
                     LogoutItem(
                       pageStyle: pageStyle,

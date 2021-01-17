@@ -84,7 +84,7 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
                     return Tab(
                       child: Text(
                         steps[index],
-                        style: TextStyle(
+                        style: mediumTextStyle.copyWith(
                           color: widget.currentIndex == index
                               ? primaryColor
                               : Colors.black,

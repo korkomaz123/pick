@@ -111,7 +111,9 @@ class _FilterPageState extends State<FilterPage> {
         actions: [
           Center(
             child: Padding(
-              padding: EdgeInsets.only(right: pageStyle.unitWidth * 8.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 8,
+              ),
               child: InkWell(
                 onTap: () => _onResetAll(),
                 child: Text(
@@ -231,18 +233,22 @@ class _FilterPageState extends State<FilterPage> {
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           ),
           Container(
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
-              '${minPrice.toStringAsFixed(0)} KD - ${maxPrice.toStringAsFixed(0)} KD',
+              '${minPrice.toStringAsFixed(0)} ' +
+                  'currency'.tr() +
+                  ' - ' +
+                  '${maxPrice.toStringAsFixed(0)} ' +
+                  'currency'.tr(),
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 18,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -279,7 +285,7 @@ class _FilterPageState extends State<FilterPage> {
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: pageStyle.unitHeight * 10),
@@ -324,7 +330,7 @@ class _FilterPageState extends State<FilterPage> {
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 20,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
             Icon(

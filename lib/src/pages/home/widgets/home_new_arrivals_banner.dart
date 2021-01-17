@@ -2,7 +2,6 @@ import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/brand_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/data/models/slider_image_entity.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
 import 'package:ciga/src/routes/routes.dart';
 import 'package:ciga/src/theme/styles.dart';

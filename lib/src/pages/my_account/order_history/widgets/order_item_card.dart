@@ -1,3 +1,4 @@
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -18,6 +19,7 @@ class OrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int count = canceled ? cartItem.itemCountCanceled : cartItem.itemCount;
     return Stack(
       children: [
         Container(
@@ -64,11 +66,7 @@ class OrderItemCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          (canceled
-                                      ? cartItem.itemCountCanceled
-                                      : cartItem.itemCount)
-                                  .toString() +
-                              'items'.tr().replaceFirst('0', ''),
+                          'items'.tr().replaceFirst('0', '$count'),
                           style: mediumTextStyle.copyWith(
                             fontSize: pageStyle.unitFontSize * 14,
                             color: primaryColor,
@@ -90,46 +88,84 @@ class OrderItemCard extends StatelessWidget {
           ),
         ),
         canceled
-            ? Positioned(
-                top: pageStyle.unitHeight * 50,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: pageStyle.unitWidth * 20,
-                    vertical: pageStyle.unitHeight * 10,
-                  ),
-                  color: dangerColor.withOpacity(0.5),
-                  child: Text(
-                    'item_canceled'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 14,
-                      color: Colors.white,
+            ? lang == 'en'
+                ? Positioned(
+                    top: pageStyle.unitHeight * 50,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 20,
+                        vertical: pageStyle.unitHeight * 10,
+                      ),
+                      color: dangerColor.withOpacity(0.5),
+                      child: Text(
+                        'item_canceled'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 14,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
+                  )
+                : Positioned(
+                    top: pageStyle.unitHeight * 50,
+                    left: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 20,
+                        vertical: pageStyle.unitHeight * 10,
+                      ),
+                      color: dangerColor.withOpacity(0.5),
+                      child: Text(
+                        'item_canceled'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
             : SizedBox.shrink(),
         !canceled &&
                 (cartItem.product.stockQty == null ||
                     cartItem.product.stockQty == 0)
-            ? Positioned(
-                top: pageStyle.unitHeight * 50,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: pageStyle.unitWidth * 20,
-                    vertical: pageStyle.unitHeight * 10,
-                  ),
-                  color: primarySwatchColor.withOpacity(0.5),
-                  child: Text(
-                    'out_stock'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 14,
-                      color: Colors.white,
+            ? lang == 'en'
+                ? Positioned(
+                    top: pageStyle.unitHeight * 50,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 20,
+                        vertical: pageStyle.unitHeight * 10,
+                      ),
+                      color: primarySwatchColor.withOpacity(0.5),
+                      child: Text(
+                        'out_stock'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 14,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
+                  )
+                : Positioned(
+                    top: pageStyle.unitHeight * 50,
+                    left: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 20,
+                        vertical: pageStyle.unitHeight * 10,
+                      ),
+                      color: primarySwatchColor.withOpacity(0.5),
+                      child: Text(
+                        'out_stock'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
             : SizedBox.shrink(),
       ],
     );

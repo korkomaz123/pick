@@ -9,9 +9,9 @@ class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getOrderHistory(String token) async {
+  Future<dynamic> getOrderHistory(String token, String lang) async {
     String url = EndPoints.getOrderHistory;
-    final params = {'token': token};
+    final params = {'token': token, 'lang': lang};
     return await Api.postMethod(url, data: params);
   }
 

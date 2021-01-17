@@ -45,7 +45,6 @@ List<String> sortByList = [
   'price_low_high',
   'price_high_low',
   'sort_by_brand',
-  'products_on_sale',
   'name_az',
   'name_za',
 ];

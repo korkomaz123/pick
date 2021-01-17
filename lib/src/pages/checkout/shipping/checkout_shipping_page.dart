@@ -102,24 +102,12 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
           setState(() {});
         },
         activeColor: primaryColor,
-        title: Row(
-          children: [
-            Text(
-              'currency'.tr() + ' ${method.serviceFees}',
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 14,
-              ),
-            ),
-            SizedBox(width: pageStyle.unitWidth * 15),
-            Text(
-              method.title,
-              style: mediumTextStyle.copyWith(
-                color: greyColor,
-                fontSize: pageStyle.unitFontSize * 14,
-              ),
-            ),
-          ],
+        title: Text(
+          method.title + ' ${method.serviceFees} ' + 'currency'.tr(),
+          style: mediumTextStyle.copyWith(
+            color: greyColor,
+            fontSize: pageStyle.unitFontSize * 14,
+          ),
         ),
         secondary: SvgPicture.asset(
           method.serviceFees > 0 ? flatRateIcon : freeShippingIcon,

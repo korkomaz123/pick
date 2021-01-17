@@ -48,11 +48,14 @@ class HomeCategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              category.name,
-              style: mediumTextStyle.copyWith(
-                color: darkColor,
-                fontSize: pageStyle.unitFontSize * 23,
+            Container(
+              width: pageStyle.deviceWidth / 2,
+              child: Text(
+                category.name,
+                style: mediumTextStyle.copyWith(
+                  color: darkColor,
+                  fontSize: pageStyle.unitFontSize * 23,
+                ),
               ),
             ),
             Container(

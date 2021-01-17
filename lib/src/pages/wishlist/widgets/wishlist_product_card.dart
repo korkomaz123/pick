@@ -1,4 +1,5 @@
 import 'package:ciga/src/components/ciga_text_button.dart';
+import 'package:ciga/src/data/mock/mock.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
@@ -97,23 +98,42 @@ class WishlistProductCard extends StatelessWidget {
   }
 
   Widget _buildOutOfStock() {
-    return Positioned(
-      top: pageStyle.unitHeight * 50,
-      right: 0,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 15,
-          vertical: pageStyle.unitHeight * 5,
-        ),
-        color: primarySwatchColor.withOpacity(0.4),
-        child: Text(
-          'out_stock'.tr(),
-          style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 14,
-            color: Colors.white70,
-          ),
-        ),
-      ),
-    );
+    return lang == 'en'
+        ? Positioned(
+            top: pageStyle.unitHeight * 50,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 15,
+                vertical: pageStyle.unitHeight * 5,
+              ),
+              color: primarySwatchColor.withOpacity(0.4),
+              child: Text(
+                'out_stock'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          )
+        : Positioned(
+            top: pageStyle.unitHeight * 50,
+            left: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 15,
+                vertical: pageStyle.unitHeight * 5,
+              ),
+              color: primarySwatchColor.withOpacity(0.4),
+              child: Text(
+                'out_stock'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          );
   }
 }

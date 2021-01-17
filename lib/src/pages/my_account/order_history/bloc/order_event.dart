@@ -9,11 +9,12 @@ abstract class OrderEvent extends Equatable {
 
 class OrderHistoryLoaded extends OrderEvent {
   final String token;
+  final String lang;
 
-  OrderHistoryLoaded({this.token});
+  OrderHistoryLoaded({this.token, this.lang});
 
   @override
-  List<Object> get props => [token];
+  List<Object> get props => [token, lang];
 }
 
 class OrderCancelled extends OrderEvent {

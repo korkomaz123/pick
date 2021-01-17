@@ -23,7 +23,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     OrderEvent event,
   ) async* {
     if (event is OrderHistoryLoaded) {
-      yield* _mapOrderHistoryLoadedToState(event.token);
+      yield* _mapOrderHistoryLoadedToState(event.token, event.lang);
     } else if (event is OrderCancelled) {
       yield* _mapOrderCancelledToState(
         event.orderId,
@@ -36,10 +36,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     }
   }
 
-  Stream<OrderState> _mapOrderHistoryLoadedToState(String token) async* {
+  Stream<OrderState> _mapOrderHistoryLoadedToState(
+    String token,
+    String lang,
+  ) async* {
     yield OrderHistoryLoadedInProcess();
     try {
-      final result = await _orderRepository.getOrderHistory(token);
+      final result = await _orderRepository.getOrderHistory(token, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> ordersList = result['orders'];
         List<OrderEntity> orders = [];

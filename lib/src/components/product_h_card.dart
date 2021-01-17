@@ -334,7 +334,8 @@ class _ProductHCardState extends State<ProductHCard>
   Widget _buildOutofStock() {
     return widget.product.stockQty == null || widget.product.stockQty == 0
         ? Align(
-            alignment: Alignment.centerRight,
+            alignment:
+                lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: widget.pageStyle.unitWidth * 15,

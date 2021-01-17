@@ -39,7 +39,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       scaffoldKey: scaffoldKey,
     );
     orderBloc = context.read<OrderBloc>();
-    orderBloc.add(OrderHistoryLoaded(token: user.token));
+    orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
   }
 
   @override

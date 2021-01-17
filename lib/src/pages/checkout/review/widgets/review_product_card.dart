@@ -85,8 +85,7 @@ class ReviewProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '(${cartItem.itemCount})' +
-                          'items'.tr().replaceFirst('0', ''),
+                      'items'.tr().replaceFirst('0', '${cartItem.itemCount}'),
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
                         color: primaryColor,
