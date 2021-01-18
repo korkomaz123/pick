@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:ciga/src/components/ciga_text_button.dart';
 import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/mock/mock.dart';
+import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/index.dart';
 import 'package:ciga/src/data/models/product_model.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
+import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
@@ -67,13 +69,14 @@ class _SignInPageState extends State<SignInPage> {
     wishlistRepo = context.read<WishlistRepository>();
   }
 
-  void _saveToken(UserEntity loggedInUser) async {
+  void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
       await localRepo.setToken(user.token);
       await _transferCartItems();
       await _loadCustomerCartItems();
       await _getWishlists();
+      await _shippingAddresses();
     } catch (e) {
       print(e.toString());
     }
@@ -83,6 +86,22 @@ class _SignInPageState extends State<SignInPage> {
     ));
     progressService.hideProgress();
     Navigator.pop(context);
+  }
+
+  Future<void> _shippingAddresses() async {
+    final result = await context
+        .read<ShippingAddressRepository>()
+        .getShippingAddresses(user.token);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> shippingAddressesList = result['addresses'];
+      for (int i = 0; i < shippingAddressesList.length; i++) {
+        final address = AddressEntity.fromJson(shippingAddressesList[i]);
+        addresses.add(address);
+        if (address.defaultShippingAddress == 1) {
+          defaultAddress = address;
+        }
+      }
+    }
   }
 
   Future<void> _getWishlists() async {
@@ -148,7 +167,7 @@ class _SignInPageState extends State<SignInPage> {
             progressService.showProgress();
           }
           if (state is SignInSubmittedSuccess) {
-            _saveToken(state.user);
+            _loggedInSuccess(state.user);
           }
           if (state is SignInSubmittedFailure) {
             progressService.hideProgress();

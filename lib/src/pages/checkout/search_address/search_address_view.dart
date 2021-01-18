@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:ciga/src/change_notifier/place_change_notifier.dart';
+import 'package:ciga/src/config/config.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/formatted_address_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
+import 'package:ciga/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -26,6 +30,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String formLocation;
   String toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
+  FlushBarService flushBarService;
+  PageStyle pageStyle;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -37,10 +43,13 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   void initState() {
     super.initState();
     formLocation = widget?.placeChangeNotifier?.formLocation?.name;
+    flushBarService = FlushBarService(context: context);
   }
 
   @override
   Widget build(BuildContext context) {
+    pageStyle = PageStyle(context, designWidth, designHeight);
+    pageStyle.initializePageStyles();
     return Container(
       color: Colors.white,
       child: Stack(
@@ -51,8 +60,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
             onTap: (latlng) {
               final selectedPosition = CameraPosition(target: latlng, zoom: 14);
               _updatePosition(selectedPosition);
@@ -197,7 +204,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: MaterialButton(
-        onPressed: () {},
+        onPressed: () => _onCurrentLocation(),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -218,6 +225,49 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         ),
       ),
     );
+  }
+
+  void _onCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      flushBarService.showErrorMessage(
+        pageStyle,
+        'Location services are disabled.',
+      );
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      flushBarService.showErrorMessage(
+        pageStyle,
+        'Location permissions are permantly denied, we cannot request permissions.',
+      );
+    }
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        flushBarService.showErrorMessage(
+          pageStyle,
+          'Location permissions are denied (actual value: $permission).',
+        );
+      }
+    }
+    flushBarService.showInformMessage(pageStyle, 'Fetching the location');
+    Position position = await Geolocator.getCurrentPosition(
+      forceAndroidLocationManager: true,
+    );
+    print(position.latitude);
+    print(position.longitude);
+    CameraPosition myPosition = CameraPosition(
+      target: LatLng(position.latitude, position.longitude),
+      zoom: 14,
+    );
+    _updatePosition(myPosition);
   }
 
   void _updatePosition(CameraPosition newPosition) async {

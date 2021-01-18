@@ -106,11 +106,11 @@ class FlushBarService {
       messageText: Text(
         message,
         style: mediumTextStyle.copyWith(
-          color: Colors.red,
+          color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
       ),
-      icon: Icon(Icons.check, color: Colors.red),
+      icon: Icon(Icons.info, color: Colors.white),
       duration: Duration(seconds: 3),
       leftBarIndicatorColor: darkColor.withOpacity(0.6),
       flushbarPosition: FlushbarPosition.BOTTOM,

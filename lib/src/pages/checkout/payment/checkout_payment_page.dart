@@ -327,7 +327,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             ),
           ),
           Spacer(),
-          Text('PAY', style: TextStyle(color: Colors.white, fontSize: 16.0)),
+          Text(
+            'checkout_place_payment_button_title'.tr(),
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+          ),
           Spacer(),
           Icon(
             Icons.lock_outline,

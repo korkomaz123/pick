@@ -241,7 +241,6 @@ class _ProductListViewState extends State<ProductListView>
                     }
                     print('reload');
                     print(index);
-
                     if (!productChangeNotifier.data.containsKey(index) ||
                         productChangeNotifier.data[index] == null) {
                       return Container();

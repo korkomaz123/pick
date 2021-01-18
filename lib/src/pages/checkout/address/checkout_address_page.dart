@@ -324,14 +324,20 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   }
 
   void _initForm([AddressEntity selectedAddress]) {
+    countryController.clear();
+    countryId = null;
+    stateController.clear();
+    cityController.clear();
+    streetController.clear();
+    zipCodeController.clear();
+    companyController.clear();
+    phoneNumberController.clear();
     if (selectedAddress == null) {
       selectedAddress = defaultAddress;
     }
-    print(selectedAddress?.company);
     countryController.text = selectedAddress?.country;
     countryId = selectedAddress?.countryId;
     stateController.text = selectedAddress?.region;
-    // regionId = selectedAddress?.region;
     cityController.text = selectedAddress?.city;
     streetController.text = selectedAddress?.street;
     zipCodeController.text = selectedAddress?.zipCode;

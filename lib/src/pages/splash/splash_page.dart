@@ -149,7 +149,11 @@ class _SplashPageState extends State<SplashPage> {
       if (result['code'] == 'SUCCESS') {
         List<dynamic> shippingAddressesList = result['addresses'];
         for (int i = 0; i < shippingAddressesList.length; i++) {
-          addresses.add(AddressEntity.fromJson(shippingAddressesList[i]));
+          final address = AddressEntity.fromJson(shippingAddressesList[i]);
+          addresses.add(address);
+          if (address.defaultShippingAddress == 1) {
+            defaultAddress = address;
+          }
         }
       }
     }
