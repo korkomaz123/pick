@@ -26,7 +26,7 @@ class ReviewProductCard extends StatelessWidget {
         children: [
           Image.network(
             cartItem.product.imageUrl,
-            width: pageStyle.unitWidth * 90,
+            width: pageStyle.unitHeight * 120,
             height: pageStyle.unitHeight * 120,
             fit: BoxFit.fill,
             loadingBuilder: (_, child, chunkEvent) {
