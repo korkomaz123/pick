@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:ciga/src/change_notifier/place_change_notifier.dart';
 import 'package:ciga/src/data/models/address_entity.dart';
 import 'package:ciga/src/data/models/formatted_address_entity.dart';
 import 'package:ciga/src/theme/styles.dart';
 import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,7 +26,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String formLocation;
   String toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
-  ProgressService progressService;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -40,9 +36,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   @override
   void initState() {
     super.initState();
-    progressService = ProgressService(context: context);
     formLocation = widget?.placeChangeNotifier?.formLocation?.name;
-    _onCurrentLocation();
   }
 
   @override
@@ -203,7 +197,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: MaterialButton(
-        onPressed: () => _onCurrentLocation(),
+        onPressed: () {},
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -224,46 +218,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         ),
       ),
     );
-  }
-
-  void _onCurrentLocation() async {
-    // progressService.showProgress();
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
-    }
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
-      }
-    }
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        forceAndroidLocationManager: true,
-      );
-      final myPosition = CameraPosition(
-        target: LatLng(position.latitude, position.longitude),
-        zoom: 14,
-      );
-      // progressService.hideProgress();
-      _updatePosition(myPosition);
-    } catch (e) {
-      print('location error: >> $e');
-    }
   }
 
   void _updatePosition(CameraPosition newPosition) async {

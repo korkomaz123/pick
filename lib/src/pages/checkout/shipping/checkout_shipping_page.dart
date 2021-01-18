@@ -110,7 +110,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
           ),
         ),
         secondary: SvgPicture.asset(
-          method.serviceFees > 0 ? flatRateIcon : freeShippingIcon,
+          method.serviceFees > 0 ? deliveredIcon : freeShippingIcon,
         ),
       ),
     );
