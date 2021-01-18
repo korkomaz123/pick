@@ -70,6 +70,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     cartItemCountBloc = context.read<CartItemCountBloc>();
     localStorageRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    print(orderDetails);
     configureSDK();
   }
 
