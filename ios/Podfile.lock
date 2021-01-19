@@ -4,6 +4,9 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
+  - CardIODynamic (5.4.1)
+  - EditableTextInsetsTextFieldV2 (0.0.2):
+    - TapAdditionsKitV2
   - FBSDKCoreKit (5.15.1):
     - FBSDKCoreKit/Basics (= 5.15.1)
     - FBSDKCoreKit/Core (= 5.15.1)
@@ -19,6 +22,11 @@ PODS:
     - FBSDKCoreKit (~> 5.5)
     - FBSDKLoginKit (~> 5.5)
     - Flutter
+  - geolocator (6.1.9):
+    - Flutter
+  - go_sell_sdk_flutter (0.0.1):
+    - Flutter
+    - goSellSDK (= 2.2.41)
   - google_maps_flutter (0.0.1):
     - Flutter
     - GoogleMaps (< 3.10)
@@ -34,25 +42,43 @@ PODS:
     - AppAuth (~> 1.2)
     - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
+  - goSellSDK (2.2.41):
+    - goSellSDK/Core (= 2.2.41)
+  - goSellSDK/Core (2.2.41):
+    - CardIODynamic
+    - EditableTextInsetsTextFieldV2
+    - SwiftyRSA
+    - TapAdditionsKitV2
+    - TapApplicationV2
+    - TapBundleLocalization
+    - TapCardValidator
+    - TapEditableViewV2
+    - TapFontsKitV2
+    - TapGLKitV2
+    - TapKeychain
+    - TapNetworkManagerV2
+    - TapNibViewV2
+    - TapResponderChainInputViewV2
+    - TapSearchViewV2
+    - TapVisualEffectViewV2
   - GTMAppAuth (1.1.0):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher (~> 1.4)
-  - GTMSessionFetcher (1.4.0):
-    - GTMSessionFetcher/Full (= 1.4.0)
-  - GTMSessionFetcher/Core (1.4.0)
-  - GTMSessionFetcher/Full (1.4.0):
-    - GTMSessionFetcher/Core (= 1.4.0)
+  - GTMSessionFetcher (1.5.0):
+    - GTMSessionFetcher/Full (= 1.5.0)
+  - GTMSessionFetcher/Core (1.5.0)
+  - GTMSessionFetcher/Full (1.5.0):
+    - GTMSessionFetcher/Core (= 1.5.0)
   - image_cropper (0.0.3):
     - Flutter
     - TOCropViewController (~> 2.5.4)
   - image_picker (0.0.1):
     - Flutter
+  - Kingfisher (6.0.1)
   - libphonenumber (0.0.1):
     - Flutter
     - libPhoneNumber-iOS
   - libPhoneNumber-iOS (0.9.15)
-  - location (0.0.1):
-    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - screen (0.0.1):
@@ -63,6 +89,43 @@ PODS:
     - Flutter
   - sign_in_with_apple (0.0.1):
     - Flutter
+  - SwiftyRSA (1.6.0):
+    - SwiftyRSA/ObjC (= 1.6.0)
+  - SwiftyRSA/ObjC (1.6.0)
+  - TapAdditionsKitV2 (0.0.8):
+    - TapSwiftFixesV2
+  - TapApplicationV2 (0.0.2):
+    - TapAdditionsKitV2
+  - TapBundleLocalization (1.0.3)
+  - TapCardValidator (1.2.6)
+  - TapEditableViewV2 (0.0.2):
+    - TapAdditionsKitV2
+  - TapFontsKitV2 (0.0.3):
+    - TapAdditionsKitV2
+  - TapGLKitV2 (0.0.2):
+    - TapAdditionsKitV2
+  - TapKeychain (1.0.5)
+  - TapNetworkManagerV2 (0.0.3):
+    - Kingfisher
+    - TapAdditionsKitV2
+  - TapNibViewV2 (0.0.2):
+    - TapAdditionsKitV2
+  - TapResponderChainInputViewV2 (0.0.3):
+    - TapAdditionsKitV2
+    - TapNibViewV2
+  - TapSearchViewV2 (0.0.3):
+    - TapAdditionsKitV2
+    - TapNibViewV2
+  - TapSwiftFixesV2 (1.0.0):
+    - TapSwiftFixesV2/CoreGraphics (= 1.0.0)
+    - TapSwiftFixesV2/Exceptions (= 1.0.0)
+    - TapSwiftFixesV2/Threading (= 1.0.0)
+  - TapSwiftFixesV2/CoreGraphics (1.0.0)
+  - TapSwiftFixesV2/Exceptions (1.0.0)
+  - TapSwiftFixesV2/Threading (1.0.0)
+  - TapVisualEffectViewV2 (0.0.2):
+    - TapAdditionsKitV2
+    - TapNibViewV2
   - TOCropViewController (2.5.5)
   - url_launcher (0.0.1):
     - Flutter
@@ -76,12 +139,13 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
+  - geolocator (from `.symlinks/plugins/geolocator/ios`)
+  - go_sell_sdk_flutter (from `.symlinks/plugins/go_sell_sdk_flutter/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
-  - location (from `.symlinks/plugins/location/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - screen (from `.symlinks/plugins/screen/ios`)
   - share (from `.symlinks/plugins/share/ios`)
@@ -95,13 +159,32 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - CardIODynamic
+    - EditableTextInsetsTextFieldV2
     - FBSDKCoreKit
     - FBSDKLoginKit
     - GoogleMaps
     - GoogleSignIn
+    - goSellSDK
     - GTMAppAuth
     - GTMSessionFetcher
+    - Kingfisher
     - libPhoneNumber-iOS
+    - SwiftyRSA
+    - TapAdditionsKitV2
+    - TapApplicationV2
+    - TapBundleLocalization
+    - TapCardValidator
+    - TapEditableViewV2
+    - TapFontsKitV2
+    - TapGLKitV2
+    - TapKeychain
+    - TapNetworkManagerV2
+    - TapNibViewV2
+    - TapResponderChainInputViewV2
+    - TapSearchViewV2
+    - TapSwiftFixesV2
+    - TapVisualEffectViewV2
     - TOCropViewController
 
 EXTERNAL SOURCES:
@@ -109,6 +192,10 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_facebook_login:
     :path: ".symlinks/plugins/flutter_facebook_login/ios"
+  geolocator:
+    :path: ".symlinks/plugins/geolocator/ios"
+  go_sell_sdk_flutter:
+    :path: ".symlinks/plugins/go_sell_sdk_flutter/ios"
   google_maps_flutter:
     :path: ".symlinks/plugins/google_maps_flutter/ios"
   google_sign_in:
@@ -119,8 +206,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker/ios"
   libphonenumber:
     :path: ".symlinks/plugins/libphonenumber/ios"
-  location:
-    :path: ".symlinks/plugins/location/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   screen:
@@ -142,32 +227,52 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  CardIODynamic: 4a0d2d0e7b82993ceca67491564934c3475fbe79
+  EditableTextInsetsTextFieldV2: 09a945c086dbcef688fe4fbb8302b408c146c391
   FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
   FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
+  geolocator: 057a0c63a43e9c5296d8ad845a3ac8e6df23d899
+  go_sell_sdk_flutter: ce60591e460c69ccd6941e0170dd78e5c0a0cc70
   google_maps_flutter: c7f9c73576de1fbe152a227bfd6e6c4ae8088619
   google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
   GoogleMaps: 4b5346bddfe6911bb89155d43c903020170523ac
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
+  goSellSDK: 66742f386d33f6945c3aa98ee6ebe3a66eb741a8
   GTMAppAuth: 197a8dabfea5d665224aa00d17f164fc2248dab9
-  GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   image_cropper: c8f9b4157933c7bb965a66d1c5e6c8fd408c6eb4
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  Kingfisher: adde87a4f74f6a3845395769354efff593581740
   libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
-  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   screen: abd91ca7bf3426e1cc3646d27e9b2358d6bf07b0
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sign_in_with_apple: 34f3f5456a45fd7ac5fb42905e2ad31dae061b4a
+  SwiftyRSA: 3b9c9179744217951facc6a3e9ae8d8c97061ffa
+  TapAdditionsKitV2: ba369802e9575c3475ce6d5af228cf60c68edfc9
+  TapApplicationV2: aee3d046c4272778431e1535de6cab34e1269f8c
+  TapBundleLocalization: c7d7c14850223b0ef447aca1269d7308f78d54f9
+  TapCardValidator: 8d43b6e8a1a78276c03116a5b625041adeffeb0d
+  TapEditableViewV2: 8f817337714ee2e89199a02aa2feaad009865ff2
+  TapFontsKitV2: f2a5b342c18784dd2068c1885313057780c49a3d
+  TapGLKitV2: d3ef8bc5d1655a1d46e1696cfdcf19ae6e6d4d35
+  TapKeychain: 143aa70bb2d1b094e0298e944660264034c79849
+  TapNetworkManagerV2: f6e844c76d49c764633722b70e14398409a10317
+  TapNibViewV2: 814b18346837d9dab611a211a702b9b0b8369d07
+  TapResponderChainInputViewV2: 2bb2694e00093a0f64f25c6cf2c670fe25458172
+  TapSearchViewV2: 30e71bdeb9ab0d9bf4ddbf7179ab5614e927fec9
+  TapSwiftFixesV2: a8623a7273c6790b9754ec7e272e96fce7d3a800
+  TapVisualEffectViewV2: b612ffee4d05004c449d433fe45aba9563c8a508
   TOCropViewController: da59f531f8ac8a94ef6d6c0fc34009350f9e8bfe
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
-PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
+PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 
 COCOAPODS: 1.10.0
