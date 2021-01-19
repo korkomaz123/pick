@@ -1,10 +1,10 @@
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/category_menu_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/message_entity.dart';
-import 'package:ciga/src/data/models/payment_method_entity.dart';
-import 'package:ciga/src/data/models/region_entity.dart';
-import 'package:ciga/src/data/models/shipping_method_entity.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/category_menu_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/message_entity.dart';
+import 'package:markaa/src/data/models/payment_method_entity.dart';
+import 'package:markaa/src/data/models/region_entity.dart';
+import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
 List<CategoryEntity> homeCategories = [
@@ -238,11 +238,7 @@ List<Map<String, dynamic>> countries = [
   {"name": "Slovenia", "dial_code": "+386", "code": "SI"},
   {"name": "Solomon Islands", "dial_code": "+677", "code": "SB"},
   {"name": "South Africa", "dial_code": "+27", "code": "ZA"},
-  {
-    "name": "South Georgia and the South Sandwich Islands",
-    "dial_code": "+500",
-    "code": "GS"
-  },
+  {"name": "South Georgia and the South Sandwich Islands", "dial_code": "+500", "code": "GS"},
   {"name": "Spain", "dial_code": "+34", "code": "ES"},
   {"name": "Sri Lanka", "dial_code": "+94", "code": "LK"},
   {"name": "Sudan", "dial_code": "+249", "code": "SD"},
@@ -275,18 +271,10 @@ List<Map<String, dynamic>> countries = [
   {"name": "Zimbabwe", "dial_code": "+263", "code": "ZW"},
   {"name": "land Islands", "dial_code": "", "code": "AX"},
   {"name": "Antarctica", "dial_code": null, "code": "AQ"},
-  {
-    "name": "Bolivia, Plurinational State of",
-    "dial_code": "+591",
-    "code": "BO"
-  },
+  {"name": "Bolivia, Plurinational State of", "dial_code": "+591", "code": "BO"},
   {"name": "Brunei Darussalam", "dial_code": "+673", "code": "BN"},
   {"name": "Cocos (Keeling) Islands", "dial_code": "+61", "code": "CC"},
-  {
-    "name": "Congo, The Democratic Republic of the",
-    "dial_code": "+243",
-    "code": "CD"
-  },
+  {"name": "Congo, The Democratic Republic of the", "dial_code": "+243", "code": "CD"},
   {"name": "Cote d'Ivoire", "dial_code": "+225", "code": "CI"},
   {"name": "Falkland Islands (Malvinas)", "dial_code": "+500", "code": "FK"},
   {"name": "Guernsey", "dial_code": "+44", "code": "GG"},
@@ -295,54 +283,26 @@ List<Map<String, dynamic>> countries = [
   {"name": "Iran, Islamic Republic of", "dial_code": "+98", "code": "IR"},
   {"name": "Isle of Man", "dial_code": "+44", "code": "IM"},
   {"name": "Jersey", "dial_code": "+44", "code": "JE"},
-  {
-    "name": "Korea, Democratic People's Republic of",
-    "dial_code": "+850",
-    "code": "KP"
-  },
+  {"name": "Korea, Democratic People's Republic of", "dial_code": "+850", "code": "KP"},
   {"name": "Korea, Republic of", "dial_code": "+82", "code": "KR"},
-  {
-    "name": "Lao People's Democratic Republic",
-    "dial_code": "+856",
-    "code": "LA"
-  },
+  {"name": "Lao People's Democratic Republic", "dial_code": "+856", "code": "LA"},
   {"name": "Libyan Arab Jamahiriya", "dial_code": "+218", "code": "LY"},
   {"name": "Macao", "dial_code": "+853", "code": "MO"},
-  {
-    "name": "Macedonia, The Former Yugoslav Republic of",
-    "dial_code": "+389",
-    "code": "MK"
-  },
-  {
-    "name": "Micronesia, Federated States of",
-    "dial_code": "+691",
-    "code": "FM"
-  },
+  {"name": "Macedonia, The Former Yugoslav Republic of", "dial_code": "+389", "code": "MK"},
+  {"name": "Micronesia, Federated States of", "dial_code": "+691", "code": "FM"},
   {"name": "Moldova, Republic of", "dial_code": "+373", "code": "MD"},
   {"name": "Mozambique", "dial_code": "+258", "code": "MZ"},
-  {
-    "name": "Palestinian Territory, Occupied",
-    "dial_code": "+970",
-    "code": "PS"
-  },
+  {"name": "Palestinian Territory, Occupied", "dial_code": "+970", "code": "PS"},
   {"name": "Pitcairn", "dial_code": "+872", "code": "PN"},
   {"name": "Réunion", "dial_code": "+262", "code": "RE"},
   {"name": "Russia", "dial_code": "+7", "code": "RU"},
   {"name": "Saint Barthélemy", "dial_code": "+590", "code": "BL"},
-  {
-    "name": "Saint Helena, Ascension and Tristan Da Cunha",
-    "dial_code": "+290",
-    "code": "SH"
-  },
+  {"name": "Saint Helena, Ascension and Tristan Da Cunha", "dial_code": "+290", "code": "SH"},
   {"name": "Saint Kitts and Nevis", "dial_code": "+1 869", "code": "KN"},
   {"name": "Saint Lucia", "dial_code": "+1 758", "code": "LC"},
   {"name": "Saint Martin", "dial_code": "+590", "code": "MF"},
   {"name": "Saint Pierre and Miquelon", "dial_code": "+508", "code": "PM"},
-  {
-    "name": "Saint Vincent and the Grenadines",
-    "dial_code": "+1 784",
-    "code": "VC"
-  },
+  {"name": "Saint Vincent and the Grenadines", "dial_code": "+1 784", "code": "VC"},
   {"name": "Sao Tome and Principe", "dial_code": "+239", "code": "ST"},
   {"name": "Somalia", "dial_code": "+252", "code": "SO"},
   {"name": "Svalbard and Jan Mayen", "dial_code": "+47", "code": "SJ"},
@@ -350,11 +310,7 @@ List<Map<String, dynamic>> countries = [
   {"name": "Taiwan, Province of China", "dial_code": "+886", "code": "TW"},
   {"name": "Tanzania, United Republic of", "dial_code": "+255", "code": "TZ"},
   {"name": "Timor-Leste", "dial_code": "+670", "code": "TL"},
-  {
-    "name": "Venezuela, Bolivarian Republic of",
-    "dial_code": "+58",
-    "code": "VE"
-  },
+  {"name": "Venezuela, Bolivarian Republic of", "dial_code": "+58", "code": "VE"},
   {"name": "Viet Nam", "dial_code": "+84", "code": "VN"},
   {"name": "Virgin Islands, British", "dial_code": "+1 284", "code": "VG"},
   {"name": "Virgin Islands, U.S.", "dial_code": "+1 340", "code": "VI"}

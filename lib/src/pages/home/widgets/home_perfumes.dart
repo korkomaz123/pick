@@ -1,13 +1,13 @@
-import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -141,9 +141,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
           width: widget.pageStyle.deviceWidth,
           height: widget.pageStyle.unitHeight * 500,
           child: Swiper(
-            itemCount: perfumesProducts.length > 12
-                ? 3
-                : (perfumesProducts.length / 4).floor(),
+            itemCount: perfumesProducts.length > 12 ? 3 : (perfumesProducts.length / 4).floor(),
             autoplay: true,
             curve: Curves.easeIn,
             duration: 300,
@@ -229,9 +227,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
           child: Center(
             child: SmoothIndicator(
               offset: activeIndex.toDouble(),
-              count: perfumesProducts.length > 12
-                  ? 3
-                  : (perfumesProducts.length / 4).floor(),
+              count: perfumesProducts.length > 12 ? 3 : (perfumesProducts.length / 4).floor(),
               axisDirection: Axis.horizontal,
               effect: SlideEffect(
                 spacing: 8.0,

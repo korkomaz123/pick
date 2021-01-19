@@ -1,22 +1,22 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/components/no_available_data.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +33,7 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage>
-    with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
@@ -297,9 +296,7 @@ class _MyCartPageState extends State<MyCartPage>
                           cartId: cartId,
                           onRemoveCartItem: () => _onRemoveCartItem(index),
                         ),
-                        index < (myCartItems.length - 1)
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
+                        index < (myCartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -388,9 +385,7 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => user?.token != null
-            ? _onCheckout()
-            : Navigator.pushNamed(context, Routes.signIn),
+        onPressed: () => user?.token != null ? _onCheckout() : Navigator.pushNamed(context, Routes.signIn),
         radius: 0,
       ),
     );

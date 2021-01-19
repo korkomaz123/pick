@@ -1,19 +1,19 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
-import 'package:ciga/src/pages/product_list/widgets/product_no_available.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
+import 'package:markaa/src/pages/product_list/widgets/product_no_available.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -188,8 +188,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               if (isCheckout) {
                 Navigator.pop(context, addresses[selectedIndex]);
               } else {
-                shippingAddressBloc
-                    .add(ShippingAddressLoaded(token: user.token));
+                shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
               }
             }
           },
@@ -204,8 +203,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 }
               }
             }
-            if (state is ShippingAddressLoadedSuccess &&
-                shippingAddresses.isEmpty) {
+            if (state is ShippingAddressLoadedSuccess && shippingAddresses.isEmpty) {
               return ProductNoAvailable(pageStyle: pageStyle);
             }
             print(shippingAddresses.length);
@@ -287,9 +285,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      'phone_number_hint'.tr() +
-                          ': ' +
-                          addresses[index].phoneNumber,
+                      'phone_number_hint'.tr() + ': ' + addresses[index].phoneNumber,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -321,8 +317,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     Routes.editAddress,
                     arguments: addresses[index],
                   );
-                  shippingAddressBloc
-                      .add(ShippingAddressLoaded(token: user.token));
+                  shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
                 },
               ),
             ),

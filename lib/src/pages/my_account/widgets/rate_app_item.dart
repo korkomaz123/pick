@@ -1,6 +1,6 @@
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';

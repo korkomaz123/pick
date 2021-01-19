@@ -1,22 +1,22 @@
 import 'dart:async';
 
-import 'package:ciga/src/components/ciga_page_loading_kit.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/components/ciga_page_loading_kit.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,12 +63,10 @@ class ProductSingleProductView extends StatefulWidget {
   });
 
   @override
-  _ProductSingleProductViewState createState() =>
-      _ProductSingleProductViewState();
+  _ProductSingleProductViewState createState() => _ProductSingleProductViewState();
 }
 
-class _ProductSingleProductViewState extends State<ProductSingleProductView>
-    with TickerProviderStateMixin {
+class _ProductSingleProductViewState extends State<ProductSingleProductView> with TickerProviderStateMixin {
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
@@ -164,9 +162,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       child: Column(
         children: [
           _buildTitlebar(),
-          productEntity.gallery.isNotEmpty
-              ? _buildImageCarousel()
-              : _buildImage(),
+          productEntity.gallery.isNotEmpty ? _buildImageCarousel() : _buildImage(),
           _buildTitle(),
           SizedBox(height: pageStyle.unitHeight * 10),
           _buildDescription(),
@@ -201,9 +197,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               InkWell(
-                onTap: () => user != null
-                    ? _onFavorite()
-                    : Navigator.pushNamed(context, Routes.signIn),
+                onTap: () => user != null ? _onFavorite() : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
@@ -349,13 +343,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     )
                   : SizedBox.shrink(),
               Text(
-                productEntity.stockQty != null && productEntity.stockQty > 0
-                    ? 'in_stock'.tr().toUpperCase()
-                    : 'out_stock'.tr().toUpperCase(),
+                productEntity.stockQty != null && productEntity.stockQty > 0 ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
-                  color: product.stockQty != null && product.stockQty > 0
-                      ? succeedColor
-                      : dangerColor,
+                  color: product.stockQty != null && product.stockQty > 0 ? succeedColor : dangerColor,
                   fontSize: pageStyle.unitFontSize * 11,
                 ),
               ),
@@ -479,12 +469,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               Container(
                 width: pageStyle.unitWidth * 296,
                 height: pageStyle.unitHeight * 50,
-                child: isBuyNow &&
-                        (state is MyCartCreatedInProcess ||
-                            state is MyCartItemAddedInProcess)
+                child: isBuyNow && (state is MyCartCreatedInProcess || state is MyCartItemAddedInProcess)
                     ? Center(child: CircleLoadingSpinner())
-                    : productEntity.stockQty != null &&
-                            productEntity.stockQty > 0
+                    : productEntity.stockQty != null && productEntity.stockQty > 0
                         ? CigaTextButton(
                             title: 'product_buy_now'.tr(),
                             titleSize: pageStyle.unitFontSize * 23,

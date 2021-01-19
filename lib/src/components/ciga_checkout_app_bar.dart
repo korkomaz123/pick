@@ -1,7 +1,7 @@
-import 'package:ciga/src/components/ciga_checkout_stepper.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_checkout_stepper.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -85,9 +85,7 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
                       child: Text(
                         steps[index],
                         style: mediumTextStyle.copyWith(
-                          color: widget.currentIndex == index
-                              ? primaryColor
-                              : Colors.black,
+                          color: widget.currentIndex == index ? primaryColor : Colors.black,
                           fontSize: pageStyle.unitFontSize * 12,
                         ),
                       ),

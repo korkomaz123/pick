@@ -1,6 +1,6 @@
-import 'package:ciga/src/apis/api.dart';
-import 'package:ciga/src/apis/endpoints.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
 
 class BrandRepository {
   //////////////////////////////////////////////////////////////////////////////

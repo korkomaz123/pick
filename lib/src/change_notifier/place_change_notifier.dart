@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/place_entity.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/models/place_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class PlaceChangeNotifier with ChangeNotifier {
-  StreamController<PlaceEntity> locationController =
-      StreamController<PlaceEntity>.broadcast();
+  StreamController<PlaceEntity> locationController = StreamController<PlaceEntity>.broadcast();
   PlaceEntity locationSelect;
   PlaceEntity formLocation;
   List<PlaceEntity> listPlace;
@@ -15,8 +14,7 @@ class PlaceChangeNotifier with ChangeNotifier {
 
   Future<List<PlaceEntity>> search(String query) async {
     String url =
-        "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=KW&query=" +
-            Uri.encodeQueryComponent(query);
+        "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=KW&query=" + Uri.encodeQueryComponent(query);
     Response response = await Dio().get(url);
     listPlace = PlaceEntity.parseLocationList(response.data);
     notifyListeners();

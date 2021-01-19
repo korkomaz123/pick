@@ -1,20 +1,20 @@
 import 'dart:async';
 
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,8 +44,7 @@ class ProductVCard extends StatefulWidget {
   _ProductVCardState createState() => _ProductVCardState();
 }
 
-class _ProductVCardState extends State<ProductVCard>
-    with TickerProviderStateMixin {
+class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMixin {
   bool isWishlist;
   int index;
   String cartId;
@@ -259,9 +258,7 @@ class _ProductVCardState extends State<ProductVCard>
                       ),
                     ),
                     Spacer(),
-                    widget.isShoppingCart &&
-                            widget.product.stockQty != null &&
-                            widget.product.stockQty > 0
+                    widget.isShoppingCart && widget.product.stockQty != null && widget.product.stockQty > 0
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(
@@ -297,14 +294,11 @@ class _ProductVCardState extends State<ProductVCard>
           children: [
             widget.isWishlist
                 ? Align(
-                    alignment:
-                        lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+                    alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: InkWell(
-                        onTap: () => user != null
-                            ? _onWishlist()
-                            : Navigator.pushNamed(context, Routes.signIn),
+                        onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
                         child: Container(
                           width: widget.pageStyle.unitWidth * 18,
                           height: widget.pageStyle.unitHeight * 17,
@@ -328,8 +322,7 @@ class _ProductVCardState extends State<ProductVCard>
   Widget _buildOutofStock() {
     return widget.product.stockQty == null || widget.product.stockQty == 0
         ? Align(
-            alignment:
-                lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: widget.pageStyle.unitWidth * 15,

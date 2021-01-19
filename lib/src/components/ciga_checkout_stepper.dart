@@ -1,4 +1,4 @@
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class CigaCheckoutStepper extends StatefulWidget {
@@ -6,8 +6,7 @@ class CigaCheckoutStepper extends StatefulWidget {
   final int totalSteps;
   final int currentStep;
 
-  CigaCheckoutStepper({this.items, this.totalSteps, this.currentStep = 0})
-      : assert(totalSteps == items.length);
+  CigaCheckoutStepper({this.items, this.totalSteps, this.currentStep = 0}) : assert(totalSteps == items.length);
 
   @override
   _CigaCheckoutStepperState createState() => _CigaCheckoutStepperState();

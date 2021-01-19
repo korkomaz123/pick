@@ -1,9 +1,9 @@
 import 'package:badges/badges.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -93,9 +93,7 @@ class _CigaAppBarState extends State<CigaAppBar> {
             left: widget.pageStyle.unitWidth * 20,
           ),
           child: InkWell(
-            onTap: () => widget.isCartPage
-                ? null
-                : Navigator.pushNamed(context, Routes.myCart),
+            onTap: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
             child: Center(
               child: BlocBuilder<CartItemCountBloc, CartItemCountState>(
                 builder: (context, state) {

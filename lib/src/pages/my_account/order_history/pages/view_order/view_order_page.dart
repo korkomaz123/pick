@@ -1,14 +1,14 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/pages/my_account/order_history/widgets/order_item_card.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_item_card.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -70,8 +70,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   void _checkOrderItems() {
     for (int i = 0; i < order.cartItems.length; i++) {
-      if (order.cartItems[i].product.stockQty != null &&
-          order.cartItems[i].product.stockQty > 0) {
+      if (order.cartItems[i].product.stockQty != null && order.cartItems[i].product.stockQty > 0) {
         isStock = true;
         break;
       }
@@ -147,11 +146,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              !isStock || order.status == OrderStatusEnum.canceled
-                  ? SizedBox.shrink()
-                  : _buildReorderButton(),
-              order.status != OrderStatusEnum.pending &&
-                      order.status != OrderStatusEnum.order_approval_pending
+              !isStock || order.status == OrderStatusEnum.canceled ? SizedBox.shrink() : _buildReorderButton(),
+              order.status != OrderStatusEnum.pending && order.status != OrderStatusEnum.order_approval_pending
                   ? SizedBox.shrink()
                   : _buildCancelOrderButton(),
             ],
@@ -257,9 +253,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               order.cartItems[index].itemCountCanceled > 0
                   ? Column(
                       children: [
-                        order.cartItems[index].itemCount > 0
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
+                        order.cartItems[index].itemCount > 0 ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                         OrderItemCard(
                           pageStyle: pageStyle,
                           cartItem: order.cartItems[index],
@@ -268,9 +262,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                       ],
                     )
                   : SizedBox.shrink(),
-              index < (order.cartItems.length - 1)
-                  ? Divider(color: greyColor, thickness: 0.5)
-                  : SizedBox.shrink(),
+              index < (order.cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
             ],
           );
         },
@@ -419,9 +411,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            order.address.title.isNotEmpty
-                ? '${order.address.title}: '
-                : 'Unnamed title: ',
+            order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
             style: boldTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
               color: primaryColor,

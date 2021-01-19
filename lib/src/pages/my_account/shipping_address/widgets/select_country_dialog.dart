@@ -1,6 +1,6 @@
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -82,11 +82,7 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
           children: countries.map((country) {
             bool isSelected = value == country['code'];
             int index = countries.indexOf(country);
-            bool contain = searchController.text.isEmpty ||
-                country['name']
-                    .toString()
-                    .toUpperCase()
-                    .contains(searchController.text.toUpperCase());
+            bool contain = searchController.text.isEmpty || country['name'].toString().toUpperCase().contains(searchController.text.toUpperCase());
             return contain
                 ? Column(
                     children: [
@@ -118,10 +114,7 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                                 child: Text(
                                   country['name'] + ' (${country['code']})',
                                   style: mediumTextStyle.copyWith(
-                                      fontSize: pageStyle.unitFontSize * 14,
-                                      color: isSelected
-                                          ? primarySwatchColor
-                                          : greyDarkColor),
+                                      fontSize: pageStyle.unitFontSize * 14, color: isSelected ? primarySwatchColor : greyDarkColor),
                                 ),
                               ),
                               isSelected
@@ -135,9 +128,7 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                           ),
                         ),
                       ),
-                      index < countries.length - 1
-                          ? Divider(color: greyColor)
-                          : SizedBox.shrink(),
+                      index < countries.length - 1 ? Divider(color: greyColor) : SizedBox.shrink(),
                     ],
                   )
                 : SizedBox.shrink();

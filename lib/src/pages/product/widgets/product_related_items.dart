@@ -1,9 +1,9 @@
-import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -33,9 +33,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   }
 
   void _getRelatedItems() async {
-    relatedItems = await context
-        .read<ProductRepository>()
-        .getRelatedProducts(product.productId, lang);
+    relatedItems = await context.read<ProductRepository>().getRelatedProducts(product.productId, lang);
     if (mounted) setState(() {});
   }
 
@@ -64,8 +62,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                   height: pageStyle.unitHeight * 260,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount:
-                        relatedItems.length > 10 ? 10 : relatedItems.length,
+                    itemCount: relatedItems.length > 10 ? 10 : relatedItems.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.only(

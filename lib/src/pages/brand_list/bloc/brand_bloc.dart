@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -62,8 +62,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   ) async* {
     yield WishlistAddedInProcess();
     try {
-      bool succeed =
-          await _wishlistRepository.changeWishlist(token, productId, 'add');
+      bool succeed = await _wishlistRepository.changeWishlist(token, productId, 'add');
       if (succeed) {
         yield WishlistAddedSuccess();
       } else {
@@ -82,8 +81,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   ) async* {
     yield WishlistRemovedInProcess();
     try {
-      final result =
-          await _wishlistRepository.changeWishlist(token, productId, 'delete');
+      final result = await _wishlistRepository.changeWishlist(token, productId, 'delete');
       if (result) {
         yield WishlistRemovedSuccess();
       } else {

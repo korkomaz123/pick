@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:ciga/src/data/models/region_entity.dart';
-import 'package:ciga/src/apis/api.dart';
-import 'package:ciga/src/apis/endpoints.dart';
+import 'package:markaa/src/data/models/region_entity.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 
 class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -119,8 +119,7 @@ class ShippingAddressRepository {
     if (result['code'] == 'SUCCESS') {
       List<dynamic> regionsList = result['regions'];
       List<RegionEntity> regions = [];
-      regions =
-          regionsList.map((region) => RegionEntity.fromJson(region)).toList();
+      regions = regionsList.map((region) => RegionEntity.fromJson(region)).toList();
       return regions;
     } else {
       return <RegionEntity>[];

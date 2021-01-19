@@ -1,6 +1,6 @@
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,13 +36,10 @@ class FilterCategorySelect extends StatelessWidget {
             height: itemHeight,
             padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 5),
             decoration: BoxDecoration(
-              color:
-                  values.contains(item['value']) ? primaryColor : Colors.white,
+              color: values.contains(item['value']) ? primaryColor : Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: values.contains(item['value'])
-                    ? Colors.transparent
-                    : primaryColor,
+                color: values.contains(item['value']) ? Colors.transparent : primaryColor,
               ),
             ),
             child: Row(
@@ -59,9 +56,7 @@ class FilterCategorySelect extends StatelessWidget {
                 Text(
                   item['display'].toString().tr(),
                   style: mediumTextStyle.copyWith(
-                    color: values.contains(item['value'])
-                        ? Colors.white
-                        : darkColor,
+                    color: values.contains(item['value']) ? Colors.white : darkColor,
                     fontSize: pageStyle.unitFontSize * 16,
                     fontWeight: FontWeight.w700,
                   ),

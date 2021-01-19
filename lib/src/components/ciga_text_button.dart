@@ -1,4 +1,4 @@
-import 'package:ciga/src/theme/styles.dart';
+import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 
 class CigaTextButton extends StatelessWidget {

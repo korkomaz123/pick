@@ -1,25 +1,25 @@
-import 'package:ciga/src/change_notifier/product_change_notifier.dart';
-import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
-import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
-import 'package:ciga/src/pages/filter/filter_page.dart';
-// import 'package:ciga/src/pages/filter/filter_page.dart';
-import 'package:ciga/src/pages/product_list/widgets/product_sort_by_dialog.dart';
-import 'package:ciga/src/theme/icons.dart';
-// import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
+import 'package:markaa/src/pages/filter/filter_page.dart';
+// import 'package:markaa/src/pages/filter/filter_page.dart';
+import 'package:markaa/src/pages/product_list/widgets/product_sort_by_dialog.dart';
+import 'package:markaa/src/theme/icons.dart';
+// import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,9 +142,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   builder: (ctx, scrollNotifier, child) {
                     double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
                     return AnimatedPositioned(
-                      top: isFromBrand
-                          ? pageStyle.unitHeight * 120 - extra
-                          : pageStyle.unitHeight * 45,
+                      top: isFromBrand ? pageStyle.unitHeight * 120 - extra : pageStyle.unitHeight * 45,
                       left: 0,
                       right: 0,
                       bottom: 0,
@@ -238,11 +236,7 @@ class _ProductListPageState extends State<ProductListPage> {
             Align(
               alignment: Alignment.center,
               child: Text(
-                isFromBrand
-                    ? brand.brandLabel
-                    : ['41', '42', '43'].contains(category.id)
-                        ? category.name.tr()
-                        : category.name,
+                isFromBrand ? brand.brandLabel : ['41', '42', '43'].contains(category.id) ? category.name.tr() : category.name,
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -290,21 +284,11 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories[activeSubcategoryIndex].id,
           brandId: brand.optionId,
-          minPrice: filterValues.containsKey('minPrice')
-              ? filterValues['minPrice']
-              : null,
-          maxPrice: filterValues.containsKey('maxPrice')
-              ? filterValues['maxPrice']
-              : null,
-          selectedCategories: filterValues.containsKey('selectedCategories')
-              ? filterValues['selectedCategories']
-              : [],
-          selectedGenders: filterValues.containsKey('selectedGenders')
-              ? filterValues['selectedGenders']
-              : [],
-          selectedValues: filterValues.containsKey('selectedValues')
-              ? filterValues['selectedValues']
-              : {},
+          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
+          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
+          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
+          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
+          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
         );
       },
     );
@@ -375,8 +359,7 @@ class _ProductListPageState extends State<ProductListPage> {
       );
     }
     filterBloc.add(FilterAttributesLoaded(
-      categoryId:
-          subCategories[index].id == 'all' ? null : subCategories[index].id,
+      categoryId: subCategories[index].id == 'all' ? null : subCategories[index].id,
       brandId: brand.optionId,
       lang: lang,
     ));

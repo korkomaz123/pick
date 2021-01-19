@@ -1,5 +1,5 @@
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/data/models/review_entity.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/review_entity.dart';
 
 class ProductEntity {
   final String entityId;
@@ -62,9 +62,6 @@ class ProductEntity {
         brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'],
         gallery = json['gallery'],
         reviews = json['reviews'],
-        brandEntity =
-            json['brand_entity'] != null && json['brand_entity'] != null
-                ? BrandEntity.fromJson(json['brand_entity'])
-                : BrandEntity(),
+        brandEntity = json['brand_entity'] != null && json['brand_entity'] != null ? BrandEntity.fromJson(json['brand_entity']) : BrandEntity(),
         stockQty = json['stockQty'];
 }

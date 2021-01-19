@@ -1,22 +1,22 @@
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/data/models/user_entity.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
-import 'package:ciga/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/data/models/user_entity.dart';
+import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
+import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,8 +109,7 @@ class _SplashPageState extends State<SplashPage> {
         int count = 0;
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
@@ -118,8 +117,7 @@ class _SplashPageState extends State<SplashPage> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
+          cartTotalPrice += cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
@@ -143,9 +141,7 @@ class _SplashPageState extends State<SplashPage> {
   void _getShippingAddress() async {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
-      final result = await context
-          .read<ShippingAddressRepository>()
-          .getShippingAddresses(token);
+      final result = await context.read<ShippingAddressRepository>().getShippingAddresses(token);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> shippingAddressesList = result['addresses'];
         for (int i = 0; i < shippingAddressesList.length; i++) {
@@ -160,19 +156,16 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getShippingMethod() async {
-    shippingMethods =
-        await context.read<CheckoutRepository>().getShippingMethod(lang);
+    shippingMethods = await context.read<CheckoutRepository>().getShippingMethod(lang);
   }
 
   void _getPaymentMethod() async {
-    paymentMethods =
-        await context.read<CheckoutRepository>().getPaymentMethod(lang);
+    paymentMethods = await context.read<CheckoutRepository>().getPaymentMethod(lang);
   }
 
   void _getSideMenu() async {
     print(lang);
-    sideMenus =
-        await context.read<CategoryRepository>().getMenuCategories(lang);
+    sideMenus = await context.read<CategoryRepository>().getMenuCategories(lang);
   }
 
   void _getRegions() async {
@@ -184,8 +177,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onEnglish() async {
-    EasyLocalization.of(context).locale =
-        EasyLocalization.of(context).supportedLocales.first;
+    EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.first;
     lang = 'en';
     isFirstTime = false;
     await localRepo.setItem('usage', 'markaa');
@@ -194,8 +186,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onArabic() async {
-    EasyLocalization.of(context).locale =
-        EasyLocalization.of(context).supportedLocales.last;
+    EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.last;
     lang = 'ar';
     isFirstTime = false;
     await localRepo.setItem('usage', 'markaa');

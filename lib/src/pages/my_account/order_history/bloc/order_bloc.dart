@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/pages/my_account/order_history/bloc/order_repository.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -69,8 +69,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async* {
     yield OrderCancelledInProcess();
     try {
-      final result = await _orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
+      final result = await _orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         yield OrderCancelledSuccess();
       } else {

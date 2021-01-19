@@ -1,18 +1,18 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_country_input.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/ciga_text_input.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/region_entity.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_country_input.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/ciga_text_input.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/region_entity.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -195,8 +195,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'address_title'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   CigaTextInput(
@@ -205,8 +204,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'first_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                   ),
@@ -216,8 +214,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'last_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                   ),
@@ -227,8 +224,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
                   CigaTextInput(
@@ -255,8 +251,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_country_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
@@ -268,8 +263,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectState(),
@@ -280,8 +274,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   CigaTextInput(
@@ -290,8 +283,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   CigaTextInput(
@@ -300,8 +292,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   CigaTextInput(

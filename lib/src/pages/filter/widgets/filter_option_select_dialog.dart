@@ -1,7 +1,7 @@
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -23,8 +23,7 @@ class FilterOptionSelectDialog extends StatefulWidget {
   });
 
   @override
-  _FilterOptionSelectDialogState createState() =>
-      _FilterOptionSelectDialogState();
+  _FilterOptionSelectDialogState createState() => _FilterOptionSelectDialogState();
 }
 
 class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
@@ -73,9 +72,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
       ),
       body: Column(
         children: [
-          code == 'manufacturer'
-              ? _buildDialogSearchInput()
-              : SizedBox.shrink(),
+          code == 'manufacturer' ? _buildDialogSearchInput() : SizedBox.shrink(),
           _buildOptionsList(),
         ],
       ),
@@ -150,8 +147,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                                 right: widget.pageStyle.unitWidth * 10,
                               ),
                               decoration: BoxDecoration(
-                                color: _getColorFromHex(
-                                    options[index]['color_code']),
+                                color: _getColorFromHex(options[index]['color_code']),
                                 shape: BoxShape.circle,
                               ),
                             )

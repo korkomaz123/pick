@@ -1,20 +1,19 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class NotificationMessagesPage extends StatefulWidget {
   @override
-  _NotificationMessagesPageState createState() =>
-      _NotificationMessagesPageState();
+  _NotificationMessagesPageState createState() => _NotificationMessagesPageState();
 }
 
 class _NotificationMessagesPageState extends State<NotificationMessagesPage> {

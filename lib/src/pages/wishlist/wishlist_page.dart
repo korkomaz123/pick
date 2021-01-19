@@ -1,23 +1,23 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/components/no_available_data.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:ciga/src/pages/wishlist/widgets/wishlist_product_card.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:markaa/src/pages/wishlist/widgets/wishlist_product_card.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,8 +41,7 @@ class WishlistPageView extends StatefulWidget {
   _WishlistPageViewState createState() => _WishlistPageViewState();
 }
 
-class _WishlistPageViewState extends State<WishlistPageView>
-    with TickerProviderStateMixin {
+class _WishlistPageViewState extends State<WishlistPageView> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   bool isDeleting = false;
@@ -137,24 +136,21 @@ class _WishlistPageViewState extends State<WishlistPageView>
                       ));
                     }
                     if (state is WishlistLoadedFailure) {
-                      flushBarService.showErrorMessage(
-                          pageStyle, state.message);
+                      flushBarService.showErrorMessage(pageStyle, state.message);
                     }
                     if (state is WishlistAddedInProcess) {
                       progressService.showProgress();
                     }
                     if (state is WishlistAddedFailure) {
                       progressService.hideProgress();
-                      flushBarService.showErrorMessage(
-                          pageStyle, state.message);
+                      flushBarService.showErrorMessage(pageStyle, state.message);
                     }
                     if (state is WishlistRemovedInProcess) {
                       progressService.showProgress();
                     }
                     if (state is WishlistRemovedFailure) {
                       progressService.hideProgress();
-                      flushBarService.showErrorMessage(
-                          pageStyle, state.message);
+                      flushBarService.showErrorMessage(pageStyle, state.message);
                     }
                     if (state is WishlistAddedSuccess) {
                       progressService.hideProgress();
@@ -256,9 +252,7 @@ class _WishlistPageViewState extends State<WishlistPageView>
                     onAddToCart: () => _onAddToCart(index),
                   ),
                 ),
-                index < (wishlists.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
+                index < (wishlists.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
               ],
             ),
           );

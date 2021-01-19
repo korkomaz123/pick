@@ -1,6 +1,6 @@
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -90,11 +90,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
           children: regions.map((region) {
             bool isSelected = widget.value == region.regionId;
             int index = regions.indexOf(region);
-            bool contain = searchController.text.isEmpty ||
-                region.defaultName
-                    .toString()
-                    .toUpperCase()
-                    .contains(searchController.text.toUpperCase());
+            bool contain = searchController.text.isEmpty || region.defaultName.toString().toUpperCase().contains(searchController.text.toUpperCase());
             return contain
                 ? Column(
                     children: [
@@ -112,8 +108,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                                 region.defaultName,
                                 style: mediumTextStyle.copyWith(
                                   fontSize: widget.pageStyle.unitFontSize * 16,
-                                  color:
-                                      isSelected ? primaryColor : greyDarkColor,
+                                  color: isSelected ? primaryColor : greyDarkColor,
                                 ),
                               ),
                               isSelected
@@ -127,9 +122,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                           ),
                         ),
                       ),
-                      index < countries.length - 1
-                          ? Divider(color: greyColor)
-                          : SizedBox.shrink(),
+                      index < countries.length - 1 ? Divider(color: greyColor) : SizedBox.shrink(),
                     ],
                   )
                 : SizedBox.shrink();

@@ -1,8 +1,8 @@
-import 'package:ciga/src/data/models/product_entity.dart';
-import 'package:ciga/src/data/models/review_entity.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/models/product_entity.dart';
+import 'package:markaa/src/data/models/review_entity.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,9 +30,7 @@ class _ProductReviewState extends State<ProductReview> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context
-          .watch<ProductRepository>()
-          .getProductReviews(widget.product.productId),
+      future: context.watch<ProductRepository>().getProductReviews(widget.product.productId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           reviews = snapshot.data ?? [];
@@ -58,9 +56,7 @@ class _ProductReviewState extends State<ProductReview> {
                         ),
                       ),
                       Column(
-                        children: reviews
-                            .map((review) => _buildProductReview(review))
-                            .toList(),
+                        children: reviews.map((review) => _buildProductReview(review)).toList(),
                       ),
                     ],
                   ),

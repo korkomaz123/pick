@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:equatable/equatable.dart';
 
 part 'cart_item_count_event.dart';

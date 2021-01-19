@@ -1,7 +1,7 @@
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -91,12 +91,10 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
     if (language != value) {
       language = value;
       if (language == 'EN') {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.first;
+        EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.first;
         lang = 'en';
       } else {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.last;
+        EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
       await Future.delayed(Duration(milliseconds: 2000));

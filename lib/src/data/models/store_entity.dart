@@ -1,4 +1,4 @@
-import 'package:ciga/src/data/models/index.dart';
+import 'package:markaa/src/data/models/index.dart';
 
 class StoreEntity {
   final String id;

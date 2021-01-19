@@ -1,45 +1,45 @@
-import 'package:ciga/src/change_notifier/place_change_notifier.dart';
-import 'package:ciga/src/change_notifier/product_change_notifier.dart';
-import 'package:ciga/src/change_notifier/scroll_chagne_notifier.dart';
-import 'package:ciga/src/change_notifier/suggestion_change_notifier.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/pages/brand_list/bloc/brand_bloc.dart';
-import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:ciga/src/pages/category_list/bloc/category/category_bloc.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
-import 'package:ciga/src/pages/category_list/bloc/category_repository.dart';
-import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
-import 'package:ciga/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
-import 'package:ciga/src/pages/filter/bloc/filter_repository.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/pages/home/bloc/home_repository.dart';
-import 'package:ciga/src/pages/my_account/bloc/setting_bloc.dart';
-import 'package:ciga/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:ciga/src/pages/my_account/order_history/bloc/order_bloc.dart';
-import 'package:ciga/src/pages/my_account/order_history/bloc/order_repository.dart';
-import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
-import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
-import 'package:ciga/src/pages/my_account/update_profile/bloc/profile_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
-import 'package:ciga/src/pages/product/bloc/product_bloc.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/pages/product_list/bloc/product_list_bloc.dart';
-import 'package:ciga/src/pages/product_review/bloc/product_review_bloc.dart';
-import 'package:ciga/src/pages/search/bloc/search_bloc.dart';
-import 'package:ciga/src/pages/search/bloc/search_repository.dart';
-import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
-import 'package:ciga/src/pages/sign_in/bloc/sign_in_repository.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/routes/generator.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/change_notifier/place_change_notifier.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
+import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
+import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
+import 'package:markaa/src/pages/category_list/bloc/category/category_bloc.dart';
+import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
+import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
+import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
+import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
+import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
+import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/pages/home/bloc/home_repository.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
+import 'package:markaa/src/pages/my_account/order_history/bloc/order_bloc.dart';
+import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
+import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
+import 'package:markaa/src/pages/product/bloc/product_bloc.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/pages/product_list/bloc/product_list_bloc.dart';
+import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
+import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
+import 'package:markaa/src/pages/search/bloc/search_repository.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/generator.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -330,16 +330,14 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate
-    extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) =>
-      DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;

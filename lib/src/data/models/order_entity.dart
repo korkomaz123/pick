@@ -1,7 +1,7 @@
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/payment_method_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/data/models/shipping_method_entity.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/payment_method_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/data/models/shipping_method_entity.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 
 import 'address_entity.dart';
@@ -64,8 +64,7 @@ class OrderEntity {
     String totalPriceStr = json['grand_total'];
     String subtotalPriceStr = json['subtotal'];
     int totalPrice = int.parse(double.parse(totalPriceStr).toStringAsFixed(0));
-    int subtotalPrice =
-        int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
+    int subtotalPrice = int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
     return totalPrice - subtotalPrice;
   }
 

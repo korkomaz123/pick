@@ -1,14 +1,14 @@
-import 'package:ciga/src/components/ciga_input_field.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/components/ciga_text_input.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_entity.dart';
-import 'package:ciga/src/pages/product_review/bloc/product_review_bloc.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_input_field.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/ciga_text_input.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_entity.dart';
+import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -154,8 +154,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                       controller: usernameController,
                       fontSize: pageStyle.unitFontSize * 16,
                       hint: 'username'.tr(),
-                      validator: (value) =>
-                          value.isEmpty ? 'required_field'.tr() : null,
+                      validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                       inputType: TextInputType.text,
                       padding: 0,
                     ),
@@ -171,8 +170,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 controller: titleController,
                 fontSize: pageStyle.unitFontSize * 16,
                 hint: 'add_review_form_review_title'.tr(),
-                validator: (value) =>
-                    value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                 inputType: TextInputType.text,
                 padding: 0,
               ),
@@ -196,8 +194,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 fillColor: Colors.white,
                 bordered: true,
                 borderColor: greyColor,
-                validator: (value) =>
-                    value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                 maxLines: 6,
               ),
             ),

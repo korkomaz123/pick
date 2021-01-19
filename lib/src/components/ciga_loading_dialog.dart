@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/theme.dart';
 
 class CigaLoadingDialog extends StatelessWidget {
   @override

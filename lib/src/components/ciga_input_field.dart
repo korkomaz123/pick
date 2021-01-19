@@ -1,4 +1,4 @@
-import 'package:ciga/src/theme/styles.dart';
+import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 
 class CigaInputField extends StatelessWidget {
@@ -178,9 +178,7 @@ class CigaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null
-                                  ? focusedColor
-                                  : Color(0xFF82B1FF),
+                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),
@@ -258,9 +256,7 @@ class CigaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null
-                                  ? focusedColor
-                                  : Color(0xFF82B1FF),
+                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),

@@ -1,17 +1,17 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/pages/my_cart/widgets/my_cart_qty_horizontal_picker.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/images.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_cart/widgets/my_cart_qty_horizontal_picker.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/images.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -244,10 +244,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       children: List.generate(
         order.cartItems.length,
         (index) {
-          if (order.cartItems[index].availableCount == null ||
-              order.cartItems[index].availableCount == 0) {
-            order.cartItems[index].availableCount =
-                order.cartItems[index].itemCount;
+          if (order.cartItems[index].availableCount == null || order.cartItems[index].availableCount == 0) {
+            order.cartItems[index].availableCount = order.cartItems[index].itemCount;
           }
           String key = order.cartItems[index].product.productId.toString();
           bool isSelected = cancelItemsMap.containsKey(key);
@@ -259,14 +257,12 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: IconButton(
-                      icon: SvgPicture.asset(
-                          isSelected ? selectedIcon : unSelectedIcon),
+                      icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
                       onPressed: () {
                         if (isSelected) {
                           cancelItemsMap.remove(key);
                         } else {
-                          cancelItemsMap[key] =
-                              order.cartItems[index].itemCount;
+                          cancelItemsMap[key] = order.cartItems[index].itemCount;
                         }
                         setState(() {});
                       },
@@ -274,9 +270,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                   ),
                 ],
               ),
-              index < (order.cartItems.length - 1)
-                  ? Divider(color: greyColor, thickness: 0.5)
-                  : SizedBox.shrink(),
+              index < (order.cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
             ],
           );
         },
@@ -285,8 +279,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
-    bool isDefaultValue =
-        cancelItemsMap.containsKey(cartItem.product.productId.toString());
+    bool isDefaultValue = cancelItemsMap.containsKey(cartItem.product.productId.toString());
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(

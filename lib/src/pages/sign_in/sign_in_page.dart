@@ -1,26 +1,26 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/address_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
-import 'package:ciga/src/pages/wishlist/bloc/wishlist_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,9 +89,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> _shippingAddresses() async {
-    final result = await context
-        .read<ShippingAddressRepository>()
-        .getShippingAddresses(user.token);
+    final result = await context.read<ShippingAddressRepository>().getShippingAddresses(user.token);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> shippingAddressesList = result['addresses'];
       for (int i = 0; i < shippingAddressesList.length; i++) {
@@ -136,8 +134,7 @@ class _SignInPageState extends State<SignInPage> {
         int count = 0;
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
@@ -145,8 +142,7 @@ class _SignInPageState extends State<SignInPage> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
+          cartTotalPrice += cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
@@ -186,9 +182,7 @@ class _SignInPageState extends State<SignInPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -387,9 +381,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
@@ -400,9 +392,7 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],
@@ -504,8 +494,7 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       final profile = json.decode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

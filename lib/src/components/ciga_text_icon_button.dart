@@ -1,4 +1,4 @@
-import 'package:ciga/src/theme/styles.dart';
+import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 

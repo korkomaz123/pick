@@ -1,10 +1,10 @@
-import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/home/bloc/home_bloc.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

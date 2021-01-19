@@ -1,9 +1,9 @@
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -35,8 +35,7 @@ class _OrderCardState extends State<OrderCard> {
 
   void _checkOrderItems() {
     for (int i = 0; i < order.cartItems.length; i++) {
-      if (order.cartItems[i].product.stockQty != null &&
-          order.cartItems[i].product.stockQty > 0) {
+      if (order.cartItems[i].product.stockQty != null && order.cartItems[i].product.stockQty > 0) {
         isStock = true;
         break;
       }
@@ -244,22 +243,19 @@ class _OrderCardState extends State<OrderCard> {
                 ),
                 SizedBox(width: pageStyle.unitWidth * 5),
                 MaterialButton(
-                  onPressed: () =>
-                      !isStock || order.status == OrderStatusEnum.canceled
-                          ? null
-                          : Navigator.pushNamed(
-                              context,
-                              Routes.reOrder,
-                              arguments: order,
-                            ),
+                  onPressed: () => !isStock || order.status == OrderStatusEnum.canceled
+                      ? null
+                      : Navigator.pushNamed(
+                          context,
+                          Routes.reOrder,
+                          arguments: order,
+                        ),
                   minWidth: pageStyle.unitWidth * 150,
                   height: pageStyle.unitHeight * 45,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: !isStock || order.status == OrderStatusEnum.canceled
-                      ? greyColor
-                      : primaryColor,
+                  color: !isStock || order.status == OrderStatusEnum.canceled ? greyColor : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

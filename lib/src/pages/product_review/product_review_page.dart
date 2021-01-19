@@ -1,11 +1,11 @@
-import 'package:ciga/src/data/models/product_entity.dart';
-import 'package:ciga/src/data/models/review_entity.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/models/product_entity.dart';
+import 'package:markaa/src/data/models/review_entity.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:ciga/src/config/config.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,9 +31,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
   }
 
   void _getProductReviews() async {
-    reviews = await context
-        .read<ProductRepository>()
-        .getProductReviews(widget.product.productId);
+    reviews = await context.read<ProductRepository>().getProductReviews(widget.product.productId);
     if (mounted) {
       setState(() {});
     }
@@ -78,8 +76,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
           horizontal: pageStyle.unitWidth * 20,
         ),
         child: Column(
-          children:
-              reviews.map((review) => _buildProductReview(review)).toList(),
+          children: reviews.map((review) => _buildProductReview(review)).toList(),
         ),
       ),
     );

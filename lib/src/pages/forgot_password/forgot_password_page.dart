@@ -1,14 +1,14 @@
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
-import 'package:ciga/src/pages/sign_in/bloc/sign_in_bloc.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,9 +69,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -42,8 +42,7 @@ class ProductReviewBloc extends Bloc<ProductReviewEvent, ProductReviewState> {
   ) async* {
     yield ProductReviewAddedInProcess();
     try {
-      await _productRepository.addReview(
-          productId, title, detail, rate, token, username);
+      await _productRepository.addReview(productId, title, detail, rate, token, username);
       yield ProductReviewAddedSuccess();
     } catch (e) {
       yield ProductReviewAddedFailure(message: e.toString());

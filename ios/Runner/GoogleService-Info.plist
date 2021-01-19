@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>5336431605-ga3jfvhneddhr1r02nqrnpbc3omvh7ao.apps.googleusercontent.com</string>
+	<string>5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.5336431605-ga3jfvhneddhr1r02nqrnpbc3omvh7ao</string>
+	<string>com.googleusercontent.apps.5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>5336431605-jcp12c56lo038ga3g66aq9aa9m9cpgmd.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.markaa.app</string>
+	<string>com.markaa.shop</string>
 	<key>PROJECT_ID</key>
 	<string>markaa-4c479</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:5336431605:ios:54732e316c6f6b1f9a3ebc</string>
+	<string>1:5336431605:ios:463c10f6b4719c7c9a3ebc</string>
 	<key>DATABASE_URL</key>
 	<string>https://markaa-4c479.firebaseio.com</string>
 </dict>

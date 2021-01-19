@@ -1,4 +1,4 @@
-import 'package:ciga/src/data/models/product_model.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 
 class CartItemEntity {
   final ProductModel product;
@@ -20,8 +20,7 @@ class CartItemEntity {
   CartItemEntity.fromJson(Map<String, dynamic> json)
       : product = json['product'],
         itemCount = _getIntValueFromString(json['itemCount']),
-        itemCountCanceled =
-            _getIntValueFromString(json['itemCountCanceled'] ?? '0.00'),
+        itemCountCanceled = _getIntValueFromString(json['itemCountCanceled'] ?? '0.00'),
         availableCount = json['availableCount'],
         itemId = json['itemId'],
         rowPrice = json['rowPrice'] + .0;

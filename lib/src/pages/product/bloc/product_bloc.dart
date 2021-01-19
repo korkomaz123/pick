@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -34,8 +34,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async* {
     yield ProductDetailsLoadedInProcess();
     try {
-      final result =
-          await _productRepository.getProductDetails(productId, lang);
+      final result = await _productRepository.getProductDetails(productId, lang);
       if (result['code'] == 'SUCCESS') {
         // List<dynamic> reviewList = result['reviews'];
         // List<ReviewEntity> reviews = [];

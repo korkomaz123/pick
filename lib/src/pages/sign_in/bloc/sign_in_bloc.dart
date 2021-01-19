@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/index.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -84,8 +84,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignInSubmittedInProcess();
     try {
-      final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang);
+      final result = await _signInRepository.socialLogin(email, firstName, lastName, loginType, lang);
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
@@ -106,8 +105,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignUpSubmittedInProcess();
     try {
-      final result = await _signInRepository.register(
-          firstName, lastName, email, password);
+      final result = await _signInRepository.register(firstName, lastName, email, password);
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];

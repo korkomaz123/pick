@@ -1,8 +1,8 @@
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -90,9 +90,7 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        product.stockQty == null || product.stockQty == 0
-            ? _buildOutOfStock()
-            : SizedBox.shrink(),
+        product.stockQty == null || product.stockQty == 0 ? _buildOutOfStock() : SizedBox.shrink(),
       ],
     );
   }

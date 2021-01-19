@@ -1,10 +1,10 @@
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,12 +146,8 @@ class _FilterPageState extends State<FilterPage> {
           builder: (context, state) {
             if (state is FilterAttributesLoadedSuccess) {
               filters = state.availableFilters;
-              genderList = filters.containsKey('Gender')
-                  ? filters['Gender']['values']
-                  : [];
-              price = filters.containsKey('Price')
-                  ? filters['Price']
-                  : {'min': .0, 'max': .0};
+              genderList = filters.containsKey('Gender') ? filters['Gender']['values'] : [];
+              price = filters.containsKey('Price') ? filters['Price'] : {'min': .0, 'max': .0};
               minPrice = minPrice ?? price['min'] + .0;
               maxPrice = maxPrice ?? price['max'] + .0;
               print(minPrice);
@@ -159,15 +155,12 @@ class _FilterPageState extends State<FilterPage> {
               return Column(
                 children: [
                   _buildCategories(),
-                  price.keys.toList().length > 0
-                      ? _buildPriceRange()
-                      : SizedBox.shrink(),
+                  price.keys.toList().length > 0 ? _buildPriceRange() : SizedBox.shrink(),
                   genderList.isNotEmpty ? _buildGender() : SizedBox.shrink(),
                   Column(
                     children: filters.keys.map((key) {
                       String code = filters[key]['attribute_code'];
-                      return ['price', 'gender', 'rating', 'cat', 'new', 'sale']
-                              .contains(code)
+                      return ['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)
                           ? SizedBox.shrink()
                           : _buildFilterOption(key, filters[key]);
                     }).toList(),
@@ -193,14 +186,8 @@ class _FilterPageState extends State<FilterPage> {
       ),
       child: FilterCategorySelect(
         items: [
-          {
-            'display': homeCategories[0].name,
-            'value': '${homeCategories[0].id}'
-          },
-          {
-            'display': homeCategories[1].name,
-            'value': '${homeCategories[1].id}'
-          },
+          {'display': homeCategories[0].name, 'value': '${homeCategories[0].id}'},
+          {'display': homeCategories[1].name, 'value': '${homeCategories[1].id}'},
         ],
         itemWidth: pageStyle.unitWidth * 160,
         itemHeight: pageStyle.unitHeight * 40,
@@ -240,11 +227,7 @@ class _FilterPageState extends State<FilterPage> {
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
-              '${minPrice.toStringAsFixed(0)} ' +
-                  'currency'.tr() +
-                  ' - ' +
-                  '${maxPrice.toStringAsFixed(0)} ' +
-                  'currency'.tr(),
+              '${minPrice.toStringAsFixed(0)} ' + 'currency'.tr() + ' - ' + '${maxPrice.toStringAsFixed(0)} ' + 'currency'.tr(),
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 18,

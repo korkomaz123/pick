@@ -1,7 +1,7 @@
-import 'package:ciga/src/components/product_h_card.dart';
-import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/product_h_card.dart';
+import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -32,12 +32,9 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: !widget.isVerticalCard
-                ? widget.pageStyle.unitHeight * 320
-                : widget.pageStyle.unitHeight * 460,
+            height: !widget.isVerticalCard ? widget.pageStyle.unitHeight * 320 : widget.pageStyle.unitHeight * 460,
             child: Swiper(
-              itemCount:
-                  widget.products.length > 10 ? 10 : widget.products.length,
+              itemCount: widget.products.length > 10 ? 10 : widget.products.length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -77,8 +74,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count:
-                    widget.products.length > 10 ? 10 : widget.products.length,
+                count: widget.products.length > 10 ? 10 : widget.products.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

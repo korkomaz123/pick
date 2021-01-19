@@ -1,7 +1,7 @@
-import 'package:ciga/src/apis/api.dart';
-import 'package:ciga/src/apis/endpoints.dart';
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/category_menu_entity.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/category_menu_entity.dart';
 
 class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////

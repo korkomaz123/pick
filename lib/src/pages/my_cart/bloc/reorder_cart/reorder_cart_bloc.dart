@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -42,8 +42,7 @@ class ReorderCartBloc extends Bloc<ReorderCartEvent, ReorderCartState> {
         List<CartItemEntity> cartItems = [];
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
           cartItemJson['itemId'] = cartList[i]['itemid'];

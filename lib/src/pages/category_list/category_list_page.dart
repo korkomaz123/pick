@@ -1,18 +1,18 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_list_arguments.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/progress_service.dart';
-import 'package:ciga/src/utils/snackbar_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,9 +106,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
                         (index) => Column(
                           children: [
                             _buildCategoryCard(categories[index]),
-                            activeIndex == index
-                                ? _buildSubcategoriesList(categories[index])
-                                : SizedBox.shrink(),
+                            activeIndex == index ? _buildSubcategoriesList(categories[index]) : SizedBox.shrink(),
                             SizedBox(height: pageStyle.unitHeight * 6),
                           ],
                         ),
@@ -178,8 +176,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
               },
             ),
             Align(
-              alignment:
-                  lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+              alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(
                   left: pageStyle.unitWidth * (lang == 'en' ? 31 : 150),

@@ -1,8 +1,8 @@
-import 'package:ciga/src/data/models/product_entity.dart';
-import 'package:ciga/src/data/models/review_entity.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/models/product_entity.dart';
+import 'package:markaa/src/data/models/review_entity.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -56,9 +56,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             ),
           ),
           FutureBuilder(
-            future: context
-                .watch<ProductRepository>()
-                .getProductReviews(widget.product.productId),
+            future: context.watch<ProductRepository>().getProductReviews(widget.product.productId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 reviews = snapshot.data ?? [];

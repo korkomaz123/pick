@@ -1,15 +1,15 @@
-import 'package:ciga/src/change_notifier/product_change_notifier.dart';
-import 'package:ciga/src/components/product_v_card.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/brand_entity.dart';
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/filter/bloc/filter_bloc.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +50,7 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView>
-    with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
   final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
@@ -100,9 +99,7 @@ class _ProductListViewState extends State<ProductListView>
       );
     }
     filterBloc.add(FilterAttributesLoaded(
-      categoryId: subCategories[widget.activeIndex].id == 'all'
-          ? null
-          : subCategories[widget.activeIndex].id,
+      categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
       brandId: brand.optionId,
       lang: lang,
     ));
@@ -159,8 +156,7 @@ class _ProductListViewState extends State<ProductListView>
         subCategories[tabController.index].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      page = productChangeNotifier
-          .pages[brand.optionId + '_' + subCategories[tabController.index].id];
+      page = productChangeNotifier.pages[brand.optionId + '_' + subCategories[tabController.index].id];
       page += 1;
       await productChangeNotifier.loadMoreBrandProducts(
         page,
@@ -168,11 +164,7 @@ class _ProductListViewState extends State<ProductListView>
         subCategories[tabController.index].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      page = productChangeNotifier.pages[widget.sortByItem +
-          '_' +
-          (brand.optionId ?? '') +
-          '_' +
-          (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages[widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreSortedProducts(
         page,
@@ -181,10 +173,7 @@ class _ProductListViewState extends State<ProductListView>
         widget.sortByItem,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      page = productChangeNotifier.pages['filter_' +
-          (brand.optionId ?? '') +
-          '_' +
-          (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages['filter_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreFilteredProducts(
         page,
@@ -228,27 +217,18 @@ class _ProductListViewState extends State<ProductListView>
                     } else if (widget.viewMode == ProductViewModeEnum.brand) {
                       index = brand.optionId + '_' + cat.id;
                     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-                      index = widget.sortByItem +
-                          '_' +
-                          (brand.optionId ?? '') +
-                          '_' +
-                          (cat.id ?? '');
+                      index = widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
                     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-                      index = 'filter_' +
-                          (brand.optionId ?? '') +
-                          '_' +
-                          (cat.id ?? '');
+                      index = 'filter_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
                     }
                     print('reload');
                     print(index);
-                    if (!productChangeNotifier.data.containsKey(index) ||
-                        productChangeNotifier.data[index] == null) {
+                    if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
                       return Container();
                     } else if (productChangeNotifier.data[index].isEmpty) {
                       return ProductNoAvailable(pageStyle: pageStyle);
                     } else {
-                      return _buildProductList(
-                          productChangeNotifier.data[index]);
+                      return _buildProductList(productChangeNotifier.data[index]);
                     }
                   },
                 ),

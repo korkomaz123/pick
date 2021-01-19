@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/data/models/payment_method_entity.dart';
-import 'package:ciga/src/pages/checkout/bloc/checkout_bloc.dart';
-import 'package:ciga/src/pages/checkout/payment/awesome_loader.dart';
-import 'package:ciga/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/data/models/payment_method_entity.dart';
+import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
+import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
+import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,8 +151,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         activeColor: primaryColor,
         title: Row(
           children: [
-            if (method.title == 'Cash On Delivery' ||
-                method.title == 'الدفع عند التوصيل') ...[
+            if (method.title == 'Cash On Delivery' || method.title == 'الدفع عند التوصيل') ...[
               SvgPicture.asset(
                 'lib/public/icons/cashondelivery.svg',
                 height: 19,
@@ -216,8 +215,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                'currency'.tr() +
-                    ' ${orderDetails['orderDetails']['subTotalPrice']}',
+                'currency'.tr() + ' ${orderDetails['orderDetails']['subTotalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -237,10 +235,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                int.parse(orderDetails['orderDetails']['fees']) == 0
-                    ? 'free'.tr()
-                    : 'currency'.tr() +
-                        ' ${orderDetails['orderDetails']['fees']}',
+                int.parse(orderDetails['orderDetails']['fees']) == 0 ? 'free'.tr() : 'currency'.tr() + ' ${orderDetails['orderDetails']['fees']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -260,8 +255,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                'currency'.tr() +
-                    ' ${orderDetails['orderDetails']['totalPrice']}',
+                'currency'.tr() + ' ${orderDetails['orderDetails']['totalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -306,9 +300,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               _scaffoldKey.currentState.showSnackBar(
                 new SnackBar(
                   backgroundColor: Colors.red,
-                  content: new Text(sdkStatus == ""
-                      ? 'Status: Failed'
-                      : 'Status: [$sdkStatus $responseID ]'),
+                  content: new Text(sdkStatus == "" ? 'Status: Failed' : 'Status: [$sdkStatus $responseID ]'),
                   duration: Duration(seconds: 5),
                 ),
               );
@@ -385,12 +377,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   Future<void> configureApp() async {
     GoSellSdkFlutter.configureApp(
         bundleId: Platform.isAndroid ? "com.app.markaa" : "com.markaa.app",
-        productionSecreteKey: Platform.isAndroid
-            ? "sk_live_yhvSZwp2NcQIDCYW9k3EzLf6"
-            : "sk_live_VwyhnCY6aMlUX1E7oPFQD4cL",
-        sandBoxsecretKey: Platform.isAndroid
-            ? "sk_test_ge1wCvn8pADBXcjasGu9drNS"
-            : "sk_test_DdFoY4SJHiKU9zWev8yGqg6l",
+        productionSecreteKey: Platform.isAndroid ? "sk_live_yhvSZwp2NcQIDCYW9k3EzLf6" : "sk_live_1w4nP6Ne5OFUoS0bY9uTyzJR",
+        sandBoxsecretKey: Platform.isAndroid ? "sk_test_ge1wCvn8pADBXcjasGu9drNS" : "sk_test_8vcH9RlXrGqnxh2DYij1ECQO",
         lang: "en");
   }
 
@@ -404,8 +392,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         transactionCurrency: "kwd",
         amount: orderDetails['orderDetails']['totalPrice'],
         customer: Customer(
-          customerId:
-              "", // customer id is important to retrieve cards saved for this customer
+          customerId: "", // customer id is important to retrieve cards saved for this customer
           email: data['email'],
           isdNumber: "965",
           number: data['telephone'],
@@ -565,15 +552,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     print('$trxMode  card_exp_month  : ${tapSDKResult['card_exp_month']}');
     print('$trxMode  card_exp_year: ${tapSDKResult['card_exp_year']}');
     print('$trxMode  acquirer_id  : ${tapSDKResult['acquirer_id']}');
-    print(
-        '$trxMode  acquirer_response_code : ${tapSDKResult['acquirer_response_code']}');
-    print(
-        '$trxMode  acquirer_response_message: ${tapSDKResult['acquirer_response_message']}');
+    print('$trxMode  acquirer_response_code : ${tapSDKResult['acquirer_response_code']}');
+    print('$trxMode  acquirer_response_message: ${tapSDKResult['acquirer_response_message']}');
     print('$trxMode  source_id: ${tapSDKResult['source_id']}');
     print('$trxMode  source_channel     : ${tapSDKResult['source_channel']}');
     print('$trxMode  source_object      : ${tapSDKResult['source_object']}');
-    print(
-        '$trxMode source_payment_type : ${tapSDKResult['source_payment_type']}');
+    print('$trxMode source_payment_type : ${tapSDKResult['source_payment_type']}');
     responseID = tapSDKResult['charge_id'];
   }
 }

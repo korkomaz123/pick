@@ -1,5 +1,5 @@
-import 'package:ciga/src/apis/api.dart';
-import 'package:ciga/src/apis/endpoints.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 
 class SettingRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -53,12 +53,7 @@ class SettingRepository {
     String comment,
   ) async {
     String url = EndPoints.submitContactUs;
-    final params = {
-      'name': name,
-      'telephone': phone,
-      'email': email,
-      'comment': comment
-    };
+    final params = {'name': name, 'telephone': phone, 'email': email, 'comment': comment};
     return await Api.postMethod(url, data: params);
   }
 

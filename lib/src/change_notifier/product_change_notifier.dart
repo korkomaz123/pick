@@ -1,7 +1,7 @@
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
@@ -118,8 +118,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(
-        brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -180,8 +179,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String sortItem,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(
-        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {

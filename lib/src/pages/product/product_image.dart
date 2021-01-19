@@ -1,5 +1,5 @@
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:photo_view/photo_view.dart';
@@ -83,9 +83,7 @@ class _ProductImageState extends State<ProductImage> {
                               image: NetworkImage(images[index]),
                             ),
                             border: Border.all(
-                              color: activeIndex == index
-                                  ? Colors.black.withOpacity(0.3)
-                                  : Colors.transparent,
+                              color: activeIndex == index ? Colors.black.withOpacity(0.3) : Colors.transparent,
                             ),
                           ),
                         ),

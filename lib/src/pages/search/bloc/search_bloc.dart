@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/search/bloc/search_repository.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -45,8 +45,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async* {
     yield SearchedInProcess();
     try {
-      final result = await _searchRepository.searchProducts(
-          query, categories, brands, genders, lang);
+      final result = await _searchRepository.searchProducts(query, categories, brands, genders, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> productList = result['products'];
         List<ProductModel> products = [];

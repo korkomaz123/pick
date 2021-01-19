@@ -1,5 +1,5 @@
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -47,9 +47,7 @@ class _SearchBasicSelectState extends State<SearchBasicSelect> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
-                    color: isSelected
-                        ? Colors.transparent
-                        : greyDarkColor.withOpacity(0.3),
+                    color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
                   ),
                   color: isSelected ? primaryColor : Colors.white,
                 ),

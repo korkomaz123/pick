@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -24,8 +24,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   final CategoryRepository _categoryRepository;
   final BrandRepository _brandRepository;
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   @override
   Stream<CategoryState> mapEventToState(
@@ -59,8 +58,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         }
         yield CategorySubCategoriesLoadedSuccess(subCategories: categories);
       }
-      final result =
-          await _categoryRepository.getSubCategories(categoryId, lang);
+      final result = await _categoryRepository.getSubCategories(categoryId, lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['categories']);
         List<dynamic> categoryList = result['categories'];

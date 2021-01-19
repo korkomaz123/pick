@@ -1,22 +1,22 @@
-import 'package:ciga/src/components/ciga_app_bar.dart';
-import 'package:ciga/src/components/ciga_bottom_bar.dart';
-import 'package:ciga/src/components/ciga_side_menu.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/enum.dart';
-import 'package:ciga/src/data/models/order_entity.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
-import 'package:ciga/src/pages/checkout/review/widgets/review_product_card.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/images.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/components/ciga_app_bar.dart';
+import 'package:markaa/src/components/ciga_bottom_bar.dart';
+import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
+import 'package:markaa/src/pages/checkout/review/widgets/review_product_card.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/images.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -327,18 +327,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
                           ? Align(
                               alignment: Alignment.topRight,
                               child: IconButton(
-                                onPressed: () =>
-                                    _onDeleteOrderItem(cartItems[index]),
-                                icon: SvgPicture.asset(trashIcon,
-                                    color: greyColor),
+                                onPressed: () => _onDeleteOrderItem(cartItems[index]),
+                                icon: SvgPicture.asset(trashIcon, color: greyColor),
                               ),
                             )
                           : SizedBox.shrink(),
                     ],
                   ),
-                  index < (cartItems.length - 1)
-                      ? Divider(color: greyColor, thickness: 0.5)
-                      : SizedBox.shrink(),
+                  index < (cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                 ],
               );
             },
@@ -489,9 +485,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              order.address.title.isNotEmpty
-                  ? '${order.address.title}: '
-                  : 'Unnamed title: ',
+              order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
               style: boldTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 14,
                 color: primaryColor,

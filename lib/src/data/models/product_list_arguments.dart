@@ -1,5 +1,5 @@
-import 'package:ciga/src/data/models/category_entity.dart';
-import 'package:ciga/src/data/models/index.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
 
 import 'brand_entity.dart';
 

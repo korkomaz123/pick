@@ -1,8 +1,8 @@
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:ciga/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,8 +25,7 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
   });
 
   @override
-  _MyCartQtyHorizontalPickerState createState() =>
-      _MyCartQtyHorizontalPickerState();
+  _MyCartQtyHorizontalPickerState createState() => _MyCartQtyHorizontalPickerState();
 }
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
@@ -43,9 +42,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.cartItem.availableCount > 0
-          ? (widget.onChange ?? () => _onChangeQty())
-          : () => null,
+      onTap: widget.cartItem.availableCount > 0 ? (widget.onChange ?? () => _onChangeQty()) : () => null,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 6,
@@ -119,9 +116,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
   void initState() {
     super.initState();
     myCartRepo = context.read<MyCartRepository>();
-    availableCount = widget.cartItem.availableCount > 20
-        ? 20
-        : widget.cartItem.availableCount;
+    availableCount = widget.cartItem.availableCount > 20 ? 20 : widget.cartItem.availableCount;
     pageStyle = widget.pageStyle;
     productId = widget.cartItem.product.productId;
   }

@@ -1,15 +1,15 @@
-import 'package:ciga/src/change_notifier/suggestion_change_notifier.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/data/mock/mock.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/search/bloc/search_bloc.dart';
-import 'package:ciga/src/pages/search/bloc/search_repository.dart';
-import 'package:ciga/src/routes/routes.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
-import 'package:ciga/src/utils/flushbar_service.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
-import 'package:ciga/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
+import 'package:markaa/src/pages/search/bloc/search_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,8 +70,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _getSearchHistories() async {
     bool isExist = await localStorageRepository.existItem('search_history');
-    searchHistory =
-        isExist ? await localStorageRepository.getItem('search_history') : [];
+    searchHistory = isExist ? await localStorageRepository.getItem('search_history') : [];
     setState(() {});
   }
 
@@ -153,11 +152,7 @@ class _SearchPageState extends State<SearchPage> {
                       _buildSearchField(),
                       products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
                       _buildFilterButton(),
-                      isFiltering
-                          ? _buildFilterOptions()
-                          : searchHistory.isNotEmpty
-                              ? _buildSearchHistory()
-                              : SizedBox.shrink(),
+                      isFiltering ? _buildFilterOptions() : searchHistory.isNotEmpty ? _buildSearchHistory() : SizedBox.shrink(),
                     ],
                   ),
                 ),
@@ -183,8 +178,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Consumer<SuggestionChangeNotifier>(
         builder: (ctx, notifier, _) {
           suggestionChangeNotifier = notifier;
-          return notifier.suggestions.isNotEmpty &&
-                  searchController.text.isNotEmpty
+          return notifier.suggestions.isNotEmpty && searchController.text.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(
                     children: List.generate(
@@ -204,9 +198,7 @@ class _SearchPageState extends State<SearchPage> {
                                 product: notifier.suggestions[index],
                               ),
                             ),
-                            index < (notifier.suggestions.length - 1)
-                                ? Divider(color: greyColor, thickness: 0.5)
-                                : SizedBox.shrink(),
+                            index < (notifier.suggestions.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                           ],
                         );
                       },
@@ -283,9 +275,7 @@ class _SearchPageState extends State<SearchPage> {
                     product: products[index],
                   ),
                 ),
-                index < (products.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
+                index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
               ],
             );
           },

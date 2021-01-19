@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/pages/product/bloc/product_repository.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -17,8 +17,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         super(ProductListInitial());
 
   final ProductRepository _productRepository;
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   @override
   Stream<ProductListState> mapEventToState(
@@ -64,8 +63,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           isReachedMax: products.isEmpty,
         );
       }
-      final result =
-          await _productRepository.getProducts(categoryId, lang, page);
+      final result = await _productRepository.getProducts(categoryId, lang, page);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         List<dynamic> productList = result['products'];
@@ -112,8 +110,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           isReachedMax: products.isNotEmpty,
         );
       }
-      final result = await _productRepository.getBrandProducts(
-          brandId, categoryId, lang, page);
+      final result = await _productRepository.getBrandProducts(brandId, categoryId, lang, page);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         List<dynamic> productList = result['products'];

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ciga/src/data/models/cart_item_entity.dart';
-import 'package:ciga/src/data/models/product_model.dart';
-import 'package:ciga/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -81,8 +81,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
         List<CartItemEntity> cartItems = [];
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
@@ -102,8 +101,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
         List<CartItemEntity> cartItems = [];
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
@@ -130,8 +128,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
   ) async* {
     yield MyCartItemAddedInProcess();
     try {
-      final result =
-          await _myCartRepository.addCartItem(cartId, product.productId, qty);
+      final result = await _myCartRepository.addCartItem(cartId, product.productId, qty);
       if (result['code'] == 'SUCCESS') {
         yield MyCartItemAddedSuccess(product: product);
       } else {
@@ -149,8 +146,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
   ) async* {
     yield MyCartItemUpdatedInProcess();
     try {
-      final result =
-          await _myCartRepository.updateCartItem(cartId, itemId, qty);
+      final result = await _myCartRepository.updateCartItem(cartId, itemId, qty);
       if (result['code'] == 'SUCCESS') {
         yield MyCartItemUpdatedSuccess();
       } else {
@@ -201,8 +197,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
   ) async* {
     yield CouponCodeAppliedInProcess();
     try {
-      final result =
-          await _myCartRepository.couponCode(cartId, couponCode, '0');
+      final result = await _myCartRepository.couponCode(cartId, couponCode, '0');
       // print(result);
       if (result['code'] == 'SUCCESS') {
         yield CouponCodeAppliedSuccess();
@@ -220,8 +215,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
   ) async* {
     yield CouponCodeCancelledInProcess();
     try {
-      final result =
-          await _myCartRepository.couponCode(cartId, couponCode, '1');
+      final result = await _myCartRepository.couponCode(cartId, couponCode, '1');
       if (result['code'] == 'SUCCESS') {
         yield CouponCodeCancelledSuccess();
       } else {

@@ -1,14 +1,14 @@
-import 'package:ciga/src/components/ciga_checkout_app_bar.dart';
-import 'package:ciga/src/components/ciga_text_button.dart';
-import 'package:ciga/src/config/config.dart';
-import 'package:ciga/src/theme/icons.dart';
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
+import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:ciga/src/routes/routes.dart';
+import 'package:markaa/src/routes/routes.dart';
 
 class CheckoutConfirmedPage extends StatefulWidget {
   final String orderNo;
@@ -61,9 +61,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 ),
                 color: greyLightColor,
                 child: Text(
-                  'checkout_ordered_success_text'
-                      .tr()
-                      .replaceFirst('0', widget.orderNo),
+                  'checkout_ordered_success_text'.tr().replaceFirst('0', widget.orderNo),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,

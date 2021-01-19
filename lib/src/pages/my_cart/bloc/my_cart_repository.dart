@@ -1,5 +1,5 @@
-import 'package:ciga/src/apis/api.dart';
-import 'package:ciga/src/apis/endpoints.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 
 class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -51,12 +51,7 @@ class MyCartRepository {
     String qty,
   ) async {
     String url = EndPoints.getCartItems;
-    final params = {
-      'cartId': cartId,
-      'productId': productId,
-      'qty': qty,
-      'type': 'add'
-    };
+    final params = {'cartId': cartId, 'productId': productId, 'qty': qty, 'type': 'add'};
     return await Api.postMethod(url, data: params);
   }
 
@@ -69,12 +64,7 @@ class MyCartRepository {
     String qty,
   ) async {
     String url = EndPoints.getCartItems;
-    final params = {
-      'cartId': cartId,
-      'itemId': itemId,
-      'qty': qty,
-      'type': 'edit'
-    };
+    final params = {'cartId': cartId, 'itemId': itemId, 'qty': qty, 'type': 'edit'};
     return await Api.postMethod(url, data: params);
   }
 
@@ -96,11 +86,7 @@ class MyCartRepository {
     String remove,
   ) async {
     String url = EndPoints.applyCouponCode;
-    final params = {
-      'cartId': cartId,
-      'coupon_code': couponCode,
-      'remove': remove
-    };
+    final params = {'cartId': cartId, 'coupon_code': couponCode, 'remove': remove};
     print(params);
     return await Api.postMethod(url, data: params);
   }

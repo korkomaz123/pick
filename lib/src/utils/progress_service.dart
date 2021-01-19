@@ -1,4 +1,4 @@
-import 'package:ciga/src/components/ciga_loading_dialog.dart';
+import 'package:markaa/src/components/ciga_loading_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

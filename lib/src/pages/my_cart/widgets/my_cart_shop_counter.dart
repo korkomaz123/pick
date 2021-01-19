@@ -1,5 +1,5 @@
-import 'package:ciga/src/theme/styles.dart';
-import 'package:ciga/src/theme/theme.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
@@ -54,9 +54,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
     return Row(
       children: [
         InkWell(
-          onTap: widget.onDecrement == null
-              ? () => _onDecrement()
-              : widget.onDecrement,
+          onTap: widget.onDecrement == null ? () => _onDecrement() : widget.onDecrement,
           child: Container(
             height: widget.pageStyle.unitHeight * 25,
             padding: EdgeInsets.symmetric(horizontal: 4),
@@ -65,24 +63,16 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               border: Border.all(color: greyColor),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'ar'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'ar' ? 10 : 0,
                 ),
                 bottomRight: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'ar'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'ar' ? 10 : 0,
                 ),
                 topLeft: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'en'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'en' ? 10 : 0,
                 ),
                 bottomLeft: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'en'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'en' ? 10 : 0,
                 ),
               ),
             ),
@@ -110,9 +100,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
           ),
         ),
         InkWell(
-          onTap: widget.onIncrement == null
-              ? () => _onIncrement()
-              : widget.onIncrement,
+          onTap: widget.onIncrement == null ? () => _onIncrement() : widget.onIncrement,
           child: Container(
             height: widget.pageStyle.unitHeight * 25,
             padding: EdgeInsets.symmetric(horizontal: 4),
@@ -122,24 +110,16 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               border: Border.all(color: greyColor),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'en'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'en' ? 10 : 0,
                 ),
                 bottomRight: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'en'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'en' ? 10 : 0,
                 ),
                 topLeft: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'ar'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'ar' ? 10 : 0,
                 ),
                 bottomLeft: Radius.circular(
-                  EasyLocalization.of(context).locale.languageCode == 'ar'
-                      ? 10
-                      : 0,
+                  EasyLocalization.of(context).locale.languageCode == 'ar' ? 10 : 0,
                 ),
               ),
             ),
