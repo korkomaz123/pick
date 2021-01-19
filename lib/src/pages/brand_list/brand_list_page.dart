@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -61,12 +61,12 @@ class _BrandListPageState extends State<BrandListPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -109,7 +109,7 @@ class _BrandListPageState extends State<BrandListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.store,
       ),

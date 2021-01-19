@@ -1,4 +1,4 @@
-# ciga
+# Markaa
 
 Ecommerce app for multi-vendor
 

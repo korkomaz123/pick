@@ -1,7 +1,7 @@
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 
-class CigaInputField extends StatelessWidget {
+class MarkaaInputField extends StatelessWidget {
   /// textediting controller
   final TextEditingController controller;
 
@@ -77,7 +77,7 @@ class CigaInputField extends StatelessWidget {
 
   final Color fillColor;
 
-  CigaInputField({
+  MarkaaInputField({
     @required this.width,
     @required this.controller,
     this.borderColor = Colors.transparent,
@@ -178,7 +178,9 @@ class CigaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
+                              color: focusedColor != null
+                                  ? focusedColor
+                                  : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),
@@ -256,7 +258,9 @@ class CigaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
+                              color: focusedColor != null
+                                  ? focusedColor
+                                  : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),

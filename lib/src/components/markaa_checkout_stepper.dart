@@ -1,18 +1,19 @@
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class CigaCheckoutStepper extends StatefulWidget {
+class MarkaaCheckoutStepper extends StatefulWidget {
   final List<Widget> items;
   final int totalSteps;
   final int currentStep;
 
-  CigaCheckoutStepper({this.items, this.totalSteps, this.currentStep = 0}) : assert(totalSteps == items.length);
+  MarkaaCheckoutStepper({this.items, this.totalSteps, this.currentStep = 0})
+      : assert(totalSteps == items.length);
 
   @override
-  _CigaCheckoutStepperState createState() => _CigaCheckoutStepperState();
+  _MarkaaCheckoutStepperState createState() => _MarkaaCheckoutStepperState();
 }
 
-class _CigaCheckoutStepperState extends State<CigaCheckoutStepper> {
+class _MarkaaCheckoutStepperState extends State<MarkaaCheckoutStepper> {
   @override
   Widget build(BuildContext context) {
     return Container(

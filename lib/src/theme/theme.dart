@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 //Common
 
-Map<int, Color> cigaColor = {
+Map<int, Color> markaaColor = {
   50: Color(0xFF0C5EED),
   100: Color(0xFF0C5EED),
   200: Color(0xFF0C5EED),
@@ -15,15 +15,15 @@ Map<int, Color> cigaColor = {
   900: Color(0xFF0C5EED)
 };
 
-MaterialColor cigaMaterialColor = MaterialColor(0xFF0C5EED, cigaColor);
+MaterialColor markaaMaterialColor = MaterialColor(0xFF0C5EED, markaaColor);
 
-final ThemeData cigaAppTheme = ThemeData(
-  primarySwatch: cigaMaterialColor,
+final ThemeData markaaAppTheme = ThemeData(
+  primarySwatch: markaaMaterialColor,
   primaryColor: Color(0xFF287EF2),
   accentColor: Color(0xFFB4C9FA),
   primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
   appBarTheme: AppBarTheme(
-    color: cigaMaterialColor,
+    color: markaaMaterialColor,
     iconTheme: IconThemeData(color: Colors.white),
   ),
 );

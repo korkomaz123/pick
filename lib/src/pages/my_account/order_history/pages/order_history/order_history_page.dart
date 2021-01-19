@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_order_history_app_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_order_history_app_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -49,8 +49,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaOrderHistoryAppBar(pageStyle: pageStyle),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaOrderHistoryAppBar(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state is OrderHistoryLoadedInProcess) {
@@ -107,7 +107,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           );
         },
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),

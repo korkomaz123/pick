@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
-import 'package:markaa/src/components/ciga_country_input.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
-import 'package:markaa/src/components/ciga_text_icon_button.dart';
-import 'package:markaa/src/components/ciga_text_input.dart';
+import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_country_input.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
+import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -78,7 +78,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
+      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
       body: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
           if (state is ShippingAddressAddedInProcess) {
@@ -110,7 +110,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       key: _formKey,
       child: Column(
         children: [
-          CigaTextInput(
+          MarkaaTextInput(
             controller: firstNameController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -120,7 +120,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             inputType: TextInputType.text,
             readOnly: true,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: lastNameController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -130,7 +130,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             inputType: TextInputType.text,
             readOnly: true,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: phoneNumberController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -160,7 +160,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           //     selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
           //   ),
           // ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: emailController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -175,7 +175,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           SizedBox(height: pageStyle.unitHeight * 5),
           _buildSelectAddressButton(),
           SizedBox(height: pageStyle.unitHeight * 20),
-          CigaCountryInput(
+          MarkaaCountryInput(
             controller: countryController,
             countryCode: countryId,
             width: pageStyle.deviceWidth,
@@ -188,7 +188,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             onTap: () => _onSelectCountry(),
             pageStyle: pageStyle,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: stateController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -199,7 +199,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             readOnly: true,
             onTap: () => _onSelectState(),
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: streetController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -208,7 +208,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: companyController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -217,7 +217,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: cityController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -226,7 +226,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             validator: (value) => null,
             inputType: TextInputType.text,
           ),
-          CigaTextInput(
+          MarkaaTextInput(
             controller: zipCodeController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
@@ -250,7 +250,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: CigaTextIconButton(
+      child: MarkaaTextIconButton(
         title: 'checkout_searching_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyColor,
@@ -269,7 +269,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-      child: CigaTextIconButton(
+      child: MarkaaTextIconButton(
         title: 'checkout_select_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: greyColor,
@@ -311,7 +311,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   Widget _buildToolbarButtons() {
     return Container(
       width: pageStyle.unitWidth * 210,
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_continue_shipping_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,

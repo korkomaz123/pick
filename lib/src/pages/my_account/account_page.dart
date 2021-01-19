@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -58,8 +58,8 @@ class _AccountPageState extends State<AccountPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       drawerEnableOpenDragGesture: false,
       body: SingleChildScrollView(
         child: Column(
@@ -71,7 +71,7 @@ class _AccountPageState extends State<AccountPage> {
           ],
         ),
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -93,7 +93,9 @@ class _AccountPageState extends State<AccountPage> {
                   height: pageStyle.unitWidth * 107,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: user.profileUrl.isEmpty ? AssetImage('lib/public/images/profile.png') : NetworkImage(user.profileUrl),
+                      image: user.profileUrl.isEmpty
+                          ? AssetImage('lib/public/images/profile.png')
+                          : NetworkImage(user.profileUrl),
                       fit: BoxFit.cover,
                     ),
                     shape: BoxShape.circle,

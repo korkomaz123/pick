@@ -10,13 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 
-class CigaBottomBar extends StatelessWidget {
+class MarkaaBottomBar extends StatelessWidget {
   final PageStyle pageStyle;
   final BottomEnum activeItem;
 
-  CigaBottomBar({this.pageStyle, this.activeItem});
+  MarkaaBottomBar({this.pageStyle, this.activeItem});
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +115,8 @@ class CigaBottomBar extends StatelessWidget {
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
-          activeIcon: BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
+          activeIcon:
+              BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
             builder: (context, state) {
               int count = state.wishlistItemCount;
               return Badge(

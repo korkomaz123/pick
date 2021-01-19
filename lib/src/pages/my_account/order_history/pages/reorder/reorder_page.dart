@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
@@ -124,12 +124,12 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
           Column(
@@ -140,7 +140,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
           ),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -327,14 +327,18 @@ class _ReOrderPageState extends State<ReOrderPage> {
                           ? Align(
                               alignment: Alignment.topRight,
                               child: IconButton(
-                                onPressed: () => _onDeleteOrderItem(cartItems[index]),
-                                icon: SvgPicture.asset(trashIcon, color: greyColor),
+                                onPressed: () =>
+                                    _onDeleteOrderItem(cartItems[index]),
+                                icon: SvgPicture.asset(trashIcon,
+                                    color: greyColor),
                               ),
                             )
                           : SizedBox.shrink(),
                     ],
                   ),
-                  index < (cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                  index < (cartItems.length - 1)
+                      ? Divider(color: greyColor, thickness: 0.5)
+                      : SizedBox.shrink(),
                 ],
               );
             },
@@ -485,7 +489,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
+              order.address.title.isNotEmpty
+                  ? '${order.address.title}: '
+                  : 'Unnamed title: ',
               style: boldTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 14,
                 color: primaryColor,

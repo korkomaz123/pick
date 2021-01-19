@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -13,7 +13,8 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class NotificationMessagesPage extends StatefulWidget {
   @override
-  _NotificationMessagesPageState createState() => _NotificationMessagesPageState();
+  _NotificationMessagesPageState createState() =>
+      _NotificationMessagesPageState();
 }
 
 class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
@@ -26,15 +27,15 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
           _buildMessageList(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),

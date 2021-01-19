@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_input_field.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_input_field.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -72,11 +72,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess ||
+              state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -132,7 +133,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           );
         },
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -170,7 +171,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: pageStyle.unitHeight * 140,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty ? NetworkImage(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty
+                      ? NetworkImage(user.profileUrl)
+                      : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,
@@ -226,7 +229,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: firstNameController,
         space: pageStyle.unitHeight * 4,
@@ -247,7 +250,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: lastNameController,
         space: pageStyle.unitHeight * 4,
@@ -268,7 +271,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: phoneNumberController,
         space: pageStyle.unitHeight * 4,
@@ -289,7 +292,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: emailController,
         space: pageStyle.unitHeight * 4,
@@ -310,7 +313,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'update_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,

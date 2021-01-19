@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_input_field.dart';
+import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,10 +12,12 @@ class CheckoutAddAddressTitleDialog extends StatefulWidget {
   CheckoutAddAddressTitleDialog({this.pageStyle});
 
   @override
-  _CheckoutAddAddressTitleDialogState createState() => _CheckoutAddAddressTitleDialogState();
+  _CheckoutAddAddressTitleDialogState createState() =>
+      _CheckoutAddAddressTitleDialogState();
 }
 
-class _CheckoutAddAddressTitleDialogState extends State<CheckoutAddAddressTitleDialog> {
+class _CheckoutAddAddressTitleDialogState
+    extends State<CheckoutAddAddressTitleDialog> {
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
 
@@ -34,7 +36,7 @@ class _CheckoutAddAddressTitleDialogState extends State<CheckoutAddAddressTitleD
         ),
         content: Form(
           key: formKey,
-          child: CigaInputField(
+          child: MarkaaInputField(
             width: double.infinity,
             controller: titleController,
             space: widget.pageStyle.unitHeight * 4,

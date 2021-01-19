@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -84,8 +84,8 @@ class _HomePageState extends State<HomePage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: SmartRefresher(
         enablePullDown: true,
         enablePullUp: false,
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),

@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -63,12 +63,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -106,7 +106,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
                         (index) => Column(
                           children: [
                             _buildCategoryCard(categories[index]),
-                            activeIndex == index ? _buildSubcategoriesList(categories[index]) : SizedBox.shrink(),
+                            activeIndex == index
+                                ? _buildSubcategoriesList(categories[index])
+                                : SizedBox.shrink(),
                             SizedBox(height: pageStyle.unitHeight * 6),
                           ],
                         ),
@@ -119,7 +121,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.category,
       ),
@@ -176,7 +178,8 @@ class _CategoryListPageState extends State<CategoryListPage> {
               },
             ),
             Align(
-              alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+              alignment:
+                  lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(
                   left: pageStyle.unitWidth * (lang == 'en' ? 31 : 150),

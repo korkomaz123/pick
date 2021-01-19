@@ -1,5 +1,5 @@
-import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -53,7 +53,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 1),
+      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 1),
       body: Container(
         width: pageStyle.deviceWidth,
         padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -120,7 +120,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_continue_review_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
@@ -136,7 +136,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_back_address_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_loading_dialog.dart';
+import 'package:markaa/src/components/markaa_loading_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class ProgressService {
       context: context,
       barrierColor: Colors.white.withOpacity(0.01),
       builder: (context) {
-        return CigaLoadingDialog();
+        return MarkaaLoadingDialog();
       },
     );
   }

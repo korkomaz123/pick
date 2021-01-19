@@ -1,13 +1,13 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -33,7 +33,8 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
@@ -44,7 +45,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   MyCartBloc myCartBloc;
-  CartItemCountBloc cigaAppBloc;
+  CartItemCountBloc markaaAppBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
 
@@ -59,7 +60,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
       scaffoldKey: scaffoldKey,
     );
     myCartBloc = context.read<MyCartBloc>();
-    cigaAppBloc = context.read<CartItemCountBloc>();
+    markaaAppBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
     _getMyCartId();
@@ -95,16 +96,16 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCartPage: true,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<MyCartBloc, MyCartState>(
         listener: (context, state) {
           if (state is MyCartItemsLoadedSuccess) {
-            cigaAppBloc.add(CartItemCountUpdated(
+            markaaAppBloc.add(CartItemCountUpdated(
               cartItems: state.cartItems,
             ));
           }
@@ -139,7 +140,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
           }
           if (state is MyCartItemsClearedSuccess) {
             progressService.hideProgress();
-            cigaAppBloc.add(CartItemCountSet(cartItemCount: 0));
+            markaaAppBloc.add(CartItemCountSet(cartItemCount: 0));
             myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
           }
           if (state is MyCartItemsClearedFailure) {
@@ -202,7 +203,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
           );
         },
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
@@ -296,7 +297,9 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                           cartId: cartId,
                           onRemoveCartItem: () => _onRemoveCartItem(index),
                         ),
-                        index < (myCartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                        index < (myCartItems.length - 1)
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -379,13 +382,15 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
         horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 15,
       ),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 23,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => user?.token != null ? _onCheckout() : Navigator.pushNamed(context, Routes.signIn),
+        onPressed: () => user?.token != null
+            ? _onCheckout()
+            : Navigator.pushNamed(context, Routes.signIn),
         radius: 0,
       ),
     );

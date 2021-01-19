@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -66,20 +66,24 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                   ),
                   hintText: 'my_cart_coupon_code_hint'.tr(),
                 ),
-                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) =>
+                    value.isEmpty ? 'required_field'.tr() : null,
               ),
             ),
             BlocConsumer<MyCartBloc, MyCartState>(
               listener: (context, state) {},
               builder: (context, state) {
-                if (state is CouponCodeAppliedInProcess || state is CouponCodeCancelledInProcess) {
+                if (state is CouponCodeAppliedInProcess ||
+                    state is CouponCodeCancelledInProcess) {
                   return CircleLoadingSpinner();
                 }
                 return Container(
                   width: widget.pageStyle.unitWidth * 120,
                   height: widget.pageStyle.unitHeight * 40,
                   child: TextIconButton(
-                    title: widget.couponCode.isNotEmpty ? 'cancel_button_title'.tr() : 'apply_button_title'.tr(),
+                    title: widget.couponCode.isNotEmpty
+                        ? 'cancel_button_title'.tr()
+                        : 'apply_button_title'.tr(),
                     iconData: Icons.check_circle_outline,
                     titleSize: widget.pageStyle.unitFontSize * 15,
                     iconSize: widget.pageStyle.unitFontSize * 20,

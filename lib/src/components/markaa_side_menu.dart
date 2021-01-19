@@ -5,8 +5,8 @@ import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -25,16 +25,16 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class CigaSideMenu extends StatefulWidget {
+class MarkaaSideMenu extends StatefulWidget {
   final PageStyle pageStyle;
 
-  CigaSideMenu({this.pageStyle});
+  MarkaaSideMenu({this.pageStyle});
 
   @override
-  _CigaSideMenuState createState() => _CigaSideMenuState();
+  _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _CigaSideMenuState extends State<CigaSideMenu> {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
@@ -123,7 +123,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
                     height: pageStyle.unitWidth * 60,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: user.profileUrl.isNotEmpty ? NetworkImage(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
+                        image: user.profileUrl.isNotEmpty
+                            ? NetworkImage(user.profileUrl)
+                            : AssetImage('lib/public/images/profile.png'),
                         fit: BoxFit.cover,
                       ),
                       shape: BoxShape.circle,
@@ -214,7 +216,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
 
   Widget _buildParentMenu(CategoryMenuEntity menu) {
     return InkWell(
-      onTap: () => menu.subMenu.isNotEmpty ? _displaySubmenu(menu) : _viewCategory(menu, 0),
+      onTap: () => menu.subMenu.isNotEmpty
+          ? _displaySubmenu(menu)
+          : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: pageStyle.unitHeight * 15),
@@ -246,7 +250,9 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
             ),
             menu.subMenu.isNotEmpty
                 ? Icon(
-                    activeMenu == menu.id ? Icons.arrow_drop_down : Icons.arrow_right,
+                    activeMenu == menu.id
+                        ? Icons.arrow_drop_down
+                        : Icons.arrow_right,
                     size: pageStyle.unitFontSize * 25,
                     color: greyDarkColor,
                   )
@@ -361,7 +367,8 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
         int count = 0;
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] =
+              ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
@@ -369,7 +376,8 @@ class _CigaSideMenuState extends State<CigaSideMenu> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
-          cartTotalPrice += cart.itemCount * double.parse(cart.product.price).ceil();
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));

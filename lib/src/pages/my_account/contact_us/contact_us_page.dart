@@ -1,7 +1,7 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -56,8 +56,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      drawer: CigaSideMenu(pageStyle: pageStyle),
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is ContactUsSubmittedInProcess) {
@@ -81,7 +81,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           );
         },
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -277,7 +277,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         horizontal: pageStyle.unitWidth * 80,
         vertical: pageStyle.unitHeight * 20,
       ),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'send_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,

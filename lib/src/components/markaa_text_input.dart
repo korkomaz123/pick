@@ -2,7 +2,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class CigaTextInput extends StatelessWidget {
+class MarkaaTextInput extends StatelessWidget {
   final TextEditingController controller;
   final double width;
   final double padding;
@@ -13,7 +13,7 @@ class CigaTextInput extends StatelessWidget {
   final bool readOnly;
   final Function onTap;
 
-  CigaTextInput({
+  MarkaaTextInput({
     @required this.controller,
     @required this.width,
     @required this.padding,

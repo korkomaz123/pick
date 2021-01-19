@@ -1,8 +1,8 @@
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -110,12 +110,12 @@ class _ProductListPageState extends State<ProductListPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
           isFromBrand
@@ -142,7 +142,9 @@ class _ProductListPageState extends State<ProductListPage> {
                   builder: (ctx, scrollNotifier, child) {
                     double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
                     return AnimatedPositioned(
-                      top: isFromBrand ? pageStyle.unitHeight * 120 - extra : pageStyle.unitHeight * 45,
+                      top: isFromBrand
+                          ? pageStyle.unitHeight * 120 - extra
+                          : pageStyle.unitHeight * 45,
                       left: 0,
                       right: 0,
                       bottom: 0,
@@ -171,7 +173,7 @@ class _ProductListPageState extends State<ProductListPage> {
           _buildAppBar(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: isFromBrand ? BottomEnum.store : BottomEnum.category,
       ),
@@ -236,7 +238,11 @@ class _ProductListPageState extends State<ProductListPage> {
             Align(
               alignment: Alignment.center,
               child: Text(
-                isFromBrand ? brand.brandLabel : ['41', '42', '43'].contains(category.id) ? category.name.tr() : category.name,
+                isFromBrand
+                    ? brand.brandLabel
+                    : ['41', '42', '43'].contains(category.id)
+                        ? category.name.tr()
+                        : category.name,
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -284,11 +290,21 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories[activeSubcategoryIndex].id,
           brandId: brand.optionId,
-          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
-          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
-          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
-          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
-          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
+          minPrice: filterValues.containsKey('minPrice')
+              ? filterValues['minPrice']
+              : null,
+          maxPrice: filterValues.containsKey('maxPrice')
+              ? filterValues['maxPrice']
+              : null,
+          selectedCategories: filterValues.containsKey('selectedCategories')
+              ? filterValues['selectedCategories']
+              : [],
+          selectedGenders: filterValues.containsKey('selectedGenders')
+              ? filterValues['selectedGenders']
+              : [],
+          selectedValues: filterValues.containsKey('selectedValues')
+              ? filterValues['selectedValues']
+              : {},
         );
       },
     );
@@ -359,7 +375,8 @@ class _ProductListPageState extends State<ProductListPage> {
       );
     }
     filterBloc.add(FilterAttributesLoaded(
-      categoryId: subCategories[index].id == 'all' ? null : subCategories[index].id,
+      categoryId:
+          subCategories[index].id == 'all' ? null : subCategories[index].id,
       brandId: brand.optionId,
       lang: lang,
     ));

@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
@@ -69,7 +69,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -180,7 +182,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'get_new_password'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,

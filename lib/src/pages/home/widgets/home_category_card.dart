@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -73,7 +73,7 @@ class HomeCategoryCard extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
-              child: CigaTextButton(
+              child: MarkaaTextButton(
                 title: 'view_all'.tr(),
                 titleSize: pageStyle.unitFontSize * 18,
                 titleColor: greyDarkColor,

@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -23,7 +23,8 @@ class FilterOptionSelectDialog extends StatefulWidget {
   });
 
   @override
-  _FilterOptionSelectDialogState createState() => _FilterOptionSelectDialogState();
+  _FilterOptionSelectDialogState createState() =>
+      _FilterOptionSelectDialogState();
 }
 
 class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
@@ -72,7 +73,9 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
       ),
       body: Column(
         children: [
-          code == 'manufacturer' ? _buildDialogSearchInput() : SizedBox.shrink(),
+          code == 'manufacturer'
+              ? _buildDialogSearchInput()
+              : SizedBox.shrink(),
           _buildOptionsList(),
         ],
       ),
@@ -147,7 +150,8 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                                 right: widget.pageStyle.unitWidth * 10,
                               ),
                               decoration: BoxDecoration(
-                                color: _getColorFromHex(options[index]['color_code']),
+                                color: _getColorFromHex(
+                                    options[index]['color_code']),
                                 shape: BoxShape.circle,
                               ),
                             )
@@ -191,7 +195,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
     return Container(
       width: widget.pageStyle.deviceWidth,
       height: widget.pageStyle.unitHeight * 60,
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'apply_button_title'.tr(),
         titleSize: widget.pageStyle.unitFontSize * 24,
         titleColor: Colors.white,

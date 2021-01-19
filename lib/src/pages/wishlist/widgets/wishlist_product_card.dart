@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -74,7 +74,7 @@ class WishlistProductCard extends StatelessWidget {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 10),
                     product.stockQty != null && product.stockQty > 0
-                        ? CigaTextButton(
+                        ? MarkaaTextButton(
                             title: 'wishlist_add_cart_button_title'.tr(),
                             titleSize: pageStyle.unitFontSize * 15,
                             titleColor: Colors.white,
@@ -90,7 +90,9 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        product.stockQty == null || product.stockQty == 0 ? _buildOutOfStock() : SizedBox.shrink(),
+        product.stockQty == null || product.stockQty == 0
+            ? _buildOutOfStock()
+            : SizedBox.shrink(),
       ],
     );
   }

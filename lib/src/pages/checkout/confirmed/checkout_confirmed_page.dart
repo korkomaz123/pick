@@ -1,5 +1,5 @@
-import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -29,7 +29,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle),
+      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -61,7 +61,9 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 ),
                 color: greyLightColor,
                 child: Text(
-                  'checkout_ordered_success_text'.tr().replaceFirst('0', widget.orderNo),
+                  'checkout_ordered_success_text'
+                      .tr()
+                      .replaceFirst('0', widget.orderNo),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -118,7 +120,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_show_all_ordered_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white70,
@@ -134,7 +136,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_back_shop_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

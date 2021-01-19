@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -78,12 +78,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
@@ -117,7 +117,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           ),
         ),
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -188,7 +188,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               if (isCheckout) {
                 Navigator.pop(context, addresses[selectedIndex]);
               } else {
-                shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+                shippingAddressBloc
+                    .add(ShippingAddressLoaded(token: user.token));
               }
             }
           },
@@ -203,7 +204,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 }
               }
             }
-            if (state is ShippingAddressLoadedSuccess && shippingAddresses.isEmpty) {
+            if (state is ShippingAddressLoadedSuccess &&
+                shippingAddresses.isEmpty) {
               return ProductNoAvailable(pageStyle: pageStyle);
             }
             print(shippingAddresses.length);
@@ -285,7 +287,9 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      'phone_number_hint'.tr() + ': ' + addresses[index].phoneNumber,
+                      'phone_number_hint'.tr() +
+                          ': ' +
+                          addresses[index].phoneNumber,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -317,7 +321,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     Routes.editAddress,
                     arguments: addresses[index],
                   );
-                  shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+                  shippingAddressBloc
+                      .add(ShippingAddressLoaded(token: user.token));
                 },
               ),
             ),

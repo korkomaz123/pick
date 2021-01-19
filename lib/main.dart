@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
-import 'src/pages/ciga_app/ciga_app.dart';
+import 'src/pages/markaa_app/markaa_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: Phoenix(child: CigaApp()),
+      child: Phoenix(child: MarkaaApp()),
     ),
   );
 }

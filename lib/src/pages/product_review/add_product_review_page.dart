@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_input_field.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
-import 'package:markaa/src/components/ciga_text_input.dart';
+import 'package:markaa/src/components/markaa_input_field.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
@@ -149,12 +149,13 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                     padding: EdgeInsets.symmetric(
                       horizontal: pageStyle.unitFontSize * 20,
                     ),
-                    child: CigaTextInput(
+                    child: MarkaaTextInput(
                       width: double.infinity,
                       controller: usernameController,
                       fontSize: pageStyle.unitFontSize * 16,
                       hint: 'username'.tr(),
-                      validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                      validator: (value) =>
+                          value.isEmpty ? 'required_field'.tr() : null,
                       inputType: TextInputType.text,
                       padding: 0,
                     ),
@@ -165,12 +166,13 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
               padding: EdgeInsets.symmetric(
                 horizontal: pageStyle.unitFontSize * 20,
               ),
-              child: CigaTextInput(
+              child: MarkaaTextInput(
                 width: double.infinity,
                 controller: titleController,
                 fontSize: pageStyle.unitFontSize * 16,
                 hint: 'add_review_form_review_title'.tr(),
-                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) =>
+                    value.isEmpty ? 'required_field'.tr() : null,
                 inputType: TextInputType.text,
                 padding: 0,
               ),
@@ -181,7 +183,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 horizontal: pageStyle.unitFontSize * 20,
                 vertical: pageStyle.unitHeight * 20,
               ),
-              child: CigaInputField(
+              child: MarkaaInputField(
                 width: double.infinity,
                 controller: commentController,
                 space: pageStyle.unitHeight * 10,
@@ -194,13 +196,14 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 fillColor: Colors.white,
                 bordered: true,
                 borderColor: greyColor,
-                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) =>
+                    value.isEmpty ? 'required_field'.tr() : null,
                 maxLines: 6,
               ),
             ),
             Container(
               width: pageStyle.unitWidth * 150,
-              child: CigaTextButton(
+              child: MarkaaTextButton(
                 title: 'submit_button_title'.tr(),
                 titleSize: pageStyle.unitFontSize * 16,
                 titleColor: Colors.white,

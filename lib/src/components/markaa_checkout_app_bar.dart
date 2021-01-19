@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_checkout_stepper.dart';
+import 'package:markaa/src/components/markaa_checkout_stepper.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -6,20 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class CigaCheckoutAppBar extends StatefulWidget implements PreferredSizeWidget {
+class MarkaaCheckoutAppBar extends StatefulWidget
+    implements PreferredSizeWidget {
   final PageStyle pageStyle;
   final int currentIndex;
 
-  CigaCheckoutAppBar({this.pageStyle, this.currentIndex});
+  MarkaaCheckoutAppBar({this.pageStyle, this.currentIndex});
 
   @override
-  _CigaCheckoutAppBarState createState() => _CigaCheckoutAppBarState();
+  _MarkaaCheckoutAppBarState createState() => _MarkaaCheckoutAppBarState();
 
   @override
   Size get preferredSize => Size.fromHeight(currentIndex == null ? 60 : 120);
 }
 
-class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
+class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
   PageStyle pageStyle;
   List<String> steps = [
     'checkout_step_address'.tr(),
@@ -75,7 +76,7 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
         preferredSize: Size.fromHeight(widget.currentIndex == null ? 0 : 60),
         child: widget.currentIndex == null
             ? SizedBox.shrink()
-            : CigaCheckoutStepper(
+            : MarkaaCheckoutStepper(
                 totalSteps: 4,
                 currentStep: widget.currentIndex,
                 items: List.generate(
@@ -85,7 +86,9 @@ class _CigaCheckoutAppBarState extends State<CigaCheckoutAppBar> {
                       child: Text(
                         steps[index],
                         style: mediumTextStyle.copyWith(
-                          color: widget.currentIndex == index ? primaryColor : Colors.black,
+                          color: widget.currentIndex == index
+                              ? primaryColor
+                              : Colors.black,
                           fontSize: pageStyle.unitFontSize * 12,
                         ),
                       ),

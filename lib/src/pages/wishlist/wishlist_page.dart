@@ -1,13 +1,13 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
@@ -41,7 +41,8 @@ class WishlistPageView extends StatefulWidget {
   _WishlistPageViewState createState() => _WishlistPageViewState();
 }
 
-class _WishlistPageViewState extends State<WishlistPageView> with TickerProviderStateMixin {
+class _WishlistPageViewState extends State<WishlistPageView>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   bool isDeleting = false;
@@ -95,12 +96,12 @@ class _WishlistPageViewState extends State<WishlistPageView> with TickerProvider
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
           Column(
@@ -136,21 +137,24 @@ class _WishlistPageViewState extends State<WishlistPageView> with TickerProvider
                       ));
                     }
                     if (state is WishlistLoadedFailure) {
-                      flushBarService.showErrorMessage(pageStyle, state.message);
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
                     }
                     if (state is WishlistAddedInProcess) {
                       progressService.showProgress();
                     }
                     if (state is WishlistAddedFailure) {
                       progressService.hideProgress();
-                      flushBarService.showErrorMessage(pageStyle, state.message);
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
                     }
                     if (state is WishlistRemovedInProcess) {
                       progressService.showProgress();
                     }
                     if (state is WishlistRemovedFailure) {
                       progressService.hideProgress();
-                      flushBarService.showErrorMessage(pageStyle, state.message);
+                      flushBarService.showErrorMessage(
+                          pageStyle, state.message);
                     }
                     if (state is WishlistAddedSuccess) {
                       progressService.hideProgress();
@@ -188,7 +192,7 @@ class _WishlistPageViewState extends State<WishlistPageView> with TickerProvider
           _buildLottieAnimationOnAdd(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.wishlist,
       ),
@@ -252,7 +256,9 @@ class _WishlistPageViewState extends State<WishlistPageView> with TickerProvider
                     onAddToCart: () => _onAddToCart(index),
                   ),
                 ),
-                index < (wishlists.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                index < (wishlists.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
               ],
             ),
           );

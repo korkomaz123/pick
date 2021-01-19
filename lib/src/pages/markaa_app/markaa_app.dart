@@ -11,7 +11,7 @@ import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
@@ -51,8 +51,8 @@ import 'package:provider/provider.dart';
 
 import 'bloc/cart_item_count/cart_item_count_bloc.dart';
 
-class CigaApp extends StatelessWidget {
-  CigaApp({Key key}) : super(key: key);
+class MarkaaApp extends StatelessWidget {
+  MarkaaApp({Key key}) : super(key: key);
 
   final homeRepository = HomeRepository();
   final signInRepository = SignInRepository();
@@ -247,17 +247,17 @@ class CigaApp extends StatelessWidget {
           ),
         ),
       ],
-      child: CigaAppView(),
+      child: MarkaaAppView(),
     );
   }
 }
 
-class CigaAppView extends StatefulWidget {
+class MarkaaAppView extends StatefulWidget {
   @override
-  _CigaAppViewState createState() => _CigaAppViewState();
+  _MarkaaAppViewState createState() => _MarkaaAppViewState();
 }
 
-class _CigaAppViewState extends State<CigaAppView> {
+class _MarkaaAppViewState extends State<MarkaaAppView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   CartItemCountBloc cartItemCountBloc;
   MyCartBloc myCartBloc;
@@ -293,7 +293,7 @@ class _CigaAppViewState extends State<CigaAppView> {
         supportedLocales: EasyLocalization.of(context).supportedLocales,
         locale: EasyLocalization.of(context).locale,
         debugShowCheckedModeBanner: false,
-        theme: cigaAppTheme,
+        theme: markaaAppTheme,
         title: 'Markaa',
         initialRoute: '/',
         onGenerateRoute: (settings) {
@@ -330,14 +330,16 @@ class _CigaAppViewState extends State<CigaAppView> {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;

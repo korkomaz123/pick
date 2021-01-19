@@ -1,5 +1,5 @@
-import 'package:markaa/src/components/ciga_checkout_app_bar.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
@@ -62,7 +62,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CigaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 2),
+      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 2),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
@@ -81,7 +81,9 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
                   ),
                 ),
               ),
-              widget.reorder != null ? _buildReorderCartItems() : _buildMyCartItems(),
+              widget.reorder != null
+                  ? _buildReorderCartItems()
+                  : _buildMyCartItems(),
               _buildNote(),
               SizedBox(height: pageStyle.unitHeight * 30),
               _buildContinuePaymentButton(),
@@ -199,7 +201,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_continue_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
@@ -215,7 +217,7 @@ class _CheckoutReviewPageState extends State<CheckoutReviewPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_back_shipping_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: greyColor,

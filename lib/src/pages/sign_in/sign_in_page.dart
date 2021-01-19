@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -89,7 +89,9 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> _shippingAddresses() async {
-    final result = await context.read<ShippingAddressRepository>().getShippingAddresses(user.token);
+    final result = await context
+        .read<ShippingAddressRepository>()
+        .getShippingAddresses(user.token);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> shippingAddressesList = result['addresses'];
       for (int i = 0; i < shippingAddressesList.length; i++) {
@@ -134,7 +136,8 @@ class _SignInPageState extends State<SignInPage> {
         int count = 0;
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] =
+              ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['itemId'] = cartList[i]['itemid'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
@@ -142,7 +145,8 @@ class _SignInPageState extends State<SignInPage> {
           CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
           myCartItems.add(cart);
           count += cart.itemCount;
-          cartTotalPrice += cart.itemCount * double.parse(cart.product.price).ceil();
+          cartTotalPrice +=
+              cart.itemCount * double.parse(cart.product.price).ceil();
         }
         cartItemCount = count;
         cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
@@ -182,7 +186,9 @@ class _SignInPageState extends State<SignInPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -343,7 +349,7 @@ class _SignInPageState extends State<SignInPage> {
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 20,
       ),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'sign_in'.tr(),
         titleSize: pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
@@ -381,7 +387,9 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
@@ -392,7 +400,9 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
+            width: lang == 'en'
+                ? pageStyle.unitWidth * 100
+                : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],
@@ -494,7 +504,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse = await http.get(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       final profile = json.decode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

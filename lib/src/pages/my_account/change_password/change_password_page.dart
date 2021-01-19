@@ -1,8 +1,8 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_input_field.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_input_field.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -48,8 +48,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is PasswordUpdatedInProcess) {
@@ -92,7 +92,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           );
         },
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -121,7 +121,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: oldPasswordController,
         space: pageStyle.unitHeight * 4,
@@ -143,7 +143,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: newPasswordController,
         space: pageStyle.unitHeight * 4,
@@ -165,7 +165,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: confirmPasswordController,
         space: pageStyle.unitHeight * 4,
@@ -194,7 +194,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'update_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 14,
         titleColor: Colors.white,

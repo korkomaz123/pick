@@ -1,6 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -10,13 +10,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
+class MarkaaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool isCartPage;
   final bool isCenter;
 
-  CigaAppBar({
+  MarkaaAppBar({
     this.pageStyle,
     @required this.scaffoldKey,
     this.isCartPage = false,
@@ -24,13 +24,13 @@ class CigaAppBar extends StatefulWidget implements PreferredSizeWidget {
   });
 
   @override
-  _CigaAppBarState createState() => _CigaAppBarState();
+  _MarkaaAppBarState createState() => _MarkaaAppBarState();
 
   @override
   Size get preferredSize => Size.fromHeight(100);
 }
 
-class _CigaAppBarState extends State<CigaAppBar> {
+class _MarkaaAppBarState extends State<MarkaaAppBar> {
   double logoWidth;
 
   double logoHeight;
@@ -93,7 +93,9 @@ class _CigaAppBarState extends State<CigaAppBar> {
             left: widget.pageStyle.unitWidth * 20,
           ),
           child: InkWell(
-            onTap: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
+            onTap: () => widget.isCartPage
+                ? null
+                : Navigator.pushNamed(context, Routes.myCart),
             child: Center(
               child: BlocBuilder<CartItemCountBloc, CartItemCountState>(
                 builder: (context, state) {

@@ -3,7 +3,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class CigaCountryInput extends StatelessWidget {
+class MarkaaCountryInput extends StatelessWidget {
   final TextEditingController controller;
   final String countryCode;
   final double width;
@@ -16,7 +16,7 @@ class CigaCountryInput extends StatelessWidget {
   final Function onTap;
   final PageStyle pageStyle;
 
-  CigaCountryInput({
+  MarkaaCountryInput({
     @required this.controller,
     @required this.countryCode,
     @required this.width,

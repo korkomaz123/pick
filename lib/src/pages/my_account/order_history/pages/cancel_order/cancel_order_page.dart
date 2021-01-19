@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -90,19 +90,19 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
           _buildOrder(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -244,8 +244,10 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       children: List.generate(
         order.cartItems.length,
         (index) {
-          if (order.cartItems[index].availableCount == null || order.cartItems[index].availableCount == 0) {
-            order.cartItems[index].availableCount = order.cartItems[index].itemCount;
+          if (order.cartItems[index].availableCount == null ||
+              order.cartItems[index].availableCount == 0) {
+            order.cartItems[index].availableCount =
+                order.cartItems[index].itemCount;
           }
           String key = order.cartItems[index].product.productId.toString();
           bool isSelected = cancelItemsMap.containsKey(key);
@@ -257,12 +259,14 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: IconButton(
-                      icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
+                      icon: SvgPicture.asset(
+                          isSelected ? selectedIcon : unSelectedIcon),
                       onPressed: () {
                         if (isSelected) {
                           cancelItemsMap.remove(key);
                         } else {
-                          cancelItemsMap[key] = order.cartItems[index].itemCount;
+                          cancelItemsMap[key] =
+                              order.cartItems[index].itemCount;
                         }
                         setState(() {});
                       },
@@ -270,7 +274,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                   ),
                 ],
               ),
-              index < (order.cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+              index < (order.cartItems.length - 1)
+                  ? Divider(color: greyColor, thickness: 0.5)
+                  : SizedBox.shrink(),
             ],
           );
         },
@@ -279,7 +285,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
-    bool isDefaultValue = cancelItemsMap.containsKey(cartItem.product.productId.toString());
+    bool isDefaultValue =
+        cancelItemsMap.containsKey(cartItem.product.productId.toString());
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(

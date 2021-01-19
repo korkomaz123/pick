@@ -1,7 +1,7 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_button.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -29,15 +29,15 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
           _buildContactUsSucceed(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -116,7 +116,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
         vertical: pageStyle.unitHeight * 30,
         horizontal: pageStyle.unitWidth * 30,
       ),
-      child: CigaTextButton(
+      child: MarkaaTextButton(
         title: 'checkout_back_shop_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 17,
         titleColor: greyColor,

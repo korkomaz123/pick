@@ -1,4 +1,4 @@
-import 'package:markaa/src/components/ciga_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
@@ -19,10 +19,12 @@ class ChangeNotificationSettingItem extends StatefulWidget {
   ChangeNotificationSettingItem({this.pageStyle, this.snackBarService});
 
   @override
-  _ChangeNotificationSettingItemState createState() => _ChangeNotificationSettingItemState();
+  _ChangeNotificationSettingItemState createState() =>
+      _ChangeNotificationSettingItemState();
 }
 
-class _ChangeNotificationSettingItemState extends State<ChangeNotificationSettingItem> {
+class _ChangeNotificationSettingItemState
+    extends State<ChangeNotificationSettingItem> {
   PageStyle pageStyle;
   SettingBloc settingBloc;
   SnackBarService snackBarService;
@@ -38,7 +40,9 @@ class _ChangeNotificationSettingItemState extends State<ChangeNotificationSettin
   }
 
   void _getNotification() async {
-    getNotification = await context.read<SettingRepository>().getNotificationSetting(user.token);
+    getNotification = await context
+        .read<SettingRepository>()
+        .getNotificationSetting(user.token);
     setState(() {});
   }
 

@@ -3,7 +3,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/theme/theme.dart';
 
-class CigaLoadingDialog extends StatelessWidget {
+class MarkaaLoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(

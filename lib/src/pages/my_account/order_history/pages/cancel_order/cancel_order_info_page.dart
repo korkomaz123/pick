@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_input_field.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_input_field.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -66,12 +66,12 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state is OrderCancelledInProcess) {
@@ -141,7 +141,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         horizontal: pageStyle.unitFontSize * 20,
         vertical: pageStyle.unitHeight * 20,
       ),
-      child: CigaInputField(
+      child: MarkaaInputField(
         width: double.infinity,
         controller: additionalInfoController,
         space: pageStyle.unitHeight * 4,

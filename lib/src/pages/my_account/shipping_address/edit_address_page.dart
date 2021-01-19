@@ -1,8 +1,8 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_country_input.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
-import 'package:markaa/src/components/ciga_text_input.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_country_input.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -112,12 +112,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
     pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocListener<ShippingAddressBloc, ShippingAddressState>(
         listener: (context, state) {
           if (state is ShippingAddressAddedInProcess) {
@@ -154,7 +154,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           ],
         ),
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -189,45 +189,49 @@ class _EditAddressPageState extends State<EditAddressPage> {
             children: [
               Column(
                 children: [
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: titleController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'address_title'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: firstNameController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'first_name'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: lastNameController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'last_name'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: phoneNumberController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: emailController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
@@ -244,58 +248,63 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     },
                     inputType: TextInputType.phone,
                   ),
-                  CigaCountryInput(
+                  MarkaaCountryInput(
                     controller: countryController,
                     countryCode: countryId,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_country_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
                     pageStyle: pageStyle,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: stateController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectState(),
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: cityController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: streetController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: companyController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  CigaTextInput(
+                  MarkaaTextInput(
                     controller: zipCodeController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,

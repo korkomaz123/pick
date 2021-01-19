@@ -4,7 +4,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/ciga_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
@@ -44,7 +44,8 @@ class ProductHCard extends StatefulWidget {
   _ProductHCardState createState() => _ProductHCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMixin {
+class _ProductHCardState extends State<ProductHCard>
+    with TickerProviderStateMixin {
   bool isWishlist;
   int index;
   String cartId;
@@ -266,7 +267,9 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
                       ),
                     ),
                     Spacer(),
-                    widget.isShoppingCart && widget.product.stockQty != null && widget.product.stockQty > 0
+                    widget.isShoppingCart &&
+                            widget.product.stockQty != null &&
+                            widget.product.stockQty > 0
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(
@@ -302,15 +305,21 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
           children: [
             widget.isWishlist
                 ? Align(
-                    alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+                    alignment:
+                        lang == 'en' ? Alignment.topRight : Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: InkWell(
-                        onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
+                        onTap: () => user != null
+                            ? _onWishlist()
+                            : Navigator.pushNamed(context, Routes.signIn),
                         child: Container(
                           width: widget.pageStyle.unitWidth * 18,
                           height: widget.pageStyle.unitHeight * 17,
-                          child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(wishlistIcon, color: greyColor),
+                          child: isWishlist
+                              ? SvgPicture.asset(wishlistedIcon)
+                              : SvgPicture.asset(wishlistIcon,
+                                  color: greyColor),
                         ),
                       ),
                     ),
@@ -325,7 +334,8 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
   Widget _buildOutofStock() {
     return widget.product.stockQty == null || widget.product.stockQty == 0
         ? Align(
-            alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+            alignment:
+                lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: widget.pageStyle.unitWidth * 15,

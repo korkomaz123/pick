@@ -1,6 +1,6 @@
-import 'package:markaa/src/components/ciga_app_bar.dart';
-import 'package:markaa/src/components/ciga_bottom_bar.dart';
-import 'package:markaa/src/components/ciga_side_menu.dart';
+import 'package:markaa/src/components/markaa_app_bar.dart';
+import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -70,7 +70,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   void _checkOrderItems() {
     for (int i = 0; i < order.cartItems.length; i++) {
-      if (order.cartItems[i].product.stockQty != null && order.cartItems[i].product.stockQty > 0) {
+      if (order.cartItems[i].product.stockQty != null &&
+          order.cartItems[i].product.stockQty > 0) {
         isStock = true;
         break;
       }
@@ -84,19 +85,19 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CigaAppBar(
+      appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: CigaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Column(
         children: [
           _buildAppBar(),
           _buildOrder(),
         ],
       ),
-      bottomNavigationBar: CigaBottomBar(
+      bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
@@ -146,8 +147,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              !isStock || order.status == OrderStatusEnum.canceled ? SizedBox.shrink() : _buildReorderButton(),
-              order.status != OrderStatusEnum.pending && order.status != OrderStatusEnum.order_approval_pending
+              !isStock || order.status == OrderStatusEnum.canceled
+                  ? SizedBox.shrink()
+                  : _buildReorderButton(),
+              order.status != OrderStatusEnum.pending &&
+                      order.status != OrderStatusEnum.order_approval_pending
                   ? SizedBox.shrink()
                   : _buildCancelOrderButton(),
             ],
@@ -253,7 +257,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               order.cartItems[index].itemCountCanceled > 0
                   ? Column(
                       children: [
-                        order.cartItems[index].itemCount > 0 ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                        order.cartItems[index].itemCount > 0
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
                         OrderItemCard(
                           pageStyle: pageStyle,
                           cartItem: order.cartItems[index],
@@ -262,7 +268,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                       ],
                     )
                   : SizedBox.shrink(),
-              index < (order.cartItems.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+              index < (order.cartItems.length - 1)
+                  ? Divider(color: greyColor, thickness: 0.5)
+                  : SizedBox.shrink(),
             ],
           );
         },
@@ -411,7 +419,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
+            order.address.title.isNotEmpty
+                ? '${order.address.title}: '
+                : 'Unnamed title: ',
             style: boldTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 14,
               color: primaryColor,
