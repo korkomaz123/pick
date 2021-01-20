@@ -45,7 +45,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
       builder: (context, state) {
         perfumesProducts = state.perfumesProducts;
         title = state.perfumesTitle;
-        if (perfumesProducts.isNotEmpty) {
+        if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
           return Container(
             width: widget.pageStyle.deviceWidth,
             padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
@@ -141,7 +141,9 @@ class _HomePerfumesState extends State<HomePerfumes> {
           width: widget.pageStyle.deviceWidth,
           height: widget.pageStyle.unitHeight * 500,
           child: Swiper(
-            itemCount: perfumesProducts.length > 12 ? 3 : (perfumesProducts.length / 4).floor(),
+            itemCount: perfumesProducts.length > 12
+                ? 3
+                : (perfumesProducts.length / 4).floor(),
             autoplay: true,
             curve: Curves.easeIn,
             duration: 300,
@@ -227,7 +229,9 @@ class _HomePerfumesState extends State<HomePerfumes> {
           child: Center(
             child: SmoothIndicator(
               offset: activeIndex.toDouble(),
-              count: perfumesProducts.length > 12 ? 3 : (perfumesProducts.length / 4).floor(),
+              count: perfumesProducts.length > 12
+                  ? 3
+                  : (perfumesProducts.length / 4).floor(),
               axisDirection: Axis.horizontal,
               effect: SlideEffect(
                 spacing: 8.0,

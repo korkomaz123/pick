@@ -163,10 +163,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       padding: EdgeInsets.all(pageStyle.unitWidth * 8),
       child: Column(
         children: [
-          _buildTitlebar(),
-          productEntity.gallery.isNotEmpty
-              ? _buildImageCarousel()
-              : _buildImage(),
+          if (productEntity.gallery.isNotEmpty) ...[
+            _buildImageCarousel()
+          ] else ...[
+            Container(
+              width: double.infinity,
+              height: pageStyle.unitHeight * 300,
+              child: Image.asset('lib/public/images/loading/image_loading.jpg'),
+            )
+          ],
           _buildTitle(),
           SizedBox(height: pageStyle.unitHeight * 10),
           _buildDescription(),
@@ -225,59 +230,10 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildImageCarousel() {
     return Container(
       width: double.infinity,
-      height: widget.pageStyle.unitHeight * 300,
+      height: widget.pageStyle.unitHeight * 350,
       child: Stack(
         children: [
-          Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 300,
-            child: productEntity.gallery.length < 2
-                ? Image.network(
-                    productEntity.gallery[0],
-                    width: pageStyle.unitWidth * 343,
-                    height: pageStyle.unitHeight * 240.31,
-                    loadingBuilder: (_, child, chunkEvent) {
-                      return chunkEvent != null
-                          ? Image.asset(
-                              'lib/public/images/loading/image_loading.jpg',
-                            )
-                          : child;
-                    },
-                  )
-                : Swiper(
-                    itemCount: productEntity.gallery.length,
-                    autoplay: true,
-                    curve: Curves.easeIn,
-                    duration: 300,
-                    autoplayDelay: 5000,
-                    onIndexChanged: (value) {
-                      setState(() {
-                        activeIndex = value;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          Routes.viewFullImage,
-                          arguments: productEntity.gallery,
-                        ),
-                        child: Image.network(
-                          productEntity.gallery[index],
-                          width: pageStyle.unitWidth * 343,
-                          height: pageStyle.unitHeight * 240.31,
-                          loadingBuilder: (_, child, chunkEvent) {
-                            return chunkEvent != null
-                                ? Image.asset(
-                                    'lib/public/images/loading/image_loading.jpg',
-                                  )
-                                : child;
-                          },
-                        ),
-                      );
-                    },
-                  ),
-          ),
+          _buildProduct(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -301,16 +257,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               ),
             ),
           ),
+          _buildTitlebar(),
         ],
       ),
-    );
-  }
-
-  Widget _buildImage() {
-    return Container(
-      width: double.infinity,
-      height: pageStyle.unitHeight * 300,
-      child: Image.asset('lib/public/images/loading/image_loading.jpg'),
     );
   }
 
@@ -323,31 +272,33 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              productEntity.brandLabel.isNotEmpty
-                  ? InkWell(
-                      onTap: () {
-                        ProductListArguments arguments = ProductListArguments(
-                          category: CategoryEntity(),
-                          subCategory: [],
-                          brand: productEntity.brandEntity,
-                          selectedSubCategoryIndex: 0,
-                          isFromBrand: true,
-                        );
-                        Navigator.pushNamed(
-                          context,
-                          Routes.productList,
-                          arguments: arguments,
-                        );
-                      },
-                      child: Text(
-                        productEntity.brandLabel,
-                        style: mediumTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: pageStyle.unitFontSize * 13,
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
+              if (productEntity.brandLabel.isNotEmpty) ...[
+                InkWell(
+                  onTap: () {
+                    ProductListArguments arguments = ProductListArguments(
+                      category: CategoryEntity(),
+                      subCategory: [],
+                      brand: productEntity.brandEntity,
+                      selectedSubCategoryIndex: 0,
+                      isFromBrand: true,
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      Routes.productList,
+                      arguments: arguments,
+                    );
+                  },
+                  child: Text(
+                    productEntity.brandLabel,
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: pageStyle.unitFontSize * 13,
+                    ),
+                  ),
+                )
+              ] else ...[
+                SizedBox.shrink()
+              ],
               Text(
                 productEntity.stockQty != null && productEntity.stockQty > 0
                     ? 'in_stock'.tr().toUpperCase()
@@ -373,47 +324,106 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     );
   }
 
+  Widget _buildProduct() {
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 300,
+      child: productEntity.gallery.length < 2
+          ? Image.network(
+              productEntity.gallery[0],
+              width: pageStyle.unitWidth * 343,
+              height: pageStyle.unitHeight * 240.31,
+              loadingBuilder: (_, child, chunkEvent) {
+                if (chunkEvent != null) {
+                  return Image.asset(
+                    'lib/public/images/loading/image_loading.jpg',
+                  );
+                }
+                return child;
+              },
+            )
+          : Swiper(
+              itemCount: productEntity.gallery.length,
+              autoplay: true,
+              curve: Curves.easeIn,
+              duration: 300,
+              autoplayDelay: 5000,
+              onIndexChanged: (value) {
+                setState(() {
+                  activeIndex = value;
+                });
+              },
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    Routes.viewFullImage,
+                    arguments: productEntity.gallery,
+                  ),
+                  child: Image.network(
+                    productEntity.gallery[index],
+                    width: pageStyle.unitWidth * 343,
+                    height: pageStyle.unitHeight * 240.31,
+                    loadingBuilder: (_, child, chunkEvent) {
+                      if (chunkEvent != null) {
+                        return Image.asset(
+                          'lib/public/images/loading/image_loading.jpg',
+                        );
+                      }
+                      return child;
+                    },
+                  ),
+                );
+              },
+            ),
+    );
+  }
+
   Widget _buildDescription() {
     return Container(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          isMore
-              ? Text(
-                  productEntity.shortDescription,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
-                  ),
-                )
-              : isLength(productEntity.shortDescription, 110)
-                  ? Text(
-                      productEntity.shortDescription.substring(0, 110) + ' ...',
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
-                      ),
-                    )
-                  : Text(
-                      productEntity.shortDescription,
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
-                      ),
-                    ),
-          isLength(productEntity.shortDescription, 110)
-              ? InkWell(
-                  onTap: () {
-                    isMore = !isMore;
-                    setState(() {});
-                  },
-                  child: Text(
-                    isMore ? 'product_less'.tr() : 'product_more'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 14,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink()
+          if (isMore) ...[
+            Text(
+              productEntity.shortDescription,
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 12,
+              ),
+            )
+          ] else if (isLength(productEntity.shortDescription, 110)) ...[
+            Text(
+              productEntity.shortDescription.substring(0, 110) + ' ...',
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 12,
+              ),
+            )
+          ] else ...[
+            Text(
+              productEntity.shortDescription,
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 12,
+              ),
+            )
+          ],
+          if (isLength(productEntity.shortDescription, 110)) ...[
+            InkWell(
+              onTap: () {
+                isMore = !isMore;
+                setState(() {});
+              },
+              child: Text(
+                isMore ? 'product_less'.tr() : 'product_more'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: pageStyle.unitFontSize * 14,
+                ),
+              ),
+            )
+          ] else ...[
+            SizedBox.shrink()
+          ],
         ],
       ),
     );
@@ -471,51 +481,63 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
         }
       },
       builder: (context, state) {
+        bool isCreating = state is MyCartCreatedInProcess;
+        bool isAdding = state is MyCartItemAddedInProcess;
+        bool isStock =
+            productEntity.stockQty != null && productEntity.stockQty > 0;
         return Container(
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: pageStyle.unitWidth * 296,
-                height: pageStyle.unitHeight * 50,
-                child: isBuyNow &&
-                        (state is MyCartCreatedInProcess ||
-                            state is MyCartItemAddedInProcess)
-                    ? Center(child: CircleLoadingSpinner())
-                    : productEntity.stockQty != null &&
-                            productEntity.stockQty > 0
-                        ? MarkaaTextButton(
-                            title: 'product_buy_now'.tr(),
-                            titleSize: pageStyle.unitFontSize * 23,
-                            titleColor: Colors.white,
-                            buttonColor: Color(0xFFFF8B00),
-                            borderColor: Colors.transparent,
-                            radius: 1,
-                            onPressed: () => _onBuyNow(),
-                          )
-                        : SizedBox.shrink(),
-              ),
-              productEntity.stockQty != null && productEntity.stockQty > 0
-                  ? RoundImageButton(
-                      width: pageStyle.unitWidth * 58,
-                      height: pageStyle.unitHeight * 50,
-                      color: primarySwatchColor,
-                      child: ScaleTransition(
-                        scale: _addToCartScaleAnimation,
-                        child: Container(
-                          width: pageStyle.unitWidth * 25,
-                          height: pageStyle.unitHeight * 25,
-                          child: SvgPicture.asset(
-                            shoppingCartIcon,
-                            color: Colors.white,
-                          ),
-                        ),
+              if (isBuyNow && (isCreating || isAdding)) ...[
+                Container(
+                  width: pageStyle.unitWidth * 296,
+                  height: pageStyle.unitHeight * 50,
+                  child: Center(child: CircleLoadingSpinner()),
+                )
+              ] else if (isStock) ...[
+                Container(
+                  width: pageStyle.unitWidth * 296,
+                  height: pageStyle.unitHeight * 50,
+                  child: MarkaaTextButton(
+                    title: 'product_buy_now'.tr(),
+                    titleSize: pageStyle.unitFontSize * 23,
+                    titleColor: Colors.white,
+                    buttonColor: Color(0xFFFF8B00),
+                    borderColor: Colors.transparent,
+                    radius: 1,
+                    onPressed: () => _onBuyNow(),
+                  ),
+                )
+              ] else ...[
+                Container(
+                  width: pageStyle.unitWidth * 296,
+                  height: pageStyle.unitHeight * 50,
+                )
+              ],
+              if (isStock) ...[
+                RoundImageButton(
+                  width: pageStyle.unitWidth * 58,
+                  height: pageStyle.unitHeight * 50,
+                  color: primarySwatchColor,
+                  child: ScaleTransition(
+                    scale: _addToCartScaleAnimation,
+                    child: Container(
+                      width: pageStyle.unitWidth * 25,
+                      height: pageStyle.unitHeight * 25,
+                      child: SvgPicture.asset(
+                        shoppingCartIcon,
+                        color: Colors.white,
                       ),
-                      onTap: () => _onAddToCart(),
-                      radius: 1,
-                    )
-                  : SizedBox.shrink(),
+                    ),
+                  ),
+                  onTap: () => _onAddToCart(),
+                  radius: 1,
+                )
+              ] else ...[
+                SizedBox.shrink()
+              ],
             ],
           ),
         );
