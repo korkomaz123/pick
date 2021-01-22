@@ -153,19 +153,21 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
               ),
             ),
           ),
-          isSelected
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.check,
-                      color: widget.selectedTitleColor,
-                      size: widget.titleSize * 4 / 3,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
+          if (isSelected) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  Icons.check,
+                  color: widget.selectedTitleColor,
+                  size: widget.titleSize * 4 / 3,
+                ),
+              ),
+            )
+          ] else ...[
+            SizedBox.shrink()
+          ],
         ],
       ),
     );

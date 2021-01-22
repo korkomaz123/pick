@@ -3,9 +3,11 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 
 class FilterOptionSelectDialog extends StatefulWidget {
   final PageStyle pageStyle;
@@ -32,12 +34,18 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
   String code;
   List<dynamic> options;
   List<dynamic> values;
+  TextEditingController searchController = TextEditingController();
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     title = widget.title;
     code = widget.code;
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    searchController.addListener(() {
+      markaaAppChangeNotifier.rebuild();
+    });
     options = widget.options.map((option) => option).toList();
     values = widget.values.map((value) => value).toList();
   }
@@ -73,10 +81,12 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
       ),
       body: Column(
         children: [
-          code == 'manufacturer'
-              ? _buildDialogSearchInput()
-              : SizedBox.shrink(),
-          _buildOptionsList(),
+          if (code == 'manufacturer') ...[_buildDialogSearchInput()],
+          Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return _buildOptionsList();
+            },
+          ),
         ],
       ),
       bottomSheet: _buildApplyButton(),
@@ -128,64 +138,73 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           dynamic title = options[index]['display'];
           int selIdx = values.indexOf(value);
           bool isSelected = selIdx >= 0;
-          return InkWell(
-            onTap: () => _onSelectItem(selIdx, options[index]),
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 30,
-              ),
-              padding: EdgeInsets.symmetric(
-                vertical: widget.pageStyle.unitHeight * 5,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      code == 'color'
-                          ? Container(
-                              width: widget.pageStyle.unitWidth * 30,
-                              height: widget.pageStyle.unitWidth * 30,
-                              margin: EdgeInsets.only(
-                                right: widget.pageStyle.unitWidth * 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getColorFromHex(
-                                    options[index]['color_code']),
-                                shape: BoxShape.circle,
-                              ),
-                            )
-                          : SizedBox.shrink(),
-                      Text(
-                        title,
-                        style: mediumTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: widget.pageStyle.unitFontSize * 18,
+          String query = searchController.text.toLowerCase();
+          String item = title.toString().toLowerCase();
+          if (item.contains(query)) {
+            return InkWell(
+              onTap: () => _onSelectItem(selIdx, options[index]),
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: widget.pageStyle.unitWidth * 30,
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: widget.pageStyle.unitHeight * 5,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        if (code == 'color') ...[
+                          Container(
+                            width: widget.pageStyle.unitWidth * 30,
+                            height: widget.pageStyle.unitWidth * 30,
+                            margin: EdgeInsets.only(
+                              right: widget.pageStyle.unitWidth * 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getColorFromHex(
+                                  options[index]['color_code']),
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        ],
+                        Text(
+                          title,
+                          style: mediumTextStyle.copyWith(
+                            color: primaryColor,
+                            fontSize: widget.pageStyle.unitFontSize * 18,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                    if (isSelected) ...[
+                      Icon(
+                        Icons.check,
+                        size: widget.pageStyle.unitFontSize * 20,
+                        color: primaryColor,
+                      )
                     ],
-                  ),
-                  isSelected
-                      ? Icon(
-                          Icons.check,
-                          size: widget.pageStyle.unitFontSize * 20,
-                          color: primaryColor,
-                        )
-                      : SizedBox.shrink(),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Container();
+          }
         },
         separatorBuilder: (context, index) {
-          return index < options.length - 1
-              ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.pageStyle.unitWidth * 20,
-                  ),
-                  child: Divider(color: primaryColor),
-                )
-              : SizedBox.shrink();
+          String query = searchController.text.toLowerCase();
+          String item = title.toString().toLowerCase();
+          if (index < options.length - 1 && item.contains(query)) {
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.pageStyle.unitWidth * 20,
+              ),
+              child: Divider(color: primaryColor),
+            );
+          }
+          return Container();
         },
       ),
     );
@@ -224,11 +243,11 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
     } else {
       values.add(item['value']);
     }
-    setState(() {});
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _onClear() {
     values.clear();
-    setState(() {});
+    markaaAppChangeNotifier.rebuild();
   }
 }

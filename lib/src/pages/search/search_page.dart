@@ -70,7 +70,8 @@ class _SearchPageState extends State<SearchPage> {
 
   void _getSearchHistories() async {
     bool isExist = await localStorageRepository.existItem('search_history');
-    searchHistory = isExist ? await localStorageRepository.getItem('search_history') : [];
+    searchHistory =
+        isExist ? await localStorageRepository.getItem('search_history') : [];
     setState(() {});
   }
 
@@ -150,9 +151,13 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     children: [
                       _buildSearchField(),
-                      products.isNotEmpty ? _buildResult() : SizedBox.shrink(),
+                      if (products.isNotEmpty) ...[_buildResult()],
                       _buildFilterButton(),
-                      isFiltering ? _buildFilterOptions() : searchHistory.isNotEmpty ? _buildSearchHistory() : SizedBox.shrink(),
+                      if (isFiltering) ...[
+                        _buildFilterOptions()
+                      ] else if (searchHistory.isNotEmpty) ...[
+                        _buildSearchHistory()
+                      ],
                     ],
                   ),
                 ),
@@ -178,34 +183,38 @@ class _SearchPageState extends State<SearchPage> {
       child: Consumer<SuggestionChangeNotifier>(
         builder: (ctx, notifier, _) {
           suggestionChangeNotifier = notifier;
-          return notifier.suggestions.isNotEmpty && searchController.text.isNotEmpty
-              ? SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(
-                      notifier.suggestions.length,
-                      (index) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                Routes.product,
-                                arguments: notifier.suggestions[index],
-                              ),
-                              child: SearchProductCard(
-                                pageStyle: pageStyle,
-                                product: notifier.suggestions[index],
-                              ),
-                            ),
-                            index < (notifier.suggestions.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                )
-              : SizedBox.shrink();
+          if (notifier.suggestions.isNotEmpty &&
+              searchController.text.isNotEmpty) {
+            return SingleChildScrollView(
+              child: Column(
+                children: List.generate(
+                  notifier.suggestions.length,
+                  (index) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            Routes.product,
+                            arguments: notifier.suggestions[index],
+                          ),
+                          child: SearchProductCard(
+                            pageStyle: pageStyle,
+                            product: notifier.suggestions[index],
+                          ),
+                        ),
+                        index < (notifier.suggestions.length - 1)
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          }
+          return Container();
         },
       ),
     );
@@ -275,7 +284,9 @@ class _SearchPageState extends State<SearchPage> {
                     product: products[index],
                   ),
                 ),
-                index < (products.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                index < (products.length - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
               ],
             );
           },
@@ -379,37 +390,37 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             SizedBox(height: pageStyle.unitHeight * 4),
-            searchHistory.isNotEmpty
-                ? AnimationConfiguration.staggeredList(
-                    position: 0,
-                    duration: Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: pageStyle.unitWidth * 10,
-                            vertical: pageStyle.unitHeight * 15,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                              searchHistory.length,
-                              (index) => _buildHistoryItem(
-                                searchHistory.length - index - 1,
-                              ),
-                            ),
+            if (searchHistory.isNotEmpty) ...[
+              AnimationConfiguration.staggeredList(
+                position: 0,
+                duration: Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 10,
+                        vertical: pageStyle.unitHeight * 15,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          searchHistory.length,
+                          (index) => _buildHistoryItem(
+                            searchHistory.length - index - 1,
                           ),
                         ),
                       ),
                     ),
-                  )
-                : SizedBox.shrink(),
+                  ),
+                ),
+              )
+            ],
           ],
         ),
       ),
@@ -468,12 +479,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        index > 0
-            ? Divider(
-                thickness: 0.5,
-                color: greyDarkColor,
-              )
-            : SizedBox.shrink(),
+        if (index > 0) ...[Divider(thickness: 0.5, color: greyDarkColor)],
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
@@ -129,6 +130,9 @@ class MarkaaApp extends StatelessWidget {
   Widget _buildMultiProvider() {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => MarkaaAppChangeNotifier(),
+        ),
         ChangeNotifierProvider(
           create: (context) => PlaceChangeNotifier(),
         ),
@@ -324,7 +328,6 @@ class _MarkaaAppViewState extends State<MarkaaAppView> {
               }
               if (state is MyCartCreatedFailure) {}
               if (state is MyCartItemAddedSuccess) {
-                print('//// product v card ////');
                 cartTotalPrice += double.parse(state.product.price).ceil();
                 int count = int.parse(state.count);
                 cartItemCountBloc.add(CartItemCountIncremented(

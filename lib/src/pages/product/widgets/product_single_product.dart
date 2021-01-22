@@ -74,6 +74,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   bool isFavorite = true;
   bool isBuyNow = false;
   bool isWishlist = false;
+  bool isStock = false;
   int index;
   AnimationController _addToCartController;
   AnimationController _favoriteController;
@@ -96,6 +97,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     pageStyle = widget.pageStyle;
     product = widget.product;
     productEntity = widget.productEntity;
+    isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
     cartBloc = context.read<MyCartBloc>();
     wishlistBloc = context.read<WishlistBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
@@ -296,17 +298,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     ),
                   ),
                 )
-              ] else ...[
-                SizedBox.shrink()
               ],
               Text(
-                productEntity.stockQty != null && productEntity.stockQty > 0
+                isStock
                     ? 'in_stock'.tr().toUpperCase()
                     : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
-                  color: product.stockQty != null && product.stockQty > 0
-                      ? succeedColor
-                      : dangerColor,
+                  color: isStock ? succeedColor : dangerColor,
                   fontSize: pageStyle.unitFontSize * 11,
                 ),
               ),
@@ -483,8 +481,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       builder: (context, state) {
         bool isCreating = state is MyCartCreatedInProcess;
         bool isAdding = state is MyCartItemAddedInProcess;
-        bool isStock =
-            productEntity.stockQty != null && productEntity.stockQty > 0;
         return Container(
           width: double.infinity,
           child: Row(

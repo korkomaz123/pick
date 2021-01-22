@@ -159,10 +159,8 @@ class _FilterPageState extends State<FilterPage> {
               return Column(
                 children: [
                   _buildCategories(),
-                  price.keys.toList().length > 0
-                      ? _buildPriceRange()
-                      : SizedBox.shrink(),
-                  genderList.isNotEmpty ? _buildGender() : SizedBox.shrink(),
+                  if (price.keys.toList().length > 0) ...[_buildPriceRange()],
+                  if (genderList.isNotEmpty) ...[_buildGender()],
                   Column(
                     children: filters.keys.map((key) {
                       String code = filters[key]['attribute_code'];
@@ -374,8 +372,8 @@ class _FilterPageState extends State<FilterPage> {
           pageStyle: pageStyle,
           title: title,
           code: option['attribute_code'],
-          options: option['values'],
-          values: selectedValues[option['attribute_code']],
+          options: option['values'] ?? [],
+          values: selectedValues[option['attribute_code']] ?? [],
         );
       },
     );

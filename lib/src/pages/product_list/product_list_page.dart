@@ -118,14 +118,16 @@ class _ProductListPageState extends State<ProductListPage> {
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
-          isFromBrand
-              ? _buildBrandBar()
-              : Positioned(
-                  top: 0,
-                  left: 0,
-                  right: pageStyle.deviceWidth,
-                  child: Container(),
-                ),
+          if (isFromBrand) ...[
+            _buildBrandBar()
+          ] else ...[
+            Positioned(
+              top: 0,
+              left: 0,
+              right: pageStyle.deviceWidth,
+              child: Container(),
+            )
+          ],
           BlocConsumer<CategoryBloc, CategoryState>(
             listener: (context, categoryState) {},
             builder: (context, categoryState) {

@@ -50,7 +50,8 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView>
+    with TickerProviderStateMixin {
   final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
@@ -99,24 +100,12 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
       );
     }
     filterBloc.add(FilterAttributesLoaded(
-      categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
+      categoryId: subCategories[widget.activeIndex].id == 'all'
+          ? null
+          : subCategories[widget.activeIndex].id,
       brandId: brand.optionId,
       lang: lang,
     ));
-
-    //  else if (widget.viewMode == ProductViewModeEnum.sort) {
-    //   await productChangeNotifier.initialLoadSortedProducts(
-    //     brand.optionId ?? '',
-    //     subCategories[activeIndex].id,
-    //     widget.sortByItem,
-    //   );
-    // } else if (widget.viewMode == ProductViewModeEnum.filter) {
-    //   await productChangeNotifier.initialLoadFilteredProducts(
-    //     brand.optionId,
-    //     subCategories[tabController.index].id,
-    //     widget.filterValues,
-    //   );
-    // }
   }
 
   void _onRefresh() async {
@@ -156,7 +145,8 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         subCategories[tabController.index].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      page = productChangeNotifier.pages[brand.optionId + '_' + subCategories[tabController.index].id];
+      page = productChangeNotifier
+          .pages[brand.optionId + '_' + subCategories[tabController.index].id];
       page += 1;
       await productChangeNotifier.loadMoreBrandProducts(
         page,
@@ -164,7 +154,11 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         subCategories[tabController.index].id,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      page = productChangeNotifier.pages[widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages[widget.sortByItem +
+          '_' +
+          (brand.optionId ?? '') +
+          '_' +
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreSortedProducts(
         page,
@@ -173,7 +167,10 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         widget.sortByItem,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      page = productChangeNotifier.pages['filter_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages['filter_' +
+          (brand.optionId ?? '') +
+          '_' +
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreFilteredProducts(
         page,
@@ -217,18 +214,27 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                     } else if (widget.viewMode == ProductViewModeEnum.brand) {
                       index = brand.optionId + '_' + cat.id;
                     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-                      index = widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
+                      index = widget.sortByItem +
+                          '_' +
+                          (brand.optionId ?? '') +
+                          '_' +
+                          (cat.id ?? '');
                     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-                      index = 'filter_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
+                      index = 'filter_' +
+                          (brand.optionId ?? '') +
+                          '_' +
+                          (cat.id ?? '');
                     }
                     print('reload');
                     print(index);
-                    if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
+                    if (!productChangeNotifier.data.containsKey(index) ||
+                        productChangeNotifier.data[index] == null) {
                       return Container();
                     } else if (productChangeNotifier.data[index].isEmpty) {
                       return ProductNoAvailable(pageStyle: pageStyle);
                     } else {
-                      return _buildProductList(productChangeNotifier.data[index]);
+                      return _buildProductList(
+                          productChangeNotifier.data[index]);
                     }
                   },
                 ),

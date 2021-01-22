@@ -32,6 +32,7 @@ import 'package:http/http.dart' as http;
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
+import 'widgets/apple_sign_alert_dialog.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -40,8 +41,8 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   PageStyle pageStyle;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isShowPass = false;
@@ -541,25 +542,40 @@ class _SignInPageState extends State<SignInPage> {
 
   void _onAppleSign() async {
     try {
+      await showDialog(
+        context: context,
+        builder: (context) => AppleSignAlertDialog(
+          pageStyle: pageStyle,
+          title: 'markaa_team_title'.tr(),
+          description: 'apple_sign_description'.tr(),
+        ),
+      );
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      print(credential.userIdentifier);
-      print(credential.authorizationCode);
-      print(credential.identityToken);
-      print(credential.email);
       String email = credential.email;
       String firstName = credential.givenName;
       String lastName = credential.familyName;
-      if (email == null) {
-        flushBarService.showErrorMessage(
-          pageStyle,
-          'You should share your email when choose the option for apple sign-in',
+      String appleId = await localRepo.getItem('appleId');
+      if (appleId.isNotEmpty) {
+        email = appleId;
+      } else {
+        email = '';
+      }
+      if (email.isEmpty) {
+        await showDialog(
+          context: context,
+          builder: (context) => AppleSignAlertDialog(
+            pageStyle: pageStyle,
+            title: 'markaa_team_title'.tr(),
+            description: 'apple_sign_failure'.tr(),
+          ),
         );
       } else {
+        await localRepo.setItem('appleId', email);
         signInBloc.add(SocialSignInSubmitted(
           email: email,
           firstName: firstName,
