@@ -539,8 +539,6 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _onTwitterSign() {}
-
   void _onAppleSign() async {
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
@@ -549,6 +547,10 @@ class _SignInPageState extends State<SignInPage> {
           AppleIDAuthorizationScopes.fullName,
         ],
       );
+      print(credential.userIdentifier);
+      print(credential.authorizationCode);
+      print(credential.identityToken);
+      print(credential.email);
       String email = credential.email;
       String firstName = credential.givenName;
       String lastName = credential.familyName;

@@ -112,9 +112,9 @@ class FlushBarService {
       ),
       icon: Icon(Icons.info, color: Colors.white),
       duration: Duration(seconds: 3),
-      leftBarIndicatorColor: darkColor.withOpacity(0.6),
+      leftBarIndicatorColor: primarySwatchColor.withOpacity(0.6),
       flushbarPosition: FlushbarPosition.BOTTOM,
-      backgroundColor: darkColor,
+      backgroundColor: primarySwatchColor,
     )..show(context);
   }
 }

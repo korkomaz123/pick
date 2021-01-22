@@ -217,13 +217,27 @@ class _MyCartPageState extends State<MyCartPage>
         if (myCartItems == null) {
           return Container();
         } else if (myCartItems.isEmpty) {
-          return Container(
-            height: pageStyle.deviceHeight * 2 / 3,
-            alignment: Alignment.center,
-            child: NoAvailableData(
-              pageStyle: pageStyle,
-              message: 'no_cart_items_available',
-            ),
+          return BlocBuilder<SaveLaterBloc, SaveLaterState>(
+            builder: (context, state) {
+              double dimension = .0;
+              if (state is SaveLaterItemsLoadedSuccess) {
+                if (state.items.isNotEmpty) {
+                  dimension = 1 / 3;
+                } else {
+                  dimension = 2 / 3;
+                }
+              } else {
+                dimension = 1 / 3;
+              }
+              return Container(
+                height: pageStyle.deviceHeight * dimension,
+                alignment: Alignment.center,
+                child: NoAvailableData(
+                  pageStyle: pageStyle,
+                  message: 'no_cart_items_available',
+                ),
+              );
+            },
           );
         }
         return Column(

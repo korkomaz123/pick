@@ -136,7 +136,37 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
             return Container();
           }
         }
-        return Container();
+        return Container(
+          width: widget.pageStyle.deviceWidth,
+          color: backgroundColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: widget.pageStyle.deviceWidth,
+                color: Colors.white,
+                padding: EdgeInsets.only(
+                  left: widget.pageStyle.unitWidth * 10,
+                  right: widget.pageStyle.unitWidth * 10,
+                  top: widget.pageStyle.unitHeight * 20,
+                  bottom: widget.pageStyle.unitHeight * 10,
+                ),
+                child: Text(
+                  'Save For Later',
+                  style: mediumTextStyle.copyWith(
+                    fontSize: widget.pageStyle.unitFontSize * 23,
+                    color: greyDarkColor,
+                  ),
+                ),
+              ),
+              Container(
+                width: widget.pageStyle.deviceWidth,
+                height: widget.pageStyle.unitHeight * 60,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        );
       },
     );
   }
