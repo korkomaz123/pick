@@ -180,16 +180,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: pageStyle.unitWidth * 60,
       ),
       child: MarkaaTextButton(
         title: 'get_new_password'.tr(),
-        titleSize: pageStyle.unitFontSize * 19,
+        titleSize: pageStyle.unitFontSize * 16,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
         onPressed: () => _onGetNewPassword(),
-        radius: 10,
+        radius: 30,
       ),
     );
   }

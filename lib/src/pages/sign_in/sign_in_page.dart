@@ -425,22 +425,17 @@ class _SignInPageState extends State<SignInPage> {
             onTap: () => _onGoogleSign(),
             child: SvgPicture.asset(googleIcon),
           ),
-          SizedBox(width: pageStyle.unitWidth * 20),
-          InkWell(
-            onTap: () => _onTwitterSign(),
-            child: SvgPicture.asset(twitterIcon),
-          ),
-          Platform.isIOS
-              ? Row(
-                  children: [
-                    SizedBox(width: pageStyle.unitWidth * 20),
-                    InkWell(
-                      onTap: () => _onAppleSign(),
-                      child: SvgPicture.asset(appleIcon),
-                    ),
-                  ],
-                )
-              : SizedBox.shrink(),
+          if (Platform.isIOS) ...[
+            Row(
+              children: [
+                SizedBox(width: pageStyle.unitWidth * 20),
+                InkWell(
+                  onTap: () => _onAppleSign(),
+                  child: SvgPicture.asset(appleIcon),
+                ),
+              ],
+            )
+          ],
         ],
       ),
     );

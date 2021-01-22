@@ -33,57 +33,61 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   }
 
   void _getRelatedItems() async {
-    relatedItems = await context.read<ProductRepository>().getRelatedProducts(product.productId, lang);
+    relatedItems = await context
+        .read<ProductRepository>()
+        .getRelatedProducts(product.productId, lang);
     if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return relatedItems.isNotEmpty
-        ? Container(
-            width: pageStyle.deviceWidth,
-            padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 6,
+    if (relatedItems.isNotEmpty) {
+      return Container(
+        width: pageStyle.deviceWidth,
+        padding: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 10,
+          vertical: pageStyle.unitHeight * 6,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'product_related_items'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: greyColor,
+                fontSize: pageStyle.unitFontSize * 16,
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'product_related_items'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 16,
-                  ),
-                ),
-                SizedBox(height: pageStyle.unitHeight * 4),
-                Container(
-                  width: double.infinity,
-                  height: pageStyle.unitHeight * 260,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: relatedItems.length > 10 ? 10 : relatedItems.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: pageStyle.unitWidth * 10,
-                        ),
-                        child: ProductVCard(
-                          cardWidth: pageStyle.unitWidth * 150,
-                          cardHeight: pageStyle.unitHeight * 256,
-                          product: relatedItems[index],
-                          isShoppingCart: true,
-                          isWishlist: true,
-                          isShare: true,
-                          pageStyle: pageStyle,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+            SizedBox(height: pageStyle.unitHeight * 4),
+            Container(
+              width: double.infinity,
+              height: pageStyle.unitHeight * 260,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: relatedItems.length > 10 ? 10 : relatedItems.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: pageStyle.unitWidth * 10,
+                    ),
+                    child: ProductVCard(
+                      cardWidth: pageStyle.unitWidth * 160,
+                      cardHeight: pageStyle.unitHeight * 256,
+                      product: relatedItems[index],
+                      isShoppingCart: true,
+                      isWishlist: true,
+                      isShare: true,
+                      isLine: true,
+                      pageStyle: pageStyle,
+                    ),
+                  );
+                },
+              ),
             ),
-          )
-        : Container();
+          ],
+        ),
+      );
+    }
+    return Container();
   }
 }

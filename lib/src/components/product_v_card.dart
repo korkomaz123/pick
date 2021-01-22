@@ -28,6 +28,7 @@ class ProductVCard extends StatefulWidget {
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
+  final bool isLine;
   final PageStyle pageStyle;
 
   ProductVCard({
@@ -37,6 +38,7 @@ class ProductVCard extends StatefulWidget {
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
+    this.isLine = false,
     this.pageStyle,
   });
 
@@ -88,7 +90,6 @@ class _ProductVCardState extends State<ProductVCard>
   Future<void> _getMyCartId() async {
     if (user?.token != null) {
       final result = await cartRepo.getCartId(user.token);
-      // print(result);
       if (result['code'] == 'SUCCESS') {
         cartId = result['cartId'];
       }
@@ -104,12 +105,7 @@ class _ProductVCardState extends State<ProductVCard>
     }
   }
 
-  // void _saveCartId(String cartId) async {
-  //   await localRepo.setCartId(cartId);
-  // }
-
   void _initAnimation() {
-    /// add to cart button animation
     _addToCartController = AnimationController(
       duration: const Duration(milliseconds: 300),
       reverseDuration: const Duration(milliseconds: 300),
@@ -185,15 +181,15 @@ class _ProductVCardState extends State<ProductVCard>
         children: [
           Image.network(
             widget.product.imageUrl,
-            width: widget.cardHeight * 0.6,
-            height: widget.cardHeight * 0.6,
+            width: widget.cardHeight * 0.7,
+            height: widget.cardHeight * 0.65,
             fit: BoxFit.fill,
             loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                    )
-                  : child;
+              if (chunkEvent != null)
+                return Image.asset(
+                  'lib/public/images/loading/image_loading.jpg',
+                );
+              return child;
             },
           ),
           Expanded(
@@ -225,17 +221,20 @@ class _ProductVCardState extends State<ProductVCard>
                     ),
                   ),
                 ),
-                Text(
-                  widget.product.shortDescription,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: widget.pageStyle.unitFontSize * 12,
-                    height: widget.pageStyle.unitHeight * 1.2,
+                Expanded(
+                  child: Text(
+                    widget.product.shortDescription,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: mediumTextStyle.copyWith(
+                      color: greyDarkColor,
+                      fontSize: widget.pageStyle.unitFontSize * 12,
+                      height: widget.pageStyle.unitHeight * 1.2,
+                    ),
                   ),
                 ),
                 SizedBox(height: widget.pageStyle.unitHeight * 10),
+                if (widget.isLine) ...[Divider(color: greyColor)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -249,7 +248,6 @@ class _ProductVCardState extends State<ProductVCard>
                     SizedBox(width: widget.pageStyle.unitWidth * 10),
                     Text(
                       '',
-                      // widget.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         decorationStyle: TextDecorationStyle.solid,
                         decoration: TextDecoration.lineThrough,
@@ -259,26 +257,29 @@ class _ProductVCardState extends State<ProductVCard>
                       ),
                     ),
                     Spacer(),
-                    widget.isShoppingCart &&
-                            widget.product.stockQty != null &&
-                            widget.product.stockQty > 0
-                        ? InkWell(
-                            onTap: () => _onAddProductToCart(context),
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: widget.pageStyle.unitWidth * 18,
-                                height: widget.pageStyle.unitHeight * 17,
-                                child: SvgPicture.asset(
-                                  shoppingCartIcon,
-                                  color: primaryColor,
-                                ),
-                              ),
+                    if (widget.isShoppingCart &&
+                        widget.product.stockQty != null &&
+                        widget.product.stockQty > 0) ...[
+                      InkWell(
+                        onTap: () => _onAddProductToCart(context),
+                        child: ScaleTransition(
+                          scale: _addToCartScaleAnimation,
+                          child: Container(
+                            width: widget.pageStyle.unitWidth * 18,
+                            height: widget.pageStyle.unitHeight * 17,
+                            child: SvgPicture.asset(
+                              shoppingCartIcon,
+                              color: primaryColor,
                             ),
-                          )
-                        : SizedBox.shrink(),
+                          ),
+                        ),
+                      )
+                    ] else ...[
+                      SizedBox.shrink()
+                    ],
                   ],
                 ),
+                SizedBox(height: widget.pageStyle.unitHeight * 10),
               ],
             ),
           ),
@@ -293,59 +294,53 @@ class _ProductVCardState extends State<ProductVCard>
         _getWishlist();
       },
       builder: (context, state) {
-        return Column(
-          children: [
-            widget.isWishlist
-                ? Align(
-                    alignment:
-                        lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () => user != null
-                            ? _onWishlist()
-                            : Navigator.pushNamed(context, Routes.signIn),
-                        child: Container(
-                          width: widget.pageStyle.unitWidth * 18,
-                          height: widget.pageStyle.unitHeight * 17,
-                          child: isWishlist
-                              ? SvgPicture.asset(wishlistedIcon)
-                              : SvgPicture.asset(
-                                  wishlistIcon,
-                                  color: greyColor,
-                                ),
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink(),
-          ],
-        );
+        if (widget.isWishlist) {
+          return Align(
+            alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () => user != null
+                    ? _onWishlist()
+                    : Navigator.pushNamed(context, Routes.signIn),
+                child: Container(
+                  width: widget.pageStyle.unitWidth * 18,
+                  height: widget.pageStyle.unitHeight * 17,
+                  child: isWishlist
+                      ? SvgPicture.asset(wishlistedIcon)
+                      : SvgPicture.asset(wishlistIcon, color: greyColor),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return SizedBox.shrink();
+        }
       },
     );
   }
 
   Widget _buildOutofStock() {
-    return widget.product.stockQty == null || widget.product.stockQty == 0
-        ? Align(
-            alignment:
-                lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 15,
-                vertical: widget.pageStyle.unitHeight * 5,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: widget.pageStyle.unitFontSize * 14,
-                  color: Colors.white70,
-                ),
-              ),
+    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+      return Align(
+        alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.pageStyle.unitWidth * 15,
+            vertical: widget.pageStyle.unitHeight * 5,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: widget.pageStyle.unitFontSize * 14,
+              color: Colors.white70,
             ),
-          )
-        : SizedBox.shrink();
+          ),
+        ),
+      );
+    }
+    return SizedBox.shrink();
   }
 
   void _onAddProductToCart(BuildContext context) async {

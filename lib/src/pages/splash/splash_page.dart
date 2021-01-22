@@ -88,6 +88,8 @@ class _SplashPageState extends State<SplashPage> {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         user = UserEntity.fromJson(result['data']['customer']);
+      } else {
+        await localRepo.removeToken();
       }
     }
   }

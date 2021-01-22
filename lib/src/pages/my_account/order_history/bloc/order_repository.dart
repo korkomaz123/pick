@@ -34,9 +34,8 @@ class OrderRepository {
       'reason': reason,
       'imageName': imageName,
       'lang': lang,
-      'imageForProduct': product.toString(),
+      'imageForProduct': base64Encode(product),
     };
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

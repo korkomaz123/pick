@@ -25,7 +25,8 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
   });
 
   @override
-  _MyCartQtyHorizontalPickerState createState() => _MyCartQtyHorizontalPickerState();
+  _MyCartQtyHorizontalPickerState createState() =>
+      _MyCartQtyHorizontalPickerState();
 }
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
@@ -42,7 +43,9 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.cartItem.availableCount > 0 ? (widget.onChange ?? () => _onChangeQty()) : () => null,
+      onTap: widget.cartItem.availableCount > 0
+          ? (widget.onChange ?? () => _onChangeQty())
+          : () => null,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 6,
@@ -75,7 +78,6 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   }
 
   void _onChangeQty() async {
-    print(widget.cartItem.availableCount);
     final result = await showDialog(
       barrierColor: Colors.white.withOpacity(0.0000000001),
       context: context,
@@ -116,7 +118,9 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
   void initState() {
     super.initState();
     myCartRepo = context.read<MyCartRepository>();
-    availableCount = widget.cartItem.availableCount > 20 ? 20 : widget.cartItem.availableCount;
+    availableCount = widget.cartItem.availableCount > 20
+        ? 20
+        : widget.cartItem.availableCount;
     pageStyle = widget.pageStyle;
     productId = widget.cartItem.product.productId;
   }
@@ -137,15 +141,19 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
               height: pageStyle.unitHeight * 95,
               child: Stack(
                 children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     child: Container(
                       width: pageStyle.deviceWidth,
                       color: primarySwatchColor,
+                      height: 60,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         reverse: true,
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: List.generate(
                             availableCount,
                             (index) => _buildQtyItem(index),
@@ -154,8 +162,9 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
+                  Positioned(
+                    bottom: pageStyle.unitHeight * 45,
+                    right: 0,
                     child: IconButton(
                       icon: SvgPicture.asset('lib/public/icons/close.svg'),
                       onPressed: () => Navigator.pop(context),
@@ -177,19 +186,18 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
         availableCount - index,
       ),
       child: Container(
+        width: pageStyle.unitHeight * 45,
+        height: pageStyle.unitHeight * 45,
         margin: EdgeInsets.symmetric(
           horizontal: widget.pageStyle.unitWidth * 10,
-          vertical: widget.pageStyle.unitHeight * 10,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: widget.pageStyle.unitWidth * 15,
-          vertical: widget.pageStyle.unitHeight * 6,
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white, width: 1),
         ),
+        alignment: Alignment.center,
         child: Text(
           (availableCount - index).toString(),
+          textAlign: TextAlign.center,
           style: mediumTextStyle.copyWith(
             fontSize: widget.pageStyle.unitFontSize * 16,
             color: Colors.white,

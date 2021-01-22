@@ -55,3 +55,5 @@ const String searchAddrIcon = '$iconsAssetPath/search-address-icon.svg';
 const String selectAddrIcon = '$iconsAssetPath/select-address-icon.svg';
 const String selectedIcon = '$iconsAssetPath/select.svg';
 const String unSelectedIcon = '$iconsAssetPath/unselect.svg';
+const String putInCartEnIcon = '$iconsAssetPath/put-in-cart-icon-en.svg';
+const String putInCartArIcon = '$iconsAssetPath/put-in-cart-icon-ar.svg';

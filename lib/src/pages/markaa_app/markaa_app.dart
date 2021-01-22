@@ -27,6 +27,8 @@ import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_reposito
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_repository.dart';
 import 'package:markaa/src/pages/product/bloc/product_bloc.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/pages/product_list/bloc/product_list_bloc.dart';
@@ -69,6 +71,7 @@ class MarkaaApp extends StatelessWidget {
   final myCartRepository = MyCartRepository();
   final searchRepository = SearchRepository();
   final checkoutRepository = CheckoutRepository();
+  final saveLaterRepository = SaveLaterRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +106,9 @@ class MarkaaApp extends StatelessWidget {
                                 value: checkoutRepository,
                                 child: RepositoryProvider.value(
                                   value: searchRepository,
-                                  child: _buildMultiProvider(),
+                                  child: RepositoryProvider.value(
+                                      value: saveLaterRepository,
+                                      child: _buildMultiProvider()),
                                 ),
                               ),
                             ),
@@ -246,6 +251,11 @@ class MarkaaApp extends StatelessWidget {
             productRepository: productRepository,
           ),
         ),
+        BlocProvider(
+          create: (context) => SaveLaterBloc(
+            saveLaterRepository: saveLaterRepository,
+          ),
+        ),
       ],
       child: MarkaaAppView(),
     );
@@ -316,11 +326,11 @@ class _MarkaaAppViewState extends State<MarkaaAppView> {
               if (state is MyCartItemAddedSuccess) {
                 print('//// product v card ////');
                 cartTotalPrice += double.parse(state.product.price).ceil();
+                int count = int.parse(state.count);
                 cartItemCountBloc.add(CartItemCountIncremented(
-                  incrementedCount: cartItemCount + 1,
+                  incrementedCount: cartItemCount + count,
                 ));
               }
-              if (state is MyCartItemAddedFailure) {}
             },
             child: child,
           );

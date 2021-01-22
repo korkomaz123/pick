@@ -54,7 +54,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         yield OrderHistoryLoadedFailure(message: result['errMessage']);
       }
     } catch (e) {
-      print(e.toString());
       yield OrderHistoryLoadedFailure(message: e.toString());
     }
   }
@@ -69,14 +68,14 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async* {
     yield OrderCancelledInProcess();
     try {
-      final result = await _orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
+      final result = await _orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         yield OrderCancelledSuccess();
       } else {
         yield OrderCancelledFailure(message: result['errorMessage']);
       }
     } catch (e) {
-      print(e.toString());
       yield OrderCancelledFailure(message: e.toString());
     }
   }

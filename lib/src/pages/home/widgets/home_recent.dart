@@ -55,7 +55,7 @@ class _HomeRecentState extends State<HomeRecent> {
         if (recentlyViews.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 380,
+            height: widget.pageStyle.unitHeight * 320,
             padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
             margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
             color: Colors.white,
@@ -79,28 +79,28 @@ class _HomeRecentState extends State<HomeRecent> {
                           children: [
                             ProductVCard(
                               cardWidth: widget.pageStyle.unitWidth * 155,
-                              cardHeight: widget.pageStyle.unitHeight * 300,
+                              cardHeight: widget.pageStyle.unitHeight * 250,
                               product: recentlyViews[index],
                               pageStyle: widget.pageStyle,
                               isShoppingCart: true,
                               isWishlist: true,
                               isShare: true,
                             ),
-                            index < recentlyViews.length - 1
-                                ? Container(
-                                    height: widget.pageStyle.unitHeight * 300,
-                                    padding: EdgeInsets.only(
-                                      left: widget.pageStyle.unitWidth * 10,
-                                      right: widget.pageStyle.unitWidth * 10,
-                                      bottom: widget.pageStyle.unitHeight * 50,
-                                    ),
-                                    child: VerticalDivider(
-                                      width: widget.pageStyle.unitWidth * 4,
-                                      thickness: widget.pageStyle.unitWidth * 1,
-                                      color: greyColor.withOpacity(0.4),
-                                    ),
-                                  )
-                                : SizedBox.shrink(),
+                            if (index < recentlyViews.length - 1) ...[
+                              Container(
+                                height: widget.pageStyle.unitHeight * 250,
+                                padding: EdgeInsets.only(
+                                  left: widget.pageStyle.unitWidth * 10,
+                                  right: widget.pageStyle.unitWidth * 10,
+                                  bottom: widget.pageStyle.unitHeight * 50,
+                                ),
+                                child: VerticalDivider(
+                                  width: widget.pageStyle.unitWidth * 4,
+                                  thickness: widget.pageStyle.unitWidth * 1,
+                                  color: greyColor.withOpacity(0.4),
+                                ),
+                              )
+                            ],
                           ],
                         );
                       },

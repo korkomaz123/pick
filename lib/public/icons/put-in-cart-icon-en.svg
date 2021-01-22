@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="22" viewBox="0 0 100 22">
+  <g id="Group_2310" data-name="Group 2310" transform="translate(-233 -799)">
+    <path id="Rectangle_402" data-name="Rectangle 402" d="M9,0H80A11,11,0,0,1,91,11v0A11,11,0,0,1,80,22H11A11,11,0,0,1,0,11V9A9,9,0,0,1,9,0Z" transform="translate(242 799)" fill="#0c5eed"/>
+    <text id="Put_In_Cart" data-name="Put In Cart" transform="translate(263 813)" fill="#fff" font-size="11" font-family="Avenir-Medium, Avenir" font-weight="500"><tspan x="0" y="0">Put In Cart</tspan></text>
+    <circle id="Ellipse_95" data-name="Ellipse 95" cx="11" cy="11" r="11" transform="translate(233 799)" fill="#fff"/>
+    <g id="Icon_feather-arrow-up-circle" data-name="Icon feather-arrow-up-circle" transform="translate(233 799)">
+      <path id="Path_6862" data-name="Path 6862" d="M19,11a8,8,0,1,1-8-8,8,8,0,0,1,8,8Z" fill="none" stroke="#0c5eed" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      <path id="Path_6863" data-name="Path 6863" d="M18.4,15.2,15.2,12,12,15.2" transform="translate(-4.2 -4.2)" fill="none" stroke="#0c5eed" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      <path id="Path_6864" data-name="Path 6864" d="M18,18.4V12" transform="translate(-7 -4.2)" fill="none" stroke="#0c5eed" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>

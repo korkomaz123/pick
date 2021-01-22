@@ -79,7 +79,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
           }
           if (state is OrderCancelledSuccess) {
             progressService.hideProgress();
-            orderBloc.add(OrderHistoryLoaded(token: user.token));
+            orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
             Navigator.popUntil(
               context,
               (route) => route.settings.name == Routes.orderHistory,
@@ -148,7 +148,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         radius: pageStyle.unitFontSize * 10,
         fontSize: pageStyle.unitFontSize * 16,
         fontColor: greyDarkColor,
-        label: 'Additional Information',
+        label: 'cancel_order_additional_info_title'.tr(),
         labelColor: greyDarkColor,
         labelSize: pageStyle.unitFontSize * 16,
         fillColor: Colors.white,
@@ -205,7 +205,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
                   onPressed: () => _onChangeImage(),
                 ),
                 Text(
-                  'Image for Product',
+                  'cancel_order_image_for_product_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 14,
                   ),
@@ -268,7 +268,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
           imageName: name,
         ));
       } else {
-        String message = 'Please take an image for product';
+        String message = 'cancel_order_image_required';
         flushBarService.showErrorMessage(pageStyle, message);
       }
     }

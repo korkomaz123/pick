@@ -71,4 +71,6 @@ class EndPoints {
   static const String getBestdealsBanner = '$baseUrl/getBestdealsBanner';
   static const String getNewarrivalBanner = '$baseUrl/getNewarrivalBanner';
   static const String getHomeCategories = '$baseUrl/getHomeCategories';
+  static const String getSaveForLaterItems = '$baseUrl/getSaveforlater';
+  static const String changeSaveForLaterItem = '$baseUrl/addSaveforlateritem';
 }

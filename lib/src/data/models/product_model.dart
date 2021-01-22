@@ -18,6 +18,7 @@ class ProductModel {
   final String brandId;
   final BrandEntity brandEntity;
   final int stockQty;
+  final int qtySaveForLater;
 
   ProductModel({
     this.entityId,
@@ -37,6 +38,7 @@ class ProductModel {
     this.brandId,
     this.brandEntity,
     this.stockQty,
+    this.qtySaveForLater,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -63,5 +65,8 @@ class ProductModel {
             json['brand_entity'] != null && json['brand_entity'].isNotEmpty
                 ? BrandEntity.fromJson(json['brand_entity'])
                 : BrandEntity(),
-        stockQty = json['stockQty'];
+        stockQty = json['stockQty'],
+        qtySaveForLater = json.containsKey('qty_saveforlater')
+            ? double.parse(json['qty_saveforlater']).ceil()
+            : 0;
 }

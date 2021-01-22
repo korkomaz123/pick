@@ -1,3 +1,4 @@
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -15,6 +16,7 @@ class MyCartItem extends StatelessWidget {
   final int discount;
   final String cartId;
   final Function onRemoveCartItem;
+  final Function onSaveForLaterItem;
 
   MyCartItem({
     this.pageStyle,
@@ -22,6 +24,7 @@ class MyCartItem extends StatelessWidget {
     this.discount,
     this.cartId,
     this.onRemoveCartItem,
+    this.onSaveForLaterItem,
   });
 
   @override
@@ -106,7 +109,9 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: pageStyle.unitWidth * 20),
                         Text(
-                          discount != 0 ? discountPriceString + ' ' + 'currency'.tr() : '',
+                          discount != 0
+                              ? discountPriceString + ' ' + 'currency'.tr()
+                              : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,
@@ -121,16 +126,20 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(
-                          onTap: () => null,
-                          child: Text(
-                            'save_for_later'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: pageStyle.unitFontSize * 12,
-                              color: primaryColor,
+                        if (user?.token != null) ...[
+                          InkWell(
+                            onTap: onSaveForLaterItem,
+                            child: Text(
+                              'save_for_later'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: pageStyle.unitFontSize * 12,
+                                color: primaryColor,
+                              ),
                             ),
-                          ),
-                        ),
+                          )
+                        ] else ...[
+                          SizedBox.shrink()
+                        ],
                         MyCartQtyHorizontalPicker(
                           pageStyle: pageStyle,
                           cartItem: cartItem,

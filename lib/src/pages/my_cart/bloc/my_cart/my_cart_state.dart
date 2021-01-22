@@ -56,11 +56,12 @@ class MyCartItemAddedInProcess extends MyCartState {}
 
 class MyCartItemAddedSuccess extends MyCartState {
   final ProductModel product;
+  final String count;
 
-  MyCartItemAddedSuccess({this.product});
+  MyCartItemAddedSuccess({this.product, this.count});
 
   @override
-  List<Object> get props => [product];
+  List<Object> get props => [product, count];
 }
 
 class MyCartItemAddedFailure extends MyCartState {
