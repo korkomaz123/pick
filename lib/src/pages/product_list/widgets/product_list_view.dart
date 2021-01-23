@@ -89,23 +89,25 @@ class _ProductListViewState extends State<ProductListView>
 
   void _initLoadProducts() async {
     print('//// initial load ////');
-    if (widget.viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier.initialLoadCategoryProducts(
-        subCategories[widget.activeIndex].id,
-      );
-    } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier.initialLoadBrandProducts(
-        brand.optionId,
-        subCategories[widget.activeIndex].id,
-      );
-    }
-    filterBloc.add(FilterAttributesLoaded(
-      categoryId: subCategories[widget.activeIndex].id == 'all'
-          ? null
-          : subCategories[widget.activeIndex].id,
-      brandId: brand.optionId,
-      lang: lang,
-    ));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (widget.viewMode == ProductViewModeEnum.category) {
+        await productChangeNotifier.initialLoadCategoryProducts(
+          subCategories[widget.activeIndex].id,
+        );
+      } else if (widget.viewMode == ProductViewModeEnum.brand) {
+        await productChangeNotifier.initialLoadBrandProducts(
+          brand.optionId,
+          subCategories[widget.activeIndex].id,
+        );
+      }
+      filterBloc.add(FilterAttributesLoaded(
+        categoryId: subCategories[widget.activeIndex].id == 'all'
+            ? null
+            : subCategories[widget.activeIndex].id,
+        brandId: brand.optionId,
+        lang: lang,
+      ));
+    });
   }
 
   void _onRefresh() async {

@@ -101,6 +101,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
         vertical: widget.pageStyle.unitHeight * 10,
       ),
       child: TextFormField(
+        controller: searchController,
         style: mediumTextStyle.copyWith(
           fontSize: widget.pageStyle.unitFontSize * 15,
           color: greyColor,
@@ -194,17 +195,23 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           }
         },
         separatorBuilder: (context, index) {
+          dynamic title = options[index]['display'];
           String query = searchController.text.toLowerCase();
           String item = title.toString().toLowerCase();
-          if (index < options.length - 1 && item.contains(query)) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 20,
-              ),
-              child: Divider(color: primaryColor),
-            );
+          if (index < options.length - 1) {
+            if (item.contains(query)) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: widget.pageStyle.unitWidth * 20,
+                ),
+                child: Divider(color: primaryColor),
+              );
+            } else {
+              return Container();
+            }
+          } else {
+            return Container();
           }
-          return Container();
         },
       ),
     );

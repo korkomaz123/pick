@@ -317,11 +317,13 @@ class _ProductListPageState extends State<ProductListPage> {
         activeSubcategoryIndex = 0;
       }
       setState(() {});
-      await productChangeNotifier.initialLoadFilteredProducts(
-        brand.optionId,
-        subCategories[activeSubcategoryIndex].id,
-        filterValues,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await productChangeNotifier.initialLoadFilteredProducts(
+          brand.optionId,
+          subCategories[activeSubcategoryIndex].id,
+          filterValues,
+        );
+      });
     }
   }
 
@@ -341,47 +343,65 @@ class _ProductListPageState extends State<ProductListPage> {
         },
       );
     });
-    if (result != null) {
-      if (sortByItem != result) {
-        if (sortByItem == 'default') {
-          if (isFromBrand) {
-            viewMode = ProductViewModeEnum.brand;
-          } else {
-            viewMode = ProductViewModeEnum.category;
-          }
+    if (result != null && sortByItem != result) {
+      sortByItem = result;
+      if (sortByItem == 'default') {
+        if (isFromBrand) {
+          viewMode = ProductViewModeEnum.brand;
         } else {
-          viewMode = ProductViewModeEnum.sort;
+          viewMode = ProductViewModeEnum.category;
         }
-        sortByItem = result;
-        setState(() {});
-        await productChangeNotifier.initialLoadSortedProducts(
-          brand.optionId ?? '',
-          subCategories[0].id,
-          sortByItem,
-        );
+      } else {
+        viewMode = ProductViewModeEnum.sort;
       }
+      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (viewMode == ProductViewModeEnum.category) {
+          await productChangeNotifier.initialLoadCategoryProducts(
+            subCategories[activeSubcategoryIndex].id,
+          );
+        } else if (viewMode == ProductViewModeEnum.brand) {
+          await productChangeNotifier.initialLoadBrandProducts(
+            brand.optionId,
+            subCategories[activeSubcategoryIndex].id,
+          );
+        } else {
+          await productChangeNotifier.initialLoadSortedProducts(
+            brand.optionId ?? '',
+            subCategories[activeSubcategoryIndex].id,
+            sortByItem,
+          );
+        }
+      });
     }
   }
 
   void _onChangeTab(int index) async {
     print('//// change tab ///');
     activeSubcategoryIndex = index;
-    if (viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier.initialLoadCategoryProducts(
-        subCategories[index].id,
-      );
-    } else if (viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier.initialLoadBrandProducts(
-        brand.optionId,
-        subCategories[index].id,
-      );
-    }
-    filterBloc.add(FilterAttributesLoaded(
-      categoryId:
-          subCategories[index].id == 'all' ? null : subCategories[index].id,
-      brandId: brand.optionId,
-      lang: lang,
-    ));
+    if (isFromBrand)
+      viewMode = ProductViewModeEnum.brand;
+    else
+      viewMode = ProductViewModeEnum.category;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (viewMode == ProductViewModeEnum.category) {
+        await productChangeNotifier.initialLoadCategoryProducts(
+          subCategories[index].id,
+        );
+      } else if (viewMode == ProductViewModeEnum.brand) {
+        await productChangeNotifier.initialLoadBrandProducts(
+          brand.optionId,
+          subCategories[index].id,
+        );
+      }
+      filterBloc.add(FilterAttributesLoaded(
+        categoryId:
+            subCategories[index].id == 'all' ? null : subCategories[index].id,
+        brandId: brand.optionId,
+        lang: lang,
+      ));
+    });
   }
 
   void _onScrolling() {
