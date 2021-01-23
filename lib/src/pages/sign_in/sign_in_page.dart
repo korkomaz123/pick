@@ -216,7 +216,7 @@ class _SignInPageState extends State<SignInPage> {
                   SizedBox(height: 40),
                   _buildOrDivider(),
                   SizedBox(height: 40),
-                  _buildExternalSignInButtons(),
+                  if (Platform.isAndroid) ...[_buildExternalSignInButtons()],
                   SizedBox(height: 40),
                   _buildSignUpPhase(),
                 ],
