@@ -299,7 +299,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             cartItem.product.imageUrl,
             width: pageStyle.unitWidth * 90,
             height: pageStyle.unitHeight * 120,
-            fit: BoxFit.fill,
+            fit: BoxFit.fitHeight,
             loadingBuilder: (_, child, chunkEvent) {
               return chunkEvent != null
                   ? Image.asset(
@@ -308,6 +308,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                   : child;
             },
           ),
+          SizedBox(width: pageStyle.unitWidth * 5),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

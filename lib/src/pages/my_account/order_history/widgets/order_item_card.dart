@@ -34,7 +34,7 @@ class OrderItemCard extends StatelessWidget {
                 cartItem.product.imageUrl,
                 width: pageStyle.unitWidth * 90,
                 height: pageStyle.unitHeight * 120,
-                fit: BoxFit.fill,
+                fit: BoxFit.fitHeight,
                 loadingBuilder: (_, child, chunkEvent) {
                   return chunkEvent != null
                       ? Image.asset(
@@ -43,6 +43,7 @@ class OrderItemCard extends StatelessWidget {
                       : child;
                 },
               ),
+              SizedBox(width: pageStyle.unitWidth * 5),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +127,9 @@ class OrderItemCard extends StatelessWidget {
                     ),
                   )
             : SizedBox.shrink(),
-        !canceled && (cartItem.product.stockQty == null || cartItem.product.stockQty == 0)
+        !canceled &&
+                (cartItem.product.stockQty == null ||
+                    cartItem.product.stockQty == 0)
             ? lang == 'en'
                 ? Positioned(
                     top: pageStyle.unitHeight * 50,

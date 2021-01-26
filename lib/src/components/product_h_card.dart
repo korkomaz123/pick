@@ -28,6 +28,7 @@ class ProductHCard extends StatefulWidget {
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
+  final bool isMinor;
   final PageStyle pageStyle;
 
   ProductHCard({
@@ -37,6 +38,7 @@ class ProductHCard extends StatefulWidget {
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
+    this.isMinor = true,
     this.pageStyle,
   });
 
@@ -142,7 +144,7 @@ class _ProductHCardState extends State<ProductHCard>
                 state.message,
               );
             }
-            if (state is MyCartItemAddedSuccess) {
+            if (state is MyCartItemAddedInProcess) {
               flushBarService.showAddCartMessage(
                 widget.pageStyle,
                 state.product,
@@ -154,11 +156,6 @@ class _ProductHCardState extends State<ProductHCard>
                 state.message,
               );
             }
-            // if (state is MyCartCreatedSuccess) {
-            //   if (user == null) {
-            //     _saveCartId(state.cartId);
-            //   }
-            // }
           },
           builder: (context, state) {
             if (state is MyCartCreatedSuccess) {
@@ -186,26 +183,29 @@ class _ProductHCardState extends State<ProductHCard>
         horizontal: widget.pageStyle.unitWidth * 8,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            widget.product.imageUrl,
-            width: widget.cardHeight * 0.7,
-            height: widget.cardHeight * 0.7,
-            fit: BoxFit.fill,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                    )
-                  : child;
-            },
+          Padding(
+            padding: EdgeInsets.only(right: widget.pageStyle.unitHeight * 10),
+            child: Image.network(
+              widget.product.imageUrl,
+              width: widget.cardHeight * 0.65,
+              height: widget.cardHeight * 0.8,
+              fit: BoxFit.fitHeight,
+              loadingBuilder: (_, child, chunkEvent) {
+                return chunkEvent != null
+                    ? Image.asset(
+                        'lib/public/images/loading/image_loading.jpg',
+                      )
+                    : child;
+              },
+            ),
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: widget.cardHeight * 0.2),
+                SizedBox(height: widget.cardHeight * 0.1),
                 InkWell(
                   onTap: () {
                     if (widget.product.brandId.isNotEmpty) {
@@ -231,13 +231,20 @@ class _ProductHCardState extends State<ProductHCard>
                     ),
                   ),
                 ),
-                Text(
-                  widget.product.shortDescription,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: widget.pageStyle.unitFontSize * 12,
+                Padding(
+                  padding: EdgeInsets.only(
+                    right: widget.pageStyle.unitWidth * 20,
+                  ),
+                  child: Text(
+                    widget.product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: mediumTextStyle.copyWith(
+                      color: greyDarkColor,
+                      fontSize: widget.pageStyle.unitFontSize *
+                          (widget.isMinor ? 12 : 16),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 SizedBox(height: widget.pageStyle.unitHeight * 10),
@@ -256,7 +263,6 @@ class _ProductHCardState extends State<ProductHCard>
                     Expanded(
                       child: Text(
                         '',
-                        // widget.product.price + ' ' + 'currency'.tr(),
                         style: mediumTextStyle.copyWith(
                           decorationStyle: TextDecorationStyle.solid,
                           decoration: TextDecoration.lineThrough,
@@ -275,12 +281,9 @@ class _ProductHCardState extends State<ProductHCard>
                             child: ScaleTransition(
                               scale: _addToCartScaleAnimation,
                               child: Container(
-                                width: widget.pageStyle.unitWidth * 18,
-                                height: widget.pageStyle.unitHeight * 17,
-                                child: SvgPicture.asset(
-                                  shoppingCartIcon,
-                                  color: primaryColor,
-                                ),
+                                width: widget.pageStyle.unitHeight * 32,
+                                height: widget.pageStyle.unitHeight * 32,
+                                child: SvgPicture.asset(addCartIcon),
                               ),
                             ),
                           )
@@ -303,28 +306,29 @@ class _ProductHCardState extends State<ProductHCard>
       builder: (context, state) {
         return Column(
           children: [
-            widget.isWishlist
-                ? Align(
-                    alignment:
-                        lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () => user != null
-                            ? _onWishlist()
-                            : Navigator.pushNamed(context, Routes.signIn),
-                        child: Container(
-                          width: widget.pageStyle.unitWidth * 18,
-                          height: widget.pageStyle.unitHeight * 17,
-                          child: isWishlist
-                              ? SvgPicture.asset(wishlistedIcon)
-                              : SvgPicture.asset(wishlistIcon,
-                                  color: greyColor),
-                        ),
-                      ),
+            if (widget.isWishlist) ...[
+              Align(
+                alignment:
+                    lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () => user != null
+                        ? _onWishlist()
+                        : Navigator.pushNamed(context, Routes.signIn),
+                    child: Container(
+                      width:
+                          widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                      height:
+                          widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                      child: isWishlist
+                          ? SvgPicture.asset(wishlistedIcon)
+                          : SvgPicture.asset(wishlistOpacityIcon),
                     ),
-                  )
-                : SizedBox.shrink(),
+                  ),
+                ),
+              )
+            ],
           ],
         );
       },

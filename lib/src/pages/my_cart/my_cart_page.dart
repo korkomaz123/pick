@@ -449,7 +449,11 @@ class _MyCartPageState extends State<MyCartPage>
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return MyCartRemoveDialog(pageStyle: pageStyle);
+        return MyCartRemoveDialog(
+          pageStyle: pageStyle,
+          title: 'my_cart_remove_item_dialog_title'.tr(),
+          text: 'my_cart_remove_item_dialog_text'.tr(),
+        );
       },
     );
     if (result != null) {

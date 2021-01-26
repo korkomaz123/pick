@@ -29,6 +29,7 @@ class ProductVCard extends StatefulWidget {
   final bool isWishlist;
   final bool isShare;
   final bool isLine;
+  final bool isMinor;
   final PageStyle pageStyle;
 
   ProductVCard({
@@ -39,6 +40,7 @@ class ProductVCard extends StatefulWidget {
     this.isWishlist = false,
     this.isShare = false,
     this.isLine = false,
+    this.isMinor = true,
     this.pageStyle,
   });
 
@@ -139,7 +141,7 @@ class _ProductVCardState extends State<ProductVCard>
                 state.message,
               );
             }
-            if (state is MyCartItemAddedSuccess) {
+            if (state is MyCartItemAddedInProcess) {
               flushBarService.showAddCartMessage(
                 widget.pageStyle,
                 state.product,
@@ -179,18 +181,21 @@ class _ProductVCardState extends State<ProductVCard>
       ),
       child: Column(
         children: [
-          Image.network(
-            widget.product.imageUrl,
-            width: widget.cardHeight * 0.7,
-            height: widget.cardHeight * 0.65,
-            fit: BoxFit.fill,
-            loadingBuilder: (_, child, chunkEvent) {
-              if (chunkEvent != null)
-                return Image.asset(
-                  'lib/public/images/loading/image_loading.jpg',
-                );
-              return child;
-            },
+          Padding(
+            padding: EdgeInsets.all(widget.pageStyle.unitHeight * 10),
+            child: Image.network(
+              widget.product.imageUrl,
+              width: widget.cardHeight * 0.65,
+              height: widget.cardHeight * 0.6,
+              fit: BoxFit.fill,
+              loadingBuilder: (_, child, chunkEvent) {
+                if (chunkEvent != null)
+                  return Image.asset(
+                    'lib/public/images/loading/image_loading.jpg',
+                  );
+                return child;
+              },
+            ),
           ),
           Expanded(
             child: Column(
@@ -223,20 +228,21 @@ class _ProductVCardState extends State<ProductVCard>
                 ),
                 Expanded(
                   child: Text(
-                    widget.product.shortDescription,
+                    widget.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: widget.pageStyle.unitFontSize * 12,
-                      height: widget.pageStyle.unitHeight * 1.2,
+                      fontSize: widget.pageStyle.unitFontSize *
+                          (widget.isMinor ? 12 : 16),
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                SizedBox(height: widget.pageStyle.unitHeight * 10),
                 if (widget.isLine) ...[Divider(color: greyColor)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       widget.product.price + ' ' + 'currency'.tr(),
@@ -265,12 +271,11 @@ class _ProductVCardState extends State<ProductVCard>
                         child: ScaleTransition(
                           scale: _addToCartScaleAnimation,
                           child: Container(
-                            width: widget.pageStyle.unitWidth * 18,
-                            height: widget.pageStyle.unitHeight * 17,
-                            child: SvgPicture.asset(
-                              shoppingCartIcon,
-                              color: primaryColor,
-                            ),
+                            width: widget.pageStyle.unitWidth *
+                                (widget.isMinor ? 26 : 32),
+                            height: widget.pageStyle.unitWidth *
+                                (widget.isMinor ? 26 : 32),
+                            child: SvgPicture.asset(addCartIcon),
                           ),
                         ),
                       )
@@ -279,7 +284,7 @@ class _ProductVCardState extends State<ProductVCard>
                     ],
                   ],
                 ),
-                SizedBox(height: widget.pageStyle.unitHeight * 10),
+                SizedBox(height: widget.pageStyle.unitHeight * 5),
               ],
             ),
           ),
@@ -304,11 +309,11 @@ class _ProductVCardState extends State<ProductVCard>
                     ? _onWishlist()
                     : Navigator.pushNamed(context, Routes.signIn),
                 child: Container(
-                  width: widget.pageStyle.unitWidth * 18,
-                  height: widget.pageStyle.unitHeight * 17,
+                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(wishlistIcon, color: greyColor),
+                      : SvgPicture.asset(wishlistOpacityIcon),
                 ),
               ),
             ),

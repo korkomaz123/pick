@@ -52,7 +52,15 @@ class MyCartItemsLoadedFailure extends MyCartState {
   List<Object> get props => [message];
 }
 
-class MyCartItemAddedInProcess extends MyCartState {}
+class MyCartItemAddedInProcess extends MyCartState {
+  final ProductModel product;
+  final String count;
+
+  MyCartItemAddedInProcess({this.product, this.count});
+
+  @override
+  List<Object> get props => [product, count];
+}
 
 class MyCartItemAddedSuccess extends MyCartState {
   final ProductModel product;

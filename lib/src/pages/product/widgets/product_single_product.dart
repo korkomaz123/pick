@@ -217,7 +217,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     width: pageStyle.unitWidth * 22,
                     height: pageStyle.unitHeight * 22,
                     child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : wishlistIcon,
+                      isWishlist ? wishlistedIcon : wishlistOpacityIcon,
                     ),
                   ),
                 ),
@@ -461,15 +461,17 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             state.message,
           );
         }
+        if (state is MyCartItemAddedInProcess) {
+          flushBarService.showAddCartMessage(
+            widget.pageStyle,
+            state.product,
+          );
+        }
         if (state is MyCartItemAddedSuccess) {
           if (isBuyNow) {
             isBuyNow = false;
             Navigator.pushNamed(context, Routes.myCart);
           }
-          flushBarService.showAddCartMessage(
-            widget.pageStyle,
-            state.product,
-          );
         }
         if (state is MyCartItemAddedFailure) {
           flushBarService.showErrorMessage(

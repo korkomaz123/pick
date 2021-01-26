@@ -7,14 +7,16 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartRemoveDialog extends StatelessWidget {
   final PageStyle pageStyle;
+  final String title;
+  final String text;
 
-  MyCartRemoveDialog({this.pageStyle});
+  MyCartRemoveDialog({this.pageStyle, this.title, this.text});
 
   @override
   Widget build(BuildContext context) {
     return CupertinoAlertDialog(
       title: Text(
-        'my_cart_remove_item_dialog_title'.tr(),
+        title,
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 26,
@@ -22,7 +24,7 @@ class MyCartRemoveDialog extends StatelessWidget {
         ),
       ),
       content: Text(
-        'my_cart_remove_item_dialog_text'.tr(),
+        text,
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 15,

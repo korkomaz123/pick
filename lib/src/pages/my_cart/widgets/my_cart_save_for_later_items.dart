@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
+import 'my_cart_remove_dialog.dart';
 
 class MyCartSaveForLaterItems extends StatefulWidget {
   final PageStyle pageStyle;
@@ -41,6 +42,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   String cartId = '';
+  List<ProductModel> items = [];
 
   @override
   void initState() {
@@ -86,87 +88,57 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
       },
       builder: (context, state) {
         if (state is SaveLaterItemsLoadedSuccess) {
-          if (state.items.isNotEmpty) {
-            return Container(
-              width: widget.pageStyle.deviceWidth,
-              color: backgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: widget.pageStyle.deviceWidth,
-                    color: Colors.white,
-                    padding: EdgeInsets.only(
-                      left: widget.pageStyle.unitWidth * 10,
-                      right: widget.pageStyle.unitWidth * 10,
-                      top: widget.pageStyle.unitHeight * 20,
-                      bottom: widget.pageStyle.unitHeight * 10,
-                    ),
-                    child: Text(
-                      'Save For Later',
-                      style: mediumTextStyle.copyWith(
-                        fontSize: widget.pageStyle.unitFontSize * 23,
-                        color: greyDarkColor,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      vertical: widget.pageStyle.unitHeight * 10,
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: state.items.map((item) {
-                          return _buildItem(item);
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: widget.pageStyle.deviceWidth,
-                    height: widget.pageStyle.unitHeight * 60,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return Container();
-          }
+          items = state.items;
         }
-        return Container(
-          width: widget.pageStyle.deviceWidth,
-          color: backgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: widget.pageStyle.deviceWidth,
-                color: Colors.white,
-                padding: EdgeInsets.only(
-                  left: widget.pageStyle.unitWidth * 10,
-                  right: widget.pageStyle.unitWidth * 10,
-                  top: widget.pageStyle.unitHeight * 20,
-                  bottom: widget.pageStyle.unitHeight * 10,
-                ),
-                child: Text(
-                  'Save For Later',
-                  style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 23,
-                    color: greyDarkColor,
+        if (items.isNotEmpty) {
+          return Container(
+            width: widget.pageStyle.deviceWidth,
+            color: backgroundColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: widget.pageStyle.deviceWidth,
+                  color: Colors.white,
+                  padding: EdgeInsets.only(
+                    left: widget.pageStyle.unitWidth * 10,
+                    right: widget.pageStyle.unitWidth * 10,
+                    top: widget.pageStyle.unitHeight * 20,
+                    bottom: widget.pageStyle.unitHeight * 10,
+                  ),
+                  child: Text(
+                    'Save For Later',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: widget.pageStyle.unitFontSize * 19,
+                      color: greyDarkColor,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: widget.pageStyle.deviceWidth,
-                height: widget.pageStyle.unitHeight * 60,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        );
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    vertical: widget.pageStyle.unitHeight * 10,
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: items.map((item) {
+                        return _buildItem(item);
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: widget.pageStyle.deviceWidth,
+                  height: widget.pageStyle.unitHeight * 60,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Container();
+        }
       },
     );
   }
@@ -174,9 +146,13 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   Widget _buildItem(ProductModel item) {
     return Container(
       width: widget.pageStyle.unitWidth * 180,
+      height: widget.pageStyle.unitHeight * 300,
       margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 10),
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 10),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(widget.pageStyle.unitFontSize * 4),
+      ),
       child: Column(
         children: [
           Row(
@@ -201,14 +177,20 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
             item.imageUrl,
             width: widget.pageStyle.unitWidth * 140,
             height: widget.pageStyle.unitHeight * 160,
+            fit: BoxFit.fitHeight,
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 5),
-            child: Text(
-              item.description,
-              style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 14,
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 5),
+              child: Text(
+                item.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: mediumTextStyle.copyWith(
+                  fontSize: widget.pageStyle.unitFontSize * 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -228,13 +210,25 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
     );
   }
 
-  void _onRemoveItem(ProductModel item) {
-    widget.saveLaterBloc.add(SaveLaterItemChanged(
-      token: user.token,
-      productId: item.productId,
-      action: 'delete',
-      qty: item.qtySaveForLater,
-    ));
+  void _onRemoveItem(ProductModel item) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return MyCartRemoveDialog(
+          pageStyle: widget.pageStyle,
+          title: 'my_cart_remove_item_dialog_title'.tr(),
+          text: 'my_cart_save_later_remove_item_dialog_text'.tr(),
+        );
+      },
+    );
+    if (result != null) {
+      widget.saveLaterBloc.add(SaveLaterItemChanged(
+        token: user.token,
+        productId: item.productId,
+        action: 'delete',
+        qty: item.qtySaveForLater,
+      ));
+    }
   }
 
   void _onPutInCart(ProductModel item) {

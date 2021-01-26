@@ -52,7 +52,9 @@ class MyCartItem extends StatelessWidget {
                 cartItem.product.imageUrl,
                 width: pageStyle.unitWidth * 134,
                 height: pageStyle.unitHeight * 150,
+                fit: BoxFit.fitHeight,
               ),
+              SizedBox(width: pageStyle.unitWidth * 5),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,10 +87,14 @@ class MyCartItem extends StatelessWidget {
                     ),
                     Text(
                       cartItem.product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
+                    SizedBox(height: pageStyle.unitHeight * 5),
                     Text(
                       cartItem.product.shortDescription,
                       maxLines: 2,

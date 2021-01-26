@@ -61,7 +61,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
             SizedBox(height: pageStyle.unitHeight * 4),
             Container(
               width: double.infinity,
-              height: pageStyle.unitHeight * 260,
+              height: pageStyle.unitHeight * 320,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: relatedItems.length > 10 ? 10 : relatedItems.length,
@@ -71,8 +71,8 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
                       right: pageStyle.unitWidth * 10,
                     ),
                     child: ProductVCard(
-                      cardWidth: pageStyle.unitWidth * 160,
-                      cardHeight: pageStyle.unitHeight * 256,
+                      cardWidth: pageStyle.unitWidth * 180,
+                      cardHeight: pageStyle.unitHeight * 320,
                       product: relatedItems[index],
                       isShoppingCart: true,
                       isWishlist: true,

@@ -106,7 +106,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     ProductModel product,
     String qty,
   ) async* {
-    yield MyCartItemAddedInProcess();
+    yield MyCartItemAddedInProcess(product: product, count: qty);
     try {
       final result =
           await _myCartRepository.addCartItem(cartId, product.productId, qty);

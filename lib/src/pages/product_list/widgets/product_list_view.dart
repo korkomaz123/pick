@@ -312,7 +312,7 @@ class _ProductListViewState extends State<ProductListView>
                 pageStyle: pageStyle,
                 product: products[index],
                 cardWidth: pageStyle.unitWidth * 186,
-                cardHeight: pageStyle.unitHeight * 253,
+                cardHeight: pageStyle.unitHeight * 270,
                 isShoppingCart: true,
                 isWishlist: true,
                 isShare: true,

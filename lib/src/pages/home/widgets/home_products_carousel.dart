@@ -1,8 +1,10 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/product_h_card.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -24,6 +26,13 @@ class HomeProductsCarousel extends StatefulWidget {
 
 class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
   int activeIndex = 0;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,37 +41,44 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: !widget.isVerticalCard ? widget.pageStyle.unitHeight * 320 : widget.pageStyle.unitHeight * 460,
+            height: !widget.isVerticalCard
+                ? widget.pageStyle.unitHeight * 320
+                : widget.pageStyle.unitHeight * 380,
             child: Swiper(
-              itemCount: widget.products.length > 10 ? 10 : widget.products.length,
+              itemCount:
+                  widget.products.length > 10 ? 10 : widget.products.length,
               autoplay: true,
-              curve: Curves.easeIn,
+              curve: Curves.fastLinearToSlowEaseIn,
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
                 activeIndex = value;
-                setState(() {});
+                markaaAppChangeNotifier.rebuild();
               },
               itemBuilder: (context, index) {
-                return widget.isVerticalCard
-                    ? ProductVCard(
-                        cardWidth: widget.pageStyle.unitWidth * 355,
-                        cardHeight: widget.pageStyle.unitHeight * 360,
-                        product: widget.products[index],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      )
-                    : ProductHCard(
-                        cardWidth: widget.pageStyle.unitWidth * 355,
-                        cardHeight: widget.pageStyle.unitHeight * 220,
-                        product: widget.products[index],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      );
+                if (widget.isVerticalCard) {
+                  return ProductVCard(
+                    cardWidth: widget.pageStyle.unitWidth * 355,
+                    cardHeight: widget.pageStyle.unitHeight * 360,
+                    product: widget.products[index],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                    isMinor: false,
+                  );
+                } else {
+                  return ProductHCard(
+                    cardWidth: widget.pageStyle.unitWidth * 355,
+                    cardHeight: widget.pageStyle.unitHeight * 220,
+                    product: widget.products[index],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                    isMinor: false,
+                  );
+                }
               },
             ),
           ),
@@ -72,20 +88,26 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               padding: EdgeInsets.only(
                 bottom: widget.pageStyle.unitHeight * 20,
               ),
-              child: SmoothIndicator(
-                offset: activeIndex.toDouble(),
-                count: widget.products.length > 10 ? 10 : widget.products.length,
-                axisDirection: Axis.horizontal,
-                effect: SlideEffect(
-                  spacing: 8.0,
-                  radius: 30,
-                  dotWidth: widget.pageStyle.unitHeight * 8,
-                  dotHeight: widget.pageStyle.unitHeight * 8,
-                  paintStyle: PaintingStyle.fill,
-                  strokeWidth: 0,
-                  dotColor: greyLightColor,
-                  activeDotColor: primarySwatchColor,
-                ),
+              child: Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  return SmoothIndicator(
+                    offset: activeIndex.toDouble(),
+                    count: widget.products.length > 10
+                        ? 10
+                        : widget.products.length,
+                    axisDirection: Axis.horizontal,
+                    effect: SlideEffect(
+                      spacing: 8.0,
+                      radius: 30,
+                      dotWidth: widget.pageStyle.unitHeight * 8,
+                      dotHeight: widget.pageStyle.unitHeight * 8,
+                      paintStyle: PaintingStyle.fill,
+                      strokeWidth: 0,
+                      dotColor: greyLightColor,
+                      activeDotColor: primarySwatchColor,
+                    ),
+                  );
+                },
               ),
             ),
           ),

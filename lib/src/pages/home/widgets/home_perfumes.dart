@@ -139,7 +139,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
       children: [
         Container(
           width: widget.pageStyle.deviceWidth,
-          height: widget.pageStyle.unitHeight * 500,
+          height: widget.pageStyle.unitHeight * 600,
           child: Swiper(
             itemCount: perfumesProducts.length > 12
                 ? 3
@@ -159,7 +159,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     children: [
                       ProductVCard(
                         cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 236,
+                        cardHeight: widget.pageStyle.unitHeight * 290,
                         product: perfumesProducts[4 * index],
                         pageStyle: widget.pageStyle,
                         isShoppingCart: true,
@@ -172,7 +172,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                       ),
                       ProductVCard(
                         cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 236,
+                        cardHeight: widget.pageStyle.unitHeight * 290,
                         product: perfumesProducts[4 * index + 1],
                         pageStyle: widget.pageStyle,
                         isShoppingCart: true,
@@ -195,7 +195,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     children: [
                       ProductVCard(
                         cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 236,
+                        cardHeight: widget.pageStyle.unitHeight * 290,
                         product: perfumesProducts[4 * index + 2],
                         pageStyle: widget.pageStyle,
                         isShoppingCart: true,
@@ -208,7 +208,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                       ),
                       ProductVCard(
                         cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 236,
+                        cardHeight: widget.pageStyle.unitHeight * 290,
                         product: perfumesProducts[4 * index + 3],
                         pageStyle: widget.pageStyle,
                         isShoppingCart: true,

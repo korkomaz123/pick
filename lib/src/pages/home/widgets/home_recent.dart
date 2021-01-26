@@ -55,7 +55,7 @@ class _HomeRecentState extends State<HomeRecent> {
         if (recentlyViews.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 320,
+            height: widget.pageStyle.unitHeight * 370,
             padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
             margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
             color: Colors.white,
@@ -65,7 +65,7 @@ class _HomeRecentState extends State<HomeRecent> {
                 Text(
                   'home_recently_view'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 26,
+                    fontSize: widget.pageStyle.unitFontSize * 23,
                     color: greyDarkColor,
                   ),
                 ),
@@ -78,8 +78,8 @@ class _HomeRecentState extends State<HomeRecent> {
                         return Row(
                           children: [
                             ProductVCard(
-                              cardWidth: widget.pageStyle.unitWidth * 155,
-                              cardHeight: widget.pageStyle.unitHeight * 250,
+                              cardWidth: widget.pageStyle.unitWidth * 175,
+                              cardHeight: widget.pageStyle.unitHeight * 300,
                               product: recentlyViews[index],
                               pageStyle: widget.pageStyle,
                               isShoppingCart: true,
@@ -88,7 +88,7 @@ class _HomeRecentState extends State<HomeRecent> {
                             ),
                             if (index < recentlyViews.length - 1) ...[
                               Container(
-                                height: widget.pageStyle.unitHeight * 250,
+                                height: widget.pageStyle.unitHeight * 300,
                                 padding: EdgeInsets.only(
                                   left: widget.pageStyle.unitWidth * 10,
                                   right: widget.pageStyle.unitWidth * 10,

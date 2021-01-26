@@ -94,9 +94,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
-                setState(() {
-                  activeIndex = value;
-                });
+                activeIndex = value;
+                setState(() {});
               },
               itemBuilder: (context, index) {
                 BrandEntity brand = brands[index];
@@ -118,10 +117,14 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                   child: Container(
                     width: widget.pageStyle.deviceWidth,
                     height: widget.pageStyle.unitHeight * 380,
+                    padding: EdgeInsets.only(
+                      left: widget.pageStyle.unitWidth * 30,
+                      right: widget.pageStyle.unitWidth * 30,
+                      bottom: widget.pageStyle.unitHeight * 50,
+                    ),
                     child: Image.network(
                       brand.brandThumbnail,
-                      width: widget.pageStyle.unitWidth * 217,
-                      height: widget.pageStyle.unitHeight * 219,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 );

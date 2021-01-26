@@ -115,12 +115,14 @@ class _WishlistPageViewState extends State<WishlistPageView>
                       state.message,
                     );
                   }
-                  if (state is MyCartItemAddedSuccess) {
-                    _onRemoveWishlist(selectedIndex, false);
+                  if (state is MyCartItemAddedInProcess) {
                     flushBarService.showAddCartMessage(
                       pageStyle,
                       state.product,
                     );
+                  }
+                  if (state is MyCartItemAddedSuccess) {
+                    _onRemoveWishlist(selectedIndex, false);
                   }
                   if (state is MyCartItemAddedFailure) {
                     flushBarService.showErrorMessage(

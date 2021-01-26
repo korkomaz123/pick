@@ -32,9 +32,9 @@ class OrderRepository {
       'orderId': orderId,
       'items': json.encode(items),
       'reason': reason,
-      'imageName': imageName,
+      'imageName': imageName ?? '',
       'lang': lang,
-      'imageForProduct': base64Encode(product),
+      'imageForProduct': imageName != null ? base64Encode(product) : '',
     };
     return await Api.postMethod(url, data: params);
   }

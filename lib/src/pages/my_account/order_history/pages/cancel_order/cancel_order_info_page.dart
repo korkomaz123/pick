@@ -249,28 +249,22 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
 
   void _onSubmit() {
     if (formKey.currentState.validate()) {
-      if (file != null) {
-        List<Map<String, dynamic>> items = [];
-        List<String> keys = cancelledItemsMap.keys.toList();
-        print(keys);
-        items = keys.map((key) {
-          return {
-            'productId': int.parse(key),
-            'cancelCount': cancelledItemsMap[key],
-          };
-        }).toList();
-        orderBloc.add(OrderCancelled(
-          orderId: order.orderId,
-          items: items,
-          reason: '',
-          additionalInfo: additionalInfoController.text,
-          imageForProduct: imageData,
-          imageName: name,
-        ));
-      } else {
-        String message = 'cancel_order_image_required';
-        flushBarService.showErrorMessage(pageStyle, message);
-      }
+      List<Map<String, dynamic>> items = [];
+      List<String> keys = cancelledItemsMap.keys.toList();
+      items = keys.map((key) {
+        return {
+          'productId': int.parse(key),
+          'cancelCount': cancelledItemsMap[key],
+        };
+      }).toList();
+      orderBloc.add(OrderCancelled(
+        orderId: order.orderId,
+        items: items,
+        reason: additionalInfoController.text,
+        additionalInfo: additionalInfoController.text,
+        imageForProduct: imageData,
+        imageName: name,
+      ));
     }
   }
 }
