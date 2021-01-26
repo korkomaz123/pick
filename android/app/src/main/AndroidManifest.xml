@@ -13,7 +13,7 @@
         android:label="markaa"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true">
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyD-_PshcdHw2PUx1uMtjnUIW2060nEmXCI"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

@@ -1,6 +1,6 @@
 const double designWidth = 375;
 const double designHeight = 812;
-const String apiKey = 'AIzaSyD-_PshcdHw2PUx1uMtjnUIW2060nEmXCI';
+const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
 class GoSellSdk {
   static const String pAndroidSecretKey = 'sk_live_yhvSZwp2NcQIDCYW9k3EzLf6';
