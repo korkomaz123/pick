@@ -19,7 +19,8 @@ class OrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int count = canceled ? cartItem.itemCountCanceled : cartItem.itemCount;
+    bool isStock =
+        cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
     return Stack(
       children: [
         Container(
@@ -50,6 +51,8 @@ class OrderItemCard extends StatelessWidget {
                   children: [
                     Text(
                       cartItem.product.name ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 16,
                       ),
@@ -67,7 +70,9 @@ class OrderItemCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'items'.tr().replaceFirst('0', '$count'),
+                          'items'
+                              .tr()
+                              .replaceFirst('0', '${cartItem.itemCount}'),
                           style: mediumTextStyle.copyWith(
                             fontSize: pageStyle.unitFontSize * 14,
                             color: primaryColor,
@@ -88,86 +93,102 @@ class OrderItemCard extends StatelessWidget {
             ],
           ),
         ),
-        canceled
-            ? lang == 'en'
-                ? Positioned(
-                    top: pageStyle.unitHeight * 50,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 20,
-                        vertical: pageStyle.unitHeight * 10,
-                      ),
-                      color: dangerColor.withOpacity(0.5),
-                      child: Text(
-                        'item_canceled'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 14,
-                          color: Colors.white,
-                        ),
+        if (canceled) ...[
+          if (lang == 'en') ...[
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Row(
+                children: [
+                  Text(
+                    'items'
+                        .tr()
+                        .replaceFirst('0', '${cartItem.itemCountCanceled}'),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 14,
+                      color: dangerColor,
+                    ),
+                  ),
+                  SizedBox(width: pageStyle.unitWidth * 20),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: pageStyle.unitWidth * 10,
+                      vertical: pageStyle.unitHeight * 4,
+                    ),
+                    color: dangerColor.withOpacity(0.5),
+                    child: Text(
+                      'item_canceled'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 14,
+                        color: Colors.white,
                       ),
                     ),
-                  )
-                : Positioned(
-                    top: pageStyle.unitHeight * 50,
-                    left: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 20,
-                        vertical: pageStyle.unitHeight * 10,
-                      ),
-                      color: dangerColor.withOpacity(0.5),
-                      child: Text(
-                        'item_canceled'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )
-            : SizedBox.shrink(),
-        !canceled &&
-                (cartItem.product.stockQty == null ||
-                    cartItem.product.stockQty == 0)
-            ? lang == 'en'
-                ? Positioned(
-                    top: pageStyle.unitHeight * 50,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 20,
-                        vertical: pageStyle.unitHeight * 10,
-                      ),
-                      color: primarySwatchColor.withOpacity(0.5),
-                      child: Text(
-                        'out_stock'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )
-                : Positioned(
-                    top: pageStyle.unitHeight * 50,
-                    left: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 20,
-                        vertical: pageStyle.unitHeight * 10,
-                      ),
-                      color: primarySwatchColor.withOpacity(0.5),
-                      child: Text(
-                        'out_stock'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )
-            : SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            )
+          ] else ...[
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                  vertical: pageStyle.unitHeight * 4,
+                ),
+                color: dangerColor.withOpacity(0.5),
+                child: Text(
+                  'item_canceled'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ]
+        ],
+        if (!canceled && isStock) ...[
+          if (lang == 'en') ...[
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                  vertical: pageStyle.unitHeight * 4,
+                ),
+                color: primarySwatchColor.withOpacity(0.5),
+                child: Text(
+                  'out_stock'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ] else ...[
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                  vertical: pageStyle.unitHeight * 4,
+                ),
+                color: primarySwatchColor.withOpacity(0.5),
+                child: Text(
+                  'out_stock'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ]
+        ],
       ],
     );
   }

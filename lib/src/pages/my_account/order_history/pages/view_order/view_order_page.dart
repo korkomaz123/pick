@@ -248,29 +248,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         (index) {
           return Column(
             children: [
-              order.cartItems[index].itemCount > 0
-                  ? OrderItemCard(
-                      pageStyle: pageStyle,
-                      cartItem: order.cartItems[index],
-                    )
-                  : SizedBox.shrink(),
-              order.cartItems[index].itemCountCanceled > 0
-                  ? Column(
-                      children: [
-                        order.cartItems[index].itemCount > 0
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
-                        OrderItemCard(
-                          pageStyle: pageStyle,
-                          cartItem: order.cartItems[index],
-                          canceled: true,
-                        ),
-                      ],
-                    )
-                  : SizedBox.shrink(),
-              index < (order.cartItems.length - 1)
-                  ? Divider(color: greyColor, thickness: 0.5)
-                  : SizedBox.shrink(),
+              OrderItemCard(
+                pageStyle: pageStyle,
+                cartItem: order.cartItems[index],
+                canceled: order.cartItems[index].itemCountCanceled > 0,
+              ),
+              if (index < (order.cartItems.length - 1)) ...[
+                Divider(color: greyColor, thickness: 0.5)
+              ],
             ],
           );
         },

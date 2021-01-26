@@ -323,22 +323,21 @@ class _ReOrderPageState extends State<ReOrderPage> {
                         pageStyle: pageStyle,
                         cartItem: cartItems[index],
                       ),
-                      cartItems.length > 1
-                          ? Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                onPressed: () =>
-                                    _onDeleteOrderItem(cartItems[index]),
-                                icon: SvgPicture.asset(trashIcon,
-                                    color: greyColor),
-                              ),
-                            )
-                          : SizedBox.shrink(),
+                      if (cartItems.length > 1) ...[
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            onPressed: () =>
+                                _onDeleteOrderItem(cartItems[index]),
+                            icon: SvgPicture.asset(trashIcon, color: greyColor),
+                          ),
+                        )
+                      ],
                     ],
                   ),
-                  index < (cartItems.length - 1)
-                      ? Divider(color: greyColor, thickness: 0.5)
-                      : SizedBox.shrink(),
+                  if (index < (cartItems.length - 1)) ...[
+                    Divider(color: greyColor, thickness: 0.5)
+                  ],
                 ],
               );
             },

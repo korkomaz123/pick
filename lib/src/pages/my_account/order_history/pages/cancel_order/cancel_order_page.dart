@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -14,6 +15,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -36,10 +38,12 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
   Map<String, dynamic> cancelItemsMap = {};
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
     super.initState();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     order = widget.order;
     switch (order.status) {
@@ -144,7 +148,11 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
               _buildOrderStatus(),
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
-              _buildOrderItems(),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  return _buildOrderItems();
+                },
+              ),
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildOrderPaymentMethod(),
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
@@ -251,34 +259,23 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           }
           String key = order.cartItems[index].product.productId.toString();
           bool isSelected = cancelItemsMap.containsKey(key);
-          return Column(
-            children: [
-              Stack(
-                children: [
-                  _buildProductCard(order.cartItems[index], index),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: SvgPicture.asset(
-                          isSelected ? selectedIcon : unSelectedIcon),
-                      onPressed: () {
-                        if (isSelected) {
-                          cancelItemsMap.remove(key);
-                        } else {
-                          cancelItemsMap[key] =
-                              order.cartItems[index].itemCount;
-                        }
-                        setState(() {});
-                      },
-                    ),
-                  ),
+          if (order.cartItems[index].itemCount > 0) {
+            return Column(
+              children: [
+                Stack(
+                  children: [
+                    _buildProductCard(order.cartItems[index], index),
+                    _buildCheckButton(isSelected, key, index),
+                  ],
+                ),
+                if (index < (order.cartItems.length - 1)) ...[
+                  Divider(color: greyColor, thickness: 0.5)
                 ],
-              ),
-              index < (order.cartItems.length - 1)
-                  ? Divider(color: greyColor, thickness: 0.5)
-                  : SizedBox.shrink(),
-            ],
-          );
+              ],
+            );
+          } else {
+            return Container();
+          }
         },
       ),
     );
@@ -315,6 +312,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               children: [
                 Text(
                   cartItem.product.name ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                   ),
@@ -351,6 +350,23 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCheckButton(bool isSelected, String key, int index) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: IconButton(
+        icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
+        onPressed: () {
+          if (isSelected) {
+            cancelItemsMap.remove(key);
+          } else {
+            cancelItemsMap[key] = order.cartItems[index].itemCount;
+          }
+          markaaAppChangeNotifier.rebuild();
+        },
       ),
     );
   }

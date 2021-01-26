@@ -26,9 +26,9 @@ class ReviewProductCard extends StatelessWidget {
         children: [
           Image.network(
             cartItem.product.imageUrl,
-            width: pageStyle.unitHeight * 120,
+            width: pageStyle.unitHeight * 90,
             height: pageStyle.unitHeight * 120,
-            fit: BoxFit.fill,
+            fit: BoxFit.fitHeight,
             loadingBuilder: (_, child, chunkEvent) {
               return chunkEvent != null
                   ? Image.asset(
@@ -37,6 +37,7 @@ class ReviewProductCard extends StatelessWidget {
                   : child;
             },
           ),
+          SizedBox(width: pageStyle.unitWidth * 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,6 +69,8 @@ class ReviewProductCard extends StatelessWidget {
                 ),
                 Text(
                   cartItem.product.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                   ),

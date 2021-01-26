@@ -51,25 +51,25 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       backgroundColor: Colors.white,
       appBar: MarkaaOrderHistoryAppBar(pageStyle: pageStyle),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: BlocConsumer<OrderBloc, OrderState>(
-        listener: (context, state) {
-          if (state is OrderHistoryLoadedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is OrderHistoryLoadedSuccess) {
-            progressService.hideProgress();
-          }
-          if (state is OrderHistoryLoadedFailure) {
-            progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
-          }
-        },
-        builder: (context, state) {
-          if (state is OrderHistoryLoadedSuccess) {
-            orders = state.orders;
-          }
-          return SingleChildScrollView(
-            child: Column(
+      body: SingleChildScrollView(
+        child: BlocConsumer<OrderBloc, OrderState>(
+          listener: (context, state) {
+            if (state is OrderHistoryLoadedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is OrderHistoryLoadedSuccess) {
+              progressService.hideProgress();
+            }
+            if (state is OrderHistoryLoadedFailure) {
+              progressService.hideProgress();
+              snackBarService.showErrorSnackBar(state.message);
+            }
+          },
+          builder: (context, state) {
+            if (state is OrderHistoryLoadedSuccess) {
+              orders = state.orders;
+            }
+            return Column(
               children: [
                 Container(
                   width: pageStyle.deviceWidth,
@@ -103,9 +103,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   ),
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
