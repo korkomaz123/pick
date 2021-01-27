@@ -260,6 +260,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     flushBarService.showInformMessage(pageStyle, 'Fetching the location');
     Position position = await Geolocator.getCurrentPosition(
       forceAndroidLocationManager: true,
+      desiredAccuracy: LocationAccuracy.high,
     );
     print(position.latitude);
     print(position.longitude);
