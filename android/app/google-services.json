@@ -59,7 +59,8 @@
               "client_id": "5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.markaa.shop"
+                "bundle_id": "com.markaa.shop",
+                "app_store_id": "1549591755"
               }
             }
           ]

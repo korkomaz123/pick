@@ -37,7 +37,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
-  Map<String, dynamic> cancelItemsMap = {};
+  Map<String, dynamic> returnItemsMap = {};
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
@@ -48,7 +48,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     order = widget.order;
     switch (order.status) {
       case OrderStatusEnum.pending:
-        icon = cancelledIcon;
+        icon = pendingIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;
@@ -123,7 +123,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       ),
       centerTitle: true,
       title: Text(
-        'cancel_order_button_title'.tr(),
+        'return_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
@@ -257,8 +257,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             order.cartItems[index].availableCount =
                 order.cartItems[index].itemCount;
           }
-          String key = order.cartItems[index].product.productId.toString();
-          bool isSelected = cancelItemsMap.containsKey(key);
+          String key = order.cartItems[index].itemId.toString();
+          bool isSelected = returnItemsMap.containsKey(key);
           if (order.cartItems[index].itemCount > 0) {
             return Column(
               children: [
@@ -283,7 +283,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
     bool isDefaultValue =
-        cancelItemsMap.containsKey(cartItem.product.productId.toString());
+        returnItemsMap.containsKey(cartItem.itemId.toString());
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
@@ -361,9 +361,9 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
           if (isSelected) {
-            cancelItemsMap.remove(key);
+            returnItemsMap.remove(key);
           } else {
-            cancelItemsMap[key] = order.cartItems[index].itemCount;
+            returnItemsMap[key] = order.cartItems[index].itemCount;
           }
           markaaAppChangeNotifier.rebuild();
         },
@@ -526,19 +526,20 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     if (result != null) {
       final count = result as int;
       order.cartItems[index].itemCount = count;
-      final key = order.cartItems[index].product.productId;
-      cancelItemsMap[key] = count;
+      final key = order.cartItems[index].itemId;
+      print(key);
+      returnItemsMap[key] = count;
       setState(() {});
     }
   }
 
   void _onNext() {
-    List<String> keys = cancelItemsMap.keys.toList();
+    List<String> keys = returnItemsMap.keys.toList();
     if (keys.isNotEmpty) {
-      final params = {'order': order, 'items': cancelItemsMap};
-      Navigator.pushNamed(context, Routes.cancelOrderInfo, arguments: params);
+      final params = {'order': order, 'items': returnItemsMap};
+      Navigator.pushNamed(context, Routes.returnOrderInfo, arguments: params);
     } else {
-      String message = 'cancel_order_no_selected_item'.tr();
+      String message = 'return_order_no_selected_item'.tr();
       flushBarService.showErrorMessage(pageStyle, message);
     }
   }

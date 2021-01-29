@@ -328,7 +328,6 @@ class _MarkaaAppViewState extends State<MarkaaAppView> {
               }
               if (state is MyCartCreatedFailure) {}
               if (state is MyCartItemAddedSuccess) {
-                cartTotalPrice += double.parse(state.product.price).ceil();
                 int count = int.parse(state.count);
                 cartItemCountBloc.add(CartItemCountIncremented(
                   incrementedCount: cartItemCount + count,

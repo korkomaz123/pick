@@ -59,3 +59,5 @@ const String selectedIcon = '$iconsAssetPath/select.svg';
 const String unSelectedIcon = '$iconsAssetPath/unselect.svg';
 const String putInCartEnIcon = '$iconsAssetPath/put-in-cart-icon-en.svg';
 const String putInCartArIcon = '$iconsAssetPath/put-in-cart-icon-ar.svg';
+const String returnIcon = '$iconsAssetPath/return-icon.svg';
+const String returnedIcon = '$iconsAssetPath/returned-icon.svg';

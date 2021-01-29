@@ -1,5 +1,5 @@
 class EndPoints {
-  static const String baseUrl = 'https://cigaon.com/customapi/api';
+  static const String baseUrl = 'https://markaa.com/customapi/api';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
@@ -63,6 +63,7 @@ class EndPoints {
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';
   static const String cancelOrder = '$baseUrl/cancelOrder';
+  static const String returnOrder = '$baseUrl/returnOrder';
   static const String getViewedProducts = '$baseUrl/getViewedProducts';
   static const String sendProductViewed = '$baseUrl/sendProductViewed';
   static const String getViewedGuestProducts = '$baseUrl/getRecentView';
@@ -73,4 +74,5 @@ class EndPoints {
   static const String getHomeCategories = '$baseUrl/getHomeCategories';
   static const String getSaveForLaterItems = '$baseUrl/getSaveforlater';
   static const String changeSaveForLaterItem = '$baseUrl/addSaveforlateritem';
+  static const String getProduct = '$baseUrl/getProduct';
 }

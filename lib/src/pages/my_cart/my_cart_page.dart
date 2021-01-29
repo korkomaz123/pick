@@ -410,7 +410,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '$totalPrice ' + 'currency'.tr(),
+                '${totalPrice.toStringAsFixed(2)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,

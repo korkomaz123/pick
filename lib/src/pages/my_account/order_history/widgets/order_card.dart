@@ -35,7 +35,8 @@ class _OrderCardState extends State<OrderCard> {
 
   void _checkOrderItems() {
     for (int i = 0; i < order.cartItems.length; i++) {
-      if (order.cartItems[i].product.stockQty != null && order.cartItems[i].product.stockQty > 0) {
+      if (order.cartItems[i].product.stockQty != null &&
+          order.cartItems[i].product.stockQty > 0) {
         isStock = true;
         break;
       }
@@ -68,6 +69,11 @@ class _OrderCardState extends State<OrderCard> {
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
+        break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
         break;
       default:
         icon = pendingIcon;
@@ -243,19 +249,22 @@ class _OrderCardState extends State<OrderCard> {
                 ),
                 SizedBox(width: pageStyle.unitWidth * 5),
                 MaterialButton(
-                  onPressed: () => !isStock || order.status == OrderStatusEnum.canceled
-                      ? null
-                      : Navigator.pushNamed(
-                          context,
-                          Routes.reOrder,
-                          arguments: order,
-                        ),
+                  onPressed: () =>
+                      !isStock || order.status == OrderStatusEnum.canceled
+                          ? null
+                          : Navigator.pushNamed(
+                              context,
+                              Routes.reOrder,
+                              arguments: order,
+                            ),
                   minWidth: pageStyle.unitWidth * 150,
                   height: pageStyle.unitHeight * 45,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: !isStock || order.status == OrderStatusEnum.canceled ? greyColor : primaryColor,
+                  color: !isStock || order.status == OrderStatusEnum.canceled
+                      ? greyColor
+                      : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

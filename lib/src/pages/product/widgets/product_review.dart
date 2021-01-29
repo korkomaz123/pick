@@ -30,38 +30,43 @@ class _ProductReviewState extends State<ProductReview> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.watch<ProductRepository>().getProductReviews(widget.product.productId),
+      future: context
+          .watch<ProductRepository>()
+          .getProductReviews(widget.product.productId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           reviews = snapshot.data ?? [];
-          return reviews.isNotEmpty
-              ? Container(
-                  width: widget.pageStyle.deviceWidth,
-                  margin: EdgeInsets.only(
-                    top: widget.pageStyle.unitHeight * 10,
+          if (reviews.isNotEmpty) {
+            return Container(
+              width: widget.pageStyle.deviceWidth,
+              margin: EdgeInsets.only(
+                top: widget.pageStyle.unitHeight * 10,
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.pageStyle.unitWidth * 20,
+                vertical: widget.pageStyle.unitHeight * 20,
+              ),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'product_reviews'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: widget.pageStyle.unitFontSize * 19,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.pageStyle.unitWidth * 20,
-                    vertical: widget.pageStyle.unitHeight * 20,
+                  Column(
+                    children: reviews
+                        .map((review) => _buildProductReview(review))
+                        .toList(),
                   ),
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'product_reviews'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize * 19,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Column(
-                        children: reviews.map((review) => _buildProductReview(review)).toList(),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox.shrink();
+                ],
+              ),
+            );
+          }
+          return Container();
         }
         return Container();
       },

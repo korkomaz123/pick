@@ -10,11 +10,13 @@ class OrderItemCard extends StatelessWidget {
   final PageStyle pageStyle;
   final CartItemEntity cartItem;
   final bool canceled;
+  final bool returned;
 
   OrderItemCard({
     this.pageStyle,
     this.cartItem,
     this.canceled = false,
+    this.returned = false,
   });
 
   @override
@@ -93,103 +95,211 @@ class OrderItemCard extends StatelessWidget {
             ],
           ),
         ),
-        if (canceled) ...[
-          if (lang == 'en') ...[
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Row(
-                children: [
-                  Text(
-                    'items'
-                        .tr()
-                        .replaceFirst('0', '${cartItem.itemCountCanceled}'),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 14,
-                      color: dangerColor,
-                    ),
-                  ),
-                  SizedBox(width: pageStyle.unitWidth * 20),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: pageStyle.unitWidth * 10,
-                      vertical: pageStyle.unitHeight * 4,
-                    ),
-                    color: dangerColor.withOpacity(0.5),
-                    child: Text(
-                      'item_canceled'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ] else ...[
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
-                  vertical: pageStyle.unitHeight * 4,
-                ),
-                color: dangerColor.withOpacity(0.5),
-                child: Text(
-                  'item_canceled'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
-          ]
-        ],
-        if (!canceled && isStock) ...[
-          if (lang == 'en') ...[
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
-                  vertical: pageStyle.unitHeight * 4,
-                ),
-                color: primarySwatchColor.withOpacity(0.5),
-                child: Text(
-                  'out_stock'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
-          ] else ...[
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
-                  vertical: pageStyle.unitHeight * 4,
-                ),
-                color: primarySwatchColor.withOpacity(0.5),
-                child: Text(
-                  'out_stock'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
-          ]
+        if (returned) ...[
+          _buildReturnedLabel()
+        ] else if (canceled) ...[
+          _buildCanceledLabel()
+        ] else if (isStock) ...[
+          _buildOutStockLabel()
         ],
       ],
     );
+  }
+
+  Widget _buildCanceledLabel() {
+    if (lang == 'en') {
+      return Positioned(
+        bottom: 0,
+        right: 0,
+        child: Row(
+          children: [
+            Text(
+              'items'.tr().replaceFirst('0', '${cartItem.itemCountCanceled}'),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+                color: dangerColor,
+              ),
+            ),
+            SizedBox(width: pageStyle.unitWidth * 20),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
+              ),
+              color: dangerColor.withOpacity(0.5),
+              child: Text(
+                'item_canceled'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Positioned(
+        bottom: 0,
+        left: 0,
+        child: Row(
+          children: [
+            Text(
+              'items'.tr().replaceFirst('0', '${cartItem.itemCountCanceled}'),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+                color: dangerColor,
+              ),
+            ),
+            SizedBox(width: pageStyle.unitWidth * 20),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
+              ),
+              color: dangerColor.withOpacity(0.5),
+              child: Text(
+                'item_canceled'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _buildOutStockLabel() {
+    if (lang == 'en') {
+      return Positioned(
+        bottom: 0,
+        right: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: pageStyle.unitWidth * 10,
+            vertical: pageStyle.unitHeight * 4,
+          ),
+          color: primarySwatchColor.withOpacity(0.5),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Positioned(
+        bottom: 0,
+        left: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: pageStyle.unitWidth * 10,
+            vertical: pageStyle.unitHeight * 4,
+          ),
+          color: primarySwatchColor.withOpacity(0.5),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildReturnedLabel() {
+    String label = '';
+    Color color;
+    switch (cartItem.returnedStatus) {
+      case 0:
+        label = 'waiting_for_approval'.tr();
+        color = primaryColor;
+        break;
+      case 1:
+        label = 'return_approved'.tr();
+        color = orangeColor;
+        break;
+      case 2:
+        label = 'returned'.tr();
+        color = orangeColor;
+        break;
+      case 3:
+        label = 'declined'.tr();
+        color = greyColor;
+        break;
+      default:
+        label = 'waiting_for_approval'.tr();
+        color = greyColor;
+    }
+    if (lang == 'en') {
+      return Positioned(
+        bottom: 0,
+        right: 0,
+        child: Row(
+          children: [
+            Text(
+              'items'.tr().replaceFirst('0', '${cartItem.itemCountReturned}'),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+                color: color,
+              ),
+            ),
+            SizedBox(width: pageStyle.unitWidth * 20),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
+              ),
+              color: color.withOpacity(0.5),
+              child: Text(
+                label,
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Positioned(
+        bottom: 0,
+        left: 0,
+        child: Row(
+          children: [
+            Text(
+              'items'.tr().replaceFirst('0', '${cartItem.itemCountReturned}'),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 14,
+                color: color,
+              ),
+            ),
+            SizedBox(width: pageStyle.unitWidth * 20),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: pageStyle.unitWidth * 10,
+                vertical: pageStyle.unitHeight * 4,
+              ),
+              color: color.withOpacity(0.5),
+              child: Text(
+                label,
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

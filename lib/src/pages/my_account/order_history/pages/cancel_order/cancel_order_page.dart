@@ -48,7 +48,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     order = widget.order;
     switch (order.status) {
       case OrderStatusEnum.pending:
-        icon = cancelledIcon;
+        icon = pendingIcon;
         color = dangerColor;
         status = 'order_pending'.tr();
         break;

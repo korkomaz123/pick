@@ -1,5 +1,6 @@
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_order_history_app_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -28,7 +29,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   ProgressService progressService;
   SnackBarService snackBarService;
   OrderBloc orderBloc;
-  List<OrderEntity> orders = [];
+  List<OrderEntity> orders;
 
   @override
   void initState() {
@@ -43,6 +44,12 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   }
 
   @override
+  void dispose() {
+    orderBloc.add(OrderHistoryInitialized());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
     pageStyle.initializePageStyles();
@@ -51,25 +58,30 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       backgroundColor: Colors.white,
       appBar: MarkaaOrderHistoryAppBar(pageStyle: pageStyle),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: BlocConsumer<OrderBloc, OrderState>(
-          listener: (context, state) {
-            if (state is OrderHistoryLoadedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is OrderHistoryLoadedSuccess) {
-              progressService.hideProgress();
-            }
-            if (state is OrderHistoryLoadedFailure) {
-              progressService.hideProgress();
-              snackBarService.showErrorSnackBar(state.message);
-            }
-          },
-          builder: (context, state) {
-            if (state is OrderHistoryLoadedSuccess) {
-              orders = state.orders;
-            }
-            return Column(
+      body: BlocConsumer<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state is OrderHistoryLoadedInProcess) {
+            // progressService.showProgress();
+          }
+          if (state is OrderHistoryLoadedSuccess) {
+            // progressService.hideProgress();
+          }
+          if (state is OrderHistoryLoadedFailure) {
+            // progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is OrderHistoryLoadedSuccess) {
+            orders = state.orders;
+          }
+          if (orders == null) {
+            return Center(
+              child: PulseLoadingSpinner(),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
               children: [
                 Container(
                   width: pageStyle.deviceWidth,
@@ -103,9 +115,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,

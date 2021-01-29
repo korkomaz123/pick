@@ -38,4 +38,30 @@ class OrderRepository {
     };
     return await Api.postMethod(url, data: params);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> returnOrder(
+    String token,
+    String orderId,
+    List<Map<String, dynamic>> items,
+    String additionalInfo,
+    String reason,
+    Uint8List product,
+    String imageName,
+  ) async {
+    String url = EndPoints.returnOrder;
+    final params = {
+      'token': token,
+      'orderId': orderId,
+      'items': json.encode(items),
+      'reason': reason,
+      'imageName': imageName ?? '',
+      'lang': lang,
+      'imageForProduct': imageName != null ? base64Encode(product) : '',
+    };
+    print(params);
+    return await Api.postMethod(url, data: params);
+  }
 }

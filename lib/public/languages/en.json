@@ -249,6 +249,7 @@
     "search_region_hint": "Search Region",
     "no_available_regions": "No available regions",
     "cancel_order_no_selected_item": "Please select at least one item to cancel the order",
+    "return_order_no_selected_item": "Please select at least one item to return the order",
     "cancel_order_additional_info_title": "Additional Information",
     "cancel_order_image_for_product_title": "Image for Product",
     "cancel_order_image_required": "Please take an image for product",
@@ -261,5 +262,12 @@
     "markaa_team_title": "Markaa Team",
     "apple_sign_description": "When you log into markaa app using Apple Sign In, we need to access to your Apple ID(Email) to identify you. Before continue, please make sure you choose share email option.",
     "apple_sign_failure": "We can not identify you at this time. To continue please follow this steps. Go to your device settings; Settings > Apple ID, iCloud, iTunes & App Store > Password & Security > Apps Using Your Apple ID, tap on your app and tap Stop Using Apple ID. After done success, you can sign in with your apple account again.",
-    "my_cart_save_later_remove_item_dialog_text": "You want to delete this item from your save for later list?"
+    "my_cart_save_later_remove_item_dialog_text": "You want to delete this item from your save for later list?",
+    "return_button_title": "Return",
+    "items_returned": "# Items Returned",
+    "waiting_for_approval": "Waiting for approval",
+    "return_approved": "Return Approved",
+    "returned": "Returned",
+    "declined": "Declined",
+    "canceled": "Canceled"
 }

@@ -22,10 +22,22 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Stream<OrderState> mapEventToState(
     OrderEvent event,
   ) async* {
-    if (event is OrderHistoryLoaded) {
+    if (event is OrderHistoryInitialized) {
+      yield OrderHistoryInitializedSuccess();
+    } else if (event is OrderHistoryLoaded) {
       yield* _mapOrderHistoryLoadedToState(event.token, event.lang);
     } else if (event is OrderCancelled) {
       yield* _mapOrderCancelledToState(
+        event.orderId,
+        event.items,
+        event.additionalInfo,
+        event.reason,
+        event.imageForProduct,
+        event.imageName,
+      );
+    } else if (event is OrderReturned) {
+      yield* _mapOrderReturnedToState(
+        event.token,
         event.orderId,
         event.items,
         event.additionalInfo,
@@ -77,6 +89,31 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     } catch (e) {
       yield OrderCancelledFailure(message: e.toString());
+    }
+  }
+
+  Stream<OrderState> _mapOrderReturnedToState(
+    String token,
+    String orderId,
+    List<Map<String, dynamic>> items,
+    String additionalInfo,
+    String reason,
+    Uint8List product,
+    String imageName,
+  ) async* {
+    yield OrderReturnedInProcess();
+    try {
+      final result = await _orderRepository.returnOrder(
+          token, orderId, items, additionalInfo, reason, product, imageName);
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        yield OrderReturnedSuccess();
+      } else {
+        yield OrderReturnedFailure(message: result['errorMessage']);
+      }
+    } catch (e) {
+      print(e.toString());
+      yield OrderReturnedFailure(message: e.toString());
     }
   }
 }

@@ -20,6 +20,8 @@ import 'package:markaa/src/pages/my_account/order_history/pages/cancel_order/can
 import 'package:markaa/src/pages/my_account/order_history/pages/cancel_order/cancel_order_page.dart';
 import 'package:markaa/src/pages/my_account/order_history/pages/order_history/order_history_page.dart';
 import 'package:markaa/src/pages/my_account/order_history/pages/reorder/reorder_page.dart';
+import 'package:markaa/src/pages/my_account/order_history/pages/return_order/return_order_info_page.dart';
+import 'package:markaa/src/pages/my_account/order_history/pages/return_order/return_order_page.dart';
 import 'package:markaa/src/pages/my_account/order_history/pages/view_order/view_order_page.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/edit_address_page.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/shipping_address_page.dart';
@@ -222,6 +224,16 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (context) => CancelOrderInfoPage(params: params),
           settings: RouteSettings(name: Routes.cancelOrderInfo),
+        );
+      case Routes.returnOrder:
+        return CupertinoPageRoute(
+          builder: (context) => ReturnOrderPage(order: params),
+          settings: RouteSettings(name: Routes.returnOrder),
+        );
+      case Routes.returnOrderInfo:
+        return CupertinoPageRoute(
+          builder: (context) => ReturnOrderInfoPage(params: params),
+          settings: RouteSettings(name: Routes.returnOrderInfo),
         );
       case Routes.changePassword:
         return CupertinoPageRoute(

@@ -22,6 +22,7 @@ class SearchProductCard extends StatelessWidget {
             product.imageUrl,
             width: pageStyle.unitWidth * 50,
             height: pageStyle.unitHeight * 50,
+            fit: BoxFit.fitHeight,
           ),
           Expanded(
             child: Text(

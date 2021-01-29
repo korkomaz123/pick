@@ -76,7 +76,7 @@ class _TermsPageState extends State<TermsPage> {
                     return Html(data: snapshot.data['data']['html']);
                   } else {
                     return Center(
-                      child: CircleLoadingSpinner(),
+                      child: PulseLoadingSpinner(),
                     );
                   }
                 },

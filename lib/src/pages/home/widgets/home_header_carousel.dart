@@ -123,9 +123,9 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           axisDirection: Axis.horizontal,
           effect: SlideEffect(
             spacing: 8.0,
-            radius: 0,
-            dotWidth: 24.0,
-            dotHeight: widget.pageStyle.unitHeight * 2,
+            radius: 10,
+            dotWidth: widget.pageStyle.deviceWidth / (sliderImages.length * 3),
+            dotHeight: widget.pageStyle.unitHeight * 3,
             paintStyle: PaintingStyle.fill,
             strokeWidth: 0,
             dotColor: Colors.white,

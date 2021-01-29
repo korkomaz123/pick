@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -231,7 +232,7 @@ class _ProductListViewState extends State<ProductListView>
                     print(index);
                     if (!productChangeNotifier.data.containsKey(index) ||
                         productChangeNotifier.data[index] == null) {
-                      return Container();
+                      return Center(child: PulseLoadingSpinner());
                     } else if (productChangeNotifier.data[index].isEmpty) {
                       return ProductNoAvailable(pageStyle: pageStyle);
                     } else {

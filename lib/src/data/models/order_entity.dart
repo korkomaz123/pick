@@ -64,7 +64,8 @@ class OrderEntity {
     String totalPriceStr = json['grand_total'];
     String subtotalPriceStr = json['subtotal'];
     int totalPrice = int.parse(double.parse(totalPriceStr).toStringAsFixed(0));
-    int subtotalPrice = int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
+    int subtotalPrice =
+        int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
     return totalPrice - subtotalPrice;
   }
 
@@ -74,7 +75,9 @@ class OrderEntity {
       itemJson['product'] = ProductModel.fromJson(item['product']);
       itemJson['itemCount'] = item['item_count'];
       itemJson['itemCountCanceled'] = item['item_count_canceled'] ?? '0';
-      itemJson['itemId'] = '1';
+      itemJson['itemCountReturned'] = item['itemCountReturned'] ?? '0';
+      itemJson['returnStatus'] = item['returnStatus'];
+      itemJson['itemId'] = item['itemId'];
       itemJson['availableCount'] = 0;
       itemJson['rowPrice'] = 0;
       return CartItemEntity.fromJson(itemJson);

@@ -7,6 +7,8 @@ abstract class OrderEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class OrderHistoryInitialized extends OrderEvent {}
+
 class OrderHistoryLoaded extends OrderEvent {
   final String token;
   final String lang;
@@ -36,6 +38,37 @@ class OrderCancelled extends OrderEvent {
 
   @override
   List<Object> get props => [
+        orderId,
+        items,
+        reason,
+        additionalInfo,
+        imageForProduct,
+        imageName,
+      ];
+}
+
+class OrderReturned extends OrderEvent {
+  final String token;
+  final String orderId;
+  final List<Map<String, dynamic>> items;
+  final String reason;
+  final String additionalInfo;
+  final Uint8List imageForProduct;
+  final String imageName;
+
+  OrderReturned({
+    this.token,
+    this.orderId,
+    this.items,
+    this.reason,
+    this.additionalInfo,
+    this.imageForProduct,
+    this.imageName,
+  });
+
+  @override
+  List<Object> get props => [
+        token,
         orderId,
         items,
         reason,

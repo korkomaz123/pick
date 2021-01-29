@@ -147,13 +147,16 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               _buildShippingCost(),
               _buildTotal(),
               _buildAddressBar(),
-              !isStock || order.status == OrderStatusEnum.canceled
-                  ? SizedBox.shrink()
-                  : _buildReorderButton(),
-              order.status != OrderStatusEnum.pending &&
-                      order.status != OrderStatusEnum.order_approval_pending
-                  ? SizedBox.shrink()
-                  : _buildCancelOrderButton(),
+              if (isStock && order.status != OrderStatusEnum.canceled) ...[
+                _buildReorderButton()
+              ],
+              if (order.status == OrderStatusEnum.pending ||
+                  order.status == OrderStatusEnum.order_approval_pending) ...[
+                _buildCancelOrderButton()
+              ],
+              if (order.status == OrderStatusEnum.complete) ...[
+                _buildReturnOrderButton()
+              ]
             ],
           ),
         ),
@@ -252,6 +255,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 pageStyle: pageStyle,
                 cartItem: order.cartItems[index],
                 canceled: order.cartItems[index].itemCountCanceled > 0,
+                returned: order.cartItems[index].itemCountReturned > 0,
               ),
               if (index < (order.cartItems.length - 1)) ...[
                 Divider(color: greyColor, thickness: 0.5)
@@ -472,6 +476,33 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             fontSize: pageStyle.unitFontSize * 17,
             color: dangerColor,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReturnOrderButton() {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(
+        context,
+        Routes.returnOrder,
+        arguments: order,
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(returnIcon),
+            SizedBox(width: pageStyle.unitWidth * 4),
+            Text(
+              'return_button_title'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 17,
+                color: greyDarkColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -16,6 +17,7 @@ class RateAppItem extends StatefulWidget {
 }
 
 class _RateAppItemState extends State<RateAppItem> {
+  final InAppReview inAppReview = InAppReview.instance;
   PageStyle pageStyle;
 
   @override
@@ -27,7 +29,7 @@ class _RateAppItemState extends State<RateAppItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => null,
+      onTap: () => _onRateApp(),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
@@ -58,6 +60,16 @@ class _RateAppItemState extends State<RateAppItem> {
           ],
         ),
       ),
+    );
+  }
+
+  void _onRateApp() async {
+    // if (await inAppReview.isAvailable()) {
+    //   inAppReview.requestReview();
+    // }
+    inAppReview.openStoreListing(
+      appStoreId: '1549591755',
+      microsoftStoreId: '',
     );
   }
 }

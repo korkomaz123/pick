@@ -40,9 +40,11 @@ class WishlistProductCard extends StatelessWidget {
               ),
               Image.network(
                 product.imageUrl,
-                width: pageStyle.unitWidth * 124,
+                width: pageStyle.unitWidth * 114,
                 height: pageStyle.unitHeight * 140,
+                fit: BoxFit.fitHeight,
               ),
+              SizedBox(width: pageStyle.unitWidth * 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,6 +52,8 @@ class WishlistProductCard extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -73,17 +77,17 @@ class WishlistProductCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: pageStyle.unitHeight * 10),
-                    product.stockQty != null && product.stockQty > 0
-                        ? MarkaaTextButton(
-                            title: 'wishlist_add_cart_button_title'.tr(),
-                            titleSize: pageStyle.unitFontSize * 15,
-                            titleColor: Colors.white,
-                            buttonColor: primaryColor,
-                            borderColor: Colors.transparent,
-                            onPressed: () => onAddToCart(),
-                            radius: 10,
-                          )
-                        : SizedBox.shrink(),
+                    if (product.stockQty != null && product.stockQty > 0) ...[
+                      MarkaaTextButton(
+                        title: 'wishlist_add_cart_button_title'.tr(),
+                        titleSize: pageStyle.unitFontSize * 15,
+                        titleColor: Colors.white,
+                        buttonColor: primaryColor,
+                        borderColor: Colors.transparent,
+                        onPressed: () => onAddToCart(),
+                        radius: 10,
+                      )
+                    ],
                   ],
                 ),
               ),

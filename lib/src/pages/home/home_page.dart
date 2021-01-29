@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -8,6 +10,7 @@ import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/dynamic_link_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +34,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   HomeBloc homeBloc;
@@ -39,14 +42,38 @@ class _HomePageState extends State<HomePage> {
   BrandBloc brandBloc;
   PageStyle pageStyle;
   LocalStorageRepository localStorageRepository;
+  DynamicLinkService dynamicLinkService = DynamicLinkService();
+  Timer timerLink;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     homeBloc = context.read<HomeBloc>();
     categoryListBloc = context.read<CategoryListBloc>();
     brandBloc = context.read<BrandBloc>();
     localStorageRepository = context.read<LocalStorageRepository>();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      timerLink = new Timer(
+        const Duration(milliseconds: 1000),
+        () {
+          dynamicLinkService.retrieveDynamicLink(context);
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (timerLink != null) {
+      timerLink.cancel();
+    }
+    super.dispose();
   }
 
   void _onRefresh() async {

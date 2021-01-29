@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -49,6 +50,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
     searchRepository = context.read<SearchRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
     futureCategories = searchRepository.getCategoryOptions(lang);
@@ -151,18 +153,21 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     children: [
                       _buildSearchField(),
-                      if (products.isNotEmpty) ...[_buildResult()],
                       _buildFilterButton(),
-                      if (isFiltering) ...[
-                        _buildFilterOptions()
-                      ] else if (searchHistory.isNotEmpty) ...[
+                      if (isFiltering) ...[_buildFilterOptions()],
+                      if (state is SearchedInProcess) ...[
+                        PulseLoadingSpinner()
+                      ] else if (products.isNotEmpty) ...[
+                        _buildResult()
+                      ],
+                      if (!isFiltering && searchHistory.isNotEmpty) ...[
                         _buildSearchHistory()
                       ],
                     ],
                   ),
                 ),
               ),
-              _buildSuggestion(),
+              if (searchNode.hasFocus) ...[_buildSuggestion()],
             ],
           );
         },
@@ -171,51 +176,50 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSuggestion() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      margin: EdgeInsets.only(
-        left: pageStyle.unitWidth * 20,
-        right: pageStyle.unitWidth * 20,
-        top: pageStyle.unitHeight * 70,
-      ),
-      padding: EdgeInsets.all(pageStyle.unitWidth * 10),
-      color: Colors.white,
-      child: Consumer<SuggestionChangeNotifier>(
-        builder: (ctx, notifier, _) {
-          suggestionChangeNotifier = notifier;
-          if (notifier.suggestions.isNotEmpty &&
-              searchController.text.isNotEmpty) {
-            return SingleChildScrollView(
-              child: Column(
-                children: List.generate(
-                  notifier.suggestions.length,
-                  (index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            Routes.product,
-                            arguments: notifier.suggestions[index],
+    return Positioned(
+      left: pageStyle.unitWidth * 20,
+      right: pageStyle.unitWidth * 20,
+      top: pageStyle.unitHeight * 70,
+      bottom: 0,
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(pageStyle.unitWidth * 10),
+          color: Colors.white,
+          child: Consumer<SuggestionChangeNotifier>(
+            builder: (ctx, notifier, _) {
+              if (notifier.suggestions.isNotEmpty &&
+                  searchController.text.isNotEmpty) {
+                return Column(
+                  children: List.generate(
+                    notifier.suggestions.length,
+                    (index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.product,
+                              arguments: notifier.suggestions[index],
+                            ),
+                            child: SearchProductCard(
+                              pageStyle: pageStyle,
+                              product: notifier.suggestions[index],
+                            ),
                           ),
-                          child: SearchProductCard(
-                            pageStyle: pageStyle,
-                            product: notifier.suggestions[index],
-                          ),
-                        ),
-                        index < (notifier.suggestions.length - 1)
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            );
-          }
-          return Container();
-        },
+                          index < (notifier.suggestions.length - 1)
+                              ? Divider(color: greyColor, thickness: 0.5)
+                              : SizedBox.shrink(),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
       ),
     );
   }
@@ -246,13 +250,7 @@ class _SearchPageState extends State<SearchPage> {
         focusNode: searchNode,
         onFieldSubmitted: (value) {
           searchNode.unfocus();
-          searchBloc.add(Searched(
-            query: searchController.text,
-            categories: selectedCategories,
-            brands: selectedBrands,
-            genders: selectedGenders,
-            lang: lang,
-          ));
+          _searchProducts();
         },
         textInputAction: TextInputAction.search,
       ),
@@ -299,7 +297,7 @@ class _SearchPageState extends State<SearchPage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 20,
+        vertical: pageStyle.unitHeight * 10,
       ),
       child: Row(
         children: [
@@ -491,13 +489,7 @@ class _SearchPageState extends State<SearchPage> {
       selectedCategories.add(value['value']);
     }
     setState(() {});
-    searchBloc.add(Searched(
-      query: searchController.text,
-      categories: selectedCategories,
-      brands: selectedBrands,
-      genders: selectedGenders,
-      lang: lang,
-    ));
+    _searchProducts();
   }
 
   void _onSelectBrand(dynamic value) {
@@ -507,13 +499,6 @@ class _SearchPageState extends State<SearchPage> {
       selectedBrands.add(value['value']);
     }
     setState(() {});
-    searchBloc.add(Searched(
-      query: searchController.text,
-      categories: selectedCategories,
-      brands: selectedBrands,
-      genders: selectedGenders,
-      lang: lang,
-    ));
   }
 
   void _onSelectGender(dynamic value) {
@@ -523,12 +508,17 @@ class _SearchPageState extends State<SearchPage> {
       selectedGenders.add(value['value']);
     }
     setState(() {});
-    searchBloc.add(Searched(
-      query: searchController.text,
-      categories: selectedCategories,
-      brands: selectedBrands,
-      genders: selectedGenders,
-      lang: lang,
-    ));
+  }
+
+  void _searchProducts() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      searchBloc.add(Searched(
+        query: searchController.text,
+        categories: selectedCategories,
+        brands: selectedBrands,
+        genders: selectedGenders,
+        lang: lang,
+      ));
+    });
   }
 }

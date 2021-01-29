@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -16,6 +14,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/dynamic_link_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -72,24 +71,21 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   bool isMore = false;
   int activeIndex = 0;
   bool isFavorite = true;
-  bool isBuyNow = false;
   bool isWishlist = false;
-  bool isStock = false;
+  bool isStock = true;
   int index;
-  AnimationController _addToCartController;
   AnimationController _favoriteController;
-  Animation<double> _addToCartScaleAnimation;
   Animation<double> _favoriteScaleAnimation;
   ProductModel product;
   ProductEntity productEntity;
   PageStyle pageStyle;
-  MyCartBloc cartBloc;
   WishlistItemCountBloc wishlistItemCountBloc;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
   WishlistRepository wishlistRepo;
   MyCartRepository cartRepo;
   WishlistBloc wishlistBloc;
+  DynamicLinkService dynamicLinkService = DynamicLinkService();
 
   @override
   void initState() {
@@ -98,7 +94,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     product = widget.product;
     productEntity = widget.productEntity;
     isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
-    cartBloc = context.read<MyCartBloc>();
     wishlistBloc = context.read<WishlistBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
@@ -115,25 +110,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
         user.token,
         widget.product.entityId,
       );
-      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {});
+      });
     }
   }
 
   void _initAnimation() {
-    /// add to cart button animation
-    _addToCartController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      reverseDuration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _addToCartScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 3.0,
-    ).animate(CurvedAnimation(
-      parent: _addToCartController,
-      curve: Curves.easeIn,
-    ));
-
     /// favorite button animation
     _favoriteController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -151,8 +134,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   @override
   void dispose() {
-    isBuyNow = false;
-    _addToCartController.dispose();
     _favoriteController.dispose();
     super.dispose();
   }
@@ -178,8 +159,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           SizedBox(height: pageStyle.unitHeight * 10),
           _buildDescription(),
           _buildPrice(),
-          SizedBox(height: pageStyle.unitHeight * 10),
-          _buildToolbar(),
         ],
       ),
     );
@@ -327,18 +306,25 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
       width: widget.pageStyle.deviceWidth,
       height: widget.pageStyle.unitHeight * 300,
       child: productEntity.gallery.length < 2
-          ? Image.network(
-              productEntity.gallery[0],
-              width: pageStyle.unitWidth * 343,
-              height: pageStyle.unitHeight * 240.31,
-              loadingBuilder: (_, child, chunkEvent) {
-                if (chunkEvent != null) {
-                  return Image.asset(
-                    'lib/public/images/loading/image_loading.jpg',
-                  );
-                }
-                return child;
-              },
+          ? InkWell(
+              onTap: () => Navigator.pushNamed(
+                context,
+                Routes.viewFullImage,
+                arguments: productEntity.gallery,
+              ),
+              child: Image.network(
+                productEntity.gallery[0],
+                width: pageStyle.unitWidth * 343,
+                height: pageStyle.unitHeight * 240.31,
+                loadingBuilder: (_, child, chunkEvent) {
+                  if (chunkEvent != null) {
+                    return Image.asset(
+                      'lib/public/images/loading/image_loading.jpg',
+                    );
+                  }
+                  return child;
+                },
+              ),
             )
           : Swiper(
               itemCount: productEntity.gallery.length,
@@ -452,127 +438,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     );
   }
 
-  Widget _buildToolbar() {
-    return BlocConsumer<MyCartBloc, MyCartState>(
-      listener: (context, state) {
-        if (state is MyCartCreatedFailure) {
-          flushBarService.showErrorMessage(
-            widget.pageStyle,
-            state.message,
-          );
-        }
-        if (state is MyCartItemAddedInProcess) {
-          flushBarService.showAddCartMessage(
-            widget.pageStyle,
-            state.product,
-          );
-        }
-        if (state is MyCartItemAddedSuccess) {
-          if (isBuyNow) {
-            isBuyNow = false;
-            Navigator.pushNamed(context, Routes.myCart);
-          }
-        }
-        if (state is MyCartItemAddedFailure) {
-          flushBarService.showErrorMessage(
-            widget.pageStyle,
-            state.message,
-          );
-        }
-      },
-      builder: (context, state) {
-        bool isCreating = state is MyCartCreatedInProcess;
-        bool isAdding = state is MyCartItemAddedInProcess;
-        return Container(
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (isBuyNow && (isCreating || isAdding)) ...[
-                Container(
-                  width: pageStyle.unitWidth * 296,
-                  height: pageStyle.unitHeight * 50,
-                  child: Center(child: CircleLoadingSpinner()),
-                )
-              ] else if (isStock) ...[
-                Container(
-                  width: pageStyle.unitWidth * 296,
-                  height: pageStyle.unitHeight * 50,
-                  child: MarkaaTextButton(
-                    title: 'product_buy_now'.tr(),
-                    titleSize: pageStyle.unitFontSize * 23,
-                    titleColor: Colors.white,
-                    buttonColor: Color(0xFFFF8B00),
-                    borderColor: Colors.transparent,
-                    radius: 1,
-                    onPressed: () => _onBuyNow(),
-                  ),
-                )
-              ] else ...[
-                Container(
-                  width: pageStyle.unitWidth * 296,
-                  height: pageStyle.unitHeight * 50,
-                )
-              ],
-              if (isStock) ...[
-                RoundImageButton(
-                  width: pageStyle.unitWidth * 58,
-                  height: pageStyle.unitHeight * 50,
-                  color: primarySwatchColor,
-                  child: ScaleTransition(
-                    scale: _addToCartScaleAnimation,
-                    child: Container(
-                      width: pageStyle.unitWidth * 25,
-                      height: pageStyle.unitHeight * 25,
-                      child: SvgPicture.asset(
-                        shoppingCartIcon,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  onTap: () => _onAddToCart(),
-                  radius: 1,
-                )
-              ] else ...[
-                SizedBox.shrink()
-              ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _addToCart(String cartId) async {
-    cartBloc.add(MyCartItemAdded(
-      cartId: cartId,
-      product: product,
-      qty: '1',
-    ));
-  }
-
-  void _onAddToCart() async {
-    _addToCartController.repeat(reverse: true);
-    Timer.periodic(Duration(milliseconds: 600), (timer) {
-      _addToCartController.stop(canceled: true);
-      timer.cancel();
-    });
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localStorageRepo.getCartId();
-    }
-    if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated(product: product));
-    } else {
-      _addToCart(cartId);
-    }
-  }
-
   void _onFavorite() async {
     _updateWishlist();
     _favoriteController.repeat(reverse: true);
@@ -603,25 +468,10 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     setState(() {});
   }
 
-  void _onBuyNow() async {
-    isBuyNow = true;
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localStorageRepo.getCartId();
-    }
-    if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated(product: product));
-    } else {
-      _addToCart(cartId);
-    }
-  }
-
-  void _onShareProduct() {
-    Share.share(product.imageUrl, subject: product.name);
+  void _onShareProduct() async {
+    Uri shareLink =
+        await dynamicLinkService.productSharableLink(productEntity.productId);
+    print(shareLink.toString());
+    Share.share(shareLink.toString(), subject: product.name);
   }
 }

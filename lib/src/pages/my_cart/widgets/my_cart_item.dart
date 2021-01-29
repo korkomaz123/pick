@@ -50,11 +50,11 @@ class MyCartItem extends StatelessWidget {
               ),
               Image.network(
                 cartItem.product.imageUrl,
-                width: pageStyle.unitWidth * 134,
+                width: pageStyle.unitWidth * 104,
                 height: pageStyle.unitHeight * 150,
                 fit: BoxFit.fitHeight,
               ),
-              SizedBox(width: pageStyle.unitWidth * 5),
+              SizedBox(width: pageStyle.unitWidth * 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +87,7 @@ class MyCartItem extends StatelessWidget {
                     ),
                     Text(
                       cartItem.product.name,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 14,

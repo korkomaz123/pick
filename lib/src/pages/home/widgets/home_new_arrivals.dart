@@ -41,8 +41,9 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {},
       builder: (context, state) {
-        newArrivalsProducts = state.bestDealsProducts;
+        newArrivalsProducts = state.newArrivalsProducts;
         title = state.newArrivalsTitle;
+
         if (newArrivalsProducts.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,

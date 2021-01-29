@@ -65,6 +65,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   thickness: widget.pageStyle.unitHeight * 1.5,
                   color: greyColor.withOpacity(0.4),
                 ),
+                _buildIndicator(),
                 _buildFooter(context),
               ],
             ),
@@ -134,119 +135,117 @@ class _HomePerfumesState extends State<HomePerfumes> {
     );
   }
 
+  Widget _buildIndicator() {
+    return Container(
+      width: widget.pageStyle.unitWidth,
+      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
+      child: Center(
+        child: SmoothIndicator(
+          offset: activeIndex.toDouble(),
+          count: perfumesProducts.length > 12
+              ? 3
+              : (perfumesProducts.length / 4).floor(),
+          axisDirection: Axis.horizontal,
+          effect: SlideEffect(
+            spacing: 8.0,
+            radius: 30,
+            dotWidth: widget.pageStyle.unitHeight * 8,
+            dotHeight: widget.pageStyle.unitHeight * 8,
+            paintStyle: PaintingStyle.fill,
+            strokeWidth: 0,
+            dotColor: greyLightColor,
+            activeDotColor: primarySwatchColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildProductView() {
-    return Stack(
-      children: [
-        Container(
-          width: widget.pageStyle.deviceWidth,
-          height: widget.pageStyle.unitHeight * 600,
-          child: Swiper(
-            itemCount: perfumesProducts.length > 12
-                ? 3
-                : (perfumesProducts.length / 4).floor(),
-            autoplay: true,
-            curve: Curves.easeIn,
-            duration: 300,
-            autoplayDelay: 5000,
-            onIndexChanged: (value) {
-              activeIndex = value;
-              setState(() {});
-            },
-            itemBuilder: (context, index) {
-              return Row(
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 600,
+      child: Swiper(
+        itemCount: perfumesProducts.length > 12
+            ? 3
+            : (perfumesProducts.length / 4).floor(),
+        autoplay: true,
+        curve: Curves.easeIn,
+        duration: 300,
+        autoplayDelay: 5000,
+        onIndexChanged: (value) {
+          activeIndex = value;
+          setState(() {});
+        },
+        itemBuilder: (context, index) {
+          return Row(
+            children: [
+              Column(
                 children: [
-                  Column(
-                    children: [
-                      ProductVCard(
-                        cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 290,
-                        product: perfumesProducts[4 * index],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                      Container(
-                        width: widget.pageStyle.unitWidth * 170,
-                        child: Divider(color: greyColor, thickness: 0.5),
-                      ),
-                      ProductVCard(
-                        cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 290,
-                        product: perfumesProducts[4 * index + 1],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                    ],
+                  ProductVCard(
+                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardHeight: widget.pageStyle.unitHeight * 290,
+                    product: perfumesProducts[4 * index],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: widget.pageStyle.unitHeight * 2,
-                    ),
-                    child: VerticalDivider(
-                      width: widget.pageStyle.unitWidth * 4,
-                      thickness: widget.pageStyle.unitWidth * 1,
-                      color: greyColor.withOpacity(0.4),
-                    ),
+                  Container(
+                    width: widget.pageStyle.unitWidth * 170,
+                    child: Divider(color: greyColor, thickness: 0.5),
                   ),
-                  Column(
-                    children: [
-                      ProductVCard(
-                        cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 290,
-                        product: perfumesProducts[4 * index + 2],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                      Container(
-                        width: widget.pageStyle.unitWidth * 170,
-                        child: Divider(color: greyColor, thickness: 0.5),
-                      ),
-                      ProductVCard(
-                        cardWidth: widget.pageStyle.unitWidth * 170,
-                        cardHeight: widget.pageStyle.unitHeight * 290,
-                        product: perfumesProducts[4 * index + 3],
-                        pageStyle: widget.pageStyle,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                    ],
+                  ProductVCard(
+                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardHeight: widget.pageStyle.unitHeight * 290,
+                    product: perfumesProducts[4 * index + 1],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
                   ),
                 ],
-              );
-            },
-          ),
-        ),
-        Positioned(
-          bottom: widget.pageStyle.unitHeight * 10,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: SmoothIndicator(
-              offset: activeIndex.toDouble(),
-              count: perfumesProducts.length > 12
-                  ? 3
-                  : (perfumesProducts.length / 4).floor(),
-              axisDirection: Axis.horizontal,
-              effect: SlideEffect(
-                spacing: 8.0,
-                radius: 30,
-                dotWidth: widget.pageStyle.unitHeight * 8,
-                dotHeight: widget.pageStyle.unitHeight * 8,
-                paintStyle: PaintingStyle.fill,
-                strokeWidth: 0,
-                dotColor: greyLightColor,
-                activeDotColor: primarySwatchColor,
               ),
-            ),
-          ),
-        ),
-      ],
+              Padding(
+                padding: EdgeInsets.only(
+                  top: widget.pageStyle.unitHeight * 2,
+                ),
+                child: VerticalDivider(
+                  width: widget.pageStyle.unitWidth * 4,
+                  thickness: widget.pageStyle.unitWidth * 1,
+                  color: greyColor.withOpacity(0.4),
+                ),
+              ),
+              Column(
+                children: [
+                  ProductVCard(
+                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardHeight: widget.pageStyle.unitHeight * 290,
+                    product: perfumesProducts[4 * index + 2],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                  ),
+                  Container(
+                    width: widget.pageStyle.unitWidth * 170,
+                    child: Divider(color: greyColor, thickness: 0.5),
+                  ),
+                  ProductVCard(
+                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardHeight: widget.pageStyle.unitHeight * 290,
+                    product: perfumesProducts[4 * index + 3],
+                    pageStyle: widget.pageStyle,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

@@ -9,6 +9,19 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<ProductModel> getProduct(String productId, String lang) async {
+    String url = EndPoints.getProduct;
+    final params = {'productId': productId, 'lang': lang};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return ProductModel.fromJson(result['product']);
+    }
+    return ProductModel();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getProducts(String categoryId, String lang, int page) async {
     String url = EndPoints.getCategoryProducts;
     final params = {'categoryId': categoryId, 'lang': lang, 'page': '$page'};
@@ -122,9 +135,19 @@ class ProductRepository {
     String url = EndPoints.getBrandProducts;
     Map<String, dynamic> params = {};
     if (categoryId != 'all') {
-      params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': categoryId,
+        'lang': lang,
+        'page': '$page'
+      };
     } else {
-      params = {'brandId': brandId, 'categoryId': null, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': null,
+        'lang': lang,
+        'page': '$page'
+      };
     }
     return await Api.getMethod(url, data: params);
   }
@@ -244,7 +267,8 @@ class ProductRepository {
       'selectedBrandId': brandId.toString(),
       'lang': lang,
       'categoryIds': json.encode(filterValues['selectedCategories']),
-      'priceRanges': json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
+      'priceRanges':
+          json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
       'filter': json.encode(filterValues['selectedValues']),
       'page': page.toString(),
     };

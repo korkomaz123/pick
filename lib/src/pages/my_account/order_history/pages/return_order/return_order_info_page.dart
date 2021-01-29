@@ -37,7 +37,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   ProgressService progressService;
   PageStyle pageStyle;
   OrderEntity order;
-  Map<String, dynamic> cancelledItemsMap = {};
+  Map<String, dynamic> returnedItemsMap = {};
   File file;
   Uint8List imageData;
   String name;
@@ -47,7 +47,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   void initState() {
     super.initState();
     order = widget.params['order'];
-    cancelledItemsMap = widget.params['items'];
+    returnedItemsMap = widget.params['items'];
     orderBloc = context.read<OrderBloc>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
@@ -74,10 +74,10 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: BlocConsumer<OrderBloc, OrderState>(
         listener: (context, state) {
-          if (state is OrderCancelledInProcess) {
+          if (state is OrderReturnedInProcess) {
             progressService.showProgress();
           }
-          if (state is OrderCancelledSuccess) {
+          if (state is OrderReturnedSuccess) {
             progressService.hideProgress();
             orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
             Navigator.popUntil(
@@ -85,7 +85,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
               (route) => route.settings.name == Routes.orderHistory,
             );
           }
-          if (state is OrderCancelledFailure) {
+          if (state is OrderReturnedFailure) {
             progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);
           }
@@ -125,7 +125,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
       ),
       centerTitle: true,
       title: Text(
-        'cancel_order_button_title'.tr(),
+        'return_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 17,
@@ -250,14 +250,17 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   void _onSubmit() {
     if (formKey.currentState.validate()) {
       List<Map<String, dynamic>> items = [];
-      List<String> keys = cancelledItemsMap.keys.toList();
+      List<String> keys = returnedItemsMap.keys.toList();
       items = keys.map((key) {
         return {
-          'productId': int.parse(key),
-          'cancelCount': cancelledItemsMap[key],
+          'itemId': int.parse(key),
+          'returnCount': returnedItemsMap[key],
+          'reasonId': 1,
+          'resolutionId': 1,
         };
       }).toList();
-      orderBloc.add(OrderCancelled(
+      orderBloc.add(OrderReturned(
+        token: user.token,
         orderId: order.orderId,
         items: items,
         reason: additionalInfoController.text,

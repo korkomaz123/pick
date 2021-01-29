@@ -70,4 +70,6 @@ class Routes {
   static const String cancelOrder = '/cancel-order';
   static const String cancelOrderInfo = '/cancel-order-info';
   static const String changePassword = 'change-password';
+  static const String returnOrder = '/return-order';
+  static const String returnOrderInfo = '/return-order-info';
 }

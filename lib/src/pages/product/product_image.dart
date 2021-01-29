@@ -1,3 +1,4 @@
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class ProductImage extends StatefulWidget {
 }
 
 class _ProductImageState extends State<ProductImage> {
+  final dataKey = GlobalKey();
   int activeIndex = 0;
   PageStyle pageStyle;
   List<dynamic> images;
@@ -36,12 +38,37 @@ class _ProductImageState extends State<ProductImage> {
             Container(
               width: pageStyle.deviceWidth,
               height: pageStyle.deviceHeight,
-              child: PhotoView(
-                backgroundDecoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                imageProvider: NetworkImage(images[activeIndex]),
-              ),
+              child: images.length < 2
+                  ? PhotoView(
+                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                      imageProvider: NetworkImage(images[0]),
+                      loadingBuilder: (_, chunk) {
+                        return Image.asset(
+                          'lib/public/images/loading/image_loading.jpg',
+                        );
+                      },
+                    )
+                  : Swiper(
+                      itemCount: images.length,
+                      autoplay: false,
+                      curve: Curves.easeIn,
+                      duration: 300,
+                      autoplayDelay: 5000,
+                      onIndexChanged: (value) => _onUpdateIndex(value),
+                      itemBuilder: (context, index) {
+                        return PhotoView(
+                          backgroundDecoration: BoxDecoration(
+                            color: Colors.white,
+                          ),
+                          imageProvider: NetworkImage(images[activeIndex]),
+                          loadingBuilder: (_, chunk) {
+                            return Image.asset(
+                              'lib/public/images/loading/image_loading.jpg',
+                            );
+                          },
+                        );
+                      },
+                    ),
             ),
             InkWell(
               onTap: () => Navigator.pop(context),
@@ -71,19 +98,24 @@ class _ProductImageState extends State<ProductImage> {
                   child: Row(
                     children: List.generate(images.length, (index) {
                       return InkWell(
-                        onTap: () => setState(() {
-                          activeIndex = index;
-                        }),
+                        key: activeIndex == index ? dataKey : null,
+                        onTap: () => _onUpdateIndex(index),
                         child: Container(
-                          width: pageStyle.unitWidth * 120,
-                          height: pageStyle.unitHeight * 120,
+                          width: pageStyle.unitWidth * 100,
+                          height: pageStyle.unitHeight * 100,
+                          margin: EdgeInsets.only(
+                            right: pageStyle.unitWidth * 10,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             image: DecorationImage(
                               image: NetworkImage(images[index]),
                             ),
                             border: Border.all(
-                              color: activeIndex == index ? Colors.black.withOpacity(0.3) : Colors.transparent,
+                              color: activeIndex == index
+                                  ? primaryColor
+                                  : greyColor,
+                              width: pageStyle.unitWidth * 0.8,
                             ),
                           ),
                         ),
@@ -97,5 +129,14 @@ class _ProductImageState extends State<ProductImage> {
         ),
       ),
     );
+  }
+
+  void _onUpdateIndex(int newIndex) {
+    setState(() {
+      activeIndex = newIndex;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(dataKey.currentContext);
+    });
   }
 }

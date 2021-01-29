@@ -41,3 +41,18 @@ class OrderCancelledFailure extends OrderState {
   @override
   List<Object> get props => [message];
 }
+
+class OrderReturnedInProcess extends OrderState {}
+
+class OrderReturnedSuccess extends OrderState {}
+
+class OrderReturnedFailure extends OrderState {
+  final String message;
+
+  OrderReturnedFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class OrderHistoryInitializedSuccess extends OrderState {}

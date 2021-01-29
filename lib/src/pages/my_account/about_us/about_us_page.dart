@@ -74,7 +74,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                     return Html(data: snapshot.data['data']['html']);
                   } else {
                     return Center(
-                      child: CircleLoadingSpinner(),
+                      child: PulseLoadingSpinner(),
                     );
                   }
                 },

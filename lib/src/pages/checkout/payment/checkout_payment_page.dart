@@ -217,7 +217,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               ),
               Text(
                 'currency'.tr() +
-                    ' ${orderDetails['orderDetails']['subTotalPrice']}',
+                    ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(2)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -261,7 +261,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               ),
               Text(
                 'currency'.tr() +
-                    ' ${orderDetails['orderDetails']['totalPrice']}',
+                    ' ${double.parse(orderDetails['orderDetails']['totalPrice']).toStringAsFixed(2)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,

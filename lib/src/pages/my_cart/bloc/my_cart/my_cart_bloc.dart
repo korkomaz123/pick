@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
@@ -106,6 +107,7 @@ class MyCartBloc extends Bloc<MyCartEvent, MyCartState> {
     ProductModel product,
     String qty,
   ) async* {
+    cartTotalPrice += double.parse(product.price);
     yield MyCartItemAddedInProcess(product: product, count: qty);
     try {
       final result =
