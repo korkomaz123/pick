@@ -34,14 +34,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async* {
     yield ProductDetailsLoadedInProcess();
     try {
-      final result = await _productRepository.getProductDetails(productId, lang);
+      final result =
+          await _productRepository.getProductDetails(productId, lang);
       if (result['code'] == 'SUCCESS') {
-        // List<dynamic> reviewList = result['reviews'];
-        // List<ReviewEntity> reviews = [];
-        // for (int i = 0; i < reviewList.length; i++) {
-        //   reviews.add(ReviewEntity.fromJson(reviewList[i]));
-        // }
-        // result['moreAbout']['reviews'] = reviews;
         final productEntity = ProductEntity.fromJson(result['moreAbout']);
         yield ProductDetailsLoadedSuccess(productEntity: productEntity);
       } else {

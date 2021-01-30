@@ -75,6 +75,8 @@ class _ProductPageState extends State<ProductPage>
     cartBloc = context.read<MyCartBloc>();
     homeBloc = context.read<HomeBloc>();
     productBloc = context.read<ProductBloc>();
+    print('/////');
+    productBloc.add(ProductInitialized());
     productBloc.add(ProductDetailsLoaded(
       productId: product.productId,
       lang: lang,
@@ -118,7 +120,6 @@ class _ProductPageState extends State<ProductPage>
   void dispose() {
     isBuyNow = false;
     _addToCartController.dispose();
-    productBloc.add(ProductInitialized());
     super.dispose();
   }
 
@@ -163,6 +164,7 @@ class _ProductPageState extends State<ProductPage>
         },
         builder: (context, state) {
           if (state is ProductDetailsLoadedSuccess) {
+            print('success');
             return Stack(
               children: [
                 SmartRefresher(
@@ -217,6 +219,7 @@ class _ProductPageState extends State<ProductPage>
               ],
             );
           } else {
+            print('else');
             return Container(color: Colors.white);
           }
         },

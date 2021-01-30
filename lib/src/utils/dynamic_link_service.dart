@@ -9,7 +9,7 @@ class DynamicLinkService {
   Future<Uri> productSharableLink(String productId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://markaa.page.link',
-      link: Uri.parse('https://markaa.page.link.com/?id=$productId'),
+      link: Uri.parse('https://markaa.page.link.com/product?id=$productId'),
       androidParameters: AndroidParameters(
         packageName: 'com.app.markaa',
         minimumVersion: 1,
@@ -21,28 +21,53 @@ class DynamicLinkService {
       ),
     );
     var dynamicUrl = await parameters.buildUrl();
-
-    return dynamicUrl;
+    final shortenedLink = await DynamicLinkParameters.shortenUrl(
+      dynamicUrl,
+      DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.unguessable,
+      ),
+    );
+    return shortenedLink.shortUrl;
   }
 
   Future<void> retrieveDynamicLink(BuildContext context) async {
     final productRepository = context.read<ProductRepository>();
+    print('start deeplink');
     try {
       final PendingDynamicLinkData data =
           await FirebaseDynamicLinks.instance.getInitialLink();
       final Uri deepLink = data?.link;
-
       if (deepLink != null) {
         if (deepLink.queryParameters.containsKey('id')) {
           String id = deepLink.queryParameters['id'];
           final product = await productRepository.getProduct(id, lang);
-          Navigator.pushNamed(context, Routes.product, arguments: product);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.product,
+            (route) => route.settings.name == Routes.home,
+            arguments: product,
+          );
         }
       }
 
       FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
-          print(dynamicLink.toString());
+          print('onSuccess');
+          print(dynamicLink.link);
+          final Uri deepLink = dynamicLink?.link;
+          if (deepLink != null) {
+            print(deepLink.queryParameters);
+            if (deepLink.queryParameters.containsKey('id')) {
+              String id = deepLink.queryParameters['id'];
+              final product = await productRepository.getProduct(id, lang);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                Routes.product,
+                (route) => route.settings.name == Routes.home,
+                arguments: product,
+              );
+            }
+          }
         },
       );
     } catch (e) {
