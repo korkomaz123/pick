@@ -255,20 +255,20 @@ class _ProductPageState extends State<ProductPage>
         bool isAdding = state is MyCartItemAddedInProcess;
         return Container(
           width: pageStyle.deviceWidth,
-          height: pageStyle.unitHeight * 50,
+          height: pageStyle.unitHeight * 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (isBuyNow && (isCreating || isAdding)) ...[
                 Container(
                   width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 50,
+                  height: pageStyle.unitHeight * 60,
                   child: Center(child: CircleLoadingSpinner()),
                 )
               ] else if (isStock) ...[
                 Container(
                   width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 50,
+                  height: pageStyle.unitHeight * 60,
                   child: MarkaaTextButton(
                     title: 'product_buy_now'.tr(),
                     titleSize: pageStyle.unitFontSize * 23,
@@ -277,18 +277,19 @@ class _ProductPageState extends State<ProductPage>
                     borderColor: Colors.transparent,
                     radius: 1,
                     onPressed: () => _onBuyNow(),
+                    isBold: true,
                   ),
                 )
               ] else ...[
                 Container(
                   width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 50,
+                  height: pageStyle.unitHeight * 60,
                 )
               ],
               if (isStock) ...[
                 RoundImageButton(
                   width: pageStyle.unitWidth * 58,
-                  height: pageStyle.unitHeight * 50,
+                  height: pageStyle.unitHeight * 60,
                   color: primarySwatchColor,
                   child: ScaleTransition(
                     scale: _addToCartScaleAnimation,

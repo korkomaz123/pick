@@ -143,7 +143,6 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     return Container(
       width: pageStyle.deviceWidth,
       color: Colors.white,
-      padding: EdgeInsets.all(pageStyle.unitWidth * 8),
       child: Column(
         children: [
           if (productEntity.gallery.isNotEmpty) ...[
@@ -151,14 +150,20 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           ] else ...[
             Container(
               width: double.infinity,
-              height: pageStyle.unitHeight * 300,
+              height: pageStyle.unitHeight * 460,
               child: Image.asset('lib/public/images/loading/image_loading.jpg'),
             )
           ],
-          _buildTitle(),
-          SizedBox(height: pageStyle.unitHeight * 10),
-          _buildDescription(),
-          _buildPrice(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+            child: Column(
+              children: [
+                _buildTitle(),
+                _buildDescription(),
+                _buildPrice(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -171,9 +176,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Container(
               width: pageStyle.unitWidth * 22,
               height: pageStyle.unitHeight * 22,
               child: SvgPicture.asset(closeIcon),
@@ -181,22 +186,21 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           ),
           Column(
             children: [
-              InkWell(
-                onTap: () => _onShareProduct(),
-                child: SvgPicture.asset(shareIcon),
+              IconButton(
+                onPressed: () => _onShareProduct(),
+                icon: SvgPicture.asset(shareIcon),
               ),
-              SizedBox(height: pageStyle.unitHeight * 10),
-              InkWell(
-                onTap: () => user != null
+              IconButton(
+                onPressed: () => user != null
                     ? _onFavorite()
                     : Navigator.pushNamed(context, Routes.signIn),
-                child: ScaleTransition(
+                icon: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
                     width: pageStyle.unitWidth * 22,
                     height: pageStyle.unitHeight * 22,
                     child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : wishlistOpacityIcon,
+                      isWishlist ? wishlistedIcon : wishlistIcon,
                     ),
                   ),
                 ),
@@ -211,7 +215,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildImageCarousel() {
     return Container(
       width: double.infinity,
-      height: widget.pageStyle.unitHeight * 350,
+      height: widget.pageStyle.unitHeight * 460,
       child: Stack(
         children: [
           _buildProduct(),
@@ -273,7 +277,8 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     productEntity.brandLabel,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 13,
+                      fontSize:
+                          pageStyle.unitFontSize * (lang == 'en' ? 16 : 18),
                     ),
                   ),
                 )
@@ -284,14 +289,13 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
                   color: isStock ? succeedColor : dangerColor,
-                  fontSize: pageStyle.unitFontSize * 11,
+                  fontSize: pageStyle.unitFontSize * (lang == 'en' ? 16 : 18),
                 ),
               ),
             ],
           ),
           Text(
             productEntity.name,
-            overflow: TextOverflow.ellipsis,
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 20,
             ),
@@ -304,7 +308,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildProduct() {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 300,
+      height: widget.pageStyle.unitHeight * 420,
       child: productEntity.gallery.length < 2
           ? InkWell(
               onTap: () => Navigator.pushNamed(
@@ -314,8 +318,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
               ),
               child: Image.network(
                 productEntity.gallery[0],
-                width: pageStyle.unitWidth * 343,
-                height: pageStyle.unitHeight * 240.31,
+                width: widget.pageStyle.deviceWidth,
+                height: pageStyle.unitHeight * 400,
+                fit: BoxFit.fitHeight,
                 loadingBuilder: (_, child, chunkEvent) {
                   if (chunkEvent != null) {
                     return Image.asset(
@@ -346,8 +351,9 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                   ),
                   child: Image.network(
                     productEntity.gallery[index],
-                    width: pageStyle.unitWidth * 343,
-                    height: pageStyle.unitHeight * 240.31,
+                    width: pageStyle.deviceWidth,
+                    height: pageStyle.unitHeight * 400,
+                    fit: BoxFit.fitHeight,
                     loadingBuilder: (_, child, chunkEvent) {
                       if (chunkEvent != null) {
                         return Image.asset(
@@ -366,6 +372,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   Widget _buildDescription() {
     return Container(
       width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -373,21 +380,21 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             Text(
               productEntity.shortDescription,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 12,
+                fontSize: pageStyle.unitFontSize * 14,
               ),
             )
           ] else if (isLength(productEntity.shortDescription, 110)) ...[
             Text(
               productEntity.shortDescription.substring(0, 110) + ' ...',
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 12,
+                fontSize: pageStyle.unitFontSize * 14,
               ),
             )
           ] else ...[
             Text(
               productEntity.shortDescription,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 12,
+                fontSize: pageStyle.unitFontSize * 14,
               ),
             )
           ],
@@ -422,14 +429,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           Text(
             productEntity.price + ' ' + 'currency'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: pageStyle.unitFontSize * 16,
               color: greyColor,
+              fontWeight: FontWeight.w700,
             ),
           ),
           Text(
             'sku'.tr() + ': ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 10,
+              fontSize: pageStyle.unitFontSize * 12,
               color: primaryColor,
             ),
           ),

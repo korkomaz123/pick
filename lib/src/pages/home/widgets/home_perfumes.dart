@@ -137,7 +137,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
 
   Widget _buildIndicator() {
     return Container(
-      width: widget.pageStyle.unitWidth,
+      width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
       child: Center(
         child: SmoothIndicator(
@@ -179,11 +179,12 @@ class _HomePerfumesState extends State<HomePerfumes> {
         },
         itemBuilder: (context, index) {
           return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 children: [
                   ProductVCard(
-                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index],
                     pageStyle: widget.pageStyle,
@@ -192,11 +193,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     isShare: true,
                   ),
                   Container(
-                    width: widget.pageStyle.unitWidth * 170,
+                    width: widget.pageStyle.unitWidth * 179,
                     child: Divider(color: greyColor, thickness: 0.5),
                   ),
                   ProductVCard(
-                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 1],
                     pageStyle: widget.pageStyle,
@@ -211,7 +212,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   top: widget.pageStyle.unitHeight * 2,
                 ),
                 child: VerticalDivider(
-                  width: widget.pageStyle.unitWidth * 4,
+                  width: widget.pageStyle.unitWidth * 1,
                   thickness: widget.pageStyle.unitWidth * 1,
                   color: greyColor.withOpacity(0.4),
                 ),
@@ -219,7 +220,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
               Column(
                 children: [
                   ProductVCard(
-                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 2],
                     pageStyle: widget.pageStyle,
@@ -228,11 +229,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     isShare: true,
                   ),
                   Container(
-                    width: widget.pageStyle.unitWidth * 170,
+                    width: widget.pageStyle.unitWidth * 179,
                     child: Divider(color: greyColor, thickness: 0.5),
                   ),
                   ProductVCard(
-                    cardWidth: widget.pageStyle.unitWidth * 170,
+                    cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 3],
                     pageStyle: widget.pageStyle,

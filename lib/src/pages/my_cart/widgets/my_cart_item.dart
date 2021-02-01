@@ -17,6 +17,7 @@ class MyCartItem extends StatelessWidget {
   final String cartId;
   final Function onRemoveCartItem;
   final Function onSaveForLaterItem;
+  final Function onSignIn;
 
   MyCartItem({
     this.pageStyle,
@@ -25,6 +26,7 @@ class MyCartItem extends StatelessWidget {
     this.cartId,
     this.onRemoveCartItem,
     this.onSaveForLaterItem,
+    this.onSignIn,
   });
 
   @override
@@ -132,20 +134,18 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (user?.token != null) ...[
-                          InkWell(
-                            onTap: onSaveForLaterItem,
-                            child: Text(
-                              'save_for_later'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                fontSize: pageStyle.unitFontSize * 12,
-                                color: primaryColor,
-                              ),
+                        InkWell(
+                          onTap: user?.token != null
+                              ? onSaveForLaterItem
+                              : onSignIn,
+                          child: Text(
+                            'save_for_later'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: pageStyle.unitFontSize * 12,
+                              color: primaryColor,
                             ),
-                          )
-                        ] else ...[
-                          SizedBox.shrink()
-                        ],
+                          ),
+                        ),
                         MyCartQtyHorizontalPicker(
                           pageStyle: pageStyle,
                           cartItem: cartItem,

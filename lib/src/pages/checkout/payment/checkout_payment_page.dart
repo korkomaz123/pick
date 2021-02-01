@@ -237,7 +237,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                int.parse(orderDetails['orderDetails']['fees']) == 0
+                double.parse(orderDetails['orderDetails']['fees']) == .0
                     ? 'free'.tr()
                     : 'currency'.tr() +
                         ' ${orderDetails['orderDetails']['fees']}',
@@ -421,7 +421,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         shippings: [
           Shipping(
             name: data['firstname'] + data['lastname'],
-            amount: int.parse(orderDetails['orderDetails']['fees']) + .0,
+            amount: double.parse(orderDetails['orderDetails']['fees']),
             description: "Shopping",
           ),
         ],

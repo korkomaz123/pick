@@ -25,7 +25,7 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   PageStyle pageStyle;
   TextEditingController searchController = TextEditingController();
   List<dynamic> searchHistory = [];
@@ -61,6 +61,9 @@ class _SearchPageState extends State<SearchPage> {
     searchBloc = context.read<SearchBloc>();
     searchController.addListener(_getSuggestion);
     _getSearchHistories();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      searchNode.requestFocus();
+    });
   }
 
   void _getSuggestion() async {
@@ -143,32 +146,36 @@ class _SearchPageState extends State<SearchPage> {
           if (state is SearchedSuccess) {
             products = state.products;
           }
-          return Stack(
-            children: [
-              InkWell(
-                onTap: () => setState(() {
-                  isFiltering = !isFiltering;
-                }),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildSearchField(),
-                      _buildFilterButton(),
-                      if (isFiltering) ...[_buildFilterOptions()],
-                      if (state is SearchedInProcess) ...[
-                        PulseLoadingSpinner()
-                      ] else if (products.isNotEmpty) ...[
-                        _buildResult()
+          return Container(
+            width: pageStyle.deviceWidth,
+            height: pageStyle.deviceHeight,
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: () => setState(() {
+                    isFiltering = !isFiltering;
+                  }),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildSearchField(),
+                        _buildFilterButton(),
+                        if (isFiltering) ...[_buildFilterOptions()],
+                        if (state is SearchedInProcess) ...[
+                          PulseLoadingSpinner()
+                        ] else if (products.isNotEmpty) ...[
+                          _buildResult()
+                        ],
+                        if (!isFiltering && searchHistory.isNotEmpty) ...[
+                          _buildSearchHistory()
+                        ],
                       ],
-                      if (!isFiltering && searchHistory.isNotEmpty) ...[
-                        _buildSearchHistory()
-                      ],
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              if (searchNode.hasFocus) ...[_buildSuggestion()],
-            ],
+                if (searchNode.hasFocus) ...[_buildSuggestion()],
+              ],
+            ),
           );
         },
       ),

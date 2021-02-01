@@ -11,6 +11,7 @@ class MarkaaTextButton extends StatelessWidget {
   final double radius;
   final double elevation;
   final double borderWidth;
+  final bool isBold;
 
   MarkaaTextButton({
     @required this.title,
@@ -22,6 +23,7 @@ class MarkaaTextButton extends StatelessWidget {
     this.elevation = 0,
     this.radius = 10,
     this.borderWidth = 1,
+    this.isBold = false,
   });
 
   @override
@@ -39,6 +41,7 @@ class MarkaaTextButton extends StatelessWidget {
         style: mediumTextStyle.copyWith(
           color: titleColor,
           fontSize: titleSize,
+          fontWeight: isBold ? FontWeight.w700 : FontWeight.w600,
         ),
       ),
     );

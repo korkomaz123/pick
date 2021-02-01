@@ -3,7 +3,7 @@ class ShippingMethodEntity {
   final String title;
   final String description;
   final String type;
-  final int serviceFees;
+  final double serviceFees;
 
   ShippingMethodEntity({
     this.id,
@@ -13,13 +13,12 @@ class ShippingMethodEntity {
     this.serviceFees,
   });
 
-  static int _getFeesFromStringValue(String value) {
+  static double _getFeesFromStringValue(String value) {
     if (value != null) {
       double doubleValue = double.parse(value);
-      String intableStringValue = doubleValue.toStringAsFixed(0);
-      return int.parse(intableStringValue);
+      return doubleValue;
     } else {
-      return 0;
+      return .0;
     }
   }
 

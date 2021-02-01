@@ -13,11 +13,13 @@ import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_country_dialog.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_region_dialog.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -57,10 +59,23 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   String countryId;
   String regionId;
   bool isSave;
+  String shippingMethodId;
+  double serviceFees;
+  LocalStorageRepository localRepo;
+  MyCartRepository cartRepo;
 
   @override
   void initState() {
     super.initState();
+    if (widget.reorder != null) {
+      shippingMethodId = widget.reorder.shippingMethod.id;
+      serviceFees = widget.reorder.shippingMethod.serviceFees;
+    } else {
+      shippingMethodId = shippingMethods[0].id;
+      serviceFees = shippingMethods[0].serviceFees;
+    }
+    localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
     // shippingAddressBloc = context.read<ShippingAddressBloc>();
@@ -411,6 +426,36 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         }
       }
       if (!isSave || addressTitle.isNotEmpty) {
+        progressService.showProgress();
+        String cartId;
+        if (widget.reorder != null) {
+          cartId = await localRepo.getItem('reorderCartId');
+        } else {
+          final result = await cartRepo.getCartId(user.token);
+          if (result['code'] == 'SUCCESS') {
+            cartId = result['cartId'];
+          }
+        }
+        orderDetails['shipping'] = shippingMethodId;
+        orderDetails['cartId'] = cartId;
+        double totalPrice = 0;
+        double subtotalPrice = 0;
+        if (widget.reorder != null) {
+          for (int i = 0; i < reorderCartItems.length; i++) {
+            subtotalPrice += reorderCartItems[i].rowPrice;
+          }
+        } else {
+          for (int i = 0; i < myCartItems.length; i++) {
+            subtotalPrice += myCartItems[i].rowPrice;
+          }
+        }
+
+        totalPrice = subtotalPrice + serviceFees;
+        orderDetails['orderDetails'] = {};
+        orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
+        orderDetails['orderDetails']['subTotalPrice'] =
+            subtotalPrice.toString();
+        orderDetails['orderDetails']['fees'] = serviceFees.toString();
         orderDetails['token'] = user.token;
         orderDetails['orderAddress'] = json.encode({
           'firstname': firstNameController.text,
@@ -426,9 +471,10 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           'save_in_address_book': '${isSave ? 1 : 0}',
           'prefix': addressTitle,
         });
+        progressService.hideProgress();
         Navigator.pushNamed(
           context,
-          Routes.checkoutShipping,
+          Routes.checkoutPayment,
           arguments: widget.reorder,
         );
       }

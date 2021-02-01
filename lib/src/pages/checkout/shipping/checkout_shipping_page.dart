@@ -29,7 +29,7 @@ class CheckoutShippingPage extends StatefulWidget {
 class _CheckoutShippingPageState extends State<CheckoutShippingPage> {
   PageStyle pageStyle;
   String shippingMethodId;
-  int serviceFees;
+  double serviceFees;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
 

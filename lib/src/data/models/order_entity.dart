@@ -60,12 +60,11 @@ class OrderEntity {
         cartItems = _getCartItems(json['products']),
         address = AddressEntity.fromJson(json['shippingAddress']);
 
-  static int _getServiceFees(Map<String, dynamic> json) {
+  static double _getServiceFees(Map<String, dynamic> json) {
     String totalPriceStr = json['grand_total'];
     String subtotalPriceStr = json['subtotal'];
-    int totalPrice = int.parse(double.parse(totalPriceStr).toStringAsFixed(0));
-    int subtotalPrice =
-        int.parse(double.parse(subtotalPriceStr).toStringAsFixed(0));
+    double totalPrice = double.parse(totalPriceStr);
+    double subtotalPrice = double.parse(subtotalPriceStr);
     return totalPrice - subtotalPrice;
   }
 

@@ -181,13 +181,12 @@ class _ProductVCardState extends State<ProductVCard>
       ),
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(widget.pageStyle.unitHeight * 10),
+          Container(
             child: Image.network(
               widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
-              fit: BoxFit.fill,
+              fit: BoxFit.fitHeight,
               loadingBuilder: (_, child, chunkEvent) {
                 if (chunkEvent != null)
                   return Image.asset(
@@ -222,7 +221,7 @@ class _ProductVCardState extends State<ProductVCard>
                     widget.product.brandLabel,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 12,
+                      fontSize: widget.pageStyle.unitFontSize * 14,
                     ),
                   ),
                 ),
@@ -247,8 +246,9 @@ class _ProductVCardState extends State<ProductVCard>
                     Text(
                       widget.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: widget.pageStyle.unitFontSize * 12,
+                        fontSize: widget.pageStyle.unitFontSize * 14,
                         color: greyColor,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     SizedBox(width: widget.pageStyle.unitWidth * 10),

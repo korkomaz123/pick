@@ -53,6 +53,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     categoryListBloc = context.read<CategoryListBloc>();
     brandBloc = context.read<BrandBloc>();
     localStorageRepository = context.read<LocalStorageRepository>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      dynamicLinkService.initialDynamicLink(context);
+    });
   }
 
   @override

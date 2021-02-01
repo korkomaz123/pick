@@ -185,8 +185,11 @@ class _ProductHCardState extends State<ProductHCard>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(right: widget.pageStyle.unitHeight * 10),
+          Container(
+            padding: EdgeInsets.only(
+              right: lang == 'en' ? widget.pageStyle.unitWidth * 5 : 0,
+              left: lang == 'ar' ? widget.pageStyle.unitWidth * 5 : 0,
+            ),
             child: Image.network(
               widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
@@ -227,13 +230,14 @@ class _ProductHCardState extends State<ProductHCard>
                     widget.product.brandLabel,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 12,
+                      fontSize: widget.pageStyle.unitFontSize * 14,
                     ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    right: widget.pageStyle.unitWidth * 20,
+                    right: lang == 'en' ? widget.pageStyle.unitWidth * 20 : 0,
+                    left: lang == 'ar' ? widget.pageStyle.unitWidth * 20 : 0,
                   ),
                   child: Text(
                     widget.product.name,
@@ -255,8 +259,9 @@ class _ProductHCardState extends State<ProductHCard>
                       child: Text(
                         widget.product.price + ' ' + 'currency'.tr(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize * 12,
+                          fontSize: widget.pageStyle.unitFontSize * 14,
                           color: greyColor,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),

@@ -345,6 +345,7 @@ class _MyCartPageState extends State<MyCartPage>
                           cartId: cartId,
                           onRemoveCartItem: () => _onRemoveCartItem(index),
                           onSaveForLaterItem: () => _onSaveForLaterItem(index),
+                          onSignIn: () => _onSignIn(),
                         ),
                         index < (myCartItems.length - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
@@ -437,9 +438,7 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => user?.token != null
-            ? _onCheckout()
-            : Navigator.pushNamed(context, Routes.signIn),
+        onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(),
         radius: 0,
       ),
     );
@@ -474,6 +473,11 @@ class _MyCartPageState extends State<MyCartPage>
       product: myCartItems[index].product,
       itemId: myCartItems[index].itemId,
     ));
+  }
+
+  void _onSignIn() async {
+    await Navigator.pushNamed(context, Routes.signIn);
+    Navigator.pushReplacementNamed(context, Routes.myCart);
   }
 
   void _onClearCartItems() async {

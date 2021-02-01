@@ -24,8 +24,6 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
   PageStyle pageStyle;
   List<String> steps = [
     'checkout_step_address'.tr(),
-    'checkout_step_shipping'.tr(),
-    'checkout_step_review'.tr(),
     'checkout_step_payment'.tr(),
   ];
 
@@ -77,7 +75,7 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
         child: widget.currentIndex == null
             ? SizedBox.shrink()
             : MarkaaCheckoutStepper(
-                totalSteps: 4,
+                totalSteps: steps.length,
                 currentStep: widget.currentIndex,
                 items: List.generate(
                   steps.length,
