@@ -10,6 +10,7 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -55,6 +56,7 @@ class _SignInPageState extends State<SignInPage> {
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
+  SettingRepository settingRepo;
 
   @override
   void initState() {
@@ -68,6 +70,7 @@ class _SignInPageState extends State<SignInPage> {
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
+    settingRepo = context.read<SettingRepository>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
@@ -78,6 +81,11 @@ class _SignInPageState extends State<SignInPage> {
       await _loadCustomerCartItems();
       await _getWishlists();
       await _shippingAddresses();
+      await settingRepo.updateFcmDeviceToken(
+        user.token,
+        Platform.isAndroid ? deviceToken : '',
+        Platform.isIOS ? deviceToken : '',
+      );
     } catch (e) {
       print(e.toString());
     }

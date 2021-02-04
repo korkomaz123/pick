@@ -9,6 +9,7 @@ import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
@@ -35,6 +36,7 @@ class _SplashPageState extends State<SplashPage> {
   MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
   CategoryRepository categoryRepo;
+  SettingRepository settingRepo;
   PageStyle pageStyle;
   bool isFirstTime;
 
@@ -47,6 +49,7 @@ class _SplashPageState extends State<SplashPage> {
     categoryRepo = context.read<CategoryRepository>();
     cartItemCountBloc = context.read<CartItemCountBloc>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    settingRepo = context.read<SettingRepository>();
     _checkAppUsage();
   }
 
@@ -63,6 +66,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _loadAssets() async {
     await _getCurrentUser();
+    _getNotificationSetting();
     _getHomeCategories();
     _getCartItems();
     _getWishlists();
@@ -74,13 +78,18 @@ class _SplashPageState extends State<SplashPage> {
     _navigator();
   }
 
+  Future<void> _getNotificationSetting() async {
+    if (user?.token != null) {
+      isNotification = await settingRepo.getNotificationSetting(user.token);
+    }
+  }
+
   Future<void> _getHomeCategories() async {
     homeCategories = await categoryRepo.getHomeCategories(lang);
   }
 
   Future<void> _getCurrentUser() async {
     String token = await localRepo.getToken();
-
     if (token.isNotEmpty) {
       final signInRepo = context.read<SignInRepository>();
       final result = await signInRepo.getCurrentUser(token);

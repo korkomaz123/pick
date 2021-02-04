@@ -3,6 +3,7 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -40,6 +41,7 @@ class _LogoutItemState extends State<LogoutItem> {
   WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  SettingRepository settingRepo;
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _LogoutItemState extends State<LogoutItem> {
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    settingRepo = context.read<SettingRepository>();
   }
 
   @override
@@ -121,6 +124,7 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logoutUser() async {
+    await settingRepo.updateFcmDeviceToken(user.token, '', '');
     user = null;
     await localRepo.setToken('');
     myCartItems.clear();

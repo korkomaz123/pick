@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     settingRepository = context.read<SettingRepository>();
     _initializeLocalNotification();
     _configureMessaging();
+    _subscribeToTopic();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
@@ -147,6 +148,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       },
     );
     firebaseMessaging.getToken().then((String token) async {
+      deviceToken = token;
       if (user?.token != null) {
         await settingRepository.updateFcmDeviceToken(
           user.token,
@@ -189,6 +191,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         IOSNotificationDetails(),
       ),
     );
+  }
+
+  void _subscribeToTopic() {
+    if (isNotification == null) {
+      firebaseMessaging.subscribeToTopic('guest').then((_) {
+        print('subscribed to guest channel');
+      });
+    }
   }
 
   @override

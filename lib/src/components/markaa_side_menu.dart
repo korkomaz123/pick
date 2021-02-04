@@ -8,6 +8,7 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -46,6 +47,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  SettingRepository settingRepo;
 
   @override
   void initState() {
@@ -56,6 +58,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    settingRepo = context.read<SettingRepository>();
     wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -341,6 +344,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   }
 
   void _logoutUser() async {
+    await settingRepo.updateFcmDeviceToken(user.token, '', '');
     user = null;
     await localRepo.setToken('');
     List<String> ids = await localRepo.getRecentlyViewedIds();

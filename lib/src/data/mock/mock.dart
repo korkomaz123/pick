@@ -7,23 +7,7 @@ import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
-List<CategoryEntity> homeCategories = [
-  CategoryEntity(
-    id: '41',
-    name: 'home_best_deals',
-    subCategories: [],
-  ),
-  CategoryEntity(
-    id: '42',
-    name: 'home_new_arrivals',
-    subCategories: [],
-  ),
-  CategoryEntity(
-    id: '43',
-    name: 'home_perfumes',
-    subCategories: [],
-  ),
-];
+List<CategoryEntity> homeCategories = [];
 
 List<CategoryMenuEntity> sideMenus = [];
 List<RegionEntity> regions = [];
@@ -58,19 +42,10 @@ MessageEntity message = MessageEntity(
 
 List<MessageEntity> messages = List.generate(20, (index) => message).toList();
 
-List<AddressEntity> shippingAddresses = List.generate(4, (index) {
-  return AddressEntity(
-    country: 'Kuwait',
-    city: 'Salmaya Salem Almubarak',
-    street: 'Street',
-    zipCode: '00232',
-    phoneNumber: '+9653373373',
-  );
-}).toList();
-
 UserEntity user;
-
+String deviceToken = '';
 String lang = 'en';
+bool isNotification = false;
 
 List<Map<String, dynamic>> countries = [
   {"name": "Kuwait", "dial_code": "+965", "code": "KW"},
