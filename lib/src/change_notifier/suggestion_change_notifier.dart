@@ -9,15 +9,7 @@ class SuggestionChangeNotifier extends ChangeNotifier {
     suggestions = [];
     notifyListeners();
     final searchRepository = SearchRepository();
-    final result = await searchRepository.getSearchSuggestion(query, lang);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> suggestionList = result['products'];
-      for (int i = 0; i < suggestionList.length; i++) {
-        suggestions.add(ProductModel.fromJson(suggestionList[i]));
-      }
-    } else {
-      suggestions = [];
-    }
+    suggestions = await searchRepository.getSearchSuggestion(query, lang);
     notifyListeners();
   }
 }

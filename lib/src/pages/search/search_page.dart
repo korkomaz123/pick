@@ -122,7 +122,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
           'search_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: greyColor,
-            fontSize: pageStyle.unitFontSize * 40,
+            fontSize: pageStyle.unitFontSize * 36,
           ),
         ),
       ),

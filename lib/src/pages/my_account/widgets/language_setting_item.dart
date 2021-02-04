@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 
 class LanguageSettingItem extends StatefulWidget {
   final PageStyle pageStyle;
@@ -19,12 +20,14 @@ class LanguageSettingItem extends StatefulWidget {
 
 class _LanguageSettingItemState extends State<LanguageSettingItem> {
   PageStyle pageStyle;
+  ProgressService progressService;
   String language;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    progressService = ProgressService(context: context);
   }
 
   @override
@@ -89,15 +92,19 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
 
   void _onChangeLanguage(String value) async {
     if (language != value) {
+      progressService.showProgress();
       language = value;
       if (language == 'EN') {
-        EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.first;
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.first;
         lang = 'en';
       } else {
-        EasyLocalization.of(context).locale = EasyLocalization.of(context).supportedLocales.last;
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
       await Future.delayed(Duration(milliseconds: 2000));
+      progressService.hideProgress();
       Phoenix.rebirth(context);
     }
   }

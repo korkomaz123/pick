@@ -75,4 +75,5 @@ class EndPoints {
   static const String getSaveForLaterItems = '$baseUrl/getSaveforlater';
   static const String changeSaveForLaterItem = '$baseUrl/addSaveforlateritem';
   static const String getProduct = '$baseUrl/getProduct';
+  static const String updateDeviceToken = '$baseUrl/updateDeviceToken';
 }

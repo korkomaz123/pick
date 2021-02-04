@@ -45,7 +45,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async* {
     yield SearchedInProcess();
     try {
-      final result = await _searchRepository.searchProducts(query, categories, brands, genders, lang);
+      final result = await _searchRepository.searchProducts(
+          query, categories, brands, genders, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> productList = result['products'];
         List<ProductModel> products = [];
@@ -68,17 +69,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async* {
     yield SearchSuggestionLoadedInProcess();
     try {
-      final result = await _searchRepository.getSearchSuggestion(query, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> suggestionList = result['products'];
-        List<ProductModel> suggestions = [];
-        for (int i = 0; i < suggestionList.length; i++) {
-          suggestions.add(ProductModel.fromJson(suggestionList[i]));
-        }
-        yield SearchSuggestionLoadedSuccess(suggestions: suggestions);
-      } else {
-        yield SearchSuggestionLoadedFailure(message: result['errorMessage']);
-      }
+      // final result = await _searchRepository.getSearchSuggestion(query, lang);
+      // if (result['code'] == 'SUCCESS') {
+      //   List<dynamic> suggestionList = result['products'];
+      //   List<ProductModel> suggestions = [];
+      //   for (int i = 0; i < suggestionList.length; i++) {
+      //     suggestions.add(ProductModel.fromJson(suggestionList[i]));
+      //   }
+      //   yield SearchSuggestionLoadedSuccess(suggestions: suggestions);
+      // } else {
+      //   yield SearchSuggestionLoadedFailure(message: result['errorMessage']);
+      // }
     } catch (e) {
       yield SearchSuggestionLoadedFailure(message: e.toString());
     }

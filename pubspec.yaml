@@ -15,6 +15,7 @@ dependencies:
     sdk: flutter
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
+  algolia: ^0.1.7
   badges: ^1.1.1
   bloc: ^6.0.1
   carousel_slider: ^2.2.1
@@ -25,11 +26,13 @@ dependencies:
   equatable: ^1.2.3
   firebase_core: ^0.7.0
   firebase_dynamic_links: ^0.7.0+1
+  firebase_messaging: ^6.0.16
   flushbar: ^1.10.4
   flutter_bloc: ^6.0.1
   flutter_facebook_login: ^3.0.0
   flutter_html: ^1.0.2
   flutter_launcher_icons: ^0.7.5
+  flutter_local_notifications: ^1.4.4+5
   flutter_phoenix: ^0.1.0
   flutter_rating_bar: ^3.2.0+1
   flutter_spinkit: ^4.1.2+1

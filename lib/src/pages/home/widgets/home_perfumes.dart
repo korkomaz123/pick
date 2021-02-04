@@ -142,8 +142,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
       child: Center(
         child: SmoothIndicator(
           offset: activeIndex.toDouble(),
-          count: perfumesProducts.length > 12
-              ? 3
+          count: perfumesProducts.length > 40
+              ? 10
               : (perfumesProducts.length / 4).floor(),
           axisDirection: Axis.horizontal,
           effect: SlideEffect(
@@ -166,8 +166,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
       width: widget.pageStyle.deviceWidth,
       height: widget.pageStyle.unitHeight * 600,
       child: Swiper(
-        itemCount: perfumesProducts.length > 12
-            ? 3
+        itemCount: perfumesProducts.length > 40
+            ? 10
             : (perfumesProducts.length / 4).floor(),
         autoplay: true,
         curve: Curves.easeIn,

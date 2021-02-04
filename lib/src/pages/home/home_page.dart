@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -9,6 +12,7 @@ import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/dynamic_link_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
@@ -29,6 +33,15 @@ import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_perfumes.dart';
 import 'widgets/home_recent.dart';
 
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'High Importance Notifications', // title
+  'This channel is used for important notifications.', // description
+  importance: Importance.Max,
+);
+
+final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -42,8 +55,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   BrandBloc brandBloc;
   PageStyle pageStyle;
   LocalStorageRepository localStorageRepository;
+  SettingRepository settingRepository;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   Timer timerLink;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
@@ -53,9 +68,127 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     categoryListBloc = context.read<CategoryListBloc>();
     brandBloc = context.read<BrandBloc>();
     localStorageRepository = context.read<LocalStorageRepository>();
+    settingRepository = context.read<SettingRepository>();
+    _initializeLocalNotification();
+    _configureMessaging();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
+  }
+
+  void _initializeLocalNotification() async {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    );
+    var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid,
+      initializationSettingsIOS,
+    );
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: onSelectNotification,
+    );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+  }
+
+  Future onDidReceiveLocalNotification(
+    int id,
+    String title,
+    String body,
+    String payload,
+  ) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {},
+          )
+        ],
+      ),
+    );
+  }
+
+  void _configureMessaging() {
+    firebaseMessaging.configure(
+      onMessage: _onForegroundMessage,
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch');
+      },
+      onBackgroundMessage: _onBackgroundMessageHandler,
+    );
+    firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
+      sound: true,
+      badge: true,
+      alert: true,
+      provisional: true,
+    ));
+    firebaseMessaging.onIosSettingsRegistered.listen(
+      (IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      },
+    );
+    firebaseMessaging.getToken().then((String token) async {
+      if (user?.token != null) {
+        await settingRepository.updateFcmDeviceToken(
+          user.token,
+          Platform.isAndroid ? token : '',
+          Platform.isIOS ? token : '',
+        );
+      }
+    });
+  }
+
+  static Future<void> _onBackgroundMessageHandler(
+      Map<String, dynamic> message) async {
+    await flutterLocalNotificationsPlugin.show(
+      message.hashCode,
+      message['notification']['title'],
+      message['notification']['body'],
+      NotificationDetails(
+        AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+        ),
+        IOSNotificationDetails(),
+      ),
+    );
+  }
+
+  Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
+    print(message);
+    await flutterLocalNotificationsPlugin.show(
+      message.hashCode,
+      message['notification']['title'],
+      message['notification']['body'],
+      NotificationDetails(
+        AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+        ),
+        IOSNotificationDetails(),
+      ),
+    );
   }
 
   @override

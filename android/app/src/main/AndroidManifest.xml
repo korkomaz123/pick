@@ -9,11 +9,16 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name=".Application"
         android:label="markaa"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true">
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -46,6 +51,11 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
 
         <!-- Start Facebook Login Configure -->

@@ -313,7 +313,7 @@ class _ProductVCardState extends State<ProductVCard>
                   height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(wishlistOpacityIcon),
+                      : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),

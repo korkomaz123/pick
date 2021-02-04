@@ -179,9 +179,10 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: Container(
-              width: pageStyle.unitWidth * 22,
-              height: pageStyle.unitHeight * 22,
-              child: SvgPicture.asset(closeIcon),
+              width: pageStyle.unitWidth * 26,
+              height: pageStyle.unitHeight * 26,
+              child: SvgPicture.asset(
+                  lang == 'en' ? arrowBackEnIcon : arrowBackArIcon),
             ),
           ),
           Column(
@@ -197,10 +198,10 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                 icon: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
-                    width: pageStyle.unitWidth * 22,
-                    height: pageStyle.unitHeight * 22,
+                    width: pageStyle.unitWidth * 26,
+                    height: pageStyle.unitHeight * 26,
                     child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : wishlistIcon,
+                      isWishlist ? wishlistedIcon : favoriteIcon,
                     ),
                   ),
                 ),
@@ -289,7 +290,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                     : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
                   color: isStock ? succeedColor : dangerColor,
-                  fontSize: pageStyle.unitFontSize * (lang == 'en' ? 16 : 18),
+                  fontSize: pageStyle.unitFontSize * (lang == 'en' ? 14 : 18),
                 ),
               ),
             ],
@@ -478,8 +479,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   void _onShareProduct() async {
     Uri shareLink =
-        await dynamicLinkService.productSharableLink(productEntity.productId);
-    print(shareLink.toString());
+        await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: product.name);
   }
 }

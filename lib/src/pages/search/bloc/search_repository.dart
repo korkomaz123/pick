@@ -1,5 +1,9 @@
+import 'package:algolia/algolia.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/utils/algolia_service.dart';
 
 class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -47,10 +51,27 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getSearchSuggestion(String query, String lang) async {
-    final url = EndPoints.getSearchSuggestion;
-    final params = {'q': query, 'lang': lang};
-    return await Api.getMethod(url, data: params);
+  Future<List<ProductModel>> getSearchSuggestion(String q, String lang) async {
+    // final url = EndPoints.getSearchSuggestion;
+    // final params = {'q': query, 'lang': lang};
+    // return await Api.getMethod(url, data: params);
+    Algolia algolia = AlgoliaService.algolia;
+    String index =
+        lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
+    AlgoliaQuery query = algolia.instance.index(index).search(q);
+    AlgoliaQuerySnapshot snap = await query.getObjects();
+    List<ProductModel> products = [];
+    for (int i = 0; i < snap.hits.length; i++) {
+      Map<String, dynamic> data = {};
+      AlgoliaObjectSnapshot item = snap.hits[i];
+      data['entity_id'] = item.objectID;
+      data['name'] = item.data['name'];
+      data['price'] = item.data['price']['KWD']['default'].toString();
+      data['image_url'] =
+          item.data['image_url'].toString().replaceFirst('//', 'https://');
+      products.add(ProductModel.fromJson(data));
+    }
+    return products;
   }
 
   //////////////////////////////////////////////////////////////////////////////

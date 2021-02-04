@@ -53,7 +53,12 @@ class SettingRepository {
     String comment,
   ) async {
     String url = EndPoints.submitContactUs;
-    final params = {'name': name, 'telephone': phone, 'email': email, 'comment': comment};
+    final params = {
+      'name': name,
+      'telephone': phone,
+      'email': email,
+      'comment': comment
+    };
     return await Api.postMethod(url, data: params);
   }
 
@@ -71,6 +76,25 @@ class SettingRepository {
       'oldPassword': oldPassword,
       'newPassword': newPassword,
     };
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> updateFcmDeviceToken(
+    String token,
+    String aToken,
+    String iToken,
+  ) async {
+    String url = EndPoints.updateDeviceToken;
+    final params = {
+      'token': token,
+      'android_token': aToken,
+      'ios_token': iToken
+    };
+    print(url);
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 }
