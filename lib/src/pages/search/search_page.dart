@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
@@ -36,9 +37,9 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   SearchBloc searchBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
-  List<dynamic> selectedCategories = [];
-  List<dynamic> selectedBrands = [];
-  List<dynamic> selectedGenders = [];
+  dynamic selectedCategory;
+  dynamic selectedBrand;
+  dynamic selectedBrandName;
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
@@ -46,6 +47,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   LocalStorageRepository localStorageRepository;
   SearchRepository searchRepository;
   SuggestionChangeNotifier suggestionChangeNotifier;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -59,6 +61,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     searchBloc = context.read<SearchBloc>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     searchController.addListener(_getSuggestion);
     _getSearchHistories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -126,58 +129,32 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
           ),
         ),
       ),
-      body: BlocConsumer<SearchBloc, SearchState>(
-        listener: (context, state) {
-          // if (state is SearchedInProcess) {
-          //   progressService.showProgress();
-          // }
-          if (state is SearchedSuccess) {
-            // progressService.hideProgress();
-            if (state.products.isNotEmpty && searchController.text.isNotEmpty) {
-              _saveSearchHistory();
-            }
-          }
-          if (state is SearchedFailure) {
-            // progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        builder: (context, state) {
-          if (state is SearchedSuccess) {
-            products = state.products;
-          }
-          return Container(
-            width: pageStyle.deviceWidth,
-            height: pageStyle.deviceHeight,
-            child: Stack(
-              children: [
-                InkWell(
-                  onTap: () => setState(() {
-                    isFiltering = !isFiltering;
-                  }),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildSearchField(),
-                        _buildFilterButton(),
-                        if (isFiltering) ...[_buildFilterOptions()],
-                        if (state is SearchedInProcess) ...[
-                          PulseLoadingSpinner()
-                        ] else if (products.isNotEmpty) ...[
-                          _buildResult()
-                        ],
-                        if (!isFiltering && searchHistory.isNotEmpty) ...[
-                          _buildSearchHistory()
-                        ],
-                      ],
-                    ),
-                  ),
+      body: Container(
+        width: pageStyle.deviceWidth,
+        height: pageStyle.deviceHeight,
+        child: Stack(
+          children: [
+            InkWell(
+              onTap: () => setState(() {
+                isFiltering = !isFiltering;
+              }),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildSearchField(),
+                    _buildFilterButton(),
+                    if (isFiltering) ...[_buildFilterOptions()],
+                    if (!searchNode.hasFocus) ...[_buildResult()],
+                    if (!isFiltering && searchHistory.isNotEmpty) ...[
+                      _buildSearchHistory()
+                    ],
+                  ],
                 ),
-                if (searchNode.hasFocus) ...[_buildSuggestion()],
-              ],
+              ),
             ),
-          );
-        },
+            if (searchNode.hasFocus) ...[_buildSuggestion()],
+          ],
+        ),
       ),
     );
   }
@@ -271,31 +248,42 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
         horizontal: pageStyle.unitWidth * 20,
         vertical: pageStyle.unitHeight * 20,
       ),
-      child: Column(
-        children: List.generate(
-          products.length,
-          (index) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.product,
-                    arguments: products[index],
-                  ),
-                  child: SearchProductCard(
-                    pageStyle: pageStyle,
-                    product: products[index],
-                  ),
-                ),
-                index < (products.length - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
-              ],
-            );
-          },
-        ),
+      child: Consumer<SuggestionChangeNotifier>(
+        builder: (_, __, ___) {
+          if (suggestionChangeNotifier.searchedProducts == null) {
+            return PulseLoadingSpinner();
+          }
+          return Column(
+            children: List.generate(
+              suggestionChangeNotifier.searchedProducts.length,
+              (index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        Routes.product,
+                        arguments:
+                            suggestionChangeNotifier.searchedProducts[index],
+                      ),
+                      child: SearchProductCard(
+                        pageStyle: pageStyle,
+                        product:
+                            suggestionChangeNotifier.searchedProducts[index],
+                      ),
+                    ),
+                    index <
+                            (suggestionChangeNotifier.searchedProducts.length -
+                                1)
+                        ? Divider(color: greyColor, thickness: 0.5)
+                        : SizedBox.shrink(),
+                  ],
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -344,26 +332,18 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 List<dynamic> brands = snapshot.data;
-                return FutureBuilder(
-                  future: futureGenders,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      List<dynamic> genders = snapshot.data;
-                      return SearchFilterOption(
-                        pageStyle: pageStyle,
-                        categories: categories,
-                        brands: brands,
-                        genders: genders,
-                        selectedCategories: selectedCategories,
-                        selectedBrands: selectedBrands,
-                        selectedGenders: selectedGenders,
-                        onSelectCategory: (value) => _onSelectCategory(value),
-                        onSelectBrand: (value) => _onSelectBrand(value),
-                        onSelectGender: (value) => _onSelectGender(value),
-                      );
-                    } else {
-                      return Container();
-                    }
+                return Consumer<MarkaaAppChangeNotifier>(
+                  builder: (_, __, ___) {
+                    return SearchFilterOption(
+                      pageStyle: pageStyle,
+                      categories: categories,
+                      brands: brands,
+                      genders: [],
+                      selectedCategory: selectedCategory,
+                      selectedBrand: selectedBrand,
+                      onSelectCategory: (value) => _onSelectCategory(value),
+                      onSelectBrand: (value) => _onSelectBrand(value),
+                    );
                   },
                 );
               } else {
@@ -468,13 +448,6 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
         InkWell(
           onTap: () {
             searchController.text = searchHistory[index];
-            searchBloc.add(Searched(
-              query: searchController.text,
-              categories: selectedCategories,
-              brands: selectedBrands,
-              genders: selectedGenders,
-              lang: lang,
-            ));
           },
           child: Text(
             searchHistory[index],
@@ -490,42 +463,27 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   }
 
   void _onSelectCategory(dynamic value) {
-    if (selectedCategories.contains(value['value'])) {
-      selectedCategories.remove(value['value']);
-    } else {
-      selectedCategories.add(value['value']);
-    }
-    setState(() {});
+    selectedCategory = value['value'];
     _searchProducts();
   }
 
   void _onSelectBrand(dynamic value) {
-    if (selectedBrands.contains(value['value'])) {
-      selectedBrands.remove(value['value']);
-    } else {
-      selectedBrands.add(value['value']);
-    }
-    setState(() {});
-  }
-
-  void _onSelectGender(dynamic value) {
-    if (selectedGenders.contains(value['value'])) {
-      selectedGenders.remove(value['value']);
-    } else {
-      selectedGenders.add(value['value']);
-    }
+    selectedBrand = value['value'];
+    selectedBrandName = value['label'];
+    _searchProducts();
     setState(() {});
   }
 
   void _searchProducts() {
+    _saveSearchHistory();
+    markaaAppChangeNotifier.rebuild();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      searchBloc.add(Searched(
-        query: searchController.text,
-        categories: selectedCategories,
-        brands: selectedBrands,
-        genders: selectedGenders,
-        lang: lang,
-      ));
+      suggestionChangeNotifier.searchProducts(
+        searchController.text,
+        lang,
+        selectedCategory,
+        selectedBrandName,
+      );
     });
   }
 }

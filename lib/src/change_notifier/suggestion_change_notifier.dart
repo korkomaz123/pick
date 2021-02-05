@@ -4,12 +4,40 @@ import 'package:flutter/material.dart';
 
 class SuggestionChangeNotifier extends ChangeNotifier {
   List<ProductModel> suggestions = [];
+  List<ProductModel> searchedProducts = [];
 
   Future<void> getSuggestions(String query, String lang) async {
     suggestions = [];
     notifyListeners();
     final searchRepository = SearchRepository();
     suggestions = await searchRepository.getSearchSuggestion(query, lang);
+    notifyListeners();
+    // suggestions = [];
+    // notifyListeners();
+    // final searchRepository = SearchRepository();
+    // final result = await searchRepository.getSearchSuggestion(query, lang);
+    // if (result['code'] == 'SUCCESS') {
+    //   List<dynamic> suggestionList = result['products'];
+    //   for (int i = 0; i < suggestionList.length; i++) {
+    //     suggestions.add(ProductModel.fromJson(suggestionList[i]));
+    //   }
+    // } else {
+    //   suggestions = [];
+    // }
+    // notifyListeners();
+  }
+
+  Future<void> searchProducts(
+    String query,
+    String lang,
+    dynamic category,
+    dynamic brand,
+  ) async {
+    searchedProducts = null;
+    notifyListeners();
+    final searchRepository = SearchRepository();
+    searchedProducts =
+        await searchRepository.searchProducts(query, category, brand, lang);
     notifyListeners();
   }
 }

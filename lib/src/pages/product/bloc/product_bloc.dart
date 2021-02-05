@@ -36,11 +36,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final result =
           await _productRepository.getProductDetails(productId, lang);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         final productEntity = ProductEntity.fromJson(result['moreAbout']);
         yield ProductDetailsLoadedSuccess(productEntity: productEntity);
       } else {
-        yield ProductDetailsLoadedFailure(message: result['errMessage']);
+        yield ProductDetailsLoadedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield ProductDetailsLoadedFailure(message: e.toString());

@@ -12,9 +12,8 @@ class SearchFilterOption extends StatefulWidget {
   final List<dynamic> categories;
   final List<dynamic> brands;
   final List<dynamic> genders;
-  final List<dynamic> selectedCategories;
-  final List<dynamic> selectedBrands;
-  final List<dynamic> selectedGenders;
+  final dynamic selectedCategory;
+  final dynamic selectedBrand;
   final Function onSelectCategory;
   final Function onSelectBrand;
   final Function onSelectGender;
@@ -24,9 +23,8 @@ class SearchFilterOption extends StatefulWidget {
     this.categories,
     this.brands,
     this.genders,
-    this.selectedCategories,
-    this.selectedBrands,
-    this.selectedGenders,
+    this.selectedCategory,
+    this.selectedBrand,
     this.onSelectCategory,
     this.onSelectBrand,
     this.onSelectGender,
@@ -89,7 +87,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: categories,
-                      values: widget.selectedCategories,
+                      values: [widget.selectedCategory],
                       onSelectItem: (value) => widget.onSelectCategory(value),
                     ),
                   ),
@@ -122,41 +120,8 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: brands,
-                      values: widget.selectedBrands,
+                      values: [widget.selectedBrand],
                       onSelectItem: (value) => widget.onSelectBrand(value),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
-              AnimationConfiguration.staggeredList(
-                position: 0,
-                duration: Duration(milliseconds: 375),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: Text(
-                      'filter_gender'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: widget.pageStyle.unitFontSize * 23,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              AnimationConfiguration.staggeredList(
-                position: 0,
-                duration: Duration(milliseconds: 375),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: SearchBasicSelect(
-                      pageStyle: widget.pageStyle,
-                      width: double.infinity,
-                      options: genders,
-                      values: widget.selectedGenders,
-                      onSelectItem: (value) => widget.onSelectGender(value),
                     ),
                   ),
                 ),

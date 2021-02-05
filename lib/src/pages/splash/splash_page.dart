@@ -67,7 +67,7 @@ class _SplashPageState extends State<SplashPage> {
   void _loadAssets() async {
     await _getCurrentUser();
     _getNotificationSetting();
-    _getHomeCategories();
+    await _getHomeCategories();
     _getCartItems();
     _getWishlists();
     _getShippingAddress();

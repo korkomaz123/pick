@@ -51,9 +51,11 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ProductModel>> getSearchSuggestion(String q, String lang) async {
+  Future<dynamic> getSearchSuggestion(String q, String lang) async {
     // final url = EndPoints.getSearchSuggestion;
-    // final params = {'q': query, 'lang': lang};
+    // final params = {'q': q, 'lang': lang};
+    // print(url);
+    // print(params);
     // return await Api.getMethod(url, data: params);
     Algolia algolia = AlgoliaService.algolia;
     String index =
@@ -65,6 +67,7 @@ class SearchRepository {
       Map<String, dynamic> data = {};
       AlgoliaObjectSnapshot item = snap.hits[i];
       data['entity_id'] = item.objectID;
+      data['product_id'] = item.objectID;
       data['name'] = item.data['name'];
       data['price'] = item.data['price']['KWD']['default'].toString();
       data['image_url'] =
@@ -77,36 +80,73 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> searchProducts(
-    String query,
-    List<dynamic> categories,
-    List<dynamic> brands,
-    List<dynamic> genders,
+  Future<List<ProductModel>> searchProducts(
+    String q,
+    dynamic category,
+    dynamic brand,
     String lang,
   ) async {
-    final url = EndPoints.getSearchedProducts;
-    String categoryString = '';
-    String brandString = '';
-    String genderString = '';
-    for (int i = 0; i < categories.length; i++) {
-      categoryString += categories[i];
-      if (i < categories.length - 1) categoryString += ',';
+    Algolia algolia = AlgoliaService.algolia;
+    String index =
+        lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
+    final algoliaIndex = algolia.instance.index(index);
+    AlgoliaQuery query = algoliaIndex.search(q);
+    if (category != null) {
+      query = query.setFacetFilter('categoryIds:$category');
     }
-    for (int i = 0; i < brands.length; i++) {
-      brandString += brands[i];
-      if (i < brands.length - 1) brandString += ',';
+    if (brand != null) {
+      print(brand);
+      query = query.setFacetFilter('manufacturer:$brand');
     }
-    for (int i = 0; i < genders.length; i++) {
-      genderString += genders[i];
-      if (i < genders.length - 1) genderString += ',';
+    AlgoliaQuerySnapshot snap = await query.getObjects();
+    List<ProductModel> products = [];
+    for (int i = 0; i < snap.hits.length; i++) {
+      Map<String, dynamic> data = {};
+      AlgoliaObjectSnapshot item = snap.hits[i];
+      data['entity_id'] = item.objectID;
+      data['product_id'] = item.objectID;
+      data['name'] = item.data['name'];
+      data['price'] = item.data['price']['KWD']['default'].toString();
+      data['image_url'] =
+          item.data['image_url'].toString().replaceFirst('//', 'https://');
+      products.add(ProductModel.fromJson(data));
     }
-    final params = {
-      'q': query,
-      'categories': categoryString,
-      'brands': brandString,
-      'gender': genderString,
-      'lang': lang,
-    };
-    return await Api.getMethod(url, data: params);
+    return products;
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  // Future<List<ProductModel>> searchProducts(
+  //   String query,
+  //   List<dynamic> categories,
+  //   List<dynamic> brands,
+  //   List<dynamic> genders,
+  //   String lang,
+  // ) async {
+  //   final url = EndPoints.getSearchedProducts;
+  //   String categoryString = '';
+  //   String brandString = '';
+  //   String genderString = '';
+  //   for (int i = 0; i < categories.length; i++) {
+  //     categoryString += categories[i];
+  //     if (i < categories.length - 1) categoryString += ',';
+  //   }
+  //   for (int i = 0; i < brands.length; i++) {
+  //     brandString += brands[i];
+  //     if (i < brands.length - 1) brandString += ',';
+  //   }
+  //   for (int i = 0; i < genders.length; i++) {
+  //     genderString += genders[i];
+  //     if (i < genders.length - 1) genderString += ',';
+  //   }
+  //   final params = {
+  //     'q': query,
+  //     'categories': categoryString,
+  //     'brands': brandString,
+  //     'gender': genderString,
+  //     'lang': lang,
+  //   };
+  //   return await Api.getMethod(url, data: params);
+  // }
 }

@@ -45,19 +45,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async* {
     yield SearchedInProcess();
     try {
-      final result = await _searchRepository.searchProducts(
-          query, categories, brands, genders, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        List<ProductModel> products = [];
-        for (int i = 0; i < productList.length; i++) {
-          products.add(ProductModel.fromJson(productList[i]));
-        }
-        yield SearchedSuccess(products: products);
-      } else {
-        print(result['errMessage']);
-        yield SearchedFailure(message: result['errMessage']);
-      }
+      // final result = await _searchRepository.searchProducts(
+      //     query, categories, brands, genders, lang);
+      // if (result['code'] == 'SUCCESS') {
+      //   List<dynamic> productList = result['products'];
+      //   List<ProductModel> products = [];
+      //   for (int i = 0; i < productList.length; i++) {
+      //     products.add(ProductModel.fromJson(productList[i]));
+      //   }
+      //   yield SearchedSuccess(products: products);
+      // } else {
+      //   print(result['errMessage']);
+      //   yield SearchedFailure(message: result['errMessage']);
+      // }
     } catch (e) {
       yield SearchedFailure(message: e.toString());
     }
