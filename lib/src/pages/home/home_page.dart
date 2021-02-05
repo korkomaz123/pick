@@ -177,6 +177,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
+    print('on message');
     print(message);
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,

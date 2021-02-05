@@ -56,6 +56,8 @@ class CategoryRepository {
   Future<List<CategoryEntity>> getHomeCategories(String lang) async {
     final url = EndPoints.getHomeCategories;
     final params = {'lang': lang};
+    print(url);
+    print(params);
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoriesList = result['categories'];

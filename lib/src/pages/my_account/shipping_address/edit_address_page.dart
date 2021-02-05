@@ -275,11 +275,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     onTap: () => _onSelectState(),
                   ),
                   MarkaaTextInput(
-                    controller: cityController,
+                    controller: companyController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'checkout_city_hint'.tr(),
+                    hint: 'checkout_company_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
@@ -295,11 +295,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
-                    controller: companyController,
+                    controller: cityController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'checkout_company_hint'.tr(),
+                    hint: 'checkout_city_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,

@@ -142,8 +142,6 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                 child: Column(
                   children: [
                     _buildSearchField(),
-                    _buildFilterButton(),
-                    if (isFiltering) ...[_buildFilterOptions()],
                     if (!searchNode.hasFocus) ...[_buildResult()],
                     if (!isFiltering && searchHistory.isNotEmpty) ...[
                       _buildSearchHistory()
@@ -155,6 +153,14 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
             if (searchNode.hasFocus) ...[_buildSuggestion()],
           ],
         ),
+      ),
+      bottomSheet: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildFilterButton(),
+          if (isFiltering) ...[_buildFilterOptions()],
+        ],
       ),
     );
   }
@@ -292,7 +298,16 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 10,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: greyColor.withOpacity(0.3),
+            offset: Offset(0, 1),
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Row(
         children: [

@@ -215,20 +215,20 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             onTap: () => _onSelectState(),
           ),
           MarkaaTextInput(
-            controller: streetController,
-            width: pageStyle.deviceWidth,
-            padding: pageStyle.unitWidth * 10,
-            fontSize: pageStyle.unitFontSize * 14,
-            hint: 'checkout_street_name_hint'.tr(),
-            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-            inputType: TextInputType.text,
-          ),
-          MarkaaTextInput(
             controller: companyController,
             width: pageStyle.deviceWidth,
             padding: pageStyle.unitWidth * 10,
             fontSize: pageStyle.unitFontSize * 14,
             hint: 'checkout_company_hint'.tr(),
+            validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+            inputType: TextInputType.text,
+          ),
+          MarkaaTextInput(
+            controller: streetController,
+            width: pageStyle.deviceWidth,
+            padding: pageStyle.unitWidth * 10,
+            fontSize: pageStyle.unitFontSize * 14,
+            hint: 'checkout_street_name_hint'.tr(),
             validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
             inputType: TextInputType.text,
           ),
@@ -241,6 +241,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             validator: (value) => null,
             inputType: TextInputType.text,
           ),
+
           MarkaaTextInput(
             controller: zipCodeController,
             width: pageStyle.deviceWidth,
