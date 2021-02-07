@@ -269,5 +269,6 @@
     "return_approved": "Return Approved",
     "returned": "Returned",
     "declined": "Declined",
-    "canceled": "Canceled"
+    "canceled": "Canceled",
+    "no_products_searched": "No products searched"
 }

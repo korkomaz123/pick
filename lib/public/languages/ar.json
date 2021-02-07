@@ -267,5 +267,6 @@
     "return_approved": "تمت الموافقة على العودة",
     "returned": "عاد",
     "declined": "رفض",
-    "canceled": "ألغيت"
+    "canceled": "ألغيت",
+    "no_products_searched": "لا توجد منتجات فتشت"
 }

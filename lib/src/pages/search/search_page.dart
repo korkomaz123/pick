@@ -1,6 +1,7 @@
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -154,7 +155,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
           ],
         ),
       ),
-      bottomSheet: Column(
+      bottomNavigationBar: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -258,6 +259,16 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
         builder: (_, __, ___) {
           if (suggestionChangeNotifier.searchedProducts == null) {
             return PulseLoadingSpinner();
+          } else if (suggestionChangeNotifier.searchedProducts.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: pageStyle.unitHeight * 100,
+              ),
+              child: NoAvailableData(
+                pageStyle: pageStyle,
+                message: 'no_products_searched'.tr(),
+              ),
+            );
           }
           return Column(
             children: List.generate(
@@ -478,13 +489,22 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   }
 
   void _onSelectCategory(dynamic value) {
-    selectedCategory = value['value'];
+    if (selectedCategory == value['value']) {
+      selectedCategory = null;
+    } else {
+      selectedCategory = value['value'];
+    }
     _searchProducts();
   }
 
   void _onSelectBrand(dynamic value) {
-    selectedBrand = value['value'];
-    selectedBrandName = value['label'];
+    if (selectedBrand == value['value']) {
+      selectedBrand = null;
+      selectedBrandName = null;
+    } else {
+      selectedBrand = value['value'];
+      selectedBrandName = value['label'];
+    }
     _searchProducts();
     setState(() {});
   }
