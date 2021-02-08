@@ -39,6 +39,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   Widget paymentWidget = SizedBox.shrink();
   Map<String, dynamic> returnItemsMap = {};
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  double returnPrice = .0;
 
   @override
   void initState() {
@@ -156,9 +157,18 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildOrderPaymentMethod(),
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
-              _buildSubtotal(),
-              _buildShippingCost(),
-              _buildTotal(),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  return Column(
+                    children: [
+                      _buildReturnRequestPrice(),
+                      _buildSubtotal(),
+                      _buildShippingCost(),
+                      _buildTotal(),
+                    ],
+                  );
+                },
+              ),
               _buildNextButton(),
             ],
           ),
@@ -360,11 +370,16 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       child: IconButton(
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
+          int count = 0;
           if (isSelected) {
+            count = -returnItemsMap[key];
             returnItemsMap.remove(key);
           } else {
+            count = order.cartItems[index].itemCount;
             returnItemsMap[key] = order.cartItems[index].itemCount;
           }
+          returnPrice +=
+              double.parse(order.cartItems[index].product.price) * count;
           markaaAppChangeNotifier.rebuild();
         },
       ),
@@ -404,6 +419,35 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     );
   }
 
+  Widget _buildReturnRequestPrice() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'return_request_price'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: dangerColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+          Text(
+            'currency'.tr() + ' ${returnPrice.toStringAsFixed(2)}',
+            style: mediumTextStyle.copyWith(
+              color: dangerColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubtotal() {
     return Container(
       width: double.infinity,
@@ -422,7 +466,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.subtotalPrice}',
+            'currency'.tr() +
+                ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -481,7 +526,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.totalPrice}',
+            'currency'.tr() +
+                ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
@@ -524,12 +570,19 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       },
     );
     if (result != null) {
-      final count = result as int;
-      order.cartItems[index].itemCount = count;
       final key = order.cartItems[index].itemId;
-      print(key);
+      final count = result as int;
+      int updatedCount = 0;
+      if (returnItemsMap.containsKey(key)) {
+        updatedCount = count - order.cartItems[index].itemCount;
+      } else {
+        updatedCount = count;
+      }
+      order.cartItems[index].itemCount = count;
       returnItemsMap[key] = count;
-      setState(() {});
+      returnPrice =
+          double.parse(order.cartItems[index].product.price) * updatedCount;
+      markaaAppChangeNotifier.rebuild();
     }
   }
 

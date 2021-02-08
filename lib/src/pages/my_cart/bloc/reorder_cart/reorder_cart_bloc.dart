@@ -27,6 +27,8 @@ class ReorderCartBloc extends Bloc<ReorderCartEvent, ReorderCartState> {
       yield* _mapReorderCartItemsLoadedToState(event.reorderCartId, event.lang);
     } else if (event is ReorderCartItemRemoved) {
       yield* _mapReorderCartItemRemovedToState(event.cartId, event.itemId);
+    } else if (event is ReorderCartItemsInitialized) {
+      yield ReorderCartItemsInitializedSuccess();
     }
   }
 
@@ -42,7 +44,8 @@ class ReorderCartBloc extends Bloc<ReorderCartEvent, ReorderCartState> {
         List<CartItemEntity> cartItems = [];
         for (int i = 0; i < cartList.length; i++) {
           Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
+          cartItemJson['product'] =
+              ProductModel.fromJson(cartList[i]['product']);
           cartItemJson['itemCount'] = cartList[i]['itemCount'];
           cartItemJson['rowPrice'] = cartList[i]['row_price'];
           cartItemJson['itemId'] = cartList[i]['itemid'];

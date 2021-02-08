@@ -270,5 +270,9 @@
     "returned": "Returned",
     "declined": "Declined",
     "canceled": "Canceled",
-    "no_products_searched": "No products searched"
+    "no_products_searched": "No products searched",
+    "no_saved_addresses": "There is no saved addresses",
+    "cancel_request_price": "Cancel request cost",
+    "return_request_price": "Return request cost",
+    "no_orders_list": "There is no orders in your list"
 }

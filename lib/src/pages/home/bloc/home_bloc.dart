@@ -40,7 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is HomePerfumesLoaded) {
       yield* _mapHomePerfumesLoadedToState(event.lang);
     } else if (event is HomeAdsLoaded) {
-      yield* _mapHomeAdsLoadedToState();
+      yield* _mapHomeAdsLoadedToState(event.lang);
     } else if (event is HomeRecentlyViewedGuestLoaded) {
       yield* _mapHomeRecentlyViewedGuestLoadedToState(event.ids, event.lang);
     } else if (event is HomeRecentlyViewedCustomerLoaded) {
@@ -198,16 +198,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> _mapHomeAdsLoadedToState() async* {
+  Stream<HomeState> _mapHomeAdsLoadedToState(String lang) async* {
     try {
-      String key = 'homeads';
+      String key = 'homeads-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
-        String ads = await localStorageRepository.getItem(key);
+        dynamic data = await localStorageRepository.getItem(key);
+        SliderImageEntity ads = SliderImageEntity.fromJson(data);
         yield state.copyWith(ads: ads);
       }
-      final ads = await _homeRepository.getHomeAds();
-      await localStorageRepository.setItem(key, ads);
+      final result = await _homeRepository.getHomeAds(lang);
+      SliderImageEntity ads = SliderImageEntity.fromJson(result['data']);
+      await localStorageRepository.setItem(key, result['data']);
       yield state.copyWith(ads: ads);
     } catch (e) {
       yield state.copyWith(message: e.toString());

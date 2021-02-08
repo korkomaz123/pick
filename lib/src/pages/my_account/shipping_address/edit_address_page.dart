@@ -95,10 +95,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
     shippingRepo = context.read<ShippingAddressRepository>();
   }
 
-  void _onSuccess() {
-    Navigator.pop(context);
-  }
-
   @override
   void dispose() {
     _onRetrieveRegions();
@@ -124,11 +120,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
             print('process');
             progressService.showProgress();
           }
-          if (state is ShippingAddressAddedSuccess) {
-            print('success');
-            progressService.hideProgress();
-            _onSuccess();
-          }
           if (state is ShippingAddressAddedFailure) {
             print('failure');
             progressService.hideProgress();
@@ -137,11 +128,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           if (state is ShippingAddressUpdatedInProcess) {
             progressService.showProgress();
           }
-          if (state is ShippingAddressUpdatedSuccess) {
-            print('updated success');
-            progressService.hideProgress();
-            _onSuccess();
-          }
+
           if (state is ShippingAddressUpdatedFailure) {
             progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);

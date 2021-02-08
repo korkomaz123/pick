@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeBloc.add(HomePerfumesLoaded(lang: lang));
     categoryListBloc.add(CategoryListLoaded(lang: lang));
     brandBloc.add(BrandListLoaded(lang: lang));
-    homeBloc.add(HomeAdsLoaded());
+    homeBloc.add(HomeAdsLoaded(lang: lang));
     if (user?.token != null) {
       print('customer recently view');
       homeBloc.add(HomeRecentlyViewedCustomerLoaded(

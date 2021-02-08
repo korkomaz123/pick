@@ -395,6 +395,7 @@ class _ProductListPageState extends State<ProductListPage> {
           subCategories[index].id,
         );
       }
+      filterValues = {};
       filterBloc.add(FilterAttributesLoaded(
         categoryId:
             subCategories[index].id == 'all' ? null : subCategories[index].id,

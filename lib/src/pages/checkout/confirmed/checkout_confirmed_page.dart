@@ -126,7 +126,10 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
         titleColor: Colors.white70,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushNamed(context, Routes.orderHistory),
+        onPressed: () => Navigator.pushReplacementNamed(
+          context,
+          Routes.orderHistory,
+        ),
         radius: 30,
       ),
     );

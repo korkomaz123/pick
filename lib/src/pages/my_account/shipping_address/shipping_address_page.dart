@@ -1,12 +1,13 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
-import 'package:markaa/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -33,7 +34,8 @@ class ShippingAddressPage extends StatefulWidget {
 }
 
 class _ShippingAddressPageState extends State<ShippingAddressPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final dataKey = GlobalKey();
   final _refreshController = RefreshController(initialRefresh: false);
   String defaultAddressId;
   PageStyle pageStyle;
@@ -41,7 +43,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
-  List<AddressEntity> shippingAddresses = [];
+  List<AddressEntity> shippingAddresses;
   int selectedIndex;
   bool isCheckout = false;
 
@@ -64,6 +66,25 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
+
+  void _onSuccess() {
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.shippingAddress,
+    );
+    shippingAddressBloc.add(ShippingAddressInitialized());
+    Future.delayed(Duration(milliseconds: 500), () {
+      shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    });
+  }
+
+  // void _moveToActiveItem() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     Future.delayed(Duration(milliseconds: 500), () {
+  //       Scrollable.ensureVisible(dataKey.currentContext);
+  //     });
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -154,14 +175,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
-            // if (state is ShippingAddressLoadedInProcess) {
-            //   progressService.showProgress();
-            // }
             // if (state is ShippingAddressLoadedSuccess) {
-            //   progressService.hideProgress();
+            //   _moveToActiveItem();
             // }
             if (state is ShippingAddressLoadedFailure) {
-              // progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedInProcess) {
@@ -192,6 +209,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     .add(ShippingAddressLoaded(token: user.token));
               }
             }
+            if (state is ShippingAddressAddedSuccess) {
+              _onSuccess();
+            }
+            if (state is ShippingAddressUpdatedSuccess) {
+              _onSuccess();
+            }
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
@@ -204,11 +227,19 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 }
               }
             }
-            if (state is ShippingAddressLoadedSuccess &&
-                shippingAddresses.isEmpty) {
-              return ProductNoAvailable(pageStyle: pageStyle);
+            if (shippingAddresses == null) {
+              return Center(
+                child: PulseLoadingSpinner(),
+              );
             }
-            print(shippingAddresses.length);
+            if (shippingAddresses.isEmpty) {
+              return Center(
+                child: NoAvailableData(
+                  pageStyle: pageStyle,
+                  message: 'no_saved_addresses'.tr(),
+                ),
+              );
+            }
             return SingleChildScrollView(
               child: Column(
                 children: List.generate(

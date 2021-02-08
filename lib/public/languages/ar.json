@@ -268,5 +268,9 @@
     "returned": "عاد",
     "declined": "رفض",
     "canceled": "ألغيت",
-    "no_products_searched": "لا توجد منتجات فتشت"
+    "no_products_searched": "لا توجد منتجات فتشت",
+    "no_saved_addresses": "لا يوجد أي حفظ عناوين",
+    "cancel_request_price": "تكلفة إلغاء الطلب",
+    "return_request_price": "تكلفة طلب الإرجاع",
+    "no_orders_list": "لا توجد أوامر في قائمتك"
 }

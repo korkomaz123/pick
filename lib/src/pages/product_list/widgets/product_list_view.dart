@@ -206,6 +206,9 @@ class _ProductListViewState extends State<ProductListView>
                 onLoading: page != null && !isReachedMax ? _onLoadMore : null,
                 footer: CustomFooter(
                   builder: (BuildContext context, LoadStatus mode) {
+                    if (mode == LoadStatus.loading) {
+                      return RippleLoadingSpinner();
+                    }
                     return SizedBox.shrink();
                   },
                 ),
@@ -226,10 +229,8 @@ class _ProductListViewState extends State<ProductListView>
                       index = 'filter_' +
                           (brand.optionId ?? '') +
                           '_' +
-                          (cat.id ?? '');
+                          (cat.id ?? 'all');
                     }
-                    print('reload');
-                    print(index);
                     if (!productChangeNotifier.data.containsKey(index) ||
                         productChangeNotifier.data[index] == null) {
                       return Center(child: PulseLoadingSpinner());

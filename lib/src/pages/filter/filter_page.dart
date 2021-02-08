@@ -64,11 +64,11 @@ class _FilterPageState extends State<FilterPage> {
     filterBloc = context.read<FilterBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    filterBloc.add(FilterAttributesLoaded(
-      categoryId: widget.categoryId == 'all' ? null : widget.categoryId,
-      brandId: widget.brandId,
-      lang: lang,
-    ));
+    // filterBloc.add(FilterAttributesLoaded(
+    //   categoryId: widget.categoryId == 'all' ? null : widget.categoryId,
+    //   brandId: widget.brandId,
+    //   lang: lang,
+    // ));
   }
 
   void _setSelectedValues(Map<String, dynamic> availableFilters) {

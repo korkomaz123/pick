@@ -45,8 +45,8 @@ class OrderEntity {
           json['status'],
         ),
         totalQty = json['total_qty_ordered'],
-        totalPrice = json['grand_total'],
-        subtotalPrice = json['subtotal'],
+        totalPrice = _getFormattedValue(json['base_grand_total']),
+        subtotalPrice = _getFormattedValue(json['base_subtotal']),
         paymentMethod = PaymentMethodEntity(
           id: json['payment_code'],
           title: json['payment_method'],
@@ -60,9 +60,14 @@ class OrderEntity {
         cartItems = _getCartItems(json['products']),
         address = AddressEntity.fromJson(json['shippingAddress']);
 
+  static String _getFormattedValue(String value) {
+    double price = double.parse(value);
+    return price.toStringAsFixed(2);
+  }
+
   static double _getServiceFees(Map<String, dynamic> json) {
-    String totalPriceStr = json['grand_total'];
-    String subtotalPriceStr = json['subtotal'];
+    String totalPriceStr = json['base_grand_total'];
+    String subtotalPriceStr = json['base_subtotal'];
     double totalPrice = double.parse(totalPriceStr);
     double subtotalPrice = double.parse(subtotalPriceStr);
     return totalPrice - subtotalPrice;

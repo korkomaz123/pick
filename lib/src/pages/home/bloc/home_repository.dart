@@ -14,14 +14,9 @@ class HomeRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<String> getHomeAds() async {
+  Future<dynamic> getHomeAds(String lang) async {
     String url = EndPoints.getHomeAds;
-    final result = await Api.getMethod(url);
-    if (result['code'] == 'SUCCESS') {
-      return result['data']['image'];
-    } else {
-      return '';
-    }
+    return await Api.getMethod(url);
   }
 
   //////////////////////////////////////////////////////////////////////////////

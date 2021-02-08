@@ -26,3 +26,5 @@ class ReorderCartItemRemoved extends ReorderCartEvent {
   @override
   List<Object> get props => [cartId, itemId];
 }
+
+class ReorderCartItemsInitialized extends ReorderCartEvent {}
