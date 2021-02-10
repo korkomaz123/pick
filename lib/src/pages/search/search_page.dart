@@ -4,7 +4,11 @@ import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -27,9 +31,11 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
+class _SearchPageState extends State<SearchPage>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   TextEditingController searchController = TextEditingController();
+  TabController tabController;
   List<dynamic> searchHistory = [];
   Future<List<dynamic>> futureGenders;
   String filterData;
@@ -41,6 +47,9 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   dynamic selectedCategory;
   dynamic selectedBrand;
   dynamic selectedBrandName;
+  List<dynamic> selectedCategories = [];
+  List<dynamic> selectedBrands = [];
+  List<dynamic> selectedBrandNames = [];
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
@@ -49,6 +58,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   SearchRepository searchRepository;
   SuggestionChangeNotifier suggestionChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  BrandBloc brandBloc;
 
   @override
   void initState() {
@@ -56,14 +66,19 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
     searchRepository = context.read<SearchRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
+    brandBloc = context.read<BrandBloc>();
+    brandBloc.add(BrandListLoaded(lang: lang));
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     searchBloc = context.read<SearchBloc>();
+    tabController = TabController(initialIndex: 0, length: 2, vsync: this);
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    suggestionChangeNotifier.initializeSuggestion();
     searchController.addListener(_getSuggestion);
+
     _getSearchHistories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       searchNode.requestFocus();
@@ -71,9 +86,15 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   }
 
   void _getSuggestion() async {
+    print('suggestion');
     if (searchController.text.isNotEmpty && searchNode.hasFocus) {
       String query = searchController.text;
       await suggestionChangeNotifier?.getSuggestions(query, lang);
+    } else {
+      if (tabController.index == 0 &&
+          suggestionChangeNotifier.suggestions.isNotEmpty) {
+        suggestionChangeNotifier.initializeSuggestion();
+      }
     }
   }
 
@@ -143,24 +164,92 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                 child: Column(
                   children: [
                     _buildSearchField(),
-                    if (!searchNode.hasFocus) ...[_buildResult()],
-                    if (!isFiltering && searchHistory.isNotEmpty) ...[
-                      _buildSearchHistory()
+                    if (!searchNode.hasFocus) ...[
+                      Consumer<MarkaaAppChangeNotifier>(
+                        builder: (_, __, ___) {
+                          return Column(
+                            children: [
+                              _buildTabbar(),
+                              if (tabController.index == 0) ...[
+                                if (!searchNode.hasFocus) ...[_buildResult()]
+                              ] else ...[
+                                _buildBrandResult()
+                              ],
+                              if (!searchNode.hasFocus &&
+                                  searchHistory.isNotEmpty) ...[
+                                _buildSearchHistory()
+                              ],
+                            ],
+                          );
+                        },
+                      )
                     ],
                   ],
                 ),
               ),
             ),
-            if (searchNode.hasFocus) ...[_buildSuggestion()],
+            Consumer<SuggestionChangeNotifier>(
+              builder: (_, __, ___) {
+                if (tabController.index == 0 &&
+                    searchNode.hasFocus &&
+                    suggestionChangeNotifier.suggestions.isNotEmpty) {
+                  return _buildSuggestion();
+                }
+                return SizedBox.shrink();
+              },
+            ),
           ],
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildFilterButton(),
-          if (isFiltering) ...[_buildFilterOptions()],
+      bottomNavigationBar: Consumer<MarkaaAppChangeNotifier>(
+        builder: (_, __, ___) {
+          if (tabController.index == 0) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildFilterButton(),
+                if (isFiltering) ...[_buildFilterOptions()],
+              ],
+            );
+          } else {
+            return Container(height: 0);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildTabbar() {
+    print('tabbar');
+    return Container(
+      width: pageStyle.deviceWidth,
+      margin: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: darkColor,
+            width: pageStyle.unitWidth * 0.5,
+          ),
+        ),
+      ),
+      child: TabBar(
+        controller: tabController,
+        indicatorWeight: pageStyle.unitHeight * 3,
+        indicatorColor: primaryColor,
+        labelColor: primaryColor,
+        unselectedLabelColor: greyDarkColor,
+        labelStyle: mediumTextStyle.copyWith(
+          fontSize: pageStyle.unitFontSize * 14,
+          fontWeight: FontWeight.w700,
+        ),
+        onTap: (index) {
+          tabController.index = index;
+          markaaAppChangeNotifier.rebuild();
+        },
+        tabs: [
+          Tab(text: 'search_items_tab_title'.tr()),
+          Tab(text: 'search_brands_tab_title'.tr()),
         ],
       ),
     );
@@ -240,8 +329,12 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
         ),
         focusNode: searchNode,
         onFieldSubmitted: (value) {
-          searchNode.unfocus();
-          _searchProducts();
+          if (value.isNotEmpty) {
+            searchNode.unfocus();
+            _searchProducts();
+          } else {
+            searchNode.requestFocus();
+          }
         },
         textInputAction: TextInputAction.search,
       ),
@@ -305,6 +398,110 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     );
   }
 
+  Widget _buildBrandResult() {
+    return BlocBuilder<BrandBloc, BrandState>(
+      builder: (context, state) {
+        List<BrandEntity> brands = [];
+        if (state is BrandListLoadedSuccess) {
+          brands = state.brands;
+        } else {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 100),
+            child: PulseLoadingSpinner(),
+          );
+        }
+        int rIndex = 0;
+        return SingleChildScrollView(
+          child: Column(
+            children: List.generate(
+              brands.length,
+              (index) {
+                if (searchController.text.isEmpty ||
+                    brands[index]
+                        .brandLabel
+                        .toString()
+                        .toLowerCase()
+                        .contains(searchController.text.toLowerCase())) {
+                  rIndex += 1;
+                  return Column(
+                    children: [
+                      if (rIndex > 1) ...[
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: pageStyle.unitWidth * 20,
+                          ),
+                          child: Divider(color: greyColor),
+                        )
+                      ],
+                      InkWell(
+                        onTap: () {
+                          ProductListArguments arguments = ProductListArguments(
+                            category: CategoryEntity(),
+                            subCategory: [],
+                            brand: brands[index],
+                            selectedSubCategoryIndex: 0,
+                            isFromBrand: true,
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productList,
+                            arguments: arguments,
+                          );
+                        },
+                        child: Container(
+                          width: pageStyle.deviceWidth,
+                          height: pageStyle.unitHeight * 50,
+                          margin: EdgeInsets.only(
+                            top: pageStyle.unitHeight * 5,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: pageStyle.unitWidth * 20,
+                          ),
+                          color: Colors.white,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.network(brands[index].brandThumbnail),
+                              Text(
+                                brands[index].brandLabel,
+                                style: mediumTextStyle.copyWith(
+                                  color: darkColor,
+                                  fontSize: pageStyle.unitFontSize * 12,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'view_products'.tr(),
+                                    style: mediumTextStyle.copyWith(
+                                      color: primaryColor,
+                                      fontSize: pageStyle.unitFontSize * 10,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                    color: primaryColor,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildFilterButton() {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -342,6 +539,23 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
             color: Colors.grey.shade300,
             elevation: 0,
           ),
+          Spacer(),
+          InkWell(
+            onTap: () {
+              selectedCategories = [];
+              selectedBrands = [];
+              selectedBrandNames = [];
+              markaaAppChangeNotifier.rebuild();
+              _searchProducts();
+            },
+            child: Text(
+              'reset'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: pageStyle.unitFontSize * 16,
+                color: primaryColor,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -365,8 +579,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                       categories: categories,
                       brands: brands,
                       genders: [],
-                      selectedCategory: selectedCategory,
-                      selectedBrand: selectedBrand,
+                      selectedCategories: selectedCategories,
+                      selectedBrands: selectedBrands,
                       onSelectCategory: (value) => _onSelectCategory(value),
                       onSelectBrand: (value) => _onSelectBrand(value),
                     );
@@ -489,21 +703,23 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   }
 
   void _onSelectCategory(dynamic value) {
-    if (selectedCategory == value['value']) {
-      selectedCategory = null;
+    int index = selectedCategories.indexOf(value['value']);
+    if (index > -1) {
+      selectedCategories.removeAt(index);
     } else {
-      selectedCategory = value['value'];
+      selectedCategories.add(value['value']);
     }
     _searchProducts();
   }
 
   void _onSelectBrand(dynamic value) {
-    if (selectedBrand == value['value']) {
-      selectedBrand = null;
-      selectedBrandName = null;
+    int index = selectedBrands.indexOf(value['value']);
+    if (index > -1) {
+      selectedBrands.removeAt(index);
+      selectedBrandNames.removeAt(index);
     } else {
-      selectedBrand = value['value'];
-      selectedBrandName = value['label'];
+      selectedBrands.add(value['value']);
+      selectedBrandNames.add(value['label']);
     }
     _searchProducts();
     setState(() {});
@@ -516,8 +732,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
       suggestionChangeNotifier.searchProducts(
         searchController.text,
         lang,
-        selectedCategory,
-        selectedBrandName,
+        selectedCategories,
+        selectedBrandNames,
       );
     });
   }

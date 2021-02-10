@@ -265,19 +265,6 @@ class _ProductHCardState extends State<ProductHCard>
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        '',
-                        style: mediumTextStyle.copyWith(
-                          decorationStyle: TextDecorationStyle.solid,
-                          decoration: TextDecoration.lineThrough,
-                          decorationColor: dangerColor,
-                          fontSize: widget.pageStyle.unitFontSize * 12,
-                          color: greyColor,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
                     widget.isShoppingCart &&
                             widget.product.stockQty != null &&
                             widget.product.stockQty > 0

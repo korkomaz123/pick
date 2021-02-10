@@ -46,6 +46,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   List<AddressEntity> shippingAddresses;
   int selectedIndex;
   bool isCheckout = false;
+  int length;
 
   @override
   void initState() {
@@ -67,11 +68,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     _refreshController.refreshCompleted();
   }
 
-  void _onSuccess() {
+  void _onSuccess(bool isNew) {
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.shippingAddress,
     );
+    if (isNew) length += 1;
     shippingAddressBloc.add(ShippingAddressInitialized());
     Future.delayed(Duration(milliseconds: 500), () {
       shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
@@ -175,9 +177,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
-            // if (state is ShippingAddressLoadedSuccess) {
-            //   _moveToActiveItem();
-            // }
             if (state is ShippingAddressLoadedFailure) {
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
@@ -210,20 +209,24 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               }
             }
             if (state is ShippingAddressAddedSuccess) {
-              _onSuccess();
+              _onSuccess(true);
             }
             if (state is ShippingAddressUpdatedSuccess) {
-              _onSuccess();
+              _onSuccess(false);
             }
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
-              addresses = state.addresses;
-              shippingAddresses = state.addresses;
-              for (int i = 0; i < shippingAddresses.length; i++) {
-                if (shippingAddresses[i].defaultShippingAddress == 1) {
-                  defaultAddressId = shippingAddresses[i].addressId;
-                  defaultAddress = shippingAddresses[i];
+              if (length != null && length == state.addresses.length ||
+                  length == null) {
+                length = length ?? state.addresses.length;
+                addresses = state.addresses;
+                shippingAddresses = state.addresses;
+                for (int i = 0; i < shippingAddresses.length; i++) {
+                  if (shippingAddresses[i].defaultShippingAddress == 1) {
+                    defaultAddressId = shippingAddresses[i].addressId;
+                    defaultAddress = shippingAddresses[i];
+                  }
                 }
               }
             }
@@ -333,7 +336,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             Align(
               alignment: Alignment.topLeft,
               child: Radio(
-                value: addresses[index].addressId,
+                value: shippingAddresses[index].addressId,
                 groupValue: defaultAddressId,
                 activeColor: primaryColor,
                 onChanged: (value) {
@@ -350,7 +353,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   await Navigator.pushNamed(
                     context,
                     Routes.editAddress,
-                    arguments: addresses[index],
+                    arguments: shippingAddresses[index],
                   );
                   shippingAddressBloc
                       .add(ShippingAddressLoaded(token: user.token));
@@ -361,7 +364,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               alignment: Alignment.bottomRight,
               child: IconButton(
                 icon: SvgPicture.asset(trashIcon),
-                onPressed: () => _onRemove(index),
+                onPressed: () => _onRemove(
+                  index,
+                  defaultAddressId == shippingAddresses[index].addressId,
+                ),
               ),
             ),
           ],
@@ -370,7 +376,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     );
   }
 
-  void _onRemove(int index) async {
+  void _onRemove(int index, bool isDefault) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -378,16 +384,26 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       },
     );
     if (result != null) {
-      shippingAddressBloc.add(ShippingAddressRemoved(
-        addressId: addresses[index].addressId,
-        token: user.token,
-      ));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (isDefault) {
+          print('defaultddress nulll');
+          defaultAddressId = null;
+          defaultAddress = null;
+        }
+        length -= 1;
+        shippingAddressBloc.add(ShippingAddressRemoved(
+          addressId: addresses[index].addressId,
+          token: user.token,
+        ));
+      });
     }
   }
 
   void _onUpdate(int index) async {
     selectedIndex = index;
     defaultAddress = shippingAddresses[index];
+    print(defaultAddress.addressId);
+    print(defaultAddress.title);
     shippingAddressBloc.add(DefaultShippingAddressUpdated(
       token: user.token,
       title: addresses[index].title,

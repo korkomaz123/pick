@@ -6,6 +6,11 @@ class SuggestionChangeNotifier extends ChangeNotifier {
   List<ProductModel> suggestions = [];
   List<ProductModel> searchedProducts = [];
 
+  void initializeSuggestion() {
+    suggestions = [];
+    notifyListeners();
+  }
+
   Future<void> getSuggestions(String query, String lang) async {
     suggestions = [];
     notifyListeners();
@@ -30,14 +35,14 @@ class SuggestionChangeNotifier extends ChangeNotifier {
   Future<void> searchProducts(
     String query,
     String lang,
-    dynamic category,
-    dynamic brand,
+    List<dynamic> categories,
+    List<dynamic> brands,
   ) async {
     searchedProducts = null;
     notifyListeners();
     final searchRepository = SearchRepository();
     searchedProducts =
-        await searchRepository.searchProducts(query, category, brand, lang);
+        await searchRepository.searchProducts(query, categories, brands, lang);
     notifyListeners();
   }
 }

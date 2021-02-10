@@ -43,11 +43,10 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
       builder: (context, state) {
         newArrivalsProducts = state.newArrivalsProducts;
         title = state.newArrivalsTitle;
-
         if (newArrivalsProducts.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 320,
+            height: widget.pageStyle.unitHeight * 300,
             padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
             margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
             color: Colors.white,

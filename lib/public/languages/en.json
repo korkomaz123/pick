@@ -104,6 +104,8 @@
     "checkout_searching_address_button_title": "SEARCHING ADDRESS",
     "checkout_search_address_title": "Search Address",
     "checkout_select_address_button_title": "SELECT ADDRESS",
+    "checkout_add_address_button_title": "ADD ADDRESS",
+    "checkout_change_address_button_title": "CHANGE ADDRESS",
     "checkout_country_hint": "Country",
     "checkout_state_hint": "State / Province",
     "checkout_city_hint": "House / Apartment",
@@ -185,7 +187,7 @@
     "no_data_message": "Sorry, There is no available data",
     "shipping_address_title": "Shipping Address",
     "add_new_address_button_title": "Add New Address",
-    "save_address_button_title": "Save Address",
+    "change_address_button_title": "Change",
     "remove_shipping_address_title": "Are You Sure",
     "remove_shipping_address_subtitle": "You want to delete this shipping address?",
     "remove_reorder_item_title": "Are You Sure",
@@ -272,7 +274,11 @@
     "canceled": "Canceled",
     "no_products_searched": "No products searched",
     "no_saved_addresses": "There is no saved addresses",
-    "cancel_request_price": "Cancel request cost",
-    "return_request_price": "Return request cost",
-    "no_orders_list": "There is no orders in your list"
+    "cancel_request_price": "Cancel Request Cost",
+    "return_request_price": "Return Request Cost",
+    "no_orders_list": "There is no orders in your list",
+    "required_address_title": "Please select the shipping address",
+    "search_items_tab_title": "Showing in Items",
+    "search_brands_tab_title": "Showing in Brands",
+    "payment_canceled": "Payment has been canceled"
 }

@@ -429,7 +429,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'cancel_request_cost'.tr(),
+            'cancel_request_price'.tr(),
             style: mediumTextStyle.copyWith(
               color: dangerColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -478,6 +478,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildShippingCost() {
+    double totalPrice = double.parse(order.totalPrice);
+    double changedPrice = totalPrice - canceledPrice;
+    double fees = order.shippingMethod.serviceFees;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -495,7 +498,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
+            'currency'.tr() +
+                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -507,6 +511,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildTotal() {
+    double totalPrice = double.parse(order.totalPrice);
+    double changedPrice = totalPrice - canceledPrice;
+    double fees = order.shippingMethod.serviceFees;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -526,7 +533,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(double.parse(order.totalPrice) - canceledPrice).toStringAsFixed(2)}',
+                ' ${changedPrice == fees ? 0.00 : changedPrice.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

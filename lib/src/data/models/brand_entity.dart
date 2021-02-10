@@ -7,6 +7,7 @@ class BrandEntity {
   final String sortOrder;
   final String brandThumbnail;
   final String url;
+  final int productsCount;
 
   BrandEntity({
     this.entityId,
@@ -17,6 +18,7 @@ class BrandEntity {
     this.sortOrder,
     this.brandThumbnail,
     this.url,
+    this.productsCount,
   });
 
   BrandEntity.fromJson(Map<String, dynamic> json)
@@ -27,5 +29,6 @@ class BrandEntity {
         brandLabel = json['brand_label'],
         sortOrder = json['sort_order'],
         brandThumbnail = json['brand_thumbnail'],
-        url = json['url'];
+        url = json['url'],
+        productsCount = json['productsCount'];
 }

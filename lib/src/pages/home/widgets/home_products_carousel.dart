@@ -42,13 +42,13 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
           Container(
             width: widget.pageStyle.deviceWidth,
             height: !widget.isVerticalCard
-                ? widget.pageStyle.unitHeight * 320
-                : widget.pageStyle.unitHeight * 380,
+                ? widget.pageStyle.unitHeight * 200
+                : widget.pageStyle.unitHeight * 320,
             child: Swiper(
               itemCount:
                   widget.products.length > 10 ? 10 : widget.products.length,
               autoplay: true,
-              curve: Curves.fastLinearToSlowEaseIn,
+              curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
@@ -59,7 +59,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 if (widget.isVerticalCard) {
                   return ProductVCard(
                     cardWidth: widget.pageStyle.unitWidth * 355,
-                    cardHeight: widget.pageStyle.unitHeight * 360,
+                    cardHeight: widget.pageStyle.unitHeight * 300,
                     product: widget.products[index],
                     pageStyle: widget.pageStyle,
                     isShoppingCart: true,
@@ -70,7 +70,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 } else {
                   return ProductHCard(
                     cardWidth: widget.pageStyle.unitWidth * 355,
-                    cardHeight: widget.pageStyle.unitHeight * 220,
+                    cardHeight: widget.pageStyle.unitHeight * 180,
                     product: widget.products[index],
                     pageStyle: widget.pageStyle,
                     isShoppingCart: true,

@@ -1,13 +1,17 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_country_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -235,6 +239,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     },
                     inputType: TextInputType.phone,
                   ),
+                  _buildSearchingAddressButton(),
                   MarkaaCountryInput(
                     controller: countryController,
                     countryCode: countryId,
@@ -310,6 +315,30 @@ class _EditAddressPageState extends State<EditAddressPage> {
     );
   }
 
+  Widget _buildSearchingAddressButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 50,
+      margin: EdgeInsets.symmetric(
+        vertical: pageStyle.unitHeight * 20,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+      ),
+      child: MarkaaTextIconButton(
+        title: 'checkout_searching_address_button_title'.tr(),
+        titleSize: pageStyle.unitFontSize * 14,
+        titleColor: greyColor,
+        buttonColor: greyLightColor,
+        borderColor: Colors.transparent,
+        icon: SvgPicture.asset(searchAddrIcon),
+        onPressed: () => _onSearchAddress(),
+        radius: 0,
+        pageStyle: pageStyle,
+      ),
+    );
+  }
+
   Widget _buildSaveButton() {
     return Container(
       width: pageStyle.deviceWidth,
@@ -326,7 +355,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
-          'save_address_button_title'.tr(),
+          'checkout_save_address_button_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: pageStyle.unitFontSize * 16,
@@ -334,6 +363,36 @@ class _EditAddressPageState extends State<EditAddressPage> {
         ),
       ),
     );
+  }
+
+  void _onSearchAddress() async {
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.searchAddress,
+    );
+    if (result != null) {
+      _initForm(result as AddressEntity);
+    }
+  }
+
+  void _initForm([AddressEntity selectedAddress]) {
+    countryController.clear();
+    countryId = null;
+    stateController.clear();
+    cityController.clear();
+    streetController.clear();
+    zipCodeController.clear();
+    companyController.clear();
+    phoneNumberController.clear();
+    countryController.text = selectedAddress?.country;
+    countryId = selectedAddress?.countryId;
+    stateController.text = selectedAddress?.region;
+    cityController.text = selectedAddress?.city;
+    streetController.text = selectedAddress?.street;
+    zipCodeController.text = selectedAddress?.zipCode;
+    companyController.text = selectedAddress?.company;
+    phoneNumberController.text = selectedAddress?.phoneNumber;
+    setState(() {});
   }
 
   void _onSelectCountry() async {

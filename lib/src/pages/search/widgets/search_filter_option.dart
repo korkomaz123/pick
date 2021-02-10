@@ -12,8 +12,8 @@ class SearchFilterOption extends StatefulWidget {
   final List<dynamic> categories;
   final List<dynamic> brands;
   final List<dynamic> genders;
-  final dynamic selectedCategory;
-  final dynamic selectedBrand;
+  final List<dynamic> selectedCategories;
+  final List<dynamic> selectedBrands;
   final Function onSelectCategory;
   final Function onSelectBrand;
   final Function onSelectGender;
@@ -23,8 +23,8 @@ class SearchFilterOption extends StatefulWidget {
     this.categories,
     this.brands,
     this.genders,
-    this.selectedCategory,
-    this.selectedBrand,
+    this.selectedCategories,
+    this.selectedBrands,
     this.onSelectCategory,
     this.onSelectBrand,
     this.onSelectGender,
@@ -87,7 +87,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: categories,
-                      values: [widget.selectedCategory],
+                      values: widget.selectedCategories,
                       onSelectItem: (value) => widget.onSelectCategory(value),
                     ),
                   ),
@@ -120,7 +120,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: brands,
-                      values: [widget.selectedBrand],
+                      values: widget.selectedBrands,
                       onSelectItem: (value) => widget.onSelectBrand(value),
                     ),
                   ),

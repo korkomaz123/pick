@@ -82,8 +82,8 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<List<ProductModel>> searchProducts(
     String q,
-    dynamic category,
-    dynamic brand,
+    List<dynamic> categories,
+    List<dynamic> brands,
     String lang,
   ) async {
     Algolia algolia = AlgoliaService.algolia;
@@ -91,12 +91,20 @@ class SearchRepository {
         lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
     final algoliaIndex = algolia.instance.index(index);
     AlgoliaQuery query = algoliaIndex.search(q);
-    if (category != null) {
-      query = query.setFacetFilter('categoryIds:$category');
+    if (categories.isNotEmpty) {
+      List<String> categoryFilter = [];
+      for (var category in categories) {
+        categoryFilter.add('categoryIds:$category');
+      }
+      query = query.setFacetFilter(categoryFilter);
     }
-    if (brand != null) {
-      print(brand);
-      query = query.setFacetFilter('manufacturer:$brand');
+    if (brands.isNotEmpty) {
+      List<String> brandFilter = [];
+      for (var brand in brands) {
+        print(brand);
+        brandFilter.add('manufacturer:$brand');
+      }
+      query = query.setFacetFilter(brandFilter);
     }
     AlgoliaQuerySnapshot snap = await query.getObjects();
     List<ProductModel> products = [];

@@ -29,7 +29,9 @@ class CategoryListPage extends StatefulWidget {
   _CategoryListPageState createState() => _CategoryListPageState();
 }
 
-class _CategoryListPageState extends State<CategoryListPage> {
+class _CategoryListPageState extends State<CategoryListPage>
+    with WidgetsBindingObserver {
+  final dataKey = GlobalKey();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   String category;
@@ -92,26 +94,21 @@ class _CategoryListPageState extends State<CategoryListPage> {
                 categories = state.categories;
               }
               return Expanded(
-                child: SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  header: MaterialClassicHeader(color: primaryColor),
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  onLoading: () => null,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        categories.length,
-                        (index) => Column(
-                          children: [
-                            _buildCategoryCard(categories[index]),
-                            activeIndex == index
-                                ? _buildSubcategoriesList(categories[index])
-                                : SizedBox.shrink(),
-                            SizedBox(height: pageStyle.unitHeight * 6),
-                          ],
-                        ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      categories.length,
+                      (index) => Column(
+                        children: [
+                          Container(
+                            key: activeIndex == index ? dataKey : null,
+                            child: _buildCategoryCard(categories[index]),
+                          ),
+                          activeIndex == index
+                              ? _buildSubcategoriesList(categories[index])
+                              : SizedBox.shrink(),
+                          SizedBox(height: pageStyle.unitHeight * 6),
+                        ],
                       ),
                     ),
                   ),
@@ -157,6 +154,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
           } else {
             activeIndex = -1;
           }
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Scrollable.ensureVisible(dataKey.currentContext);
         });
       },
       child: Container(
