@@ -41,3 +41,5 @@ class ReorderCartItemRemovedFailure extends ReorderCartState {
   @override
   List<Object> get props => [message];
 }
+
+class ReorderCartItemsInitializedSuccess extends ReorderCartState {}

@@ -45,15 +45,18 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
   ) async* {
     yield FilterAttributesLoadedInProcess();
     try {
-      final key = 'filter-' + (categoryId ?? '') + '-' + (brandId ?? '') + '-' + lang;
+      final key =
+          'filter-' + (categoryId ?? '') + '-' + (brandId ?? '') + '-' + lang;
       final existItem = await _localStorageRepository.existItem(key);
       if (existItem) {
         final cacheData = await _localStorageRepository.getItem(key);
         yield FilterAttributesLoadedSuccess(availableFilters: cacheData);
       }
-      final result = await _filterRepository.getFilterAttributes(categoryId, brandId, lang);
+      final result = await _filterRepository.getFilterAttributes(
+          categoryId, brandId, lang);
       if (result['code'] == 'SUCCESS') {
-        final availableFilters = result['filter']['availablefilter'] as Map<String, dynamic>;
+        final availableFilters =
+            result['filter']['availablefilter'] as Map<String, dynamic>;
         result['filter']['prices']['attribute_code'] = 'price';
         availableFilters['Price'] = result['filter']['prices'];
         await _localStorageRepository.setItem(key, availableFilters);

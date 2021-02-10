@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>5336431605-j8sh80opnrt2v0h7psrgcqsqrp1m0rmd.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyALf98xfoTIT3yNYbG2twd4dvE1uiO_DzQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>5336431605</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.markaa.shop</string>
+	<key>PROJECT_ID</key>
+	<string>markaa-4c479</string>
+	<key>STORAGE_BUCKET</key>
+	<string>markaa-4c479.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:5336431605:ios:463c10f6b4719c7c9a3ebc</string>
+	<key>DATABASE_URL</key>
+	<string>https://markaa-4c479.firebaseio.com</string>
+</dict>
+</plist>

@@ -77,14 +77,6 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
           if (state is OrderReturnedInProcess) {
             progressService.showProgress();
           }
-          if (state is OrderReturnedSuccess) {
-            progressService.hideProgress();
-            orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == Routes.orderHistory,
-            );
-          }
           if (state is OrderReturnedFailure) {
             progressService.hideProgress();
             flushBarService.showErrorMessage(pageStyle, state.message);

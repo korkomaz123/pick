@@ -5,10 +5,8 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/bloc/order_bloc.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -76,14 +74,6 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         listener: (context, state) {
           if (state is OrderCancelledInProcess) {
             progressService.showProgress();
-          }
-          if (state is OrderCancelledSuccess) {
-            progressService.hideProgress();
-            orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == Routes.orderHistory,
-            );
           }
           if (state is OrderCancelledFailure) {
             progressService.hideProgress();

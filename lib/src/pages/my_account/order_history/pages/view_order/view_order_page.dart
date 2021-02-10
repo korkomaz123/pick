@@ -330,6 +330,12 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildShippingCost() {
+    double fees = .0;
+    print(order.status);
+    if (order.status != OrderStatusEnum.canceled) {
+      fees = order.shippingMethod.serviceFees;
+      print(fees);
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -347,7 +353,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
+            'currency'.tr() + ' ${fees.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -359,6 +365,10 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildTotal() {
+    double total = double.parse(order.totalPrice);
+    if (order.status == OrderStatusEnum.canceled) {
+      total -= order.shippingMethod.serviceFees;
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -377,7 +387,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.totalPrice}',
+            'currency'.tr() + ' ${total.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

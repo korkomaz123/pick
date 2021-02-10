@@ -25,7 +25,7 @@ class HomeState extends Equatable {
   final List<ProductModel> newArrivalsProducts;
   final List<ProductModel> perfumesProducts;
   final List<ProductModel> recentlyViewedProducts;
-  final String ads;
+  final SliderImageEntity ads;
   final String message;
   final String bestDealsTitle;
   final String newArrivalsTitle;
@@ -42,7 +42,7 @@ class HomeState extends Equatable {
       newArrivalsProducts: [],
       perfumesProducts: [],
       recentlyViewedProducts: [],
-      ads: '',
+      ads: null,
       message: '',
       bestDealsTitle: '',
       newArrivalsTitle: '',
@@ -60,7 +60,7 @@ class HomeState extends Equatable {
     List<ProductModel> newArrivalsProducts,
     List<ProductModel> perfumesProducts,
     List<ProductModel> recentlyViewedProducts,
-    String ads,
+    SliderImageEntity ads,
     String message,
     String bestDealsTitle,
     String newArrivalsTitle,

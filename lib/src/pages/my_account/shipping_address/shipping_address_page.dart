@@ -1,12 +1,13 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
-import 'package:markaa/src/pages/product_list/widgets/product_no_available.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -33,7 +34,8 @@ class ShippingAddressPage extends StatefulWidget {
 }
 
 class _ShippingAddressPageState extends State<ShippingAddressPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final dataKey = GlobalKey();
   final _refreshController = RefreshController(initialRefresh: false);
   String defaultAddressId;
   PageStyle pageStyle;
@@ -41,9 +43,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   SnackBarService snackBarService;
   FlushBarService flushBarService;
   ShippingAddressBloc shippingAddressBloc;
-  List<AddressEntity> shippingAddresses = [];
+  List<AddressEntity> shippingAddresses;
   int selectedIndex;
   bool isCheckout = false;
+  int length;
 
   @override
   void initState() {
@@ -64,6 +67,26 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
+
+  void _onSuccess(bool isNew) {
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.shippingAddress,
+    );
+    if (isNew) length += 1;
+    shippingAddressBloc.add(ShippingAddressInitialized());
+    Future.delayed(Duration(milliseconds: 500), () {
+      shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    });
+  }
+
+  // void _moveToActiveItem() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     Future.delayed(Duration(milliseconds: 500), () {
+  //       Scrollable.ensureVisible(dataKey.currentContext);
+  //     });
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -154,14 +177,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
-            // if (state is ShippingAddressLoadedInProcess) {
-            //   progressService.showProgress();
-            // }
-            // if (state is ShippingAddressLoadedSuccess) {
-            //   progressService.hideProgress();
-            // }
             if (state is ShippingAddressLoadedFailure) {
-              // progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedInProcess) {
@@ -192,23 +208,41 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     .add(ShippingAddressLoaded(token: user.token));
               }
             }
+            if (state is ShippingAddressAddedSuccess) {
+              _onSuccess(true);
+            }
+            if (state is ShippingAddressUpdatedSuccess) {
+              _onSuccess(false);
+            }
           },
           builder: (context, state) {
             if (state is ShippingAddressLoadedSuccess) {
-              addresses = state.addresses;
-              shippingAddresses = state.addresses;
-              for (int i = 0; i < shippingAddresses.length; i++) {
-                if (shippingAddresses[i].defaultShippingAddress == 1) {
-                  defaultAddressId = shippingAddresses[i].addressId;
-                  defaultAddress = shippingAddresses[i];
+              if (length != null && length == state.addresses.length ||
+                  length == null) {
+                length = length ?? state.addresses.length;
+                addresses = state.addresses;
+                shippingAddresses = state.addresses;
+                for (int i = 0; i < shippingAddresses.length; i++) {
+                  if (shippingAddresses[i].defaultShippingAddress == 1) {
+                    defaultAddressId = shippingAddresses[i].addressId;
+                    defaultAddress = shippingAddresses[i];
+                  }
                 }
               }
             }
-            if (state is ShippingAddressLoadedSuccess &&
-                shippingAddresses.isEmpty) {
-              return ProductNoAvailable(pageStyle: pageStyle);
+            if (shippingAddresses == null) {
+              return Center(
+                child: PulseLoadingSpinner(),
+              );
             }
-            print(shippingAddresses.length);
+            if (shippingAddresses.isEmpty) {
+              return Center(
+                child: NoAvailableData(
+                  pageStyle: pageStyle,
+                  message: 'no_saved_addresses'.tr(),
+                ),
+              );
+            }
             return SingleChildScrollView(
               child: Column(
                 children: List.generate(
@@ -302,7 +336,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             Align(
               alignment: Alignment.topLeft,
               child: Radio(
-                value: addresses[index].addressId,
+                value: shippingAddresses[index].addressId,
                 groupValue: defaultAddressId,
                 activeColor: primaryColor,
                 onChanged: (value) {
@@ -319,7 +353,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   await Navigator.pushNamed(
                     context,
                     Routes.editAddress,
-                    arguments: addresses[index],
+                    arguments: shippingAddresses[index],
                   );
                   shippingAddressBloc
                       .add(ShippingAddressLoaded(token: user.token));
@@ -330,7 +364,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               alignment: Alignment.bottomRight,
               child: IconButton(
                 icon: SvgPicture.asset(trashIcon),
-                onPressed: () => _onRemove(index),
+                onPressed: () => _onRemove(
+                  index,
+                  defaultAddressId == shippingAddresses[index].addressId,
+                ),
               ),
             ),
           ],
@@ -339,7 +376,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     );
   }
 
-  void _onRemove(int index) async {
+  void _onRemove(int index, bool isDefault) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -347,16 +384,26 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       },
     );
     if (result != null) {
-      shippingAddressBloc.add(ShippingAddressRemoved(
-        addressId: addresses[index].addressId,
-        token: user.token,
-      ));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (isDefault) {
+          print('defaultddress nulll');
+          defaultAddressId = null;
+          defaultAddress = null;
+        }
+        length -= 1;
+        shippingAddressBloc.add(ShippingAddressRemoved(
+          addressId: addresses[index].addressId,
+          token: user.token,
+        ));
+      });
     }
   }
 
   void _onUpdate(int index) async {
     selectedIndex = index;
     defaultAddress = shippingAddresses[index];
+    print(defaultAddress.addressId);
+    print(defaultAddress.title);
     shippingAddressBloc.add(DefaultShippingAddressUpdated(
       token: user.token,
       title: addresses[index].title,

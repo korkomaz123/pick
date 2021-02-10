@@ -13,8 +13,9 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
   final PageStyle pageStyle;
+  final Function onTap;
 
-  OrderCard({this.order, this.pageStyle});
+  OrderCard({this.order, this.pageStyle, this.onTap});
 
   @override
   _OrderCardState createState() => _OrderCardState();
@@ -218,11 +219,14 @@ class _OrderCardState extends State<OrderCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MaterialButton(
-                  onPressed: () => Navigator.pushNamed(
-                    context,
-                    Routes.viewOrder,
-                    arguments: order,
-                  ),
+                  onPressed: () {
+                    widget.onTap();
+                    Navigator.pushNamed(
+                      context,
+                      Routes.viewOrder,
+                      arguments: order,
+                    );
+                  },
                   height: pageStyle.unitHeight * 45,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -249,14 +253,17 @@ class _OrderCardState extends State<OrderCard> {
                 ),
                 SizedBox(width: pageStyle.unitWidth * 5),
                 MaterialButton(
-                  onPressed: () =>
+                  onPressed:
                       !isStock || order.status == OrderStatusEnum.canceled
-                          ? null
-                          : Navigator.pushNamed(
-                              context,
-                              Routes.reOrder,
-                              arguments: order,
-                            ),
+                          ? () => null
+                          : () {
+                              widget.onTap();
+                              Navigator.pushNamed(
+                                context,
+                                Routes.reOrder,
+                                arguments: order,
+                              );
+                            },
                   minWidth: pageStyle.unitWidth * 150,
                   height: pageStyle.unitHeight * 45,
                   shape: RoundedRectangleBorder(

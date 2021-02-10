@@ -225,8 +225,22 @@ class _ProductVCardState extends State<ProductVCard>
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Text(
+                if (widget.isLine || widget.isMinor) ...[
+                  Expanded(
+                    child: Text(
+                      widget.product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: mediumTextStyle.copyWith(
+                        color: greyDarkColor,
+                        fontSize: widget.pageStyle.unitFontSize *
+                            (widget.isMinor ? 12 : 16),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  )
+                ] else ...[
+                  Text(
                     widget.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -236,33 +250,23 @@ class _ProductVCardState extends State<ProductVCard>
                           (widget.isMinor ? 12 : 16),
                       fontWeight: FontWeight.w700,
                     ),
-                  ),
-                ),
+                  )
+                ],
                 if (widget.isLine) ...[Divider(color: greyColor)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      widget.product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: widget.pageStyle.unitFontSize * 14,
-                        color: greyColor,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        widget.product.price + ' ' + 'currency'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: widget.pageStyle.unitFontSize * 14,
+                          color: greyColor,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                    SizedBox(width: widget.pageStyle.unitWidth * 10),
-                    Text(
-                      '',
-                      style: mediumTextStyle.copyWith(
-                        decorationStyle: TextDecorationStyle.solid,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: dangerColor,
-                        fontSize: widget.pageStyle.unitFontSize * 12,
-                        color: greyColor,
-                      ),
-                    ),
-                    Spacer(),
                     if (widget.isShoppingCart &&
                         widget.product.stockQty != null &&
                         widget.product.stockQty > 0) ...[

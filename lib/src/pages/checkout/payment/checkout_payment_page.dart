@@ -21,8 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_sell_sdk_flutter/go_sell_sdk_flutter.dart';
-import 'package:go_sell_sdk_flutter/model/models.dart';
+import 'package:tap_payment_markaa/go_sell_sdk_flutter.dart';
+import 'package:tap_payment_markaa/model/models.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
@@ -306,9 +306,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               _scaffoldKey.currentState.showSnackBar(
                 new SnackBar(
                   backgroundColor: Colors.red,
-                  content: new Text(sdkStatus == ""
-                      ? 'Status: Failed'
-                      : 'Status: [$sdkStatus $responseID ]'),
+                  content: new Text('payment_canceled'.tr()),
                   duration: Duration(seconds: 5),
                 ),
               );
@@ -384,14 +382,15 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   // configure app key and bundle-id (You must get those keys from tap)
   Future<void> configureApp() async {
     GoSellSdkFlutter.configureApp(
-        bundleId: Platform.isAndroid ? "com.app.markaa" : "com.markaa.app",
-        productionSecreteKey: Platform.isAndroid
-            ? "sk_live_yhvSZwp2NcQIDCYW9k3EzLf6"
-            : "sk_live_1w4nP6Ne5OFUoS0bY9uTyzJR",
-        sandBoxsecretKey: Platform.isAndroid
-            ? "sk_test_ge1wCvn8pADBXcjasGu9drNS"
-            : "sk_test_8vcH9RlXrGqnxh2DYij1ECQO",
-        lang: "en");
+      bundleId: Platform.isAndroid ? "com.app.markaa" : "com.markaa.app",
+      productionSecreteKey: Platform.isAndroid
+          ? "sk_live_yhvSZwp2NcQIDCYW9k3EzLf6"
+          : "sk_live_1w4nP6Ne5OFUoS0bY9uTyzJR",
+      sandBoxsecretKey: Platform.isAndroid
+          ? "sk_test_ge1wCvn8pADBXcjasGu9drNS"
+          : "sk_test_8vcH9RlXrGqnxh2DYij1ECQO",
+      lang: lang,
+    );
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -402,10 +401,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       GoSellSdkFlutter.sessionConfigurations(
         trxMode: TransactionMode.PURCHASE,
         transactionCurrency: "kwd",
-        amount: orderDetails['orderDetails']['totalPrice'],
+        amount: orderDetails['orderDetails']['subTotalPrice'],
         customer: Customer(
-          customerId:
-              "", // customer id is important to retrieve cards saved for this customer
+          customerId: "",
           email: data['email'],
           isdNumber: "965",
           number: data['telephone'],

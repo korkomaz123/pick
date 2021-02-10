@@ -4,10 +4,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChasingDotsLoadingSpinner extends StatefulWidget {
   @override
-  _ChasingDotsLoadingSpinnerState createState() => _ChasingDotsLoadingSpinnerState();
+  _ChasingDotsLoadingSpinnerState createState() =>
+      _ChasingDotsLoadingSpinnerState();
 }
 
-class _ChasingDotsLoadingSpinnerState extends State<ChasingDotsLoadingSpinner> with TickerProviderStateMixin {
+class _ChasingDotsLoadingSpinnerState extends State<ChasingDotsLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitChasingDots(
@@ -23,7 +25,8 @@ class CircleLoadingSpinner extends StatefulWidget {
   _CircleLoadingSpinnerState createState() => _CircleLoadingSpinnerState();
 }
 
-class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner> with TickerProviderStateMixin {
+class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitCircle(
@@ -39,10 +42,12 @@ class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner> with Ticker
 
 class PouringHourLoadingSpinner extends StatefulWidget {
   @override
-  _PouringHourLoadingSpinnerState createState() => _PouringHourLoadingSpinnerState();
+  _PouringHourLoadingSpinnerState createState() =>
+      _PouringHourLoadingSpinnerState();
 }
 
-class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner> with TickerProviderStateMixin {
+class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitPouringHourglass(
@@ -61,7 +66,8 @@ class BounceLoadingSpinner extends StatefulWidget {
   _BounceLoadingSpinnerState createState() => _BounceLoadingSpinnerState();
 }
 
-class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner> with TickerProviderStateMixin {
+class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitDoubleBounce(
@@ -79,10 +85,31 @@ class PulseLoadingSpinner extends StatefulWidget {
   _PulseLoadingSpinnerState createState() => _PulseLoadingSpinnerState();
 }
 
-class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner> with TickerProviderStateMixin {
+class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitPulse(
+      controller: AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 1200),
+      ),
+      color: primarySwatchColor,
+    );
+  }
+}
+
+class WaveLoadingSpinner extends StatefulWidget {
+  @override
+  _WaveLoadingSpinnerState createState() => _WaveLoadingSpinnerState();
+}
+
+class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner>
+    with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitWave(
+      size: 30,
       controller: AnimationController(
         vsync: this,
         duration: Duration(milliseconds: 1200),
@@ -97,7 +124,8 @@ class RippleLoadingSpinner extends StatefulWidget {
   _RippleLoadingSpinnerState createState() => _RippleLoadingSpinnerState();
 }
 
-class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner> with TickerProviderStateMixin {
+class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitRipple(

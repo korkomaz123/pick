@@ -104,6 +104,8 @@
     "checkout_searching_address_button_title": "بحث",
     "checkout_search_address_title": "عنوان البحث",
     "checkout_select_address_button_title": "اختر عنوان",
+    "checkout_add_address_button_title": "إضافة عنوان",
+    "checkout_change_address_button_title": "تغيير العنوان",
     "checkout_country_hint": "الدولة",
     "checkout_state_hint": "المدینة / المنطقة",
     "checkout_city_hint": "رقم البنایة / الطابق",
@@ -267,5 +269,14 @@
     "return_approved": "تمت الموافقة على العودة",
     "returned": "عاد",
     "declined": "رفض",
-    "canceled": "ألغيت"
+    "canceled": "ألغيت",
+    "no_products_searched": "لا توجد منتجات فتشت",
+    "no_saved_addresses": "لا يوجد أي حفظ عناوين",
+    "cancel_request_price": "تكلفة إلغاء الطلب",
+    "return_request_price": "تكلفة طلب الإرجاع",
+    "no_orders_list": "لا توجد أوامر في قائمتك",
+    "required_address_title": "الرجاء تحديد عنوان الشحن",
+    "search_items_tab_title": "عرض في الأصناف",
+    "search_brands_tab_title": "عرض في العلامات التجارية",
+    "payment_canceled": "تم إلغاء الدفع"
 }

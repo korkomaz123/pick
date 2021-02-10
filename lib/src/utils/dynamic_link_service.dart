@@ -31,13 +31,13 @@ class DynamicLinkService {
       ),
     );
     var dynamicUrl = await parameters.buildUrl();
-    // final shortenedLink = await DynamicLinkParameters.shortenUrl(
-    //   dynamicUrl,
-    //   DynamicLinkParametersOptions(
-    //     shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
-    //   ),
-    // );
-    return dynamicUrl;
+    final shortenedLink = await DynamicLinkParameters.shortenUrl(
+      dynamicUrl,
+      DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
+    return shortenedLink.shortUrl;
   }
 
   Future<void> retrieveDynamicLink(BuildContext context) async {

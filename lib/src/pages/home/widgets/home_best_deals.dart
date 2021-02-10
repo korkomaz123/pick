@@ -46,7 +46,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
         if (bestDealsProducts.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 500,
+            height: widget.pageStyle.unitHeight * 420,
             padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
             margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
             color: Colors.white,

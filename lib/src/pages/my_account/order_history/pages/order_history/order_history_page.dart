@@ -2,10 +2,12 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_order_history_app_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/progress_service.dart';
@@ -24,12 +26,14 @@ class OrderHistoryPage extends StatefulWidget {
 }
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final dataKey = GlobalKey();
   PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   OrderBloc orderBloc;
   List<OrderEntity> orders;
+  int activeIndex = 0;
 
   @override
   void initState() {
@@ -49,6 +53,19 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     super.dispose();
   }
 
+  void _reloadPage() {
+    orderBloc.add(OrderHistoryInitialized());
+    Future.delayed(Duration(milliseconds: 500), () {
+      orderBloc.add(OrderHistoryLoaded(token: user.token, lang: lang));
+    });
+  }
+
+  void _moveToActiveItem() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(dataKey.currentContext);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     pageStyle = PageStyle(context, designWidth, designHeight);
@@ -65,19 +82,45 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           }
           if (state is OrderHistoryLoadedSuccess) {
             // progressService.hideProgress();
+            _moveToActiveItem();
           }
           if (state is OrderHistoryLoadedFailure) {
             // progressService.hideProgress();
             snackBarService.showErrorSnackBar(state.message);
+          }
+          if (state is OrderCancelledSuccess) {
+            Navigator.popUntil(
+              context,
+              (route) => route.settings.name == Routes.orderHistory,
+            );
+            _reloadPage();
+          }
+          if (state is OrderReturnedSuccess) {
+            Navigator.popUntil(
+              context,
+              (route) => route.settings.name == Routes.orderHistory,
+            );
+            _reloadPage();
           }
         },
         builder: (context, state) {
           if (state is OrderHistoryLoadedSuccess) {
             orders = state.orders;
           }
+          if (state is OrderHistoryInitializedSuccess) {
+            orders = null;
+          }
           if (orders == null) {
             return Center(
               child: PulseLoadingSpinner(),
+            );
+          }
+          if (orders.isEmpty) {
+            return Center(
+              child: NoAvailableData(
+                pageStyle: pageStyle,
+                message: 'no_orders_list'.tr(),
+              ),
             );
           }
           return SingleChildScrollView(
@@ -106,9 +149,15 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     children: List.generate(
                       orders.length,
                       (index) {
-                        return OrderCard(
-                          order: orders[index],
-                          pageStyle: pageStyle,
+                        return Container(
+                          key: activeIndex == index ? dataKey : null,
+                          child: OrderCard(
+                            order: orders[index],
+                            pageStyle: pageStyle,
+                            onTap: () {
+                              activeIndex = index;
+                            },
+                          ),
                         );
                       },
                     ),

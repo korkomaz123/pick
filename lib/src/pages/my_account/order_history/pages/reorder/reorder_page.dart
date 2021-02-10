@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -19,6 +20,7 @@ import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -50,6 +52,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
   MyCartRepository cartRepo;
   ReorderCartBloc reorderCartBloc;
   List<CartItemEntity> cartItems = [];
+  double subtotalPrice = .0;
+  double totalPrice = .0;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -59,8 +64,15 @@ class _ReOrderPageState extends State<ReOrderPage> {
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
     reorderCartBloc = context.read<ReorderCartBloc>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     _getReorderCartId();
     _getOrderStatus();
+  }
+
+  @override
+  void dispose() {
+    reorderCartBloc.add(ReorderCartItemsInitialized());
+    super.dispose();
   }
 
   void _getOrderStatus() {
@@ -186,9 +198,17 @@ class _ReOrderPageState extends State<ReOrderPage> {
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildOrderPaymentMethod(),
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
-              _buildSubtotal(),
-              _buildShippingCost(),
-              _buildTotal(),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  return Column(
+                    children: [
+                      _buildSubtotal(),
+                      _buildShippingCost(),
+                      _buildTotal(),
+                    ],
+                  );
+                },
+              ),
               _buildAddressBar(),
               _buildNextButton(),
             ],
@@ -286,6 +306,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         }
         if (state is ReorderCartItemsLoadedSuccess) {
           progressService.hideProgress();
+          _calculatePrice(state.cartItems);
         }
         if (state is ReorderCartItemsLoadedFailure) {
           progressService.hideProgress();
@@ -398,7 +419,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.subtotalPrice}',
+            'currency'.tr() + ' ${subtotalPrice.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -457,7 +478,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.totalPrice}',
+            'currency'.tr() + ' ${totalPrice.toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
@@ -525,6 +546,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
         ),
       ),
     );
+  }
+
+  void _calculatePrice(List<CartItemEntity> items) {
+    for (CartItemEntity item in items) {
+      subtotalPrice += item.itemCount * double.parse(item.product.price);
+    }
+    totalPrice = subtotalPrice + order.shippingMethod.serviceFees;
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _onDeleteOrderItem(CartItemEntity cartItem) async {
