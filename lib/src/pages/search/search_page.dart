@@ -416,12 +416,13 @@ class _SearchPageState extends State<SearchPage>
             children: List.generate(
               brands.length,
               (index) {
-                if (searchController.text.isEmpty ||
-                    brands[index]
-                        .brandLabel
-                        .toString()
-                        .toLowerCase()
-                        .contains(searchController.text.toLowerCase())) {
+                bool isEmpty = searchController.text.isEmpty;
+                String searchText = searchController.text.toLowerCase();
+                String brandLabel =
+                    brands[index].brandLabel.toString().toLowerCase();
+
+                if ((isEmpty || brandLabel.contains(searchText)) &&
+                    brands[index].productsCount > 0) {
                   rIndex += 1;
                   return Column(
                     children: [
@@ -472,7 +473,8 @@ class _SearchPageState extends State<SearchPage>
                               Row(
                                 children: [
                                   Text(
-                                    'view_products'.tr(),
+                                    '${brands[index].productsCount}' +
+                                        'items'.tr(),
                                     style: mediumTextStyle.copyWith(
                                       color: primaryColor,
                                       fontSize: pageStyle.unitFontSize * 10,

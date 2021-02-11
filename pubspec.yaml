@@ -15,8 +15,6 @@ dependencies:
     sdk: flutter
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
-  tap_payment_markaa:
-    git: https://github.com/iscojin/tap_payment_sdk_markaa.git
   algolia: ^0.1.7
   badges: ^1.1.1
   bloc: ^6.0.1
@@ -43,6 +41,7 @@ dependencies:
   flutter_swiper: ^1.1.6
   font_awesome_flutter: ^8.8.1
   geolocator: ^6.1.10
+  go_sell_sdk_flutter: ^2.0.3
   google_fonts: ^1.1.0
   google_maps_flutter: ^0.5.33
   google_sign_in: ^4.5.6

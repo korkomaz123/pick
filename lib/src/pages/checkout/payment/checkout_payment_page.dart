@@ -21,8 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tap_payment_markaa/go_sell_sdk_flutter.dart';
-import 'package:tap_payment_markaa/model/models.dart';
+import 'package:go_sell_sdk_flutter/go_sell_sdk_flutter.dart';
+import 'package:go_sell_sdk_flutter/model/models.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
