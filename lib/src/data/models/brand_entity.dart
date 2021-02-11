@@ -30,5 +30,5 @@ class BrandEntity {
         sortOrder = json['sort_order'],
         brandThumbnail = json['brand_thumbnail'],
         url = json['url'],
-        productsCount = json['productsCount'];
+        productsCount = json['item_count'];
 }

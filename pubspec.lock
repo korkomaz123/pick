@@ -399,6 +399,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.9"
+  go_sell_sdk_flutter:
+    dependency: "direct main"
+    description:
+      name: go_sell_sdk_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
   google_fonts:
     dependency: "direct main"
     description:
@@ -854,15 +861,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
-  tap_payment_markaa:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "5b72a6cb39572a20814265cabc7c6e417b334737"
-      url: "https://github.com/iscojin/tap_payment_sdk_markaa.git"
-    source: git
-    version: "1.0.0"
   term_glyph:
     dependency: transitive
     description:
