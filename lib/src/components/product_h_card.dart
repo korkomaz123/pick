@@ -199,6 +199,8 @@ class _ProductHCardState extends State<ProductHCard>
                 return chunkEvent != null
                     ? Image.asset(
                         'lib/public/images/loading/image_loading.jpg',
+                        width: widget.cardHeight * 0.65,
+                        height: widget.cardHeight * 0.8,
                       )
                     : child;
               },

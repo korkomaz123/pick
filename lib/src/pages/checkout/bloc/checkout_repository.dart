@@ -33,7 +33,8 @@ class CheckoutRepository {
     final data = {'lang': lang};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
-      List<String> keys = (result['data'] as Map<String, dynamic>).keys.toList();
+      List<String> keys =
+          (result['data'] as Map<String, dynamic>).keys.toList();
       List<PaymentMethodEntity> methods = [];
       for (int i = 0; i < keys.length; i++) {
         methods.add(PaymentMethodEntity.fromJson(result['data'][keys[i]]));
@@ -63,5 +64,21 @@ class CheckoutRepository {
     print(params);
     final result = await Api.postMethod(url, data: params);
     return result;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> tapPaymentCheckout(
+    Map<String, dynamic> data,
+    String lang,
+  ) async {
+    String url = 'https://api.tap.company/v2/charges';
+    Map<String, String> headers = {
+      'Authorization': 'Bearer sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n',
+      'lang_code': lang,
+      'Content-Type': 'application/json'
+    };
+    return Api.postMethod(url, data: data, headers: headers);
   }
 }

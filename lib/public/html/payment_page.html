@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Import JS Library for Tap Payment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
+    <script src="https://secure.gosell.io/js/sdk/tap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <form id="form-container" method="post" action="/charge">
+        <!-- Tap element will be here -->
+        <div id="element-container"></div>
+        <div id="error-handler" role="alert"></div>
+        <div id="success" style=" display: none;;position: relative;float: left;">
+                Success! Your token is <span id="token"></span>
+        </div>
+        <!-- Tap pay button -->
+        <button id="tap-btn">Submit</button>
+    </form>
+    <script>
+        // STEP 2:
+        //pass your public key from tap's dashboard
+        var tap = Tapjsli('pk_test_hfYC04VzPiwQLqJv7AmDa2Fu');
+
+        var elements = tap.elements({});
+
+        var style = {
+        base: {
+            color: '#535353',
+            lineHeight: '18px',
+            fontFamily: 'sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+            color: 'rgba(0, 0, 0, 0.26)',
+            fontSize:'15px'
+            }
+        },
+        invalid: {
+            color: 'red'
+        }
+        };
+        // input labels/placeholders
+        var labels = {
+            cardNumber:"Card Number",
+            expirationDate:"MM/YY",
+            cvv:"CVV",
+            cardHolder:"Card Holder Name"
+        };
+        //payment options
+        var paymentOptions = {
+            currencyCode:["KWD","USD","SAR"],
+            labels : labels,
+            TextDirection:'ltr'
+        }
+        //create element, pass style and payment options
+        var card = elements.create('card', {style: style},paymentOptions);
+        //mount element
+        card.mount('#element-container');
+        //card change event listener
+        card.addEventListener('change', function(event) {
+            if(event.loaded){
+                console.log("UI loaded :"+event.loaded);
+                console.log("current currency is :"+card.getCurrency())
+            }
+            var displayError = document.getElementById('error-handler');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // STEP 3:
+        // Handle form submission
+        var form = document.getElementById('form-container');
+            form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            tap.createToken(card).then(function(result) {
+                console.log(result);
+                if (result.error) {
+                    // Inform the user if there was an error
+                    var errorElement = document.getElementById('error-handler');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server
+                    var errorElement = document.getElementById('success');
+                    errorElement.style.display = "block";
+                    var tokenElement = document.getElementById('token');
+                    tokenElement.textContent = result.id;
+                    tapTokenHandler(result)
+                }
+            });
+        });
+        
+        // STEP 4:
+        function tapTokenHandler(token) {
+            var url = 'https://api.tap.company/v2/charges';
+            var method = 'POST';
+            var shouldBeAsync = true;
+            var data = {
+                "amount": 1,
+                "currency": "KWD",
+                "threeDSecure": false,
+                "save_card": false,
+                "description": "Test Description",
+                "statement_descriptor": "Sample",
+                "metadata": {
+                    "udf1": "test 1",
+                    "udf2": "test 2"
+                },
+                "reference": {
+                    "transaction": "txn_0001",
+                    "order": "ord_0001"
+                },
+                "receipt": {
+                    "email": false,
+                    "sms": true
+                },
+                "customer": {
+                    "first_name": "test",
+                    "middle_name": "test",
+                    "last_name": "test",
+                    "email": "test@test.com",
+                    "phone": {
+                    "country_code": "965",
+                    "number": "50000000"
+                    }
+                },
+                "merchant": {
+                    "id": ""
+                },
+                "source": {
+                    "id": token.id
+                },
+                "post": {
+                    "url": "http://google.com/payment_post"
+                },
+                "redirect": {
+                    "url": "https://google.com/payment_redirect"
+                }
+            };
+            var request = new XMLHttpRequest();
+            request.onload = function () {
+                var status = request.status;
+                var data = request.responseText;
+            }
+            request.open(method, url, shouldBeAsync);
+            request.setRequestHeader('Authorization', 'Bearer sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n');
+            request.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            request.setRequestHeader('lang_code', 'en');
+            request.setRequestHeader('Origin', '*');
+            request.send(data);
+        }
+    </script>
+</body>
+</html>

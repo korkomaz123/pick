@@ -28,3 +28,23 @@ class OrderSubmittedFailure extends CheckoutState {
   @override
   List<Object> get props => [message];
 }
+
+class TapPaymentCheckoutInProcess extends CheckoutState {}
+
+class TapPaymentCheckoutSuccess extends CheckoutState {
+  final String url;
+
+  TapPaymentCheckoutSuccess({this.url});
+
+  @override
+  List<Object> get props => [url];
+}
+
+class TapPaymentCheckoutFailure extends CheckoutState {
+  final String message;
+
+  TapPaymentCheckoutFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

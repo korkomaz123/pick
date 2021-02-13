@@ -26,6 +26,8 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
         event.orderDetails,
         event.lang,
       );
+    } else if (event is TapPaymentCheckout) {
+      yield* _mapTapPaymentCheckoutToState(event.data, event.lang);
     }
   }
 
@@ -47,6 +49,19 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       print('catch');
       print(e.toString());
       yield OrderSubmittedFailure(message: e.toString());
+    }
+  }
+
+  Stream<CheckoutState> _mapTapPaymentCheckoutToState(
+    Map<String, dynamic> data,
+    String lang,
+  ) async* {
+    yield TapPaymentCheckoutInProcess();
+    try {
+      final result = await _checkoutRepository.tapPaymentCheckout(data, lang);
+      yield TapPaymentCheckoutSuccess(url: result['transaction']['url']);
+    } catch (e) {
+      yield TapPaymentCheckoutFailure(message: e.toString());
     }
   }
 }

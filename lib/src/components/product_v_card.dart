@@ -191,6 +191,8 @@ class _ProductVCardState extends State<ProductVCard>
                 if (chunkEvent != null)
                   return Image.asset(
                     'lib/public/images/loading/image_loading.jpg',
+                    width: widget.cardHeight * 0.65,
+                    height: widget.cardHeight * 0.6,
                   );
                 return child;
               },
