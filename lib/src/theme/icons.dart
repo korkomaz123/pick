@@ -64,3 +64,4 @@ const String returnedIcon = '$iconsAssetPath/returned-icon.svg';
 const String arrowBackEnIcon = '$iconsAssetPath/arrow-back-en-icon.svg';
 const String arrowBackArIcon = '$iconsAssetPath/arrow-back-ar-icon.svg';
 const String favoriteIcon = '$iconsAssetPath/favorite-icon.svg';
+const String addressIcon = '$iconsAssetPath/address-icon.svg';

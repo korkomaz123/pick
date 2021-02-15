@@ -57,7 +57,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
-  TextEditingController zipCodeController = TextEditingController();
+  TextEditingController postCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController stateController = TextEditingController();
@@ -83,7 +83,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       cityController.text = widget?.address?.city;
       companyController.text = widget?.address?.company;
       streetController.text = widget?.address?.street;
-      zipCodeController.text = widget?.address?.zipCode;
+      postCodeController.text = widget?.address?.postCode;
       phoneNumberController.text = widget?.address?.phoneNumber;
     } else {
       countryId = 'KW';
@@ -287,6 +287,15 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
+                    controller: postCodeController,
+                    width: pageStyle.deviceWidth,
+                    padding: pageStyle.unitWidth * 10,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    hint: 'checkout_post_code_hint'.tr(),
+                    validator: (value) => null,
+                    inputType: TextInputType.number,
+                  ),
+                  MarkaaTextInput(
                     controller: cityController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
@@ -295,15 +304,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
-                  ),
-                  MarkaaTextInput(
-                    controller: zipCodeController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'checkout_zip_code_hint'.tr(),
-                    validator: (value) => null,
-                    inputType: TextInputType.number,
                   ),
                 ],
               ),
@@ -381,7 +381,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     stateController.clear();
     cityController.clear();
     streetController.clear();
-    zipCodeController.clear();
+    postCodeController.clear();
     companyController.clear();
     phoneNumberController.clear();
     countryController.text = selectedAddress?.country;
@@ -389,7 +389,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     stateController.text = selectedAddress?.region;
     cityController.text = selectedAddress?.city;
     streetController.text = selectedAddress?.street;
-    zipCodeController.text = selectedAddress?.zipCode;
+    postCodeController.text = selectedAddress?.postCode;
     companyController.text = selectedAddress?.company;
     phoneNumberController.text = selectedAddress?.phoneNumber;
     setState(() {});
@@ -443,7 +443,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           lastName: lastNameController.text,
           city: cityController.text,
           streetName: streetController.text,
-          zipCode: zipCodeController.text,
+          zipCode: postCodeController.text,
           phone: phoneNumberController.text,
           company: companyController.text,
           email: emailController.text,
@@ -459,7 +459,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
           lastName: lastNameController.text,
           city: cityController.text,
           streetName: streetController.text,
-          zipCode: zipCodeController.text,
+          zipCode: postCodeController.text,
           phone: phoneNumberController.text,
           company: companyController.text,
           email: emailController.text,

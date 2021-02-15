@@ -7,6 +7,7 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
@@ -121,6 +122,7 @@ class _MyCartPageState extends State<MyCartPage>
                 cartBloc: myCartBloc,
                 saveLaterBloc: saveLaterBloc,
                 cartRepo: cartRepo,
+                onPutInCart: (value) => _onPutInCart(value),
               )
             ]
           ],
@@ -141,7 +143,6 @@ class _MyCartPageState extends State<MyCartPage>
             cartItems: state.cartItems,
           ));
         }
-        if (state is MyCartItemAddedInProcess) {}
         if (state is MyCartItemAddedFailure) {
           flushBarService.showErrorMessage(pageStyle, state.message);
         }
@@ -457,6 +458,7 @@ class _MyCartPageState extends State<MyCartPage>
     );
     if (result != null) {
       isDeleting = true;
+      myCartItems.removeAt(index);
       myCartBloc.add(MyCartItemRemoved(
         cartId: cartId,
         itemId: myCartItems[index].itemId,
@@ -465,6 +467,10 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onSaveForLaterItem(int index) {
+    myCartBloc.add(MyCartItemRemoved(
+      cartId: cartId,
+      itemId: myCartItems[index].itemId,
+    ));
     saveLaterBloc.add(SaveLaterItemChanged(
       token: user.token,
       productId: myCartItems[index].product.productId,
@@ -473,6 +479,7 @@ class _MyCartPageState extends State<MyCartPage>
       product: myCartItems[index].product,
       itemId: myCartItems[index].itemId,
     ));
+    myCartItems.removeAt(index);
   }
 
   void _onSignIn() async {
@@ -517,5 +524,10 @@ class _MyCartPageState extends State<MyCartPage>
     if (isStock) {
       Navigator.pushNamed(context, Routes.checkoutAddress);
     }
+  }
+
+  void _onPutInCart(CartItemEntity value) {
+    myCartItems.add(value);
+    setState(() {});
   }
 }

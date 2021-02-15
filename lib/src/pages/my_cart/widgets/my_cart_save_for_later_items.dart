@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -23,6 +24,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
   final SaveLaterBloc saveLaterBloc;
   final MyCartBloc cartBloc;
   final MyCartRepository cartRepo;
+  final Function onPutInCart;
   final LocalStorageRepository localRepo;
 
   MyCartSaveForLaterItems({
@@ -32,6 +34,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
     this.saveLaterBloc,
     this.cartBloc,
     this.cartRepo,
+    this.onPutInCart,
     this.localRepo,
   });
 
@@ -66,20 +69,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
     return BlocConsumer<SaveLaterBloc, SaveLaterState>(
       listener: (context, state) {
         if (state is SaveLaterItemChangedSuccess) {
-          if (state.product != null) {
-            if (state.action == 'delete') {
-              widget.cartBloc.add(MyCartItemAdded(
-                cartId: cartId,
-                product: state.product,
-                qty: state.product.qtySaveForLater.toString(),
-              ));
-            } else {
-              widget.cartBloc.add(MyCartItemRemoved(
-                cartId: cartId,
-                itemId: state.itemId,
-              ));
-            }
-          }
           widget.saveLaterBloc.add(SaveLaterItemsLoaded(
             token: user.token,
             lang: lang,
@@ -232,12 +221,23 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   void _onPutInCart(ProductModel item) {
+    final newItem = CartItemEntity(
+      itemCount: item.qtySaveForLater,
+      availableCount: item.stockQty,
+      product: item,
+    );
+    widget.onPutInCart(newItem);
     widget.saveLaterBloc.add(SaveLaterItemChanged(
       token: user.token,
       productId: item.productId,
       action: 'delete',
       qty: item.qtySaveForLater,
       product: item,
+    ));
+    widget.cartBloc.add(MyCartItemAdded(
+      cartId: cartId,
+      product: item,
+      qty: item.qtySaveForLater.toString(),
     ));
   }
 }

@@ -10,7 +10,7 @@ class AddressEntity {
   final String city;
   final String street;
   final String company;
-  final String zipCode;
+  final String postCode;
   final String phoneNumber;
   final int defaultBillingAddress;
   final int defaultShippingAddress;
@@ -27,7 +27,7 @@ class AddressEntity {
     this.city,
     this.street,
     this.company,
-    this.zipCode,
+    this.postCode,
     this.phoneNumber,
     this.defaultBillingAddress,
     this.defaultShippingAddress,
@@ -44,7 +44,7 @@ class AddressEntity {
         region = json['region'] ?? '',
         city = json['city'] ?? '',
         street = json['street'],
-        zipCode = json['postcode'],
+        postCode = json['postcode'],
         company = json['company'] ?? '',
         phoneNumber = json['telephone'],
         defaultBillingAddress = json['DefaultBillingAddress'],

@@ -47,7 +47,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
             child: Swiper(
               itemCount:
                   widget.products.length > 10 ? 10 : widget.products.length,
-              autoplay: true,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,

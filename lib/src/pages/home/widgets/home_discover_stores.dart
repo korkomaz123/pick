@@ -89,7 +89,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             height: widget.pageStyle.unitHeight * 380,
             child: Swiper(
               itemCount: brands.length > 10 ? 10 : brands.length,
-              autoplay: true,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,

@@ -5,6 +5,7 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -50,6 +51,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   double serviceFees;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  ShippingAddressBloc shippingAddressBloc;
 
   @override
   void initState() {
@@ -61,10 +63,32 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       shippingMethodId = shippingMethods[0].id;
       serviceFees = shippingMethods[0].serviceFees;
     }
+    shippingAddressBloc = context.read<ShippingAddressBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
+  }
+
+  void _onAddedSuccess() {
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.checkoutAddress,
+    );
+    shippingAddressBloc.add(ShippingAddressInitialized());
+    Future.delayed(Duration(milliseconds: 500), () {
+      shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    });
+  }
+
+  void _onLoadedSuccess(List<AddressEntity> list) {
+    addresses = list;
+    for (int i = 0; i < addresses.length; i++) {
+      if (addresses[i].defaultShippingAddress == 1) {
+        defaultAddress = addresses[i];
+      }
+    }
+    setState(() {});
   }
 
   @override
@@ -74,44 +98,60 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
-      body: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
-        listener: (context, state) {
-          if (state is ShippingAddressAddedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is ShippingAddressAddedSuccess) {
-            progressService.hideProgress();
-            flushBarService.showSuccessMessage(
-              pageStyle,
-              'success'.tr(),
-            );
-          }
-          if (state is ShippingAddressAddedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                if (defaultAddress != null) ...[_buildSelectedAddress()],
-                if (defaultAddress == null) ...[
-                  SizedBox(height: pageStyle.unitHeight * 50)
-                ],
-                if (defaultAddress != null) ...[
-                  _buildChangeAddressButton()
-                ] else ...[
-                  _buildSelectAddressButton()
-                ],
-                // SizedBox(height: pageStyle.unitHeight * 10),
-                // _buildSearchingAddressButton(),
-                _buildNote(),
-                _buildToolbarButtons(),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (addresses.isEmpty) ...[_buildListener()],
+            if (defaultAddress != null) ...[_buildSelectedAddress()],
+            if (addresses.isEmpty) ...[_buildNoAddress()],
+            if (defaultAddress == null && addresses.isNotEmpty) ...[
+              SizedBox(height: pageStyle.unitHeight * 50)
+            ],
+            if (defaultAddress != null) ...[
+              _buildChangeAddressButton()
+            ] else if (addresses.isNotEmpty) ...[
+              _buildSelectAddressButton()
+            ] else ...[
+              _buildCreateAddressButton()
+            ],
+            _buildNote(),
+            _buildToolbarButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListener() {
+    return BlocListener<ShippingAddressBloc, ShippingAddressState>(
+      listener: (context, state) {
+        if (state is ShippingAddressAddedSuccess) {
+          _onAddedSuccess();
+        }
+        if (state is ShippingAddressLoadedSuccess) {
+          _onLoadedSuccess(state.addresses);
+        }
+      },
+      child: Container(),
+    );
+  }
+
+  Widget _buildNoAddress() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
+      child: Column(
+        children: [
+          SvgPicture.asset(addressIcon),
+          SizedBox(height: pageStyle.unitHeight * 10),
+          Text(
+            'no_saved_addresses'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 12,
+              color: greyDarkColor,
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -211,6 +251,25 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         borderColor: Colors.transparent,
         icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onChangeAddress(),
+        radius: 0,
+        pageStyle: pageStyle,
+      ),
+    );
+  }
+
+  Widget _buildCreateAddressButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 50,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      child: MarkaaTextIconButton(
+        title: 'create_address_button_title'.tr(),
+        titleSize: pageStyle.unitFontSize * 14,
+        titleColor: greyColor,
+        buttonColor: greyLightColor,
+        borderColor: Colors.transparent,
+        icon: SvgPicture.asset(selectAddrIcon),
+        onPressed: () => Navigator.pushNamed(context, Routes.editAddress),
         radius: 0,
         pageStyle: pageStyle,
       ),
@@ -324,7 +383,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         'country_id': defaultAddress.countryId,
         'city': defaultAddress.city,
         'company': defaultAddress.company,
-        'postcode': defaultAddress.zipCode,
+        'postcode': defaultAddress.postCode,
         'telephone': defaultAddress.phoneNumber,
         'save_in_address_book': '0',
         'prefix': defaultAddress.title,

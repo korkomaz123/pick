@@ -47,8 +47,8 @@ class ShippingAddressRepository {
         'telephone': phoneNumber,
         'company': company,
         'email': email,
-        'isdefaultbilling': '0',
-        'isdefaultshipping': '0'
+        'isdefaultbilling': '1',
+        'isdefaultshipping': '1'
       }),
     };
     return await Api.postMethod(url, data: params);
@@ -119,7 +119,8 @@ class ShippingAddressRepository {
     if (result['code'] == 'SUCCESS') {
       List<dynamic> regionsList = result['regions'];
       List<RegionEntity> regions = [];
-      regions = regionsList.map((region) => RegionEntity.fromJson(region)).toList();
+      regions =
+          regionsList.map((region) => RegionEntity.fromJson(region)).toList();
       return regions;
     } else {
       return <RegionEntity>[];

@@ -313,7 +313,7 @@ class _ProductListViewState extends State<ProductListView>
               child: ProductVCard(
                 pageStyle: pageStyle,
                 product: products[index],
-                cardWidth: pageStyle.unitWidth * 186,
+                cardWidth: pageStyle.unitWidth * 187.25,
                 cardHeight: pageStyle.unitHeight * 280,
                 isShoppingCart: true,
                 isWishlist: true,

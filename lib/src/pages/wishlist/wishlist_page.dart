@@ -177,14 +177,16 @@ class _WishlistPageViewState extends State<WishlistPageView>
                     if (state is WishlistLoadedSuccess) {
                       wishlists = state.wishlists;
                     }
-                    return wishlists.isEmpty && state is WishlistLoadedSuccess
-                        ? Expanded(
-                            child: NoAvailableData(
-                              pageStyle: pageStyle,
-                              message: 'wishlist_empty',
-                            ),
-                          )
-                        : _buildWishlistItems();
+                    if (wishlists.isEmpty && state is WishlistLoadedSuccess) {
+                      return Expanded(
+                        child: NoAvailableData(
+                          pageStyle: pageStyle,
+                          message: 'wishlist_empty',
+                        ),
+                      );
+                    } else {
+                      return _buildWishlistItems();
+                    }
                   },
                 ),
               ),

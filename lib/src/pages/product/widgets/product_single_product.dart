@@ -334,7 +334,7 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
             )
           : Swiper(
               itemCount: productEntity.gallery.length,
-              autoplay: true,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,

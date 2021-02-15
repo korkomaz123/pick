@@ -17,6 +17,11 @@ class FlushBarService {
 
   void showAddCartMessage(PageStyle pageStyle, ProductModel product) {
     Flushbar(
+      margin: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      borderRadius: pageStyle.unitFontSize * 10,
       messageText: Container(
         width: pageStyle.unitWidth * 300,
         child: Row(
@@ -61,7 +66,6 @@ class FlushBarService {
         height: pageStyle.unitHeight * 20,
       ),
       duration: Duration(seconds: 3),
-      leftBarIndicatorColor: Colors.blue[100],
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.white,
     )..show(context);

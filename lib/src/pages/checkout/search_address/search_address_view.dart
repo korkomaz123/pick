@@ -327,7 +327,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       region: address.state,
       city: address.city,
       street: address.street,
-      zipCode: address.postalCode,
+      postCode: address.postalCode,
     );
     Navigator.pop(context, addressEntity);
   }

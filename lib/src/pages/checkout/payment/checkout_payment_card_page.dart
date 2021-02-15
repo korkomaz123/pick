@@ -71,8 +71,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             : "src_card"
       },
       "destinations": {"destination": []},
-      "post": {"url": "http://tap.company"},
-      "redirect": {"url": "http://tap.company"}
+      "post": {"url": "https://tap.company"},
+      "redirect": {"url": "https://tap.company"}
     };
     print(data);
     checkoutBloc.add(TapPaymentCheckout(data: data, lang: lang));
@@ -132,7 +132,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
         body: BlocConsumer<CheckoutBloc, CheckoutState>(
           listener: (context, state) {
             if (state is TapPaymentCheckoutFailure) {
-              Navigator.pop(context, state.message);
+              Navigator.pop(context, 'Something went wrong');
             }
           },
           builder: (context, state) {

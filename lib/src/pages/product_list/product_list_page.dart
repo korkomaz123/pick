@@ -276,7 +276,7 @@ class _ProductListPageState extends State<ProductListPage> {
               brand.brandThumbnail,
               width: pageStyle.unitWidth * 120,
               height: pageStyle.unitHeight * 60,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitHeight,
             ),
           ),
         );

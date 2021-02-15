@@ -11,7 +11,7 @@ class GoSellSdk {
 
 class AlgoliaConfig {
   static const String appId = '79CSNNDELV';
-  static const String apiKey = 'dd53d88d688c02f3d969218c5f961948';
+  static const String apiKey = '8ca7be02352085bd2ed725b027bf2680';
 }
 
 class AlgoliaIndexes {

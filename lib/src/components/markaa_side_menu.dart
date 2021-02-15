@@ -353,6 +353,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
     await _loadViewerCartItems();
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+    Navigator.pop(context);
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,

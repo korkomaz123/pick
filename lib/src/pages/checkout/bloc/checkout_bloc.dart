@@ -59,8 +59,10 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     yield TapPaymentCheckoutInProcess();
     try {
       final result = await _checkoutRepository.tapPaymentCheckout(data, lang);
+      print(result);
       yield TapPaymentCheckoutSuccess(url: result['transaction']['url']);
     } catch (e) {
+      print(e.toString());
       yield TapPaymentCheckoutFailure(message: e.toString());
     }
   }

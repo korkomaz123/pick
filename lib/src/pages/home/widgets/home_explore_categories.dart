@@ -125,7 +125,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             color: Colors.white,
             child: Swiper(
               itemCount: categories.length > 10 ? 10 : categories.length,
-              autoplay: true,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,
