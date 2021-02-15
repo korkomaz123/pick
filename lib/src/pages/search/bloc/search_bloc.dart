@@ -15,6 +15,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         _searchRepository = searchRepository,
         super(SearchInitial());
 
+  // ignore: unused_field
   final SearchRepository _searchRepository;
 
   @override

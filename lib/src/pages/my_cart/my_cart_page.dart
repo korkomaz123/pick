@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -7,7 +8,6 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
@@ -21,6 +21,7 @@ import 'package:markaa/src/utils/progress_service.dart';
 import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -30,6 +31,7 @@ import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
 import 'widgets/my_cart_save_for_later_items.dart';
+import 'widgets/my_cart_quick_access_login_dialog.dart';
 
 class MyCartPage extends StatefulWidget {
   @override
@@ -52,6 +54,8 @@ class _MyCartPageState extends State<MyCartPage>
   SaveLaterBloc saveLaterBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  bool showSign = false;
 
   @override
   void initState() {
@@ -68,6 +72,7 @@ class _MyCartPageState extends State<MyCartPage>
     saveLaterBloc = context.read<SaveLaterBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     if (user?.token != null) {
       saveLaterBloc.add(SaveLaterItemsLoaded(token: user.token, lang: lang));
     }
@@ -110,23 +115,57 @@ class _MyCartPageState extends State<MyCartPage>
         isCartPage: true,
       ),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildMyCartPage(),
-            if (user?.token != null) ...[
-              MyCartSaveForLaterItems(
-                pageStyle: pageStyle,
-                progressService: progressService,
-                flushBarService: flushBarService,
-                cartBloc: myCartBloc,
-                saveLaterBloc: saveLaterBloc,
-                cartRepo: cartRepo,
-                onPutInCart: (value) => _onPutInCart(value),
-              )
-            ]
-          ],
-        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildMyCartPage(),
+                Consumer<MarkaaAppChangeNotifier>(
+                  builder: (_, __, ___) {
+                    if (user?.token != null) {
+                      _getMyCartId();
+                      return MyCartSaveForLaterItems(
+                        pageStyle: pageStyle,
+                        progressService: progressService,
+                        flushBarService: flushBarService,
+                        cartBloc: myCartBloc,
+                        saveLaterBloc: saveLaterBloc,
+                        cartRepo: cartRepo,
+                        onPutInCart: (value) => _onPutInCart(value),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              if (showSign) {
+                return AnimationLimiter(
+                  child: AnimationConfiguration.staggeredList(
+                    position: 1,
+                    duration: Duration(milliseconds: 300),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: MyCartQuickAccessLoginDialog(
+                          cartId: cartId,
+                          onClose: _onClose,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
@@ -482,9 +521,14 @@ class _MyCartPageState extends State<MyCartPage>
     myCartItems.removeAt(index);
   }
 
-  void _onSignIn() async {
-    await Navigator.pushNamed(context, Routes.signIn);
-    Navigator.pushReplacementNamed(context, Routes.myCart);
+  void _onSignIn() {
+    showSign = true;
+    markaaAppChangeNotifier.rebuild();
+  }
+
+  void _onClose() {
+    showSign = false;
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _onClearCartItems() async {

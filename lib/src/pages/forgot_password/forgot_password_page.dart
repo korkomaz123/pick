@@ -17,6 +17,10 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:string_validator/string_validator.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  final bool isFromCheckout;
+
+  ForgotPasswordPage({this.isFromCheckout = false});
+
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
@@ -211,20 +215,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
             ),
           ),
-          Container(
-            height: pageStyle.unitHeight * 20,
-            child: VerticalDivider(color: Colors.white, thickness: 0.5),
-          ),
-          InkWell(
-            onTap: () => Navigator.pushReplacementNamed(context, Routes.signUp),
-            child: Text(
-              'register'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 14,
+          if (!widget.isFromCheckout) ...[
+            Container(
+              height: pageStyle.unitHeight * 20,
+              child: VerticalDivider(color: Colors.white, thickness: 0.5),
+            ),
+            InkWell(
+              onTap: () =>
+                  Navigator.pushReplacementNamed(context, Routes.signUp),
+              child: Text(
+                'register'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: Colors.white,
+                  fontSize: pageStyle.unitFontSize * 14,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

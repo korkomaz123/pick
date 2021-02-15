@@ -1,9 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';

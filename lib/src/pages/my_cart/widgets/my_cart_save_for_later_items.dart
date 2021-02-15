@@ -6,6 +6,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
@@ -46,10 +47,12 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   String cartId = '';
   List<ProductModel> items = [];
+  WishlistItemCountBloc wishlistItemCountBloc;
 
   @override
   void initState() {
     super.initState();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     _getMyCartId();
   }
 
@@ -73,6 +76,10 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
             token: user.token,
             lang: lang,
           ));
+        }
+        if (state is SaveLaterItemsLoadedSuccess) {
+          wishlistItemCountBloc
+              .add(WishlistItemCountSet(wishlistItemCount: state.items.length));
         }
       },
       builder: (context, state) {

@@ -36,6 +36,10 @@ import 'package:string_validator/string_validator.dart';
 import 'widgets/apple_sign_alert_dialog.dart';
 
 class SignInPage extends StatefulWidget {
+  final bool isFromCheckout;
+
+  SignInPage({this.isFromCheckout = false});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -136,6 +140,7 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _loadCustomerCartItems() async {
     final result = await cartRepo.getCartId(user.token);
     myCartItems.clear();
+    cartTotalPrice = .0;
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     if (result['code'] == 'SUCCESS') {
       String cartId = result['cartId'];
@@ -224,9 +229,9 @@ class _SignInPageState extends State<SignInPage> {
                   SizedBox(height: 40),
                   _buildOrDivider(),
                   SizedBox(height: 40),
-                  if (Platform.isAndroid) ...[_buildExternalSignInButtons()],
+                  _buildExternalSignInButtons(),
                   SizedBox(height: 40),
-                  _buildSignUpPhase(),
+                  if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
                 ],
               ),
             ),
@@ -376,7 +381,11 @@ class _SignInPageState extends State<SignInPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
       alignment: Alignment.centerRight,
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, Routes.forgotPassword),
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.forgotPassword,
+          arguments: widget.isFromCheckout,
+        ),
         child: Text(
           'ask_forgot_password'.tr(),
           style: mediumTextStyle.copyWith(

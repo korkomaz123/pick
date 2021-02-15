@@ -65,7 +65,6 @@ class _LogoutItemState extends State<LogoutItem> {
           progressService.showProgress();
         }
         if (state is SignOutSubmittedSuccess) {
-          progressService.hideProgress();
           _logoutUser();
         }
         if (state is SignOutSubmittedFailure) {
@@ -128,9 +127,11 @@ class _LogoutItemState extends State<LogoutItem> {
     user = null;
     await localRepo.setToken('');
     myCartItems.clear();
+    cartTotalPrice = .0;
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
     await _loadViewerCartItems();
+    progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.home,

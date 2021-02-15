@@ -55,17 +55,17 @@ class RouteGenerator {
         );
       case Routes.signIn:
         return CupertinoPageRoute(
-          builder: (context) => SignInPage(),
+          builder: (context) => SignInPage(isFromCheckout: params),
           settings: RouteSettings(name: Routes.signIn),
         );
       case Routes.signUp:
         return CupertinoPageRoute(
-          builder: (context) => SignUpPage(),
+          builder: (context) => SignUpPage(isFromCheckout: params),
           settings: RouteSettings(name: Routes.signUp),
         );
       case Routes.forgotPassword:
         return CupertinoPageRoute(
-          builder: (context) => ForgotPasswordPage(),
+          builder: (context) => ForgotPasswordPage(isFromCheckout: params),
           settings: RouteSettings(name: Routes.forgotPassword),
         );
       case Routes.home:

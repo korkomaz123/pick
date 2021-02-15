@@ -23,6 +23,10 @@ import 'package:string_validator/string_validator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpPage extends StatefulWidget {
+  final bool isFromCheckout;
+
+  SignUpPage({this.isFromCheckout = false});
+
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -60,6 +64,7 @@ class _SignUpPageState extends State<SignUpPage> {
     await localRepo.setToken(loggedInUser.token);
     final result = await cartRepo.getCartId(user.token);
     myCartItems.clear();
+    cartTotalPrice = .0;
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     if (result['code'] == 'SUCCESS') {
       String cartId = result['cartId'];
@@ -109,7 +114,9 @@ class _SignUpPageState extends State<SignUpPage> {
             progressService.hideProgress();
             _saveToken(state.user);
             Navigator.pop(context);
-            Navigator.pop(context);
+            if (!widget.isFromCheckout) {
+              Navigator.pop(context);
+            }
           }
           if (state is SignUpSubmittedFailure) {
             progressService.hideProgress();
@@ -160,7 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(height: 40),
                   _buildSignUpButton(),
                   SizedBox(height: 40),
-                  _buildSignInPhase(),
+                  if (!widget.isFromCheckout) ...[_buildSignInPhase()],
                 ],
               ),
             ),

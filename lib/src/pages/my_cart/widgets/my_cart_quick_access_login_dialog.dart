@@ -1,0 +1,407 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
+import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
+import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
+import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
+import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/progress_service.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
+import 'package:markaa/src/pages/sign_in/widgets/apple_sign_alert_dialog.dart';
+
+class MyCartQuickAccessLoginDialog extends StatefulWidget {
+  final String cartId;
+  final Function onClose;
+
+  MyCartQuickAccessLoginDialog({this.cartId, this.onClose});
+
+  @override
+  _MyCartQuickAccessLoginDialogState createState() =>
+      _MyCartQuickAccessLoginDialogState();
+}
+
+class _MyCartQuickAccessLoginDialogState
+    extends State<MyCartQuickAccessLoginDialog> {
+  SignInBloc signInBloc;
+  PageStyle pageStyle;
+  LocalStorageRepository localRepo;
+  HomeBloc homeBloc;
+  CartItemCountBloc cartItemCountBloc;
+  WishlistItemCountBloc wishlistItemCountBloc;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+  MyCartRepository cartRepo;
+  WishlistRepository wishlistRepo;
+  SettingRepository settingRepo;
+  SaveLaterBloc saveLaterBloc;
+  MyCartBloc myCartBloc;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    myCartBloc = context.read<MyCartBloc>();
+    signInBloc = context.read<SignInBloc>();
+    saveLaterBloc = context.read<SaveLaterBloc>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+    homeBloc = context.read<HomeBloc>();
+    cartItemCountBloc = context.read<CartItemCountBloc>();
+    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    localRepo = context.read<LocalStorageRepository>();
+    cartRepo = context.read<MyCartRepository>();
+    wishlistRepo = context.read<WishlistRepository>();
+    settingRepo = context.read<SettingRepository>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+  }
+
+  void _loggedInSuccess(UserEntity loggedInUser) async {
+    try {
+      user = loggedInUser;
+      saveLaterBloc.add(SaveLaterItemsLoaded(token: user.token, lang: lang));
+      await localRepo.setToken(user.token);
+      await _transferCartItems();
+      await _loadCustomerCartItems();
+      await _getWishlists();
+      await _shippingAddresses();
+      await settingRepo.updateFcmDeviceToken(
+        user.token,
+        Platform.isAndroid ? deviceToken : '',
+        Platform.isIOS ? deviceToken : '',
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
+      token: user.token,
+      lang: lang,
+    ));
+    progressService.hideProgress();
+    markaaAppChangeNotifier.rebuild();
+    widget.onClose();
+  }
+
+  Future<void> _shippingAddresses() async {
+    final result = await context
+        .read<ShippingAddressRepository>()
+        .getShippingAddresses(user.token);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> shippingAddressesList = result['addresses'];
+      for (int i = 0; i < shippingAddressesList.length; i++) {
+        final address = AddressEntity.fromJson(shippingAddressesList[i]);
+        addresses.add(address);
+        if (address.defaultShippingAddress == 1) {
+          defaultAddress = address;
+        }
+      }
+    }
+  }
+
+  Future<void> _getWishlists() async {
+    final result = await wishlistRepo.getWishlists(user.token, lang);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> lists = result['wishlists'];
+      wishlistCount = lists.isEmpty ? 0 : lists.length;
+      wishlistItemCountBloc.add(WishlistItemCountSet(
+        wishlistItemCount: wishlistCount,
+      ));
+    }
+  }
+
+  Future<void> _transferCartItems() async {
+    final result = await cartRepo.getCartId(user.token);
+    String customerCartId = result['cartId'];
+    if (widget.cartId.isNotEmpty && customerCartId.isNotEmpty) {
+      await cartRepo.transferCart(widget.cartId, customerCartId);
+    }
+  }
+
+  Future<void> _loadCustomerCartItems() async {
+    final result = await cartRepo.getCartId(user.token);
+    myCartItems.clear();
+    cartTotalPrice = .0;
+    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
+    if (result['code'] == 'SUCCESS') {
+      String cartId = result['cartId'];
+      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    pageStyle = PageStyle(context, designWidth, designHeight);
+    pageStyle.initializePageStyles();
+    return Stack(
+      children: [
+        _buildBloc(),
+        Container(
+          width: pageStyle.deviceWidth,
+          padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+          color: primarySwatchColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LOGIN WITH',
+                style: mediumTextStyle.copyWith(
+                  color: Colors.white,
+                  fontSize: pageStyle.unitFontSize * 16,
+                ),
+              ),
+              SizedBox(height: pageStyle.unitHeight * 10),
+              _buildSocialSignInButtons(),
+              SizedBox(height: pageStyle.unitHeight * 20),
+              _buildAuthChoice(),
+            ],
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: SvgPicture.asset(closeIcon, color: Colors.white),
+            onPressed: widget.onClose,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBloc() {
+    return BlocListener<SignInBloc, SignInState>(
+      listener: (context, state) {
+        if (state is SignInSubmittedInProcess) {
+          progressService.showProgress();
+        }
+        if (state is SignInSubmittedSuccess) {
+          _loggedInSuccess(state.user);
+        }
+        if (state is SignInSubmittedFailure) {
+          progressService.hideProgress();
+          flushBarService.showErrorMessage(pageStyle, state.message);
+        }
+      },
+      child: Container(),
+    );
+  }
+
+  Widget _buildSocialSignInButtons() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () => _onFacebookSign(),
+            child: SvgPicture.asset(facebookIcon),
+          ),
+          SizedBox(width: pageStyle.unitWidth * 20),
+          InkWell(
+            onTap: () => _onGoogleSign(),
+            child: SvgPicture.asset(googleIcon),
+          ),
+          if (Platform.isIOS) ...[
+            Row(
+              children: [
+                SizedBox(width: pageStyle.unitWidth * 20),
+                InkWell(
+                  onTap: () => _onAppleSign(),
+                  child: SvgPicture.asset(appleIcon),
+                ),
+              ],
+            )
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthChoice() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () => _onLogin(),
+            child: Text(
+              'login'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ),
+          Container(
+            height: pageStyle.unitHeight * 20,
+            child: VerticalDivider(color: Colors.white, thickness: 0.5),
+          ),
+          InkWell(
+            onTap: () => _onRegister(),
+            child: Text(
+              'register'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onLogin() async {
+    await Navigator.pushNamed(context, Routes.signIn, arguments: true);
+    if (user?.token != null) {
+      markaaAppChangeNotifier.rebuild();
+      widget.onClose();
+    }
+  }
+
+  void _onRegister() async {
+    await Navigator.pushNamed(context, Routes.signUp, arguments: true);
+    if (user?.token != null) {
+      markaaAppChangeNotifier.rebuild();
+      widget.onClose();
+    }
+  }
+
+  void _onFacebookSign() async {
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        _loginWithFacebook(result);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print('/// Canceled By User ///');
+        break;
+      case FacebookLoginStatus.error:
+        print('/// Facebook Login Error ///');
+        print(result.errorMessage);
+        break;
+    }
+  }
+
+  void _loginWithFacebook(FacebookLoginResult result) async {
+    try {
+      final token = result.accessToken.token;
+      final graphResponse = await http.get(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = jsonDecode(graphResponse.body);
+      String firstName = profile['first_name'];
+      String lastName = profile['last_name'];
+      String email = profile['email'];
+      print(profile);
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'Facebook Sign',
+        lang: lang,
+      ));
+    } catch (e) {
+      print('/// _loginWithFacebook Error ///');
+      print(e.toString());
+    }
+  }
+
+  void _onGoogleSign() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn();
+    try {
+      final googleAccount = await _googleSignIn.signIn();
+      String email = googleAccount.email;
+      String displayName = googleAccount.displayName;
+      String firstName = displayName.split(' ')[0];
+      String lastName = displayName.split(' ')[1];
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'Google Sign',
+        lang: lang,
+      ));
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _onAppleSign() async {
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) => AppleSignAlertDialog(
+          pageStyle: pageStyle,
+          title: 'markaa_team_title'.tr(),
+          description: 'apple_sign_description'.tr(),
+        ),
+      );
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      String email = credential.email;
+      String firstName = credential.givenName;
+      String lastName = credential.familyName;
+      String appleId = await localRepo.getItem('appleId');
+      if (appleId.isNotEmpty) {
+        email = appleId;
+      } else {
+        email = '';
+      }
+      if (email.isEmpty) {
+        await showDialog(
+          context: context,
+          builder: (context) => AppleSignAlertDialog(
+            pageStyle: pageStyle,
+            title: 'markaa_team_title'.tr(),
+            description: 'apple_sign_failure'.tr(),
+          ),
+        );
+      } else {
+        await localRepo.setItem('appleId', email);
+        signInBloc.add(SocialSignInSubmitted(
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          loginType: 'Apple Sign',
+          lang: lang,
+        ));
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+}

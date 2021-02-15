@@ -49,7 +49,7 @@ class _FilterPageState extends State<FilterPage> {
   List<dynamic> genderList = [];
   Map<String, dynamic> price = {};
   Map<String, dynamic> selectedValues;
-  FilterBloc filterBloc;
+  // FilterBloc filterBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
 
@@ -61,7 +61,7 @@ class _FilterPageState extends State<FilterPage> {
     selectedCategories = widget.selectedCategories ?? [];
     selectedGenders = widget.selectedGenders ?? [];
     selectedValues = widget.selectedValues ?? {};
-    filterBloc = context.read<FilterBloc>();
+    // filterBloc = context.read<FilterBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     // filterBloc.add(FilterAttributesLoaded(

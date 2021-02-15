@@ -77,7 +77,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
             progressService.showProgress();
           }
           if (state is SignOutSubmittedSuccess) {
-            progressService.hideProgress();
             _logoutUser();
           }
           if (state is SignOutSubmittedFailure) {
@@ -349,10 +348,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     await localRepo.setToken('');
     List<String> ids = await localRepo.getRecentlyViewedIds();
     myCartItems.clear();
+    cartTotalPrice = .0;
     cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
     await _loadViewerCartItems();
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+    progressService.hideProgress();
     Navigator.pop(context);
     Navigator.popUntil(
       context,
