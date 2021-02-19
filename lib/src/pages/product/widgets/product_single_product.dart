@@ -4,21 +4,16 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/dynamic_link_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -26,7 +21,7 @@ import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:string_validator/string_validator.dart';
 
-class ProductSingleProduct extends StatelessWidget {
+class ProductSingleProduct extends StatefulWidget {
   final PageStyle pageStyle;
   final ProductModel product;
   final ProductEntity productEntity;
@@ -38,35 +33,10 @@ class ProductSingleProduct extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: context.watch<MyCartBloc>(),
-      child: ProductSingleProductView(
-        pageStyle: pageStyle,
-        product: product,
-        productEntity: productEntity,
-      ),
-    );
-  }
+  _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class ProductSingleProductView extends StatefulWidget {
-  final PageStyle pageStyle;
-  final ProductModel product;
-  final ProductEntity productEntity;
-
-  ProductSingleProductView({
-    this.pageStyle,
-    this.product,
-    this.productEntity,
-  });
-
-  @override
-  _ProductSingleProductViewState createState() =>
-      _ProductSingleProductViewState();
-}
-
-class _ProductSingleProductViewState extends State<ProductSingleProductView>
+class _ProductSingleProductState extends State<ProductSingleProduct>
     with TickerProviderStateMixin {
   bool isMore = false;
   int activeIndex = 0;
@@ -79,12 +49,8 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
   ProductModel product;
   ProductEntity productEntity;
   PageStyle pageStyle;
-  WishlistItemCountBloc wishlistItemCountBloc;
   FlushBarService flushBarService;
-  LocalStorageRepository localStorageRepo;
-  WishlistRepository wishlistRepo;
-  MyCartRepository cartRepo;
-  WishlistBloc wishlistBloc;
+  WishlistChangeNotifier wishlistChangeNotifier;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
   @override
@@ -94,22 +60,15 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
     product = widget.product;
     productEntity = widget.productEntity;
     isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
-    wishlistBloc = context.read<WishlistBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     flushBarService = FlushBarService(context: context);
-    localStorageRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     _initFavorite();
     _initAnimation();
   }
 
   void _initFavorite() async {
     if (user?.token != null) {
-      isWishlist = await wishlistRepo.checkWishlistStatus(
-        user.token,
-        widget.product.entityId,
-      );
+      isWishlist = wishlistIds.contains(product.productId);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {});
       });
@@ -191,20 +150,26 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
                 onPressed: () => _onShareProduct(),
                 icon: SvgPicture.asset(shareIcon),
               ),
-              IconButton(
-                onPressed: () => user != null
-                    ? _onFavorite()
-                    : Navigator.pushNamed(context, Routes.signIn),
-                icon: ScaleTransition(
-                  scale: _favoriteScaleAnimation,
-                  child: Container(
-                    width: pageStyle.unitWidth * 26,
-                    height: pageStyle.unitHeight * 26,
-                    child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : favoriteIcon,
+              Consumer<WishlistChangeNotifier>(
+                builder: (_, model, __) {
+                  isWishlist = model.wishlistItemsMap
+                      .containsKey(widget.product.productId);
+                  return IconButton(
+                    onPressed: () => user != null
+                        ? _onFavorite()
+                        : Navigator.pushNamed(context, Routes.signIn),
+                    icon: ScaleTransition(
+                      scale: _favoriteScaleAnimation,
+                      child: Container(
+                        width: pageStyle.unitWidth * 26,
+                        height: pageStyle.unitHeight * 26,
+                        child: SvgPicture.asset(
+                          isWishlist ? wishlistedIcon : favoriteIcon,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           ),
@@ -458,23 +423,12 @@ class _ProductSingleProductViewState extends State<ProductSingleProductView>
 
   void _updateWishlist() async {
     if (isWishlist) {
-      wishlistCount -= 1;
-      wishlistBloc.add(WishlistRemoved(
-        token: user.token,
-        productId: widget.product.entityId,
-      ));
+      await wishlistChangeNotifier.removeItemFromWishlist(
+          user.token, widget.product.productId);
     } else {
-      wishlistCount += 1;
-      wishlistBloc.add(WishlistAdded(
-        token: user.token,
-        productId: widget.product.entityId,
-      ));
+      await wishlistChangeNotifier.addItemToWishlist(
+          user.token, widget.product, 1);
     }
-    isWishlist = !isWishlist;
-    wishlistItemCountBloc.add(WishlistItemCountSet(
-      wishlistItemCount: wishlistCount,
-    ));
-    setState(() {});
   }
 
   void _onShareProduct() async {

@@ -8,17 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -53,43 +49,36 @@ class _MyCartQuickAccessLoginDialogState
   PageStyle pageStyle;
   LocalStorageRepository localRepo;
   HomeBloc homeBloc;
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
-  MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
   SettingRepository settingRepo;
-  SaveLaterBloc saveLaterBloc;
-  MyCartBloc myCartBloc;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    myCartBloc = context.read<MyCartBloc>();
     signInBloc = context.read<SignInBloc>();
-    saveLaterBloc = context.read<SaveLaterBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     homeBloc = context.read<HomeBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      saveLaterBloc.add(SaveLaterItemsLoaded(token: user.token, lang: lang));
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await localRepo.setToken(user.token);
       await _transferCartItems();
       await _loadCustomerCartItems();
-      await _getWishlists();
       await _shippingAddresses();
       await settingRepo.updateFcmDeviceToken(
         user.token,
@@ -124,34 +113,13 @@ class _MyCartQuickAccessLoginDialogState
     }
   }
 
-  Future<void> _getWishlists() async {
-    final result = await wishlistRepo.getWishlists(user.token, lang);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> lists = result['wishlists'];
-      wishlistCount = lists.isEmpty ? 0 : lists.length;
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: wishlistCount,
-      ));
-    }
-  }
-
   Future<void> _transferCartItems() async {
-    final result = await cartRepo.getCartId(user.token);
-    String customerCartId = result['cartId'];
-    if (widget.cartId.isNotEmpty && customerCartId.isNotEmpty) {
-      await cartRepo.transferCart(widget.cartId, customerCartId);
-    }
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.transferCartItems();
   }
 
   Future<void> _loadCustomerCartItems() async {
-    final result = await cartRepo.getCartId(user.token);
-    myCartItems.clear();
-    cartTotalPrice = .0;
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    if (result['code'] == 'SUCCESS') {
-      String cartId = result['cartId'];
-      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-    }
+    await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override
@@ -170,7 +138,7 @@ class _MyCartQuickAccessLoginDialogState
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'LOGIN WITH',
+                'login_with'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 16,
@@ -209,7 +177,11 @@ class _MyCartQuickAccessLoginDialogState
           flushBarService.showErrorMessage(pageStyle, state.message);
         }
       },
-      child: Container(),
+      child: Container(
+        width: pageStyle.deviceWidth,
+        height: pageStyle.deviceHeight,
+        color: Colors.black38,
+      ),
     );
   }
 

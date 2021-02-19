@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class ReviewProductCard extends StatelessWidget {
+class MarkaaReviewProductCard extends StatelessWidget {
   final PageStyle pageStyle;
   final CartItemEntity cartItem;
 
-  ReviewProductCard({this.pageStyle, this.cartItem});
+  MarkaaReviewProductCard({this.pageStyle, this.cartItem});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class ReviewProductCard extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    if (cartItem.product.brandId.isNotEmpty) {
+                    if (cartItem?.product?.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
@@ -60,7 +60,7 @@ class ReviewProductCard extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    cartItem.product.brandLabel,
+                    cartItem?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: pageStyle.unitFontSize * 12,

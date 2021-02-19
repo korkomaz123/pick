@@ -7,11 +7,10 @@ import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
@@ -39,9 +38,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   ProgressService progressService;
   FlushBarService flushBarService;
   CheckoutBloc checkoutBloc;
-  CartItemCountBloc cartItemCountBloc;
   LocalStorageRepository localStorageRepo;
-  MyCartRepository cartRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
@@ -56,11 +54,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     checkoutBloc = context.read<CheckoutBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
     localStorageRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    print(orderDetails);
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
 
   @override
@@ -348,12 +344,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   }
 
   void _onOrderSubmittedSuccess(String orderNo) async {
-    myCartItems = [];
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
     if (widget.reorder != null) {
-      await localStorageRepo.setItem('reorderCartId', '');
+      myCartChangeNotifier.initializeReorderCart();
     } else {
-      await localStorageRepo.setCartId('');
+      myCartChangeNotifier.initialize();
     }
     Navigator.pushNamedAndRemoveUntil(
       context,

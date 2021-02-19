@@ -1,5 +1,7 @@
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 
 class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -28,9 +30,27 @@ class MyCartRepository {
   Future<dynamic> getCartItems(String cartId, String lang) async {
     String url = EndPoints.getCartItems;
     final params = {'cartId': cartId, 'lang': lang};
-    // print(url);
-    // print(params);
-    return await Api.postMethod(url, data: params);
+    final result = await Api.postMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> cartList = result['cart'];
+      List<CartItemEntity> cartItems = [];
+      for (int i = 0; i < cartList.length; i++) {
+        Map<String, dynamic> cartItemJson = {};
+        cartItemJson['product'] = ProductModel.fromJson(cartList[i]['product']);
+        cartItemJson['itemCount'] = cartList[i]['itemCount'];
+        cartItemJson['rowPrice'] = cartList[i]['row_price'];
+        cartItemJson['itemId'] = cartList[i]['itemid'];
+        cartItemJson['availableCount'] = cartList[i]['availableCount'];
+        cartItems.add(CartItemEntity.fromJson(cartItemJson));
+      }
+      return {
+        'code': 'SUCCESS',
+        'items': cartItems,
+        'couponCode': result['coupon_code'] ?? '',
+        'discount': result['discount'],
+      };
+    }
+    return result;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -50,14 +70,23 @@ class MyCartRepository {
     String productId,
     String qty,
   ) async {
-    String url = EndPoints.getCartItems;
-    final params = {
-      'cartId': cartId,
-      'productId': productId,
-      'qty': qty,
-      'type': 'add'
-    };
-    return await Api.postMethod(url, data: params);
+    String url = EndPoints.addCartItem;
+    final params = {'cartId': cartId, 'productId': productId, 'qty': qty};
+    final result = await Api.postMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      final item = result['cart'][0];
+      Map<String, dynamic> cartItemJson = {};
+      cartItemJson['product'] = ProductModel.fromJson(item['product']);
+      cartItemJson['itemCount'] = item['itemCount'];
+      cartItemJson['rowPrice'] = item['row_price'];
+      cartItemJson['itemId'] = item['itemid'];
+      cartItemJson['availableCount'] = item['availableCount'];
+      return {
+        'code': 'SUCCESS',
+        'item': CartItemEntity.fromJson(cartItemJson),
+      };
+    }
+    return result;
   }
 
   //////////////////////////////////////////////////////////////////////////////

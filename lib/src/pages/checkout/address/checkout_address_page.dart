@@ -8,18 +8,18 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CheckoutAddressPage extends StatefulWidget {
@@ -35,7 +35,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   PageStyle pageStyle;
   FlushBarService flushBarService;
   ProgressService progressService;
-  // ShippingAddressBloc shippingAddressBloc;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -50,8 +49,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   String shippingMethodId;
   double serviceFees;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   ShippingAddressBloc shippingAddressBloc;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
@@ -65,7 +64,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     }
     shippingAddressBloc = context.read<ShippingAddressBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
   }
@@ -346,27 +345,19 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       progressService.showProgress();
       String cartId;
       if (widget.reorder != null) {
-        cartId = await localRepo.getItem('reorderCartId');
+        cartId = myCartChangeNotifier.reorderCartId;
       } else {
-        final result = await cartRepo.getCartId(user.token);
-        if (result['code'] == 'SUCCESS') {
-          cartId = result['cartId'];
-        }
+        cartId = myCartChangeNotifier.cartId;
       }
       orderDetails['shipping'] = shippingMethodId;
       orderDetails['cartId'] = cartId;
       double totalPrice = 0;
       double subtotalPrice = 0;
       if (widget.reorder != null) {
-        for (int i = 0; i < reorderCartItems.length; i++) {
-          subtotalPrice += reorderCartItems[i].rowPrice;
-        }
+        subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
       } else {
-        for (int i = 0; i < myCartItems.length; i++) {
-          subtotalPrice += myCartItems[i].rowPrice;
-        }
+        subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
-
       totalPrice = subtotalPrice + serviceFees;
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();

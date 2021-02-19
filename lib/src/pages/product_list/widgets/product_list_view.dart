@@ -198,7 +198,7 @@ class _ProductListViewState extends State<ProductListView>
             children: subCategories.map((cat) {
               return SmartRefresher(
                 enablePullDown: true,
-                enablePullUp: page != null && !isReachedMax,
+                enablePullUp: true,
                 header: MaterialClassicHeader(color: primaryColor),
                 controller: _refreshController,
                 scrollController: widget.scrollController,
@@ -208,12 +208,32 @@ class _ProductListViewState extends State<ProductListView>
                   builder: (BuildContext context, LoadStatus mode) {
                     if (mode == LoadStatus.loading) {
                       return RippleLoadingSpinner();
+                    } else if (mode == LoadStatus.noMore) {
+                      return Container(
+                        width: pageStyle.deviceWidth,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(
+                          top: pageStyle.unitHeight * 10,
+                        ),
+                        child: Text(
+                          'no_more_products'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: pageStyle.unitFontSize * 14,
+                          ),
+                        ),
+                      );
                     }
                     return SizedBox.shrink();
                   },
                 ),
                 child: Consumer<ProductChangeNotifier>(
                   builder: (ctx, notifier, _) {
+                    if (!isReachedMax == productChangeNotifier.isReachedMax) {
+                      isReachedMax = productChangeNotifier.isReachedMax;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _refreshController.loadNoData();
+                      });
+                    }
                     String index;
                     if (widget.viewMode == ProductViewModeEnum.category) {
                       index = cat.id;

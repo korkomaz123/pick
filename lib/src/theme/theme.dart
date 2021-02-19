@@ -26,6 +26,7 @@ final ThemeData markaaAppTheme = ThemeData(
     color: markaaMaterialColor,
     iconTheme: IconThemeData(color: Colors.white),
   ),
+  textSelectionColor: Colors.purple,
 );
 
 /// App Colors

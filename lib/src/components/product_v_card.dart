@@ -4,19 +4,16 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -52,59 +49,20 @@ class _ProductVCardState extends State<ProductVCard>
     with TickerProviderStateMixin {
   bool isWishlist;
   int index;
-  String cartId;
-  MyCartRepository cartRepo;
-  WishlistRepository wishlistRepo;
-  LocalStorageRepository localRepo;
   FlushBarService flushBarService;
-  MyCartBloc myCartBloc;
-  WishlistBloc wishlistBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     isWishlist = false;
-    localRepo = context.read<LocalStorageRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
-    cartRepo = context.read<MyCartRepository>();
-    myCartBloc = context.read<MyCartBloc>();
-    wishlistBloc = context.read<WishlistBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
-    _getWishlist();
-    _getMyCartId();
     _initAnimation();
-  }
-
-  void _getWishlist() async {
-    if (user?.token != null) {
-      isWishlist = await wishlistRepo.checkWishlistStatus(
-        user.token,
-        widget.product.entityId,
-      );
-      if (mounted) setState(() {});
-    }
-  }
-
-  Future<void> _getMyCartId() async {
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localRepo.getCartId();
-    }
-    if (cartId.isEmpty) {
-      final result = await cartRepo.createCart();
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-        await localRepo.setCartId(cartId);
-      }
-    }
   }
 
   void _initAnimation() {
@@ -133,39 +91,12 @@ class _ProductVCardState extends State<ProductVCard>
       child: Container(
         width: widget.cardWidth,
         height: widget.cardHeight,
-        child: BlocConsumer<MyCartBloc, MyCartState>(
-          listener: (context, state) {
-            if (state is MyCartCreatedFailure) {
-              flushBarService.showErrorMessage(
-                widget.pageStyle,
-                state.message,
-              );
-            }
-            if (state is MyCartItemAddedInProcess) {
-              flushBarService.showAddCartMessage(
-                widget.pageStyle,
-                state.product,
-              );
-            }
-            if (state is MyCartItemAddedFailure) {
-              flushBarService.showErrorMessage(
-                widget.pageStyle,
-                state.message,
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is MyCartCreatedSuccess) {
-              cartId = state.cartId;
-            }
-            return Stack(
-              children: [
-                _buildProductCard(),
-                _buildToolbar(),
-                _buildOutofStock(),
-              ],
-            );
-          },
+        child: Stack(
+          children: [
+            _buildProductCard(),
+            _buildToolbar(),
+            _buildOutofStock(),
+          ],
         ),
       ),
     );
@@ -204,7 +135,7 @@ class _ProductVCardState extends State<ProductVCard>
               children: [
                 InkWell(
                   onTap: () {
-                    if (widget.product.brandId.isNotEmpty) {
+                    if (widget?.product?.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
@@ -220,7 +151,7 @@ class _ProductVCardState extends State<ProductVCard>
                     }
                   },
                   child: Text(
-                    widget.product.brandLabel,
+                    widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: widget.pageStyle.unitFontSize * 14,
@@ -300,12 +231,11 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   Widget _buildToolbar() {
-    return BlocConsumer<WishlistItemCountBloc, WishlistItemCountState>(
-      listener: (context, state) {
-        _getWishlist();
-      },
-      builder: (context, state) {
+    return Consumer<WishlistChangeNotifier>(
+      builder: (_, model, __) {
         if (widget.isWishlist) {
+          isWishlist =
+              model.wishlistItemsMap.containsKey(widget.product.productId);
           return Align(
             alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
             child: Padding(
@@ -361,18 +291,8 @@ class _ProductVCardState extends State<ProductVCard>
       timer.cancel();
     });
     if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-      await _getMyCartId();
-      if (cartId.isEmpty) {
-        myCartBloc.add(MyCartCreated(
-          product: widget.product,
-        ));
-      } else {
-        myCartBloc.add(MyCartItemAdded(
-          cartId: cartId,
-          product: widget.product,
-          qty: '1',
-        ));
-      }
+      await myCartChangeNotifier.addProductToCart(
+          context, widget.pageStyle, widget.product, 1);
     } else {
       flushBarService.showErrorMessage(
         widget.pageStyle,
@@ -383,23 +303,11 @@ class _ProductVCardState extends State<ProductVCard>
 
   void _onWishlist() async {
     if (isWishlist) {
-      wishlistCount -= 1;
-      wishlistBloc.add(WishlistRemoved(
-        token: user.token,
-        productId: widget.product.productId,
-      ));
-      await localRepo.removeWishlistItem(widget.product.productId);
+      await wishlistChangeNotifier.removeItemFromWishlist(
+          user.token, widget.product.productId);
     } else {
-      wishlistCount += 1;
-      wishlistBloc.add(WishlistAdded(
-        token: user.token,
-        productId: widget.product.productId,
-      ));
+      await wishlistChangeNotifier.addItemToWishlist(
+          user.token, widget.product, 1);
     }
-    isWishlist = !isWishlist;
-    wishlistItemCountBloc.add(WishlistItemCountSet(
-      wishlistItemCount: wishlistCount,
-    ));
-    setState(() {});
   }
 }

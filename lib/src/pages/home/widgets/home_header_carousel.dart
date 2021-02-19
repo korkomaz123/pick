@@ -66,7 +66,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
       height: widget.pageStyle.deviceWidth * 579 / 1125,
       child: Swiper(
         itemCount: sliderImages.length,
-        autoplay: false,
+        autoplay: true,
         curve: Curves.easeInOutCubic,
         onIndexChanged: (value) {
           activeIndex = value;

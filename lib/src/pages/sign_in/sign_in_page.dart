@@ -6,13 +6,9 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -22,6 +18,8 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,14 +51,13 @@ class _SignInPageState extends State<SignInPage> {
   bool isShowPass = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
   SettingRepository settingRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
@@ -69,21 +66,20 @@ class _SignInPageState extends State<SignInPage> {
     flushBarService = FlushBarService(context: context);
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await localRepo.setToken(user.token);
       await _transferCartItems();
       await _loadCustomerCartItems();
-      await _getWishlists();
       await _shippingAddresses();
       await settingRepo.updateFcmDeviceToken(
         user.token,
@@ -117,55 +113,13 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future<void> _getWishlists() async {
-    final result = await wishlistRepo.getWishlists(user.token, lang);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> lists = result['wishlists'];
-      wishlistCount = lists.isEmpty ? 0 : lists.length;
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: wishlistCount,
-      ));
-    }
-  }
-
   Future<void> _transferCartItems() async {
-    String viewerCartId = await localRepo.getCartId();
-    final result = await cartRepo.getCartId(user.token);
-    String customerCartId = result['cartId'];
-    if (viewerCartId.isNotEmpty && customerCartId.isNotEmpty) {
-      await cartRepo.transferCart(viewerCartId, customerCartId);
-    }
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.transferCartItems();
   }
 
   Future<void> _loadCustomerCartItems() async {
-    final result = await cartRepo.getCartId(user.token);
-    myCartItems.clear();
-    cartTotalPrice = .0;
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    if (result['code'] == 'SUCCESS') {
-      String cartId = result['cartId'];
-      final response = await cartRepo.getCartItems(cartId, lang);
-      if (response['code'] == 'SUCCESS') {
-        List<dynamic> cartList = response['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
+    await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override

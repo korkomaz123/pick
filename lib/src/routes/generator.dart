@@ -4,9 +4,7 @@ import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_card_page.dart';
-import 'package:markaa/src/pages/checkout/review/checkout_review_page.dart';
 import 'package:markaa/src/pages/checkout/search_address/search_address_screen.dart';
-import 'package:markaa/src/pages/checkout/shipping/checkout_shipping_page.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:markaa/src/pages/home/home_page.dart';
@@ -65,7 +63,8 @@ class RouteGenerator {
         );
       case Routes.forgotPassword:
         return CupertinoPageRoute(
-          builder: (context) => ForgotPasswordPage(isFromCheckout: params ?? false),
+          builder: (context) =>
+              ForgotPasswordPage(isFromCheckout: params ?? false),
           settings: RouteSettings(name: Routes.forgotPassword),
         );
       case Routes.home:
@@ -120,16 +119,6 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (context) => CheckoutAddressPage(reorder: params),
           settings: RouteSettings(name: Routes.checkoutAddress),
-        );
-      case Routes.checkoutShipping:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutShippingPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutShipping),
-        );
-      case Routes.checkoutReview:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutReviewPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutReview),
         );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(

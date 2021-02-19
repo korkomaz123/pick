@@ -281,5 +281,7 @@
     "search_items_tab_title": "Showing in Items",
     "search_brands_tab_title": "Showing in Brands",
     "payment_canceled": "Payment has been canceled",
-    "create_address_button_title": "Create Address"
+    "create_address_button_title": "Create Address",
+    "no_more_products": "Sorry, There is no more products Available",
+    "login_with": "LOGIN WITH"
 }

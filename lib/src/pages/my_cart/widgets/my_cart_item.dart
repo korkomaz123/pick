@@ -64,7 +64,7 @@ class MyCartItem extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        if (cartItem.product.brandId.isNotEmpty) {
+                        if (cartItem?.product?.brandEntity?.optionId != null) {
                           ProductListArguments arguments = ProductListArguments(
                             category: CategoryEntity(),
                             subCategory: [],
@@ -80,7 +80,7 @@ class MyCartItem extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        cartItem.product.brandLabel,
+                        cartItem?.product?.brandEntity?.brandLabel ?? '',
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
                           fontSize: pageStyle.unitFontSize * 10,

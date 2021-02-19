@@ -4,13 +4,9 @@ import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -19,6 +15,8 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,13 +39,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   String activeMenu = '';
   HomeBloc homeBloc;
   SignInBloc signInBloc;
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   SettingRepository settingRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
@@ -55,11 +52,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     pageStyle = widget.pageStyle;
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     settingRepo = context.read<SettingRepository>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -194,8 +190,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
       child: Column(
         children: sideMenus.map((menu) {
-          // int index = sideMenus.indexOf(menu);
-          // int length = sideMenus.length;
           return Column(
             children: [
               _buildParentMenu(menu),
@@ -233,14 +227,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
           children: [
             Row(
               children: [
-                menu.iconUrl.isNotEmpty
-                    ? Row(
-                        children: [
-                          Image.network(menu.iconUrl, width: 25, height: 25),
-                          SizedBox(width: 6),
-                        ],
-                      )
-                    : SizedBox.shrink(),
+                if (menu.iconUrl.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Image.network(menu.iconUrl, width: 25, height: 25),
+                      SizedBox(width: 6),
+                    ],
+                  )
+                ],
                 Text(
                   menu.title.toUpperCase(),
                   style: mediumTextStyle.copyWith(
@@ -250,15 +244,15 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
                 ),
               ],
             ),
-            menu.subMenu.isNotEmpty
-                ? Icon(
-                    activeMenu == menu.id
-                        ? Icons.arrow_drop_down
-                        : Icons.arrow_right,
-                    size: pageStyle.unitFontSize * 25,
-                    color: greyDarkColor,
-                  )
-                : SizedBox.shrink(),
+            if (menu.subMenu.isNotEmpty) ...[
+              Icon(
+                activeMenu == menu.id
+                    ? Icons.arrow_drop_down
+                    : Icons.arrow_right,
+                size: pageStyle.unitFontSize * 25,
+                color: greyDarkColor,
+              )
+            ],
           ],
         ),
       ),
@@ -318,11 +312,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       selectedSubCategoryIndex: index + 1,
       isFromBrand: false,
     );
-    Navigator.popAndPushNamed(
+    Navigator.pop(context);
+    Navigator.popUntil(
       context,
-      Routes.productList,
-      arguments: arguments,
+      (route) => route.settings.name == Routes.home,
     );
+    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
   }
 
   void _login() async {
@@ -346,12 +341,11 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     await settingRepo.updateFcmDeviceToken(user.token, '', '');
     user = null;
     await localRepo.setToken('');
+    myCartChangeNotifier.initialize();
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
     List<String> ids = await localRepo.getRecentlyViewedIds();
-    myCartItems.clear();
-    cartTotalPrice = .0;
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
-    await _loadViewerCartItems();
+    wishlistChangeNotifier.initialize();
     homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
     progressService.hideProgress();
     Navigator.pop(context);
@@ -359,35 +353,5 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       context,
       (route) => route.settings.name == Routes.home,
     );
-  }
-
-  Future<void> _loadViewerCartItems() async {
-    final cartId = await localRepo.getCartId();
-    if (cartId.isNotEmpty) {
-      print('/// logged out ///');
-      print('/// cartId: $cartId ///');
-      final result = await cartRepo.getCartItems(cartId, lang);
-      if (result['code'] == 'SUCCESS') {
-        print('/// get cart item ///');
-        List<dynamic> cartList = result['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
   }
 }

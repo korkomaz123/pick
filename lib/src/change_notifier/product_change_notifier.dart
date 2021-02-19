@@ -1,4 +1,5 @@
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
@@ -13,12 +14,24 @@ class ProductChangeNotifier extends ChangeNotifier {
   final ProductRepository productRepository;
   final LocalStorageRepository localStorageRepository;
 
+  bool isReachedMax = false;
   String brandId;
   Map<String, List<ProductModel>> data = {};
   Map<String, int> pages = {};
+  ProductEntity productDetails;
+
+  Future<void> getProductDetails(String productId, String lang) async {
+    productDetails = null;
+    final result = await productRepository.getProductDetails(productId, lang);
+    if (result['code'] == 'SUCCESS') {
+      productDetails = ProductEntity.fromJson(result['moreAbout']);
+    }
+    notifyListeners();
+  }
 
   /// category products list loading...
   Future<void> initialLoadCategoryProducts(String categoryId) async {
+    isReachedMax = false;
     if (!data.containsKey(categoryId)) {
       // data[categoryId] = <ProductModel>[];
       pages[categoryId] = 1;
@@ -50,6 +63,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[categoryId].add(ProductModel.fromJson(productList[i]));
       }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
+      }
       notifyListeners();
     }
     final result = await productRepository.getProducts(categoryId, lang, page);
@@ -63,6 +79,9 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[categoryId].add(ProductModel.fromJson(productList[i]));
         }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
+        }
         notifyListeners();
       }
     }
@@ -73,6 +92,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
   ) async {
+    isReachedMax = false;
     final index = brandId + '_' + categoryId ?? '';
     if (!data.containsKey(index)) {
       pages[index] = 1;
@@ -116,9 +136,13 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
       }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
+      }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(
+        brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -128,6 +152,9 @@ class ProductChangeNotifier extends ChangeNotifier {
         }
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
+        }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
         }
         notifyListeners();
       }
@@ -140,6 +167,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String sortItem,
   ) async {
+    isReachedMax = false;
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     if (!data.containsKey(index)) {
       pages[index] = 1;
@@ -179,7 +207,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String sortItem,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(
+        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
@@ -187,6 +216,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
+      }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
       }
       notifyListeners();
     }
@@ -198,6 +230,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     Map<String, dynamic> filterValues,
   ) async {
+    isReachedMax = false;
     final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     print(index);
     data[index] = null;
@@ -249,6 +282,9 @@ class ProductChangeNotifier extends ChangeNotifier {
         }
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
+        }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
         }
         notifyListeners();
       }

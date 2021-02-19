@@ -237,7 +237,7 @@
     "or_divider": "دخول عن طريق",
     "cart_total": "المجموع الكلي",
     "welcome": "مرحبا!",
-    "save_for_later": "احفظ لوقت لاحق",
+    "save_for_later": "قائمة الشراء لاحقاً",
     "qty": "الكمية",
     "removed": "تم الحذف",
     "done": "منجز",
@@ -279,5 +279,7 @@
     "search_items_tab_title": "عرض في الأصناف",
     "search_brands_tab_title": "عرض في العلامات التجارية",
     "payment_canceled": "تم إلغاء الدفع",
-    "create_address_button_title": "أنشئ عنوان"
+    "create_address_button_title": "أنشئ عنوان",
+    "no_more_products": "عذراً، لا يوجد منتجات اخري متاحة.",
+    "login_with": "LOGIN WITH"
 }

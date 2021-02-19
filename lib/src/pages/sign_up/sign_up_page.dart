@@ -2,11 +2,8 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -14,6 +11,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,21 +38,19 @@ class _SignUpPageState extends State<SignUpPage> {
   bool agreeTerms = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
-  CartItemCountBloc cartItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   PageStyle pageStyle;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -62,37 +58,9 @@ class _SignUpPageState extends State<SignUpPage> {
   void _saveToken(UserEntity loggedInUser) async {
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
-    final result = await cartRepo.getCartId(user.token);
-    myCartItems.clear();
-    cartTotalPrice = .0;
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    if (result['code'] == 'SUCCESS') {
-      String cartId = result['cartId'];
-      print('/// registered in ///');
-      print('/// cartId: $cartId ///');
-      final response = await cartRepo.getCartItems(cartId, lang);
-      if (response['code'] == 'SUCCESS') {
-        print('/// get cart item ///');
-        List<dynamic> cartList = response['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.transferCartItems();
+    await myCartChangeNotifier.getCartItems(lang);
     homeBloc.add(HomeRecentlyViewedCustomerLoaded(
       token: user.token,
       lang: lang,

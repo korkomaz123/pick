@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
@@ -12,9 +14,7 @@ import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_bloc.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/pages/product/widgets/product_more_about.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -24,6 +24,7 @@ import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -50,9 +51,7 @@ class _ProductPageState extends State<ProductPage>
   final _refreshController = RefreshController(initialRefresh: false);
   PageStyle pageStyle;
   ProductModel product;
-  MyCartBloc cartBloc;
   MyCartRepository cartRepo;
-  ProductBloc productBloc;
   ProgressService progressService;
   LocalStorageRepository localStorageRepository;
   ProductRepository productRepository;
@@ -62,6 +61,8 @@ class _ProductPageState extends State<ProductPage>
   bool isStock = false;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
+  ProductChangeNotifier productChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
@@ -69,19 +70,18 @@ class _ProductPageState extends State<ProductPage>
     product = widget.arguments as ProductModel;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    cartRepo = context.read<MyCartRepository>();
     productRepository = context.read<ProductRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
-    cartBloc = context.read<MyCartBloc>();
     homeBloc = context.read<HomeBloc>();
-    productBloc = context.read<ProductBloc>();
-    productBloc.add(ProductInitialized());
-    productBloc.add(ProductDetailsLoaded(
-      productId: product.productId,
-      lang: lang,
-    ));
+    productChangeNotifier = context.read<ProductChangeNotifier>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    _loadDetails();
     _initAnimation();
     _sendViewedProduct();
+  }
+
+  void _loadDetails() async {
+    await productChangeNotifier.getProductDetails(product.productId, lang);
   }
 
   void _initAnimation() {
@@ -123,16 +123,10 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _onRefresh() async {
-    productBloc.add(ProductDetailsLoaded(
-      productId: product.productId,
-      lang: lang,
-    ));
-  }
-
-  void _updateStockStatus(ProductEntity productEntity) {
-    isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
+      Future.delayed(Duration.zero, () async {
+        await productChangeNotifier.getProductDetails(product.productId, lang);
+      });
     });
   }
 
@@ -145,25 +139,11 @@ class _ProductPageState extends State<ProductPage>
       backgroundColor: backgroundColor,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: BlocConsumer<ProductBloc, ProductState>(
-        listener: (context, state) {
-          if (state is ProductDetailsLoadedInProcess) {
-            // progressService.showProgress();
-          }
-          if (state is ProductDetailsLoadedSuccess) {
-            // progressService.hideProgress();
-            _updateStockStatus(state.productEntity);
-            _refreshController.refreshCompleted();
-          }
-          if (state is ProductDetailsLoadedFailure) {
-            // progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-            _refreshController.refreshCompleted();
-          }
-        },
-        builder: (context, state) {
-          if (state is ProductDetailsLoadedSuccess) {
-            print('success');
+      body: Consumer<ProductChangeNotifier>(
+        builder: (_, model, ___) {
+          if (model.productDetails != null) {
+            isStock = model.productDetails.stockQty != null &&
+                model.productDetails.stockQty > 0;
             return Stack(
               children: [
                 SmartRefresher(
@@ -179,14 +159,14 @@ class _ProductPageState extends State<ProductPage>
                         ProductSingleProduct(
                           pageStyle: pageStyle,
                           product: product,
-                          productEntity: state.productEntity,
+                          productEntity: model.productDetails,
                         ),
                         ProductReviewTotal(
                           pageStyle: pageStyle,
-                          product: state.productEntity,
+                          product: model.productDetails,
                           onFirstReview: () =>
-                              _onFirstReview(state.productEntity),
-                          onReviews: () => _onReviews(state.productEntity),
+                              _onFirstReview(model.productDetails),
+                          onReviews: () => _onReviews(model.productDetails),
                         ),
                         ProductRelatedItems(
                           pageStyle: pageStyle,
@@ -198,11 +178,11 @@ class _ProductPageState extends State<ProductPage>
                         ),
                         ProductMoreAbout(
                           pageStyle: pageStyle,
-                          productEntity: state.productEntity,
+                          productEntity: model.productDetails,
                         ),
                         ProductReview(
                           pageStyle: pageStyle,
-                          product: state.productEntity,
+                          product: model.productDetails,
                         ),
                         SizedBox(height: pageStyle.unitHeight * 50),
                       ],
@@ -218,10 +198,7 @@ class _ProductPageState extends State<ProductPage>
               ],
             );
           } else {
-            return Container(
-              color: Colors.white,
-              child: Center(child: PulseLoadingSpinner()),
-            );
+            return Center(child: PulseLoadingSpinner());
           }
         },
       ),
@@ -233,95 +210,58 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Widget _buildToolbar() {
-    return BlocConsumer<MyCartBloc, MyCartState>(
-      listener: (context, state) {
-        if (state is MyCartCreatedFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is MyCartItemAddedInProcess) {
-          flushBarService.showAddCartMessage(pageStyle, state.product);
-        }
-        if (state is MyCartItemAddedSuccess) {
-          if (isBuyNow) {
-            isBuyNow = false;
-            Navigator.pushNamed(context, Routes.myCart);
-          }
-        }
-        if (state is MyCartItemAddedFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-      },
-      builder: (context, state) {
-        bool isCreating = state is MyCartCreatedInProcess;
-        bool isAdding = state is MyCartItemAddedInProcess;
-        return Container(
-          width: pageStyle.deviceWidth,
-          height: pageStyle.unitHeight * 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (isBuyNow && (isCreating || isAdding)) ...[
-                Container(
-                  width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 60,
-                  child: Center(child: CircleLoadingSpinner()),
-                )
-              ] else if (isStock) ...[
-                Container(
-                  width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 60,
-                  child: MarkaaTextButton(
-                    title: 'product_buy_now'.tr(),
-                    titleSize: pageStyle.unitFontSize * 23,
-                    titleColor: Colors.white,
-                    buttonColor: Color(0xFFFF8B00),
-                    borderColor: Colors.transparent,
-                    radius: 1,
-                    onPressed: () => _onBuyNow(),
-                    isBold: true,
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (isStock) ...[
+            Container(
+              width: pageStyle.unitWidth * 317,
+              height: pageStyle.unitHeight * 60,
+              child: MarkaaTextButton(
+                title: 'product_buy_now'.tr(),
+                titleSize: pageStyle.unitFontSize * 23,
+                titleColor: Colors.white,
+                buttonColor: Color(0xFFFF8B00),
+                borderColor: Colors.transparent,
+                radius: 1,
+                onPressed: () => _onBuyNow(),
+                isBold: true,
+              ),
+            )
+          ] else ...[
+            Container(
+              width: pageStyle.unitWidth * 317,
+              height: pageStyle.unitHeight * 60,
+            )
+          ],
+          if (isStock) ...[
+            RoundImageButton(
+              width: pageStyle.unitWidth * 58,
+              height: pageStyle.unitHeight * 60,
+              color: primarySwatchColor,
+              child: ScaleTransition(
+                scale: _addToCartScaleAnimation,
+                child: Container(
+                  width: pageStyle.unitWidth * 25,
+                  height: pageStyle.unitHeight * 25,
+                  child: SvgPicture.asset(
+                    shoppingCartIcon,
+                    color: Colors.white,
                   ),
-                )
-              ] else ...[
-                Container(
-                  width: pageStyle.unitWidth * 317,
-                  height: pageStyle.unitHeight * 60,
-                )
-              ],
-              if (isStock) ...[
-                RoundImageButton(
-                  width: pageStyle.unitWidth * 58,
-                  height: pageStyle.unitHeight * 60,
-                  color: primarySwatchColor,
-                  child: ScaleTransition(
-                    scale: _addToCartScaleAnimation,
-                    child: Container(
-                      width: pageStyle.unitWidth * 25,
-                      height: pageStyle.unitHeight * 25,
-                      child: SvgPicture.asset(
-                        shoppingCartIcon,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  onTap: () => _onAddToCart(),
-                  radius: 1,
-                )
-              ] else ...[
-                SizedBox.shrink()
-              ],
-            ],
-          ),
-        );
-      },
+                ),
+              ),
+              onTap: () => _onAddToCart(),
+              radius: 1,
+            )
+          ] else ...[
+            SizedBox.shrink()
+          ],
+        ],
+      ),
     );
-  }
-
-  void _addToCart(String cartId) {
-    cartBloc.add(MyCartItemAdded(
-      cartId: cartId,
-      product: product,
-      qty: '1',
-    ));
   }
 
   void _onAddToCart() async {
@@ -330,38 +270,12 @@ class _ProductPageState extends State<ProductPage>
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localStorageRepository.getCartId();
-    }
-    if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated(product: product));
-    } else {
-      _addToCart(cartId);
-    }
+    await myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1);
   }
 
   void _onBuyNow() async {
-    isBuyNow = true;
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localStorageRepository.getCartId();
-    }
-    if (cartId.isEmpty) {
-      cartBloc.add(MyCartCreated(product: product));
-    } else {
-      _addToCart(cartId);
-    }
+    await myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1);
+    Navigator.pushNamed(context, Routes.myCart);
   }
 
   void _onFirstReview(ProductEntity product) async {
