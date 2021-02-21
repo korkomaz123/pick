@@ -48,6 +48,7 @@ class MyCartRepository {
         'items': cartItems,
         'couponCode': result['coupon_code'] ?? '',
         'discount': result['discount'],
+        'type': result['type'],
       };
     }
     return result;
@@ -69,9 +70,15 @@ class MyCartRepository {
     String cartId,
     String productId,
     String qty,
+    String lang,
   ) async {
     String url = EndPoints.addCartItem;
-    final params = {'cartId': cartId, 'productId': productId, 'qty': qty};
+    final params = {
+      'cartId': cartId,
+      'productId': productId,
+      'qty': qty,
+      'lang': lang
+    };
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       final item = result['cart'][0];

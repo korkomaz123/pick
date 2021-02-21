@@ -63,7 +63,6 @@ class _ProductListViewState extends State<ProductListView>
   FlushBarService flushBarService;
   TabController tabController;
   int page = 1;
-  bool isReachedMax = false;
   ProductChangeNotifier productChangeNotifier;
   FilterBloc filterBloc;
 
@@ -85,7 +84,10 @@ class _ProductListViewState extends State<ProductListView>
       initialIndex: widget.activeIndex,
       vsync: this,
     );
-    tabController.addListener(() => widget.onChangeTab(tabController.index));
+    tabController.addListener(() {
+      widget.onChangeTab(tabController.index);
+      // _refreshController.loadComplete();
+    });
   }
 
   void _initLoadProducts() async {
@@ -203,9 +205,10 @@ class _ProductListViewState extends State<ProductListView>
                 controller: _refreshController,
                 scrollController: widget.scrollController,
                 onRefresh: _onRefresh,
-                onLoading: page != null && !isReachedMax ? _onLoadMore : null,
+                onLoading: page != null ? _onLoadMore : null,
                 footer: CustomFooter(
                   builder: (BuildContext context, LoadStatus mode) {
+                    // mode = LoadStatus.canLoading;
                     if (mode == LoadStatus.loading) {
                       return RippleLoadingSpinner();
                     } else if (mode == LoadStatus.noMore) {
@@ -228,10 +231,13 @@ class _ProductListViewState extends State<ProductListView>
                 ),
                 child: Consumer<ProductChangeNotifier>(
                   builder: (ctx, notifier, _) {
-                    if (!isReachedMax == productChangeNotifier.isReachedMax) {
-                      isReachedMax = productChangeNotifier.isReachedMax;
+                    if (productChangeNotifier.isReachedMax) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         _refreshController.loadNoData();
+                      });
+                    } else {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _refreshController.loadComplete();
                       });
                     }
                     String index;

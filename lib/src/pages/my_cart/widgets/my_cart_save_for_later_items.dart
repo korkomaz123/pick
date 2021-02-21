@@ -189,6 +189,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
     await widget.wishlistChangeNotifier
         .removeItemFromWishlist(user.token, item.productId);
     await widget.myCartChangeNotifier.addProductToCart(
-        context, widget.pageStyle, item, item.qtySaveForLater);
+        context, widget.pageStyle, item, item.qtySaveForLater, lang);
   }
 }

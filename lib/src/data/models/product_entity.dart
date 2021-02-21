@@ -16,7 +16,6 @@ class ProductEntity {
   final String hasOptions;
   final String addCartUrl;
   final String productId;
-  final String brandLabel;
   final List<dynamic> gallery;
   final List<ReviewEntity> reviews;
   final BrandEntity brandEntity;
@@ -37,7 +36,6 @@ class ProductEntity {
     this.hasOptions,
     this.addCartUrl,
     this.productId,
-    this.brandLabel,
     this.gallery,
     this.reviews,
     this.brandEntity,
@@ -59,9 +57,14 @@ class ProductEntity {
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
         productId = json['product_id'],
-        brandLabel = json['brand_label'] == 'no' ? '' : json['brand_label'],
         gallery = json['gallery'],
         reviews = json['reviews'],
-        brandEntity = json['brand_entity'] != null && json['brand_entity'] != null ? BrandEntity.fromJson(json['brand_entity']) : BrandEntity(),
+        brandEntity = json['brand_id'] != null
+            ? BrandEntity(
+                optionId: json['brand_id'],
+                brandLabel: json['brand_label'],
+                brandThumbnail: json['brand_thumbnail'],
+              )
+            : null,
         stockQty = json['stockQty'];
 }

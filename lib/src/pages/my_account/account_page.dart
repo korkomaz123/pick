@@ -359,17 +359,12 @@ class _AccountPageState extends State<AccountPage> {
           SizedBox(height: pageStyle.unitHeight * 5),
           TermsItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),
+          ContactUsItem(pageStyle: pageStyle),
           if (user != null) ...[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ContactUsItem(pageStyle: pageStyle),
-                LogoutItem(
-                  pageStyle: pageStyle,
-                  snackBarService: snackBarService,
-                  progressService: progressService,
-                ),
-              ],
+            LogoutItem(
+              pageStyle: pageStyle,
+              snackBarService: snackBarService,
+              progressService: progressService,
             )
           ],
         ],

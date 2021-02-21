@@ -125,14 +125,17 @@ class _ProductListPageState extends State<ProductListPage> {
             )
           ],
           Consumer<CategoryChangeNotifier>(
-            builder: (_, __, ___) {
-              if (!categoryChangeNotifier.isLoading) {
+            builder: (_, model, ___) {
+              if (!model.isLoading) {
+                if (model.subCategories == null) {
+                  return Container();
+                }
                 if (isFromBrand) {
                   subCategories = [CategoryEntity(id: 'all')];
                 } else {
                   subCategories = [category];
                 }
-                subCategories.addAll(categoryChangeNotifier.subCategories);
+                subCategories.addAll(model.subCategories);
                 if (subCategories.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {

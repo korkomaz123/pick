@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -22,13 +23,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
   int cartItemCount = 0;
   int cartTotalCount = 0;
   String couponCode = '';
-  int discount = 0;
+  double discount = .0;
   Map<String, CartItemEntity> cartItemsMap = {};
   String reorderCartId = '';
   double reorderCartTotalPrice = .0;
   int reorderCartItemCount = 0;
   int reorderCartTotalCount = 0;
   Map<String, CartItemEntity> reorderCartItemsMap = {};
+  String errorMessage;
+  String type;
 
   void initialize() {
     cartId = '';
@@ -41,6 +44,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     reorderCartTotalCount = 0;
     reorderCartTotalPrice = .0;
     reorderCartItemsMap = {};
+    type = '';
     notifyListeners();
   }
 
@@ -60,7 +64,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount += item.itemCount;
       }
       couponCode = result['couponCode'];
-      discount = result['discount'];
+      discount = result['discount'] + .0;
+      type = result['type'];
+      print(type);
     } else {
       processStatus = ProcessStatus.failed;
     }
@@ -89,11 +95,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
     PageStyle pageStyle,
     ProductModel product,
     int qty,
+    String lang,
   ) async {
     final result = await myCartRepository.addCartItem(
       cartId,
       product.productId,
       qty.toString(),
+      lang,
     );
     if (result['code'] == 'SUCCESS') {
       CartItemEntity newItem = result['item'];
@@ -178,21 +186,35 @@ class MyCartChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> applyCouponCode(String code) async {
+  Future<void> applyCouponCode(
+    String code,
+    FlushBarService flushBarService,
+    PageStyle pageStyle,
+  ) async {
     final result = await myCartRepository.couponCode(cartId, code, '0');
     if (result['code'] == 'SUCCESS') {
-      couponCode = result['coupon_code'];
-      discount = result['discount'];
-      notifyListeners();
+      couponCode = code;
+      discount = result['discount'] + .0;
+      type = result['type'];
+    } else {
+      errorMessage = result['errMessage'];
+      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
     }
+    notifyListeners();
   }
 
-  Future<void> cancelCouponCode() async {
+  Future<void> cancelCouponCode(
+    FlushBarService flushBarService,
+    PageStyle pageStyle,
+  ) async {
     final result = await myCartRepository.couponCode(cartId, couponCode, '1');
     if (result['code'] == 'SUCCESS') {
       couponCode = '';
-      discount = 0;
+      discount = .0;
+      type = '';
       notifyListeners();
+    } else {
+      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
     }
   }
 

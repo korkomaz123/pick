@@ -54,9 +54,9 @@ class _CategoryListPageState extends State<CategoryListPage>
     categoryListBloc.add(CategoryListLoaded(lang: lang));
   }
 
-  // `void _onRefresh() {
+  // void _onRefresh() {
   //   categoryListBloc.add(CategoryListLoaded(lang: lang));
-  // }`
+  // }
 
   @override
   Widget build(BuildContext context) {

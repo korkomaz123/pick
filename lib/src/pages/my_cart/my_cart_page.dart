@@ -105,6 +105,7 @@ class _MyCartPageState extends State<MyCartPage>
                           MyCartCouponCode(
                             pageStyle: pageStyle,
                             cartId: cartId,
+                            onSignIn: _onSignIn,
                           ),
                           _buildTotalPrice(),
                           _buildCheckoutButton(),
@@ -116,11 +117,13 @@ class _MyCartPageState extends State<MyCartPage>
                           return Padding(
                             padding: EdgeInsets.symmetric(
                               vertical: pageStyle.unitHeight *
-                                  (model.wishlistItemsCount > 0 ? 100 : 200),
+                                  (model.wishlistItemsCount > 0 ? 100 : 250),
                             ),
-                            child: NoAvailableData(
-                              pageStyle: pageStyle,
-                              message: 'no_cart_items_available',
+                            child: Center(
+                              child: NoAvailableData(
+                                pageStyle: pageStyle,
+                                message: 'no_cart_items_available',
+                              ),
                             ),
                           );
                         },
@@ -260,6 +263,7 @@ class _MyCartPageState extends State<MyCartPage>
                           cartItem:
                               myCartChangeNotifier.cartItemsMap[keys[index]],
                           discount: myCartChangeNotifier.discount,
+                          type: myCartChangeNotifier.type,
                           cartId: cartId,
                           onRemoveCartItem: () =>
                               _onRemoveCartItem(keys[index]),
@@ -283,6 +287,12 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildTotalPrice() {
+    double subTotal = myCartChangeNotifier.cartTotalPrice;
+    print(myCartChangeNotifier.type);
+    double discount = myCartChangeNotifier.type == 'fixed'
+        ? myCartChangeNotifier.discount
+        : subTotal * myCartChangeNotifier.discount / 100;
+    double totalPrice = subTotal - discount;
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
@@ -321,6 +331,49 @@ class _MyCartPageState extends State<MyCartPage>
               )
             ],
           ),
+          if (discount > 0) ...[
+            SizedBox(height: pageStyle.unitHeight * 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'checkout_subtotal_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: greyColor,
+                    fontSize: pageStyle.unitFontSize * 17,
+                  ),
+                ),
+                Text(
+                  '${subTotal.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 18,
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: pageStyle.unitHeight * 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'discount'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: darkColor,
+                    fontSize: pageStyle.unitFontSize * 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  '${discount.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 18,
+                  ),
+                )
+              ],
+            )
+          ],
           SizedBox(height: pageStyle.unitHeight * 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,8 +386,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '${myCartChangeNotifier.cartTotalPrice.toStringAsFixed(2)} ' +
-                    'currency'.tr(),
+                '${totalPrice.toStringAsFixed(2)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,

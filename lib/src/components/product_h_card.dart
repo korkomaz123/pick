@@ -281,7 +281,7 @@ class _ProductHCardState extends State<ProductHCard>
     });
     if (widget.product.stockQty != null && widget.product.stockQty > 0) {
       await myCartChangeNotifier.addProductToCart(
-          context, widget.pageStyle, widget.product, 1);
+          context, widget.pageStyle, widget.product, 1, lang);
     } else {
       flushBarService.showErrorMessage(
         widget.pageStyle,

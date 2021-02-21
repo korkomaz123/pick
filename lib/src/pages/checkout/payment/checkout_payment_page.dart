@@ -208,6 +208,31 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               )
             ],
           ),
+          if (double.parse(orderDetails['orderDetails']['discount']) > 0) ...[
+            SizedBox(height: pageStyle.unitHeight * 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'discount'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: darkColor,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  'currency'.tr() +
+                      ' ${orderDetails['orderDetails']['discount']}',
+                  style: mediumTextStyle.copyWith(
+                    color: darkColor,
+                    fontSize: pageStyle.unitFontSize * 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              ],
+            ),
+          ],
           SizedBox(height: pageStyle.unitHeight * 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -244,7 +269,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               ),
               Text(
                 'currency'.tr() +
-                    ' ${double.parse(orderDetails['orderDetails']['totalPrice']).toStringAsFixed(2)}',
+                    ' ${orderDetails['orderDetails']['totalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,

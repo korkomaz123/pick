@@ -43,6 +43,7 @@ class MarkaaTextInput extends StatelessWidget {
           ),
           hintText: hint,
         ),
+        enableInteractiveSelection: true,
         validator: (value) => validator(value),
         keyboardType: inputType,
         readOnly: readOnly,

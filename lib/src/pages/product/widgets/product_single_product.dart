@@ -223,7 +223,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (productEntity.brandLabel.isNotEmpty) ...[
+              if (productEntity?.brandEntity != null) ...[
                 InkWell(
                   onTap: () {
                     ProductListArguments arguments = ProductListArguments(
@@ -240,7 +240,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     );
                   },
                   child: Text(
-                    productEntity.brandLabel,
+                    productEntity?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize:

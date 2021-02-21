@@ -5,6 +5,7 @@ import 'package:markaa/src/components/markaa_country_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
+import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -295,7 +296,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) => null,
                     inputType: TextInputType.number,
                   ),
-                  MarkaaTextInput(
+                  MarkaaTextInputMulti(
                     controller: cityController,
                     width: pageStyle.deviceWidth,
                     padding: pageStyle.unitWidth * 10,
@@ -304,6 +305,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    maxLine: 3,
                   ),
                 ],
               ),

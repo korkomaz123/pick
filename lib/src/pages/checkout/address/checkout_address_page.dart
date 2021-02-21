@@ -351,18 +351,27 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       }
       orderDetails['shipping'] = shippingMethodId;
       orderDetails['cartId'] = cartId;
-      double totalPrice = 0;
-      double subtotalPrice = 0;
+      double totalPrice = .0;
+      double subtotalPrice = .0;
+      double discount = .0;
       if (widget.reorder != null) {
         subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
       } else {
+        discount = myCartChangeNotifier.type == 'fixed'
+            ? myCartChangeNotifier.discount
+            : myCartChangeNotifier.discount *
+                myCartChangeNotifier.cartTotalPrice /
+                100;
         subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
-      totalPrice = subtotalPrice + serviceFees;
+      totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
-      orderDetails['orderDetails']['totalPrice'] = totalPrice.toString();
-      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toString();
-      orderDetails['orderDetails']['fees'] = serviceFees.toString();
+      orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(2);
+      orderDetails['orderDetails']['totalPrice'] =
+          totalPrice.toStringAsFixed(2);
+      orderDetails['orderDetails']['subTotalPrice'] =
+          subtotalPrice.toStringAsFixed(2);
+      orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(2);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = json.encode({
         'customer_address_id': defaultAddress.addressId,

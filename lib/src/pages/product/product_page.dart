@@ -270,11 +270,13 @@ class _ProductPageState extends State<ProductPage>
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    await myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1);
+    await myCartChangeNotifier.addProductToCart(
+        context, pageStyle, product, 1, lang);
   }
 
   void _onBuyNow() async {
-    await myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1);
+    await myCartChangeNotifier.addProductToCart(
+        context, pageStyle, product, 1, lang);
     Navigator.pushNamed(context, Routes.myCart);
   }
 

@@ -5,11 +5,11 @@ import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
-  List<CategoryEntity> subCategories = [];
+  List<CategoryEntity> subCategories;
   bool isLoading = false;
 
   void initialSubCategories() {
-    subCategories = [];
+    subCategories = null;
     isLoading = false;
     // notifyListeners();
   }
