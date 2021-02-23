@@ -83,14 +83,14 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                   ),
                   validator: (value) =>
                       value.isEmpty ? 'required_field'.tr() : null,
+                  readOnly: model.couponCode.isNotEmpty,
                 ),
               ),
               Container(
                 width: widget.pageStyle.unitWidth * 120,
                 height: widget.pageStyle.unitHeight * 40,
                 child: TextIconButton(
-                  title: model.couponCode.isNotEmpty &&
-                          model.couponCode == couponCodeController.text
+                  title: model.couponCode.isNotEmpty
                       ? 'cancel_button_title'.tr()
                       : 'apply_button_title'.tr(),
                   iconData: Icons.check_circle_outline,
@@ -107,8 +107,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     }
                     if (_couponFormKey.currentState.validate()) {
                       couponNode.unfocus();
-                      if (model.couponCode.isNotEmpty &&
-                          model.couponCode == couponCodeController.text) {
+                      if (model.couponCode.isNotEmpty) {
                         couponCodeController.clear();
                         model.cancelCouponCode(
                           flushBarService,
