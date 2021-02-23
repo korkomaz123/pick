@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:faker/faker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,7 +31,6 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
-import 'package:markaa/src/pages/sign_in/widgets/apple_sign_alert_dialog.dart';
 
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
@@ -330,14 +330,6 @@ class _MyCartQuickAccessLoginDialogState
 
   void _onAppleSign() async {
     try {
-      await showDialog(
-        context: context,
-        builder: (context) => AppleSignAlertDialog(
-          pageStyle: pageStyle,
-          title: 'markaa_team_title'.tr(),
-          description: 'apple_sign_description'.tr(),
-        ),
-      );
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -347,31 +339,20 @@ class _MyCartQuickAccessLoginDialogState
       String email = credential.email;
       String firstName = credential.givenName;
       String lastName = credential.familyName;
-      String appleId = await localRepo.getItem('appleId');
-      if (appleId.isNotEmpty) {
-        email = appleId;
-      } else {
-        email = '';
+      String appleId = credential.userIdentifier;
+      if (email == null) {
+        final faker = Faker();
+        String fakeEmail = faker.internet.freeEmail();
+        email = '$appleId-$fakeEmail';
       }
-      if (email.isEmpty) {
-        await showDialog(
-          context: context,
-          builder: (context) => AppleSignAlertDialog(
-            pageStyle: pageStyle,
-            title: 'markaa_team_title'.tr(),
-            description: 'apple_sign_failure'.tr(),
-          ),
-        );
-      } else {
-        await localRepo.setItem('appleId', email);
-        signInBloc.add(SocialSignInSubmitted(
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          loginType: 'Apple Sign',
-          lang: lang,
-        ));
-      }
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'apple',
+        lang: lang,
+        appleId: appleId,
+      ));
     } catch (error) {
       print(error);
     }

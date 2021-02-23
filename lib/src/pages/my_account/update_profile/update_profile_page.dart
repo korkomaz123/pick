@@ -63,7 +63,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
     phoneNumberController.text = user?.phoneNumber;
-    emailController.text = user.email;
+    emailController.text = user?.email;
   }
 
   @override

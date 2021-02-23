@@ -76,15 +76,10 @@ class _CategoryListPageState extends State<CategoryListPage>
           _buildAppBar(),
           BlocConsumer<CategoryListBloc, CategoryListState>(
             listener: (context, state) {
-              // if (state is CategoryListLoadedInProcess) {
-              //   progressService.showProgress();
-              // }
               if (state is CategoryListLoadedSuccess) {
-                // progressService.hideProgress();
                 _refreshController.refreshCompleted();
               }
               if (state is CategoryListLoadedFailure) {
-                // progressService.hideProgress();
                 _refreshController.refreshCompleted();
                 snackBarService.showErrorSnackBar(state.message);
               }
@@ -271,10 +266,10 @@ class _CategoryListPageState extends State<CategoryListPage>
                         activeIndex = -1;
                         setState(() {});
                         ProductListArguments arguments = ProductListArguments(
-                          category: category.subCategories[index],
+                          category: category,
                           subCategory: [],
                           brand: BrandEntity(),
-                          selectedSubCategoryIndex: 0,
+                          selectedSubCategoryIndex: index + 1,
                           isFromBrand: false,
                         );
                         Navigator.pushNamed(
@@ -322,7 +317,6 @@ class _CategoryListPageState extends State<CategoryListPage>
 
   Widget _buildCategoryButton() {
     return Container(
-      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(
@@ -348,7 +342,6 @@ class _CategoryListPageState extends State<CategoryListPage>
 
   Widget _buildBrandButton() {
     return Container(
-      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () {
           Navigator.popUntil(

@@ -50,7 +50,10 @@ class MarkaaTextInputMulti extends StatelessWidget {
               fontSize: fontSize,
             ),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: padding),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: padding,
+                vertical: 5,
+              ),
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: greyDarkColor),
               ),
@@ -62,7 +65,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
               ),
             ),
             validator: (value) => validator(value),
-            keyboardType: inputType,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.newline,
             readOnly: readOnly,
             onTap: onTap,
             maxLines: maxLine,
