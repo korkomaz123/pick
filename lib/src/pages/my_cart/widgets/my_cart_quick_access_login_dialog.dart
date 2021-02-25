@@ -276,11 +276,12 @@ class _MyCartQuickAccessLoginDialogState
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        print('/// Canceled By User ///');
+        flushBarService.showErrorMessage(pageStyle, 'Canceled by User');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');
         print(result.errorMessage);
+        flushBarService.showErrorMessage(pageStyle, result.errorMessage);
         break;
     }
   }
@@ -312,17 +313,19 @@ class _MyCartQuickAccessLoginDialogState
     GoogleSignIn _googleSignIn = GoogleSignIn();
     try {
       final googleAccount = await _googleSignIn.signIn();
-      String email = googleAccount.email;
-      String displayName = googleAccount.displayName;
-      String firstName = displayName.split(' ')[0];
-      String lastName = displayName.split(' ')[1];
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'Google Sign',
-        lang: lang,
-      ));
+      if (googleAccount != null) {
+        String email = googleAccount.email;
+        String displayName = googleAccount.displayName;
+        String firstName = displayName.split(' ')[0];
+        String lastName = displayName.split(' ')[1];
+        signInBloc.add(SocialSignInSubmitted(
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          loginType: 'Google Sign',
+          lang: lang,
+        ));
+      }
     } catch (error) {
       print(error);
     }
@@ -343,7 +346,8 @@ class _MyCartQuickAccessLoginDialogState
       if (email == null) {
         final faker = Faker();
         String fakeEmail = faker.internet.freeEmail();
-        email = '$appleId-$fakeEmail';
+        int timestamp = DateTime.now().microsecondsSinceEpoch;
+        email = '$timestamp-$fakeEmail';
       }
       signInBloc.add(SocialSignInSubmitted(
         email: email,

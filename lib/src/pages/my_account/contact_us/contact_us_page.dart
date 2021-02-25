@@ -323,8 +323,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
   void _onCallUs() async {
-    if (await canLaunch('tel:+965 22285188')) {
-      await launch('tel:+965 22285188');
+    if (await canLaunch('tel:+96522285188')) {
+      await launch('tel:+96522285188');
     }
   }
 }

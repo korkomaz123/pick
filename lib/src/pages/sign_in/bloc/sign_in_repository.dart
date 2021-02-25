@@ -44,9 +44,9 @@ class SignInRepository {
   ) async {
     String url = EndPoints.socialLogin;
     final params = {
-      'email': email ?? '',
-      'firstName': firstName,
-      'lastName': lastName,
+      'email': email,
+      'firstName': firstName ?? '',
+      'lastName': lastName ?? '',
       'loginType': loginType,
       'lang': lang,
       'appleId': appleId ?? '',

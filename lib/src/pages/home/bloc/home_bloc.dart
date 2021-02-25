@@ -78,7 +78,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         yield state.copyWith(sliderImages: sliderImages);
       } else {
-        yield state.copyWith(message: result['errorMessage']);
+        if (!exist) {
+          yield state.copyWith(message: result['errorMessage']);
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -106,17 +108,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         await localStorageRepository.setItem(key + 'title', result['title']);
-        List<dynamic> bestDealsList = result['products'];
-        List<ProductModel> bestDeals = [];
-        for (int i = 0; i < bestDealsList.length; i++) {
-          bestDeals.add(ProductModel.fromJson(bestDealsList[i]));
+        if (!exist) {
+          List<dynamic> bestDealsList = result['products'];
+          List<ProductModel> bestDeals = [];
+          for (int i = 0; i < bestDealsList.length; i++) {
+            bestDeals.add(ProductModel.fromJson(bestDealsList[i]));
+          }
+          yield state.copyWith(
+            bestDealsProducts: bestDeals,
+            bestDealsTitle: result['title'],
+          );
         }
-        yield state.copyWith(
-          bestDealsProducts: bestDeals,
-          bestDealsTitle: result['title'],
-        );
       } else {
-        yield state.copyWith(message: result['errorMessage']);
+        if (!exist) {
+          yield state.copyWith(message: result['errorMessage']);
+        }
       }
     } catch (e) {
       yield state.copyWith(message: e.toString());
@@ -144,17 +150,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         await localStorageRepository.setItem(key + 'title', result['title']);
-        List<dynamic> newArrivalsList = result['products'];
-        List<ProductModel> newArrivals = [];
-        for (int i = 0; i < newArrivalsList.length; i++) {
-          newArrivals.add(ProductModel.fromJson(newArrivalsList[i]));
+        if (!exist) {
+          List<dynamic> newArrivalsList = result['products'];
+          List<ProductModel> newArrivals = [];
+          for (int i = 0; i < newArrivalsList.length; i++) {
+            newArrivals.add(ProductModel.fromJson(newArrivalsList[i]));
+          }
+          yield state.copyWith(
+            newArrivalsProducts: newArrivals,
+            newArrivalsTitle: result['title'],
+          );
         }
-        yield state.copyWith(
-          newArrivalsProducts: newArrivals,
-          newArrivalsTitle: result['title'],
-        );
       } else {
-        yield state.copyWith(message: result['errorMessage']);
+        if (!exist) {
+          yield state.copyWith(message: result['errorMessage']);
+        }
       }
     } catch (e) {
       yield state.copyWith(message: e.toString());
@@ -181,17 +191,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         await localStorageRepository.setItem(key + 'title', result['title']);
-        List<dynamic> perfumesList = result['products'];
-        List<ProductModel> perfumes = [];
-        for (int i = 0; i < perfumesList.length; i++) {
-          perfumes.add(ProductModel.fromJson(perfumesList[i]));
+        if (!exist) {
+          List<dynamic> perfumesList = result['products'];
+          List<ProductModel> perfumes = [];
+          for (int i = 0; i < perfumesList.length; i++) {
+            perfumes.add(ProductModel.fromJson(perfumesList[i]));
+          }
+          yield state.copyWith(
+            perfumesProducts: perfumes,
+            perfumesTitle: result['title'],
+          );
         }
-        yield state.copyWith(
-          perfumesProducts: perfumes,
-          perfumesTitle: result['title'],
-        );
       } else {
-        yield state.copyWith(message: result['errorMessage']);
+        if (!exist) {
+          yield state.copyWith(message: result['errorMessage']);
+        }
       }
     } catch (e) {
       yield state.copyWith(message: e.toString());
@@ -208,8 +222,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield state.copyWith(ads: ads);
       }
       final result = await _homeRepository.getHomeAds(lang);
-      SliderImageEntity ads = SliderImageEntity.fromJson(result['data']);
       await localStorageRepository.setItem(key, result['data']);
+      SliderImageEntity ads = SliderImageEntity.fromJson(result['data']);
       yield state.copyWith(ads: ads);
     } catch (e) {
       yield state.copyWith(message: e.toString());
