@@ -373,6 +373,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       myCartChangeNotifier.initializeReorderCart();
     } else {
       myCartChangeNotifier.initialize();
+      await myCartChangeNotifier.getCartId();
     }
     Navigator.pushNamedAndRemoveUntil(
       context,

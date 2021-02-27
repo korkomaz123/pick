@@ -39,13 +39,14 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     couponCodeController.text = myCartChangeNotifier.couponCode;
-    couponCodeController.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (myCartChangeNotifier.couponCode.isNotEmpty &&
+        couponCodeController.text.isEmpty) {
+      couponCodeController.text = myCartChangeNotifier.couponCode;
+    }
     return Form(
       key: _couponFormKey,
       child: Container(

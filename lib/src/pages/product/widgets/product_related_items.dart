@@ -36,7 +36,9 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
     relatedItems = await context
         .read<ProductRepository>()
         .getRelatedProducts(product.productId, lang);
-    if (mounted) setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
   }
 
   @override

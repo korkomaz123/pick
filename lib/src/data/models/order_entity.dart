@@ -15,6 +15,8 @@ class OrderEntity {
   final String totalQty;
   final String totalPrice;
   final String subtotalPrice;
+  final double discountAmount;
+  final String discountType;
   final PaymentMethodEntity paymentMethod;
   final ShippingMethodEntity shippingMethod;
   final String cartId;
@@ -29,6 +31,8 @@ class OrderEntity {
     this.totalQty,
     this.totalPrice,
     this.subtotalPrice,
+    this.discountAmount,
+    this.discountType,
     this.paymentMethod,
     this.shippingMethod,
     this.cartId,
@@ -47,6 +51,9 @@ class OrderEntity {
         totalQty = json['total_qty_ordered'],
         totalPrice = _getFormattedValue(json['base_grand_total']),
         subtotalPrice = _getFormattedValue(json['base_subtotal']),
+        discountAmount = double.parse(
+            json['discount'].isNotEmpty ? json['discount'] : '0.00'),
+        discountType = json['discount_type'],
         paymentMethod = PaymentMethodEntity(
           id: json['payment_code'],
           title: json['payment_method'],
@@ -54,7 +61,7 @@ class OrderEntity {
         shippingMethod = ShippingMethodEntity(
           id: json['shipping_method'],
           description: json['shipping_description'],
-          serviceFees: _getServiceFees(json),
+          serviceFees: double.parse(json['base_shipping_amount']),
         ),
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
@@ -63,14 +70,6 @@ class OrderEntity {
   static String _getFormattedValue(String value) {
     double price = double.parse(value);
     return price.toStringAsFixed(2);
-  }
-
-  static double _getServiceFees(Map<String, dynamic> json) {
-    String totalPriceStr = json['base_grand_total'];
-    String subtotalPriceStr = json['base_subtotal'];
-    double totalPrice = double.parse(totalPriceStr);
-    double subtotalPrice = double.parse(subtotalPriceStr);
-    return totalPrice - subtotalPrice;
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {
