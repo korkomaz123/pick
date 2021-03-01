@@ -8,6 +8,7 @@ class SuggestionChangeNotifier extends ChangeNotifier {
 
   void initializeSuggestion() {
     suggestions = [];
+    searchedProducts = [];
     notifyListeners();
   }
 
@@ -17,19 +18,6 @@ class SuggestionChangeNotifier extends ChangeNotifier {
     final searchRepository = SearchRepository();
     suggestions = await searchRepository.getSearchSuggestion(query, lang);
     notifyListeners();
-    // suggestions = [];
-    // notifyListeners();
-    // final searchRepository = SearchRepository();
-    // final result = await searchRepository.getSearchSuggestion(query, lang);
-    // if (result['code'] == 'SUCCESS') {
-    //   List<dynamic> suggestionList = result['products'];
-    //   for (int i = 0; i < suggestionList.length; i++) {
-    //     suggestions.add(ProductModel.fromJson(suggestionList[i]));
-    //   }
-    // } else {
-    //   suggestions = [];
-    // }
-    // notifyListeners();
   }
 
   Future<void> searchProducts(

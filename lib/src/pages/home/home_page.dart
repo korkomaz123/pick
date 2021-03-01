@@ -3,14 +3,14 @@ import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -51,8 +51,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   HomeBloc homeBloc;
-  CategoryListBloc categoryListBloc;
-  BrandBloc brandBloc;
+  BrandChangeNotifier brandChangeNotifier;
+  CategoryChangeNotifier categoryChangeNotifier;
   PageStyle pageStyle;
   LocalStorageRepository localStorageRepository;
   SettingRepository settingRepository;
@@ -65,8 +65,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     homeBloc = context.read<HomeBloc>();
-    categoryListBloc = context.read<CategoryListBloc>();
-    brandBloc = context.read<BrandBloc>();
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     localStorageRepository = context.read<LocalStorageRepository>();
     settingRepository = context.read<SettingRepository>();
     _initializeLocalNotification();
@@ -160,7 +160,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   static Future<void> _onBackgroundMessageHandler(
-      Map<String, dynamic> message) async {
+    Map<String, dynamic> message,
+  ) async {
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
       message['notification']['title'],
@@ -177,8 +178,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
-    print('on message');
-    print(message);
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
       message['notification']['title'],
@@ -230,17 +229,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeBloc.add(HomeBestDealsLoaded(lang: lang));
     homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
     homeBloc.add(HomePerfumesLoaded(lang: lang));
-    categoryListBloc.add(CategoryListLoaded(lang: lang));
-    brandBloc.add(BrandListLoaded(lang: lang));
+    categoryChangeNotifier.getCategoriesList(lang);
+    brandChangeNotifier.getBrandsList(lang, 'home');
     homeBloc.add(HomeAdsLoaded(lang: lang));
     if (user?.token != null) {
-      print('customer recently view');
       homeBloc.add(HomeRecentlyViewedCustomerLoaded(
         token: user.token,
         lang: lang,
       ));
     } else {
-      print('guest view');
       _loadGuestViewed();
     }
     await Future.delayed(Duration(milliseconds: 1000));

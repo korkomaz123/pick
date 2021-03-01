@@ -1,5 +1,7 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -11,14 +13,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'bloc/brand_bloc.dart';
 
 class BrandListPage extends StatefulWidget {
   const BrandListPage();
@@ -32,24 +31,19 @@ class _BrandListPageState extends State<BrandListPage> {
   final _refreshController = RefreshController(initialRefresh: false);
   List<BrandEntity> brands = [];
   PageStyle pageStyle;
-  BrandBloc brandBloc;
-  SnackBarService snackBarService;
+  BrandChangeNotifier brandChangeNotifier;
   ProgressService progressService;
 
   @override
   void initState() {
     super.initState();
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
     progressService = ProgressService(context: context);
-    brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang, from: 'brand'));
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    brandChangeNotifier.getBrandsList(lang, 'brand');
   }
 
   void _onRefresh() async {
-    brandBloc.add(BrandListLoaded(lang: lang));
+    brandChangeNotifier.getBrandsList(lang, 'brand');
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
@@ -70,15 +64,15 @@ class _BrandListPageState extends State<BrandListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          BlocConsumer<BrandBloc, BrandState>(
-            listener: (context, state) {
-              if (state is BrandListLoadedFailure) {
-                snackBarService.showErrorSnackBar(state.message);
-              }
-            },
-            builder: (context, state) {
-              if (state is BrandListLoadedSuccess) {
-                brands = state.brands;
+          Consumer<BrandChangeNotifier>(
+            builder: (_, __, ___) {
+              brands = brandChangeNotifier.sortedBrandList;
+              if (brands.isEmpty) {
+                return Expanded(
+                  child: Center(
+                    child: PulseLoadingSpinner(),
+                  ),
+                );
               }
               return Expanded(
                 child: SmartRefresher(

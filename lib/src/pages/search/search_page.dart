@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
@@ -8,8 +9,6 @@ import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
-import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -19,7 +18,6 @@ import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,7 +39,6 @@ class _SearchPageState extends State<SearchPage>
   String filterData;
   Future<List<dynamic>> futureCategories;
   Future<List<dynamic>> futureBrands;
-  SearchBloc searchBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   dynamic selectedCategory;
@@ -58,7 +55,7 @@ class _SearchPageState extends State<SearchPage>
   SearchRepository searchRepository;
   SuggestionChangeNotifier suggestionChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  BrandBloc brandBloc;
+  BrandChangeNotifier brandChangeNotifier;
 
   @override
   void initState() {
@@ -66,20 +63,19 @@ class _SearchPageState extends State<SearchPage>
     suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
     searchRepository = context.read<SearchRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
-    brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang, from: 'brand'));
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    brandChangeNotifier.getBrandsList(lang, 'brand');
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    searchBloc = context.read<SearchBloc>();
     tabController = TabController(initialIndex: 0, length: 2, vsync: this);
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    suggestionChangeNotifier.initializeSuggestion();
     searchController.addListener(_getSuggestion);
     _getSearchHistories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      suggestionChangeNotifier.initializeSuggestion();
       searchNode.requestFocus();
     });
   }
@@ -88,10 +84,12 @@ class _SearchPageState extends State<SearchPage>
     if (searchController.text.isNotEmpty && searchNode.hasFocus) {
       String query = searchController.text;
       await suggestionChangeNotifier?.getSuggestions(query, lang);
+      await suggestionChangeNotifier?.searchProducts(query, lang, [], []);
+      markaaAppChangeNotifier.rebuild();
     } else {
-      if (tabController.index == 0 &&
-          suggestionChangeNotifier.suggestions.isNotEmpty) {
+      if (suggestionChangeNotifier.suggestions.isNotEmpty) {
         suggestionChangeNotifier.initializeSuggestion();
+        markaaAppChangeNotifier.rebuild();
       }
     }
   }
@@ -100,7 +98,7 @@ class _SearchPageState extends State<SearchPage>
     bool isExist = await localStorageRepository.existItem('search_history');
     searchHistory =
         isExist ? await localStorageRepository.getItem('search_history') : [];
-    setState(() {});
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _saveSearchHistory() async {
@@ -110,19 +108,13 @@ class _SearchPageState extends State<SearchPage>
     }
     searchHistory.add(searchController.text);
     await localStorageRepository.setItem('search_history', searchHistory);
-    setState(() {});
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _clearSearchHistory() async {
     searchHistory.clear();
     await localStorageRepository.setItem('search_history', searchHistory);
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    searchBloc.add(SearchInitialized());
-    super.dispose();
+    markaaAppChangeNotifier.rebuild();
   }
 
   @override
@@ -149,55 +141,53 @@ class _SearchPageState extends State<SearchPage>
           ),
         ),
       ),
-      body: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.deviceHeight,
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: () => setState(() {
-                isFiltering = !isFiltering;
-              }),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildSearchField(),
-                    if (!searchNode.hasFocus) ...[
-                      Consumer<MarkaaAppChangeNotifier>(
-                        builder: (_, __, ___) {
-                          return Column(
-                            children: [
-                              _buildTabbar(),
-                              if (tabController.index == 0) ...[
-                                if (!searchNode.hasFocus) ...[_buildResult()]
-                              ] else ...[
-                                _buildBrandResult()
-                              ],
-                              if (!searchNode.hasFocus &&
-                                  searchHistory.isNotEmpty) ...[
-                                _buildSearchHistory()
-                              ],
+      body: Consumer<MarkaaAppChangeNotifier>(
+        builder: (_, __, ___) {
+          return Container(
+            width: pageStyle.deviceWidth,
+            height: pageStyle.deviceHeight,
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: () => setState(() {
+                    isFiltering = !isFiltering;
+                  }),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildSearchField(),
+                        Column(
+                          children: [
+                            _buildTabbar(),
+                            if (tabController.index == 0) ...[
+                              if (!searchNode.hasFocus) ...[_buildResult()]
+                            ] else ...[
+                              _buildBrandResult()
                             ],
-                          );
-                        },
-                      )
-                    ],
-                  ],
+                            if (!searchNode.hasFocus &&
+                                searchHistory.isNotEmpty) ...[
+                              _buildSearchHistory()
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                Consumer<SuggestionChangeNotifier>(
+                  builder: (_, __, ___) {
+                    if (tabController.index == 0 &&
+                        searchNode.hasFocus &&
+                        suggestionChangeNotifier.suggestions.isNotEmpty) {
+                      return _buildSuggestion();
+                    }
+                    return SizedBox.shrink();
+                  },
+                ),
+              ],
             ),
-            Consumer<SuggestionChangeNotifier>(
-              builder: (_, __, ___) {
-                if (tabController.index == 0 &&
-                    searchNode.hasFocus &&
-                    suggestionChangeNotifier.suggestions.isNotEmpty) {
-                  return _buildSuggestion();
-                }
-                return SizedBox.shrink();
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
       bottomNavigationBar: Consumer<MarkaaAppChangeNotifier>(
         builder: (_, __, ___) {
@@ -245,80 +235,94 @@ class _SearchPageState extends State<SearchPage>
           markaaAppChangeNotifier.rebuild();
         },
         tabs: [
-          Row(
-            children: [
-              Text(
-                'search_items_tab_title'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 12,
-                  color:
-                      tabController.index == 0 ? primaryColor : greyDarkColor,
-                ),
-              ),
-              SizedBox(width: pageStyle.unitWidth * 4),
-              Consumer<SuggestionChangeNotifier>(builder: (_, __, ___) {
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: pageStyle.unitWidth * 6,
-                    vertical: pageStyle.unitHeight * 4,
-                  ),
-                  decoration: BoxDecoration(
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 4),
+            child: Row(
+              children: [
+                Text(
+                  'search_items_tab_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
                     color:
                         tabController.index == 0 ? primaryColor : greyDarkColor,
-                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
-                    suggestionChangeNotifier?.searchedProducts?.length
-                            ?.toString() ??
-                        '0',
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 8,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              }),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                'search_brands_tab_title'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 12,
-                  color:
-                      tabController.index == 1 ? primaryColor : greyDarkColor,
                 ),
-              ),
-              SizedBox(width: pageStyle.unitWidth * 4),
-              BlocBuilder<BrandBloc, BrandState>(
-                builder: (context, state) {
-                  List<BrandEntity> brands = [];
-                  if (state is BrandListLoadedSuccess) {
-                    brands = state.brands;
-                  }
+                SizedBox(width: pageStyle.unitWidth * 4),
+                Consumer<SuggestionChangeNotifier>(builder: (_, __, ___) {
                   return Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: pageStyle.unitWidth * 6,
                       vertical: pageStyle.unitHeight * 4,
                     ),
                     decoration: BoxDecoration(
-                      color: tabController.index == 1
+                      color: tabController.index == 0
                           ? primaryColor
                           : greyDarkColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      brands?.length?.toString() ?? '0',
+                      suggestionChangeNotifier?.searchedProducts?.length
+                              ?.toString() ??
+                          '0',
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 8,
                         color: Colors.white,
                       ),
                     ),
                   );
-                },
-              ),
-            ],
+                }),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 4),
+            child: Row(
+              children: [
+                Text(
+                  'search_brands_tab_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                    color:
+                        tabController.index == 1 ? primaryColor : greyDarkColor,
+                  ),
+                ),
+                SizedBox(width: pageStyle.unitWidth * 4),
+                Consumer<BrandChangeNotifier>(
+                  builder: (_, __, ___) {
+                    int count = 0;
+                    for (var brand in brandChangeNotifier.sortedBrandList) {
+                      bool isEmpty = searchController.text.isEmpty;
+                      String searchText = searchController.text.toLowerCase();
+                      String brandLabel =
+                          brand.brandLabel.toString().toLowerCase();
+                      if ((!isEmpty && brandLabel.contains(searchText)) &&
+                          brand.productsCount > 0) {
+                        count += 1;
+                      }
+                    }
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: pageStyle.unitWidth * 6,
+                        vertical: pageStyle.unitHeight * 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: tabController.index == 1
+                            ? primaryColor
+                            : greyDarkColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        count.toString(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: pageStyle.unitFontSize * 8,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -329,48 +333,149 @@ class _SearchPageState extends State<SearchPage>
     return Positioned(
       left: pageStyle.unitWidth * 20,
       right: pageStyle.unitWidth * 20,
-      top: pageStyle.unitHeight * 70,
+      top: pageStyle.unitHeight * 130,
       bottom: 0,
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(pageStyle.unitWidth * 10),
           color: Colors.white,
-          child: Consumer<SuggestionChangeNotifier>(
-            builder: (ctx, notifier, _) {
-              if (notifier.suggestions.isNotEmpty &&
-                  searchController.text.isNotEmpty) {
-                return Column(
-                  children: List.generate(
-                    notifier.suggestions.length,
-                    (index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.pushNamed(
-                              context,
-                              Routes.product,
-                              arguments: notifier.suggestions[index],
-                            ),
-                            child: SearchProductCard(
-                              pageStyle: pageStyle,
-                              product: notifier.suggestions[index],
-                            ),
-                          ),
-                          index < (notifier.suggestions.length - 1)
-                              ? Divider(color: greyColor, thickness: 0.5)
-                              : SizedBox.shrink(),
-                        ],
-                      );
-                    },
-                  ),
-                );
-              }
-              return Container();
-            },
-          ),
+          child: tabController.index == 0
+              ? _buildProductsSuggestion()
+              : _buildBrandsSuggestion(),
         ),
       ),
+    );
+  }
+
+  Widget _buildProductsSuggestion() {
+    return Consumer<SuggestionChangeNotifier>(
+      builder: (ctx, notifier, _) {
+        if (notifier.suggestions.isNotEmpty &&
+            searchController.text.isNotEmpty) {
+          return Column(
+            children: List.generate(
+              notifier.suggestions.length,
+              (index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        Routes.product,
+                        arguments: notifier.suggestions[index],
+                      ),
+                      child: SearchProductCard(
+                        pageStyle: pageStyle,
+                        product: notifier.suggestions[index],
+                      ),
+                    ),
+                    index < (notifier.suggestions.length - 1)
+                        ? Divider(color: greyColor, thickness: 0.5)
+                        : SizedBox.shrink(),
+                  ],
+                );
+              },
+            ),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildBrandsSuggestion() {
+    return Consumer<BrandChangeNotifier>(
+      builder: (_, __, ___) {
+        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
+        int rIndex = 0;
+        return Column(
+          children: List.generate(
+            brands.length,
+            (index) {
+              bool isEmpty = searchController.text.isEmpty;
+              String searchText = searchController.text.toLowerCase();
+              String brandLabel =
+                  brands[index].brandLabel.toString().toLowerCase();
+              if ((!isEmpty && brandLabel.contains(searchText)) &&
+                  brands[index].productsCount > 0) {
+                rIndex += 1;
+                return Column(
+                  children: [
+                    if (rIndex > 1) ...[
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: pageStyle.unitWidth * 20,
+                        ),
+                        child: Divider(color: greyColor),
+                      )
+                    ],
+                    InkWell(
+                      onTap: () {
+                        ProductListArguments arguments = ProductListArguments(
+                          category: CategoryEntity(),
+                          subCategory: [],
+                          brand: brands[index],
+                          selectedSubCategoryIndex: 0,
+                          isFromBrand: true,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productList,
+                          arguments: arguments,
+                        );
+                      },
+                      child: Container(
+                        width: pageStyle.deviceWidth,
+                        height: pageStyle.unitHeight * 50,
+                        margin: EdgeInsets.only(
+                          top: pageStyle.unitHeight * 5,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: pageStyle.unitWidth * 20,
+                        ),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.network(brands[index].brandThumbnail),
+                            Text(
+                              brands[index].brandLabel,
+                              style: mediumTextStyle.copyWith(
+                                color: darkColor,
+                                fontSize: pageStyle.unitFontSize * 12,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'items'.tr().replaceFirst(
+                                      '0', '${brands[index].productsCount}'),
+                                  style: mediumTextStyle.copyWith(
+                                    color: primaryColor,
+                                    fontSize: pageStyle.unitFontSize * 10,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 20,
+                                  color: primaryColor,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -401,7 +506,6 @@ class _SearchPageState extends State<SearchPage>
         onFieldSubmitted: (value) {
           if (value.isNotEmpty) {
             searchNode.unfocus();
-            _searchProducts();
           } else {
             searchNode.requestFocus();
           }
@@ -469,17 +573,9 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildBrandResult() {
-    return BlocBuilder<BrandBloc, BrandState>(
-      builder: (context, state) {
-        List<BrandEntity> brands = [];
-        if (state is BrandListLoadedSuccess) {
-          brands = state.brands;
-        } else {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 100),
-            child: PulseLoadingSpinner(),
-          );
-        }
+    return Consumer<BrandChangeNotifier>(
+      builder: (_, __, ___) {
+        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
         int rIndex = 0;
         return SingleChildScrollView(
           child: Column(
@@ -490,8 +586,7 @@ class _SearchPageState extends State<SearchPage>
                 String searchText = searchController.text.toLowerCase();
                 String brandLabel =
                     brands[index].brandLabel.toString().toLowerCase();
-
-                if ((isEmpty || brandLabel.contains(searchText)) &&
+                if ((!isEmpty && brandLabel.contains(searchText)) &&
                     brands[index].productsCount > 0) {
                   rIndex += 1;
                   return Column(

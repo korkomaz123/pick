@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -12,15 +13,12 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'bloc/category_list/category_list_bloc.dart';
 
 class CategoryListPage extends StatefulWidget {
   const CategoryListPage();
@@ -33,30 +31,20 @@ class _CategoryListPageState extends State<CategoryListPage>
     with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final _refreshController = RefreshController(initialRefresh: false);
   String category;
   int activeIndex;
   List<CategoryEntity> categories = [];
   PageStyle pageStyle;
-  CategoryListBloc categoryListBloc;
-  SnackBarService snackBarService;
+  CategoryChangeNotifier categoryChangeNotifier;
   ProgressService progressService;
 
   @override
   void initState() {
     super.initState();
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
     progressService = ProgressService(context: context);
-    categoryListBloc = context.read<CategoryListBloc>();
-    categoryListBloc.add(CategoryListLoaded(lang: lang));
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    categoryChangeNotifier.getCategoriesList(lang);
   }
-
-  // void _onRefresh() {
-  //   categoryListBloc.add(CategoryListLoaded(lang: lang));
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,43 +62,30 @@ class _CategoryListPageState extends State<CategoryListPage>
       body: Column(
         children: [
           _buildAppBar(),
-          BlocConsumer<CategoryListBloc, CategoryListState>(
-            listener: (context, state) {
-              if (state is CategoryListLoadedSuccess) {
-                _refreshController.refreshCompleted();
-              }
-              if (state is CategoryListLoadedFailure) {
-                _refreshController.refreshCompleted();
-                snackBarService.showErrorSnackBar(state.message);
-              }
-            },
-            builder: (context, state) {
-              if (state is CategoryListLoadedSuccess) {
-                categories = state.categories;
-              }
-              return Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(
-                      categories.length,
-                      (index) => Column(
-                        children: [
-                          Container(
-                            key: activeIndex == index ? dataKey : null,
-                            child: _buildCategoryCard(categories[index]),
-                          ),
-                          activeIndex == index
-                              ? _buildSubcategoriesList(categories[index])
-                              : SizedBox.shrink(),
-                          SizedBox(height: pageStyle.unitHeight * 6),
-                        ],
-                      ),
+          Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
+            categories = categoryChangeNotifier.categories;
+            return Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(
+                    categories.length,
+                    (index) => Column(
+                      children: [
+                        Container(
+                          key: activeIndex == index ? dataKey : null,
+                          child: _buildCategoryCard(categories[index]),
+                        ),
+                        activeIndex == index
+                            ? _buildSubcategoriesList(categories[index])
+                            : SizedBox.shrink(),
+                        SizedBox(height: pageStyle.unitHeight * 6),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          }),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(

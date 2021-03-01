@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
@@ -7,10 +8,7 @@ import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:markaa/src/pages/category_list/bloc/category/category_bloc.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
@@ -27,11 +25,8 @@ import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_addre
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_bloc.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/pages/product_list/bloc/product_list_bloc.dart';
 import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
-import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
@@ -139,7 +134,17 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(
-          create: (context) => CategoryChangeNotifier(),
+          create: (context) => CategoryChangeNotifier(
+            categoryRepository: categoryRepository,
+            brandRepository: brandRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BrandChangeNotifier(
+            brandRepository: brandRepository,
+            localStorageRepository: localStorageRepository,
+          ),
         ),
         ChangeNotifierProvider(
           create: (context) => MyCartChangeNotifier(
@@ -172,27 +177,6 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => CategoryBloc(
-            categoryRepository: categoryRepository,
-            brandRepository: brandRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductBloc(
-            productRepository: productRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => BrandBloc(
-            brandRepository: brandRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductListBloc(
-            productRepository: productRepository,
-          ),
-        ),
-        BlocProvider(
           create: (context) => SettingBloc(
             settingRepository: settingRepository,
           ),
@@ -219,18 +203,8 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => SearchBloc(
-            searchRepository: searchRepository,
-          ),
-        ),
-        BlocProvider(
           create: (context) => CheckoutBloc(
             checkoutRepository: checkoutRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CategoryListBloc(
-            categoryRepository: categoryRepository,
           ),
         ),
         BlocProvider(
