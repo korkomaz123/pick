@@ -16,9 +16,9 @@ class BrandRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getAllBrands(String lang) async {
+  Future<dynamic> getAllBrands(String lang, String from) async {
     String url = EndPoints.getAllBrands;
-    final params = {'lang': lang};
+    final params = {'lang': lang, 'from': from};
     return await Api.getMethod(url, data: params);
   }
 

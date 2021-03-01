@@ -73,7 +73,7 @@ class _HomeRecentState extends State<HomeRecent> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(
-                      recentlyViews.length,
+                      recentlyViews.length > 20 ? 20 : recentlyViews.length,
                       (index) {
                         return Row(
                           children: [

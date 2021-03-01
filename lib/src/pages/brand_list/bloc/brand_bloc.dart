@@ -25,14 +25,17 @@ class BrandBloc extends Bloc<BrandEvent, BrandState> {
     BrandEvent event,
   ) async* {
     if (event is BrandListLoaded) {
-      yield* _mapBrandListLoadedToState(event.lang);
+      yield* _mapBrandListLoadedToState(event.lang, event.from);
     }
   }
 
-  Stream<BrandState> _mapBrandListLoadedToState(String lang) async* {
+  Stream<BrandState> _mapBrandListLoadedToState(
+    String lang,
+    String from,
+  ) async* {
     yield BrandListLoadedInProcess();
     try {
-      String key = 'brands-$lang';
+      String key = 'brands-$lang-$from';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         List<dynamic> brandList = await localStorageRepository.getItem(key);
@@ -42,7 +45,7 @@ class BrandBloc extends Bloc<BrandEvent, BrandState> {
         }
         yield BrandListLoadedSuccess(brands: brands);
       }
-      final result = await _brandRepository.getAllBrands(lang);
+      final result = await _brandRepository.getAllBrands(lang, from);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['brand']);
         List<dynamic> brandList = result['brand'];

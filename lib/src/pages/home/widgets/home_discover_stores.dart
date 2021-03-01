@@ -31,7 +31,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   void initState() {
     super.initState();
     brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang));
+    brandBloc.add(BrandListLoaded(lang: lang, from: 'home'));
   }
 
   @override
@@ -81,6 +81,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildStoresSlider() {
+    int length = brands.length > 20 ? 20 : brands.length;
     return Expanded(
       child: Stack(
         children: [
@@ -88,7 +89,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 380,
             child: Swiper(
-              itemCount: brands.length > 10 ? 10 : brands.length,
+              itemCount: length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -138,8 +139,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 bottom: widget.pageStyle.unitHeight * 20,
               ),
               child: SmoothIndicator(
-                offset: activeIndex.toDouble(),
-                count: brands.length > 10 ? 10 : brands.length,
+                offset: (activeIndex / 2).floor().toDouble(),
+                count: (length / 2).ceil(),
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

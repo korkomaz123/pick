@@ -35,6 +35,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state.bestDealsBanners.isNotEmpty) {
+          final banner = state.bestDealsBanners[0];
           return Container(
             width: widget.pageStyle.deviceWidth,
             color: Colors.white,
@@ -55,50 +56,27 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                     ),
                   ),
                 ),
-                Container(
-                  width: widget.pageStyle.deviceWidth,
-                  height: widget.pageStyle.deviceWidth * 373 / 1125,
-                  child: Swiper(
-                    itemCount: state.bestDealsBanners.length,
-                    autoplay: false,
-                    curve: Curves.easeInOutCubic,
-                    loop: false,
-                    itemBuilder: (context, index) {
-                      SliderImageEntity banner = state.bestDealsBanners[index];
-                      return InkWell(
-                        onTap: () {
-                          if (banner.categoryId != null) {
-                            final arguments = ProductListArguments(
-                              category: CategoryEntity(
-                                id: banner.categoryId,
-                                name: banner.categoryName,
-                              ),
-                              brand: BrandEntity(),
-                              subCategory: [],
-                              selectedSubCategoryIndex: 0,
-                              isFromBrand: false,
-                            );
-                            Navigator.pushNamed(
-                              context,
-                              Routes.productList,
-                              arguments: arguments,
-                            );
-                          }
-                        },
-                        child: Container(
-                          width: widget.pageStyle.deviceWidth,
-                          height: widget.pageStyle.deviceWidth * 373 / 1125,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: NetworkImage(banner.bannerImage),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
+                InkWell(
+                  onTap: () {
+                    if (banner.categoryId != null) {
+                      final arguments = ProductListArguments(
+                        category: CategoryEntity(
+                          id: banner.categoryId,
+                          name: banner.categoryName,
                         ),
+                        brand: BrandEntity(),
+                        subCategory: [],
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: false,
                       );
-                    },
-                  ),
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Image.network(banner.bannerImage),
                 ),
               ],
             ),

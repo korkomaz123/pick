@@ -284,5 +284,6 @@
     "login_with": "دخول عن طريق",
     "call_us": "اتصل بنا",
     "discount": "خصم",
-    "incorrect_coupon_code": "نأسف، كود الكوبون غير صحيح"
+    "incorrect_coupon_code": "نأسف، كود الكوبون غير صحيح",
+    "continue_as_guest": "المتابعة كضيف"
 }

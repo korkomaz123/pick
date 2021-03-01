@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage>
     searchRepository = context.read<SearchRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
     brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang));
+    brandBloc.add(BrandListLoaded(lang: lang, from: 'brand'));
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
@@ -78,7 +78,6 @@ class _SearchPageState extends State<SearchPage>
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     suggestionChangeNotifier.initializeSuggestion();
     searchController.addListener(_getSuggestion);
-
     _getSearchHistories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       searchNode.requestFocus();
@@ -86,7 +85,6 @@ class _SearchPageState extends State<SearchPage>
   }
 
   void _getSuggestion() async {
-    print('suggestion');
     if (searchController.text.isNotEmpty && searchNode.hasFocus) {
       String query = searchController.text;
       await suggestionChangeNotifier?.getSuggestions(query, lang);
@@ -221,7 +219,6 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildTabbar() {
-    print('tabbar');
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
@@ -248,8 +245,81 @@ class _SearchPageState extends State<SearchPage>
           markaaAppChangeNotifier.rebuild();
         },
         tabs: [
-          Tab(text: 'search_items_tab_title'.tr()),
-          Tab(text: 'search_brands_tab_title'.tr()),
+          Row(
+            children: [
+              Text(
+                'search_items_tab_title'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 12,
+                  color:
+                      tabController.index == 0 ? primaryColor : greyDarkColor,
+                ),
+              ),
+              SizedBox(width: pageStyle.unitWidth * 4),
+              Consumer<SuggestionChangeNotifier>(builder: (_, __, ___) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: pageStyle.unitWidth * 6,
+                    vertical: pageStyle.unitHeight * 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        tabController.index == 0 ? primaryColor : greyDarkColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    suggestionChangeNotifier?.searchedProducts?.length
+                            ?.toString() ??
+                        '0',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 8,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'search_brands_tab_title'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 12,
+                  color:
+                      tabController.index == 1 ? primaryColor : greyDarkColor,
+                ),
+              ),
+              SizedBox(width: pageStyle.unitWidth * 4),
+              BlocBuilder<BrandBloc, BrandState>(
+                builder: (context, state) {
+                  List<BrandEntity> brands = [];
+                  if (state is BrandListLoadedSuccess) {
+                    brands = state.brands;
+                  }
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: pageStyle.unitWidth * 6,
+                      vertical: pageStyle.unitHeight * 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: tabController.index == 1
+                          ? primaryColor
+                          : greyDarkColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      brands?.length?.toString() ?? '0',
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 8,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );

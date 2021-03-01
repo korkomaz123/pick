@@ -286,5 +286,6 @@
     "login_with": "LOGIN WITH",
     "call_us": "Call Us",
     "discount": "Discount",
-    "incorrect_coupon_code": "Sorry, coupon Code Is not correct"
+    "incorrect_coupon_code": "Sorry, coupon Code Is not correct",
+    "continue_as_guest": "CONTINUE AS GUEST"
 }

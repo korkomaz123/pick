@@ -45,7 +45,7 @@ class _BrandListPageState extends State<BrandListPage> {
     );
     progressService = ProgressService(context: context);
     brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang));
+    brandBloc.add(BrandListLoaded(lang: lang, from: 'brand'));
   }
 
   void _onRefresh() async {
@@ -72,14 +72,7 @@ class _BrandListPageState extends State<BrandListPage> {
           _buildAppBar(),
           BlocConsumer<BrandBloc, BrandState>(
             listener: (context, state) {
-              // if (state is BrandListLoadedInProcess) {
-              //   progressService.showProgress();
-              // }
-              // if (state is BrandListLoadedSuccess) {
-              //   progressService.hideProgress();
-              // }
               if (state is BrandListLoadedFailure) {
-                // progressService.hideProgress();
                 snackBarService.showErrorSnackBar(state.message);
               }
             },

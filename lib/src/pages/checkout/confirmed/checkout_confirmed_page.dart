@@ -1,6 +1,7 @@
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -89,7 +90,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                   ),
                 ),
               ),
-              _buildShowAllMyOrderedButton(),
+              if (user?.token != null) ...[_buildShowAllMyOrderedButton()],
               Text(
                 'checkout_ordered_success_account_title'.tr(),
                 style: mediumTextStyle.copyWith(

@@ -373,6 +373,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       myCartChangeNotifier.initializeReorderCart();
     } else {
       myCartChangeNotifier.initialize();
+      if (user?.token == null) {
+        await localStorageRepo.removeItem('cartId');
+      }
       await myCartChangeNotifier.getCartId();
     }
     Navigator.pushNamedAndRemoveUntil(

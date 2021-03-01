@@ -11,6 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
@@ -142,12 +143,15 @@ class _MyCartQuickAccessLoginDialogState
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: pageStyle.unitFontSize * 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: pageStyle.unitHeight * 10),
               _buildSocialSignInButtons(),
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildAuthChoice(),
+              SizedBox(height: pageStyle.unitHeight * 20),
+              _buildContinueAsGuest(),
             ],
           ),
         ),
@@ -248,6 +252,25 @@ class _MyCartQuickAccessLoginDialogState
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildContinueAsGuest() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
+      child: MarkaaTextButton(
+        title: 'continue_as_guest'.tr(),
+        titleColor: Colors.white70,
+        titleSize: pageStyle.unitFontSize * 16,
+        buttonColor: primarySwatchColor,
+        borderColor: Colors.white70,
+        radius: pageStyle.unitFontSize * 10,
+        onPressed: () {
+          widget.onClose();
+          Navigator.pushNamed(context, Routes.checkoutGuestAddress);
+        },
       ),
     );
   }

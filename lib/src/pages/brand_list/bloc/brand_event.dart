@@ -9,9 +9,10 @@ abstract class BrandEvent extends Equatable {
 
 class BrandListLoaded extends BrandEvent {
   final String lang;
+  final String from;
 
-  BrandListLoaded({this.lang});
+  BrandListLoaded({this.lang, this.from});
 
   @override
-  List<Object> get props => [lang];
+  List<Object> get props => [lang, from];
 }

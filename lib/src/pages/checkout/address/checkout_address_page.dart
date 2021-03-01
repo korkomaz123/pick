@@ -55,13 +55,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.reorder != null) {
-      shippingMethodId = widget.reorder.shippingMethod.id;
-      serviceFees = widget.reorder.shippingMethod.serviceFees;
-    } else {
-      shippingMethodId = shippingMethods[0].id;
-      serviceFees = shippingMethods[0].serviceFees;
-    }
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
     shippingAddressBloc = context.read<ShippingAddressBloc>();
     localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -320,7 +315,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     return Container(
       width: pageStyle.unitWidth * 210,
       child: MarkaaTextButton(
-        title: 'checkout_continue_shipping_button_title'.tr(),
+        title: 'checkout_continue_payment_button_title'.tr(),
         titleSize: pageStyle.unitFontSize * 12,
         titleColor: Colors.white,
         buttonColor: primaryColor,

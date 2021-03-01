@@ -44,6 +44,7 @@ class Routes {
   /// checkout
   static const String searchAddress = '/search-address';
   static const String checkoutAddress = '/checkout-address';
+  static const String checkoutGuestAddress = '/checkout-guest-address';
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
   static const String checkoutPayment = '/checkout-payment';

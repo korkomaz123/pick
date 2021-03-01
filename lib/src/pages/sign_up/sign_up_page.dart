@@ -65,6 +65,11 @@ class _SignUpPageState extends State<SignUpPage> {
       token: user.token,
       lang: lang,
     ));
+    progressService.hideProgress();
+    Navigator.pop(context);
+    if (!widget.isFromCheckout) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -79,12 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
             progressService.showProgress();
           }
           if (state is SignUpSubmittedSuccess) {
-            progressService.hideProgress();
             _saveToken(state.user);
-            Navigator.pop(context);
-            if (!widget.isFromCheckout) {
-              Navigator.pop(context);
-            }
           }
           if (state is SignUpSubmittedFailure) {
             progressService.hideProgress();
