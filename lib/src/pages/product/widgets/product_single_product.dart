@@ -287,14 +287,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 width: widget.pageStyle.deviceWidth,
                 height: pageStyle.unitHeight * 400,
                 fit: BoxFit.fitHeight,
-                loadingBuilder: (_, child, chunkEvent) {
-                  if (chunkEvent != null) {
-                    return Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                    );
-                  }
-                  return child;
-                },
               ),
             )
           : Swiper(
@@ -320,14 +312,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     width: pageStyle.deviceWidth,
                     height: pageStyle.unitHeight * 400,
                     fit: BoxFit.fitHeight,
-                    loadingBuilder: (_, child, chunkEvent) {
-                      if (chunkEvent != null) {
-                        return Image.asset(
-                          'lib/public/images/loading/image_loading.jpg',
-                        );
-                      }
-                      return child;
-                    },
                   ),
                 );
               },

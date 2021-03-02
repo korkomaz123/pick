@@ -48,6 +48,8 @@ class _SignInPageState extends State<SignInPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode emailNode = FocusNode();
+  FocusNode passNode = FocusNode();
   bool isShowPass = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
@@ -216,6 +218,9 @@ class _SignInPageState extends State<SignInPage> {
           return null;
         },
         keyboardType: TextInputType.emailAddress,
+        focusNode: emailNode,
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () => passNode.requestFocus(),
         decoration: InputDecoration(
           hintText: 'email'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -266,6 +271,12 @@ class _SignInPageState extends State<SignInPage> {
             return 'short_length_password'.tr();
           }
           return null;
+        },
+        focusNode: passNode,
+        textInputAction: TextInputAction.done,
+        onEditingComplete: () {
+          passNode.unfocus();
+          _signIn();
         },
         decoration: InputDecoration(
           hintText: 'password'.tr(),

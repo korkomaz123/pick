@@ -35,6 +35,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(homeIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_home'.tr(),
             style: mediumTextStyle.copyWith(
@@ -53,6 +54,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(categoryIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_category'.tr(),
             style: mediumTextStyle.copyWith(
@@ -71,6 +73,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(storeIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'brands_title'.tr(),
             style: mediumTextStyle.copyWith(
@@ -109,6 +112,7 @@ class MarkaaBottomBar extends StatelessWidget {
               );
             },
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_wishlist'.tr(),
             style: mediumTextStyle.copyWith(
@@ -147,6 +151,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(userIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_account'.tr(),
             style: mediumTextStyle.copyWith(
@@ -172,36 +177,40 @@ class MarkaaBottomBar extends StatelessWidget {
         );
         break;
       case 1:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.categoryList,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.brandList,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
         if (user?.token != null) {
-          Navigator.popUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
+            Routes.wishlist,
             (route) => route.settings.name == Routes.home,
           );
-          Navigator.pushNamed(context, Routes.wishlist);
         } else {
-          Navigator.pushNamed(context, Routes.signIn);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.signIn,
+            (route) => route.settings.name == Routes.home,
+          );
         }
         break;
       case 4:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.account,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.account);
         break;
       default:
         Navigator.popUntil(

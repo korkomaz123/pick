@@ -54,7 +54,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController countryController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController postCodeController = TextEditingController();
@@ -62,7 +61,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController companyController = TextEditingController();
-  FocusNode titleNode = FocusNode();
   FocusNode firstNameNode = FocusNode();
   FocusNode lastNameNode = FocusNode();
   FocusNode countryNode = FocusNode();
@@ -105,7 +103,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       companyController.text = address['company'];
       postCodeController.text = address['postcode'];
       phoneNumberController.text = address['telephone'];
-      titleController.text = address['prefix'];
       setState(() {});
     }
   }
@@ -169,16 +166,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
             children: [
               Column(
                 children: [
-                  MarkaaTextInput(
-                    controller: titleController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
-                    hint: 'address_title'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                  ),
                   MarkaaTextInput(
                     controller: firstNameController,
                     width: pageStyle.deviceWidth,
@@ -451,7 +438,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
         'postcode': postCodeController.text,
         'telephone': phoneNumberController.text,
         'save_in_address_book': '0',
-        'prefix': titleController.text,
+        'prefix': '',
       };
       localStorageRepository.setItem('guest_address', address);
       orderDetails['orderAddress'] = jsonEncode(address);

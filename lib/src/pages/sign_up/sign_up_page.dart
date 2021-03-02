@@ -35,6 +35,10 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode firstnameNode = FocusNode();
+  FocusNode lastnameNode = FocusNode();
+  FocusNode emailNode = FocusNode();
+  FocusNode passNode = FocusNode();
   bool agreeTerms = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
@@ -157,6 +161,9 @@ class _SignUpPageState extends State<SignUpPage> {
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        focusNode: firstnameNode,
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () => lastnameNode.requestFocus(),
         decoration: InputDecoration(
           hintText: 'first_name'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -201,6 +208,9 @@ class _SignUpPageState extends State<SignUpPage> {
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        focusNode: lastnameNode,
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () => emailNode.requestFocus(),
         decoration: InputDecoration(
           hintText: 'last_name'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -245,6 +255,9 @@ class _SignUpPageState extends State<SignUpPage> {
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        focusNode: emailNode,
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () => passNode.requestFocus(),
         decoration: InputDecoration(
           hintText: 'email_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -296,6 +309,9 @@ class _SignUpPageState extends State<SignUpPage> {
           color: Colors.white,
           fontSize: pageStyle.unitFontSize * 15,
         ),
+        focusNode: passNode,
+        textInputAction: TextInputAction.done,
+        onEditingComplete: () => passNode.unfocus(),
         decoration: InputDecoration(
           hintText: 'password_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(

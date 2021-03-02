@@ -64,14 +64,16 @@ class RouteGenerator {
         );
       case Routes.forgotPassword:
         return CupertinoPageRoute(
-          builder: (context) =>
-              ForgotPasswordPage(isFromCheckout: params ?? false),
+          builder: (context) => ForgotPasswordPage(
+            isFromCheckout: params ?? false,
+          ),
           settings: RouteSettings(name: Routes.forgotPassword),
         );
       case Routes.home:
-        return CupertinoPageRoute(
-          builder: (context) => HomePage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.home),
+          pageBuilder: (_, __, ___) => HomePage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.productList:
         return CupertinoPageRoute(
@@ -79,14 +81,16 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.productList),
         );
       case Routes.categoryList:
-        return CupertinoPageRoute(
-          builder: (context) => CategoryListPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.categoryList),
+          pageBuilder: (_, __, ___) => CategoryListPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.brandList:
-        return CupertinoPageRoute(
-          builder: (context) => BrandListPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.brandList),
+          pageBuilder: (_, __, ___) => BrandListPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.filter:
         return CupertinoPageRoute(
@@ -147,9 +151,10 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.search),
         );
       case Routes.account:
-        return CupertinoPageRoute(
-          builder: (context) => AccountPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.account),
+          pageBuilder: (_, __, ___) => AccountPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.updateProfile:
         return CupertinoPageRoute(
@@ -157,9 +162,10 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.updateProfile),
         );
       case Routes.wishlist:
-        return CupertinoPageRoute(
-          builder: (context) => WishlistPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.wishlist),
+          pageBuilder: (_, __, ___) => WishlistPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.orderHistory:
         return CupertinoPageRoute(
