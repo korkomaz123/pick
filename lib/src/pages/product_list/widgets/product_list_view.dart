@@ -96,11 +96,13 @@ class _ProductListViewState extends State<ProductListView>
       if (widget.viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[widget.activeIndex].id,
+          lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.brand) {
         await productChangeNotifier.initialLoadBrandProducts(
           brand.optionId,
           subCategories[widget.activeIndex].id,
+          lang,
         );
       }
       filterBloc.add(FilterAttributesLoaded(
@@ -118,23 +120,27 @@ class _ProductListViewState extends State<ProductListView>
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       await productChangeNotifier.refreshBrandProducts(
         brand.optionId,
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier.refreshSortedProducts(
         brand.optionId ?? '',
         (subCategories[tabController.index].id ?? ''),
         widget.sortByItem,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       await productChangeNotifier.refreshFilteredProducts(
         brand.optionId,
         subCategories[tabController.index].id,
         widget.filterValues,
+        lang,
       );
     }
     _refreshController.refreshCompleted();
@@ -148,6 +154,7 @@ class _ProductListViewState extends State<ProductListView>
       await productChangeNotifier.loadMoreCategoryProducts(
         page,
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       page = productChangeNotifier
@@ -157,6 +164,7 @@ class _ProductListViewState extends State<ProductListView>
         page,
         brand.optionId ?? '',
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       page = productChangeNotifier.pages[widget.sortByItem +
@@ -170,6 +178,7 @@ class _ProductListViewState extends State<ProductListView>
         brand.optionId,
         subCategories[tabController.index].id,
         widget.sortByItem,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       page = productChangeNotifier.pages['filter_' +
@@ -182,6 +191,7 @@ class _ProductListViewState extends State<ProductListView>
         brand.optionId,
         subCategories[tabController.index].id,
         widget.filterValues,
+        lang,
       );
     }
     _refreshController.loadComplete();
@@ -211,7 +221,7 @@ class _ProductListViewState extends State<ProductListView>
                     if (mode == LoadStatus.loading) {
                       return RippleLoadingSpinner();
                     } else if (mode == LoadStatus.noMore) {
-                      if (page != null && page > 0) {
+                      if (page != null && page > 1) {
                         return Container(
                           width: pageStyle.deviceWidth,
                           alignment: Alignment.center,

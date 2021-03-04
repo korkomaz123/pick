@@ -341,6 +341,7 @@ class _ProductListPageState extends State<ProductListPage> {
           brand.optionId,
           subCategories[activeSubcategoryIndex].id,
           filterValues,
+          lang,
         );
       });
     }
@@ -379,17 +380,20 @@ class _ProductListPageState extends State<ProductListPage> {
         if (viewMode == ProductViewModeEnum.category) {
           await productChangeNotifier.initialLoadCategoryProducts(
             subCategories[activeSubcategoryIndex].id,
+            lang,
           );
         } else if (viewMode == ProductViewModeEnum.brand) {
           await productChangeNotifier.initialLoadBrandProducts(
             brand.optionId,
             subCategories[activeSubcategoryIndex].id,
+            lang,
           );
         } else {
           await productChangeNotifier.initialLoadSortedProducts(
             brand.optionId ?? '',
             subCategories[activeSubcategoryIndex].id,
             sortByItem,
+            lang,
           );
         }
       });
@@ -408,11 +412,13 @@ class _ProductListPageState extends State<ProductListPage> {
       if (viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[index].id,
+          lang,
         );
       } else if (viewMode == ProductViewModeEnum.brand) {
         await productChangeNotifier.initialLoadBrandProducts(
           brand.optionId,
           subCategories[index].id,
+          lang,
         );
       }
       filterValues = {};

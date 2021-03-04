@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -66,6 +67,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
     flushBarService = FlushBarService(context: context);
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    _initFavorite();
+    _initAnimation();
+  }
+
+  @override
+  void didChangeDependencies() {
     if (productEntity.gallery.isNotEmpty) {
       for (int i = 0; i < productEntity.gallery.length; i++) {
         preCachedImages.add(Image.network(
@@ -73,15 +80,19 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           width: widget.pageStyle.deviceWidth,
           height: pageStyle.unitHeight * 400,
           fit: BoxFit.fitHeight,
+          loadingBuilder: (_, child, chunk) {
+            if (chunk != null) {
+              return Center(
+                child: CupertinoActivityIndicator(
+                  radius: pageStyle.unitWidth * 30,
+                ),
+              );
+            }
+            return child;
+          },
         ));
       }
     }
-    _initFavorite();
-    _initAnimation();
-  }
-
-  @override
-  void didChangeDependencies() {
     if (preCachedImages.isNotEmpty) {
       for (var item in preCachedImages) {
         precacheImage(item.image, context);
@@ -130,6 +141,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         children: [
           if (preCachedImages.isNotEmpty) ...[
             _buildImageCarousel()
+          ] else if (productEntity.gallery.isNotEmpty) ...[
+            Container(
+              width: double.infinity,
+              height: pageStyle.unitHeight * 460,
+              alignment: Alignment.center,
+              color: Colors.white,
+              child: CupertinoActivityIndicator(
+                radius: pageStyle.unitWidth * 30,
+              ),
+            ),
           ] else ...[
             Container(
               width: double.infinity,
@@ -403,15 +424,31 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               color: primaryColor,
             ),
           ),
-          Text(
-            productEntity.price != null
-                ? productEntity.price + ' ' + 'currency'.tr()
-                : '',
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 16,
-              color: greyColor,
-              fontWeight: FontWeight.w700,
-            ),
+          Row(
+            children: [
+              Text(
+                productEntity.price != null
+                    ? productEntity.price
+                    : widget?.model?.selectedVariant?.price != null
+                        ? widget.model.selectedVariant.price
+                        : '',
+                style: mediumTextStyle.copyWith(
+                  fontSize: pageStyle.unitFontSize * 20,
+                  color: greyColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (productEntity.price != null ||
+                  widget?.model?.selectedVariant?.price != null) ...[
+                Text(
+                  'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 12,
+                    color: greyColor,
+                  ),
+                )
+              ],
+            ],
           ),
         ],
       ),
@@ -425,8 +462,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
       return;
     }
-    if (model?.selectedVariant?.stockQty == null ||
-        model.selectedVariant.stockQty == 0) {
+    if (model.productDetails.typeId == 'configurable' &&
+        (model?.selectedVariant?.stockQty == null ||
+            model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }

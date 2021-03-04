@@ -93,10 +93,17 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
                   arguments: arguments,
                 );
               } else if (banner?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: banner.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
                 Navigator.pushNamed(
                   context,
-                  Routes.brandList,
-                  arguments: banner.brand,
+                  Routes.productList,
+                  arguments: arguments,
                 );
               }
             },

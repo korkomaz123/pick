@@ -235,7 +235,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                       }
                       return null;
                     },
-                    inputType: TextInputType.phone,
+                    inputType: TextInputType.emailAddress,
                   ),
                   _buildSearchingAddressButton(),
                   MarkaaCountryInput(

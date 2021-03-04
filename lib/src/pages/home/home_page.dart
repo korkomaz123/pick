@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -59,6 +60,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   Timer timerLink;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  ProductChangeNotifier productChangeNotifier;
 
   @override
   void initState() {
@@ -67,8 +69,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeBloc = context.read<HomeBloc>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    productChangeNotifier = context.read<ProductChangeNotifier>();
     localStorageRepository = context.read<LocalStorageRepository>();
     settingRepository = context.read<SettingRepository>();
+    productChangeNotifier.initialize();
     _initializeLocalNotification();
     _configureMessaging();
     _subscribeToTopic();

@@ -50,7 +50,7 @@ class SliderImageEntity {
         isActive = json['is_active'],
         categoryId = json['category_id'],
         categoryName = json['category_name'],
-        brand = json.containsKey('brandId') && json['brand_id'] != null
+        brand = json.containsKey('brand_id') && json['brand_id'] != null
             ? BrandEntity(
                 optionId: json['brand_id'],
                 brandThumbnail: json['brand_thumbnail'],

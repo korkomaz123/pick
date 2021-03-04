@@ -231,6 +231,9 @@ class _SearchPageState extends State<SearchPage>
         ),
         onTap: (index) {
           tabController.index = index;
+          if (searchNode.hasFocus) {
+            searchNode.unfocus();
+          }
           markaaAppChangeNotifier.rebuild();
         },
         tabs: [
@@ -332,7 +335,7 @@ class _SearchPageState extends State<SearchPage>
     return Positioned(
       left: pageStyle.unitWidth * 20,
       right: pageStyle.unitWidth * 20,
-      top: pageStyle.unitHeight * 130,
+      top: pageStyle.unitHeight * 135,
       bottom: 0,
       child: SingleChildScrollView(
         child: Container(

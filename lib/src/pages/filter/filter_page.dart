@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -7,6 +8,7 @@ import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -49,9 +51,9 @@ class _FilterPageState extends State<FilterPage> {
   List<dynamic> genderList = [];
   Map<String, dynamic> price = {};
   Map<String, dynamic> selectedValues;
-  // FilterBloc filterBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
+  MarkaaAppChangeNotifier model;
 
   @override
   void initState() {
@@ -61,14 +63,9 @@ class _FilterPageState extends State<FilterPage> {
     selectedCategories = widget.selectedCategories ?? [];
     selectedGenders = widget.selectedGenders ?? [];
     selectedValues = widget.selectedValues ?? {};
-    // filterBloc = context.read<FilterBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    // filterBloc.add(FilterAttributesLoaded(
-    //   categoryId: widget.categoryId == 'all' ? null : widget.categoryId,
-    //   brandId: widget.brandId,
-    //   lang: lang,
-    // ));
+    model = context.read<MarkaaAppChangeNotifier>();
   }
 
   void _setSelectedValues(Map<String, dynamic> availableFilters) {
@@ -154,22 +151,28 @@ class _FilterPageState extends State<FilterPage> {
                   : {'min': .0, 'max': .0};
               minPrice = minPrice ?? price['min'] + .0;
               maxPrice = maxPrice ?? price['max'] + .0;
-              print(minPrice);
-              print(maxPrice);
               return Column(
                 children: [
                   _buildCategories(),
                   if (price.keys.toList().length > 0) ...[_buildPriceRange()],
                   if (genderList.isNotEmpty) ...[_buildGender()],
-                  Column(
-                    children: filters.keys.map((key) {
-                      String code = filters[key]['attribute_code'];
-                      return ['price', 'gender', 'rating', 'cat', 'new', 'sale']
-                              .contains(code)
-                          ? SizedBox.shrink()
-                          : _buildFilterOption(key, filters[key]);
-                    }).toList(),
-                  ),
+                  Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
+                    return Column(
+                      children: filters.keys.map((key) {
+                        String code = filters[key]['attribute_code'];
+                        return [
+                          'price',
+                          'gender',
+                          'rating',
+                          'cat',
+                          'new',
+                          'sale'
+                        ].contains(code)
+                            ? SizedBox.shrink()
+                            : _buildFilterOption(key, filters[key]);
+                      }).toList(),
+                    );
+                  }),
                 ],
               );
             } else {
@@ -323,13 +326,31 @@ class _FilterPageState extends State<FilterPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 20,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              children: [
+                Container(
+                  width: pageStyle.unitWidth * 8,
+                  height: pageStyle.unitWidth * 8,
+                  decoration: BoxDecoration(
+                    color: !selectedValues
+                                .containsKey(filterOption['attribute_code']) ||
+                            selectedValues[filterOption['attribute_code']]
+                                .isEmpty
+                        ? Colors.white
+                        : Colors.greenAccent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                SizedBox(width: pageStyle.unitWidth * 2),
+                Text(
+                  title,
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
             Icon(
               Icons.arrow_forward_ios,
@@ -379,6 +400,7 @@ class _FilterPageState extends State<FilterPage> {
     );
     if (result != null) {
       selectedValues[option['attribute_code']] = result;
+      model.rebuild();
     }
   }
 

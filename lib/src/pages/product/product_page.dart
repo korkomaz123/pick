@@ -280,8 +280,9 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
       return;
     }
-    if (model?.selectedVariant?.stockQty == null ||
-        model.selectedVariant.stockQty == 0) {
+    if (model.productDetails.typeId == 'configurable' &&
+        (model?.selectedVariant?.stockQty == null ||
+            model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
@@ -301,8 +302,9 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
       return;
     }
-    if (model?.selectedVariant?.stockQty == null ||
-        model.selectedVariant.stockQty == 0) {
+    if (model.productDetails.typeId == 'configurable' &&
+        (model?.selectedVariant?.stockQty == null ||
+            model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
