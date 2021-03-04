@@ -184,7 +184,7 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddToCart(ProductModel product) async {
     await wishlistChangeNotifier.removeItemFromWishlist(
         user.token, product.productId);
-    await myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang);
+    await myCartChangeNotifier
+        .addProductToCart(context, pageStyle, product, 1, lang, {});
   }
 }

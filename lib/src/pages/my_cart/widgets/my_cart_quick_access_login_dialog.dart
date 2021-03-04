@@ -76,10 +76,11 @@ class _MyCartQuickAccessLoginDialogState
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await localRepo.setToken(user.token);
-      await _transferCartItems();
-      await _loadCustomerCartItems();
+      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier.transferCartItems();
+      await myCartChangeNotifier.getCartItems(lang);
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await _shippingAddresses();
       await settingRepo.updateFcmDeviceToken(
         user.token,
@@ -112,15 +113,6 @@ class _MyCartQuickAccessLoginDialogState
         }
       }
     }
-  }
-
-  Future<void> _transferCartItems() async {
-    await myCartChangeNotifier.getCartId();
-    await myCartChangeNotifier.transferCartItems();
-  }
-
-  Future<void> _loadCustomerCartItems() async {
-    await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override

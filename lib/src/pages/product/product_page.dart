@@ -35,6 +35,7 @@ import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
 import 'widgets/product_review.dart';
 import 'widgets/product_review_total.dart';
+import 'widgets/product_configurable_options.dart';
 
 class ProductPage extends StatefulWidget {
   final Object arguments;
@@ -142,8 +143,9 @@ class _ProductPageState extends State<ProductPage>
       body: Consumer<ProductChangeNotifier>(
         builder: (_, model, ___) {
           if (model.productDetails != null) {
-            isStock = model.productDetails.stockQty != null &&
-                model.productDetails.stockQty > 0;
+            isStock = model.productDetails.typeId == 'configurable' ||
+                (model.productDetails.stockQty != null &&
+                    model.productDetails.stockQty > 0);
             return Stack(
               children: [
                 SmartRefresher(
@@ -160,7 +162,14 @@ class _ProductPageState extends State<ProductPage>
                           pageStyle: pageStyle,
                           product: product,
                           productEntity: model.productDetails,
+                          model: model,
                         ),
+                        if (model.productDetails.typeId == 'configurable') ...[
+                          ProductConfigurableOptions(
+                            productEntity: model.productDetails,
+                            pageStyle: pageStyle,
+                          )
+                        ],
                         ProductReviewTotal(
                           pageStyle: pageStyle,
                           product: model.productDetails,
@@ -193,7 +202,7 @@ class _ProductPageState extends State<ProductPage>
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: _buildToolbar(),
+                  child: _buildToolbar(model),
                 ),
               ],
             );
@@ -209,7 +218,7 @@ class _ProductPageState extends State<ProductPage>
     );
   }
 
-  Widget _buildToolbar() {
+  Widget _buildToolbar(ProductChangeNotifier model) {
     return Container(
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 60,
@@ -227,7 +236,7 @@ class _ProductPageState extends State<ProductPage>
                 buttonColor: Color(0xFFFF8B00),
                 borderColor: Colors.transparent,
                 radius: 1,
-                onPressed: () => _onBuyNow(),
+                onPressed: () => _onBuyNow(model),
                 isBold: true,
               ),
             )
@@ -253,7 +262,7 @@ class _ProductPageState extends State<ProductPage>
                   ),
                 ),
               ),
-              onTap: () => _onAddToCart(),
+              onTap: () => _onAddToCart(model),
               radius: 1,
             )
           ] else ...[
@@ -264,19 +273,41 @@ class _ProductPageState extends State<ProductPage>
     );
   }
 
-  void _onAddToCart() async {
+  void _onAddToCart(ProductChangeNotifier model) async {
+    if (model.productDetails.typeId == 'configurable' &&
+        model.selectedOptions.keys.toList().length !=
+            model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      return;
+    }
+    if (model?.selectedVariant?.stockQty == null ||
+        model.selectedVariant.stockQty == 0) {
+      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      return;
+    }
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
     await myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang);
+        context, pageStyle, product, 1, lang, model.selectedOptions);
   }
 
-  void _onBuyNow() async {
+  void _onBuyNow(ProductChangeNotifier model) async {
+    if (model.productDetails.typeId == 'configurable' &&
+        model.selectedOptions.keys.toList().length !=
+            model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      return;
+    }
+    if (model?.selectedVariant?.stockQty == null ||
+        model.selectedVariant.stockQty == 0) {
+      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      return;
+    }
     await myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang);
+        context, pageStyle, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
   }
 

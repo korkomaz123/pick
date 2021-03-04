@@ -200,7 +200,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
-                    readOnly: true,
                   ),
                   MarkaaTextInput(
                     controller: lastNameController,
@@ -211,7 +210,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
-                    readOnly: true,
                   ),
                   MarkaaTextInput(
                     controller: phoneNumberController,
@@ -229,7 +227,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'email'.tr(),
-                    readOnly: true,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'required_field'.tr();

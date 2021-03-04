@@ -3,6 +3,7 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
@@ -26,7 +27,6 @@ import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dar
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
@@ -157,6 +157,11 @@ class MarkaaApp extends StatelessWidget {
             wishlistRepository: wishlistRepository,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ProductReviewChangeNotifier(
+            productRepository: productRepository,
+          ),
+        ),
       ],
       child: _buildMultiBlocProvider(),
     );
@@ -205,11 +210,6 @@ class MarkaaApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CheckoutBloc(
             checkoutRepository: checkoutRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductReviewBloc(
-            productRepository: productRepository,
           ),
         ),
       ],

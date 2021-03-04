@@ -195,8 +195,9 @@ class _ProductHCardState extends State<ProductHCard>
                       ),
                     ),
                     widget.isShoppingCart &&
-                            widget.product.stockQty != null &&
-                            widget.product.stockQty > 0
+                            (widget.product.typeId != 'simple' ||
+                                widget.product.stockQty != null &&
+                                    widget.product.stockQty > 0)
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(
@@ -251,7 +252,8 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (widget.product.typeId == 'simple' &&
+        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -274,29 +276,37 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   void _onAddProductToCart(BuildContext context) async {
-    _addToCartController.repeat(reverse: true);
-    Timer.periodic(Duration(milliseconds: 600), (timer) {
-      _addToCartController.stop(canceled: true);
-      timer.cancel();
-    });
-    if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-      await myCartChangeNotifier.addProductToCart(
-          context, widget.pageStyle, widget.product, 1, lang);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      flushBarService.showErrorMessage(
-        widget.pageStyle,
-        'out_of_stock_error'.tr(),
-      );
+      _addToCartController.repeat(reverse: true);
+      Timer.periodic(Duration(milliseconds: 600), (timer) {
+        _addToCartController.stop(canceled: true);
+        timer.cancel();
+      });
+      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+        await myCartChangeNotifier.addProductToCart(
+            context, widget.pageStyle, widget.product, 1, lang, {});
+      } else {
+        flushBarService.showErrorMessage(
+          widget.pageStyle,
+          'out_of_stock_error'.tr(),
+        );
+      }
     }
   }
 
   void _onWishlist() async {
-    if (isWishlist) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product.productId);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(
-          user.token, widget.product, 1);
+      if (isWishlist) {
+        await wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product.productId);
+      } else {
+        await wishlistChangeNotifier
+            .addItemToWishlist(user.token, widget.product, 1, {});
+      }
     }
   }
 }

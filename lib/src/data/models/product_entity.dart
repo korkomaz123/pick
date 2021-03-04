@@ -1,4 +1,5 @@
 import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
 
 class ProductEntity {
@@ -20,6 +21,8 @@ class ProductEntity {
   final List<ReviewEntity> reviews;
   final BrandEntity brandEntity;
   final int stockQty;
+  final Map<String, dynamic> configurable;
+  final List<ProductModel> variants;
 
   ProductEntity({
     this.entityId,
@@ -40,6 +43,8 @@ class ProductEntity {
     this.reviews,
     this.brandEntity,
     this.stockQty,
+    this.configurable,
+    this.variants,
   });
 
   ProductEntity.fromJson(Map<String, dynamic> json)
@@ -52,7 +57,9 @@ class ProductEntity {
         shortDescription = json['short_description'] ?? '',
         name = json['name'],
         metaDescription = json['meta_description'],
-        price = double.parse(json['price']).toStringAsFixed(2),
+        price = json['price'] == null
+            ? null
+            : double.parse(json['price']).toStringAsFixed(2),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -66,5 +73,17 @@ class ProductEntity {
                 brandThumbnail: json['brand_thumbnail'],
               )
             : null,
-        stockQty = json['stockQty'];
+        stockQty = json['stockQty'],
+        configurable = json['configurable'],
+        variants = _getVariants(json['child_products']);
+
+  static List<ProductModel> _getVariants(List<dynamic> list) {
+    List<ProductModel> variants = [];
+    if (list != null) {
+      for (var item in list) {
+        variants.add(ProductModel.fromJson(item));
+      }
+    }
+    return variants;
+  }
 }

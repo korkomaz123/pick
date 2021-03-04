@@ -1,6 +1,7 @@
 import 'brand_entity.dart';
 
 class ProductModel {
+  String wishlistItemId;
   String entityId;
   String typeId;
   String sku;
@@ -17,8 +18,10 @@ class ProductModel {
   BrandEntity brandEntity;
   int stockQty;
   int qtySaveForLater;
+  Map<String, dynamic> options;
 
   ProductModel({
+    this.wishlistItemId,
     this.entityId,
     this.typeId,
     this.sku,
@@ -35,10 +38,14 @@ class ProductModel {
     this.brandEntity,
     this.stockQty,
     this.qtySaveForLater,
+    this.options,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : entityId = json['entity_id'],
+      : wishlistItemId = json.containsKey('wishlist_item_id')
+            ? json['wishlist_item_id']
+            : null,
+        entityId = json['entity_id'],
         typeId = json['type_id'],
         sku = json['sku'],
         metaKeyword = json['meta_keyword'],
@@ -63,5 +70,15 @@ class ProductModel {
         stockQty = json['stockQty'],
         qtySaveForLater = json.containsKey('qty_saveforlater')
             ? double.parse(json['qty_saveforlater']).ceil()
-            : 0;
+            : 0,
+        options =
+            json.containsKey('options') ? _getOptions(json['options']) : null;
+
+  static Map<String, dynamic> _getOptions(List<dynamic> list) {
+    Map<String, dynamic> options = {};
+    for (var item in list) {
+      options[item['attribute_id']] = item['attribute_options']['option_value'];
+    }
+    return options;
+  }
 }

@@ -211,7 +211,6 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildTabbar() {
     return Container(
       width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -242,7 +241,7 @@ class _SearchPageState extends State<SearchPage>
                 Text(
                   'search_items_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+                    fontSize: pageStyle.unitFontSize * 14,
                     color:
                         tabController.index == 0 ? primaryColor : greyDarkColor,
                   ),
@@ -251,7 +250,7 @@ class _SearchPageState extends State<SearchPage>
                 Consumer<SuggestionChangeNotifier>(builder: (_, __, ___) {
                   return Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: pageStyle.unitWidth * 6,
+                      horizontal: pageStyle.unitWidth * 10,
                       vertical: pageStyle.unitHeight * 4,
                     ),
                     decoration: BoxDecoration(
@@ -265,7 +264,7 @@ class _SearchPageState extends State<SearchPage>
                               ?.toString() ??
                           '0',
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 8,
+                        fontSize: pageStyle.unitFontSize * 12,
                         color: Colors.white,
                       ),
                     ),
@@ -281,7 +280,7 @@ class _SearchPageState extends State<SearchPage>
                 Text(
                   'search_brands_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+                    fontSize: pageStyle.unitFontSize * 14,
                     color:
                         tabController.index == 1 ? primaryColor : greyDarkColor,
                   ),
@@ -302,7 +301,7 @@ class _SearchPageState extends State<SearchPage>
                     }
                     return Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: pageStyle.unitWidth * 6,
+                        horizontal: pageStyle.unitWidth * 10,
                         vertical: pageStyle.unitHeight * 4,
                       ),
                       decoration: BoxDecoration(
@@ -314,7 +313,7 @@ class _SearchPageState extends State<SearchPage>
                       child: Text(
                         count.toString(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 8,
+                          fontSize: pageStyle.unitFontSize * 12,
                           color: Colors.white,
                         ),
                       ),

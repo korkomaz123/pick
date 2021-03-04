@@ -1,10 +1,10 @@
+import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
-import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -33,12 +33,12 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  ProductReviewBloc productReviewBloc;
+  ProductReviewChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    productReviewBloc = context.read<ProductReviewBloc>();
+    model = context.read<ProductReviewChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -67,26 +67,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           ),
         ),
       ),
-      body: BlocConsumer<ProductReviewBloc, ProductReviewState>(
-        listener: (context, state) {
-          if (state is ProductReviewAddedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is ProductReviewAddedSuccess) {
-            progressService.hideProgress();
-            Navigator.pop(context);
-          }
-          if (state is ProductReviewAddedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        builder: (context, state) {
-          return Container(
-            width: pageStyle.deviceWidth,
-            child: _buildForm(),
-          );
-        },
+      body: Container(
+        width: pageStyle.deviceWidth,
+        child: _buildForm(),
       ),
     );
   }
@@ -143,24 +126,24 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 setState(() {});
               },
             ),
-            user?.token == null
-                ? Container(
-                    width: pageStyle.deviceWidth,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: pageStyle.unitFontSize * 20,
-                    ),
-                    child: MarkaaTextInput(
-                      width: double.infinity,
-                      controller: usernameController,
-                      fontSize: pageStyle.unitFontSize * 16,
-                      hint: 'username'.tr(),
-                      validator: (value) =>
-                          value.isEmpty ? 'required_field'.tr() : null,
-                      inputType: TextInputType.text,
-                      padding: 0,
-                    ),
-                  )
-                : SizedBox.shrink(),
+            if (user?.token == null) ...[
+              Container(
+                width: pageStyle.deviceWidth,
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitFontSize * 20,
+                ),
+                child: MarkaaTextInput(
+                  width: double.infinity,
+                  controller: usernameController,
+                  fontSize: pageStyle.unitFontSize * 16,
+                  hint: 'username'.tr(),
+                  validator: (value) =>
+                      value.isEmpty ? 'required_field'.tr() : null,
+                  inputType: TextInputType.text,
+                  padding: 0,
+                ),
+              )
+            ],
             Container(
               width: pageStyle.deviceWidth,
               padding: EdgeInsets.symmetric(
@@ -222,17 +205,34 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   void _onAddReview() {
     if (formKey.currentState.validate()) {
       if (rate > 0) {
-        productReviewBloc.add(ProductReviewAdded(
-          productId: widget.product.productId,
-          title: titleController.text,
-          detail: commentController.text,
-          rate: int.parse(rate.toStringAsFixed(0)).toString(),
-          token: user?.token ?? '',
-          username: usernameController.text,
-        ));
+        model.addReview(
+          widget.product.productId,
+          titleController.text,
+          commentController.text,
+          int.parse(rate.toStringAsFixed(0)).toString(),
+          user?.token ?? '',
+          usernameController.text,
+          _onProcess,
+          _onSuccess,
+          _onFailure,
+        );
       } else {
         flushBarService.showErrorMessage(pageStyle, 'rating_required'.tr());
       }
     }
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    progressService.hideProgress();
+    Navigator.pop(context);
+  }
+
+  void _onFailure() {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, 'failed'.tr());
   }
 }

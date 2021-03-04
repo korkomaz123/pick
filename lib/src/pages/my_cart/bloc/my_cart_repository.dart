@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -71,14 +73,17 @@ class MyCartRepository {
     String productId,
     String qty,
     String lang,
+    Map<String, dynamic> options,
   ) async {
     String url = EndPoints.addCartItem;
     final params = {
       'cartId': cartId,
       'productId': productId,
       'qty': qty,
-      'lang': lang
+      'lang': lang,
+      'option': jsonEncode(options),
     };
+    print(params);
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       final item = result['cart'][0];

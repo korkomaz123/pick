@@ -1,11 +1,12 @@
+import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -23,18 +24,13 @@ class ProductReviewPage extends StatefulWidget {
 class _ProductReviewPageState extends State<ProductReviewPage> {
   PageStyle pageStyle;
   List<ReviewEntity> reviews = [];
+  ProductReviewChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    _getProductReviews();
-  }
-
-  void _getProductReviews() async {
-    reviews = await context.read<ProductRepository>().getProductReviews(widget.product.productId);
-    if (mounted) {
-      setState(() {});
-    }
+    model = context.read<ProductReviewChangeNotifier>();
+    model.getProductReviews(widget.product.productId);
   }
 
   @override
@@ -75,8 +71,14 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
           vertical: pageStyle.unitHeight * 10,
           horizontal: pageStyle.unitWidth * 20,
         ),
-        child: Column(
-          children: reviews.map((review) => _buildProductReview(review)).toList(),
+        child: Consumer<ProductReviewChangeNotifier>(
+          builder: (_, __, ___) {
+            return Column(
+              children: model.reviews
+                  .map((review) => _buildProductReview(review))
+                  .toList(),
+            );
+          },
         ),
       ),
     );
@@ -146,12 +148,11 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
     );
   }
 
-  void _onAddReview() async {
-    await Navigator.pushNamed(
+  void _onAddReview() {
+    Navigator.pushNamed(
       context,
       Routes.addProductReview,
       arguments: widget.product,
     );
-    _getProductReviews();
   }
 }

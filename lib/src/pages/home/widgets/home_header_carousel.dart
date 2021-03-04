@@ -92,18 +92,19 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
                   Routes.productList,
                   arguments: arguments,
                 );
+              } else if (banner?.brand?.optionId != null) {
+                Navigator.pushNamed(
+                  context,
+                  Routes.brandList,
+                  arguments: banner.brand,
+                );
               }
             },
-            child: Container(
+            child: Image.network(
+              banner.bannerImage,
               width: widget.pageStyle.deviceWidth,
               height: widget.pageStyle.deviceWidth * 579 / 1125,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                  image: NetworkImage(banner.bannerImage),
-                  fit: BoxFit.fill,
-                ),
-              ),
+              fit: BoxFit.fill,
             ),
           );
         },

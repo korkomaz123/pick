@@ -72,6 +72,12 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                         Routes.productList,
                         arguments: arguments,
                       );
+                    } else if (banner?.brand?.optionId != null) {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.brandList,
+                        arguments: banner.brand,
+                      );
                     }
                   },
                   child: Image.network(banner.bannerImage),

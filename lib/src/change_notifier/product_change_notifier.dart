@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -19,9 +20,13 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, List<ProductModel>> data = {};
   Map<String, int> pages = {};
   ProductEntity productDetails;
+  Map<String, dynamic> selectedOptions = {};
+  ProductModel selectedVariant;
 
   Future<void> getProductDetails(String productId, String lang) async {
+    selectedOptions = {};
     productDetails = null;
+    selectedVariant = null;
     final result = await productRepository.getProductDetails(productId, lang);
     if (result['code'] == 'SUCCESS') {
       productDetails = ProductEntity.fromJson(result['moreAbout']);
@@ -291,5 +296,18 @@ class ProductChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  /// select option in configurable product
+  void selectOption(String attributeId, String optionValue) {
+    selectedOptions[attributeId] = optionValue;
+    selectedVariant = null;
+    for (var variant in productDetails.variants) {
+      if (mapEquals(selectedOptions, variant.options)) {
+        selectedVariant = variant;
+        break;
+      }
+    }
+    notifyListeners();
   }
 }

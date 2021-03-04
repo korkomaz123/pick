@@ -66,7 +66,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
       couponCode = result['couponCode'];
       discount = result['discount'] + .0;
       type = result['type'];
-      print(type);
     } else {
       processStatus = ProcessStatus.failed;
     }
@@ -96,12 +95,14 @@ class MyCartChangeNotifier extends ChangeNotifier {
     ProductModel product,
     int qty,
     String lang,
+    Map<String, dynamic> options,
   ) async {
     final result = await myCartRepository.addCartItem(
       cartId,
       product.productId,
       qty.toString(),
       lang,
+      options,
     );
     if (result['code'] == 'SUCCESS') {
       CartItemEntity newItem = result['item'];
@@ -220,6 +221,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> transferCartItems() async {
     final viewerCartId = await localStorageRepository.getCartId();
+    print(viewerCartId);
+    print(cartId);
     await myCartRepository.transferCart(viewerCartId, cartId);
   }
 }

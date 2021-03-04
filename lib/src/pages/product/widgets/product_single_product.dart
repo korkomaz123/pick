@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -25,11 +26,13 @@ class ProductSingleProduct extends StatefulWidget {
   final PageStyle pageStyle;
   final ProductModel product;
   final ProductEntity productEntity;
+  final ProductChangeNotifier model;
 
   ProductSingleProduct({
     this.pageStyle,
     this.product,
     this.productEntity,
+    this.model,
   });
 
   @override
@@ -52,6 +55,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   FlushBarService flushBarService;
   WishlistChangeNotifier wishlistChangeNotifier;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
+  List<Image> preCachedImages = [];
 
   @override
   void initState() {
@@ -62,8 +66,28 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
     flushBarService = FlushBarService(context: context);
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    if (productEntity.gallery.isNotEmpty) {
+      for (int i = 0; i < productEntity.gallery.length; i++) {
+        preCachedImages.add(Image.network(
+          productEntity.gallery[i],
+          width: widget.pageStyle.deviceWidth,
+          height: pageStyle.unitHeight * 400,
+          fit: BoxFit.fitHeight,
+        ));
+      }
+    }
     _initFavorite();
     _initAnimation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (preCachedImages.isNotEmpty) {
+      for (var item in preCachedImages) {
+        precacheImage(item.image, context);
+      }
+    }
+    super.didChangeDependencies();
   }
 
   void _initFavorite() async {
@@ -104,7 +128,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       color: Colors.white,
       child: Column(
         children: [
-          if (productEntity.gallery.isNotEmpty) ...[
+          if (preCachedImages.isNotEmpty) ...[
             _buildImageCarousel()
           ] else ...[
             Container(
@@ -154,9 +178,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 builder: (_, model, __) {
                   isWishlist = model.wishlistItemsMap
                       .containsKey(widget.product.productId);
+                  if (productEntity.typeId == 'configurable') {
+                    isWishlist = widget?.model?.selectedVariant != null &&
+                        model.wishlistItemsMap.containsKey(
+                            widget.model.selectedVariant.productId);
+                    print('wishlist $isWishlist');
+                  }
                   return IconButton(
                     onPressed: () => user != null
-                        ? _onFavorite()
+                        ? _onFavorite(widget.model)
                         : Navigator.pushNamed(context, Routes.signIn),
                     icon: ScaleTransition(
                       scale: _favoriteScaleAnimation,
@@ -282,12 +312,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 Routes.viewFullImage,
                 arguments: productEntity.gallery,
               ),
-              child: Image.network(
-                productEntity.gallery[0],
-                width: widget.pageStyle.deviceWidth,
-                height: pageStyle.unitHeight * 400,
-                fit: BoxFit.fitHeight,
-              ),
+              child: preCachedImages[0],
             )
           : Swiper(
               itemCount: productEntity.gallery.length,
@@ -307,12 +332,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     Routes.viewFullImage,
                     arguments: productEntity.gallery,
                   ),
-                  child: Image.network(
-                    productEntity.gallery[index],
-                    width: pageStyle.deviceWidth,
-                    height: pageStyle.unitHeight * 400,
-                    fit: BoxFit.fitHeight,
-                  ),
+                  child: preCachedImages[index],
                 );
               },
             ),
@@ -377,18 +397,20 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            productEntity.price + ' ' + 'currency'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 16,
-              color: greyColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Text(
             'sku'.tr() + ': ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 12,
               color: primaryColor,
+            ),
+          ),
+          Text(
+            productEntity.price != null
+                ? productEntity.price + ' ' + 'currency'.tr()
+                : '',
+            style: mediumTextStyle.copyWith(
+              fontSize: pageStyle.unitFontSize * 16,
+              color: greyColor,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -396,8 +418,19 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
-  void _onFavorite() async {
-    _updateWishlist();
+  void _onFavorite(ProductChangeNotifier model) async {
+    if (model.productDetails.typeId == 'configurable' &&
+        model.selectedOptions.keys.toList().length !=
+            model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      return;
+    }
+    if (model?.selectedVariant?.stockQty == null ||
+        model.selectedVariant.stockQty == 0) {
+      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      return;
+    }
+    _updateWishlist(model);
     _favoriteController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _favoriteController.stop(canceled: true);
@@ -405,13 +438,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     });
   }
 
-  void _updateWishlist() async {
+  void _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
       await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product.productId);
+          user.token, widget.product.productId, widget.model.selectedVariant);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(
-          user.token, widget.product, 1);
+      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
+          1, model.selectedOptions, widget.model.selectedVariant);
     }
   }
 

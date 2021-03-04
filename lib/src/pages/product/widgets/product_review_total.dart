@@ -1,9 +1,9 @@
+import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
-import 'package:markaa/src/data/models/review_entity.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -27,12 +27,13 @@ class ProductReviewTotal extends StatefulWidget {
 }
 
 class _ProductReviewTotalState extends State<ProductReviewTotal> {
-  List<ReviewEntity> reviews = [];
   double average = 0;
+  ProductReviewChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
+    model = context.read<ProductReviewChangeNotifier>();
   }
 
   @override
@@ -55,23 +56,18 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          FutureBuilder(
-            future: context.watch<ProductRepository>().getProductReviews(widget.product.productId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                reviews = snapshot.data ?? [];
-                if (reviews.isEmpty) {
-                  return _buildFirstReview();
-                } else {
-                  double total = 0;
-                  for (int i = 0; i < reviews.length; i++) {
-                    total += reviews[i].ratingValue;
-                  }
-                  average = total / reviews.length;
-                  return _buildTotalReview();
+          Consumer<ProductReviewChangeNotifier>(
+            builder: (_, __, ___) {
+              if (model.reviews.isEmpty) {
+                return _buildFirstReview();
+              } else {
+                double total = 0;
+                for (int i = 0; i < model.reviews.length; i++) {
+                  total += model.reviews[i].ratingValue;
                 }
+                average = total / model.reviews.length;
+                return _buildTotalReview(model);
               }
-              return Container();
             },
           ),
         ],
@@ -113,7 +109,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
     );
   }
 
-  Widget _buildTotalReview() {
+  Widget _buildTotalReview(ProductReviewChangeNotifier model) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -135,7 +131,9 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           InkWell(
             onTap: widget.onReviews,
             child: Text(
-              'reviews_count'.tr().replaceFirst('0', reviews.length.toString()),
+              'reviews_count'
+                  .tr()
+                  .replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
                 fontSize: widget.pageStyle.unitFontSize * 14,
                 color: primaryColor,
