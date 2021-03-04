@@ -293,7 +293,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         ),
         onPressed: () async {
           orderDetails['paymentMethod'] = payment;
-          print(payment);
           if (payment == 'cashondelivery') {
             checkoutBloc.add(
               OrderSubmitted(

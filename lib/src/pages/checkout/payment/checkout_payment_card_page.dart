@@ -155,17 +155,35 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPageLoaded(String url) {
+    /// knet result: {
+    ///   knet_vpay: Aqp0Cu0FR914pu%2fQnK3p2gDhUPBTDCDk,
+    ///   sess: l0Z6AAbK0Yo%3d,
+    ///   token: Aqp0Cu0FR914pu%2fQnK3p2suMC1las7Iq
+    /// }
+    ///
+    /// visa/master result: {
+    ///   mpgs_pay: HFJQvtL6oUakKO31ZXGNjf4a%2b3tU8emJ,
+    ///   sess: qvHbbuJIKx8%3d,
+    ///   token: HFJQvtL6oUakKO31ZXGNjR7AfyaOMr7W
+    /// }
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
     if (widget.params['paymentMethod'] == 'knet') {
       if (url.contains('paymentcancel')) {
         Navigator.pop(context);
       }
+      if (params.containsKey('knet_vpay')) {
+        Navigator.pop(context, 'success');
+      }
+    } else {
+      if (params.containsKey('mpgs_pay')) {
+        Navigator.pop(context, 'success');
+      }
     }
-    print(url);
-    print(params);
-    if (params.containsKey('tap_id')) {
-      Navigator.pop(context, 'success');
+    if (url == 'https://www.tap.company/kw/en') {
+      if (params.isEmpty) {
+        Navigator.pop(context);
+      }
     }
   }
 }

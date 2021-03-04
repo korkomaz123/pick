@@ -74,6 +74,9 @@ class CheckoutRepository {
     String lang,
   ) async {
     String url = 'https://api.tap.company/v2/charges';
+
+    /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
+    /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
     Map<String, String> headers = {
       'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
       'lang_code': lang,

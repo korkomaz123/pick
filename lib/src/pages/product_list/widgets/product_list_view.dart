@@ -208,23 +208,24 @@ class _ProductListViewState extends State<ProductListView>
                 onLoading: page != null ? _onLoadMore : null,
                 footer: CustomFooter(
                   builder: (BuildContext context, LoadStatus mode) {
-                    // mode = LoadStatus.canLoading;
                     if (mode == LoadStatus.loading) {
                       return RippleLoadingSpinner();
                     } else if (mode == LoadStatus.noMore) {
-                      return Container(
-                        width: pageStyle.deviceWidth,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.only(
-                          top: pageStyle.unitHeight * 10,
-                        ),
-                        child: Text(
-                          'no_more_products'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: pageStyle.unitFontSize * 14,
+                      if (page != null && page > 0) {
+                        return Container(
+                          width: pageStyle.deviceWidth,
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(
+                            top: pageStyle.unitHeight * 10,
                           ),
-                        ),
-                      );
+                          child: Text(
+                            'no_more_products'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: pageStyle.unitFontSize * 14,
+                            ),
+                          ),
+                        );
+                      }
                     }
                     return SizedBox.shrink();
                   },
