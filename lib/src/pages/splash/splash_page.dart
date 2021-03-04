@@ -1,3 +1,5 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -37,6 +39,8 @@ class _SplashPageState extends State<SplashPage> {
   bool isFirstTime;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  BrandChangeNotifier brandChangeNotifier;
+  CategoryChangeNotifier categoryChangeNotifier;
 
   @override
   void initState() {
@@ -48,6 +52,8 @@ class _SplashPageState extends State<SplashPage> {
     settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     _checkAppUsage();
   }
 
@@ -63,6 +69,8 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _loadAssets() async {
+    brandChangeNotifier.getBrandsList(lang, 'brand');
+    categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
     await _getNotificationSetting();
     await _getHomeCategories();

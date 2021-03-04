@@ -73,16 +73,17 @@ class _ProductListPageState extends State<ProductListPage> {
     productChangeNotifier = context.read<ProductChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     filterBloc = context.read<FilterBloc>();
-    print('/// initial ///');
     categoryChangeNotifier.initialSubCategories();
     if (isFromBrand) {
       viewMode = ProductViewModeEnum.brand;
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollChangeNotifier.initialize();
         categoryChangeNotifier.getBrandSubCategories(brand.optionId, lang);
       });
     } else {
       viewMode = ProductViewModeEnum.category;
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollChangeNotifier.initialize();
         categoryChangeNotifier.getSubCategories(category.id, lang);
       });
     }
@@ -92,11 +93,6 @@ class _ProductListPageState extends State<ProductListPage> {
       scaffoldKey: scaffoldKey,
     );
     scrollController.addListener(_onScrolling);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -114,16 +110,7 @@ class _ProductListPageState extends State<ProductListPage> {
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
-          if (isFromBrand) ...[
-            _buildBrandBar()
-          ] else ...[
-            Positioned(
-              top: 0,
-              left: 0,
-              right: pageStyle.deviceWidth,
-              child: Container(),
-            )
-          ],
+          if (isFromBrand) ...[_buildBrandBar()],
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
               if (!model.isLoading) {
@@ -173,6 +160,7 @@ class _ProductListPageState extends State<ProductListPage> {
             },
           ),
           _buildAppBar(),
+          _buildArrowButton(),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -284,6 +272,36 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
+  Widget _buildArrowButton() {
+    return Consumer<ScrollChangeNotifier>(
+      builder: (ctx, notifier, child) {
+        double extra = !scrollChangeNotifier.showScrollBar ? 40 : 0;
+        return AnimatedPositioned(
+          right: pageStyle.unitWidth * 4,
+          bottom: pageStyle.unitHeight * 4 - extra,
+          duration: Duration(milliseconds: 500),
+          child: InkWell(
+            onTap: () => _onGotoTop(),
+            child: Container(
+              width: pageStyle.unitHeight * 40,
+              height: pageStyle.unitHeight * 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: primarySwatchColor.withOpacity(0.8),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.keyboard_arrow_up,
+                size: pageStyle.unitFontSize * 30,
+                color: Colors.white70,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showFilterDialog() async {
     final result = await showDialog(
       context: context,
@@ -318,6 +336,7 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        scrollChangeNotifier.initialize();
         await productChangeNotifier.initialLoadFilteredProducts(
           brand.optionId,
           subCategories[activeSubcategoryIndex].id,
@@ -356,6 +375,7 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        scrollChangeNotifier.initialize();
         if (viewMode == ProductViewModeEnum.category) {
           await productChangeNotifier.initialLoadCategoryProducts(
             subCategories[activeSubcategoryIndex].id,
@@ -377,7 +397,6 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onChangeTab(int index) async {
-    print('//// change tab ///');
     activeSubcategoryIndex = index;
     if (isFromBrand)
       viewMode = ProductViewModeEnum.brand;
@@ -385,6 +404,7 @@ class _ProductListPageState extends State<ProductListPage> {
       viewMode = ProductViewModeEnum.category;
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      scrollChangeNotifier.initialize();
       if (viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[index].id,
@@ -406,9 +426,15 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onScrolling() {
-    if (isFromBrand) {
-      double pos = scrollController.position.pixels;
-      scrollChangeNotifier.controlBrandBar(pos);
-    }
+    double pos = scrollController.position.pixels;
+    scrollChangeNotifier.controlBrandBar(pos);
+  }
+
+  void _onGotoTop() {
+    scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeIn,
+    );
   }
 }
