@@ -425,6 +425,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 productEntity.price != null
@@ -438,6 +439,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              SizedBox(width: pageStyle.unitWidth * 1),
               if (productEntity.price != null ||
                   widget?.model?.selectedVariant?.price != null) ...[
                 Text(
