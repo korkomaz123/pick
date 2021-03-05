@@ -131,7 +131,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
                   ),
                   SizedBox(width: pageStyle.unitWidth * 10),
                   Text(
-                    'Hello, ' + user?.firstName,
+                    'Hello, ' + (user?.firstName ?? user?.lastName ?? ''),
                     style: mediumTextStyle.copyWith(
                       fontSize: pageStyle.unitFontSize * 18,
                       color: Colors.white,

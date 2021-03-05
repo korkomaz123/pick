@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27">
+  <g id="Group_2401" data-name="Group 2401" transform="translate(266.354 -418)">
+    <g id="Group_2397" data-name="Group 2397" transform="translate(-264.427 417.686)">
+      <rect id="Rectangle_462" data-name="Rectangle 462" width="27" height="27" rx="7" transform="translate(-1.928 0.314)" fill="#fff"/>
+      <circle id="Ellipse_112" data-name="Ellipse 112" cx="12" cy="12" r="12" transform="translate(-0.928 3.314)" fill="#0c5eed"/>
+      <path id="Icon_awesome-facebook" data-name="Icon awesome-facebook" d="M26.112,13.854C26.112,6.511,21.2.563,13.854.563S1.561,6.511,1.561,13.854c0,6.634,3.862,12.132,10.216,13.13V17.7H8.4V13.854h3.376V10.925c0-3.331,1.983-5.171,5.02-5.171a20.455,20.455,0,0,1,2.976.259V9.283H18.1a1.921,1.921,0,0,0-2.166,2.076v2.495h3.686l-.59,3.842h-3.1v9.288C22.284,25.986,26.112,20.487,26.112,13.854Z" transform="translate(-2.764 0.33)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
