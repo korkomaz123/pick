@@ -129,6 +129,8 @@ class MarkaaBottomBar extends StatelessWidget {
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,
+                toAnimate: false,
+                animationDuration: Duration.zero,
                 badgeContent: Text(
                   '$count',
                   style: TextStyle(

@@ -109,6 +109,8 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
                       ),
                     ),
                     showBadge: model.cartItemCount > 0,
+                    toAnimate: false,
+                    animationDuration: Duration.zero,
                     position: lang == 'ar'
                         ? BadgePosition.topStart(
                             start: -widget.pageStyle.unitWidth * 8,
