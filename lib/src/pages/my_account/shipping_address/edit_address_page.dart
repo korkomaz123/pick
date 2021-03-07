@@ -103,7 +103,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
   @override
   void dispose() {
     _onRetrieveRegions();
-    shippingAddressBloc.add(ShippingAddressInitialized());
     super.dispose();
   }
 
