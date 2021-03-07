@@ -62,12 +62,17 @@ class ProductRepository {
   ) async {
     String url = EndPoints.getViewedGuestProducts;
     int length = (ids.length / 20).ceil();
+    int rest = ids.length % 20;
     Random random = Random();
     int page = random.nextInt(length);
     List<int> viewedIds = [];
-    for (int i = 0; i < 20; i++) {
-      int index = (page - 1) * 20 + i;
-      viewedIds.add(int.parse(ids[index]));
+    for (int i = 0; i < (page == length - 1 ? rest : 20); i++) {
+      int index = page * 20 + i;
+      if (ids[index] != null) {
+        viewedIds.add(int.parse(ids[index]));
+      } else {
+        break;
+      }
     }
     return await Api.postMethod(
       url,

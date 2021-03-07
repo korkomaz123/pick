@@ -23,6 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
+import 'package:new_version/new_version.dart';
+import 'package:version/version.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -58,6 +60,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _checkAppUsage() async {
+    await checkAppVersion();
     bool isExist = await localRepo.existItem('usage');
     if (isExist) {
       isFirstTime = false;
@@ -84,6 +87,24 @@ class _SplashPageState extends State<SplashPage> {
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> checkAppVersion() async {
+    final newVersion = NewVersion(
+      androidId: 'com.app.markaa',
+      iOSId: 'com.markaa.shop',
+      context: context,
+    );
+    final status = await newVersion.getVersionStatus();
+    Version localVersion = Version.parse(status.localVersion);
+    Version storeVersion = Version.parse(status.storeVersion);
+    if (storeVersion > localVersion) {
+      Navigator.pushReplacementNamed(
+        context,
+        Routes.update,
+        arguments: status.appStoreLink,
+      );
+    }
   }
 
   Future<void> _getNotificationSetting() async {
@@ -199,49 +220,49 @@ class _SplashPageState extends State<SplashPage> {
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
-            isFirstTime != null && isFirstTime
-                ? Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: pageStyle.unitHeight * 141,
+            if (isFirstTime != null && isFirstTime) ...[
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: pageStyle.unitHeight * 141,
+                  ),
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 145,
+                        height: pageStyle.unitHeight * 49,
+                        child: MarkaaTextButton(
+                          title: 'English',
+                          titleSize: pageStyle.unitFontSize * 20,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onEnglish(),
+                          radius: 30,
+                        ),
                       ),
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: pageStyle.unitWidth * 145,
-                            height: pageStyle.unitHeight * 49,
-                            child: MarkaaTextButton(
-                              title: 'English',
-                              titleSize: pageStyle.unitFontSize * 20,
-                              titleColor: Colors.white,
-                              buttonColor: Color(0xFFF7941D),
-                              borderColor: Colors.transparent,
-                              onPressed: () => _onEnglish(),
-                              radius: 30,
-                            ),
-                          ),
-                          SizedBox(width: pageStyle.unitWidth * 13),
-                          Container(
-                            width: pageStyle.unitWidth * 145,
-                            height: pageStyle.unitHeight * 49,
-                            child: MarkaaTextButton(
-                              title: 'عربى',
-                              titleSize: pageStyle.unitFontSize * 20,
-                              titleColor: Colors.white,
-                              buttonColor: Color(0xFFF7941D),
-                              borderColor: Colors.transparent,
-                              onPressed: () => _onArabic(),
-                              radius: 30,
-                            ),
-                          ),
-                        ],
+                      SizedBox(width: pageStyle.unitWidth * 13),
+                      Container(
+                        width: pageStyle.unitWidth * 145,
+                        height: pageStyle.unitHeight * 49,
+                        child: MarkaaTextButton(
+                          title: 'عربى',
+                          titleSize: pageStyle.unitFontSize * 20,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onArabic(),
+                          radius: 30,
+                        ),
                       ),
-                    ),
-                  )
-                : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+              )
+            ],
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 class Routes {
   /// start routes
   static const String start = '/';
+  static const String update = '/update';
 
   /// authentication routes
   static const String signIn = '/sign-in';

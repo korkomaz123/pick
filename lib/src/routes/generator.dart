@@ -37,6 +37,7 @@ import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
+import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,11 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (context) => SplashPage(),
           settings: RouteSettings(name: Routes.start),
+        );
+      case Routes.update:
+        return CupertinoPageRoute(
+          builder: (context) => UpdatePage(storeLink: params),
+          settings: RouteSettings(name: Routes.update),
         );
       case Routes.signIn:
         return CupertinoPageRoute(

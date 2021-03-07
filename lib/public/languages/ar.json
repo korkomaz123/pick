@@ -287,5 +287,8 @@
     "call_us": "اتصل بنا",
     "discount": "خصم",
     "incorrect_coupon_code": "نأسف، كود الكوبون غير صحيح",
-    "continue_as_guest": "المتابعة كضيف"
+    "continue_as_guest": "المتابعة كضيف",
+    "sorry": "نأسف",
+    "update_required": "التحديث مطلوب",
+    "update_now_button_title": "ابدأ الأن"
 }

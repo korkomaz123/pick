@@ -177,7 +177,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
+            if (state is ShippingAddressLoadedInProcess) {
+              progressService.showProgress();
+            }
+            if (state is ShippingAddressLoadedSuccess) {
+              progressService.hideProgress();
+            }
             if (state is ShippingAddressLoadedFailure) {
+              progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedInProcess) {
