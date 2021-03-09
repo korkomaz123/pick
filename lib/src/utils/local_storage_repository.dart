@@ -86,4 +86,8 @@ class LocalStorageRepository {
   Future<void> setItem(String key, dynamic data) async {
     return await (await prefs).setString(key, json.encode(data));
   }
+
+  Future<void> removeItem(String key) async {
+    return await (await prefs).remove(key);
+  }
 }

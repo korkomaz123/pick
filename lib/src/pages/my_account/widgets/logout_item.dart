@@ -1,15 +1,12 @@
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:markaa/src/utils/snackbar_service.dart';
@@ -37,11 +34,10 @@ class _LogoutItemState extends State<LogoutItem> {
   SnackBarService snackBarService;
   ProgressService progressService;
   SignInBloc signInBloc;
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   SettingRepository settingRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
@@ -50,11 +46,10 @@ class _LogoutItemState extends State<LogoutItem> {
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
     signInBloc = context.read<SignInBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     settingRepo = context.read<SettingRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
   }
 
   @override
@@ -65,7 +60,6 @@ class _LogoutItemState extends State<LogoutItem> {
           progressService.showProgress();
         }
         if (state is SignOutSubmittedSuccess) {
-          progressService.hideProgress();
           _logoutUser();
         }
         if (state is SignOutSubmittedFailure) {
@@ -127,44 +121,14 @@ class _LogoutItemState extends State<LogoutItem> {
     await settingRepo.updateFcmDeviceToken(user.token, '', '');
     user = null;
     await localRepo.setToken('');
-    myCartItems.clear();
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    wishlistItemCountBloc.add(WishlistItemCountSet(wishlistItemCount: 0));
-    await _loadViewerCartItems();
+    myCartChangeNotifier.initialize();
+    await myCartChangeNotifier.getCartId();
+    wishlistChangeNotifier.initialize();
+    progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.home,
       (route) => false,
     );
-  }
-
-  Future<void> _loadViewerCartItems() async {
-    final cartId = await localRepo.getCartId();
-    if (cartId.isNotEmpty) {
-      print('/// logged out ///');
-      print('/// cartId: $cartId ///');
-      final result = await cartRepo.getCartItems(cartId, lang);
-      if (result['code'] == 'SUCCESS') {
-        print('/// get cart item ///');
-        List<dynamic> cartList = result['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
   }
 }

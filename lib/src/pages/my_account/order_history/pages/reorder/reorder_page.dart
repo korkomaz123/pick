@@ -1,27 +1,22 @@
-import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_review_product_card.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
-import 'package:markaa/src/pages/checkout/review/widgets/review_product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/images.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -43,35 +38,27 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
-  bool isDeleting = false;
-  String reorderCartId;
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
-  ReorderCartBloc reorderCartBloc;
-  List<CartItemEntity> cartItems = [];
-  double subtotalPrice = .0;
-  double totalPrice = .0;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
-    reorderCartBloc = context.read<ReorderCartBloc>();
-    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    _getReorderCartId();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    Future.delayed(Duration.zero, () async {
+      await myCartChangeNotifier.getReorderCartId(widget.order.orderId, lang);
+      await myCartChangeNotifier.getReorderCartItems(lang);
+    });
     _getOrderStatus();
   }
 
   @override
   void dispose() {
-    reorderCartBloc.add(ReorderCartItemsInitialized());
+    myCartChangeNotifier.initializeReorderCart();
     super.dispose();
   }
 
@@ -99,17 +86,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
         status = 'order_pending'.tr();
     }
     setState(() {});
-  }
-
-  void _getReorderCartId() async {
-    reorderCartId = await cartRepo.getReorderCartId(widget.order.orderId, lang);
-    if (reorderCartId.isNotEmpty) {
-      await localRepo.setItem('reorderCartId', reorderCartId);
-      reorderCartBloc.add(ReorderCartItemsLoaded(
-        reorderCartId: reorderCartId,
-        lang: lang,
-      ));
-    }
   }
 
   void _setPaymentWidget() {
@@ -198,17 +174,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildOrderPaymentMethod(),
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, __, ___) {
-                  return Column(
-                    children: [
-                      _buildSubtotal(),
-                      _buildShippingCost(),
-                      _buildTotal(),
-                    ],
-                  );
-                },
-              ),
+              _buildSubtotal(),
+              _buildShippingCost(),
+              _buildTotal(),
               _buildAddressBar(),
               _buildNextButton(),
             ],
@@ -299,64 +267,33 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildOrderItems() {
-    return BlocConsumer<ReorderCartBloc, ReorderCartState>(
-      listener: (context, state) {
-        if (state is ReorderCartItemsLoadedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is ReorderCartItemsLoadedSuccess) {
-          progressService.hideProgress();
-          _calculatePrice(state.cartItems);
-        }
-        if (state is ReorderCartItemsLoadedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is ReorderCartItemRemovedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is ReorderCartItemRemovedSuccess) {
-          progressService.hideProgress();
-          reorderCartBloc.add(ReorderCartItemsLoaded(
-            reorderCartId: reorderCartId,
-            lang: lang,
-          ));
-        }
-        if (state is ReorderCartItemRemovedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-      },
-      builder: (context, state) {
-        if (state is ReorderCartItemsLoadedSuccess) {
-          cartItems = state.cartItems;
-          reorderCartItems = cartItems;
-        }
+    return Consumer<MyCartChangeNotifier>(
+      builder: (_, model, __) {
+        final keys = model.reorderCartItemsMap.keys.toList();
         return Column(
           children: List.generate(
-            cartItems.length,
+            model.reorderCartItemCount,
             (index) {
               return Column(
                 children: [
                   Stack(
                     children: [
-                      ReviewProductCard(
+                      MarkaaReviewProductCard(
                         pageStyle: pageStyle,
-                        cartItem: cartItems[index],
+                        cartItem: model.reorderCartItemsMap[keys[index]],
                       ),
-                      if (cartItems.length > 1) ...[
+                      if (model.reorderCartItemCount > 1) ...[
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            onPressed: () =>
-                                _onDeleteOrderItem(cartItems[index]),
+                            onPressed: () => _onDeleteOrderItem(keys[index]),
                             icon: SvgPicture.asset(trashIcon, color: greyColor),
                           ),
                         )
                       ],
                     ],
                   ),
-                  if (index < (cartItems.length - 1)) ...[
+                  if (index < (model.reorderCartItemCount - 1)) ...[
                     Divider(color: greyColor, thickness: 0.5)
                   ],
                 ],
@@ -402,32 +339,35 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildSubtotal() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'checkout_subtotal_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+    return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 10,
+          vertical: pageStyle.unitHeight * 5,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'checkout_subtotal_title'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: greyDarkColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
             ),
-          ),
-          Text(
-            'currency'.tr() + ' ${subtotalPrice.toStringAsFixed(2)}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+            Text(
+              'currency'.tr() +
+                  ' ${model.reorderCartTotalPrice.toStringAsFixed(2)}',
+              style: mediumTextStyle.copyWith(
+                color: greyDarkColor,
+                fontSize: pageStyle.unitFontSize * 14,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildShippingCost() {
@@ -460,34 +400,38 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   Widget _buildTotal() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'total'.tr().toUpperCase(),
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 14,
-              fontWeight: FontWeight.w600,
+    return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
+      double totalPrice =
+          order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: pageStyle.unitWidth * 10,
+          vertical: pageStyle.unitHeight * 10,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'total'.tr().toUpperCase(),
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+                fontSize: pageStyle.unitFontSize * 14,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          Text(
-            'currency'.tr() + ' ${totalPrice.toStringAsFixed(2)}',
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 16,
-              fontWeight: FontWeight.w600,
+            Text(
+              'currency'.tr() + ' ${totalPrice.toStringAsFixed(2)}',
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+                fontSize: pageStyle.unitFontSize * 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildAddressBar() {
@@ -548,15 +492,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     );
   }
 
-  void _calculatePrice(List<CartItemEntity> items) {
-    for (CartItemEntity item in items) {
-      subtotalPrice += item.itemCount * double.parse(item.product.price);
-    }
-    totalPrice = subtotalPrice + order.shippingMethod.serviceFees;
-    markaaAppChangeNotifier.rebuild();
-  }
-
-  void _onDeleteOrderItem(CartItemEntity cartItem) async {
+  void _onDeleteOrderItem(String key) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -564,15 +500,12 @@ class _ReOrderPageState extends State<ReOrderPage> {
       },
     );
     if (result != null) {
-      reorderCartBloc.add(ReorderCartItemRemoved(
-        cartId: reorderCartId,
-        itemId: cartItem.itemId,
-      ));
+      await myCartChangeNotifier.removeReorderCartItem(key);
     }
   }
 
   void _onNext() {
-    if (cartItems.isNotEmpty) {
+    if (myCartChangeNotifier.reorderCartItemCount > 0) {
       defaultAddress = widget.order.address;
       Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
     } else {

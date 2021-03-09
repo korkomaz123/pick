@@ -1,14 +1,12 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
-import 'package:markaa/src/data/models/cart_item_entity.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
@@ -18,11 +16,15 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
+import 'package:new_version/new_version.dart';
+import 'package:version/version.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -30,8 +32,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
@@ -39,6 +39,10 @@ class _SplashPageState extends State<SplashPage> {
   SettingRepository settingRepo;
   PageStyle pageStyle;
   bool isFirstTime;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
+  BrandChangeNotifier brandChangeNotifier;
+  CategoryChangeNotifier categoryChangeNotifier;
 
   @override
   void initState() {
@@ -47,13 +51,16 @@ class _SplashPageState extends State<SplashPage> {
     wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
     categoryRepo = context.read<CategoryRepository>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     settingRepo = context.read<SettingRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     _checkAppUsage();
   }
 
   void _checkAppUsage() async {
+    await checkAppVersion();
     bool isExist = await localRepo.existItem('usage');
     if (isExist) {
       isFirstTime = false;
@@ -65,17 +72,39 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _loadAssets() async {
+    brandChangeNotifier.getBrandsList(lang, 'brand');
+    categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
-    _getNotificationSetting();
+    await _getNotificationSetting();
     await _getHomeCategories();
+    if (user?.token != null) {
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+    }
     _getCartItems();
-    _getWishlists();
     _getShippingAddress();
     _getShippingMethod();
     _getPaymentMethod();
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> checkAppVersion() async {
+    final newVersion = NewVersion(
+      androidId: 'com.app.markaa',
+      iOSId: 'com.markaa.shop',
+      context: context,
+    );
+    final status = await newVersion.getVersionStatus();
+    Version localVersion = Version.parse(status.localVersion);
+    Version storeVersion = Version.parse(status.storeVersion);
+    if (storeVersion > localVersion) {
+      Navigator.pushReplacementNamed(
+        context,
+        Routes.update,
+        arguments: status.appStoreLink,
+      );
+    }
   }
 
   Future<void> _getNotificationSetting() async {
@@ -104,51 +133,8 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getCartItems() async {
-    String cartId = '';
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localRepo.getCartId();
-    }
-    if (cartId.isNotEmpty) {
-      final result = await cartRepo.getCartItems(cartId, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> cartList = result['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
-      }
-    }
-  }
-
-  void _getWishlists() async {
-    if (user?.token != null) {
-      final result = await wishlistRepo.getWishlists(user.token, lang);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> lists = result['wishlists'];
-        wishlistCount = lists.isEmpty ? 0 : lists.length;
-        wishlistItemCountBloc.add(WishlistItemCountSet(
-          wishlistItemCount: wishlistCount,
-        ));
-      }
-    }
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
   }
 
   void _getShippingAddress() async {
@@ -234,49 +220,49 @@ class _SplashPageState extends State<SplashPage> {
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
-            isFirstTime != null && isFirstTime
-                ? Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: pageStyle.unitHeight * 141,
+            if (isFirstTime != null && isFirstTime) ...[
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: pageStyle.unitHeight * 141,
+                  ),
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: pageStyle.unitWidth * 145,
+                        height: pageStyle.unitHeight * 49,
+                        child: MarkaaTextButton(
+                          title: 'English',
+                          titleSize: pageStyle.unitFontSize * 20,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onEnglish(),
+                          radius: 30,
+                        ),
                       ),
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: pageStyle.unitWidth * 145,
-                            height: pageStyle.unitHeight * 49,
-                            child: MarkaaTextButton(
-                              title: 'English',
-                              titleSize: pageStyle.unitFontSize * 20,
-                              titleColor: Colors.white,
-                              buttonColor: Color(0xFFF7941D),
-                              borderColor: Colors.transparent,
-                              onPressed: () => _onEnglish(),
-                              radius: 30,
-                            ),
-                          ),
-                          SizedBox(width: pageStyle.unitWidth * 13),
-                          Container(
-                            width: pageStyle.unitWidth * 145,
-                            height: pageStyle.unitHeight * 49,
-                            child: MarkaaTextButton(
-                              title: 'عربى',
-                              titleSize: pageStyle.unitFontSize * 20,
-                              titleColor: Colors.white,
-                              buttonColor: Color(0xFFF7941D),
-                              borderColor: Colors.transparent,
-                              onPressed: () => _onArabic(),
-                              radius: 30,
-                            ),
-                          ),
-                        ],
+                      SizedBox(width: pageStyle.unitWidth * 13),
+                      Container(
+                        width: pageStyle.unitWidth * 145,
+                        height: pageStyle.unitHeight * 49,
+                        child: MarkaaTextButton(
+                          title: 'عربى',
+                          titleSize: pageStyle.unitFontSize * 20,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onArabic(),
+                          radius: 30,
+                        ),
                       ),
-                    ),
-                  )
-                : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+              )
+            ],
           ],
         ),
       ),

@@ -1,12 +1,12 @@
-import 'package:markaa/src/data/models/cart_item_entity.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
@@ -31,13 +31,13 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   PageStyle pageStyle;
-  MyCartBloc myCartBloc;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
-    myCartBloc = context.read<MyCartBloc>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
 
   @override
@@ -89,11 +89,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
       },
     );
     if (result != null) {
-      myCartBloc.add(MyCartItemUpdated(
-        cartId: widget.cartId,
-        itemId: widget.cartItem.itemId,
-        qty: result.toString(),
-      ));
+      await myCartChangeNotifier.updateCartItem(widget.cartItem, result);
     }
   }
 }
@@ -112,12 +108,10 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
   int availableCount;
   String productId;
   PageStyle pageStyle;
-  MyCartRepository myCartRepo;
 
   @override
   void initState() {
     super.initState();
-    myCartRepo = context.read<MyCartRepository>();
     availableCount = widget.cartItem.availableCount > 20
         ? 20
         : widget.cartItem.availableCount;
@@ -162,14 +156,25 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    bottom: pageStyle.unitHeight * 45,
-                    right: 0,
-                    child: IconButton(
-                      icon: SvgPicture.asset('lib/public/icons/close.svg'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  )
+                  if (lang == 'en') ...[
+                    Positioned(
+                      bottom: pageStyle.unitHeight * 45,
+                      right: 0,
+                      child: IconButton(
+                        icon: SvgPicture.asset('lib/public/icons/close.svg'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    )
+                  ] else ...[
+                    Positioned(
+                      bottom: pageStyle.unitHeight * 45,
+                      left: 0,
+                      child: IconButton(
+                        icon: SvgPicture.asset('lib/public/icons/close.svg'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    )
+                  ]
                 ],
               ),
             ),

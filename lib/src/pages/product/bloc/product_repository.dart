@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
@@ -60,7 +61,19 @@ class ProductRepository {
     String lang,
   ) async {
     String url = EndPoints.getViewedGuestProducts;
-    List<int> viewedIds = ids.map((id) => int.parse(id)).toList();
+    int length = (ids.length / 20).ceil();
+    int rest = ids.length % 20;
+    Random random = Random();
+    int page = random.nextInt(length);
+    List<int> viewedIds = [];
+    for (int i = 0; i < (page == length - 1 ? rest : 20); i++) {
+      int index = page * 20 + i;
+      if (ids[index] != null) {
+        viewedIds.add(int.parse(ids[index]));
+      } else {
+        break;
+      }
+    }
     return await Api.postMethod(
       url,
       data: {'viewedIds': json.encode(viewedIds), 'lang': lang},

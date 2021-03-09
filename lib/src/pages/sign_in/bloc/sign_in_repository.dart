@@ -40,14 +40,16 @@ class SignInRepository {
     String lastName,
     String loginType,
     String lang,
+    String appleId,
   ) async {
     String url = EndPoints.socialLogin;
     final params = {
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
+      'firstName': firstName ?? '',
+      'lastName': lastName ?? '',
       'loginType': loginType,
       'lang': lang,
+      'appleId': appleId ?? '',
     };
     return await Api.postMethod(url, data: params);
   }

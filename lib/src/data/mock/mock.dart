@@ -3,6 +3,7 @@ import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/message_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
+import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
@@ -11,13 +12,9 @@ List<CategoryEntity> homeCategories = [];
 
 List<CategoryMenuEntity> sideMenus = [];
 List<RegionEntity> regions = [];
-List<CartItemEntity> myCartItems = [];
-List<CartItemEntity> reorderCartItems = [];
-int cartItemCount = 0;
-String couponCode = '';
-double cartTotalPrice = .0;
-int discount = 0;
 int wishlistCount = 0;
+List<ProductModel> wishlistItems = [];
+List<String> wishlistIds = [];
 
 List<AddressEntity> addresses = [];
 AddressEntity defaultAddress;

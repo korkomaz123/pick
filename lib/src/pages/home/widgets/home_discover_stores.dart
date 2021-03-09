@@ -1,14 +1,14 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -25,13 +25,13 @@ class HomeDiscoverStores extends StatefulWidget {
 class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   int activeIndex = 0;
   List<BrandEntity> brands = [];
-  BrandBloc brandBloc;
+  BrandChangeNotifier brandChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    brandBloc = context.read<BrandBloc>();
-    brandBloc.add(BrandListLoaded(lang: lang));
+    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    brandChangeNotifier.getBrandsList(lang, 'home');
   }
 
   @override
@@ -41,32 +41,28 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       height: widget.pageStyle.unitHeight * 395,
       color: Colors.white,
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 15),
-      child: BlocConsumer<BrandBloc, BrandState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is BrandListLoadedSuccess) {
-            brands = state.brands;
-          }
-          if (brands.isNotEmpty) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTitle(),
-                SizedBox(height: widget.pageStyle.unitHeight * 20),
-                _buildStoresSlider(),
-                Divider(
-                  height: widget.pageStyle.unitHeight * 4,
-                  thickness: widget.pageStyle.unitHeight * 1.5,
-                  color: greyColor.withOpacity(0.4),
-                ),
-                _buildFooter(),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+      child: Consumer<BrandChangeNotifier>(builder: (_, __, ___) {
+        brands = brandChangeNotifier.brandList;
+        print(brands.length);
+        if (brands.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitle(),
+              SizedBox(height: widget.pageStyle.unitHeight * 20),
+              _buildStoresSlider(),
+              Divider(
+                height: widget.pageStyle.unitHeight * 4,
+                thickness: widget.pageStyle.unitHeight * 1.5,
+                color: greyColor.withOpacity(0.4),
+              ),
+              _buildFooter(),
+            ],
+          );
+        } else {
+          return Container();
+        }
+      }),
     );
   }
 
@@ -81,6 +77,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildStoresSlider() {
+    int length = brands.length > 20 ? 20 : brands.length;
     return Expanded(
       child: Stack(
         children: [
@@ -88,7 +85,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             width: widget.pageStyle.deviceWidth,
             height: widget.pageStyle.unitHeight * 380,
             child: Swiper(
-              itemCount: brands.length > 10 ? 10 : brands.length,
+              itemCount: length,
               autoplay: true,
               curve: Curves.easeIn,
               duration: 300,
@@ -138,8 +135,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 bottom: widget.pageStyle.unitHeight * 20,
               ),
               child: SmoothIndicator(
-                offset: activeIndex.toDouble(),
-                count: brands.length > 10 ? 10 : brands.length,
+                offset: (activeIndex / 2).floor().toDouble(),
+                count: (length / 2).ceil(),
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

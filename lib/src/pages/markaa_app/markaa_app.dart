@@ -1,18 +1,18 @@
+import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
-import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_bloc.dart';
 import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:markaa/src/pages/category_list/bloc/category/category_bloc.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
@@ -25,20 +25,11 @@ import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_addre
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/reorder_cart/reorder_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_bloc.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/pages/product_list/bloc/product_list_bloc.dart';
-import 'package:markaa/src/pages/product_review/bloc/product_review_bloc.dart';
-import 'package:markaa/src/pages/search/bloc/search_bloc.dart';
 import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -49,10 +40,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:provider/provider.dart';
-
-import 'bloc/cart_item_count/cart_item_count_bloc.dart';
 
 class MarkaaApp extends StatelessWidget {
   MarkaaApp({Key key}) : super(key: key);
@@ -72,7 +60,6 @@ class MarkaaApp extends StatelessWidget {
   final myCartRepository = MyCartRepository();
   final searchRepository = SearchRepository();
   final checkoutRepository = CheckoutRepository();
-  final saveLaterRepository = SaveLaterRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +94,7 @@ class MarkaaApp extends StatelessWidget {
                                 value: checkoutRepository,
                                 child: RepositoryProvider.value(
                                   value: searchRepository,
-                                  child: RepositoryProvider.value(
-                                      value: saveLaterRepository,
-                                      child: _buildMultiProvider()),
+                                  child: _buildMultiProvider(),
                                 ),
                               ),
                             ),
@@ -148,6 +133,35 @@ class MarkaaApp extends StatelessWidget {
             localStorageRepository: localStorageRepository,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CategoryChangeNotifier(
+            categoryRepository: categoryRepository,
+            brandRepository: brandRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BrandChangeNotifier(
+            brandRepository: brandRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MyCartChangeNotifier(
+            myCartRepository: myCartRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WishlistChangeNotifier(
+            wishlistRepository: wishlistRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProductReviewChangeNotifier(
+            productRepository: productRepository,
+          ),
+        ),
       ],
       child: _buildMultiBlocProvider(),
     );
@@ -165,32 +179,6 @@ class MarkaaApp extends StatelessWidget {
         BlocProvider(
           create: (context) => SignInBloc(
             signInRepository: signInRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CategoryBloc(
-            categoryRepository: categoryRepository,
-            brandRepository: brandRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductBloc(
-            productRepository: productRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => BrandBloc(
-            brandRepository: brandRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductListBloc(
-            productRepository: productRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => WishlistBloc(
-            wishlistRepository: wishlistRepository,
           ),
         ),
         BlocProvider(
@@ -220,44 +208,8 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => MyCartBloc(
-            myCartRepository: myCartRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => SearchBloc(
-            searchRepository: searchRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CartItemCountBloc(),
-        ),
-        BlocProvider(
-          create: (context) => WishlistItemCountBloc(),
-        ),
-        BlocProvider(
           create: (context) => CheckoutBloc(
             checkoutRepository: checkoutRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CategoryListBloc(
-            categoryRepository: categoryRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ReorderCartBloc(
-            myCartRepository: myCartRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ProductReviewBloc(
-            productRepository: productRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => SaveLaterBloc(
-            saveLaterRepository: saveLaterRepository,
           ),
         ),
       ],
@@ -266,31 +218,8 @@ class MarkaaApp extends StatelessWidget {
   }
 }
 
-class MarkaaAppView extends StatefulWidget {
-  @override
-  _MarkaaAppViewState createState() => _MarkaaAppViewState();
-}
-
-class _MarkaaAppViewState extends State<MarkaaAppView> {
+class MarkaaAppView extends StatelessWidget {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  CartItemCountBloc cartItemCountBloc;
-  MyCartBloc myCartBloc;
-  LocalStorageRepository localRepo;
-  PageStyle pageStyle;
-
-  @override
-  void initState() {
-    super.initState();
-    localRepo = context.read<LocalStorageRepository>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    myCartBloc = context.read<MyCartBloc>();
-  }
-
-  void _setMyCartId(String cartId) async {
-    if (user == null) {
-      await localRepo.setCartId(cartId);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -312,30 +241,6 @@ class _MarkaaAppViewState extends State<MarkaaAppView> {
         initialRoute: '/',
         onGenerateRoute: (settings) {
           return RouteGenerator.generateRoute(settings);
-        },
-        builder: (ctx, child) {
-          pageStyle = PageStyle(ctx, designWidth, designHeight);
-          pageStyle.initializePageStyles();
-          return BlocListener<MyCartBloc, MyCartState>(
-            listener: (context, state) {
-              if (state is MyCartCreatedSuccess) {
-                _setMyCartId(state.cartId);
-                myCartBloc.add(MyCartItemAdded(
-                  cartId: state.cartId,
-                  product: state.product,
-                  qty: '1',
-                ));
-              }
-              if (state is MyCartCreatedFailure) {}
-              if (state is MyCartItemAddedSuccess) {
-                int count = int.parse(state.count);
-                cartItemCountBloc.add(CartItemCountIncremented(
-                  incrementedCount: cartItemCount + count,
-                ));
-              }
-            },
-            child: child,
-          );
         },
       ),
     );

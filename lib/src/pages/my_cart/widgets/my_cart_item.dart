@@ -13,7 +13,8 @@ import 'my_cart_qty_horizontal_picker.dart';
 class MyCartItem extends StatelessWidget {
   final PageStyle pageStyle;
   final CartItemEntity cartItem;
-  final int discount;
+  final double discount;
+  final String type;
   final String cartId;
   final Function onRemoveCartItem;
   final Function onSaveForLaterItem;
@@ -23,6 +24,7 @@ class MyCartItem extends StatelessWidget {
     this.pageStyle,
     this.cartItem,
     this.discount,
+    this.type,
     this.cartId,
     this.onRemoveCartItem,
     this.onSaveForLaterItem,
@@ -64,7 +66,7 @@ class MyCartItem extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        if (cartItem.product.brandId.isNotEmpty) {
+                        if (cartItem?.product?.brandEntity?.optionId != null) {
                           ProductListArguments arguments = ProductListArguments(
                             category: CategoryEntity(),
                             subCategory: [],
@@ -80,7 +82,7 @@ class MyCartItem extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        cartItem.product.brandLabel,
+                        cartItem?.product?.brandEntity?.brandLabel ?? '',
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
                           fontSize: pageStyle.unitFontSize * 10,
@@ -109,7 +111,9 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          priceString + ' ' + 'currency'.tr(),
+                          discount != 0 && type == 'percentage'
+                              ? discountPriceString + ' ' + 'currency'.tr()
+                              : priceString + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
                             fontSize: pageStyle.unitFontSize * 12,
                             color: greyColor,
@@ -117,8 +121,8 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: pageStyle.unitWidth * 20),
                         Text(
-                          discount != 0
-                              ? discountPriceString + ' ' + 'currency'.tr()
+                          discount != 0 && type == 'percentage'
+                              ? priceString + ' ' + 'currency'.tr()
                               : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,

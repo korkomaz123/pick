@@ -17,10 +17,15 @@ class Api {
   static Future<Map<String, dynamic>> postMethod(
     String url, {
     Map<String, dynamic> data,
+    Map<String, String> headers,
   }) async {
     // print(url);
     // print(data);
-    final response = await http.post(url, headers: _getHeader(), body: data);
+    final response = await http.post(
+      url,
+      headers: headers ?? _getHeader(),
+      body: headers != null ? jsonEncode(data) : data,
+    );
     return jsonDecode(response.body);
   }
 

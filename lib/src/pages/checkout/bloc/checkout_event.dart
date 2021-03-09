@@ -16,3 +16,13 @@ class OrderSubmitted extends CheckoutEvent {
   @override
   List<Object> get props => [orderDetails, lang];
 }
+
+class TapPaymentCheckout extends CheckoutEvent {
+  final Map<String, dynamic> data;
+  final String lang;
+
+  TapPaymentCheckout({this.data, this.lang});
+
+  @override
+  List<Object> get props => [data, lang];
+}

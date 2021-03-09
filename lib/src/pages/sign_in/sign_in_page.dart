@@ -6,13 +6,9 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -22,8 +18,11 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,9 +32,12 @@ import 'package:http/http.dart' as http;
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
-import 'widgets/apple_sign_alert_dialog.dart';
 
 class SignInPage extends StatefulWidget {
+  final bool isFromCheckout;
+
+  SignInPage({this.isFromCheckout = false});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -46,17 +48,18 @@ class _SignInPageState extends State<SignInPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode emailNode = FocusNode();
+  FocusNode passNode = FocusNode();
   bool isShowPass = false;
   SignInBloc signInBloc;
   HomeBloc homeBloc;
-  CartItemCountBloc cartItemCountBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   WishlistRepository wishlistRepo;
   SettingRepository settingRepo;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
@@ -65,21 +68,21 @@ class _SignInPageState extends State<SignInPage> {
     flushBarService = FlushBarService(context: context);
     homeBloc = context.read<HomeBloc>();
     signInBloc = context.read<SignInBloc>();
-    cartItemCountBloc = context.read<CartItemCountBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
       await localRepo.setToken(user.token);
-      await _transferCartItems();
-      await _loadCustomerCartItems();
-      await _getWishlists();
+      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier.transferCartItems();
+      await myCartChangeNotifier.getCartItems(lang);
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await _shippingAddresses();
       await settingRepo.updateFcmDeviceToken(
         user.token,
@@ -109,56 +112,6 @@ class _SignInPageState extends State<SignInPage> {
         if (address.defaultShippingAddress == 1) {
           defaultAddress = address;
         }
-      }
-    }
-  }
-
-  Future<void> _getWishlists() async {
-    final result = await wishlistRepo.getWishlists(user.token, lang);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> lists = result['wishlists'];
-      wishlistCount = lists.isEmpty ? 0 : lists.length;
-      wishlistItemCountBloc.add(WishlistItemCountSet(
-        wishlistItemCount: wishlistCount,
-      ));
-    }
-  }
-
-  Future<void> _transferCartItems() async {
-    String viewerCartId = await localRepo.getCartId();
-    final result = await cartRepo.getCartId(user.token);
-    String customerCartId = result['cartId'];
-    if (viewerCartId.isNotEmpty && customerCartId.isNotEmpty) {
-      await cartRepo.transferCart(viewerCartId, customerCartId);
-    }
-  }
-
-  Future<void> _loadCustomerCartItems() async {
-    final result = await cartRepo.getCartId(user.token);
-    myCartItems.clear();
-    cartItemCountBloc.add(CartItemCountSet(cartItemCount: 0));
-    if (result['code'] == 'SUCCESS') {
-      String cartId = result['cartId'];
-      final response = await cartRepo.getCartItems(cartId, lang);
-      if (response['code'] == 'SUCCESS') {
-        List<dynamic> cartList = response['cart'];
-        int count = 0;
-        for (int i = 0; i < cartList.length; i++) {
-          Map<String, dynamic> cartItemJson = {};
-          cartItemJson['product'] =
-              ProductModel.fromJson(cartList[i]['product']);
-          cartItemJson['itemCount'] = cartList[i]['itemCount'];
-          cartItemJson['itemId'] = cartList[i]['itemid'];
-          cartItemJson['rowPrice'] = cartList[i]['row_price'];
-          cartItemJson['availableCount'] = cartList[i]['availableCount'];
-          CartItemEntity cart = CartItemEntity.fromJson(cartItemJson);
-          myCartItems.add(cart);
-          count += cart.itemCount;
-          cartTotalPrice +=
-              cart.itemCount * double.parse(cart.product.price).ceil();
-        }
-        cartItemCount = count;
-        cartItemCountBloc.add(CartItemCountSet(cartItemCount: count));
       }
     }
   }
@@ -224,9 +177,9 @@ class _SignInPageState extends State<SignInPage> {
                   SizedBox(height: 40),
                   _buildOrDivider(),
                   SizedBox(height: 40),
-                  if (Platform.isAndroid) ...[_buildExternalSignInButtons()],
+                  _buildExternalSignInButtons(),
                   SizedBox(height: 40),
-                  _buildSignUpPhase(),
+                  if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
                 ],
               ),
             ),
@@ -257,6 +210,9 @@ class _SignInPageState extends State<SignInPage> {
           return null;
         },
         keyboardType: TextInputType.emailAddress,
+        focusNode: emailNode,
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () => passNode.requestFocus(),
         decoration: InputDecoration(
           hintText: 'email'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -307,6 +263,12 @@ class _SignInPageState extends State<SignInPage> {
             return 'short_length_password'.tr();
           }
           return null;
+        },
+        focusNode: passNode,
+        textInputAction: TextInputAction.done,
+        onEditingComplete: () {
+          passNode.unfocus();
+          _signIn();
         },
         decoration: InputDecoration(
           hintText: 'password'.tr(),
@@ -376,7 +338,11 @@ class _SignInPageState extends State<SignInPage> {
       padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
       alignment: Alignment.centerRight,
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, Routes.forgotPassword),
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.forgotPassword,
+          arguments: widget.isFromCheckout,
+        ),
         child: Text(
           'ask_forgot_password'.tr(),
           style: mediumTextStyle.copyWith(
@@ -514,7 +480,6 @@ class _SignInPageState extends State<SignInPage> {
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      print(profile);
       signInBloc.add(SocialSignInSubmitted(
         email: email,
         firstName: firstName,
@@ -532,17 +497,19 @@ class _SignInPageState extends State<SignInPage> {
     GoogleSignIn _googleSignIn = GoogleSignIn();
     try {
       final googleAccount = await _googleSignIn.signIn();
-      String email = googleAccount.email;
-      String displayName = googleAccount.displayName;
-      String firstName = displayName.split(' ')[0];
-      String lastName = displayName.split(' ')[1];
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'Google Sign',
-        lang: lang,
-      ));
+      if (googleAccount != null) {
+        String email = googleAccount.email;
+        String displayName = googleAccount.displayName;
+        String firstName = displayName.split(' ')[0];
+        String lastName = displayName.split(' ')[1];
+        signInBloc.add(SocialSignInSubmitted(
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          loginType: 'Google Sign',
+          lang: lang,
+        ));
+      }
     } catch (error) {
       print(error);
     }
@@ -550,14 +517,6 @@ class _SignInPageState extends State<SignInPage> {
 
   void _onAppleSign() async {
     try {
-      await showDialog(
-        context: context,
-        builder: (context) => AppleSignAlertDialog(
-          pageStyle: pageStyle,
-          title: 'markaa_team_title'.tr(),
-          description: 'apple_sign_description'.tr(),
-        ),
-      );
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -565,33 +524,23 @@ class _SignInPageState extends State<SignInPage> {
         ],
       );
       String email = credential.email;
+      String appleId = credential.userIdentifier;
       String firstName = credential.givenName;
       String lastName = credential.familyName;
-      String appleId = await localRepo.getItem('appleId');
-      if (appleId.isNotEmpty) {
-        email = appleId;
-      } else {
-        email = '';
+      if (email == null) {
+        final faker = Faker();
+        String fakeEmail = faker.internet.freeEmail();
+        int timestamp = DateTime.now().microsecondsSinceEpoch;
+        email = '$timestamp-$fakeEmail';
       }
-      if (email.isEmpty) {
-        await showDialog(
-          context: context,
-          builder: (context) => AppleSignAlertDialog(
-            pageStyle: pageStyle,
-            title: 'markaa_team_title'.tr(),
-            description: 'apple_sign_failure'.tr(),
-          ),
-        );
-      } else {
-        await localRepo.setItem('appleId', email);
-        signInBloc.add(SocialSignInSubmitted(
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          loginType: 'Apple Sign',
-          lang: lang,
-        ));
-      }
+      signInBloc.add(SocialSignInSubmitted(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        loginType: 'apple',
+        lang: lang,
+        appleId: appleId,
+      ));
     } catch (error) {
       print(error);
     }

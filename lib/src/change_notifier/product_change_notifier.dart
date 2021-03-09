@@ -1,4 +1,5 @@
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:flutter/foundation.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
@@ -13,33 +14,69 @@ class ProductChangeNotifier extends ChangeNotifier {
   final ProductRepository productRepository;
   final LocalStorageRepository localStorageRepository;
 
+  bool isReachedMax = false;
   String brandId;
   Map<String, List<ProductModel>> data = {};
   Map<String, int> pages = {};
+  ProductEntity productDetails;
+  Map<String, dynamic> selectedOptions = {};
+  ProductModel selectedVariant;
+
+  void initialize() {
+    data = {};
+    pages = {};
+    isReachedMax = false;
+  }
+
+  Future<void> getProductDetails(String productId, String lang) async {
+    selectedOptions = {};
+    productDetails = null;
+    selectedVariant = null;
+    final result = await productRepository.getProductDetails(productId, lang);
+    if (result['code'] == 'SUCCESS') {
+      productDetails = ProductEntity.fromJson(result['moreAbout']);
+    }
+    notifyListeners();
+  }
 
   /// category products list loading...
-  Future<void> initialLoadCategoryProducts(String categoryId) async {
+  Future<void> initialLoadCategoryProducts(
+    String categoryId,
+    String lang,
+  ) async {
+    isReachedMax = false;
     if (!data.containsKey(categoryId)) {
       // data[categoryId] = <ProductModel>[];
       pages[categoryId] = 1;
-      await loadCategoryProducts(1, categoryId);
+      await loadCategoryProducts(1, categoryId, lang);
     } else {
       notifyListeners();
     }
   }
 
-  Future<void> loadMoreCategoryProducts(int page, String categoryId) async {
+  Future<void> loadMoreCategoryProducts(
+    int page,
+    String categoryId,
+    String lang,
+  ) async {
     pages[categoryId] = page;
-    await loadCategoryProducts(page, categoryId);
+    await loadCategoryProducts(page, categoryId, lang);
   }
 
-  Future<void> refreshCategoryProducts(String categoryId) async {
+  Future<void> refreshCategoryProducts(
+    String categoryId,
+    String lang,
+  ) async {
     data[categoryId] = <ProductModel>[];
     pages[categoryId] = 1;
-    await loadCategoryProducts(1, categoryId);
+    await loadCategoryProducts(1, categoryId, lang);
   }
 
-  Future<void> loadCategoryProducts(int page, String categoryId) async {
+  Future<void> loadCategoryProducts(
+    int page,
+    String categoryId,
+    String lang,
+  ) async {
     String key = 'cat-products-$categoryId-$lang-$page';
     final exist = await localStorageRepository.existItem(key);
     if (exist) {
@@ -49,6 +86,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       for (int i = 0; i < productList.length; i++) {
         data[categoryId].add(ProductModel.fromJson(productList[i]));
+      }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
       }
       notifyListeners();
     }
@@ -63,6 +103,9 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[categoryId].add(ProductModel.fromJson(productList[i]));
         }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
+        }
         notifyListeners();
       }
     }
@@ -72,11 +115,13 @@ class ProductChangeNotifier extends ChangeNotifier {
   Future<void> initialLoadBrandProducts(
     String brandId,
     String categoryId,
+    String lang,
   ) async {
+    isReachedMax = false;
     final index = brandId + '_' + categoryId ?? '';
     if (!data.containsKey(index)) {
       pages[index] = 1;
-      await loadBrandProducts(1, brandId, categoryId);
+      await loadBrandProducts(1, brandId, categoryId, lang);
     } else {
       notifyListeners();
     }
@@ -86,24 +131,30 @@ class ProductChangeNotifier extends ChangeNotifier {
     int page,
     String brandId,
     String categoryId,
+    String lang,
   ) async {
     final index = brandId + '_' + categoryId ?? '';
     pages[index] = page;
     print(page);
-    await loadBrandProducts(page, brandId, categoryId);
+    await loadBrandProducts(page, brandId, categoryId, lang);
   }
 
-  Future<void> refreshBrandProducts(String brandId, String categoryId) async {
+  Future<void> refreshBrandProducts(
+    String brandId,
+    String categoryId,
+    String lang,
+  ) async {
     final index = brandId + '_' + categoryId ?? '';
     data[index] = <ProductModel>[];
     pages[index] = 1;
-    await loadBrandProducts(1, brandId, categoryId);
+    await loadBrandProducts(1, brandId, categoryId, lang);
   }
 
   Future<void> loadBrandProducts(
     int page,
     String brandId,
     String categoryId,
+    String lang,
   ) async {
     final index = brandId + '_' + categoryId ?? '';
     String key = 'cat-products-$brandId-$categoryId-$lang-$page';
@@ -116,9 +167,13 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
       }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
+      }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(
+        brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -128,6 +183,9 @@ class ProductChangeNotifier extends ChangeNotifier {
         }
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
+        }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
         }
         notifyListeners();
       }
@@ -139,11 +197,13 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     String sortItem,
+    String lang,
   ) async {
+    isReachedMax = false;
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     if (!data.containsKey(index)) {
       pages[index] = 1;
-      await loadSortedProducts(1, brandId, categoryId, sortItem);
+      await loadSortedProducts(1, brandId, categoryId, sortItem, lang);
     } else {
       notifyListeners();
     }
@@ -154,22 +214,24 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     String sortItem,
+    String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     pages[index] = page;
     print(page);
-    await loadSortedProducts(page, brandId, categoryId, sortItem);
+    await loadSortedProducts(page, brandId, categoryId, sortItem, lang);
   }
 
   Future<void> refreshSortedProducts(
     String brandId,
     String categoryId,
     String sortItem,
+    String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     data[index] = <ProductModel>[];
     pages[index] = 1;
-    await loadSortedProducts(1, brandId, categoryId, sortItem);
+    await loadSortedProducts(1, brandId, categoryId, sortItem, lang);
   }
 
   Future<void> loadSortedProducts(
@@ -177,9 +239,11 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     String sortItem,
+    String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(
+        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
@@ -187,6 +251,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
+      }
+      if (productList.isEmpty && page > 0) {
+        isReachedMax = true;
       }
       notifyListeners();
     }
@@ -197,12 +264,14 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     Map<String, dynamic> filterValues,
+    String lang,
   ) async {
+    isReachedMax = false;
     final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     print(index);
     data[index] = null;
     pages[index] = 1;
-    await loadFilteredProducts(1, brandId, categoryId, filterValues);
+    await loadFilteredProducts(1, brandId, categoryId, filterValues, lang);
   }
 
   Future<void> loadMoreFilteredProducts(
@@ -210,21 +279,23 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     Map<String, dynamic> filterValues,
+    String lang,
   ) async {
     final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     pages[index] = page;
-    await loadFilteredProducts(page, brandId, categoryId, filterValues);
+    await loadFilteredProducts(page, brandId, categoryId, filterValues, lang);
   }
 
   Future<void> refreshFilteredProducts(
     String brandId,
     String categoryId,
     Map<String, dynamic> filterValues,
+    String lang,
   ) async {
     final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     data[index] = <ProductModel>[];
     pages[index] = 1;
-    await loadFilteredProducts(1, brandId, categoryId, filterValues);
+    await loadFilteredProducts(1, brandId, categoryId, filterValues, lang);
   }
 
   Future<void> loadFilteredProducts(
@@ -232,6 +303,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String brandId,
     String categoryId,
     Map<String, dynamic> filterValues,
+    String lang,
   ) async {
     try {
       final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
@@ -250,10 +322,26 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
         }
+        if (productList.isEmpty && page > 0) {
+          isReachedMax = true;
+        }
         notifyListeners();
       }
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  /// select option in configurable product
+  void selectOption(String attributeId, String optionValue) {
+    selectedOptions[attributeId] = optionValue;
+    selectedVariant = null;
+    for (var variant in productDetails.variants) {
+      if (mapEquals(selectedOptions, variant.options)) {
+        selectedVariant = variant;
+        break;
+      }
+    }
+    notifyListeners();
   }
 }

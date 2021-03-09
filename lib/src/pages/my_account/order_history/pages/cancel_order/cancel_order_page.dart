@@ -164,6 +164,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                       _buildCancelRequestCost(),
                       _buildSubtotal(),
                       _buildShippingCost(),
+                      if (widget.order.discountAmount != 0) ...[
+                        _buildDiscount(),
+                      ],
                       _buildTotal(),
                     ],
                   );
@@ -478,9 +481,12 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildShippingCost() {
-    double totalPrice = double.parse(order.totalPrice);
-    double changedPrice = totalPrice - canceledPrice;
-    double fees = order.shippingMethod.serviceFees;
+    double subtotalPrice = double.parse(order.subtotalPrice);
+    double changedPrice = subtotalPrice - canceledPrice;
+    double fees = .0;
+    if (changedPrice > 0) {
+      fees = order.shippingMethod.serviceFees;
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -510,10 +516,58 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     );
   }
 
+  Widget _buildDiscount() {
+    double subtotalPrice = double.parse(order.subtotalPrice);
+    double changedPrice = canceledPrice - subtotalPrice;
+    double discount = .0;
+    if (widget.order.discountType == 'percentage') {
+      discount = changedPrice * widget.order.discountAmount / 100;
+    } else {
+      discount = widget.order.discountAmount;
+    }
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'discount'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+          Text(
+            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTotal() {
-    double totalPrice = double.parse(order.totalPrice);
-    double changedPrice = totalPrice - canceledPrice;
-    double fees = order.shippingMethod.serviceFees;
+    double subtotalPrice = double.parse(order.subtotalPrice);
+    double changedPrice = subtotalPrice - canceledPrice;
+    double fees = .0;
+    if (changedPrice > 0) {
+      fees = order.shippingMethod.serviceFees;
+    }
+    double discount = .0;
+    if (widget.order.discountType == 'percentage') {
+      discount = changedPrice * widget.order.discountAmount / 100;
+    } else {
+      if (changedPrice != 0) {
+        discount = widget.order.discountAmount;
+      }
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -533,7 +587,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${changedPrice == fees ? 0.00 : changedPrice.toStringAsFixed(2)}',
+                ' ${(changedPrice - discount + fees).toStringAsFixed(2)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

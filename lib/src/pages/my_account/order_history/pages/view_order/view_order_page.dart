@@ -145,6 +145,10 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
               _buildSubtotal(),
               _buildShippingCost(),
+              if (widget.order.discountAmount != 0 &&
+                  widget.order.status != OrderStatusEnum.canceled) ...[
+                _buildDiscount(),
+              ],
               _buildTotal(),
               _buildAddressBar(),
               if (isStock && order.status != OrderStatusEnum.canceled) ...[
@@ -364,10 +368,47 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     );
   }
 
+  Widget _buildDiscount() {
+    double discount = .0;
+    if (widget.order.discountType == 'percentage') {
+      discount = -double.parse(widget.order.subtotalPrice) *
+          widget.order.discountAmount /
+          100;
+    } else {
+      discount = -widget.order.discountAmount;
+    }
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'discount'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+          Text(
+            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: pageStyle.unitFontSize * 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTotal() {
     double total = double.parse(order.totalPrice);
     if (order.status == OrderStatusEnum.canceled) {
-      total -= order.shippingMethod.serviceFees;
+      // total -= order.shippingMethod.serviceFees;
     }
     return Container(
       width: double.infinity,

@@ -52,6 +52,19 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                   Routes.productList,
                   arguments: arguments,
                 );
+              } else if (state?.ads?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: state.ads.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
               }
             },
             child: Image.network(state.ads.bannerImage),

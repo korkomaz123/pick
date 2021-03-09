@@ -16,7 +16,8 @@ class HomeRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getHomeAds(String lang) async {
     String url = EndPoints.getHomeAds;
-    return await Api.getMethod(url);
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
   }
 
   //////////////////////////////////////////////////////////////////////////////

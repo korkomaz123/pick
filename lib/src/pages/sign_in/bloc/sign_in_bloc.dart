@@ -33,6 +33,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         event.lastName,
         event.loginType,
         event.lang,
+        event.appleId,
       );
     } else if (event is SignUpSubmitted) {
       yield* _mapSignUpSubmittedToState(
@@ -81,12 +82,12 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     String lastName,
     String loginType,
     String lang,
+    String appleId,
   ) async* {
     yield SignInSubmittedInProcess();
     try {
       final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang);
-      print(result);
+          email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));

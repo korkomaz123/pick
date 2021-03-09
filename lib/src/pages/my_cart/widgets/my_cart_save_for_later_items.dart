@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'my_cart_remove_dialog.dart';
 
@@ -20,19 +18,15 @@ class MyCartSaveForLaterItems extends StatefulWidget {
   final PageStyle pageStyle;
   final ProgressService progressService;
   final FlushBarService flushBarService;
-  final SaveLaterBloc saveLaterBloc;
-  final MyCartBloc cartBloc;
-  final MyCartRepository cartRepo;
-  final LocalStorageRepository localRepo;
+  final MyCartChangeNotifier myCartChangeNotifier;
+  final WishlistChangeNotifier wishlistChangeNotifier;
 
   MyCartSaveForLaterItems({
     this.pageStyle,
     this.progressService,
     this.flushBarService,
-    this.saveLaterBloc,
-    this.cartBloc,
-    this.cartRepo,
-    this.localRepo,
+    this.myCartChangeNotifier,
+    this.wishlistChangeNotifier,
   });
 
   @override
@@ -41,56 +35,17 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
-  String cartId = '';
-  List<ProductModel> items = [];
-
   @override
   void initState() {
     super.initState();
-    _getMyCartId();
-  }
-
-  void _getMyCartId() async {
-    if (user?.token != null) {
-      final result = await widget.cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await widget.localRepo.getCartId();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SaveLaterBloc, SaveLaterState>(
-      listener: (context, state) {
-        if (state is SaveLaterItemChangedSuccess) {
-          if (state.product != null) {
-            if (state.action == 'delete') {
-              widget.cartBloc.add(MyCartItemAdded(
-                cartId: cartId,
-                product: state.product,
-                qty: state.product.qtySaveForLater.toString(),
-              ));
-            } else {
-              widget.cartBloc.add(MyCartItemRemoved(
-                cartId: cartId,
-                itemId: state.itemId,
-              ));
-            }
-          }
-          widget.saveLaterBloc.add(SaveLaterItemsLoaded(
-            token: user.token,
-            lang: lang,
-          ));
-        }
-      },
-      builder: (context, state) {
-        if (state is SaveLaterItemsLoadedSuccess) {
-          items = state.items;
-        }
-        if (items.isNotEmpty) {
+    return Consumer<WishlistChangeNotifier>(
+      builder: (_, model, __) {
+        if (model.wishlistItemsCount > 0) {
+          final keys = model.wishlistItemsMap.keys.toList();
           return Container(
             width: widget.pageStyle.deviceWidth,
             color: backgroundColor,
@@ -107,7 +62,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                     bottom: widget.pageStyle.unitHeight * 10,
                   ),
                   child: Text(
-                    'Save For Later',
+                    'save_for_later'.tr(),
                     style: mediumTextStyle.copyWith(
                       fontSize: widget.pageStyle.unitFontSize * 19,
                       color: greyDarkColor,
@@ -122,9 +77,13 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: items.map((item) {
-                        return _buildItem(item);
-                      }).toList(),
+                      children: List.generate(
+                        model.wishlistItemsCount,
+                        (index) {
+                          final item = model.wishlistItemsMap[keys[index]];
+                          return _buildItem(item);
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -136,9 +95,8 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
               ],
             ),
           );
-        } else {
-          return Container();
         }
+        return Container();
       },
     );
   }
@@ -222,22 +180,15 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
       },
     );
     if (result != null) {
-      widget.saveLaterBloc.add(SaveLaterItemChanged(
-        token: user.token,
-        productId: item.productId,
-        action: 'delete',
-        qty: item.qtySaveForLater,
-      ));
+      await widget.wishlistChangeNotifier
+          .removeItemFromWishlist(user.token, item.productId);
     }
   }
 
-  void _onPutInCart(ProductModel item) {
-    widget.saveLaterBloc.add(SaveLaterItemChanged(
-      token: user.token,
-      productId: item.productId,
-      action: 'delete',
-      qty: item.qtySaveForLater,
-      product: item,
-    ));
+  void _onPutInCart(ProductModel item) async {
+    await widget.wishlistChangeNotifier
+        .removeItemFromWishlist(user.token, item.productId);
+    await widget.myCartChangeNotifier.addProductToCart(
+        context, widget.pageStyle, item, item.qtySaveForLater, lang, {});
   }
 }

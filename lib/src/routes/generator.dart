@@ -1,11 +1,11 @@
 import 'package:markaa/src/pages/brand_list/brand_list_page.dart';
 import 'package:markaa/src/pages/category_list/category_list_page.dart';
 import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
+import 'package:markaa/src/pages/checkout/address/checkout_guest_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_page.dart';
-import 'package:markaa/src/pages/checkout/review/checkout_review_page.dart';
+import 'package:markaa/src/pages/checkout/payment/checkout_payment_card_page.dart';
 import 'package:markaa/src/pages/checkout/search_address/search_address_screen.dart';
-import 'package:markaa/src/pages/checkout/shipping/checkout_shipping_page.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:markaa/src/pages/home/home_page.dart';
@@ -37,6 +37,7 @@ import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
+import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,25 +53,33 @@ class RouteGenerator {
           builder: (context) => SplashPage(),
           settings: RouteSettings(name: Routes.start),
         );
+      case Routes.update:
+        return CupertinoPageRoute(
+          builder: (context) => UpdatePage(storeLink: params),
+          settings: RouteSettings(name: Routes.update),
+        );
       case Routes.signIn:
         return CupertinoPageRoute(
-          builder: (context) => SignInPage(),
+          builder: (context) => SignInPage(isFromCheckout: params ?? false),
           settings: RouteSettings(name: Routes.signIn),
         );
       case Routes.signUp:
         return CupertinoPageRoute(
-          builder: (context) => SignUpPage(),
+          builder: (context) => SignUpPage(isFromCheckout: params ?? false),
           settings: RouteSettings(name: Routes.signUp),
         );
       case Routes.forgotPassword:
         return CupertinoPageRoute(
-          builder: (context) => ForgotPasswordPage(),
+          builder: (context) => ForgotPasswordPage(
+            isFromCheckout: params ?? false,
+          ),
           settings: RouteSettings(name: Routes.forgotPassword),
         );
       case Routes.home:
-        return CupertinoPageRoute(
-          builder: (context) => HomePage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.home),
+          pageBuilder: (_, __, ___) => HomePage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.productList:
         return CupertinoPageRoute(
@@ -78,14 +87,16 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.productList),
         );
       case Routes.categoryList:
-        return CupertinoPageRoute(
-          builder: (context) => CategoryListPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.categoryList),
+          pageBuilder: (_, __, ___) => CategoryListPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.brandList:
-        return CupertinoPageRoute(
-          builder: (context) => BrandListPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.brandList),
+          pageBuilder: (_, __, ___) => BrandListPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.filter:
         return CupertinoPageRoute(
@@ -120,20 +131,20 @@ class RouteGenerator {
           builder: (context) => CheckoutAddressPage(reorder: params),
           settings: RouteSettings(name: Routes.checkoutAddress),
         );
-      case Routes.checkoutShipping:
+      case Routes.checkoutGuestAddress:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutShippingPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutShipping),
-        );
-      case Routes.checkoutReview:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutReviewPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutReview),
+          builder: (context) => CheckoutGuestAddressPage(),
+          settings: RouteSettings(name: Routes.checkoutGuestAddress),
         );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(
           builder: (context) => CheckoutPaymentPage(reorder: params),
           settings: RouteSettings(name: Routes.checkoutPayment),
+        );
+      case Routes.checkoutPaymentCard:
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutPaymentCardPage(params: params),
+          settings: RouteSettings(name: Routes.checkoutPaymentCard),
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(
@@ -146,9 +157,10 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.search),
         );
       case Routes.account:
-        return CupertinoPageRoute(
-          builder: (context) => AccountPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.account),
+          pageBuilder: (_, __, ___) => AccountPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.updateProfile:
         return CupertinoPageRoute(
@@ -156,9 +168,10 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.updateProfile),
         );
       case Routes.wishlist:
-        return CupertinoPageRoute(
-          builder: (context) => WishlistPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.wishlist),
+          pageBuilder: (_, __, ___) => WishlistPage(),
+          transitionDuration: Duration.zero,
         );
       case Routes.orderHistory:
         return CupertinoPageRoute(

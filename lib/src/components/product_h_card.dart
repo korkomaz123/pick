@@ -4,19 +4,16 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart/my_cart_bloc.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_bloc.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -50,64 +47,21 @@ class _ProductHCardState extends State<ProductHCard>
     with TickerProviderStateMixin {
   bool isWishlist;
   int index;
-  String cartId;
-  MyCartRepository cartRepo;
-  WishlistRepository wishlistRepo;
-  LocalStorageRepository localRepo;
   FlushBarService flushBarService;
-  MyCartBloc myCartBloc;
-  WishlistBloc wishlistBloc;
-  WishlistItemCountBloc wishlistItemCountBloc;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     isWishlist = false;
-    cartRepo = context.read<MyCartRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
-    localRepo = context.read<LocalStorageRepository>();
-    myCartBloc = context.read<MyCartBloc>();
-    wishlistBloc = context.read<WishlistBloc>();
-    wishlistItemCountBloc = context.read<WishlistItemCountBloc>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
-    _getWishlist();
-    _getMyCartId();
     _initAnimation();
   }
-
-  void _getWishlist() async {
-    if (user?.token != null) {
-      isWishlist = await wishlistRepo.checkWishlistStatus(
-        user.token,
-        widget.product.productId,
-      );
-      if (mounted) setState(() {});
-    }
-  }
-
-  Future<void> _getMyCartId() async {
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localRepo.getCartId();
-    }
-    if (cartId.isEmpty) {
-      final result = await cartRepo.createCart();
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-        await localRepo.setCartId(cartId);
-      }
-    }
-  }
-
-  // void _saveCartId(cartId) async {
-  //   await localRepo.setCartId(cartId);
-  // }
 
   void _initAnimation() {
     /// add to cart button animation
@@ -136,39 +90,12 @@ class _ProductHCardState extends State<ProductHCard>
       child: Container(
         width: widget.cardWidth,
         height: widget.cardHeight,
-        child: BlocConsumer<MyCartBloc, MyCartState>(
-          listener: (context, state) {
-            if (state is MyCartCreatedFailure) {
-              flushBarService.showErrorMessage(
-                widget.pageStyle,
-                state.message,
-              );
-            }
-            if (state is MyCartItemAddedInProcess) {
-              flushBarService.showAddCartMessage(
-                widget.pageStyle,
-                state.product,
-              );
-            }
-            if (state is MyCartItemAddedFailure) {
-              flushBarService.showErrorMessage(
-                widget.pageStyle,
-                state.message,
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is MyCartCreatedSuccess) {
-              cartId = state.cartId;
-            }
-            return Stack(
-              children: [
-                _buildProductCard(),
-                _buildToolbar(),
-                _buildOutofStock(),
-              ],
-            );
-          },
+        child: Stack(
+          children: [
+            _buildProductCard(),
+            _buildToolbar(),
+            _buildOutofStock(),
+          ],
         ),
       ),
     );
@@ -199,6 +126,8 @@ class _ProductHCardState extends State<ProductHCard>
                 return chunkEvent != null
                     ? Image.asset(
                         'lib/public/images/loading/image_loading.jpg',
+                        width: widget.cardHeight * 0.65,
+                        height: widget.cardHeight * 0.8,
                       )
                     : child;
               },
@@ -211,7 +140,7 @@ class _ProductHCardState extends State<ProductHCard>
                 SizedBox(height: widget.cardHeight * 0.1),
                 InkWell(
                   onTap: () {
-                    if (widget.product.brandId.isNotEmpty) {
+                    if (widget?.product?.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
@@ -227,7 +156,7 @@ class _ProductHCardState extends State<ProductHCard>
                     }
                   },
                   child: Text(
-                    widget.product.brandLabel,
+                    widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: widget.pageStyle.unitFontSize * 14,
@@ -266,8 +195,9 @@ class _ProductHCardState extends State<ProductHCard>
                       ),
                     ),
                     widget.isShoppingCart &&
-                            widget.product.stockQty != null &&
-                            widget.product.stockQty > 0
+                            (widget.product.typeId != 'simple' ||
+                                widget.product.stockQty != null &&
+                                    widget.product.stockQty > 0)
                         ? InkWell(
                             onTap: () => _onAddProductToCart(context),
                             child: ScaleTransition(
@@ -291,111 +221,92 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildToolbar() {
-    return BlocConsumer<WishlistItemCountBloc, WishlistItemCountState>(
-      listener: (context, state) {
-        _getWishlist();
-      },
-      builder: (context, state) {
-        return Column(
-          children: [
-            if (widget.isWishlist) ...[
-              Align(
-                alignment:
-                    lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () => user != null
-                        ? _onWishlist()
-                        : Navigator.pushNamed(context, Routes.signIn),
-                    child: Container(
-                      width:
-                          widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                      height:
-                          widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                      child: isWishlist
-                          ? SvgPicture.asset(wishlistedIcon)
-                          : SvgPicture.asset(favoriteIcon),
-                    ),
-                  ),
+    return Consumer<WishlistChangeNotifier>(
+      builder: (_, model, __) {
+        if (widget.isWishlist) {
+          isWishlist =
+              model.wishlistItemsMap.containsKey(widget.product.productId);
+          return Align(
+            alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () => user != null
+                    ? _onWishlist()
+                    : Navigator.pushNamed(context, Routes.signIn),
+                child: Container(
+                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  child: isWishlist
+                      ? SvgPicture.asset(wishlistedIcon)
+                      : SvgPicture.asset(favoriteIcon),
                 ),
               ),
-            ],
-          ],
-        );
+            ),
+          );
+        } else {
+          return SizedBox.shrink();
+        }
       },
     );
   }
 
   Widget _buildOutofStock() {
-    return widget.product.stockQty == null || widget.product.stockQty == 0
-        ? Align(
-            alignment:
-                lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 15,
-                vertical: widget.pageStyle.unitHeight * 5,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: widget.pageStyle.unitFontSize * 14,
-                  color: Colors.white70,
-                ),
-              ),
+    if (widget.product.typeId == 'simple' &&
+        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+      return Align(
+        alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.pageStyle.unitWidth * 15,
+            vertical: widget.pageStyle.unitHeight * 5,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: widget.pageStyle.unitFontSize * 14,
+              color: Colors.white70,
             ),
-          )
-        : SizedBox.shrink();
+          ),
+        ),
+      );
+    }
+    return Container();
   }
 
   void _onAddProductToCart(BuildContext context) async {
-    _addToCartController.repeat(reverse: true);
-    Timer.periodic(Duration(milliseconds: 600), (timer) {
-      _addToCartController.stop(canceled: true);
-      timer.cancel();
-    });
-    if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-      await _getMyCartId();
-      if (cartId.isEmpty) {
-        myCartBloc.add(MyCartCreated(
-          product: widget.product,
-        ));
-      } else {
-        myCartBloc.add(MyCartItemAdded(
-          cartId: cartId,
-          product: widget.product,
-          qty: '1',
-        ));
-      }
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      flushBarService.showErrorMessage(
-        widget.pageStyle,
-        'out_of_stock_error'.tr(),
-      );
+      _addToCartController.repeat(reverse: true);
+      Timer.periodic(Duration(milliseconds: 600), (timer) {
+        _addToCartController.stop(canceled: true);
+        timer.cancel();
+      });
+      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+        await myCartChangeNotifier.addProductToCart(
+            context, widget.pageStyle, widget.product, 1, lang, {});
+      } else {
+        flushBarService.showErrorMessage(
+          widget.pageStyle,
+          'out_of_stock_error'.tr(),
+        );
+      }
     }
   }
 
   void _onWishlist() async {
-    if (isWishlist) {
-      wishlistCount -= 1;
-      wishlistBloc.add(WishlistRemoved(
-        token: user.token,
-        productId: widget.product.productId,
-      ));
-      await localRepo.removeWishlistItem(widget.product.productId);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      wishlistCount += 1;
-      wishlistBloc.add(WishlistAdded(
-        token: user.token,
-        productId: widget.product.productId,
-      ));
+      if (isWishlist) {
+        await wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product.productId);
+      } else {
+        await wishlistChangeNotifier
+            .addItemToWishlist(user.token, widget.product, 1, {});
+      }
     }
-    isWishlist = !isWishlist;
-    wishlistItemCountBloc.add(WishlistItemCountSet(
-      wishlistItemCount: wishlistCount,
-    ));
-    setState(() {});
   }
 }

@@ -92,18 +92,26 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
                   Routes.productList,
                   arguments: arguments,
                 );
+              } else if (banner?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: banner.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
               }
             },
-            child: Container(
+            child: Image.network(
+              banner.bannerImage,
               width: widget.pageStyle.deviceWidth,
               height: widget.pageStyle.deviceWidth * 579 / 1125,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                  image: NetworkImage(banner.bannerImage),
-                  fit: BoxFit.fill,
-                ),
-              ),
+              fit: BoxFit.fill,
             ),
           );
         },

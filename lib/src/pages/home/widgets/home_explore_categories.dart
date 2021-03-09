@@ -1,12 +1,12 @@
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_list/category_list_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -25,13 +25,13 @@ class HomeExploreCategories extends StatefulWidget {
 class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
   List<CategoryEntity> categories = [];
-  CategoryListBloc categoryListBloc;
+  CategoryChangeNotifier categoryChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    categoryListBloc = context.read<CategoryListBloc>();
-    categoryListBloc.add(CategoryListLoaded(lang: lang));
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    categoryChangeNotifier.getCategoriesList(lang);
   }
 
   @override
@@ -40,26 +40,21 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       width: widget.pageStyle.deviceWidth,
       height: widget.pageStyle.unitHeight * 340,
       color: Colors.white,
-      child: BlocConsumer<CategoryListBloc, CategoryListState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is CategoryListLoadedSuccess) {
-            categories = state.categories;
-          }
-          if (categories.isNotEmpty) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTitle(),
-                _buildCategorySliders(),
-                _buildFooter(),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+      child: Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
+        categories = categoryChangeNotifier.categories;
+        if (categories.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitle(),
+              _buildCategorySliders(),
+              _buildFooter(),
+            ],
+          );
+        } else {
+          return Container();
+        }
+      }),
     );
   }
 
@@ -125,7 +120,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             color: Colors.white,
             child: Swiper(
               itemCount: categories.length > 10 ? 10 : categories.length,
-              autoplay: true,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,

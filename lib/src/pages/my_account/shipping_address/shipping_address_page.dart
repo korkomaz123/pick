@@ -73,11 +73,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       context,
       (route) => route.settings.name == Routes.shippingAddress,
     );
-    if (isNew) length += 1;
+
     shippingAddressBloc.add(ShippingAddressInitialized());
-    Future.delayed(Duration(milliseconds: 500), () {
-      shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-    });
+    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    // });
   }
 
   // void _moveToActiveItem() {
@@ -90,7 +89,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   @override
   void dispose() {
-    shippingAddressBloc.add(ShippingAddressInitialized());
     super.dispose();
   }
 
@@ -177,7 +175,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         onLoading: () => null,
         child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
           listener: (context, state) {
+            // if (state is ShippingAddressLoadedInProcess) {
+            //   progressService.showProgress();
+            // }
+            // if (state is ShippingAddressLoadedSuccess) {
+            //   progressService.hideProgress();
+            // }
             if (state is ShippingAddressLoadedFailure) {
+              // progressService.hideProgress();
               flushBarService.showErrorMessage(pageStyle, state.message);
             }
             if (state is ShippingAddressRemovedInProcess) {
@@ -216,26 +221,27 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             }
           },
           builder: (context, state) {
-            if (state is ShippingAddressLoadedSuccess) {
-              if (length != null && length == state.addresses.length ||
-                  length == null) {
-                length = length ?? state.addresses.length;
-                addresses = state.addresses;
-                shippingAddresses = state.addresses;
-                for (int i = 0; i < shippingAddresses.length; i++) {
-                  if (shippingAddresses[i].defaultShippingAddress == 1) {
-                    defaultAddressId = shippingAddresses[i].addressId;
-                    defaultAddress = shippingAddresses[i];
-                  }
+            if (state is ShippingAddressInitial) {
+              shippingAddresses = null;
+              print('initial');
+            } else if (state is ShippingAddressLoadedSuccess) {
+              print('loda success');
+              addresses = state.addresses;
+              shippingAddresses = state.addresses;
+              for (int i = 0; i < shippingAddresses.length; i++) {
+                if (shippingAddresses[i].defaultShippingAddress == 1) {
+                  defaultAddressId = shippingAddresses[i].addressId;
+                  defaultAddress = shippingAddresses[i];
+                  break;
                 }
               }
             }
+            print('///build////');
             if (shippingAddresses == null) {
               return Center(
                 child: PulseLoadingSpinner(),
               );
-            }
-            if (shippingAddresses.isEmpty) {
+            } else if (shippingAddresses.isEmpty) {
               return Center(
                 child: NoAvailableData(
                   pageStyle: pageStyle,
@@ -414,7 +420,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       region: addresses[index].region,
       city: addresses[index].city,
       streetName: addresses[index].street,
-      zipCode: addresses[index].zipCode,
+      zipCode: addresses[index].postCode,
       phone: addresses[index].phoneNumber,
       company: addresses[index].company,
       isDefaultBilling: addresses[index].defaultBillingAddress.toString(),

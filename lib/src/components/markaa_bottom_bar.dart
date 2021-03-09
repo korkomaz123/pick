@@ -5,12 +5,12 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 
 class MarkaaBottomBar extends StatelessWidget {
   final PageStyle pageStyle;
@@ -35,6 +35,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(homeIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_home'.tr(),
             style: mediumTextStyle.copyWith(
@@ -53,6 +54,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(categoryIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_category'.tr(),
             style: mediumTextStyle.copyWith(
@@ -71,6 +73,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(storeIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'brands_title'.tr(),
             style: mediumTextStyle.copyWith(
@@ -84,9 +87,9 @@ class MarkaaBottomBar extends StatelessWidget {
           ),
         ),
         BottomNavigationBarItem(
-          icon: BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
-            builder: (context, state) {
-              int count = state.wishlistItemCount;
+          icon: Consumer<WishlistChangeNotifier>(
+            builder: (_, model, __) {
+              int count = model.wishlistItemsCount;
               return Badge(
                 position: BadgePosition.topEnd(
                   top: -pageStyle.unitHeight * 10,
@@ -109,16 +112,16 @@ class MarkaaBottomBar extends StatelessWidget {
               );
             },
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_wishlist'.tr(),
             style: mediumTextStyle.copyWith(
               fontSize: pageStyle.unitFontSize * 11,
             ),
           ),
-          activeIcon:
-              BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
-            builder: (context, state) {
-              int count = state.wishlistItemCount;
+          activeIcon: Consumer<WishlistChangeNotifier>(
+            builder: (_, model, __) {
+              int count = model.wishlistItemsCount;
               return Badge(
                 position: BadgePosition.topEnd(
                   top: -pageStyle.unitHeight * 10,
@@ -126,6 +129,8 @@ class MarkaaBottomBar extends StatelessWidget {
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,
+                toAnimate: false,
+                animationDuration: Duration.zero,
                 badgeContent: Text(
                   '$count',
                   style: TextStyle(
@@ -148,6 +153,7 @@ class MarkaaBottomBar extends StatelessWidget {
             height: pageStyle.unitHeight * 26,
             child: SvgPicture.asset(userIcon),
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'bottom_account'.tr(),
             style: mediumTextStyle.copyWith(
@@ -173,36 +179,40 @@ class MarkaaBottomBar extends StatelessWidget {
         );
         break;
       case 1:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.categoryList,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.categoryList);
         break;
       case 2:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.brandList,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.brandList);
         break;
       case 3:
         if (user?.token != null) {
-          Navigator.popUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
+            Routes.wishlist,
             (route) => route.settings.name == Routes.home,
           );
-          Navigator.pushNamed(context, Routes.wishlist);
         } else {
-          Navigator.pushNamed(context, Routes.signIn);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.signIn,
+            (route) => route.settings.name == Routes.home,
+          );
         }
         break;
       case 4:
-        Navigator.popUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
+          Routes.account,
           (route) => route.settings.name == Routes.home,
         );
-        Navigator.pushNamed(context, Routes.account);
         break;
       default:
         Navigator.popUntil(

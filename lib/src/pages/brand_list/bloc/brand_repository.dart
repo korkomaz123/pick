@@ -1,24 +1,13 @@
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 
 class BrandRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<BrandEntity>> getAllBrandsEntity() async {
+  Future<dynamic> getAllBrands(String lang, String from) async {
     String url = EndPoints.getAllBrands;
-    final result = await Api.getMethod(url);
-    List<dynamic> data = result['brand'];
-    return data.map((e) => BrandEntity.fromJson(e)).toList();
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getAllBrands(String lang) async {
-    String url = EndPoints.getAllBrands;
-    final params = {'lang': lang};
+    final params = {'lang': lang, 'from': from};
     return await Api.getMethod(url, data: params);
   }
 

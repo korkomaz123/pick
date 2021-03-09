@@ -1,11 +1,12 @@
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -17,6 +18,11 @@ class FlushBarService {
 
   void showAddCartMessage(PageStyle pageStyle, ProductModel product) {
     Flushbar(
+      margin: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      borderRadius: pageStyle.unitFontSize * 10,
       messageText: Container(
         width: pageStyle.unitWidth * 300,
         child: Row(
@@ -31,27 +37,30 @@ class FlushBarService {
                 ),
               ),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'cart_total'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 13,
+            Consumer<MyCartChangeNotifier>(builder: (_, model, ___) {
+              return Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'cart_total'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: pageStyle.unitFontSize * 13,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'currency'.tr() + ' ${cartTotalPrice.toStringAsFixed(2)}',
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 13,
+                    Text(
+                      'currency'.tr() +
+                          ' ${model.cartTotalPrice.toStringAsFixed(2)}',
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: pageStyle.unitFontSize * 13,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
@@ -61,7 +70,6 @@ class FlushBarService {
         height: pageStyle.unitHeight * 20,
       ),
       duration: Duration(seconds: 3),
-      leftBarIndicatorColor: Colors.blue[100],
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.white,
     )..show(context);

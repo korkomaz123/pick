@@ -47,6 +47,7 @@ class _TermsPageState extends State<TermsPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),

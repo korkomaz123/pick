@@ -45,9 +45,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 ? widget.pageStyle.unitHeight * 200
                 : widget.pageStyle.unitHeight * 320,
             child: Swiper(
-              itemCount:
-                  widget.products.length > 10 ? 10 : widget.products.length,
-              autoplay: true,
+              itemCount: widget.products.length,
+              autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,
@@ -91,10 +90,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               child: Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
                   return SmoothIndicator(
-                    offset: activeIndex.toDouble(),
-                    count: widget.products.length > 10
-                        ? 10
-                        : widget.products.length,
+                    offset: (activeIndex / 2).floor().toDouble(),
+                    count: (widget.products.length / 2).ceil(),
                     axisDirection: Axis.horizontal,
                     effect: SlideEffect(
                       spacing: 8.0,

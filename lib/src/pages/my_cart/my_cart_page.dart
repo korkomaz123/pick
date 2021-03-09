@@ -1,3 +1,6 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -7,9 +10,7 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/markaa_app/bloc/cart_item_count/cart_item_count_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/save_later/save_later_bloc.dart';
 import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -20,15 +21,16 @@ import 'package:markaa/src/utils/progress_service.dart';
 import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-import 'bloc/my_cart/my_cart_bloc.dart';
 import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
 import 'widgets/my_cart_save_for_later_items.dart';
+import 'widgets/my_cart_quick_access_login_dialog.dart';
 
 class MyCartPage extends StatefulWidget {
   @override
@@ -46,54 +48,32 @@ class _MyCartPageState extends State<MyCartPage>
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
-  MyCartBloc myCartBloc;
-  CartItemCountBloc markaaAppBloc;
-  SaveLaterBloc saveLaterBloc;
   LocalStorageRepository localRepo;
   MyCartRepository cartRepo;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
+  WishlistChangeNotifier wishlistChangeNotifier;
+  bool showSign = false;
 
   @override
   void initState() {
     super.initState();
-    myCartItems = null;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    myCartBloc = context.read<MyCartBloc>();
-    markaaAppBloc = context.read<CartItemCountBloc>();
-    saveLaterBloc = context.read<SaveLaterBloc>();
     localRepo = context.read<LocalStorageRepository>();
     cartRepo = context.read<MyCartRepository>();
-    if (user?.token != null) {
-      saveLaterBloc.add(SaveLaterItemsLoaded(token: user.token, lang: lang));
-    }
-    _getMyCartId();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
   }
 
   @override
   void dispose() {
-    myCartBloc.add(MyCartItemsInitialize());
     super.dispose();
-  }
-
-  void _getMyCartId() async {
-    if (user?.token != null) {
-      final result = await cartRepo.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      cartId = await localRepo.getCartId();
-    }
-    if (cartId.isNotEmpty) {
-      myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-    } else {
-      myCartItems = [];
-      setState(() {});
-    }
   }
 
   @override
@@ -109,152 +89,89 @@ class _MyCartPageState extends State<MyCartPage>
         isCartPage: true,
       ),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildMyCartPage(),
-            if (user?.token != null) ...[
-              MyCartSaveForLaterItems(
-                pageStyle: pageStyle,
-                progressService: progressService,
-                flushBarService: flushBarService,
-                cartBloc: myCartBloc,
-                saveLaterBloc: saveLaterBloc,
-                cartRepo: cartRepo,
-              )
-            ]
-          ],
-        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Consumer<MyCartChangeNotifier>(
+                  builder: (_, model, ___) {
+                    if (model.cartItemCount > 0) {
+                      return Column(
+                        children: [
+                          _buildTitleBar(),
+                          _buildTotalItemsTitle(),
+                          _buildTotalItems(),
+                          MyCartCouponCode(
+                            pageStyle: pageStyle,
+                            cartId: cartId,
+                            onSignIn: _onSignIn,
+                          ),
+                          _buildTotalPrice(),
+                          _buildCheckoutButton(),
+                        ],
+                      );
+                    } else {
+                      return Consumer<WishlistChangeNotifier>(
+                        builder: (_, model, ___) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: pageStyle.unitHeight *
+                                  (model.wishlistItemsCount > 0 ? 100 : 250),
+                            ),
+                            child: Center(
+                              child: NoAvailableData(
+                                pageStyle: pageStyle,
+                                message: 'no_cart_items_available',
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+                if (user?.token != null) ...[
+                  MyCartSaveForLaterItems(
+                    pageStyle: pageStyle,
+                    progressService: progressService,
+                    flushBarService: flushBarService,
+                    myCartChangeNotifier: myCartChangeNotifier,
+                    wishlistChangeNotifier: wishlistChangeNotifier,
+                  )
+                ]
+              ],
+            ),
+          ),
+          Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              if (showSign) {
+                return AnimationLimiter(
+                  child: AnimationConfiguration.staggeredList(
+                    position: 1,
+                    duration: Duration(milliseconds: 300),
+                    child: SlideAnimation(
+                      verticalOffset: -50.0,
+                      child: FadeInAnimation(
+                        child: MyCartQuickAccessLoginDialog(
+                          cartId: cartId,
+                          onClose: _onClose,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
-    );
-  }
-
-  Widget _buildMyCartPage() {
-    return BlocConsumer<MyCartBloc, MyCartState>(
-      listener: (context, state) {
-        if (state is MyCartItemsLoadedSuccess) {
-          markaaAppBloc.add(CartItemCountUpdated(
-            cartItems: state.cartItems,
-          ));
-        }
-        if (state is MyCartItemAddedInProcess) {}
-        if (state is MyCartItemAddedFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is MyCartItemAddedSuccess) {
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is MyCartItemsLoadedFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is MyCartItemUpdatedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is MyCartItemUpdatedSuccess) {
-          progressService.hideProgress();
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is MyCartItemUpdatedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is MyCartItemRemovedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is MyCartItemRemovedSuccess) {
-          progressService.hideProgress();
-          flushBarService.showInformMessage(pageStyle, 'done'.tr());
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is MyCartItemRemovedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is MyCartItemsClearedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is MyCartItemsClearedSuccess) {
-          progressService.hideProgress();
-          markaaAppBloc.add(CartItemCountSet(cartItemCount: 0));
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is MyCartItemsClearedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is CouponCodeAppliedSuccess) {
-          flushBarService.showSuccessMessage(pageStyle, 'success'.tr());
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is CouponCodeAppliedFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-        if (state is CouponCodeCancelledSuccess) {
-          flushBarService.showSuccessMessage(pageStyle, 'success'.tr());
-          myCartBloc.add(MyCartItemsLoaded(cartId: cartId, lang: lang));
-        }
-        if (state is CouponCodeCancelledFailure) {
-          flushBarService.showErrorMessage(pageStyle, state.message);
-        }
-      },
-      builder: (context, state) {
-        if (state is MyCartItemsLoadedSuccess) {
-          myCartItems = state.cartItems;
-          couponCode = state.couponCode ?? couponCode;
-          discount = state.discount;
-          _getTotalPrice();
-        }
-        if (state is MyCartItemsClearedSuccess) {
-          myCartItems.clear();
-          cartItemCount = 0;
-          totalPrice = 0;
-          cartTotalPrice = 0;
-        }
-        if (myCartItems == null) {
-          return Container();
-        } else if (myCartItems.isEmpty) {
-          return BlocBuilder<SaveLaterBloc, SaveLaterState>(
-            builder: (context, state) {
-              double dimension = .0;
-              if (state is SaveLaterItemsLoadedSuccess) {
-                if (state.items.isNotEmpty) {
-                  dimension = 1 / 3;
-                } else {
-                  dimension = 2 / 3;
-                }
-              } else {
-                dimension = 1 / 3;
-              }
-              return Container(
-                height: pageStyle.deviceHeight * dimension,
-                alignment: Alignment.center,
-                child: NoAvailableData(
-                  pageStyle: pageStyle,
-                  message: 'no_cart_items_available',
-                ),
-              );
-            },
-          );
-        }
-        return Column(
-          children: [
-            _buildTitleBar(),
-            _buildTotalItemsTitle(),
-            _buildTotalItems(),
-            MyCartCouponCode(
-              pageStyle: pageStyle,
-              cartId: cartId,
-              couponCode: couponCode,
-            ),
-            _buildTotalPrice(),
-            _buildCheckoutButton(),
-          ],
-        );
-      },
     );
   }
 
@@ -307,7 +224,9 @@ class _MyCartPageState extends State<MyCartPage>
             ),
           ),
           Text(
-            'items'.tr().replaceFirst('0', '${myCartItems.length}'),
+            'items'
+                .tr()
+                .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 13,
@@ -319,6 +238,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildTotalItems() {
+    final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     return Container(
       width: pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
@@ -328,7 +248,7 @@ class _MyCartPageState extends State<MyCartPage>
       child: AnimationLimiter(
         child: Column(
           children: List.generate(
-            myCartItems.length,
+            keys.length,
             (index) {
               return AnimationConfiguration.staggeredList(
                 position: index,
@@ -340,14 +260,18 @@ class _MyCartPageState extends State<MyCartPage>
                       children: [
                         MyCartItem(
                           pageStyle: pageStyle,
-                          cartItem: myCartItems[index],
-                          discount: discount,
+                          cartItem:
+                              myCartChangeNotifier.cartItemsMap[keys[index]],
+                          discount: myCartChangeNotifier.discount,
+                          type: myCartChangeNotifier.type,
                           cartId: cartId,
-                          onRemoveCartItem: () => _onRemoveCartItem(index),
-                          onSaveForLaterItem: () => _onSaveForLaterItem(index),
+                          onRemoveCartItem: () =>
+                              _onRemoveCartItem(keys[index]),
+                          onSaveForLaterItem: () =>
+                              _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(),
                         ),
-                        index < (myCartItems.length - 1)
+                        index < (myCartChangeNotifier.cartItemCount - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
                             : SizedBox.shrink(),
                       ],
@@ -363,6 +287,12 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildTotalPrice() {
+    double subTotal = myCartChangeNotifier.cartTotalPrice;
+    print(myCartChangeNotifier.type);
+    double discount = myCartChangeNotifier.type == 'fixed'
+        ? myCartChangeNotifier.discount
+        : subTotal * myCartChangeNotifier.discount / 100;
+    double totalPrice = subTotal - discount;
     return Container(
       width: pageStyle.deviceWidth,
       margin: EdgeInsets.symmetric(
@@ -391,7 +321,9 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'.tr().replaceFirst('0', '${myCartItems.length}'),
+                'items'
+                    .tr()
+                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -399,6 +331,49 @@ class _MyCartPageState extends State<MyCartPage>
               )
             ],
           ),
+          if (discount > 0) ...[
+            SizedBox(height: pageStyle.unitHeight * 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'checkout_subtotal_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: greyColor,
+                    fontSize: pageStyle.unitFontSize * 17,
+                  ),
+                ),
+                Text(
+                  '${subTotal.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 18,
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: pageStyle.unitHeight * 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'discount'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: darkColor,
+                    fontSize: pageStyle.unitFontSize * 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  '${discount.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: pageStyle.unitFontSize * 18,
+                  ),
+                )
+              ],
+            )
+          ],
           SizedBox(height: pageStyle.unitHeight * 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -444,7 +419,7 @@ class _MyCartPageState extends State<MyCartPage>
     );
   }
 
-  void _onRemoveCartItem(int index) async {
+  void _onRemoveCartItem(String key) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -456,32 +431,30 @@ class _MyCartPageState extends State<MyCartPage>
       },
     );
     if (result != null) {
-      isDeleting = true;
-      myCartBloc.add(MyCartItemRemoved(
-        cartId: cartId,
-        itemId: myCartItems[index].itemId,
-      ));
+      await myCartChangeNotifier.removeCartItem(key);
     }
   }
 
-  void _onSaveForLaterItem(int index) {
-    saveLaterBloc.add(SaveLaterItemChanged(
-      token: user.token,
-      productId: myCartItems[index].product.productId,
-      action: 'add',
-      qty: myCartItems[index].itemCount,
-      product: myCartItems[index].product,
-      itemId: myCartItems[index].itemId,
-    ));
+  void _onSaveForLaterItem(String key) async {
+    final product = myCartChangeNotifier.cartItemsMap[key].product;
+    final count = myCartChangeNotifier.cartItemsMap[key].itemCount;
+    await myCartChangeNotifier.removeCartItem(key);
+    await wishlistChangeNotifier
+        .addItemToWishlist(user.token, product, count, {});
   }
 
-  void _onSignIn() async {
-    await Navigator.pushNamed(context, Routes.signIn);
-    Navigator.pushReplacementNamed(context, Routes.myCart);
+  void _onSignIn() {
+    showSign = true;
+    markaaAppChangeNotifier.rebuild();
+  }
+
+  void _onClose() {
+    showSign = false;
+    markaaAppChangeNotifier.rebuild();
   }
 
   void _onClearCartItems() async {
-    if (cartId.isNotEmpty) {
+    if (myCartChangeNotifier.cartItemCount > 0) {
       final result = await showDialog(
         context: context,
         builder: (context) {
@@ -489,24 +462,16 @@ class _MyCartPageState extends State<MyCartPage>
         },
       );
       if (result != null) {
-        myCartBloc.add(MyCartItemsCleared(cartId: cartId));
+        await myCartChangeNotifier.clearCart();
       }
     }
   }
 
-  void _getTotalPrice() {
-    totalPrice = 0;
-    cartTotalPrice = 0;
-    for (int i = 0; i < myCartItems.length; i++) {
-      totalPrice += myCartItems[i].rowPrice;
-    }
-    cartTotalPrice = totalPrice;
-  }
-
   void _onCheckout() {
     bool isStock = true;
-    for (int i = 0; i < myCartItems.length; i++) {
-      if (myCartItems[i].availableCount == 0) {
+    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
+      if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         isStock = false;
         flushBarService.showErrorMessage(
           pageStyle,

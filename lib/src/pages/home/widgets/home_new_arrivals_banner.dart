@@ -7,7 +7,6 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
@@ -34,6 +33,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state.newArrivalsBanners.isNotEmpty) {
+          final banner = state.newArrivalsBanners[0];
           return Container(
             width: widget.pageStyle.deviceWidth,
             color: Colors.white,
@@ -54,50 +54,40 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                     ),
                   ),
                 ),
-                Container(
-                  width: widget.pageStyle.deviceWidth,
-                  height: widget.pageStyle.deviceWidth * 373 / 1125,
-                  child: Swiper(
-                    itemCount: state.newArrivalsBanners.length,
-                    autoplay: false,
-                    curve: Curves.easeInOutCubic,
-                    loop: false,
-                    itemBuilder: (context, index) {
-                      final banner = state.newArrivalsBanners[index];
-                      return InkWell(
-                        onTap: () {
-                          if (banner.categoryId != null) {
-                            final arguments = ProductListArguments(
-                              category: CategoryEntity(
-                                id: banner.categoryId,
-                                name: banner.categoryName,
-                              ),
-                              brand: BrandEntity(),
-                              subCategory: [],
-                              selectedSubCategoryIndex: 0,
-                              isFromBrand: false,
-                            );
-                            Navigator.pushNamed(
-                              context,
-                              Routes.productList,
-                              arguments: arguments,
-                            );
-                          }
-                        },
-                        child: Container(
-                          width: widget.pageStyle.deviceWidth,
-                          height: widget.pageStyle.deviceWidth * 373 / 1125,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: NetworkImage(banner.bannerImage),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
+                InkWell(
+                  onTap: () {
+                    if (banner.categoryId != null) {
+                      final arguments = ProductListArguments(
+                        category: CategoryEntity(
+                          id: banner.categoryId,
+                          name: banner.categoryName,
                         ),
+                        brand: BrandEntity(),
+                        subCategory: [],
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: false,
                       );
-                    },
-                  ),
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    } else if (banner?.brand?.optionId != null) {
+                      final arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        brand: banner.brand,
+                        subCategory: [],
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Image.network(banner.bannerImage),
                 ),
               ],
             ),

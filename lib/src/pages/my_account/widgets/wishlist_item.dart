@@ -1,12 +1,12 @@
-import 'package:markaa/src/pages/markaa_app/bloc/wishlist_item_count/wishlist_item_count_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/snackbar_service.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -51,10 +51,10 @@ class _WishlistItemState extends State<WishlistItem> {
               ),
             ),
             Spacer(),
-            BlocBuilder<WishlistItemCountBloc, WishlistItemCountState>(
-              builder: (context, state) {
+            Consumer<WishlistChangeNotifier>(
+              builder: (_, model, __) {
                 return Text(
-                  'items'.tr().replaceFirst('0', '${state.wishlistItemCount}'),
+                  'items'.tr().replaceFirst('0', '${model.wishlistItemsCount}'),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 16,
                     color: primaryColor,

@@ -10,7 +10,8 @@ import 'package:meta/meta.dart';
 part 'shipping_address_event.dart';
 part 'shipping_address_state.dart';
 
-class ShippingAddressBloc extends Bloc<ShippingAddressEvent, ShippingAddressState> {
+class ShippingAddressBloc
+    extends Bloc<ShippingAddressEvent, ShippingAddressState> {
   ShippingAddressBloc({
     @required ShippingAddressRepository shippingAddressRepository,
   })  : assert(shippingAddressRepository != null),
@@ -24,7 +25,9 @@ class ShippingAddressBloc extends Bloc<ShippingAddressEvent, ShippingAddressStat
   Stream<ShippingAddressState> mapEventToState(
     ShippingAddressEvent event,
   ) async* {
-    if (event is ShippingAddressLoaded) {
+    if (event is ShippingAddressInitialized) {
+      yield ShippingAddressInitial();
+    } else if (event is ShippingAddressLoaded) {
       yield* _mapShippingAddressLoadedToState(event.token);
     } else if (event is ShippingAddressAdded) {
       yield* _mapShippingAddressAddedToState(
@@ -79,8 +82,6 @@ class ShippingAddressBloc extends Bloc<ShippingAddressEvent, ShippingAddressStat
       );
     } else if (event is ShippingAddressRemoved) {
       yield* _mapShippingAddressRemovedToState(event.token, event.addressId);
-    } else if (event is ShippingAddressInitialized) {
-      yield ShippingAddressInitial();
     }
   }
 
@@ -92,14 +93,16 @@ class ShippingAddressBloc extends Bloc<ShippingAddressEvent, ShippingAddressStat
       String key = '$token-shippingaddress';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
-        List<dynamic> shippingAddressesList = await localStorageRepository.getItem(key);
+        List<dynamic> shippingAddressesList =
+            await localStorageRepository.getItem(key);
         List<AddressEntity> addresses = [];
         for (int i = 0; i < shippingAddressesList.length; i++) {
           addresses.add(AddressEntity.fromJson(shippingAddressesList[i]));
         }
         yield ShippingAddressLoadedSuccess(addresses: addresses);
       }
-      final result = await _shippingAddressRepository.getShippingAddresses(token);
+      final result =
+          await _shippingAddressRepository.getShippingAddresses(token);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['addresses']);
         List<dynamic> shippingAddressesList = result['addresses'];
@@ -241,7 +244,8 @@ class ShippingAddressBloc extends Bloc<ShippingAddressEvent, ShippingAddressStat
       if (result['code'] == 'SUCCESS') {
         yield DefaultShippingAddressUpdatedSuccess();
       } else {
-        yield DefaultShippingAddressUpdatedFailure(message: result['errorMessage']);
+        yield DefaultShippingAddressUpdatedFailure(
+            message: result['errorMessage']);
       }
     } catch (e) {
       yield DefaultShippingAddressUpdatedFailure(message: e.toString());

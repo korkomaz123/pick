@@ -169,7 +169,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
         itemCount: perfumesProducts.length > 40
             ? 10
             : (perfumesProducts.length / 4).floor(),
-        autoplay: true,
+        autoplay: false,
         curve: Curves.easeIn,
         duration: 300,
         autoplayDelay: 5000,

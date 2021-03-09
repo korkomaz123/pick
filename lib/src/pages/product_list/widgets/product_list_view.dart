@@ -63,7 +63,6 @@ class _ProductListViewState extends State<ProductListView>
   FlushBarService flushBarService;
   TabController tabController;
   int page = 1;
-  bool isReachedMax = false;
   ProductChangeNotifier productChangeNotifier;
   FilterBloc filterBloc;
 
@@ -85,7 +84,10 @@ class _ProductListViewState extends State<ProductListView>
       initialIndex: widget.activeIndex,
       vsync: this,
     );
-    tabController.addListener(() => widget.onChangeTab(tabController.index));
+    tabController.addListener(() {
+      widget.onChangeTab(tabController.index);
+      // _refreshController.loadComplete();
+    });
   }
 
   void _initLoadProducts() async {
@@ -94,11 +96,13 @@ class _ProductListViewState extends State<ProductListView>
       if (widget.viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[widget.activeIndex].id,
+          lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.brand) {
         await productChangeNotifier.initialLoadBrandProducts(
           brand.optionId,
           subCategories[widget.activeIndex].id,
+          lang,
         );
       }
       filterBloc.add(FilterAttributesLoaded(
@@ -116,23 +120,27 @@ class _ProductListViewState extends State<ProductListView>
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       await productChangeNotifier.refreshBrandProducts(
         brand.optionId,
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier.refreshSortedProducts(
         brand.optionId ?? '',
         (subCategories[tabController.index].id ?? ''),
         widget.sortByItem,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       await productChangeNotifier.refreshFilteredProducts(
         brand.optionId,
         subCategories[tabController.index].id,
         widget.filterValues,
+        lang,
       );
     }
     _refreshController.refreshCompleted();
@@ -146,6 +154,7 @@ class _ProductListViewState extends State<ProductListView>
       await productChangeNotifier.loadMoreCategoryProducts(
         page,
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       page = productChangeNotifier
@@ -155,6 +164,7 @@ class _ProductListViewState extends State<ProductListView>
         page,
         brand.optionId ?? '',
         subCategories[tabController.index].id,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       page = productChangeNotifier.pages[widget.sortByItem +
@@ -168,6 +178,7 @@ class _ProductListViewState extends State<ProductListView>
         brand.optionId,
         subCategories[tabController.index].id,
         widget.sortByItem,
+        lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       page = productChangeNotifier.pages['filter_' +
@@ -180,6 +191,7 @@ class _ProductListViewState extends State<ProductListView>
         brand.optionId,
         subCategories[tabController.index].id,
         widget.filterValues,
+        lang,
       );
     }
     _refreshController.loadComplete();
@@ -198,22 +210,47 @@ class _ProductListViewState extends State<ProductListView>
             children: subCategories.map((cat) {
               return SmartRefresher(
                 enablePullDown: true,
-                enablePullUp: page != null && !isReachedMax,
+                enablePullUp: true,
                 header: MaterialClassicHeader(color: primaryColor),
                 controller: _refreshController,
                 scrollController: widget.scrollController,
                 onRefresh: _onRefresh,
-                onLoading: page != null && !isReachedMax ? _onLoadMore : null,
+                onLoading: page != null ? _onLoadMore : null,
                 footer: CustomFooter(
                   builder: (BuildContext context, LoadStatus mode) {
                     if (mode == LoadStatus.loading) {
                       return RippleLoadingSpinner();
+                    } else if (mode == LoadStatus.noMore) {
+                      if (page != null && page > 1) {
+                        return Container(
+                          width: pageStyle.deviceWidth,
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(
+                            top: pageStyle.unitHeight * 10,
+                          ),
+                          child: Text(
+                            'no_more_products'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: pageStyle.unitFontSize * 14,
+                            ),
+                          ),
+                        );
+                      }
                     }
                     return SizedBox.shrink();
                   },
                 ),
                 child: Consumer<ProductChangeNotifier>(
                   builder: (ctx, notifier, _) {
+                    if (productChangeNotifier.isReachedMax) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _refreshController.loadNoData();
+                      });
+                    } else {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _refreshController.loadComplete();
+                      });
+                    }
                     String index;
                     if (widget.viewMode == ProductViewModeEnum.category) {
                       index = cat.id;
@@ -313,7 +350,7 @@ class _ProductListViewState extends State<ProductListView>
               child: ProductVCard(
                 pageStyle: pageStyle,
                 product: products[index],
-                cardWidth: pageStyle.unitWidth * 186,
+                cardWidth: pageStyle.unitWidth * 187.25,
                 cardHeight: pageStyle.unitHeight * 280,
                 isShoppingCart: true,
                 isWishlist: true,

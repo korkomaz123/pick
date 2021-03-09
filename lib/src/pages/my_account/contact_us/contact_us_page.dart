@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatefulWidget {
   @override
@@ -45,8 +46,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    firstNameController.text = user.firstName;
-    emailController.text = user.email;
+    firstNameController.text = user?.firstName;
+    emailController.text = user?.email;
+    phoneNumberController.text = user?.phoneNumber;
   }
 
   @override
@@ -91,6 +93,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
@@ -116,10 +119,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
               _buildFirstName(),
               _buildPhoneNumber(),
               _buildEmail(),
-              SizedBox(height: pageStyle.unitHeight * 50),
               _buildMessageTitle(),
               _buildMessage(),
               _buildSendButton(),
+              _buildCallUs(),
             ],
           ),
         ),
@@ -265,7 +268,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           return null;
         },
         keyboardType: TextInputType.text,
-        maxLines: 6,
+        maxLines: 3,
       ),
     );
   }
@@ -273,9 +276,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildSendButton() {
     return Container(
       width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 80,
-        vertical: pageStyle.unitHeight * 20,
+      padding: EdgeInsets.only(
+        left: pageStyle.unitWidth * 80,
+        right: pageStyle.unitWidth * 80,
+        top: pageStyle.unitHeight * 20,
       ),
       child: MarkaaTextButton(
         title: 'send_button_title'.tr(),
@@ -289,6 +293,25 @@ class _ContactUsPageState extends State<ContactUsPage> {
     );
   }
 
+  Widget _buildCallUs() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 80,
+        vertical: pageStyle.unitHeight * 10,
+      ),
+      child: MarkaaTextButton(
+        title: 'call_us'.tr(),
+        titleSize: pageStyle.unitFontSize * 14,
+        titleColor: Colors.white,
+        buttonColor: Colors.orange,
+        borderColor: Colors.transparent,
+        onPressed: () => _onCallUs(),
+        radius: 30,
+      ),
+    );
+  }
+
   void _onSubmit() {
     if (formKey.currentState.validate()) {
       settingBloc.add(ContactUsSubmitted(
@@ -297,6 +320,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
         email: emailController.text,
         comment: messageController.text,
       ));
+    }
+  }
+
+  void _onCallUs() async {
+    if (await canLaunch('tel:+96522285188')) {
+      await launch('tel:+96522285188');
     }
   }
 }

@@ -48,6 +48,7 @@ class EndPoints {
   static const String filterProducts = '$baseUrl/Filterproducts';
   static const String createCart = '$baseUrl/CreateCart';
   static const String getCartItems = '$baseUrl/getMyCartItems';
+  static const String addCartItem = '$baseUrl/AddItemToCart';
   static const String clearMyCartItems = '$baseUrl/clearMyCartItems';
   static const String getSearchAttrOptions = '$baseUrl/getAttributeOptions';
   static const String getBrandCategories = '$baseUrl/getBrandCategories';

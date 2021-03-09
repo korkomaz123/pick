@@ -1,26 +1,27 @@
 import 'brand_entity.dart';
 
 class ProductModel {
-  final String entityId;
-  final String typeId;
-  final String sku;
-  final String metaKeyword;
-  final String description;
-  final String shortDescription;
-  final String name;
-  final String metaDescription;
-  final String price;
-  final String imageUrl;
-  final String hasOptions;
-  final String addCartUrl;
-  final String productId;
-  final String brandLabel;
-  final String brandId;
-  final BrandEntity brandEntity;
-  final int stockQty;
-  final int qtySaveForLater;
+  String wishlistItemId;
+  String entityId;
+  String typeId;
+  String sku;
+  String metaKeyword;
+  String description;
+  String shortDescription;
+  String name;
+  String metaDescription;
+  String price;
+  String imageUrl;
+  String hasOptions;
+  String addCartUrl;
+  String productId;
+  BrandEntity brandEntity;
+  int stockQty;
+  int qtySaveForLater;
+  Map<String, dynamic> options;
 
   ProductModel({
+    this.wishlistItemId,
     this.entityId,
     this.typeId,
     this.sku,
@@ -34,15 +35,17 @@ class ProductModel {
     this.hasOptions,
     this.addCartUrl,
     this.productId,
-    this.brandLabel,
-    this.brandId,
     this.brandEntity,
     this.stockQty,
     this.qtySaveForLater,
+    this.options,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : entityId = json['entity_id'],
+      : wishlistItemId = json.containsKey('wishlist_item_id')
+            ? json['wishlist_item_id']
+            : null,
+        entityId = json['entity_id'],
         typeId = json['type_id'],
         sku = json['sku'],
         metaKeyword = json['meta_keyword'],
@@ -57,16 +60,25 @@ class ProductModel {
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
         productId = json['product_id'],
-        brandId = json['brand_id'] ?? '',
-        brandLabel = json['brand_label'] == null || json['brand_label'] == 'no'
-            ? ''
-            : json['brand_label'],
-        brandEntity =
-            json['brand_entity'] != null && json['brand_entity'].isNotEmpty
-                ? BrandEntity.fromJson(json['brand_entity'])
-                : BrandEntity(),
+        brandEntity = json['brand_id'] != null
+            ? BrandEntity(
+                optionId: json['brand_id'],
+                brandThumbnail: json['brand_thumbnail'],
+                brandLabel: json['brand_label'],
+              )
+            : null,
         stockQty = json['stockQty'],
         qtySaveForLater = json.containsKey('qty_saveforlater')
             ? double.parse(json['qty_saveforlater']).ceil()
-            : 0;
+            : 0,
+        options =
+            json.containsKey('options') ? _getOptions(json['options']) : null;
+
+  static Map<String, dynamic> _getOptions(List<dynamic> list) {
+    Map<String, dynamic> options = {};
+    for (var item in list) {
+      options[item['attribute_id']] = item['attribute_options']['option_value'];
+    }
+    return options;
+  }
 }

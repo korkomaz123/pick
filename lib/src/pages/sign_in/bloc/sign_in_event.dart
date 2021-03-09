@@ -23,6 +23,7 @@ class SocialSignInSubmitted extends SignInEvent {
   final String email;
   final String loginType;
   final String lang;
+  final String appleId;
 
   SocialSignInSubmitted({
     this.firstName,
@@ -30,10 +31,18 @@ class SocialSignInSubmitted extends SignInEvent {
     this.email,
     this.loginType,
     this.lang,
+    this.appleId,
   });
 
   @override
-  List<Object> get props => [firstName, lastName, email, loginType, lang];
+  List<Object> get props => [
+        firstName,
+        lastName,
+        email,
+        loginType,
+        lang,
+        appleId,
+      ];
 }
 
 class SignOutSubmitted extends SignInEvent {

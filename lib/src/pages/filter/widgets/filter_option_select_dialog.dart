@@ -1,10 +1,8 @@
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -73,9 +71,22 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () => _onClear(),
-            icon: SvgPicture.asset(closeIcon, color: primaryColor),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.pageStyle.unitWidth * 4,
+            ),
+            child: Center(
+              child: InkWell(
+                onTap: () => _onClear(),
+                child: Text(
+                  'reset'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: widget.pageStyle.unitFontSize * 14,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

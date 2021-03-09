@@ -36,7 +36,9 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
     relatedItems = await context
         .read<ProductRepository>()
         .getRelatedProducts(product.productId, lang);
-    if (mounted) setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
   }
 
   @override
@@ -64,7 +66,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
               height: pageStyle.unitHeight * 320,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: relatedItems.length > 10 ? 10 : relatedItems.length,
+                itemCount: relatedItems.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(

@@ -1,6 +1,7 @@
 class Routes {
   /// start routes
   static const String start = '/';
+  static const String update = '/update';
 
   /// authentication routes
   static const String signIn = '/sign-in';
@@ -44,10 +45,12 @@ class Routes {
   /// checkout
   static const String searchAddress = '/search-address';
   static const String checkoutAddress = '/checkout-address';
+  static const String checkoutGuestAddress = '/checkout-guest-address';
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
   static const String checkoutPayment = '/checkout-payment';
   static const String checkoutConfirmed = '/checkout-confirmed';
+  static const String checkoutPaymentCard = '/checkout-payment-card';
 
   /// wishlist
   static const String wishlist = '/wishlist';

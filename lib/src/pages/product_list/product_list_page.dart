@@ -1,5 +1,6 @@
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
+import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -9,13 +10,10 @@ import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/category_list/bloc/category/category_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
-// import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:markaa/src/theme/icons.dart';
-// import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/progress_service.dart';
@@ -24,7 +22,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -52,13 +49,13 @@ class _ProductListPageState extends State<ProductListPage> {
   BrandEntity brand;
   int activeSubcategoryIndex;
   bool isFromBrand;
-  CategoryBloc categoryBloc;
   FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
   double scrollPosition = 0;
   ScrollChangeNotifier scrollChangeNotifier;
   ProductChangeNotifier productChangeNotifier;
+  CategoryChangeNotifier categoryChangeNotifier;
   ProductViewModeEnum viewMode;
   Map<String, dynamic> filterValues = {};
 
@@ -72,22 +69,23 @@ class _ProductListPageState extends State<ProductListPage> {
     activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
     isFromBrand = arguments.isFromBrand;
     subCategories = [category];
-    categoryBloc = context.read<CategoryBloc>();
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
+    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     filterBloc = context.read<FilterBloc>();
+    categoryChangeNotifier.initialSubCategories();
     if (isFromBrand) {
       viewMode = ProductViewModeEnum.brand;
-      categoryBloc.add(BrandSubCategoriesLoaded(
-        brandId: brand.optionId,
-        lang: lang,
-      ));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollChangeNotifier.initialize();
+        categoryChangeNotifier.getBrandSubCategories(brand.optionId, lang);
+      });
     } else {
       viewMode = ProductViewModeEnum.category;
-      categoryBloc.add(CategorySubCategoriesLoaded(
-        categoryId: category.id,
-        lang: lang,
-      ));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollChangeNotifier.initialize();
+        categoryChangeNotifier.getSubCategories(category.id, lang);
+      });
     }
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
@@ -95,12 +93,6 @@ class _ProductListPageState extends State<ProductListPage> {
       scaffoldKey: scaffoldKey,
     );
     scrollController.addListener(_onScrolling);
-  }
-
-  @override
-  void dispose() {
-    categoryBloc.add(CategoryInitialized());
-    super.dispose();
   }
 
   @override
@@ -118,61 +110,57 @@ class _ProductListPageState extends State<ProductListPage> {
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
       body: Stack(
         children: [
-          if (isFromBrand) ...[
-            _buildBrandBar()
-          ] else ...[
-            Positioned(
-              top: 0,
-              left: 0,
-              right: pageStyle.deviceWidth,
-              child: Container(),
-            )
-          ],
-          BlocConsumer<CategoryBloc, CategoryState>(
-            listener: (context, categoryState) {},
-            builder: (context, categoryState) {
-              if (categoryState is CategorySubCategoriesLoadedSuccess) {
+          if (isFromBrand) ...[_buildBrandBar()],
+          Consumer<CategoryChangeNotifier>(
+            builder: (_, model, ___) {
+              if (!model.isLoading) {
+                if (model.subCategories == null) {
+                  return Container();
+                }
                 if (isFromBrand) {
                   subCategories = [CategoryEntity(id: 'all')];
                 } else {
                   subCategories = [category];
                 }
-                for (int i = 0; i < categoryState.subCategories.length; i++) {
-                  subCategories.add(categoryState.subCategories[i]);
+                subCategories.addAll(model.subCategories);
+                if (subCategories.length > activeSubcategoryIndex) {
+                  return Consumer<ScrollChangeNotifier>(
+                    builder: (ctx, scrollNotifier, child) {
+                      double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
+                      return AnimatedPositioned(
+                        top: isFromBrand
+                            ? pageStyle.unitHeight * 120 - extra
+                            : pageStyle.unitHeight * 45,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        duration: Duration(milliseconds: 500),
+                        child: ProductListView(
+                          subCategories: subCategories,
+                          activeIndex: activeSubcategoryIndex,
+                          scaffoldKey: scaffoldKey,
+                          pageStyle: pageStyle,
+                          isFromBrand: isFromBrand,
+                          brand: brand,
+                          onChangeTab: (index) => _onChangeTab(index),
+                          scrollController: scrollController,
+                          viewMode: viewMode,
+                          sortByItem: sortByItem,
+                          filterValues: filterValues,
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return Container();
                 }
-                return Consumer<ScrollChangeNotifier>(
-                  builder: (ctx, scrollNotifier, child) {
-                    double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
-                    return AnimatedPositioned(
-                      top: isFromBrand
-                          ? pageStyle.unitHeight * 120 - extra
-                          : pageStyle.unitHeight * 45,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      duration: Duration(milliseconds: 500),
-                      child: ProductListView(
-                        subCategories: subCategories,
-                        activeIndex: activeSubcategoryIndex,
-                        scaffoldKey: scaffoldKey,
-                        pageStyle: pageStyle,
-                        isFromBrand: isFromBrand,
-                        brand: brand,
-                        onChangeTab: (index) => _onChangeTab(index),
-                        scrollController: scrollController,
-                        viewMode: viewMode,
-                        sortByItem: sortByItem,
-                        filterValues: filterValues,
-                      ),
-                    );
-                  },
-                );
               } else {
                 return Container();
               }
             },
           ),
           _buildAppBar(),
+          _buildArrowButton(),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -276,7 +264,37 @@ class _ProductListPageState extends State<ProductListPage> {
               brand.brandThumbnail,
               width: pageStyle.unitWidth * 120,
               height: pageStyle.unitHeight * 60,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildArrowButton() {
+    return Consumer<ScrollChangeNotifier>(
+      builder: (ctx, notifier, child) {
+        double extra = !scrollChangeNotifier.showScrollBar ? 40 : 0;
+        return AnimatedPositioned(
+          right: pageStyle.unitWidth * 4,
+          bottom: pageStyle.unitHeight * 4 - extra,
+          duration: Duration(milliseconds: 500),
+          child: InkWell(
+            onTap: () => _onGotoTop(),
+            child: Container(
+              width: pageStyle.unitHeight * 40,
+              height: pageStyle.unitHeight * 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: primarySwatchColor.withOpacity(0.8),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.keyboard_arrow_up,
+                size: pageStyle.unitFontSize * 30,
+                color: Colors.white70,
+              ),
             ),
           ),
         );
@@ -318,10 +336,12 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        scrollChangeNotifier.initialize();
         await productChangeNotifier.initialLoadFilteredProducts(
           brand.optionId,
           subCategories[activeSubcategoryIndex].id,
           filterValues,
+          lang,
         );
       });
     }
@@ -356,20 +376,24 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        scrollChangeNotifier.initialize();
         if (viewMode == ProductViewModeEnum.category) {
           await productChangeNotifier.initialLoadCategoryProducts(
             subCategories[activeSubcategoryIndex].id,
+            lang,
           );
         } else if (viewMode == ProductViewModeEnum.brand) {
           await productChangeNotifier.initialLoadBrandProducts(
             brand.optionId,
             subCategories[activeSubcategoryIndex].id,
+            lang,
           );
         } else {
           await productChangeNotifier.initialLoadSortedProducts(
             brand.optionId ?? '',
             subCategories[activeSubcategoryIndex].id,
             sortByItem,
+            lang,
           );
         }
       });
@@ -377,7 +401,6 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onChangeTab(int index) async {
-    print('//// change tab ///');
     activeSubcategoryIndex = index;
     if (isFromBrand)
       viewMode = ProductViewModeEnum.brand;
@@ -385,14 +408,17 @@ class _ProductListPageState extends State<ProductListPage> {
       viewMode = ProductViewModeEnum.category;
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      scrollChangeNotifier.initialize();
       if (viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[index].id,
+          lang,
         );
       } else if (viewMode == ProductViewModeEnum.brand) {
         await productChangeNotifier.initialLoadBrandProducts(
           brand.optionId,
           subCategories[index].id,
+          lang,
         );
       }
       filterValues = {};
@@ -406,9 +432,15 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   void _onScrolling() {
-    if (isFromBrand) {
-      double pos = scrollController.position.pixels;
-      scrollChangeNotifier.controlBrandBar(pos);
-    }
+    double pos = scrollController.position.pixels;
+    scrollChangeNotifier.controlBrandBar(pos);
+  }
+
+  void _onGotoTop() {
+    scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeIn,
+    );
   }
 }

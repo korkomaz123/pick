@@ -63,7 +63,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     firstNameController.text = user.firstName;
     lastNameController.text = user.lastName;
     phoneNumberController.text = user?.phoneNumber;
-    emailController.text = user.email;
+    emailController.text = user?.email;
   }
 
   @override
@@ -143,6 +143,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      toolbarHeight: pageStyle.unitHeight * 50,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),

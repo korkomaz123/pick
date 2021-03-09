@@ -90,6 +90,16 @@ class SearchRepository {
     String index =
         lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
     final algoliaIndex = algolia.instance.index(index);
+    final settings = algoliaIndex.settings;
+    AlgoliaSettings settingsData = settings;
+    settingsData = settingsData.setAttributesForFaceting([
+      'categories',
+      'categoryIds',
+      'color',
+      'price.KWD.default',
+      'manufacturer'
+    ]);
+    await settingsData.setSettings();
     AlgoliaQuery query = algoliaIndex.search(q);
     if (categories.isNotEmpty) {
       List<String> categoryFilter = [];
@@ -101,7 +111,6 @@ class SearchRepository {
     if (brands.isNotEmpty) {
       List<String> brandFilter = [];
       for (var brand in brands) {
-        print(brand);
         brandFilter.add('manufacturer:$brand');
       }
       query = query.setFacetFilter(brandFilter);
