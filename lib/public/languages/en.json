@@ -292,5 +292,6 @@
     "continue_as_guest": "CONTINUE AS GUEST",
     "sorry": "Sorry",
     "update_required": "Update is Required",
-    "update_now_button_title": "Update Now"
+    "update_now_button_title": "Update Now",
+    "delivery_time": "The order will be delivered within 2 days"
 }

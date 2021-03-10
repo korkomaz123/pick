@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -23,7 +24,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'bloc/home_bloc.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
@@ -51,7 +51,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
   PageStyle pageStyle;
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
@@ -227,30 +227,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _onRefresh() async {
-    homeBloc.add(HomeSliderImagesLoaded(lang: lang));
-    homeBloc.add(HomeBestDealsLoaded(lang: lang));
-    homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
-    homeBloc.add(HomeBestDealsLoaded(lang: lang));
-    homeBloc.add(HomeNewArrivalsLoaded(lang: lang));
-    homeBloc.add(HomePerfumesLoaded(lang: lang));
+    homeChangeNotifier.loadSliderImages(lang);
+    homeChangeNotifier.loadBestDeals(lang);
+    homeChangeNotifier.loadBestDealsBanner(lang);
+    homeChangeNotifier.loadNewArrivals(lang);
+    homeChangeNotifier.loadNewArrivalsBanner(lang);
+    homeChangeNotifier.loadPerfumes(lang);
     categoryChangeNotifier.getCategoriesList(lang);
     brandChangeNotifier.getBrandsList(lang, 'home');
-    homeBloc.add(HomeAdsLoaded(lang: lang));
+    homeChangeNotifier.loadAds(lang);
     if (user?.token != null) {
-      homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-        token: user.token,
-        lang: lang,
-      ));
+      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
-      _loadGuestViewed();
+      List<String> ids = await localStorageRepository.getRecentlyViewedIds();
+      homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     }
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
-  }
-
-  void _loadGuestViewed() async {
-    List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-    homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
   }
 
   @override

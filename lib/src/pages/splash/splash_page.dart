@@ -1,5 +1,6 @@
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -43,6 +44,7 @@ class _SplashPageState extends State<SplashPage> {
   WishlistChangeNotifier wishlistChangeNotifier;
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
 
   @override
   void initState() {
@@ -56,6 +58,7 @@ class _SplashPageState extends State<SplashPage> {
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
     _checkAppUsage();
   }
 
@@ -72,6 +75,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _loadAssets() async {
+    orderChangeNotifier.initializeOrders();
     brandChangeNotifier.getBrandsList(lang, 'brand');
     categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
@@ -79,6 +83,7 @@ class _SplashPageState extends State<SplashPage> {
     await _getHomeCategories();
     if (user?.token != null) {
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+      await orderChangeNotifier.loadOrderHistories(user.token, lang);
     }
     _getCartItems();
     _getShippingAddress();
@@ -96,8 +101,9 @@ class _SplashPageState extends State<SplashPage> {
       context: context,
     );
     final status = await newVersion.getVersionStatus();
+    String storeVersionString = status.storeVersion.split('(')[0];
     Version localVersion = Version.parse(status.localVersion);
-    Version storeVersion = Version.parse(status.storeVersion);
+    Version storeVersion = Version.parse(storeVersionString);
     if (storeVersion > localVersion) {
       Navigator.pushReplacementNamed(
         context,

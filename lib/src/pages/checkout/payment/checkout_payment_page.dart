@@ -1,11 +1,11 @@
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -37,11 +37,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  CheckoutBloc checkoutBloc;
   LocalStorageRepository localStorageRepo;
   MyCartChangeNotifier myCartChangeNotifier;
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
 
   @override
   void initState() {
@@ -53,10 +53,23 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    checkoutBloc = context.read<CheckoutBloc>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
     localStorageRepo = context.read<LocalStorageRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess(OrderEntity order) {
+    _onOrderSubmittedSuccess(order.orderNo);
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, error);
   }
 
   @override
@@ -67,51 +80,34 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 3),
-      body: BlocConsumer<CheckoutBloc, CheckoutState>(
-        listener: (context, state) {
-          if (state is OrderSubmittedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is OrderSubmittedSuccess) {
-            progressService.hideProgress();
-            _onOrderSubmittedSuccess(state.orderNo);
-          }
-          if (state is OrderSubmittedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: pageStyle.unitWidth * 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
+                return Column(
+                  children: paymentMethods.map((method) {
+                    return _buildPaymentCard(method);
+                  }).toList(),
+                );
+              }),
+              SizedBox(height: pageStyle.unitHeight * 50),
+              Divider(
+                color: greyLightColor,
+                height: pageStyle.unitHeight * 10,
+                thickness: pageStyle.unitHeight * 1,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
-                    return Column(
-                      children: paymentMethods.map((method) {
-                        return _buildPaymentCard(method);
-                      }).toList(),
-                    );
-                  }),
-                  SizedBox(height: pageStyle.unitHeight * 50),
-                  Divider(
-                    color: greyLightColor,
-                    height: pageStyle.unitHeight * 10,
-                    thickness: pageStyle.unitHeight * 1,
-                  ),
-                  _buildDetails(),
-                  SizedBox(height: pageStyle.unitHeight * 30),
-                  _buildPlacePaymentButton(),
-                  _buildBackToReviewButton(),
-                ],
-              ),
-            ),
-          );
-        },
+              _buildDetails(),
+              SizedBox(height: pageStyle.unitHeight * 30),
+              _buildPlacePaymentButton(),
+              _buildBackToReviewButton(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -294,25 +290,30 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         onPressed: () async {
           orderDetails['paymentMethod'] = payment;
           if (payment == 'cashondelivery') {
-            checkoutBloc.add(
-              OrderSubmitted(
-                orderDetails: orderDetails,
-                lang: lang,
-              ),
+            await orderChangeNotifier.submitOrder(
+              orderDetails,
+              lang,
+              _onProcess,
+              _onSuccess,
+              _onFailure,
             );
           } else {
             final result = await Navigator.pushNamed(
               context,
               Routes.checkoutPaymentCard,
-              arguments: orderDetails,
+              arguments: {
+                'orderDetails': orderDetails,
+                'reorder': widget.reorder,
+              },
             );
             if (result != null) {
               if (result == 'success') {
-                checkoutBloc.add(
-                  OrderSubmitted(
-                    orderDetails: orderDetails,
-                    lang: lang,
-                  ),
+                await orderChangeNotifier.submitOrder(
+                  orderDetails,
+                  lang,
+                  _onProcess,
+                  _onSuccess,
+                  _onFailure,
                 );
               } else {
                 flushBarService.showErrorMessage(pageStyle, result);
@@ -377,6 +378,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
+    progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.checkoutConfirmed,

@@ -7,16 +7,6 @@ abstract class CheckoutEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class OrderSubmitted extends CheckoutEvent {
-  final Map<String, dynamic> orderDetails;
-  final String lang;
-
-  OrderSubmitted({this.orderDetails, this.lang});
-
-  @override
-  List<Object> get props => [orderDetails, lang];
-}
-
 class TapPaymentCheckout extends CheckoutEvent {
   final Map<String, dynamic> data;
   final String lang;

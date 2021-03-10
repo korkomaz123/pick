@@ -21,34 +21,8 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   Stream<CheckoutState> mapEventToState(
     CheckoutEvent event,
   ) async* {
-    if (event is OrderSubmitted) {
-      yield* _mapOrderSubmittedToState(
-        event.orderDetails,
-        event.lang,
-      );
-    } else if (event is TapPaymentCheckout) {
+    if (event is TapPaymentCheckout) {
       yield* _mapTapPaymentCheckoutToState(event.data, event.lang);
-    }
-  }
-
-  Stream<CheckoutState> _mapOrderSubmittedToState(
-    Map<String, dynamic> orderDetails,
-    String lang,
-  ) async* {
-    yield OrderSubmittedInProcess();
-    try {
-      final result = await _checkoutRepository.placeOrder(orderDetails, lang);
-      // print(result);
-      if (result['code'] == 'SUCCESS') {
-        yield OrderSubmittedSuccess(orderNo: result['orderNo']);
-      } else {
-        print(result['errorMessage']);
-        yield OrderSubmittedFailure(message: result['errorMessage']);
-      }
-    } catch (e) {
-      print('catch');
-      print(e.toString());
-      yield OrderSubmittedFailure(message: e.toString());
     }
   }
 

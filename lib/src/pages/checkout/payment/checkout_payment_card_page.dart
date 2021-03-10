@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CheckoutPaymentCardPage extends StatefulWidget {
@@ -28,20 +35,33 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   WebViewController webViewController;
   CheckoutBloc checkoutBloc;
   Map<String, dynamic> data = {};
+  OrderChangeNotifier orderChangeNotifier;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+  MyCartChangeNotifier myCartChangeNotifier;
+  LocalStorageRepository localStorageRepo;
+  var orderDetails;
+  var reorder;
 
   @override
   void initState() {
     super.initState();
     print('init state');
     checkoutBloc = context.read<CheckoutBloc>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
+    localStorageRepo = context.read<LocalStorageRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _initialData();
   }
 
   void _initialData() {
-    final address = jsonDecode(widget.params['orderAddress']);
-    print(address);
+    orderDetails = widget.params['orderDetails'];
+    reorder = widget.params['reorder'];
+    final address = jsonDecode(orderDetails['orderAddress']);
     data = {
-      "amount": double.parse(widget.params['orderDetails']['totalPrice']),
+      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
       "currency": "KWD",
       "threeDSecure": true,
       "save_card": false,
@@ -66,9 +86,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       },
       "merchant": {"id": ""},
       "source": {
-        "id": widget.params['paymentMethod'] == 'knet'
-            ? "src_kw.knet"
-            : "src_card"
+        "id":
+            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
       },
       "destinations": {"destination": []},
       "post": {"url": "https://tap.company"},
@@ -154,7 +173,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     );
   }
 
-  void _onPageLoaded(String url) {
+  void _onPageLoaded(String url) async {
     /// knet result: {
     ///   knet_vpay: Aqp0Cu0FR914pu%2fQnK3p2gDhUPBTDCDk,
     ///   sess: l0Z6AAbK0Yo%3d,
@@ -168,22 +187,67 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     /// }
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    if (widget.params['paymentMethod'] == 'knet') {
+    if (orderDetails['paymentMethod'] == 'knet') {
       if (url.contains('paymentcancel')) {
         Navigator.pop(context);
       }
       if (params.containsKey('knet_vpay')) {
-        Navigator.pop(context, 'success');
+        await orderChangeNotifier.submitOrder(
+          orderDetails,
+          lang,
+          _onProcess,
+          _onSuccess,
+          _onFailure,
+        );
       }
     } else {
       if (params.containsKey('mpgs_pay')) {
-        Navigator.pop(context, 'success');
+        await orderChangeNotifier.submitOrder(
+          orderDetails,
+          lang,
+          _onProcess,
+          _onSuccess,
+          _onFailure,
+        );
       }
     }
-    if (url == 'https://www.tap.company/kw/en') {
+    if (url == 'https://www.tap.company/kw/en' ||
+        url == 'https://www.tap.company/kw/ar') {
       if (params.isEmpty) {
         Navigator.pop(context);
       }
     }
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess(OrderEntity order) {
+    _onOrderSubmittedSuccess(order.orderNo);
+  }
+
+  void _onOrderSubmittedSuccess(String orderNo) async {
+    if (reorder != null) {
+      myCartChangeNotifier.initializeReorderCart();
+    } else {
+      myCartChangeNotifier.initialize();
+      if (user?.token == null) {
+        await localStorageRepo.removeItem('cartId');
+      }
+      await myCartChangeNotifier.getCartId();
+    }
+    progressService.hideProgress();
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.checkoutConfirmed,
+      (route) => route.settings.name == Routes.home,
+      arguments: orderNo,
+    );
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, error);
   }
 }

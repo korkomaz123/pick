@@ -6,7 +6,8 @@ import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
-import 'package:markaa/src/pages/my_account/order_history/bloc/order_bloc.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -14,7 +15,7 @@ import 'package:markaa/src/utils/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class CancelOrderInfoPage extends StatefulWidget {
@@ -39,14 +40,14 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
   File file;
   Uint8List imageData;
   String name;
-  OrderBloc orderBloc;
+  OrderChangeNotifier orderChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     order = widget.params['order'];
     cancelledItemsMap = widget.params['items'];
-    orderBloc = context.read<OrderBloc>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
     imageCustomPickerService = ImageCustomPickerService(
@@ -55,6 +56,22 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
       titleColor: primaryColor,
       video: false,
     );
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.orderHistory,
+    );
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, error);
   }
 
   @override
@@ -70,37 +87,24 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         isCenter: false,
       ),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: BlocConsumer<OrderBloc, OrderState>(
-        listener: (context, state) {
-          if (state is OrderCancelledInProcess) {
-            progressService.showProgress();
-          }
-          if (state is OrderCancelledFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        _buildAdditionalInfo(),
-                        _buildImageUploader(),
-                        _buildSubmitButton(),
-                      ],
-                    ),
-                  ),
+      body: Column(
+        children: [
+          _buildAppBar(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    _buildAdditionalInfo(),
+                    _buildImageUploader(),
+                    _buildSubmitButton(),
+                  ],
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -247,14 +251,17 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
           'cancelCount': cancelledItemsMap[key],
         };
       }).toList();
-      orderBloc.add(OrderCancelled(
-        orderId: order.orderId,
-        items: items,
-        reason: additionalInfoController.text,
-        additionalInfo: additionalInfoController.text,
-        imageForProduct: imageData,
-        imageName: name,
-      ));
+      orderChangeNotifier.cancelOrder(
+        order.orderId,
+        items,
+        additionalInfoController.text,
+        additionalInfoController.text,
+        imageData,
+        name,
+        _onProcess,
+        _onSuccess,
+        _onFailure,
+      );
     }
   }
 }

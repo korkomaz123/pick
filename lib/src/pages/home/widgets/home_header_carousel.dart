@@ -1,13 +1,13 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -24,21 +24,20 @@ class HomeHeaderCarousel extends StatefulWidget {
 class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   int activeIndex = 0;
   List<SliderImageEntity> sliderImages;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.read<HomeBloc>();
-    homeBloc.add(HomeSliderImagesLoaded(lang: lang));
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.loadSliderImages(lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        sliderImages = state.sliderImages;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        sliderImages = model.sliderImages;
         if (sliderImages.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,

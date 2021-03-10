@@ -48,27 +48,6 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> placeOrder(
-    Map<String, dynamic> orderDetails,
-    String lang,
-  ) async {
-    String url = EndPoints.submitOrder;
-    Map<String, dynamic> params = {};
-    params['orderAddress'] = orderDetails['orderAddress'];
-    params['token'] = orderDetails['token'];
-    params['shipping'] = orderDetails['shipping'];
-    params['paymentMethod'] = orderDetails['paymentMethod'];
-    params['lang'] = lang;
-    params['cartId'] = orderDetails['cartId'];
-    params['orderDetails'] = json.encode(orderDetails['orderDetails']);
-    print(params);
-    final result = await Api.postMethod(url, data: params);
-    return result;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> tapPaymentCheckout(
     Map<String, dynamic> data,
     String lang,

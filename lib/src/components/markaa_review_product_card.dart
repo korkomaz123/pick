@@ -33,6 +33,8 @@ class MarkaaReviewProductCard extends StatelessWidget {
               return chunkEvent != null
                   ? Image.asset(
                       'lib/public/images/loading/image_loading.jpg',
+                      width: pageStyle.unitHeight * 90,
+                      height: pageStyle.unitHeight * 120,
                     )
                   : child;
             },

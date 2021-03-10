@@ -1,16 +1,16 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -28,23 +28,22 @@ class _HomePerfumesState extends State<HomePerfumes> {
   CategoryEntity perfumes = homeCategories[2];
   List<ProductModel> perfumesProducts;
   String title;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   int activeIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.read<HomeBloc>();
-    homeBloc.add(HomePerfumesLoaded(lang: lang));
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.loadPerfumes(lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        perfumesProducts = state.perfumesProducts;
-        title = state.perfumesTitle;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        perfumesProducts = model.perfumesProducts;
+        title = model.perfumesTitle;
         if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
           return Container(
             width: widget.pageStyle.deviceWidth,

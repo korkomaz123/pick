@@ -90,6 +90,26 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                   ),
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: pageStyle.unitWidth * 8,
+                  right: pageStyle.unitWidth * 8,
+                  top: pageStyle.unitHeight * 30,
+                ),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(deliveredIcon),
+                    SizedBox(width: pageStyle.unitWidth * 1),
+                    Text(
+                      'delivery_time'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: greyDarkColor,
+                        fontSize: pageStyle.unitFontSize * 15,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (user?.token != null) ...[_buildShowAllMyOrderedButton()],
               Text(
                 'checkout_ordered_success_account_title'.tr(),

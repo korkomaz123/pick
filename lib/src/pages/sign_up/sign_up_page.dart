@@ -1,9 +1,9 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -41,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
   FocusNode passNode = FocusNode();
   bool agreeTerms = false;
   SignInBloc signInBloc;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
   PageStyle pageStyle;
@@ -51,7 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -65,10 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
-    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-      token: user.token,
-      lang: lang,
-    ));
+    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     progressService.hideProgress();
     Navigator.pop(context);
     if (!widget.isFromCheckout) {

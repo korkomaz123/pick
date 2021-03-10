@@ -50,6 +50,8 @@ class _ProductHCardState extends State<ProductHCard>
   FlushBarService flushBarService;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
+  AnimationController _addToWishlistController;
+  Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
 
@@ -75,6 +77,20 @@ class _ProductHCardState extends State<ProductHCard>
       end: 3.0,
     ).animate(CurvedAnimation(
       parent: _addToCartController,
+      curve: Curves.easeIn,
+    ));
+
+    /// add to wishlist button animation
+    _addToWishlistController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addToWishlistScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _addToWishlistController,
       curve: Curves.easeIn,
     ));
   }
@@ -234,12 +250,15 @@ class _ProductHCardState extends State<ProductHCard>
                 onTap: () => user != null
                     ? _onWishlist()
                     : Navigator.pushNamed(context, Routes.signIn),
-                child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  child: isWishlist
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                child: ScaleTransition(
+                  scale: _addToWishlistScaleAnimation,
+                  child: Container(
+                    width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                    height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                    child: isWishlist
+                        ? SvgPicture.asset(wishlistedIcon)
+                        : SvgPicture.asset(favoriteIcon),
+                  ),
                 ),
               ),
             ),
@@ -300,6 +319,11 @@ class _ProductHCardState extends State<ProductHCard>
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
+      _addToWishlistController.repeat(reverse: true);
+      Timer.periodic(Duration(milliseconds: 600), (timer) {
+        _addToWishlistController.stop(canceled: true);
+        timer.cancel();
+      });
       if (isWishlist) {
         await wishlistChangeNotifier.removeItemFromWishlist(
             user.token, widget.product.productId);

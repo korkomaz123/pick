@@ -1,12 +1,12 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeBestDealsBanner extends StatefulWidget {
@@ -19,21 +19,21 @@ class HomeBestDealsBanner extends StatefulWidget {
 }
 
 class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.read<HomeBloc>();
-    homeBloc.add(HomeBestDealsBannersLoaded(lang: lang));
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.loadBestDealsBanner(lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        if (state.bestDealsBanners.isNotEmpty) {
-          final banner = state.bestDealsBanners[0];
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        if (model.bestDealsBanners.isNotEmpty) {
+          final banner = model.bestDealsBanners[0];
           return Container(
             width: widget.pageStyle.deviceWidth,
             color: Colors.white,
@@ -48,7 +48,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                     vertical: widget.pageStyle.unitHeight * 10,
                   ),
                   child: Text(
-                    state.bestDealsBannerTitle,
+                    model.bestDealsBannerTitle,
                     style: mediumTextStyle.copyWith(
                       fontSize: widget.pageStyle.unitFontSize * 26,
                     ),
