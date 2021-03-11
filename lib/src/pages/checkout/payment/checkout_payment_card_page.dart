@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -33,7 +29,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     with WidgetsBindingObserver {
   PageStyle pageStyle;
   WebViewController webViewController;
-  CheckoutBloc checkoutBloc;
   Map<String, dynamic> data = {};
   OrderChangeNotifier orderChangeNotifier;
   ProgressService progressService;
@@ -42,12 +37,12 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   LocalStorageRepository localStorageRepo;
   var orderDetails;
   var reorder;
+  var url;
 
   @override
   void initState() {
     super.initState();
     print('init state');
-    checkoutBloc = context.read<CheckoutBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -59,42 +54,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   void _initialData() {
     orderDetails = widget.params['orderDetails'];
     reorder = widget.params['reorder'];
-    final address = jsonDecode(orderDetails['orderAddress']);
-    data = {
-      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
-      "currency": "KWD",
-      "threeDSecure": true,
-      "save_card": false,
-      "description": "purchase description",
-      "statement_descriptor": "",
-      "metadata": {},
-      "reference": {
-        "acquirer": "acquirer",
-        "gateway": "gateway",
-        "payment": "payment",
-        "track": "track",
-        "transaction": "trans_910101",
-        "order": "order_262625",
-      },
-      "receipt": {"email": true, "sms": false},
-      "customer": {
-        "first_name": address['firstname'],
-        "middle_name": "",
-        "last_name": address['lastname'],
-        "email": address['email'],
-        "phone": {}
-      },
-      "merchant": {"id": ""},
-      "source": {
-        "id":
-            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
-      },
-      "destinations": {"destination": []},
-      "post": {"url": "https://tap.company"},
-      "redirect": {"url": "https://tap.company"}
-    };
-    print(data);
-    checkoutBloc.add(TapPaymentCheckout(data: data, lang: lang));
+    url = widget.params['url'];
   }
 
   @override
@@ -148,26 +108,13 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           ],
           elevation: 0,
         ),
-        body: BlocConsumer<CheckoutBloc, CheckoutState>(
-          listener: (context, state) {
-            if (state is TapPaymentCheckoutFailure) {
-              Navigator.pop(context, 'Something went wrong');
-            }
+        body: WebView(
+          initialUrl: url,
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (controller) {
+            webViewController = controller;
           },
-          builder: (context, state) {
-            if (state is TapPaymentCheckoutSuccess) {
-              return WebView(
-                initialUrl: state.url,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (controller) {
-                  webViewController = controller;
-                },
-                onPageFinished: _onPageLoaded,
-              );
-            } else {
-              return Center(child: PulseLoadingSpinner());
-            }
-          },
+          onPageFinished: _onPageLoaded,
         ),
       ),
     );

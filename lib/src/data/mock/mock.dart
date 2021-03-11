@@ -1,4 +1,3 @@
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/message_entity.dart';
@@ -16,8 +15,6 @@ int wishlistCount = 0;
 List<ProductModel> wishlistItems = [];
 List<String> wishlistIds = [];
 
-List<AddressEntity> addresses = [];
-AddressEntity defaultAddress;
 Map<String, dynamic> orderDetails = {};
 List<ShippingMethodEntity> shippingMethods = [];
 List<PaymentMethodEntity> paymentMethods = [];

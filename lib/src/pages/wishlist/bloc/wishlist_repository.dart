@@ -29,6 +29,7 @@ class WishlistRepository {
   Future<dynamic> changeSaveForLaterItem(
     String token,
     String productId,
+    String parentId,
     String action,
     int qty,
     Map<String, dynamic> options, [
@@ -38,6 +39,7 @@ class WishlistRepository {
     final params = {
       'token': token,
       'productId': productId,
+      'parentId': parentId,
       'action': action,
       'qty': qty.toString(),
       'option': jsonEncode(options),

@@ -13,11 +13,10 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -54,12 +53,12 @@ class _MyCartQuickAccessLoginDialogState
   ProgressService progressService;
   FlushBarService flushBarService;
   WishlistRepository wishlistRepo;
-  ShippingAddressRepository shippingAddressRepo;
   SettingRepository settingRepo;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -71,7 +70,7 @@ class _MyCartQuickAccessLoginDialogState
     localRepo = context.read<LocalStorageRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
-    shippingAddressRepo = context.read<ShippingAddressRepository>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
@@ -87,7 +86,8 @@ class _MyCartQuickAccessLoginDialogState
       await myCartChangeNotifier.getCartItems(lang);
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await orderChangeNotifier.loadOrderHistories(user.token, lang);
-      await _shippingAddresses();
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user.token);
       await settingRepo.updateFcmDeviceToken(
         user.token,
         Platform.isAndroid ? deviceToken : '',
@@ -100,20 +100,6 @@ class _MyCartQuickAccessLoginDialogState
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
     widget.onClose();
-  }
-
-  Future<void> _shippingAddresses() async {
-    final result = await shippingAddressRepo.getShippingAddresses(user.token);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> shippingAddressesList = result['addresses'];
-      for (int i = 0; i < shippingAddressesList.length; i++) {
-        final address = AddressEntity.fromJson(shippingAddressesList[i]);
-        addresses.add(address);
-        if (address.defaultShippingAddress == 1) {
-          defaultAddress = address;
-        }
-      }
-    }
   }
 
   @override

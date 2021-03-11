@@ -215,7 +215,7 @@ class RouteGenerator {
         );
       case Routes.editAddress:
         return CupertinoPageRoute(
-          builder: (context) => EditAddressPage(address: params),
+          builder: (context) => EditAddressPage(params: params),
           settings: RouteSettings(name: Routes.editAddress),
         );
       case Routes.viewOrder:

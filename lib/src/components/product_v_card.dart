@@ -336,10 +336,10 @@ class _ProductVCardState extends State<ProductVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        await wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product.productId);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product);
       } else {
-        await wishlistChangeNotifier
+        wishlistChangeNotifier
             .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }

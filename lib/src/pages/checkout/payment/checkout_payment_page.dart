@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
@@ -298,32 +300,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               _onFailure,
             );
           } else {
-            final result = await Navigator.pushNamed(
-              context,
-              Routes.checkoutPaymentCard,
-              arguments: {
-                'orderDetails': orderDetails,
-                'reorder': widget.reorder,
-              },
-            );
-            if (result != null) {
-              if (result == 'success') {
-                await orderChangeNotifier.submitOrder(
-                  orderDetails,
-                  lang,
-                  _onProcess,
-                  _onSuccess,
-                  _onFailure,
-                );
-              } else {
-                flushBarService.showErrorMessage(pageStyle, result);
-              }
-            } else {
-              flushBarService.showErrorMessage(
-                pageStyle,
-                'payment_canceled'.tr(),
-              );
-            }
+            _onGeneratePaymentUrl();
           }
         },
         child: Row(
@@ -385,5 +362,75 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       (route) => route.settings.name == Routes.home,
       arguments: orderNo,
     );
+  }
+
+  void _onGeneratePaymentUrl() async {
+    final address = jsonDecode(orderDetails['orderAddress']);
+    Map<String, dynamic> data = {
+      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
+      "currency": "KWD",
+      "threeDSecure": true,
+      "save_card": false,
+      "description": "purchase description",
+      "statement_descriptor": "",
+      "metadata": {},
+      "reference": {
+        "acquirer": "acquirer",
+        "gateway": "gateway",
+        "payment": "payment",
+        "track": "track",
+        "transaction": "trans_910101",
+        "order": "order_262625",
+      },
+      "receipt": {"email": true, "sms": false},
+      "customer": {
+        "first_name": address['firstname'],
+        "middle_name": "",
+        "last_name": address['lastname'],
+        "email": address['email'],
+        "phone": {}
+      },
+      "merchant": {"id": ""},
+      "source": {
+        "id":
+            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
+      },
+      "destinations": {"destination": []},
+      "post": {"url": "https://tap.company"},
+      "redirect": {"url": "https://tap.company"}
+    };
+    await myCartChangeNotifier.generatePaymentUrl(
+        data, lang, _onProcess, _onSuccessGenerated, _onFailure);
+  }
+
+  void _onSuccessGenerated(String url) async {
+    progressService.hideProgress();
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.checkoutPaymentCard,
+      arguments: {
+        'orderDetails': orderDetails,
+        'reorder': widget.reorder,
+        'url': url
+      },
+    );
+    if (result != null) {
+      if (result == 'success') {
+        await orderChangeNotifier.submitOrder(
+          orderDetails,
+          lang,
+          _onProcess,
+          _onSuccess,
+          _onFailure,
+        );
+      } else {
+        flushBarService.showErrorMessage(pageStyle, result);
+      }
+    } else {
+      flushBarService.showErrorMessage(
+        pageStyle,
+        'payment_canceled'.tr(),
+      );
+    }
   }
 }

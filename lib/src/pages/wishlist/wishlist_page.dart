@@ -176,15 +176,13 @@ class _WishlistPageState extends State<WishlistPage>
       );
     }
     if (result != null || !ask) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, product.productId);
+      await wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
     }
   }
 
-  void _onAddToCart(ProductModel product) async {
-    await wishlistChangeNotifier.removeItemFromWishlist(
-        user.token, product.productId);
-    await myCartChangeNotifier
+  void _onAddToCart(ProductModel product) {
+    wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
+    myCartChangeNotifier
         .addProductToCart(context, pageStyle, product, 1, lang, {});
   }
 }

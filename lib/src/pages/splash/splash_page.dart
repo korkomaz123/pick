@@ -1,10 +1,10 @@
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
@@ -45,6 +45,7 @@ class _SplashPageState extends State<SplashPage> {
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _SplashPageState extends State<SplashPage> {
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
     _checkAppUsage();
   }
 
@@ -79,19 +81,35 @@ class _SplashPageState extends State<SplashPage> {
     brandChangeNotifier.getBrandsList(lang, 'brand');
     categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
-    await _getNotificationSetting();
     await _getHomeCategories();
     if (user?.token != null) {
+      isNotification = await settingRepo.getNotificationSetting(user.token);
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       await orderChangeNotifier.loadOrderHistories(user.token, lang);
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user.token);
     }
     _getCartItems();
-    _getShippingAddress();
     _getShippingMethod();
     _getPaymentMethod();
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> _getCurrentUser() async {
+    String token = await localRepo.getToken();
+    if (token.isNotEmpty) {
+      final signInRepo = context.read<SignInRepository>();
+      final result = await signInRepo.getCurrentUser(token);
+      if (result['code'] == 'SUCCESS') {
+        result['data']['customer']['token'] = token;
+        result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
+        user = UserEntity.fromJson(result['data']['customer']);
+      } else {
+        await localRepo.removeToken();
+      }
+    }
   }
 
   Future<void> checkAppVersion() async {
@@ -113,53 +131,13 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
-  Future<void> _getNotificationSetting() async {
-    if (user?.token != null) {
-      isNotification = await settingRepo.getNotificationSetting(user.token);
-    }
-  }
-
   Future<void> _getHomeCategories() async {
     homeCategories = await categoryRepo.getHomeCategories(lang);
-  }
-
-  Future<void> _getCurrentUser() async {
-    String token = await localRepo.getToken();
-    if (token.isNotEmpty) {
-      final signInRepo = context.read<SignInRepository>();
-      final result = await signInRepo.getCurrentUser(token);
-      if (result['code'] == 'SUCCESS') {
-        result['data']['customer']['token'] = token;
-        result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
-        user = UserEntity.fromJson(result['data']['customer']);
-      } else {
-        await localRepo.removeToken();
-      }
-    }
   }
 
   void _getCartItems() async {
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-  }
-
-  void _getShippingAddress() async {
-    String token = await localRepo.getToken();
-    if (token.isNotEmpty) {
-      final result = await context
-          .read<ShippingAddressRepository>()
-          .getShippingAddresses(token);
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> shippingAddressesList = result['addresses'];
-        for (int i = 0; i < shippingAddressesList.length; i++) {
-          final address = AddressEntity.fromJson(shippingAddressesList[i]);
-          addresses.add(address);
-          if (address.defaultShippingAddress == 1) {
-            defaultAddress = address;
-          }
-        }
-      }
-    }
   }
 
   void _getShippingMethod() async {

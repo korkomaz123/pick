@@ -1,23 +1,21 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -37,59 +35,31 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final dataKey = GlobalKey();
   final _refreshController = RefreshController(initialRefresh: false);
-  String defaultAddressId;
   PageStyle pageStyle;
   ProgressService progressService;
-  SnackBarService snackBarService;
   FlushBarService flushBarService;
-  ShippingAddressBloc shippingAddressBloc;
   List<AddressEntity> shippingAddresses;
   int selectedIndex;
   bool isCheckout = false;
   int length;
+  AddressChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
     isCheckout = widget.isCheckout != null ? widget.isCheckout : false;
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
     flushBarService = FlushBarService(context: context);
-    shippingAddressBloc = context.read<ShippingAddressBloc>();
-    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
+    model = context.read<AddressChangeNotifier>();
   }
 
   void _onRefresh() async {
-    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.refreshCompleted();
-  }
-
-  void _onSuccess(bool isNew) {
-    Navigator.popUntil(
-      context,
-      (route) => route.settings.name == Routes.shippingAddress,
+    model.initialize();
+    await model.loadAddresses(
+      user.token,
+      () => _refreshController.refreshCompleted(),
+      () => _refreshController.refreshFailed(),
     );
-
-    shippingAddressBloc.add(ShippingAddressInitialized());
-    shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-    // });
-  }
-
-  // void _moveToActiveItem() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Future.delayed(Duration(milliseconds: 500), () {
-  //       Scrollable.ensureVisible(dataKey.currentContext);
-  //     });
-  //   });
-  // }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -109,34 +79,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         children: [
           _buildAppBar(),
           _buildAddressList(),
-          SizedBox(height: pageStyle.unitHeight * 60),
         ],
-      ),
-      bottomSheet: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 50,
-        margin: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 5,
-        ),
-        child: MaterialButton(
-          onPressed: () async {
-            Navigator.pushNamed(context, Routes.editAddress);
-            shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-          },
-          color: primaryColor,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            'add_new_address_button_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 16,
-            ),
-          ),
-        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
@@ -166,112 +109,79 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   Widget _buildAddressList() {
     return Expanded(
-      child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: false,
-        header: MaterialClassicHeader(color: primaryColor),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoading: () => null,
-        child: BlocConsumer<ShippingAddressBloc, ShippingAddressState>(
-          listener: (context, state) {
-            // if (state is ShippingAddressLoadedInProcess) {
-            //   progressService.showProgress();
-            // }
-            // if (state is ShippingAddressLoadedSuccess) {
-            //   progressService.hideProgress();
-            // }
-            if (state is ShippingAddressLoadedFailure) {
-              // progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is ShippingAddressRemovedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is ShippingAddressRemovedFailure) {
-              progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is ShippingAddressRemovedSuccess) {
-              progressService.hideProgress();
-              flushBarService.showInformMessage(pageStyle, 'removed'.tr());
-              shippingAddressBloc.add(ShippingAddressLoaded(token: user.token));
-            }
-            if (state is DefaultShippingAddressUpdatedInProcess) {
-              progressService.showProgress();
-            }
-            if (state is DefaultShippingAddressUpdatedFailure) {
-              progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
-            }
-            if (state is DefaultShippingAddressUpdatedSuccess) {
-              progressService.hideProgress();
-              if (isCheckout) {
-                Navigator.pop(context, addresses[selectedIndex]);
-              } else {
-                shippingAddressBloc
-                    .add(ShippingAddressLoaded(token: user.token));
-              }
-            }
-            if (state is ShippingAddressAddedSuccess) {
-              _onSuccess(true);
-            }
-            if (state is ShippingAddressUpdatedSuccess) {
-              _onSuccess(false);
-            }
-          },
-          builder: (context, state) {
-            if (state is ShippingAddressInitial) {
-              shippingAddresses = null;
-              print('initial');
-            } else if (state is ShippingAddressLoadedSuccess) {
-              print('loda success');
-              addresses = state.addresses;
-              shippingAddresses = state.addresses;
-              for (int i = 0; i < shippingAddresses.length; i++) {
-                if (shippingAddresses[i].defaultShippingAddress == 1) {
-                  defaultAddressId = shippingAddresses[i].addressId;
-                  defaultAddress = shippingAddresses[i];
-                  break;
+      child: Stack(
+        children: [
+          SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: false,
+            header: MaterialClassicHeader(color: primaryColor),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: () => null,
+            child: Consumer<AddressChangeNotifier>(
+              builder: (_, notifier, ___) {
+                model = notifier;
+                if (model.keys.isEmpty) {
+                  return NoAvailableData(
+                    pageStyle: pageStyle,
+                    message: 'no_saved_addresses'.tr(),
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        model.keys.length,
+                        (index) => _buildAddressCard(model.keys[index]),
+                      )..add(SizedBox(height: pageStyle.unitHeight * 60)),
+                    ),
+                  );
                 }
-              }
-            }
-            print('///build////');
-            if (shippingAddresses == null) {
-              return Center(
-                child: PulseLoadingSpinner(),
-              );
-            } else if (shippingAddresses.isEmpty) {
-              return Center(
-                child: NoAvailableData(
-                  pageStyle: pageStyle,
-                  message: 'no_saved_addresses'.tr(),
-                ),
-              );
-            }
-            return SingleChildScrollView(
-              child: Column(
-                children: List.generate(
-                  shippingAddresses.length,
-                  (index) {
-                    int i = shippingAddresses.length - index - 1;
-                    return _buildAddressCard(i);
-                  },
-                ),
-              ),
-            );
-          },
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildAddNewButton(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddNewButton() {
+    return Container(
+      width: pageStyle.deviceWidth,
+      height: pageStyle.unitHeight * 50,
+      margin: EdgeInsets.symmetric(
+        horizontal: pageStyle.unitWidth * 10,
+        vertical: pageStyle.unitHeight * 5,
+      ),
+      child: MaterialButton(
+        onPressed: () => Navigator.pushNamed(context, Routes.editAddress),
+        color: primaryColor,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          'add_new_address_button_title'.tr(),
+          style: mediumTextStyle.copyWith(
+            color: Colors.white,
+            fontSize: pageStyle.unitFontSize * 16,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildAddressCard(int index) {
+  Widget _buildAddressCard(String key) {
+    final address = model.addressesMap[key];
     return InkWell(
-      onTap: () => _onUpdate(index),
+      onTap: () => _onUpdate(key),
       child: Container(
         width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 190,
         margin: EdgeInsets.symmetric(
           horizontal: pageStyle.unitWidth * 10,
           vertical: pageStyle.unitHeight * 15,
@@ -294,7 +204,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      addresses[index].title,
+                      address.title,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: pageStyle.unitFontSize * 18,
@@ -303,7 +213,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      addresses[index].country,
+                      address.country,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -311,7 +221,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      addresses[index].city,
+                      address.city,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -319,7 +229,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      addresses[index].street,
+                      address.street,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -327,9 +237,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: pageStyle.unitHeight * 6),
                     Text(
-                      'phone_number_hint'.tr() +
-                          ': ' +
-                          addresses[index].phoneNumber,
+                      'phone_number_hint'.tr() + ': ' + address.phoneNumber,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: pageStyle.unitFontSize * 14,
@@ -339,41 +247,34 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topLeft,
+            Positioned(
+              top: 0,
+              left: 0,
               child: Radio(
-                value: shippingAddresses[index].addressId,
-                groupValue: defaultAddressId,
+                value: address.addressId,
+                groupValue: model?.defaultAddress?.addressId ?? '',
                 activeColor: primaryColor,
-                onChanged: (value) {
-                  defaultAddressId = value;
-                  _onUpdate(index);
-                },
+                onChanged: (value) => _onUpdate(value),
               ),
             ),
-            Align(
-              alignment: Alignment.topRight,
+            Positioned(
+              top: 0,
+              right: 0,
               child: IconButton(
                 icon: SvgPicture.asset(editIcon),
-                onPressed: () async {
-                  await Navigator.pushNamed(
-                    context,
-                    Routes.editAddress,
-                    arguments: shippingAddresses[index],
-                  );
-                  shippingAddressBloc
-                      .add(ShippingAddressLoaded(token: user.token));
-                },
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  Routes.editAddress,
+                  arguments: {'address': address},
+                ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomRight,
+            Positioned(
+              bottom: 0,
+              right: 0,
               child: IconButton(
                 icon: SvgPicture.asset(trashIcon),
-                onPressed: () => _onRemove(
-                  index,
-                  defaultAddressId == shippingAddresses[index].addressId,
-                ),
+                onPressed: () => _onRemove(key),
               ),
             ),
           ],
@@ -382,7 +283,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     );
   }
 
-  void _onRemove(int index, bool isDefault) async {
+  void _onRemove(String key) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -390,41 +291,36 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       },
     );
     if (result != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (isDefault) {
-          print('defaultddress nulll');
-          defaultAddressId = null;
-          defaultAddress = null;
-        }
-        length -= 1;
-        shippingAddressBloc.add(ShippingAddressRemoved(
-          addressId: addresses[index].addressId,
-          token: user.token,
-        ));
-      });
+      await model.deleteAddress(
+          user.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
-  void _onUpdate(int index) async {
-    selectedIndex = index;
-    defaultAddress = shippingAddresses[index];
-    print(defaultAddress.addressId);
-    print(defaultAddress.title);
-    shippingAddressBloc.add(DefaultShippingAddressUpdated(
-      token: user.token,
-      title: addresses[index].title,
-      addressId: addresses[index].addressId,
-      firstName: addresses[index].firstName,
-      lastName: addresses[index].lastName,
-      countryId: addresses[index].countryId,
-      region: addresses[index].region,
-      city: addresses[index].city,
-      streetName: addresses[index].street,
-      zipCode: addresses[index].postCode,
-      phone: addresses[index].phoneNumber,
-      company: addresses[index].company,
-      isDefaultBilling: addresses[index].defaultBillingAddress.toString(),
-      isDefaultShipping: '1',
-    ));
+  void _onUpdate(String key) async {
+    final address = model.addressesMap[key];
+    address.defaultBillingAddress = 1;
+    address.defaultShippingAddress = 1;
+    await model.updateAddress(
+        user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    progressService.hideProgress();
+  }
+
+  void _onUpdateSuccess() {
+    progressService.hideProgress();
+    if (widget.isCheckout) {
+      Navigator.pop(context);
+    }
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, error);
   }
 }

@@ -10,10 +10,10 @@ import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
@@ -21,7 +21,6 @@ import 'package:markaa/src/pages/home/bloc/home_repository.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
@@ -150,6 +149,7 @@ class MarkaaApp extends StatelessWidget {
           create: (context) => MyCartChangeNotifier(
             myCartRepository: myCartRepository,
             localStorageRepository: localStorageRepository,
+            checkoutRepository: checkoutRepository,
           ),
         ),
         ChangeNotifierProvider(
@@ -174,6 +174,11 @@ class MarkaaApp extends StatelessWidget {
             orderRepository: orderRepository,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => AddressChangeNotifier(
+            addressRepository: shippingAddressRepository,
+          ),
+        ),
       ],
       child: _buildMultiBlocProvider(),
     );
@@ -193,11 +198,6 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => ShippingAddressBloc(
-            shippingAddressRepository: shippingAddressRepository,
-          ),
-        ),
-        BlocProvider(
           create: (context) => ProfileBloc(
             profileRepository: profileRepository,
           ),
@@ -206,11 +206,6 @@ class MarkaaApp extends StatelessWidget {
           create: (context) => FilterBloc(
             filterRepository: filterRepository,
             localStorageRepository: localStorageRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CheckoutBloc(
-            checkoutRepository: checkoutRepository,
           ),
         ),
       ],
