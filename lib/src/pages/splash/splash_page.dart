@@ -79,6 +79,7 @@ class _SplashPageState extends State<SplashPage> {
   void _loadAssets() async {
     orderChangeNotifier.initializeOrders();
     brandChangeNotifier.getBrandsList(lang, 'brand');
+    brandChangeNotifier.getBrandsList(lang, 'home');
     categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
     await _getHomeCategories();

@@ -47,7 +47,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   @override
   void initState() {
     super.initState();
-    isCheckout = widget.isCheckout != null ? widget.isCheckout : false;
+    isCheckout = widget?.isCheckout != null ? widget.isCheckout : false;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     model = context.read<AddressChangeNotifier>();
@@ -314,7 +314,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   void _onUpdateSuccess() {
     progressService.hideProgress();
-    if (widget.isCheckout) {
+    if (isCheckout) {
       Navigator.pop(context);
     }
   }
