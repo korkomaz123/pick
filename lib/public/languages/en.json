@@ -293,5 +293,6 @@
     "sorry": "Sorry",
     "update_required": "Update is Required",
     "update_now_button_title": "Update Now",
-    "delivery_time": "The order will be delivered within 2 days"
+    "delivery_time": "The order will be delivered within 2 days",
+    "payment_failed": "Payment process failed"
 }

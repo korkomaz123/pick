@@ -232,16 +232,40 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> generatePaymentUrl(
     Map<String, dynamic> data,
     String lang,
-    onProcess,
-    onSuccess,
-    onFailure,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
   ) async {
     onProcess();
     try {
       final result = await checkoutRepository.tapPaymentCheckout(data, lang);
-      onSuccess(result['transaction']['url']);
+      print('generate url');
+      print(result['id']);
+      onSuccess(result['transaction']['url'], result['id']);
     } catch (e) {
       onFailure(e.toString());
+    }
+  }
+
+  Future<void> checkChargeStatus(
+    String chargeId,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ) async {
+    onProcess();
+    try {
+      final result = await checkoutRepository.checkPaymentStatus(chargeId);
+      print('check');
+      print(chargeId);
+      print(result);
+      if (result['status'] == 'CAPTURED') {
+        onSuccess();
+      } else {
+        onFailure();
+      }
+    } catch (e) {
+      onFailure();
     }
   }
 }

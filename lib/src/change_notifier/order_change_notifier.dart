@@ -59,7 +59,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         ordersMap[newOrder.orderId] = newOrder;
         setKeys();
         notifyListeners();
-        onSuccess(newOrder);
+        onSuccess(newOrder.orderNo);
       } else {
         onFailure(result['errorMessage']);
       }

@@ -38,6 +38,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   var orderDetails;
   var reorder;
   var url;
+  var chargeId;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     orderDetails = widget.params['orderDetails'];
     reorder = widget.params['reorder'];
     url = widget.params['url'];
+    chargeId = widget.params['chargeId'];
   }
 
   @override
@@ -132,6 +134,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     ///   sess: qvHbbuJIKx8%3d,
     ///   token: HFJQvtL6oUakKO31ZXGNjR7AfyaOMr7W
     /// }
+    ///
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
     if (orderDetails['paymentMethod'] == 'knet') {
@@ -139,23 +142,13 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
         Navigator.pop(context);
       }
       if (params.containsKey('knet_vpay')) {
-        await orderChangeNotifier.submitOrder(
-          orderDetails,
-          lang,
-          _onProcess,
-          _onSuccess,
-          _onFailure,
-        );
+        await myCartChangeNotifier.checkChargeStatus(
+            chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
       }
     } else {
       if (params.containsKey('mpgs_pay')) {
-        await orderChangeNotifier.submitOrder(
-          orderDetails,
-          lang,
-          _onProcess,
-          _onSuccess,
-          _onFailure,
-        );
+        await myCartChangeNotifier.checkChargeStatus(
+            chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
       }
     }
     if (url == 'https://www.tap.company/kw/en' ||
@@ -167,11 +160,17 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService.showProgress(1);
   }
 
-  void _onSuccess(OrderEntity order) {
-    _onOrderSubmittedSuccess(order.orderNo);
+  void _onPaymentSuccess() async {
+    await orderChangeNotifier.submitOrder(
+        orderDetails, lang, _onProcess, _onOrderSubmittedSuccess, _onFailure);
+  }
+
+  void _onPaymentFailure() {
+    progressService.hideProgress();
+    Navigator.pop(context, 'payment_failed'.tr());
   }
 
   void _onOrderSubmittedSuccess(String orderNo) async {
@@ -195,6 +194,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, error);
+    Navigator.pop(context, error);
   }
 }

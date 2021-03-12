@@ -366,6 +366,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onGeneratePaymentUrl() async {
     final address = jsonDecode(orderDetails['orderAddress']);
+    String cartId = orderDetails['cartId'];
+    String now = DateTime.now().millisecondsSinceEpoch.toString();
     Map<String, dynamic> data = {
       "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
       "currency": "KWD",
@@ -379,8 +381,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         "gateway": "gateway",
         "payment": "payment",
         "track": "track",
-        "transaction": "trans_910101",
-        "order": "order_262625",
+        "transaction": "trans_$cartId\_$now",
+        "order": "order_$cartId\_$now",
       },
       "receipt": {"email": true, "sms": false},
       "customer": {
@@ -403,7 +405,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         data, lang, _onProcess, _onSuccessGenerated, _onFailure);
   }
 
-  void _onSuccessGenerated(String url) async {
+  void _onSuccessGenerated(String url, String chargeId) async {
     progressService.hideProgress();
     final result = await Navigator.pushNamed(
       context,
@@ -411,7 +413,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       arguments: {
         'orderDetails': orderDetails,
         'reorder': widget.reorder,
-        'url': url
+        'url': url,
+        'chargeId': chargeId,
       },
     );
     if (result != null) {

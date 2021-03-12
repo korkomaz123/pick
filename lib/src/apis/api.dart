@@ -7,10 +7,14 @@ class Api {
   static Future<Map<String, dynamic>> getMethod(
     String url, {
     Map<String, dynamic> data,
+    Map<String, dynamic> headers,
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     // print(requestUrl);
-    final response = await http.get(requestUrl, headers: _getHeader());
+    final response = await http.get(
+      requestUrl,
+      headers: headers ?? _getHeader(),
+    );
     return jsonDecode(response.body);
   }
 
