@@ -95,7 +95,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
               padding: EdgeInsets.only(right: pageStyle.unitWidth * 8),
               child: Center(
                 child: InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Navigator.pop(context, 'cancel'),
                   child: Text(
                     'cancel_button_title'.tr(),
                     style: mediumTextStyle.copyWith(
@@ -122,46 +122,12 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPageLoaded(String url) async {
-    /// knet result: {
-    ///   knet_vpay: Aqp0Cu0FR914pu%2fQnK3p2gDhUPBTDCDk,
-    ///   sess: l0Z6AAbK0Yo%3d,
-    ///   token: Aqp0Cu0FR914pu%2fQnK3p2suMC1las7Iq
-    /// }
-    ///
-    /// visa/master result: {
-    ///   mpgs_pay: HFJQvtL6oUakKO31ZXGNjf4a%2b3tU8emJ,
-    ///   sess: qvHbbuJIKx8%3d,
-    ///   token: HFJQvtL6oUakKO31ZXGNjR7AfyaOMr7W
-    /// }
-    ///
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    print(uri);
-    print(params);
     if (params.containsKey('tap_id')) {
       await myCartChangeNotifier.checkChargeStatus(
           chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
     }
-    // if (orderDetails['paymentMethod'] == 'knet') {
-    //   if (url.contains('paymentcancel')) {
-    //     Navigator.pop(context);
-    //   }
-    //   if (params.containsKey('knet_vpay')) {
-    //     await myCartChangeNotifier.checkChargeStatus(
-    //         chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
-    //   }
-    // } else {
-    //   if (params.containsKey('mpgs_pay')) {
-    //     await myCartChangeNotifier.checkChargeStatus(
-    //         chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
-    //   }
-    // }
-    // if (url == 'https://www.tap.company/kw/en' ||
-    //     url == 'https://www.tap.company/kw/ar') {
-    //   if (params.isEmpty) {
-    //     Navigator.pop(context);
-    //   }
-    // }
   }
 
   void _onProcess() {
@@ -173,9 +139,9 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
         orderDetails, lang, _onProcess, _onOrderSubmittedSuccess, _onFailure);
   }
 
-  void _onPaymentFailure() {
+  void _onPaymentFailure(String error) {
     progressService.hideProgress();
-    Navigator.pop(context, 'payment_failed'.tr());
+    Navigator.pushReplacementNamed(context, Routes.paymentFailed);
   }
 
   void _onOrderSubmittedSuccess(String orderNo) async {

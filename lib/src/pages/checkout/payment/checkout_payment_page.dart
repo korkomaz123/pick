@@ -51,7 +51,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
     } else {
-      payment = paymentMethods[0].id;
+      payment = paymentMethods[2].id;
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -92,9 +92,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             children: [
               Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
                 return Column(
-                  children: paymentMethods.map((method) {
-                    return _buildPaymentCard(method);
-                  }).toList(),
+                  children: List.generate(paymentMethods.length, (index) {
+                    return _buildPaymentCard(
+                      paymentMethods[paymentMethods.length - index - 1],
+                    );
+                  }),
                 );
               }),
               SizedBox(height: pageStyle.unitHeight * 50),
@@ -399,8 +401,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
       },
       "destinations": {"destination": []},
-      "post": {"url": "http://markaa.com"},
-      "redirect": {"url": "http://markaa.com"}
+      "post": {"url": "https://www.google.com"},
+      "redirect": {"url": "https://www.google.com"}
     };
     await myCartChangeNotifier.generatePaymentUrl(
         data, lang, _onProcess, _onSuccessGenerated, _onFailure);
@@ -419,18 +421,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       },
     );
     if (result != null) {
-      if (result == 'success') {
-        await orderChangeNotifier.submitOrder(
-          orderDetails,
-          lang,
-          _onProcess,
-          _onSuccess,
-          _onFailure,
-        );
-      } else {
-        flushBarService.showErrorMessage(pageStyle, result);
-      }
-    } else {
       flushBarService.showErrorMessage(
         pageStyle,
         'payment_canceled'.tr(),

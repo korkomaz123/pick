@@ -172,7 +172,7 @@
     "no_button_title": "NO",
     "order_approval_pending": "Order Approval Pending",
     "order_pending": "Pending",
-    "order_on_progress": "On Progress",
+    "order_on_progress": "In Progress",
     "order_delivered": "Delivered",
     "order_cancelled": "Canceled",
     "my_orders": "My Orders",
@@ -294,5 +294,7 @@
     "update_required": "Update is Required",
     "update_now_button_title": "Update Now",
     "delivery_time": "The order will be delivered within 2 days",
-    "payment_failed": "Payment process failed"
+    "payment_failed": "Payment process failed",
+    "transation_failed": "Your Transaction has been failed.\nPlease go back and try again",
+    "go_shopping_cart_button_title": "GOTO MY SHOPPING CART"
 }
