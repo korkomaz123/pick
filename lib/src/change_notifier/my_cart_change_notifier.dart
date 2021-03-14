@@ -258,13 +258,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
       final result = await checkoutRepository.checkPaymentStatus(chargeId);
       print('check');
       print(result);
-      // if (result['status'] == 'CAPTURED') {
-      //   onSuccess();
-      // } else {
-      //   onFailure();
-      // }
+      if (result['status'] == 'CAPTURED') {
+        onSuccess();
+      } else {
+        onFailure(result['response']['message']);
+      }
     } catch (e) {
-      onFailure();
+      onFailure(e.toString());
     }
   }
 }
