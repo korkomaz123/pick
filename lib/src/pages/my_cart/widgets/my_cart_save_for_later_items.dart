@@ -181,14 +181,13 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
     );
     if (result != null) {
       await widget.wishlistChangeNotifier
-          .removeItemFromWishlist(user.token, item.productId);
+          .removeItemFromWishlist(user.token, item);
     }
   }
 
   void _onPutInCart(ProductModel item) async {
-    await widget.wishlistChangeNotifier
-        .removeItemFromWishlist(user.token, item.productId);
-    await widget.myCartChangeNotifier.addProductToCart(
+    widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
+    widget.myCartChangeNotifier.addProductToCart(
         context, widget.pageStyle, item, item.qtySaveForLater, lang, {});
   }
 }

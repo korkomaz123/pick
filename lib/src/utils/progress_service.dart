@@ -7,10 +7,11 @@ class ProgressService {
 
   ProgressService({this.context});
 
-  void showProgress() async {
+  void showProgress([double opacity = 0.01]) async {
     await showDialog(
       context: context,
-      barrierColor: Colors.white.withOpacity(0.01),
+      barrierColor:
+          opacity == 1 ? Colors.white : Colors.white.withOpacity(opacity),
       builder: (context) {
         return MarkaaLoadingDialog();
       },

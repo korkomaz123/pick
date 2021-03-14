@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -52,7 +52,7 @@ class _SignInPageState extends State<SignInPage> {
   FocusNode passNode = FocusNode();
   bool isShowPass = false;
   SignInBloc signInBloc;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
@@ -60,30 +60,36 @@ class _SignInPageState extends State<SignInPage> {
   SettingRepository settingRepo;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
       await localRepo.setToken(user.token);
+      await orderChangeNotifier.loadOrderHistories(user.token, lang);
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      await _shippingAddresses();
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user.token);
       await settingRepo.updateFcmDeviceToken(
         user.token,
         Platform.isAndroid ? deviceToken : '',
@@ -92,28 +98,9 @@ class _SignInPageState extends State<SignInPage> {
     } catch (e) {
       print(e.toString());
     }
-    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-      token: user.token,
-      lang: lang,
-    ));
+    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     progressService.hideProgress();
     Navigator.pop(context);
-  }
-
-  Future<void> _shippingAddresses() async {
-    final result = await context
-        .read<ShippingAddressRepository>()
-        .getShippingAddresses(user.token);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> shippingAddressesList = result['addresses'];
-      for (int i = 0; i < shippingAddressesList.length; i++) {
-        final address = AddressEntity.fromJson(shippingAddressesList[i]);
-        addresses.add(address);
-        if (address.defaultShippingAddress == 1) {
-          defaultAddress = address;
-        }
-      }
-    }
   }
 
   @override

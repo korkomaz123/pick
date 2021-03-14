@@ -435,12 +435,11 @@ class _MyCartPageState extends State<MyCartPage>
     }
   }
 
-  void _onSaveForLaterItem(String key) async {
+  void _onSaveForLaterItem(String key) {
     final product = myCartChangeNotifier.cartItemsMap[key].product;
     final count = myCartChangeNotifier.cartItemsMap[key].itemCount;
-    await myCartChangeNotifier.removeCartItem(key);
-    await wishlistChangeNotifier
-        .addItemToWishlist(user.token, product, count, {});
+    myCartChangeNotifier.removeCartItem(key);
+    wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
   void _onSignIn() {

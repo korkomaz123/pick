@@ -69,6 +69,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   ) async {
     data[categoryId] = <ProductModel>[];
     pages[categoryId] = 1;
+    isReachedMax = false;
     await loadCategoryProducts(1, categoryId, lang);
   }
 
@@ -147,6 +148,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     final index = brandId + '_' + categoryId ?? '';
     data[index] = <ProductModel>[];
     pages[index] = 1;
+    isReachedMax = false;
     await loadBrandProducts(1, brandId, categoryId, lang);
   }
 
@@ -231,6 +233,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     data[index] = <ProductModel>[];
     pages[index] = 1;
+    isReachedMax = false;
     await loadSortedProducts(1, brandId, categoryId, sortItem, lang);
   }
 
@@ -295,6 +298,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     final index = 'filter_' + (brandId ?? '') + '_' + (categoryId ?? 'all');
     data[index] = <ProductModel>[];
     pages[index] = 1;
+    isReachedMax = false;
     await loadFilteredProducts(1, brandId, categoryId, filterValues, lang);
   }
 

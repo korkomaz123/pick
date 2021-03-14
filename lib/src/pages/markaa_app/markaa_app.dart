@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -8,20 +9,18 @@ import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
 import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
 import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/home/bloc/home_repository.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/order_history/bloc/order_bloc.dart';
 import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_bloc.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
@@ -150,6 +149,7 @@ class MarkaaApp extends StatelessWidget {
           create: (context) => MyCartChangeNotifier(
             myCartRepository: myCartRepository,
             localStorageRepository: localStorageRepository,
+            checkoutRepository: checkoutRepository,
           ),
         ),
         ChangeNotifierProvider(
@@ -162,6 +162,23 @@ class MarkaaApp extends StatelessWidget {
             productRepository: productRepository,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => HomeChangeNotifier(
+            homeRepository: homeRepository,
+            productRepository: productRepository,
+            localStorageRepository: localStorageRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => OrderChangeNotifier(
+            orderRepository: orderRepository,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AddressChangeNotifier(
+            addressRepository: shippingAddressRepository,
+          ),
+        ),
       ],
       child: _buildMultiBlocProvider(),
     );
@@ -170,12 +187,6 @@ class MarkaaApp extends StatelessWidget {
   Widget _buildMultiBlocProvider() {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => HomeBloc(
-            homeRepository: homeRepository,
-            productRepository: productRepository,
-          ),
-        ),
         BlocProvider(
           create: (context) => SignInBloc(
             signInRepository: signInRepository,
@@ -187,16 +198,6 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => ShippingAddressBloc(
-            shippingAddressRepository: shippingAddressRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => OrderBloc(
-            orderRepository: orderRepository,
-          ),
-        ),
-        BlocProvider(
           create: (context) => ProfileBloc(
             profileRepository: profileRepository,
           ),
@@ -205,11 +206,6 @@ class MarkaaApp extends StatelessWidget {
           create: (context) => FilterBloc(
             filterRepository: filterRepository,
             localStorageRepository: localStorageRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => CheckoutBloc(
-            checkoutRepository: checkoutRepository,
           ),
         ),
       ],

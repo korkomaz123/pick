@@ -50,8 +50,11 @@ class _ProductHCardState extends State<ProductHCard>
   FlushBarService flushBarService;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
+  AnimationController _addToWishlistController;
+  Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  Image cachedImage;
 
   @override
   void initState() {
@@ -61,6 +64,18 @@ class _ProductHCardState extends State<ProductHCard>
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     _initAnimation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    cachedImage = Image.network(
+      widget.product.imageUrl,
+      width: widget.cardHeight * 0.65,
+      height: widget.cardHeight * 0.8,
+      fit: BoxFit.fitHeight,
+    );
+    precacheImage(cachedImage.image, context);
+    super.didChangeDependencies();
   }
 
   void _initAnimation() {
@@ -75,6 +90,20 @@ class _ProductHCardState extends State<ProductHCard>
       end: 3.0,
     ).animate(CurvedAnimation(
       parent: _addToCartController,
+      curve: Curves.easeIn,
+    ));
+
+    /// add to wishlist button animation
+    _addToWishlistController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _addToWishlistScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 3.0,
+    ).animate(CurvedAnimation(
+      parent: _addToWishlistController,
       curve: Curves.easeIn,
     ));
   }
@@ -117,21 +146,11 @@ class _ProductHCardState extends State<ProductHCard>
               right: lang == 'en' ? widget.pageStyle.unitWidth * 5 : 0,
               left: lang == 'ar' ? widget.pageStyle.unitWidth * 5 : 0,
             ),
-            child: Image.network(
-              widget.product.imageUrl,
-              width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.8,
-              fit: BoxFit.fitHeight,
-              loadingBuilder: (_, child, chunkEvent) {
-                return chunkEvent != null
-                    ? Image.asset(
-                        'lib/public/images/loading/image_loading.jpg',
-                        width: widget.cardHeight * 0.65,
-                        height: widget.cardHeight * 0.8,
-                      )
-                    : child;
-              },
-            ),
+            child: cachedImage ??
+                SizedBox(
+                  width: widget.cardHeight * 0.65,
+                  height: widget.cardHeight * 0.8,
+                ),
           ),
           Expanded(
             child: Column(
@@ -221,19 +240,19 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildToolbar() {
-    return Consumer<WishlistChangeNotifier>(
-      builder: (_, model, __) {
-        if (widget.isWishlist) {
-          isWishlist =
-              model.wishlistItemsMap.containsKey(widget.product.productId);
-          return Align(
-            alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: () => user != null
-                    ? _onWishlist()
-                    : Navigator.pushNamed(context, Routes.signIn),
+    return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
+      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
+      if (widget.isWishlist) {
+        return Align(
+          alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () => user != null
+                  ? _onWishlist()
+                  : Navigator.pushNamed(context, Routes.signIn),
+              child: ScaleTransition(
+                scale: _addToWishlistScaleAnimation,
                 child: Container(
                   width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
                   height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
@@ -243,12 +262,12 @@ class _ProductHCardState extends State<ProductHCard>
                 ),
               ),
             ),
-          );
-        } else {
-          return SizedBox.shrink();
-        }
-      },
-    );
+          ),
+        );
+      } else {
+        return SizedBox.shrink();
+      }
+    });
   }
 
   Widget _buildOutofStock() {
@@ -300,11 +319,16 @@ class _ProductHCardState extends State<ProductHCard>
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
+      _addToWishlistController.repeat(reverse: true);
+      Timer.periodic(Duration(milliseconds: 600), (timer) {
+        _addToWishlistController.stop(canceled: true);
+        timer.cancel();
+      });
       if (isWishlist) {
-        await wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product.productId);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product);
       } else {
-        await wishlistChangeNotifier
+        wishlistChangeNotifier
             .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }

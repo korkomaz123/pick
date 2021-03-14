@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -38,6 +39,7 @@ class _LogoutItemState extends State<LogoutItem> {
   SettingRepository settingRepo;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _LogoutItemState extends State<LogoutItem> {
     settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
   }
 
   @override
@@ -124,6 +127,7 @@ class _LogoutItemState extends State<LogoutItem> {
     myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     wishlistChangeNotifier.initialize();
+    orderChangeNotifier.initializeOrders();
     progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
       context,

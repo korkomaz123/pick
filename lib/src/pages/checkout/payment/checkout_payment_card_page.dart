@@ -1,15 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_bloc.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/progress_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CheckoutPaymentCardPage extends StatefulWidget {
@@ -26,56 +28,34 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     with WidgetsBindingObserver {
   PageStyle pageStyle;
   WebViewController webViewController;
-  CheckoutBloc checkoutBloc;
   Map<String, dynamic> data = {};
+  OrderChangeNotifier orderChangeNotifier;
+  ProgressService progressService;
+  FlushBarService flushBarService;
+  MyCartChangeNotifier myCartChangeNotifier;
+  LocalStorageRepository localStorageRepo;
+  var orderDetails;
+  var reorder;
+  var url;
+  var chargeId;
 
   @override
   void initState() {
     super.initState();
     print('init state');
-    checkoutBloc = context.read<CheckoutBloc>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
+    localStorageRepo = context.read<LocalStorageRepository>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _initialData();
   }
 
   void _initialData() {
-    final address = jsonDecode(widget.params['orderAddress']);
-    print(address);
-    data = {
-      "amount": double.parse(widget.params['orderDetails']['totalPrice']),
-      "currency": "KWD",
-      "threeDSecure": true,
-      "save_card": false,
-      "description": "purchase description",
-      "statement_descriptor": "",
-      "metadata": {},
-      "reference": {
-        "acquirer": "acquirer",
-        "gateway": "gateway",
-        "payment": "payment",
-        "track": "track",
-        "transaction": "trans_910101",
-        "order": "order_262625",
-      },
-      "receipt": {"email": true, "sms": false},
-      "customer": {
-        "first_name": address['firstname'],
-        "middle_name": "",
-        "last_name": address['lastname'],
-        "email": address['email'],
-        "phone": {}
-      },
-      "merchant": {"id": ""},
-      "source": {
-        "id": widget.params['paymentMethod'] == 'knet'
-            ? "src_kw.knet"
-            : "src_card"
-      },
-      "destinations": {"destination": []},
-      "post": {"url": "https://tap.company"},
-      "redirect": {"url": "https://tap.company"}
-    };
-    print(data);
-    checkoutBloc.add(TapPaymentCheckout(data: data, lang: lang));
+    orderDetails = widget.params['orderDetails'];
+    reorder = widget.params['reorder'];
+    url = widget.params['url'];
+    chargeId = widget.params['chargeId'];
   }
 
   @override
@@ -115,7 +95,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
               padding: EdgeInsets.only(right: pageStyle.unitWidth * 8),
               child: Center(
                 child: InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Navigator.pop(context, 'cancel'),
                   child: Text(
                     'cancel_button_title'.tr(),
                     style: mediumTextStyle.copyWith(
@@ -129,61 +109,62 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           ],
           elevation: 0,
         ),
-        body: BlocConsumer<CheckoutBloc, CheckoutState>(
-          listener: (context, state) {
-            if (state is TapPaymentCheckoutFailure) {
-              Navigator.pop(context, 'Something went wrong');
-            }
+        body: WebView(
+          initialUrl: url,
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (controller) {
+            webViewController = controller;
           },
-          builder: (context, state) {
-            if (state is TapPaymentCheckoutSuccess) {
-              return WebView(
-                initialUrl: state.url,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (controller) {
-                  webViewController = controller;
-                },
-                onPageFinished: _onPageLoaded,
-              );
-            } else {
-              return Center(child: PulseLoadingSpinner());
-            }
-          },
+          onPageStarted: _onPageLoaded,
         ),
       ),
     );
   }
 
-  void _onPageLoaded(String url) {
-    /// knet result: {
-    ///   knet_vpay: Aqp0Cu0FR914pu%2fQnK3p2gDhUPBTDCDk,
-    ///   sess: l0Z6AAbK0Yo%3d,
-    ///   token: Aqp0Cu0FR914pu%2fQnK3p2suMC1las7Iq
-    /// }
-    ///
-    /// visa/master result: {
-    ///   mpgs_pay: HFJQvtL6oUakKO31ZXGNjf4a%2b3tU8emJ,
-    ///   sess: qvHbbuJIKx8%3d,
-    ///   token: HFJQvtL6oUakKO31ZXGNjR7AfyaOMr7W
-    /// }
+  void _onPageLoaded(String url) async {
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    if (widget.params['paymentMethod'] == 'knet') {
-      if (url.contains('paymentcancel')) {
-        Navigator.pop(context);
-      }
-      if (params.containsKey('knet_vpay')) {
-        Navigator.pop(context, 'success');
-      }
+    if (params.containsKey('tap_id')) {
+      await myCartChangeNotifier.checkChargeStatus(
+          chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
+    }
+  }
+
+  void _onProcess() {
+    progressService.showProgress(1);
+  }
+
+  void _onPaymentSuccess() async {
+    await orderChangeNotifier.submitOrder(
+        orderDetails, lang, _onProcess, _onOrderSubmittedSuccess, _onFailure);
+  }
+
+  void _onPaymentFailure(String error) {
+    progressService.hideProgress();
+    Navigator.pushReplacementNamed(context, Routes.paymentFailed);
+  }
+
+  void _onOrderSubmittedSuccess(String orderNo) async {
+    if (reorder != null) {
+      myCartChangeNotifier.initializeReorderCart();
     } else {
-      if (params.containsKey('mpgs_pay')) {
-        Navigator.pop(context, 'success');
+      myCartChangeNotifier.initialize();
+      if (user?.token == null) {
+        await localStorageRepo.removeItem('cartId');
       }
+      await myCartChangeNotifier.getCartId();
     }
-    if (url == 'https://www.tap.company/kw/en') {
-      if (params.isEmpty) {
-        Navigator.pop(context);
-      }
-    }
+    progressService.hideProgress();
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.checkoutConfirmed,
+      (route) => route.settings.name == Routes.home,
+      arguments: orderNo,
+    );
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    Navigator.pop(context, error);
   }
 }

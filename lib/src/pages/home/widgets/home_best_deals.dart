@@ -1,15 +1,15 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'home_products_carousel.dart';
@@ -27,22 +27,21 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
   CategoryEntity bestDeals = homeCategories[0];
   List<ProductModel> bestDealsProducts;
   String title;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    homeBloc = context.read<HomeBloc>();
-    homeBloc.add(HomeBestDealsLoaded(lang: lang));
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.loadBestDeals(lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        bestDealsProducts = state.bestDealsProducts;
-        title = state.bestDealsTitle;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        bestDealsProducts = model.bestDealsProducts;
+        title = model.bestDealsTitle;
         if (bestDealsProducts.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,

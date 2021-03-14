@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_review_product_card.dart';
@@ -42,6 +43,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   ProgressService progressService;
   FlushBarService flushBarService;
   MyCartChangeNotifier myCartChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
     Future.delayed(Duration.zero, () async {
       await myCartChangeNotifier.getReorderCartId(widget.order.orderId, lang);
       await myCartChangeNotifier.getReorderCartItems(lang);
@@ -506,7 +509,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _onNext() {
     if (myCartChangeNotifier.reorderCartItemCount > 0) {
-      defaultAddress = widget.order.address;
+      addressChangeNotifier.setDefaultAddress(widget.order.address);
       Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
     } else {
       flushBarService.showErrorMessage(pageStyle, 'reorder_items_error'.tr());

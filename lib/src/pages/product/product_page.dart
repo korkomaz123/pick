@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
@@ -13,7 +14,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/pages/product/widgets/product_more_about.dart';
@@ -56,7 +56,7 @@ class _ProductPageState extends State<ProductPage>
   ProgressService progressService;
   LocalStorageRepository localStorageRepository;
   ProductRepository productRepository;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   FlushBarService flushBarService;
   bool isBuyNow = false;
   bool isStock = false;
@@ -73,7 +73,7 @@ class _ProductPageState extends State<ProductPage>
     flushBarService = FlushBarService(context: context);
     productRepository = context.read<ProductRepository>();
     localStorageRepository = context.read<LocalStorageRepository>();
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _loadDetails();
@@ -105,14 +105,11 @@ class _ProductPageState extends State<ProductPage>
     if (user?.token != null) {
       await productRepository.setRecentlyViewedCustomerProduct(
           user.token, product.productId, lang);
-      homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-        lang: lang,
-        token: user.token,
-      ));
+      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
       await localStorageRepository.addRecentlyViewedItem(product.productId);
       List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-      homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+      homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     }
   }
 

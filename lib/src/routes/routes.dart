@@ -51,6 +51,7 @@ class Routes {
   static const String checkoutPayment = '/checkout-payment';
   static const String checkoutConfirmed = '/checkout-confirmed';
   static const String checkoutPaymentCard = '/checkout-payment-card';
+  static const String paymentFailed = '/payment-failed';
 
   /// wishlist
   static const String wishlist = '/wishlist';

@@ -314,6 +314,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               return chunkEvent != null
                   ? Image.asset(
                       'lib/public/images/loading/image_loading.jpg',
+                      width: pageStyle.unitWidth * 90,
+                      height: pageStyle.unitHeight * 120,
                     )
                   : child;
             },

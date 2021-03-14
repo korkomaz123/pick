@@ -1,10 +1,11 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -37,7 +38,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   SignInBloc signInBloc;
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -45,17 +46,19 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   SettingRepository settingRepo;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -339,14 +342,15 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
 
   void _logoutUser() async {
     await settingRepo.updateFcmDeviceToken(user.token, '', '');
-    user = null;
     await localRepo.setToken('');
+    user = null;
     myCartChangeNotifier.initialize();
+    orderChangeNotifier.initializeOrders();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
     List<String> ids = await localRepo.getRecentlyViewedIds();
     wishlistChangeNotifier.initialize();
-    homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     progressService.hideProgress();
     Navigator.pop(context);
     Navigator.popUntil(

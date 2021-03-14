@@ -1,6 +1,7 @@
 import 'brand_entity.dart';
 
 class ProductModel {
+  String parentId;
   String wishlistItemId;
   String entityId;
   String typeId;
@@ -21,6 +22,7 @@ class ProductModel {
   Map<String, dynamic> options;
 
   ProductModel({
+    this.parentId,
     this.wishlistItemId,
     this.entityId,
     this.typeId,
@@ -42,7 +44,10 @@ class ProductModel {
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : wishlistItemId = json.containsKey('wishlist_item_id')
+      : parentId = json.containsKey('parent_id') && json['parent_id'] != null
+            ? json['parent_id']
+            : '',
+        wishlistItemId = json.containsKey('wishlist_item_id')
             ? json['wishlist_item_id']
             : null,
         entityId = json['entity_id'],

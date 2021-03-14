@@ -3,7 +3,7 @@ description: Ecommerce app for multi-vendor
 
 publish_to: 'none'
 
-version: 1.4.2+9
+version: 1.4.3+10
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

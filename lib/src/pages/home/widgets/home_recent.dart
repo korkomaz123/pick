@@ -1,13 +1,13 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeRecent extends StatefulWidget {
@@ -20,7 +20,7 @@ class HomeRecent extends StatefulWidget {
 }
 
 class _HomeRecentState extends State<HomeRecent> {
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   LocalStorageRepository localStorageRepository;
   List<ProductModel> recentlyViews = [];
 
@@ -28,13 +28,10 @@ class _HomeRecentState extends State<HomeRecent> {
   void initState() {
     super.initState();
     localStorageRepository = context.read<LocalStorageRepository>();
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     if (user?.token != null) {
       print('customer');
-      homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-        token: user.token,
-        lang: lang,
-      ));
+      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
       print('guest');
       _loadGuestViewed();
@@ -43,15 +40,14 @@ class _HomeRecentState extends State<HomeRecent> {
 
   void _loadGuestViewed() async {
     List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-    homeBloc.add(HomeRecentlyViewedGuestLoaded(ids: ids, lang: lang));
+    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        recentlyViews = state.recentlyViewedProducts;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        recentlyViews = model.recentlyViewedProducts;
         if (recentlyViews.isNotEmpty) {
           return Container(
             width: widget.pageStyle.deviceWidth,

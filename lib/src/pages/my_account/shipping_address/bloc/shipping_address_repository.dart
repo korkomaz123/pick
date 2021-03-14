@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
@@ -8,7 +9,7 @@ class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [GET SHIPPING ADDRESSES LIST]
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getShippingAddresses(String token) async {
+  Future<dynamic> getAddresses(String token) async {
     String url = EndPoints.getMyShippingAddresses;
     final params = {'token': token};
     print(params);
@@ -18,38 +19,14 @@ class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [ADD SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> addShippingAddress(
+  Future<dynamic> addAddress(
     String token,
-    String title,
-    String firstName,
-    String lastName,
-    String countryId,
-    String region,
-    String city,
-    String streetName,
-    String zipCode,
-    String phoneNumber,
-    String company,
-    String email,
+    AddressEntity newAddress,
   ) async {
     String url = EndPoints.addShippingAddress;
     final params = {
       'token': token,
-      'address': json.encode({
-        'prefix': title,
-        'firstname': firstName,
-        'lastname': lastName,
-        'country_id': countryId,
-        'region': region,
-        'city': city,
-        'street': streetName,
-        'post_code': zipCode,
-        'telephone': phoneNumber,
-        'company': company,
-        'email': email,
-        'isdefaultbilling': '1',
-        'isdefaultshipping': '1'
-      }),
+      'address': jsonEncode(newAddress.toJson()),
     };
     return await Api.postMethod(url, data: params);
   }
@@ -57,7 +34,7 @@ class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [DELETE SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> deleteShippingAddress(String token, String addressId) async {
+  Future<dynamic> deleteAddress(String token, String addressId) async {
     String url = EndPoints.deleteShippingAddress;
     final params = {'token': token, 'address_id': addressId};
     return await Api.postMethod(url, data: params);
@@ -66,42 +43,14 @@ class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [UPDATE SHIPPING ADDRESS]
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> updateShippingAddress(
+  Future<dynamic> updateAddress(
     String token,
-    String title,
-    String addressId,
-    String firstName,
-    String lastName,
-    String countryId,
-    String region,
-    String city,
-    String streetName,
-    String zipCode,
-    String phoneNumber,
-    String company,
-    String email,
-    String isDefaultBilling,
-    String isDefaultShipping,
+    AddressEntity updateAddress,
   ) async {
     String url = EndPoints.updateShippingAddress;
     final params = {
       'token': token,
-      'address': json.encode({
-        'prefix': title,
-        'addressId': addressId,
-        'firstname': firstName,
-        'lastname': lastName,
-        'country_id': countryId,
-        'region': region,
-        'city': city,
-        'street': streetName,
-        'post_code': zipCode,
-        'telephone': phoneNumber,
-        'company': company,
-        'email': email,
-        'isdefaultbilling': isDefaultBilling,
-        'isdefaultshipping': isDefaultShipping
-      }),
+      'address': jsonEncode(updateAddress.toJson()),
     };
     return await Api.postMethod(url, data: params);
   }

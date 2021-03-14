@@ -1,4 +1,3 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_country_input.dart';
@@ -17,22 +16,22 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-import 'bloc/shipping_address_bloc.dart';
 import 'bloc/shipping_address_repository.dart';
 import 'widgets/select_country_dialog.dart';
 import 'widgets/select_region_dialog.dart';
 
 class EditAddressPage extends StatefulWidget {
-  final AddressEntity address;
+  final Map<String, dynamic> params;
 
-  EditAddressPage({this.address});
+  EditAddressPage({this.params});
 
   @override
   _EditAddressPageState createState() => _EditAddressPageState();
@@ -44,10 +43,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
   String regionId;
   PageStyle pageStyle;
   ProgressService progressService;
-  SnackBarService snackBarService;
   FlushBarService flushBarService;
-  ShippingAddressBloc shippingAddressBloc;
   ShippingAddressRepository shippingRepo;
+  AddressChangeNotifier model;
+  AddressEntity addressParam;
+  bool isCheckout;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -67,35 +67,40 @@ class _EditAddressPageState extends State<EditAddressPage> {
   @override
   void initState() {
     super.initState();
+    model = context.read<AddressChangeNotifier>();
+    isCheckout = false;
+    if (widget.params != null) {
+      if (widget.params.containsKey('address')) {
+        addressParam = widget.params['address'];
+      }
+      if (widget.params.containsKey('isCheckout')) {
+        isCheckout = widget.params['isCheckout'];
+      }
+    }
     isNew = true;
     firstNameController.text = user?.firstName;
     lastNameController.text = user?.lastName;
     emailController.text = user?.email;
-    if (widget.address != null) {
+    if (addressParam != null) {
       isNew = false;
-      firstNameController.text = widget?.address?.firstName;
-      lastNameController.text = widget?.address?.lastName;
-      emailController.text = widget?.address?.email;
-      titleController.text = widget?.address?.title;
-      countryController.text = widget?.address?.country;
-      countryId = widget?.address?.countryId;
-      stateController.text = widget?.address?.region;
-      regionId = widget?.address?.region;
-      cityController.text = widget?.address?.city;
-      companyController.text = widget?.address?.company;
-      streetController.text = widget?.address?.street;
-      postCodeController.text = widget?.address?.postCode;
-      phoneNumberController.text = widget?.address?.phoneNumber;
+      firstNameController.text = addressParam?.firstName;
+      lastNameController.text = addressParam?.lastName;
+      emailController.text = addressParam?.email;
+      titleController.text = addressParam?.title;
+      countryController.text = addressParam?.country;
+      countryId = addressParam?.countryId;
+      stateController.text = addressParam?.region;
+      regionId = addressParam?.region;
+      cityController.text = addressParam?.city;
+      companyController.text = addressParam?.company;
+      streetController.text = addressParam?.street;
+      postCodeController.text = addressParam?.postCode;
+      phoneNumberController.text = addressParam?.phoneNumber;
     } else {
       countryId = 'KW';
       countryController.text = 'Kuwait';
     }
-    shippingAddressBloc = context.read<ShippingAddressBloc>();
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
     flushBarService = FlushBarService(context: context);
     shippingRepo = context.read<ShippingAddressRepository>();
   }
@@ -118,32 +123,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
         isCenter: false,
       ),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: BlocListener<ShippingAddressBloc, ShippingAddressState>(
-        listener: (context, state) {
-          if (state is ShippingAddressAddedInProcess) {
-            print('process');
-            progressService.showProgress();
-          }
-          if (state is ShippingAddressAddedFailure) {
-            print('failure');
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-          if (state is ShippingAddressUpdatedInProcess) {
-            progressService.showProgress();
-          }
-
-          if (state is ShippingAddressUpdatedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
-          }
-        },
-        child: Column(
-          children: [
-            _buildAppBar(),
-            _buildEditFormView(),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildAppBar(),
+          _buildEditFormView(),
+        ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
@@ -431,38 +415,59 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onSave() async {
     if (formKey.currentState.validate()) {
+      AddressEntity address = AddressEntity(
+        title: titleController.text,
+        country: countryController.text,
+        countryId: countryId,
+        regionId: regionId,
+        region: stateController.text,
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        city: cityController.text.trim(),
+        street: streetController.text,
+        postCode: postCodeController.text,
+        phoneNumber: phoneNumberController.text,
+        company: companyController.text,
+        email: emailController.text,
+        defaultBillingAddress: addressParam?.defaultBillingAddress != null
+            ? addressParam?.defaultBillingAddress
+            : isCheckout ? 1 : 0,
+        defaultShippingAddress: addressParam?.defaultShippingAddress != null
+            ? addressParam?.defaultShippingAddress
+            : isCheckout ? 1 : 0,
+        addressId: addressParam?.addressId ?? '',
+      );
       if (isNew) {
-        shippingAddressBloc.add(ShippingAddressAdded(
-          token: user.token,
-          title: titleController.text,
-          countryId: countryId,
-          region: regionId,
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
-          city: cityController.text,
-          streetName: streetController.text,
-          zipCode: postCodeController.text,
-          phone: phoneNumberController.text,
-          company: companyController.text,
-          email: emailController.text,
-        ));
+        await model.addAddress(
+            user.token, address, _onProcess, _onSuccess, _onFailure);
       } else {
-        shippingAddressBloc.add(ShippingAddressUpdated(
-          token: user.token,
-          addressId: widget.address.addressId,
-          title: titleController.text,
-          countryId: countryId,
-          region: regionId,
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
-          city: cityController.text,
-          streetName: streetController.text,
-          zipCode: postCodeController.text,
-          phone: phoneNumberController.text,
-          company: companyController.text,
-          email: emailController.text,
-        ));
+        await model.updateAddress(
+            user.token, address, _onProcess, _onSuccess, _onFailure);
       }
     }
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    progressService.hideProgress();
+    if (isCheckout) {
+      Navigator.popUntil(
+        context,
+        (route) => route.settings.name == Routes.checkoutAddress,
+      );
+    } else {
+      Navigator.popUntil(
+        context,
+        (route) => route.settings.name == Routes.shippingAddress,
+      );
+    }
+  }
+
+  void _onFailure(String error) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, error);
   }
 }

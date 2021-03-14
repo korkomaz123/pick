@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
@@ -48,27 +46,6 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> placeOrder(
-    Map<String, dynamic> orderDetails,
-    String lang,
-  ) async {
-    String url = EndPoints.submitOrder;
-    Map<String, dynamic> params = {};
-    params['orderAddress'] = orderDetails['orderAddress'];
-    params['token'] = orderDetails['token'];
-    params['shipping'] = orderDetails['shipping'];
-    params['paymentMethod'] = orderDetails['paymentMethod'];
-    params['lang'] = lang;
-    params['cartId'] = orderDetails['cartId'];
-    params['orderDetails'] = json.encode(orderDetails['orderDetails']);
-    print(params);
-    final result = await Api.postMethod(url, data: params);
-    return result;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> tapPaymentCheckout(
     Map<String, dynamic> data,
     String lang,
@@ -77,11 +54,27 @@ class CheckoutRepository {
 
     /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
     /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
+
     Map<String, String> headers = {
       'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
       'lang_code': lang,
       'Content-Type': 'application/json'
     };
     return Api.postMethod(url, data: data, headers: headers);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> checkPaymentStatus(String chargeId) async {
+    String url = 'https://api.tap.company/v2/charges/$chargeId';
+
+    /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
+    /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
+
+    Map<String, String> headers = {
+      'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
+    };
+    return Api.getMethod(url, headers: headers);
   }
 }

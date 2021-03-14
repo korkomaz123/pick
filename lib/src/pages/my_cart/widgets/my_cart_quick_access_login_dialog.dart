@@ -8,15 +8,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/home/bloc/home_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
@@ -49,7 +49,7 @@ class _MyCartQuickAccessLoginDialogState
   SignInBloc signInBloc;
   PageStyle pageStyle;
   LocalStorageRepository localRepo;
-  HomeBloc homeBloc;
+  HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
   WishlistRepository wishlistRepo;
@@ -57,6 +57,8 @@ class _MyCartQuickAccessLoginDialogState
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+  OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -64,13 +66,15 @@ class _MyCartQuickAccessLoginDialogState
     signInBloc = context.read<SignInBloc>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    homeBloc = context.read<HomeBloc>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     localRepo = context.read<LocalStorageRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     settingRepo = context.read<SettingRepository>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    orderChangeNotifier = context.read<OrderChangeNotifier>();
   }
 
   void _loggedInSuccess(UserEntity loggedInUser) async {
@@ -81,7 +85,9 @@ class _MyCartQuickAccessLoginDialogState
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      await _shippingAddresses();
+      await orderChangeNotifier.loadOrderHistories(user.token, lang);
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user.token);
       await settingRepo.updateFcmDeviceToken(
         user.token,
         Platform.isAndroid ? deviceToken : '',
@@ -90,29 +96,10 @@ class _MyCartQuickAccessLoginDialogState
     } catch (e) {
       print(e.toString());
     }
-    homeBloc.add(HomeRecentlyViewedCustomerLoaded(
-      token: user.token,
-      lang: lang,
-    ));
+    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
     widget.onClose();
-  }
-
-  Future<void> _shippingAddresses() async {
-    final result = await context
-        .read<ShippingAddressRepository>()
-        .getShippingAddresses(user.token);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> shippingAddressesList = result['addresses'];
-      for (int i = 0; i < shippingAddressesList.length; i++) {
-        final address = AddressEntity.fromJson(shippingAddressesList[i]);
-        addresses.add(address);
-        if (address.defaultShippingAddress == 1) {
-          defaultAddress = address;
-        }
-      }
-    }
   }
 
   @override

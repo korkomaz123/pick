@@ -1,19 +1,20 @@
 class AddressEntity {
-  final String title;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String addressId;
-  final String country;
-  final String countryId;
-  final String region;
-  final String city;
-  final String street;
-  final String company;
-  final String postCode;
-  final String phoneNumber;
-  final int defaultBillingAddress;
-  final int defaultShippingAddress;
+  String title;
+  String firstName;
+  String lastName;
+  String email;
+  String addressId;
+  String country;
+  String countryId;
+  String region;
+  String regionId;
+  String city;
+  String street;
+  String company;
+  String postCode;
+  String phoneNumber;
+  int defaultBillingAddress;
+  int defaultShippingAddress;
 
   AddressEntity({
     this.title,
@@ -24,6 +25,7 @@ class AddressEntity {
     this.country,
     this.countryId,
     this.region,
+    this.regionId,
     this.city,
     this.street,
     this.company,
@@ -49,4 +51,24 @@ class AddressEntity {
         phoneNumber = json['telephone'],
         defaultBillingAddress = json['DefaultBillingAddress'],
         defaultShippingAddress = json['DefaultShippingAddress'];
+
+  Map<String, dynamic> toJson() => {
+        'entity_id': addressId ?? '',
+        'addressId': addressId ?? '',
+        'customer_address_id': addressId ?? '',
+        'prefix': title ?? '',
+        'firstname': firstName,
+        'lastname': lastName,
+        'country_name': country,
+        'country_id': countryId,
+        'region': regionId,
+        'city': city,
+        'street': street,
+        'post_code': postCode,
+        'telephone': phoneNumber,
+        'company': company,
+        'email': email,
+        'isdefaultbilling': '$defaultBillingAddress',
+        'isdefaultshipping': '$defaultShippingAddress',
+      };
 }

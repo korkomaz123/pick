@@ -290,5 +290,9 @@
     "continue_as_guest": "المتابعة كضيف",
     "sorry": "نأسف",
     "update_required": "التحديث مطلوب",
-    "update_now_button_title": "ابدأ الأن"
+    "update_now_button_title": "ابدأ الأن",
+    "delivery_time": "سوف يتم تسليم الطلب خلال يومين.",
+    "payment_failed": "عملية الدفع فشلت",
+    "transation_failed": "فشلت معاملتك.\nالرجاء العودة والمحاولة مجددا",
+    "go_shopping_cart_button_title": "اذهب إلى عربة التسوق الخاصة بي"
 }

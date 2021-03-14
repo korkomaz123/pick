@@ -3,6 +3,7 @@ import 'package:markaa/src/pages/category_list/category_list_page.dart';
 import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
 import 'package:markaa/src/pages/checkout/address/checkout_guest_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
+import 'package:markaa/src/pages/checkout/confirmed/payment_failed_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_card_page.dart';
 import 'package:markaa/src/pages/checkout/search_address/search_address_screen.dart';
@@ -151,6 +152,11 @@ class RouteGenerator {
           builder: (context) => CheckoutConfirmedPage(orderNo: params),
           settings: RouteSettings(name: Routes.checkoutConfirmed),
         );
+      case Routes.paymentFailed:
+        return CupertinoPageRoute(
+          builder: (context) => PaymentFailedPage(),
+          settings: RouteSettings(name: Routes.paymentFailed),
+        );
       case Routes.search:
         return CupertinoPageRoute(
           builder: (context) => SearchPage(),
@@ -215,7 +221,7 @@ class RouteGenerator {
         );
       case Routes.editAddress:
         return CupertinoPageRoute(
-          builder: (context) => EditAddressPage(address: params),
+          builder: (context) => EditAddressPage(params: params),
           settings: RouteSettings(name: Routes.editAddress),
         );
       case Routes.viewOrder:

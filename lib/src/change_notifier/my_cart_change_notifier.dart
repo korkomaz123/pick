@@ -4,6 +4,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
 import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:markaa/src/utils/local_storage_repository.dart';
@@ -11,10 +12,12 @@ import 'package:markaa/src/utils/local_storage_repository.dart';
 class MyCartChangeNotifier extends ChangeNotifier {
   final MyCartRepository myCartRepository;
   final LocalStorageRepository localStorageRepository;
+  final CheckoutRepository checkoutRepository;
 
   MyCartChangeNotifier({
     @required this.myCartRepository,
     @required this.localStorageRepository,
+    @required this.checkoutRepository,
   });
 
   ProcessStatus processStatus = ProcessStatus.none;
@@ -224,5 +227,44 @@ class MyCartChangeNotifier extends ChangeNotifier {
     print(viewerCartId);
     print(cartId);
     await myCartRepository.transferCart(viewerCartId, cartId);
+  }
+
+  Future<void> generatePaymentUrl(
+    Map<String, dynamic> data,
+    String lang,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ) async {
+    onProcess();
+    try {
+      final result = await checkoutRepository.tapPaymentCheckout(data, lang);
+      print('generate url');
+      print(result);
+      onSuccess(result['transaction']['url'], result['id']);
+    } catch (e) {
+      onFailure(e.toString());
+    }
+  }
+
+  Future<void> checkChargeStatus(
+    String chargeId,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ) async {
+    onProcess();
+    try {
+      final result = await checkoutRepository.checkPaymentStatus(chargeId);
+      print('check');
+      print(result);
+      if (result['status'] == 'CAPTURED') {
+        onSuccess();
+      } else {
+        onFailure(result['response']['message']);
+      }
+    } catch (e) {
+      onFailure(e.toString());
+    }
   }
 }

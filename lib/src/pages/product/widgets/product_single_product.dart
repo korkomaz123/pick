@@ -481,7 +481,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   void _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
       await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product.productId, widget.model.selectedVariant);
+          user.token, widget.product, widget.model.selectedVariant);
     } else {
       await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
           1, model.selectedOptions, widget.model.selectedVariant);
