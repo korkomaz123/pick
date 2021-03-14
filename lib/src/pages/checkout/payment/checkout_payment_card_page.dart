@@ -115,7 +115,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           onWebViewCreated: (controller) {
             webViewController = controller;
           },
-          onPageFinished: _onPageLoaded,
+          onPageStarted: _onPageLoaded,
         ),
       ),
     );
