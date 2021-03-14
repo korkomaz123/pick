@@ -5,7 +5,6 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -137,26 +136,32 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     ///
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    if (orderDetails['paymentMethod'] == 'knet') {
-      if (url.contains('paymentcancel')) {
-        Navigator.pop(context);
-      }
-      if (params.containsKey('knet_vpay')) {
-        await myCartChangeNotifier.checkChargeStatus(
-            chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
-      }
-    } else {
-      if (params.containsKey('mpgs_pay')) {
-        await myCartChangeNotifier.checkChargeStatus(
-            chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
-      }
+    print(uri);
+    print(params);
+    if (params.containsKey('tap_id')) {
+      await myCartChangeNotifier.checkChargeStatus(
+          chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
     }
-    if (url == 'https://www.tap.company/kw/en' ||
-        url == 'https://www.tap.company/kw/ar') {
-      if (params.isEmpty) {
-        Navigator.pop(context);
-      }
-    }
+    // if (orderDetails['paymentMethod'] == 'knet') {
+    //   if (url.contains('paymentcancel')) {
+    //     Navigator.pop(context);
+    //   }
+    //   if (params.containsKey('knet_vpay')) {
+    //     await myCartChangeNotifier.checkChargeStatus(
+    //         chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
+    //   }
+    // } else {
+    //   if (params.containsKey('mpgs_pay')) {
+    //     await myCartChangeNotifier.checkChargeStatus(
+    //         chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
+    //   }
+    // }
+    // if (url == 'https://www.tap.company/kw/en' ||
+    //     url == 'https://www.tap.company/kw/ar') {
+    //   if (params.isEmpty) {
+    //     Navigator.pop(context);
+    //   }
+    // }
   }
 
   void _onProcess() {

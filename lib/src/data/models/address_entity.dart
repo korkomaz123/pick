@@ -7,6 +7,7 @@ class AddressEntity {
   String country;
   String countryId;
   String region;
+  String regionId;
   String city;
   String street;
   String company;
@@ -24,6 +25,7 @@ class AddressEntity {
     this.country,
     this.countryId,
     this.region,
+    this.regionId,
     this.city,
     this.street,
     this.company,
@@ -59,7 +61,7 @@ class AddressEntity {
         'lastname': lastName,
         'country_name': country,
         'country_id': countryId,
-        'region': region,
+        'region': regionId,
         'city': city,
         'street': street,
         'post_code': postCode,

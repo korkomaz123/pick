@@ -296,7 +296,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               orderDetails,
               lang,
               _onProcess,
-              _onSuccess,
+              _onOrderSubmittedSuccess,
               _onFailure,
             );
           } else {
@@ -375,7 +375,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       "save_card": false,
       "description": "purchase description",
       "statement_descriptor": "",
-      "metadata": {},
+      "metadata": {"udf1": "m live"},
       "reference": {
         "acquirer": "acquirer",
         "gateway": "gateway",
@@ -386,20 +386,21 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       },
       "receipt": {"email": true, "sms": false},
       "customer": {
+        "id": "",
         "first_name": address['firstname'],
         "middle_name": "",
         "last_name": address['lastname'],
         "email": address['email'],
-        "phone": {}
+        "phone": {"country_code": "965", "number": address['phoneNumber']},
       },
-      "merchant": {"id": ""},
+      "merchant": {"id": "6008426"},
       "source": {
         "id":
             orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
       },
       "destinations": {"destination": []},
-      "post": {"url": "https://tap.company"},
-      "redirect": {"url": "https://tap.company"}
+      "post": {"url": "http://markaa.com"},
+      "redirect": {"url": "http://markaa.com"}
     };
     await myCartChangeNotifier.generatePaymentUrl(
         data, lang, _onProcess, _onSuccessGenerated, _onFailure);

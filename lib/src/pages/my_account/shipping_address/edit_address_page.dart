@@ -419,7 +419,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
         title: titleController.text,
         country: countryController.text,
         countryId: countryId,
-        region: regionId,
+        regionId: regionId,
+        region: stateController.text,
         firstName: firstNameController.text,
         lastName: lastNameController.text,
         city: cityController.text.trim(),
@@ -428,10 +429,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
         phoneNumber: phoneNumberController.text,
         company: companyController.text,
         email: emailController.text,
-        defaultBillingAddress:
-            addressParam?.defaultBillingAddress ?? isCheckout ? 1 : 0,
-        defaultShippingAddress:
-            addressParam?.defaultShippingAddress ?? isCheckout ? 1 : 0,
+        defaultBillingAddress: addressParam?.defaultBillingAddress != null
+            ? addressParam?.defaultBillingAddress
+            : isCheckout ? 1 : 0,
+        defaultShippingAddress: addressParam?.defaultShippingAddress != null
+            ? addressParam?.defaultShippingAddress
+            : isCheckout ? 1 : 0,
         addressId: addressParam?.addressId ?? '',
       );
       if (isNew) {

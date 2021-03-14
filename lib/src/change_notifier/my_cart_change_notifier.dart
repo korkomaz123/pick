@@ -240,7 +240,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await checkoutRepository.tapPaymentCheckout(data, lang);
       print('generate url');
-      print(result['id']);
+      print(result);
       onSuccess(result['transaction']['url'], result['id']);
     } catch (e) {
       onFailure(e.toString());
@@ -257,13 +257,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await checkoutRepository.checkPaymentStatus(chargeId);
       print('check');
-      print(chargeId);
       print(result);
-      if (result['status'] == 'CAPTURED') {
-        onSuccess();
-      } else {
-        onFailure();
-      }
+      // if (result['status'] == 'CAPTURED') {
+      //   onSuccess();
+      // } else {
+      //   onFailure();
+      // }
     } catch (e) {
       onFailure();
     }
