@@ -85,10 +85,10 @@ class _SplashPageState extends State<SplashPage> {
     await _getHomeCategories();
     if (user?.token != null) {
       isNotification = await settingRepo.getNotificationSetting(user.token);
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
+      wishlistChangeNotifier.getWishlistItems(user.token, lang);
+      orderChangeNotifier.loadOrderHistories(user.token, lang);
       addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
+      addressChangeNotifier.loadAddresses(user.token);
     }
     _getCartItems();
     _getShippingMethod();

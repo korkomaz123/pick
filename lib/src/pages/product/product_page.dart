@@ -292,7 +292,7 @@ class _ProductPageState extends State<ProductPage>
         context, pageStyle, product, 1, lang, model.selectedOptions);
   }
 
-  void _onBuyNow(ProductChangeNotifier model) async {
+  void _onBuyNow(ProductChangeNotifier model) {
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
@@ -305,7 +305,7 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
-    await myCartChangeNotifier.addProductToCart(
+    myCartChangeNotifier.addProductToCart(
         context, pageStyle, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
   }

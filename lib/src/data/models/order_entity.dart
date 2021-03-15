@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -43,13 +44,15 @@ class OrderEntity {
   OrderEntity.fromJson(Map<String, dynamic> json)
       : orderId = json['entity_id'],
         orderNo = json['increment_id'],
-        orderDate = json['created_at'],
+        orderDate = _covertLocalTime(json['created_at_timestamp']),
         status = EnumToString.fromString(
           OrderStatusEnum.values,
           json['status'],
         ),
         totalQty = json['total_qty_ordered'],
-        totalPrice = _getFormattedValue(json['base_grand_total']),
+        totalPrice = json['status'] == 'canceled'
+            ? '0.00'
+            : _getFormattedValue(json['base_grand_total']),
         subtotalPrice = _getFormattedValue(json['base_subtotal']),
         discountAmount = double.parse(
             json['discount'].isNotEmpty ? json['discount'] : '0.00'),
@@ -66,6 +69,14 @@ class OrderEntity {
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
         address = AddressEntity.fromJson(json['shippingAddress']);
+
+  static String _covertLocalTime(int timestamp) {
+    int milliseconds = timestamp * 1000;
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    Duration timezone = DateTime.now().timeZoneOffset;
+    DateTime convertedDateTime = dateTime.add(timezone);
+    return DateFormat('yyyy-MM-dd HH:mm:ss').format(convertedDateTime);
+  }
 
   static String _getFormattedValue(String value) {
     double price = double.parse(value);

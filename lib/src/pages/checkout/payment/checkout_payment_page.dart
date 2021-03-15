@@ -65,10 +65,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     progressService.showProgress();
   }
 
-  void _onSuccess(OrderEntity order) {
-    _onOrderSubmittedSuccess(order.orderNo);
-  }
-
   void _onFailure(String error) {
     progressService.hideProgress();
     flushBarService.showErrorMessage(pageStyle, error);

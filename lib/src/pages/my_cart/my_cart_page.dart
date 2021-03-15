@@ -431,14 +431,14 @@ class _MyCartPageState extends State<MyCartPage>
       },
     );
     if (result != null) {
-      await myCartChangeNotifier.removeCartItem(key);
+      await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     }
   }
 
   void _onSaveForLaterItem(String key) {
     final product = myCartChangeNotifier.cartItemsMap[key].product;
     final count = myCartChangeNotifier.cartItemsMap[key].itemCount;
-    myCartChangeNotifier.removeCartItem(key);
+    myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
@@ -461,7 +461,8 @@ class _MyCartPageState extends State<MyCartPage>
         },
       );
       if (result != null) {
-        await myCartChangeNotifier.clearCart();
+        await myCartChangeNotifier.clearCart(
+            _onProcess, _onSuccess, _onFailure);
       }
     }
   }
@@ -481,5 +482,22 @@ class _MyCartPageState extends State<MyCartPage>
     if (isStock) {
       Navigator.pushNamed(context, Routes.checkoutAddress);
     }
+  }
+
+  void _onRemoveFailure(String message) {
+    flushBarService.showErrorMessage(pageStyle, message);
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    progressService.hideProgress();
+  }
+
+  void _onFailure(String message) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, message);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -201,7 +202,11 @@ class _BrandListPageState extends State<BrandListPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.network(brands[index].brandThumbnail),
+            CachedNetworkImage(
+              imageUrl: brands[index].brandThumbnail,
+              placeholder: (context, url) => Container(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
             Text(
               brands[index].brandLabel,
               style: mediumTextStyle.copyWith(

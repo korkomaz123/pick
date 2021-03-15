@@ -38,18 +38,18 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        newArrivalsProducts = model.newArrivalsProducts;
-        title = model.newArrivalsTitle;
-        if (newArrivalsProducts.isNotEmpty) {
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 300,
-            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-            color: Colors.white,
-            child: Column(
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 300,
+      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+      color: Colors.white,
+      child: Consumer<HomeChangeNotifier>(
+        builder: (_, model, __) {
+          newArrivalsProducts = model.newArrivalsProducts;
+          title = model.newArrivalsTitle;
+          if (newArrivalsProducts.isNotEmpty) {
+            return Column(
               children: [
                 _buildHeadline(),
                 HomeProductsCarousel(
@@ -64,12 +64,12 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
                 ),
                 _buildFooter(context),
               ],
-            ),
-          );
-        } else {
-          return Container();
-        }
-      },
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 

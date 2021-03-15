@@ -65,15 +65,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>users profile</string>
+	<string>We need to access to your camera to take picture of profile</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>access location</string>
+	<string>We need to access to your location to display your real address on the map</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>access location</string>
+	<string>We need to access to your location to display your real address on the map</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>upload video</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>users profile</string>
+	<string>We need to access to your gallery  to pick the picture of profile</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
