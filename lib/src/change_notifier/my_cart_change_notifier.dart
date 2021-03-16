@@ -61,7 +61,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await myCartRepository.getCartItems(cartId, lang);
       if (result['code'] == 'SUCCESS') {
-        processStatus = ProcessStatus.done;
         cartItemCount = result['items'].length;
         for (var item in result['items']) {
           cartItemsMap[item.itemId] = item;
@@ -71,6 +70,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         couponCode = result['couponCode'];
         discount = result['discount'] + .0;
         type = result['type'];
+        processStatus = ProcessStatus.done;
       } else {
         processStatus = ProcessStatus.failed;
         if (onFailure != null) {
@@ -122,7 +122,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
         notifyListeners();
-        await getCartItems(lang);
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
       }
     } catch (e) {
       onFailure('$cartIssue$cartId\nMore details: $e');
@@ -131,7 +133,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
       notifyListeners();
-      await getCartItems(lang);
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
     }
   }
 
@@ -166,14 +170,18 @@ class MyCartChangeNotifier extends ChangeNotifier {
         flushBarService.showAddCartMessage(pageStyle, product);
       } else {
         flushBarService.showErrorMessage(pageStyle, '$cartIssue$cartId');
-        await getCartItems(lang);
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
       }
     } catch (e) {
       flushBarService.showErrorMessage(
         pageStyle,
         '$cartIssue$cartId\nMore details: $e',
       );
-      await getCartItems(lang);
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
     }
   }
 
@@ -199,7 +207,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartItemsMap[item.itemId].rowPrice =
             double.parse(item.product.price) * item.itemCount;
         notifyListeners();
-        await getCartItems(lang);
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
       }
     } catch (e) {
       onFailure('$cartIssue$cartId\nMore details: $e');
@@ -209,7 +219,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartItemsMap[item.itemId].rowPrice =
           double.parse(item.product.price) * item.itemCount;
       notifyListeners();
-      await getCartItems(lang);
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
     }
   }
 
