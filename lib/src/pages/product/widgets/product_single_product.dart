@@ -134,41 +134,81 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: pageStyle.deviceWidth,
-      color: Colors.white,
-      child: Column(
-        children: [
-          if (preCachedImages.isNotEmpty) ...[
-            _buildImageCarousel()
-          ] else if (productEntity.gallery.isNotEmpty) ...[
-            Container(
-              width: double.infinity,
-              height: pageStyle.unitHeight * 460,
-              alignment: Alignment.center,
-              color: Colors.white,
-              child: CupertinoActivityIndicator(
-                radius: pageStyle.unitWidth * 30,
+    return Stack(
+      children: [
+        Container(
+          width: pageStyle.deviceWidth,
+          color: Colors.white,
+          child: Column(
+            children: [
+              if (preCachedImages.isNotEmpty) ...[
+                _buildImageCarousel()
+              ] else if (productEntity.gallery.isNotEmpty) ...[
+                Container(
+                  width: double.infinity,
+                  height: pageStyle.unitHeight * 460,
+                  alignment: Alignment.center,
+                  color: Colors.white,
+                  child: CupertinoActivityIndicator(
+                    radius: pageStyle.unitWidth * 30,
+                  ),
+                ),
+              ] else ...[
+                Container(
+                  width: double.infinity,
+                  height: pageStyle.unitHeight * 460,
+                  child: Image.asset(
+                      'lib/public/images/loading/image_loading.jpg'),
+                )
+              ],
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+                child: Column(
+                  children: [
+                    _buildTitle(),
+                    _buildDescription(),
+                    _buildPrice(),
+                  ],
+                ),
               ),
+            ],
+          ),
+        ),
+        if (product.discount > 0 ||
+            (widget?.model?.selectedVariant?.discount != null &&
+                widget.model.selectedVariant.discount > 0)) ...[
+          if (lang == 'en') ...[
+            Positioned(
+              top: pageStyle.unitHeight * 320,
+              right: 0,
+              child: _buildDiscount(),
             ),
           ] else ...[
-            Container(
-              width: double.infinity,
-              height: pageStyle.unitHeight * 460,
-              child: Image.asset('lib/public/images/loading/image_loading.jpg'),
-            )
-          ],
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
-            child: Column(
-              children: [
-                _buildTitle(),
-                _buildDescription(),
-                _buildPrice(),
-              ],
+            Positioned(
+              top: pageStyle.unitHeight * 320,
+              left: 0,
+              child: _buildDiscount(),
             ),
-          ),
+          ],
         ],
+      ],
+    );
+  }
+
+  Widget _buildDiscount() {
+    return Container(
+      width: pageStyle.unitWidth * 60,
+      height: pageStyle.unitHeight * 35,
+      decoration: BoxDecoration(color: Colors.redAccent),
+      alignment: Alignment.center,
+      child: Text(
+        '${product.discount > 0 ? product.discount : widget.model.selectedVariant.discount}%',
+        textAlign: TextAlign.center,
+        style: mediumTextStyle.copyWith(
+          fontSize: pageStyle.unitFontSize * 16,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -425,31 +465,54 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                productEntity.price != null
-                    ? productEntity.price
-                    : widget?.model?.selectedVariant?.price != null
-                        ? widget.model.selectedVariant.price
-                        : '',
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 20,
-                  color: greyColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(width: pageStyle.unitWidth * 1),
-              if (productEntity.price != null ||
-                  widget?.model?.selectedVariant?.price != null) ...[
+              if (product.discount > 0 ||
+                  (widget?.model?.selectedVariant?.discount != null &&
+                      widget.model.selectedVariant.discount > 0)) ...[
+                SizedBox(width: pageStyle.unitWidth * 10),
                 Text(
-                  'currency'.tr(),
+                  (product.beforePrice ??
+                          widget.model.selectedVariant.beforePrice) +
+                      ' ' +
+                      'currency'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+                    decorationStyle: TextDecorationStyle.solid,
+                    decoration: TextDecoration.lineThrough,
+                    decorationColor: dangerColor,
+                    fontSize: widget.pageStyle.unitFontSize * 14,
                     color: greyColor,
                   ),
-                )
+                ),
+                SizedBox(width: widget.pageStyle.unitWidth * 10),
               ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    product.price != null
+                        ? product.price
+                        : widget?.model?.selectedVariant?.price != null
+                            ? widget.model.selectedVariant.price
+                            : '',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: pageStyle.unitFontSize * 20,
+                      color: greyColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(width: pageStyle.unitWidth * 1),
+                  if (product.price != null ||
+                      widget?.model?.selectedVariant?.price != null) ...[
+                    Text(
+                      'currency'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: pageStyle.unitFontSize * 12,
+                        color: greyColor,
+                      ),
+                    )
+                  ],
+                ],
+              ),
             ],
           ),
         ],

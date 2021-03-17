@@ -59,7 +59,7 @@ class ProductEntity {
         metaDescription = json['meta_description'],
         price = json['price'] == null
             ? null
-            : double.parse(json['price']).toStringAsFixed(2),
+            : double.parse(json['price']).toStringAsFixed(3),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],

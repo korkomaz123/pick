@@ -441,7 +441,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${canceledPrice.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${canceledPrice.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: dangerColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -471,7 +471,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(2)}',
+                ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -507,7 +507,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(2)}',
+                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -544,7 +544,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -589,7 +589,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(changedPrice - discount + fees).toStringAsFixed(2)}',
+                ' ${(changedPrice - discount + fees).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

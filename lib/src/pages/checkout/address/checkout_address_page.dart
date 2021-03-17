@@ -337,12 +337,12 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       }
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
-      orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(2);
+      orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
       orderDetails['orderDetails']['totalPrice'] =
-          totalPrice.toStringAsFixed(2);
+          totalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['subTotalPrice'] =
-          subtotalPrice.toStringAsFixed(2);
-      orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(2);
+          subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = jsonEncode({
         'customer_address_id': addressChangeNotifier.defaultAddress.addressId,

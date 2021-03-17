@@ -51,11 +51,11 @@ class OrderEntity {
         ),
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
-            ? '0.00'
+            ? '0.000'
             : _getFormattedValue(json['base_grand_total']),
         subtotalPrice = _getFormattedValue(json['base_subtotal']),
         discountAmount = double.parse(
-            json['discount'].isNotEmpty ? json['discount'] : '0.00'),
+            json['discount'].isNotEmpty ? json['discount'] : '0.000'),
         discountType = json['discount_type'],
         paymentMethod = PaymentMethodEntity(
           id: json['payment_code'],
@@ -80,7 +80,7 @@ class OrderEntity {
 
   static String _getFormattedValue(String value) {
     double price = double.parse(value);
-    return price.toStringAsFixed(2);
+    return price.toStringAsFixed(3);
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {

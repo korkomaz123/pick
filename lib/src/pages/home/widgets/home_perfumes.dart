@@ -54,13 +54,13 @@ class _HomePerfumesState extends State<HomePerfumes> {
               children: [
                 _buildHeadline(),
                 Divider(
-                  height: widget.pageStyle.unitHeight * 4,
+                  height: widget.pageStyle.unitHeight * 1.5,
                   thickness: widget.pageStyle.unitHeight * 1.5,
                   color: greyColor.withOpacity(0.4),
                 ),
                 _buildProductView(),
                 Divider(
-                  height: widget.pageStyle.unitHeight * 4,
+                  height: widget.pageStyle.unitHeight * 1.5,
                   thickness: widget.pageStyle.unitHeight * 1.5,
                   color: greyColor.withOpacity(0.4),
                 ),
@@ -163,7 +163,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget _buildProductView() {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 600,
+      height: widget.pageStyle.unitHeight * 590,
       child: Swiper(
         itemCount: perfumesProducts.length > 40
             ? 10
@@ -193,7 +193,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ),
                   Container(
                     width: widget.pageStyle.unitWidth * 179,
-                    child: Divider(color: greyColor, thickness: 0.5),
+                    child: Divider(
+                      color: greyColor,
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                   ProductVCard(
                     cardWidth: widget.pageStyle.unitWidth * 179,
@@ -229,7 +233,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ),
                   Container(
                     width: widget.pageStyle.unitWidth * 179,
-                    child: Divider(color: greyColor, thickness: 0.5),
+                    child: Divider(
+                      color: greyColor,
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                   ProductVCard(
                     cardWidth: widget.pageStyle.unitWidth * 179,

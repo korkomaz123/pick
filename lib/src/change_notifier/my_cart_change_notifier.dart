@@ -36,6 +36,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   String errorMessage;
   String type;
   String cartIssue = 'Something went wrong regarding your shopping cart: ';
+  bool isApplying = false;
 
   void initialize() {
     cartId = '';
@@ -49,6 +50,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
     reorderCartTotalPrice = .0;
     reorderCartItemsMap = {};
     type = '';
+    couponCode = '';
+    discount = .0;
     notifyListeners();
   }
 
@@ -92,6 +95,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       String clearCartId = cartId;
+      String clearType = type;
+      String clearCouponCode = couponCode;
+      double clearDiscount = discount;
       final result = await myCartRepository.clearCartItems(clearCartId);
       if (result['code'] != 'SUCCESS') {
         onFailure('$cartIssue$cartId');
@@ -99,6 +105,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         initialize();
         notifyListeners();
         cartId = clearCartId;
+        type = clearType;
+        couponCode = clearCouponCode;
+        discount = clearDiscount;
         onSuccess();
       }
     } catch (e) {
@@ -283,18 +292,25 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> applyCouponCode(
+    String deviceId,
+    String token,
     String code,
     FlushBarService flushBarService,
     PageStyle pageStyle,
   ) async {
-    final result = await myCartRepository.couponCode(cartId, code, '0');
+    isApplying = true;
+    notifyListeners();
+    final result =
+        await myCartRepository.couponCode(deviceId, token, cartId, code, '0');
     if (result['code'] == 'SUCCESS') {
       couponCode = code;
       discount = result['discount'] + .0;
       type = result['type'];
+      isApplying = false;
     } else {
       errorMessage = result['errMessage'];
       flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      isApplying = false;
     }
     notifyListeners();
   }
@@ -303,15 +319,19 @@ class MyCartChangeNotifier extends ChangeNotifier {
     FlushBarService flushBarService,
     PageStyle pageStyle,
   ) async {
-    final result = await myCartRepository.couponCode(cartId, couponCode, '1');
+    isApplying = true;
+    final result =
+        await myCartRepository.couponCode('', '', cartId, couponCode, '1');
     if (result['code'] == 'SUCCESS') {
       couponCode = '';
       discount = .0;
       type = '';
-      notifyListeners();
+      isApplying = false;
     } else {
       flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      isApplying = false;
     }
+    notifyListeners();
   }
 
   Future<void> transferCartItems() async {

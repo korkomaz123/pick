@@ -51,7 +51,7 @@ class FlushBarService {
                     ),
                     Text(
                       'currency'.tr() +
-                          ' ${model.cartTotalPrice.toStringAsFixed(2)}',
+                          ' ${model.cartTotalPrice.toStringAsFixed(3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: pageStyle.unitFontSize * 13,

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="27" viewBox="0 0 26 27">
+  <defs>
+    <clipPath id="clip-iPhone_X_XS_11_Pro_1">
+      <rect width="26" height="27"/>
+    </clipPath>
+  </defs>
+  <g id="iPhone_X_XS_11_Pro_1" data-name="iPhone X, XS, 11 Pro – 1" clip-path="url(#clip-iPhone_X_XS_11_Pro_1)">
+    <rect width="26" height="27" fill="#fff"/>
+    <g id="Group_1" data-name="Group 1" transform="translate(-288.393 -1650.393)">
+      <circle id="Ellipse_87" data-name="Ellipse 87" cx="12.5" cy="12.5" r="12.5" transform="translate(289.393 1651.393)" fill="#0c5eed" opacity="0.87"/>
+      <g id="Icon_feather-shopping-cart" data-name="Icon feather-shopping-cart" transform="translate(293.231 1657.491)">
+        <path id="Path_31" data-name="Path 31" d="M13.4,30.7a.7.7,0,1,1-.7-.7A.7.7,0,0,1,13.4,30.7Z" transform="translate(-7.096 -16.688)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path id="Path_32" data-name="Path 32" d="M29.9,30.7a.7.7,0,1,1-.7-.7A.7.7,0,0,1,29.9,30.7Z" transform="translate(-15.888 -16.688)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path id="Path_33" data-name="Path 33" d="M1.5,1.5H4.3L6.18,10.882a1.4,1.4,0,0,0,1.4,1.128h6.81a1.4,1.4,0,0,0,1.4-1.128L16.914,5H5" transform="translate(-1.5 -1.5)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

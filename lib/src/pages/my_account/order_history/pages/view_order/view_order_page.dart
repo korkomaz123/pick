@@ -305,7 +305,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildSubtotal() {
-    String subtotal = '0.00';
+    String subtotal = '0.000';
     if (order.status != OrderStatusEnum.canceled) {
       subtotal = order.subtotalPrice;
     }
@@ -359,7 +359,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${fees.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -396,7 +396,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -408,7 +408,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildTotal() {
-    String totalPrice = '0.00';
+    String totalPrice = '0.000';
     if (order.status != OrderStatusEnum.canceled) {
       totalPrice = order.totalPrice;
     }

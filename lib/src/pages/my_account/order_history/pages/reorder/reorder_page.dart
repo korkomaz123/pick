@@ -361,7 +361,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
             Text(
               'currency'.tr() +
-                  ' ${model.reorderCartTotalPrice.toStringAsFixed(2)}',
+                  ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: pageStyle.unitFontSize * 14,
@@ -424,7 +424,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               ),
             ),
             Text(
-              'currency'.tr() + ' ${totalPrice.toStringAsFixed(2)}',
+              'currency'.tr() + ' ${totalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: pageStyle.unitFontSize * 16,

@@ -6,6 +6,8 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
+String deviceId;
+
 /// category list for home screen
 List<CategoryEntity> homeCategories = [];
 

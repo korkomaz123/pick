@@ -344,7 +344,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${subTotal.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  '${subTotal.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 18,
@@ -365,7 +365,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${discount.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  '${discount.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 18,
@@ -386,7 +386,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '${totalPrice.toStringAsFixed(2)} ' + 'currency'.tr(),
+                '${totalPrice.toStringAsFixed(3)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,

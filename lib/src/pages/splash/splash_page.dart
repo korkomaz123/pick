@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:device_info/device_info.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -86,6 +87,7 @@ class _SplashPageState extends State<SplashPage> {
     brandChangeNotifier.getBrandsList(lang, 'brand');
     brandChangeNotifier.getBrandsList(lang, 'home');
     categoryChangeNotifier.getCategoriesList(lang);
+    await _getDeviceId();
     await _getCurrentUser();
     await _getHomeCategories();
     if (user?.token != null) {
@@ -101,6 +103,18 @@ class _SplashPageState extends State<SplashPage> {
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> _getDeviceId() async {
+    final deviceInfoPlugin = new DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      var build = await deviceInfoPlugin.androidInfo;
+      deviceId = build.androidId; //UUID for Android
+    } else if (Platform.isIOS) {
+      var data = await deviceInfoPlugin.iosInfo;
+      deviceId = data.identifierForVendor; //UUID for iOS
+    }
+    print(deviceId);
   }
 
   Future<void> _getCurrentUser() async {

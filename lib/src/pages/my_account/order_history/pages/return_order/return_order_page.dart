@@ -439,7 +439,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${returnPrice.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${returnPrice.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: dangerColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -469,7 +469,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(2)}',
+                ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -529,7 +529,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(2)}',
+                ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,
