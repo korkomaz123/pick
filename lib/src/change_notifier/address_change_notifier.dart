@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class AddressChangeNotifier extends ChangeNotifier {
   AddressChangeNotifier({this.addressRepository});

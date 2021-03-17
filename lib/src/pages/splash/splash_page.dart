@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -6,7 +8,6 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -20,12 +21,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
-import 'package:new_version/new_version.dart';
-import 'package:version/version.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'update_available_dialog.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -46,10 +49,12 @@ class _SplashPageState extends State<SplashPage> {
   CategoryChangeNotifier categoryChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
+  AppRepository appRepository;
 
   @override
   void initState() {
     super.initState();
+    appRepository = context.read<AppRepository>();
     cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
@@ -114,21 +119,29 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> checkAppVersion() async {
-    final newVersion = NewVersion(
-      androidId: 'com.app.markaa',
-      iOSId: 'com.markaa.shop',
-      context: context,
-    );
-    final status = await newVersion.getVersionStatus();
-    String storeVersionString = status.storeVersion.split('(')[0];
-    Version localVersion = Version.parse(status.localVersion);
-    Version storeVersion = Version.parse(storeVersionString);
-    if (storeVersion > localVersion) {
+    final versionEntity =
+        await appRepository.checkAppVersion(Platform.isAndroid, lang);
+    if (versionEntity.updateMandatory) {
       Navigator.pushReplacementNamed(
         context,
         Routes.update,
-        arguments: status.appStoreLink,
+        arguments: versionEntity.storeLink,
       );
+    } else if (versionEntity.canUpdate) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) {
+          return UpdateAvailableDialog(
+            title: versionEntity.dialogTitle,
+            content: versionEntity.dialogContent,
+          );
+        },
+      );
+      if (result != null) {
+        if (await canLaunch(versionEntity.storeLink)) {
+          await launch(versionEntity.storeLink);
+        }
+      }
     }
   }
 
