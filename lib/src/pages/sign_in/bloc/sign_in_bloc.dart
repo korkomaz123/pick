@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:equatable/equatable.dart';
+import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:meta/meta.dart';
-
-import 'sign_in_repository.dart';
 
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';

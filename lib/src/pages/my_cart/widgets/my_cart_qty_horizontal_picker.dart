@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
   final PageStyle pageStyle;

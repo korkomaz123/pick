@@ -3,7 +3,7 @@ import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/utils/algolia_service.dart';
+import 'package:markaa/src/utils/services/algolia_service.dart';
 
 class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////

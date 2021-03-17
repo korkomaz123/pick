@@ -14,14 +14,14 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/dynamic_link_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'widgets/home_advertise.dart';

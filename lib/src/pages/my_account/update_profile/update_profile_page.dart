@@ -12,14 +12,14 @@ import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/image_custom_picker_service.dart';
-import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:markaa/src/utils/services/snackbar_service.dart';
 
 import 'bloc/profile_bloc.dart';
 import 'widgets/update_profile_success_dialog.dart';

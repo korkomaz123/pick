@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class BrandChangeNotifier extends ChangeNotifier {
   BrandChangeNotifier({this.brandRepository, this.localStorageRepository});

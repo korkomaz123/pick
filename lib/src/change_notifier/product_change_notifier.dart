@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
   ProductChangeNotifier({

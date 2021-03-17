@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/pages/home/bloc/home_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/home_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeChangeNotifier extends ChangeNotifier {
   final HomeRepository homeRepository;

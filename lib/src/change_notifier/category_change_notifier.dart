@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
   CategoryChangeNotifier({

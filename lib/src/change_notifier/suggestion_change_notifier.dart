@@ -1,6 +1,6 @@
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/search_repository.dart';
 
 class SuggestionChangeNotifier extends ChangeNotifier {
   List<ProductModel> suggestions = [];

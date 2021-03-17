@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class ProductReviewChangeNotifier extends ChangeNotifier {
   ProductReviewChangeNotifier({this.productRepository});
