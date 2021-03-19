@@ -127,7 +127,19 @@ class _ProductVCardState extends State<ProductVCard>
             children: [
               _buildProductCard(),
               if (widget.product.discount > 0) ...[
-                _buildDiscount(),
+                if (lang == 'en') ...[
+                  Positioned(
+                    top: widget.cardWidth / 2,
+                    right: 0,
+                    child: _buildDiscount(),
+                  ),
+                ] else ...[
+                  Positioned(
+                    top: widget.cardWidth / 2,
+                    left: 0,
+                    child: _buildDiscount(),
+                  ),
+                ],
               ],
               _buildToolbar(),
               _buildOutofStock(),
@@ -286,29 +298,27 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   Widget _buildDiscount() {
-    return Align(
-      alignment: lang == 'en' ? Alignment.topLeft : Alignment.topRight,
-      child: Container(
-        width: widget.pageStyle.unitWidth * (widget.isMinor ? 30 : 45),
-        height: widget.pageStyle.unitHeight * (widget.isMinor ? 30 : 45),
-        decoration: BoxDecoration(
-          color: Colors.redAccent,
-          borderRadius: BorderRadius.only(
-            bottomLeft:
-                Radius.circular(lang == 'ar' ? widget.isMinor ? 15 : 20 : 0),
-            bottomRight:
-                Radius.circular(lang == 'en' ? widget.isMinor ? 15 : 20 : 0),
-          ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: widget.pageStyle.unitWidth * 4,
+        vertical: widget.pageStyle.unitHeight * 2,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(lang == 'en' ? 30 : 0),
+          topRight: Radius.circular(lang == 'ar' ? 30 : 0),
+          bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
+          bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
         ),
-        alignment: Alignment.center,
-        child: Text(
-          '${widget.product.discount}%',
-          textAlign: TextAlign.center,
-          style: mediumTextStyle.copyWith(
-            fontSize:
-                widget.pageStyle.unitFontSize * (widget.isMinor ? 12 : 16),
-            color: Colors.white,
-          ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '${widget.product.discount}% ${'off'.tr()}',
+        textAlign: TextAlign.center,
+        style: mediumTextStyle.copyWith(
+          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 8 : 14),
+          color: Colors.white,
         ),
       ),
     );

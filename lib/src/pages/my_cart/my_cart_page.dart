@@ -54,6 +54,7 @@ class _MyCartPageState extends State<MyCartPage>
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   bool showSign = false;
+  bool isCheckout = false;
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _MyCartPageState extends State<MyCartPage>
                           MyCartCouponCode(
                             pageStyle: pageStyle,
                             cartId: cartId,
-                            onSignIn: _onSignIn,
+                            onSignIn: () => _onSignIn(false),
                           ),
                           _buildTotalPrice(),
                           _buildCheckoutButton(),
@@ -156,6 +157,7 @@ class _MyCartPageState extends State<MyCartPage>
                         child: MyCartQuickAccessLoginDialog(
                           cartId: cartId,
                           onClose: _onClose,
+                          isCheckout: isCheckout,
                         ),
                       ),
                     ),
@@ -269,7 +271,7 @@ class _MyCartPageState extends State<MyCartPage>
                               _onRemoveCartItem(keys[index]),
                           onSaveForLaterItem: () =>
                               _onSaveForLaterItem(keys[index]),
-                          onSignIn: () => _onSignIn(),
+                          onSignIn: () => _onSignIn(false),
                         ),
                         index < (myCartChangeNotifier.cartItemCount - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
@@ -413,7 +415,7 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(),
+        onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(true),
         radius: 0,
       ),
     );
@@ -442,7 +444,8 @@ class _MyCartPageState extends State<MyCartPage>
     wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
-  void _onSignIn() {
+  void _onSignIn(bool checkout) {
+    isCheckout = checkout;
     showSign = true;
     markaaAppChangeNotifier.rebuild();
   }

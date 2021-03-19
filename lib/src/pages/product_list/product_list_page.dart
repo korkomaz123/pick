@@ -114,6 +114,7 @@ class _ProductListPageState extends State<ProductListPage> {
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
               if (!model.isLoading) {
+                print(model.subCategories);
                 if (model.subCategories == null) {
                   return Container();
                 }

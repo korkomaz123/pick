@@ -22,6 +22,8 @@ class EndPoints {
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
   static const String getWishlist = '$baseUrl/getwishlists';
   static const String addWishlist = '$baseUrl/addWishlistItem';
+  static const String getPopup = '$baseUrl/getPopup';
+  static const String getFeaturedCategories = '$baseUrl/getFeaturedCategories';
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';

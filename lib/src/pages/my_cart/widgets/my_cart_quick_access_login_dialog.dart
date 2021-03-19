@@ -36,8 +36,9 @@ import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
   final Function onClose;
+  final bool isCheckout;
 
-  MyCartQuickAccessLoginDialog({this.cartId, this.onClose});
+  MyCartQuickAccessLoginDialog({this.cartId, this.onClose, this.isCheckout});
 
   @override
   _MyCartQuickAccessLoginDialogState createState() =>
@@ -130,7 +131,9 @@ class _MyCartQuickAccessLoginDialogState
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildAuthChoice(),
               SizedBox(height: pageStyle.unitHeight * 20),
-              _buildContinueAsGuest(),
+              if (widget.isCheckout) ...[
+                _buildContinueAsGuest(),
+              ]
             ],
           ),
         ),

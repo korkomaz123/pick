@@ -274,7 +274,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
               verticalOffset: 50.0,
               child: FadeInAnimation(
                 child: InkWell(
-                  onTap: () => _viewCategory(menu, index),
+                  onTap: () => _viewCategory(menu, index + 1),
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
@@ -312,7 +312,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       category: CategoryEntity(id: parentMenu.id, name: parentMenu.title),
       brand: BrandEntity(),
       subCategory: [],
-      selectedSubCategoryIndex: index + 1,
+      selectedSubCategoryIndex: index,
       isFromBrand: false,
     );
     Navigator.pop(context);

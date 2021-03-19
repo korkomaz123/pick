@@ -108,20 +108,24 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     onPressed: () {
                       if (_couponFormKey.currentState.validate()) {
                         couponNode.unfocus();
-                        if (model.couponCode.isNotEmpty) {
-                          couponCodeController.clear();
-                          model.cancelCouponCode(
-                            flushBarService,
-                            widget.pageStyle,
-                          );
+                        if (user?.token != null) {
+                          if (model.couponCode.isNotEmpty) {
+                            couponCodeController.clear();
+                            model.cancelCouponCode(
+                              flushBarService,
+                              widget.pageStyle,
+                            );
+                          } else {
+                            model.applyCouponCode(
+                              deviceId ?? '',
+                              user?.token ?? '',
+                              couponCodeController.text,
+                              flushBarService,
+                              widget.pageStyle,
+                            );
+                          }
                         } else {
-                          model.applyCouponCode(
-                            deviceId ?? '',
-                            user?.token ?? '',
-                            couponCodeController.text,
-                            flushBarService,
-                            widget.pageStyle,
-                          );
+                          widget.onSignIn();
                         }
                       }
                     },

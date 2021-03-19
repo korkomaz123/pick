@@ -94,8 +94,8 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       firstNameController.text = address['firstname'];
       lastNameController.text = address['lastname'];
       emailController.text = address['email'];
-      regionId = address['region'];
-      stateController.text = address['regionName'];
+      regionId = address['region_id'];
+      stateController.text = address['region'];
       streetController.text = address['street'];
       countryId = address['country_id'];
       countryController.text = address['country'];
@@ -433,8 +433,8 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
         'firstname': firstNameController.text,
         'lastname': lastNameController.text,
         'email': emailController.text,
-        'region': regionId,
-        'regionName': stateController.text,
+        'region_id': regionId,
+        'region': stateController.text,
         'street': streetController.text,
         'country_id': countryId,
         'country': countryController.text,

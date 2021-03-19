@@ -18,11 +18,37 @@ class CategoryChangeNotifier extends ChangeNotifier {
   List<CategoryEntity> subCategories;
   bool isLoading = false;
   List<CategoryEntity> categories = [];
+  List<CategoryEntity> featuredCategories = [];
 
   void initialSubCategories() {
     subCategories = null;
     isLoading = false;
     // notifyListeners();
+  }
+
+  void getFeaturedCategoriesList(String lang) async {
+    String key = 'featured-categories-$lang';
+    final exist = await localStorageRepository.existItem(key);
+    if (exist) {
+      List<dynamic> categoryList = await localStorageRepository.getItem(key);
+      featuredCategories = [];
+      for (int i = 0; i < categoryList.length; i++) {
+        featuredCategories.add(CategoryEntity.fromJson(categoryList[i]));
+      }
+      notifyListeners();
+    }
+    final result = await categoryRepository.getFeaturedCategories(lang);
+    if (result['code'] == 'SUCCESS') {
+      await localStorageRepository.setItem(key, result['categories']);
+      if (!exist) {
+        List<dynamic> categoryList = result['categories'];
+        featuredCategories = [];
+        for (int i = 0; i < categoryList.length; i++) {
+          featuredCategories.add(CategoryEntity.fromJson(categoryList[i]));
+        }
+        notifyListeners();
+      }
+    }
   }
 
   void getCategoriesList(String lang) async {

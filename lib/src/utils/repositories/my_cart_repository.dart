@@ -132,21 +132,16 @@ class MyCartRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> couponCode(
-    String deviceId,
-    String token,
     String cartId,
     String couponCode,
     String remove,
   ) async {
     String url = EndPoints.applyCouponCode;
     final params = {
-      'deviceId': deviceId,
-      'token': token,
       'cartId': cartId,
       'coupon_code': couponCode,
       'remove': remove
     };
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 

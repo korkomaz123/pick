@@ -16,6 +16,7 @@ class SliderImageEntity {
   final String categoryId;
   final String categoryName;
   final BrandEntity brand;
+  final String productId;
 
   SliderImageEntity({
     this.bannerId,
@@ -33,6 +34,7 @@ class SliderImageEntity {
     this.categoryId,
     this.categoryName,
     this.brand,
+    this.productId,
   });
 
   SliderImageEntity.fromJson(Map<String, dynamic> json)
@@ -56,5 +58,6 @@ class SliderImageEntity {
                 brandThumbnail: json['brand_thumbnail'],
                 brandLabel: json['brand_label'],
               )
-            : null;
+            : null,
+        productId = json.containsKey('product_id') ? json['product_id'] : null;
 }

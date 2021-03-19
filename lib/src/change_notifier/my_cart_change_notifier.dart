@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -300,8 +299,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   ) async {
     isApplying = true;
     notifyListeners();
-    final result =
-        await myCartRepository.couponCode(deviceId, token, cartId, code, '0');
+    final result = await myCartRepository.couponCode(cartId, code, '0');
     if (result['code'] == 'SUCCESS') {
       couponCode = code;
       discount = result['discount'] + .0;
@@ -309,7 +307,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       isApplying = false;
     } else {
       errorMessage = result['errMessage'];
-      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      flushBarService.showErrorMessage(pageStyle, errorMessage);
       isApplying = false;
     }
     notifyListeners();
@@ -320,15 +318,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
     PageStyle pageStyle,
   ) async {
     isApplying = true;
-    final result =
-        await myCartRepository.couponCode('', '', cartId, couponCode, '1');
+    final result = await myCartRepository.couponCode(cartId, couponCode, '1');
     if (result['code'] == 'SUCCESS') {
       couponCode = '';
       discount = .0;
       type = '';
       isApplying = false;
     } else {
-      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      errorMessage = result['errMessage'];
+      flushBarService.showErrorMessage(pageStyle, errorMessage);
       isApplying = false;
     }
     notifyListeners();

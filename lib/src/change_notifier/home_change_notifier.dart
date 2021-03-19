@@ -24,12 +24,25 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> perfumesProducts = [];
   List<ProductModel> recentlyViewedProducts = [];
   SliderImageEntity ads;
+  SliderImageEntity popupItem;
   String message;
   String bestDealsTitle = '';
   String newArrivalsTitle = '';
   String perfumesTitle = '';
   String bestDealsBannerTitle = '';
   String newArrivalsBannerTitle = '';
+
+  void loadPopup(String lang, Function onSuccess) async {
+    try {
+      final result = await homeRepository.getPopupItem(lang);
+      if (result['code'] == 'SUCCESS') {
+        popupItem = SliderImageEntity.fromJson(result['data'][0]);
+        onSuccess(popupItem);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   void loadSliderImages(String lang) async {
     try {
