@@ -70,15 +70,6 @@ class _ProductVCardState extends State<ProductVCard>
 
   @override
   void didChangeDependencies() {
-    if (widget?.product?.productId != null) {
-      cachedImage = Image.network(
-        widget.product.imageUrl,
-        width: widget.cardHeight * 0.65,
-        height: widget.cardHeight * 0.6,
-        fit: BoxFit.fitHeight,
-      );
-      precacheImage(cachedImage.image, context);
-    }
     super.didChangeDependencies();
   }
 
@@ -130,13 +121,13 @@ class _ProductVCardState extends State<ProductVCard>
                 if (lang == 'en') ...[
                   Positioned(
                     top: widget.cardWidth / 2,
-                    right: 0,
+                    left: 0,
                     child: _buildDiscount(),
                   ),
                 ] else ...[
                   Positioned(
                     top: widget.cardWidth / 2,
-                    left: 0,
+                    right: 0,
                     child: _buildDiscount(),
                   ),
                 ],
@@ -166,11 +157,12 @@ class _ProductVCardState extends State<ProductVCard>
       child: Column(
         children: [
           Container(
-            child: cachedImage ??
-                SizedBox(
-                  width: widget.cardHeight * 0.65,
-                  height: widget.cardHeight * 0.6,
-                ),
+            child: Image.network(
+              widget.product.imageUrl,
+              width: widget.cardHeight * 0.65,
+              height: widget.cardHeight * 0.6,
+              fit: BoxFit.fitHeight,
+            ),
           ),
           Expanded(
             child: Column(
@@ -306,10 +298,10 @@ class _ProductVCardState extends State<ProductVCard>
       decoration: BoxDecoration(
         color: Colors.redAccent,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(lang == 'en' ? 30 : 0),
-          topRight: Radius.circular(lang == 'ar' ? 30 : 0),
-          bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
-          bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
+          topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+          topRight: Radius.circular(lang == 'en' ? 30 : 0),
+          bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
+          bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
         ),
       ),
       alignment: Alignment.center,
