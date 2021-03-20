@@ -120,13 +120,13 @@ class _ProductVCardState extends State<ProductVCard>
               if (widget.product.discount > 0) ...[
                 if (lang == 'en') ...[
                   Positioned(
-                    top: widget.cardWidth / 2,
+                    top: widget.cardHeight / 2,
                     left: 0,
                     child: _buildDiscount(),
                   ),
                 ] else ...[
                   Positioned(
-                    top: widget.cardWidth / 2,
+                    top: widget.cardHeight / 2,
                     right: 0,
                     child: _buildDiscount(),
                   ),

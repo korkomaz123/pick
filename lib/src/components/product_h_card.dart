@@ -118,13 +118,13 @@ class _ProductHCardState extends State<ProductHCard>
             if (widget.product.discount > 0) ...[
               if (lang == 'en') ...[
                 Positioned(
-                  top: widget.cardHeight / 2 - widget.pageStyle.unitHeight * 35,
+                  top: widget.cardHeight / 2,
                   left: 0,
                   child: _buildDiscount(),
                 ),
               ] else ...[
                 Positioned(
-                  top: widget.cardHeight / 2 - widget.pageStyle.unitHeight * 35,
+                  top: widget.cardHeight / 2,
                   right: 0,
                   child: _buildDiscount(),
                 ),
