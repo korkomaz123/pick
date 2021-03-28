@@ -12,9 +12,9 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/images.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -441,7 +441,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${canceledPrice.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${canceledPrice.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: dangerColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -471,7 +471,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(2)}',
+                ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -507,7 +507,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(2)}',
+                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -544,7 +544,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -589,7 +589,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           ),
           Text(
             'currency'.tr() +
-                ' ${(changedPrice - discount + fees).toStringAsFixed(2)}',
+                ' ${(changedPrice - discount + fees).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

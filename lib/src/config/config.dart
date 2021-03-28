@@ -2,6 +2,11 @@ const double designWidth = 375;
 const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
+class MarkaaVersion {
+  static const int androidVersion = 148000;
+  static const int iOSVersion = 148000;
+}
+
 class GoSellSdk {
   static const String pAndroidSecretKey = 'sk_live_yhvSZwp2NcQIDCYW9k3EzLf6';
   static const String tAndroidSecretKey = 'sk_test_ge1wCvn8pADBXcjasGu9drNS';

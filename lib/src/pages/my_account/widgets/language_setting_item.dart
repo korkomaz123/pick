@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 
 class LanguageSettingItem extends StatefulWidget {
   final PageStyle pageStyle;

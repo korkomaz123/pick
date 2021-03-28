@@ -10,9 +10,9 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -70,15 +70,6 @@ class _ProductVCardState extends State<ProductVCard>
 
   @override
   void didChangeDependencies() {
-    if (widget?.product?.productId != null) {
-      cachedImage = Image.network(
-        widget.product.imageUrl,
-        width: widget.cardHeight * 0.65,
-        height: widget.cardHeight * 0.6,
-        fit: BoxFit.fitHeight,
-      );
-      precacheImage(cachedImage.image, context);
-    }
     super.didChangeDependencies();
   }
 
@@ -126,6 +117,21 @@ class _ProductVCardState extends State<ProductVCard>
           child: Stack(
             children: [
               _buildProductCard(),
+              if (widget.product.discount > 0) ...[
+                if (lang == 'en') ...[
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: _buildDiscount(),
+                  ),
+                ] else ...[
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: _buildDiscount(),
+                  ),
+                ],
+              ],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -151,11 +157,12 @@ class _ProductVCardState extends State<ProductVCard>
       child: Column(
         children: [
           Container(
-            child: cachedImage ??
-                SizedBox(
-                  width: widget.cardHeight * 0.65,
-                  height: widget.cardHeight * 0.6,
-                ),
+            child: Image.network(
+              widget.product.imageUrl,
+              width: widget.cardHeight * 0.65,
+              height: widget.cardHeight * 0.6,
+              fit: BoxFit.fitHeight,
+            ),
           ),
           Expanded(
             child: Column(
@@ -219,13 +226,36 @@ class _ProductVCardState extends State<ProductVCard>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: Text(
-                        widget.product.price + ' ' + 'currency'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize * 14,
-                          color: greyColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Row(
+                        children: [
+                          Text(
+                            widget.product.price + ' ' + 'currency'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: widget.pageStyle.unitFontSize *
+                                  (widget.isMinor ? 12 : 14),
+                              color: greyColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          if (widget.product.discount > 0) ...[
+                            SizedBox(
+                                width: widget.pageStyle.unitWidth *
+                                    (widget.isMinor ? 4 : 10)),
+                            Text(
+                              widget.product.beforePrice +
+                                  ' ' +
+                                  'currency'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                decorationStyle: TextDecorationStyle.solid,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: dangerColor,
+                                fontSize: widget.pageStyle.unitFontSize *
+                                    (widget.isMinor ? 12 : 14),
+                                color: greyColor,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     if (widget.isShoppingCart &&
@@ -255,6 +285,25 @@ class _ProductVCardState extends State<ProductVCard>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDiscount() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: widget.pageStyle.unitWidth * 4,
+        vertical: widget.pageStyle.unitHeight * 2,
+      ),
+      color: Colors.redAccent,
+      alignment: Alignment.center,
+      child: Text(
+        '${widget.product.discount}% ${'off'.tr()}',
+        textAlign: TextAlign.center,
+        style: mediumTextStyle.copyWith(
+          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
+          color: Colors.white,
+        ),
       ),
     );
   }

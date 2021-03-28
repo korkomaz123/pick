@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -10,8 +12,6 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/theme/icons.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/progress_service.dart';
 import 'my_cart_remove_dialog.dart';
 
 class MyCartSaveForLaterItems extends StatefulWidget {

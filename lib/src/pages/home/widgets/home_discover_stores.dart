@@ -43,7 +43,6 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 15),
       child: Consumer<BrandChangeNotifier>(builder: (_, __, ___) {
         brands = brandChangeNotifier.brandList;
-        print(brands.length);
         if (brands.isNotEmpty) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

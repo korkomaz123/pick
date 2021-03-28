@@ -1,7 +1,6 @@
 import 'package:markaa/src/components/product_h_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductSameBrandProducts extends StatefulWidget {

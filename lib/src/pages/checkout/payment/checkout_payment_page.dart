@@ -13,11 +13,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
-import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -63,10 +63,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onProcess() {
     progressService.showProgress();
-  }
-
-  void _onSuccess(OrderEntity order) {
-    _onOrderSubmittedSuccess(order.orderNo);
   }
 
   void _onFailure(String error) {
@@ -200,7 +196,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               ),
               Text(
                 'currency'.tr() +
-                    ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(2)}',
+                    ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,

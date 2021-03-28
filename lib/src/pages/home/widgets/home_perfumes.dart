@@ -40,39 +40,39 @@ class _HomePerfumesState extends State<HomePerfumes> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        perfumesProducts = model.perfumesProducts;
-        title = model.perfumesTitle;
-        if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-            color: Colors.white,
-            child: Column(
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+      color: Colors.white,
+      child: Consumer<HomeChangeNotifier>(
+        builder: (_, model, __) {
+          perfumesProducts = model.perfumesProducts;
+          title = model.perfumesTitle;
+          if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
+            return Column(
               children: [
                 _buildHeadline(),
                 Divider(
-                  height: widget.pageStyle.unitHeight * 4,
+                  height: widget.pageStyle.unitHeight * 1.5,
                   thickness: widget.pageStyle.unitHeight * 1.5,
                   color: greyColor.withOpacity(0.4),
                 ),
                 _buildProductView(),
                 Divider(
-                  height: widget.pageStyle.unitHeight * 4,
+                  height: widget.pageStyle.unitHeight * 1.5,
                   thickness: widget.pageStyle.unitHeight * 1.5,
                   color: greyColor.withOpacity(0.4),
                 ),
                 _buildIndicator(),
                 _buildFooter(context),
               ],
-            ),
-          );
-        } else {
-          return Container();
-        }
-      },
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
@@ -163,7 +163,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget _buildProductView() {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 600,
+      height: widget.pageStyle.unitHeight * 590,
       child: Swiper(
         itemCount: perfumesProducts.length > 40
             ? 10
@@ -193,7 +193,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ),
                   Container(
                     width: widget.pageStyle.unitWidth * 179,
-                    child: Divider(color: greyColor, thickness: 0.5),
+                    child: Divider(
+                      color: greyColor,
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                   ProductVCard(
                     cardWidth: widget.pageStyle.unitWidth * 179,
@@ -229,7 +233,11 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ),
                   Container(
                     width: widget.pageStyle.unitWidth * 179,
-                    child: Divider(color: greyColor, thickness: 0.5),
+                    child: Divider(
+                      color: greyColor,
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                   ProductVCard(
                     cardWidth: widget.pageStyle.unitWidth * 179,

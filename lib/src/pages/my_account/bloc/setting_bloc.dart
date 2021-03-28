@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:meta/meta.dart';
-
-import 'setting_repository.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';

@@ -21,8 +21,7 @@ class MyCartRepository {
   Future<dynamic> getCartId(String token) async {
     String url = EndPoints.createCart;
     final params = {'token': token};
-    // print(url);
-    // print(params);
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -142,7 +141,6 @@ class MyCartRepository {
       'coupon_code': couponCode,
       'remove': remove
     };
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 

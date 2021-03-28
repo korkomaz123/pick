@@ -16,11 +16,11 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -30,14 +30,15 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
   final Function onClose;
+  final bool isCheckout;
 
-  MyCartQuickAccessLoginDialog({this.cartId, this.onClose});
+  MyCartQuickAccessLoginDialog({this.cartId, this.onClose, this.isCheckout});
 
   @override
   _MyCartQuickAccessLoginDialogState createState() =>
@@ -130,7 +131,9 @@ class _MyCartQuickAccessLoginDialogState
               SizedBox(height: pageStyle.unitHeight * 20),
               _buildAuthChoice(),
               SizedBox(height: pageStyle.unitHeight * 20),
-              _buildContinueAsGuest(),
+              if (widget.isCheckout) ...[
+                _buildContinueAsGuest(),
+              ]
             ],
           ),
         ),
@@ -246,12 +249,38 @@ class _MyCartQuickAccessLoginDialogState
         buttonColor: primarySwatchColor,
         borderColor: Colors.white70,
         radius: pageStyle.unitFontSize * 10,
-        onPressed: () {
+        onPressed: () async {
+          await myCartChangeNotifier.getCartItems(
+              lang, _onProcess, _onReloadItemSuccess, _onFailure);
           widget.onClose();
-          Navigator.pushNamed(context, Routes.checkoutGuestAddress);
         },
       ),
     );
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onReloadItemSuccess() {
+    progressService.hideProgress();
+    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
+      if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
+        flushBarService.showErrorMessage(
+          pageStyle,
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+              'out_stock_items_error'.tr(),
+        );
+        return;
+      }
+    }
+    Navigator.pushNamed(context, Routes.checkoutGuestAddress);
+  }
+
+  void _onFailure(String message) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, message);
   }
 
   void _onLogin() async {

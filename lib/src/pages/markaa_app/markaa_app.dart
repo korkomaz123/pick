@@ -12,38 +12,40 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/brand_list/bloc/brand_repository.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
-import 'package:markaa/src/pages/filter/bloc/filter_repository.dart';
-import 'package:markaa/src/pages/home/bloc/home_repository.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
-import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
-import 'package:markaa/src/pages/search/bloc/search_repository.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/filter_repository.dart';
+import 'package:markaa/src/utils/repositories/home_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
+import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
+import 'package:markaa/src/utils/repositories/order_repository.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/repositories/profile_repository.dart';
+import 'package:markaa/src/utils/repositories/search_repository.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
+import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
+import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:provider/provider.dart';
 
 class MarkaaApp extends StatelessWidget {
   MarkaaApp({Key key}) : super(key: key);
 
+  final appRepository = AppRepository();
   final homeRepository = HomeRepository();
   final signInRepository = SignInRepository();
   final categoryRepository = CategoryRepository();
@@ -66,34 +68,37 @@ class MarkaaApp extends StatelessWidget {
     return RepositoryProvider.value(
       value: localStorageRepository,
       child: RepositoryProvider.value(
-        value: homeRepository,
+        value: appRepository,
         child: RepositoryProvider.value(
-          value: signInRepository,
+          value: homeRepository,
           child: RepositoryProvider.value(
-            value: categoryRepository,
+            value: signInRepository,
             child: RepositoryProvider.value(
-              value: productRepository,
+              value: categoryRepository,
               child: RepositoryProvider.value(
-                value: brandRepository,
+                value: productRepository,
                 child: RepositoryProvider.value(
-                  value: wishlistRepository,
+                  value: brandRepository,
                   child: RepositoryProvider.value(
-                    value: settingRepository,
+                    value: wishlistRepository,
                     child: RepositoryProvider.value(
-                      value: shippingAddressRepository,
+                      value: settingRepository,
                       child: RepositoryProvider.value(
-                        value: orderRepository,
+                        value: shippingAddressRepository,
                         child: RepositoryProvider.value(
-                          value: profileRepository,
+                          value: orderRepository,
                           child: RepositoryProvider.value(
-                            value: filterRepository,
+                            value: profileRepository,
                             child: RepositoryProvider.value(
-                              value: myCartRepository,
+                              value: filterRepository,
                               child: RepositoryProvider.value(
-                                value: checkoutRepository,
+                                value: myCartRepository,
                                 child: RepositoryProvider.value(
-                                  value: searchRepository,
-                                  child: _buildMultiProvider(),
+                                  value: checkoutRepository,
+                                  child: RepositoryProvider.value(
+                                    value: searchRepository,
+                                    child: _buildMultiProvider(),
+                                  ),
                                 ),
                               ),
                             ),

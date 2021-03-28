@@ -14,16 +14,16 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/product/bloc/product_repository.dart';
 import 'package:markaa/src/pages/product/widgets/product_more_about.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
-import 'package:markaa/src/utils/progress_service.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -292,7 +292,7 @@ class _ProductPageState extends State<ProductPage>
         context, pageStyle, product, 1, lang, model.selectedOptions);
   }
 
-  void _onBuyNow(ProductChangeNotifier model) async {
+  void _onBuyNow(ProductChangeNotifier model) {
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
@@ -305,7 +305,7 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
-    await myCartChangeNotifier.addProductToCart(
+    myCartChangeNotifier.addProductToCart(
         context, pageStyle, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
   }

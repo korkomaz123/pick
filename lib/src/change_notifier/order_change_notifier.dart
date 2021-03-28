@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
-import 'package:markaa/src/pages/my_account/order_history/bloc/order_repository.dart';
+import 'package:markaa/src/utils/repositories/order_repository.dart';
 
 class OrderChangeNotifier extends ChangeNotifier {
   final OrderRepository orderRepository;

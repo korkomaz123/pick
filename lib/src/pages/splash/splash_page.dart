@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+
+import 'package:device_info/device_info.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -6,17 +9,12 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
-import 'package:markaa/src/pages/category_list/bloc/category_repository.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/bloc/shipping_address_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_repository.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,8 +22,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/styles/page_style.dart';
-import 'package:new_version/new_version.dart';
-import 'package:version/version.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
+import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
+import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
+import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'update_available_dialog.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -46,10 +50,12 @@ class _SplashPageState extends State<SplashPage> {
   CategoryChangeNotifier categoryChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
+  AppRepository appRepository;
 
   @override
   void initState() {
     super.initState();
+    appRepository = context.read<AppRepository>();
     cartRepo = context.read<MyCartRepository>();
     wishlistRepo = context.read<WishlistRepository>();
     localRepo = context.read<LocalStorageRepository>();
@@ -81,14 +87,15 @@ class _SplashPageState extends State<SplashPage> {
     brandChangeNotifier.getBrandsList(lang, 'brand');
     brandChangeNotifier.getBrandsList(lang, 'home');
     categoryChangeNotifier.getCategoriesList(lang);
+    await _getDeviceId();
     await _getCurrentUser();
     await _getHomeCategories();
     if (user?.token != null) {
       isNotification = await settingRepo.getNotificationSetting(user.token);
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
+      wishlistChangeNotifier.getWishlistItems(user.token, lang);
+      orderChangeNotifier.loadOrderHistories(user.token, lang);
       addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
+      addressChangeNotifier.loadAddresses(user.token);
     }
     _getCartItems();
     _getShippingMethod();
@@ -96,6 +103,18 @@ class _SplashPageState extends State<SplashPage> {
     _getSideMenu();
     _getRegions();
     _navigator();
+  }
+
+  Future<void> _getDeviceId() async {
+    final deviceInfoPlugin = new DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      var build = await deviceInfoPlugin.androidInfo;
+      deviceId = build.androidId; //UUID for Android
+    } else if (Platform.isIOS) {
+      var data = await deviceInfoPlugin.iosInfo;
+      deviceId = data.identifierForVendor; //UUID for iOS
+    }
+    print(deviceId);
   }
 
   Future<void> _getCurrentUser() async {
@@ -114,21 +133,29 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> checkAppVersion() async {
-    final newVersion = NewVersion(
-      androidId: 'com.app.markaa',
-      iOSId: 'com.markaa.shop',
-      context: context,
-    );
-    final status = await newVersion.getVersionStatus();
-    String storeVersionString = status.storeVersion.split('(')[0];
-    Version localVersion = Version.parse(status.localVersion);
-    Version storeVersion = Version.parse(storeVersionString);
-    if (storeVersion > localVersion) {
+    final versionEntity =
+        await appRepository.checkAppVersion(Platform.isAndroid, lang);
+    if (versionEntity.updateMandatory) {
       Navigator.pushReplacementNamed(
         context,
         Routes.update,
-        arguments: status.appStoreLink,
+        arguments: versionEntity.storeLink,
       );
+    } else if (versionEntity.canUpdate) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) {
+          return UpdateAvailableDialog(
+            title: versionEntity.dialogTitle,
+            content: versionEntity.dialogContent,
+          );
+        },
+      );
+      if (result != null) {
+        if (await canLaunch(versionEntity.storeLink)) {
+          await launch(versionEntity.storeLink);
+        }
+      }
     }
   }
 

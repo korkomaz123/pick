@@ -10,17 +10,17 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
 import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
-import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/snackbar_service.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -54,6 +54,7 @@ class _MyCartPageState extends State<MyCartPage>
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   bool showSign = false;
+  bool isCheckout = false;
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _MyCartPageState extends State<MyCartPage>
                           MyCartCouponCode(
                             pageStyle: pageStyle,
                             cartId: cartId,
-                            onSignIn: _onSignIn,
+                            onSignIn: () => _onSignIn(false),
                           ),
                           _buildTotalPrice(),
                           _buildCheckoutButton(),
@@ -156,6 +157,7 @@ class _MyCartPageState extends State<MyCartPage>
                         child: MyCartQuickAccessLoginDialog(
                           cartId: cartId,
                           onClose: _onClose,
+                          isCheckout: isCheckout,
                         ),
                       ),
                     ),
@@ -269,7 +271,7 @@ class _MyCartPageState extends State<MyCartPage>
                               _onRemoveCartItem(keys[index]),
                           onSaveForLaterItem: () =>
                               _onSaveForLaterItem(keys[index]),
-                          onSignIn: () => _onSignIn(),
+                          onSignIn: () => _onSignIn(false),
                         ),
                         index < (myCartChangeNotifier.cartItemCount - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
@@ -344,7 +346,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${subTotal.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  '${subTotal.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 18,
@@ -365,7 +367,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${discount.toStringAsFixed(2)} ' + 'currency'.tr(),
+                  '${discount.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 18,
@@ -386,7 +388,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '${totalPrice.toStringAsFixed(2)} ' + 'currency'.tr(),
+                '${totalPrice.toStringAsFixed(3)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 18,
@@ -413,7 +415,7 @@ class _MyCartPageState extends State<MyCartPage>
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
-        onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(),
+        onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(true),
         radius: 0,
       ),
     );
@@ -431,18 +433,19 @@ class _MyCartPageState extends State<MyCartPage>
       },
     );
     if (result != null) {
-      await myCartChangeNotifier.removeCartItem(key);
+      await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     }
   }
 
   void _onSaveForLaterItem(String key) {
     final product = myCartChangeNotifier.cartItemsMap[key].product;
     final count = myCartChangeNotifier.cartItemsMap[key].itemCount;
-    myCartChangeNotifier.removeCartItem(key);
+    myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
-  void _onSignIn() {
+  void _onSignIn(bool checkout) {
+    isCheckout = checkout;
     showSign = true;
     markaaAppChangeNotifier.rebuild();
   }
@@ -461,25 +464,47 @@ class _MyCartPageState extends State<MyCartPage>
         },
       );
       if (result != null) {
-        await myCartChangeNotifier.clearCart();
+        await myCartChangeNotifier.clearCart(
+            _onProcess, _onSuccess, _onFailure);
       }
     }
   }
 
-  void _onCheckout() {
-    bool isStock = true;
+  void _onCheckout() async {
+    await myCartChangeNotifier.getCartItems(
+        lang, _onProcess, _onReloadItemSuccess, _onFailure);
+  }
+
+  void _onReloadItemSuccess() {
+    progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        isStock = false;
         flushBarService.showErrorMessage(
           pageStyle,
-          'out_stock_items_error'.tr(),
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+              'out_stock_items_error'.tr(),
         );
+        return;
       }
     }
-    if (isStock) {
-      Navigator.pushNamed(context, Routes.checkoutAddress);
-    }
+    Navigator.pushNamed(context, Routes.checkoutAddress);
+  }
+
+  void _onRemoveFailure(String message) {
+    flushBarService.showErrorMessage(pageStyle, message);
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onSuccess() {
+    progressService.hideProgress();
+  }
+
+  void _onFailure(String message) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, message);
   }
 }

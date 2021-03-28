@@ -305,6 +305,10 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildSubtotal() {
+    String subtotal = '0.000';
+    if (order.status != OrderStatusEnum.canceled) {
+      subtotal = order.subtotalPrice;
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -322,7 +326,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${order.subtotalPrice}',
+            'currency'.tr() + ' $subtotal',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -335,10 +339,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   Widget _buildShippingCost() {
     double fees = .0;
-    print(order.status);
     if (order.status != OrderStatusEnum.canceled) {
       fees = order.shippingMethod.serviceFees;
-      print(fees);
     }
     return Container(
       width: double.infinity,
@@ -357,7 +359,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${fees.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -394,7 +396,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${discount.toStringAsFixed(2)}',
+            'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: pageStyle.unitFontSize * 14,
@@ -406,9 +408,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildTotal() {
-    double total = double.parse(order.totalPrice);
-    if (order.status == OrderStatusEnum.canceled) {
-      // total -= order.shippingMethod.serviceFees;
+    String totalPrice = '0.000';
+    if (order.status != OrderStatusEnum.canceled) {
+      totalPrice = order.totalPrice;
     }
     return Container(
       width: double.infinity,
@@ -428,7 +430,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${total.toStringAsFixed(2)}',
+            'currency'.tr() + ' $totalPrice',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: pageStyle.unitFontSize * 16,

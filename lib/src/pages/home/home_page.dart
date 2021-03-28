@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,18 +13,27 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_repository.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/dynamic_link_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'widgets/home_featured_categories.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
@@ -33,6 +43,7 @@ import 'widgets/home_header_carousel.dart';
 import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_perfumes.dart';
 import 'widgets/home_recent.dart';
+import 'widgets/home_popup_dialog.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -51,16 +62,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
+
+  PageStyle pageStyle;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
   HomeChangeNotifier homeChangeNotifier;
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
-  PageStyle pageStyle;
+  ProductChangeNotifier productChangeNotifier;
+
   LocalStorageRepository localStorageRepository;
   SettingRepository settingRepository;
-  DynamicLinkService dynamicLinkService = DynamicLinkService();
+  ProductRepository productRepository;
+  CategoryRepository categoryRepository;
+  BrandRepository brandRepository;
+
   Timer timerLink;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  ProductChangeNotifier productChangeNotifier;
+  DynamicLinkService dynamicLinkService = DynamicLinkService();
 
   @override
   void initState() {
@@ -72,10 +90,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     productChangeNotifier = context.read<ProductChangeNotifier>();
     localStorageRepository = context.read<LocalStorageRepository>();
     settingRepository = context.read<SettingRepository>();
+    productRepository = context.read<ProductRepository>();
+    categoryRepository = context.read<CategoryRepository>();
+    brandRepository = context.read<BrandRepository>();
     productChangeNotifier.initialize();
     _initializeLocalNotification();
     _configureMessaging();
     _subscribeToTopic();
+    homeChangeNotifier.loadPopup(lang, _onShowPopup);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
@@ -104,6 +126,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
+      await _onLaunchMessage(jsonDecode(payload));
     }
   }
 
@@ -132,12 +155,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void _configureMessaging() {
     firebaseMessaging.configure(
       onMessage: _onForegroundMessage,
-      onResume: (Map<String, dynamic> message) async {
-        print('on resume');
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('on launch');
-      },
+      onResume: _onLaunchMessage,
+      onLaunch: _onLaunchMessage,
       onBackgroundMessage: _onBackgroundMessageHandler,
     );
     firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
@@ -163,7 +182,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  static Future<void> _onBackgroundMessageHandler(
+  static Future<dynamic> _onBackgroundMessageHandler(
     Map<String, dynamic> message,
   ) async {
     await flutterLocalNotificationsPlugin.show(
@@ -178,6 +197,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         IOSNotificationDetails(),
       ),
+      payload: jsonEncode(message),
     );
   }
 
@@ -194,15 +214,75 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         IOSNotificationDetails(),
       ),
+      payload: jsonEncode(message),
     );
   }
 
+  Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
+    try {
+      Map<dynamic, dynamic> data = message['data'];
+      int target = int.parse(data['target']);
+      if (target != 0) {
+        String id = data['id'];
+        if (target == 1) {
+          final product = await productRepository.getProduct(id, lang);
+          Navigator.pushNamed(context, Routes.product, arguments: product);
+        } else if (target == 2) {
+          final category = await categoryRepository.getCategory(id, lang);
+          if (category != null) {
+            ProductListArguments arguments = ProductListArguments(
+              category: category,
+              subCategory: [],
+              brand: BrandEntity(),
+              selectedSubCategoryIndex: 0,
+              isFromBrand: false,
+            );
+            Navigator.pushNamed(
+              context,
+              Routes.productList,
+              arguments: arguments,
+            );
+          }
+        } else if (target == 3) {
+          final brand = await brandRepository.getBrand(id, lang);
+          if (brand != null) {
+            ProductListArguments arguments = ProductListArguments(
+              category: CategoryEntity(),
+              subCategory: [],
+              brand: brand,
+              selectedSubCategoryIndex: 0,
+              isFromBrand: true,
+            );
+            Navigator.pushNamed(
+              context,
+              Routes.productList,
+              arguments: arguments,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print('catch error $e');
+    }
+  }
+
   void _subscribeToTopic() {
-    if (isNotification == null) {
+    print(isNotification);
+    if (isNotification) {
+      print('subscribing now');
       firebaseMessaging.subscribeToTopic('guest').then((_) {
         print('subscribed to guest channel');
       });
     }
+  }
+
+  void _onShowPopup(SliderImageEntity popupItem) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return HomePopupDialog(item: popupItem);
+      },
+    );
   }
 
   @override
@@ -234,6 +314,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeChangeNotifier.loadNewArrivalsBanner(lang);
     homeChangeNotifier.loadPerfumes(lang);
     categoryChangeNotifier.getCategoriesList(lang);
+    categoryChangeNotifier.getFeaturedCategoriesList(lang);
     brandChangeNotifier.getBrandsList(lang, 'home');
     homeChangeNotifier.loadAds(lang);
     if (user?.token != null) {
@@ -270,6 +351,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             child: Column(
               children: [
                 HomeHeaderCarousel(pageStyle: pageStyle),
+                HomeFeaturedCategories(pageStyle: pageStyle),
                 HomeBestDeals(pageStyle: pageStyle),
                 HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),

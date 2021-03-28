@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
   final PageStyle pageStyle;
@@ -32,11 +33,13 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   PageStyle pageStyle;
   MyCartChangeNotifier myCartChangeNotifier;
+  FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
+    flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
 
@@ -89,8 +92,13 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
       },
     );
     if (result != null) {
-      await myCartChangeNotifier.updateCartItem(widget.cartItem, result);
+      await myCartChangeNotifier.updateCartItem(
+          widget.cartItem, result, _onFailure);
     }
+  }
+
+  void _onFailure(String message) {
+    flushBarService.showErrorMessage(widget.pageStyle, message);
   }
 }
 

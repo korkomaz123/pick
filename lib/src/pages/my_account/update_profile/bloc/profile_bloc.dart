@@ -3,9 +3,8 @@ import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:markaa/src/utils/repositories/profile_repository.dart';
 import 'package:meta/meta.dart';
-
-import 'profile_repository.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';

@@ -12,6 +12,8 @@ class ProductModel {
   String name;
   String metaDescription;
   String price;
+  String beforePrice;
+  int discount;
   String imageUrl;
   String hasOptions;
   String addCartUrl;
@@ -33,6 +35,7 @@ class ProductModel {
     this.name,
     this.metaDescription,
     this.price,
+    this.beforePrice,
     this.imageUrl,
     this.hasOptions,
     this.addCartUrl,
@@ -58,9 +61,17 @@ class ProductModel {
         shortDescription = json['short_description'] ?? '',
         name = json['name'],
         metaDescription = json['meta_description'],
-        price = json['price'] != null
-            ? double.parse(json['price']).toStringAsFixed(2)
-            : '0.00',
+        price = json['special_price'] != null
+            ? double.parse(json['special_price']).toStringAsFixed(3)
+            : double.parse(json['price']).toStringAsFixed(3),
+        beforePrice = json['price'] != null
+            ? double.parse(json['price']).toStringAsFixed(3)
+            : '0.000',
+        discount = _getDiscount(
+            json['special_price'] != null
+                ? json['special_price']
+                : json['price'],
+            json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -85,5 +96,13 @@ class ProductModel {
       options[item['attribute_id']] = item['attribute_options']['option_value'];
     }
     return options;
+  }
+
+  static int _getDiscount(String afterPriceString, String beforePriceString) {
+    double afterPrice =
+        afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice =
+        beforePriceString != null ? double.parse(beforePriceString) : 0;
+    return ((beforePrice - afterPrice) / beforePrice * 100).floor();
   }
 }

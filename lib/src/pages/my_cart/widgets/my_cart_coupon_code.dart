@@ -1,10 +1,11 @@
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,11 +72,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                   focusNode: couponNode,
                   decoration: InputDecoration(
                     prefixIcon: Container(
-                      margin: EdgeInsets.only(
-                        right: 20,
-                        top: 10,
-                        bottom: 10,
-                      ),
+                      margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                       width: widget.pageStyle.unitWidth * 20,
                       height: widget.pageStyle.unitHeight * 20,
                       child: SvgPicture.asset(couponIcon),
@@ -87,45 +84,55 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                   readOnly: model.couponCode.isNotEmpty,
                 ),
               ),
-              Container(
-                width: widget.pageStyle.unitWidth * 120,
-                height: widget.pageStyle.unitHeight * 40,
-                child: TextIconButton(
-                  title: model.couponCode.isNotEmpty
-                      ? 'cancel_button_title'.tr()
-                      : 'apply_button_title'.tr(),
-                  iconData: Icons.check_circle_outline,
-                  titleSize: widget.pageStyle.unitFontSize * 15,
-                  iconSize: widget.pageStyle.unitFontSize * 20,
-                  titleColor: primaryColor,
-                  iconColor: primaryColor,
-                  buttonColor: greyLightColor,
-                  borderColor: Colors.transparent,
-                  onPressed: () {
-                    if (user?.token == null) {
-                      widget.onSignIn();
-                      return;
-                    }
-                    if (_couponFormKey.currentState.validate()) {
-                      couponNode.unfocus();
-                      if (model.couponCode.isNotEmpty) {
-                        couponCodeController.clear();
-                        model.cancelCouponCode(
-                          flushBarService,
-                          widget.pageStyle,
-                        );
-                      } else {
-                        model.applyCouponCode(
-                          couponCodeController.text,
-                          flushBarService,
-                          widget.pageStyle,
-                        );
-                      }
-                    }
-                  },
-                  itemSpace: widget.pageStyle.unitWidth * 4,
+              if (model.isApplying) ...[
+                Container(
+                  width: widget.pageStyle.unitWidth * 120,
+                  height: widget.pageStyle.unitHeight * 40,
+                  child: CircleLoadingSpinner(),
                 ),
-              ),
+              ] else ...[
+                Container(
+                  width: widget.pageStyle.unitWidth * 120,
+                  height: widget.pageStyle.unitHeight * 40,
+                  child: TextIconButton(
+                    title: model.couponCode.isNotEmpty
+                        ? 'cancel_button_title'.tr()
+                        : 'apply_button_title'.tr(),
+                    iconData: Icons.check_circle_outline,
+                    titleSize: widget.pageStyle.unitFontSize * 15,
+                    iconSize: widget.pageStyle.unitFontSize * 20,
+                    titleColor: primaryColor,
+                    iconColor: primaryColor,
+                    buttonColor: greyLightColor,
+                    borderColor: Colors.transparent,
+                    onPressed: () {
+                      if (_couponFormKey.currentState.validate()) {
+                        couponNode.unfocus();
+                        if (user?.token != null) {
+                          if (model.couponCode.isNotEmpty) {
+                            couponCodeController.clear();
+                            model.cancelCouponCode(
+                              flushBarService,
+                              widget.pageStyle,
+                            );
+                          } else {
+                            model.applyCouponCode(
+                              deviceId ?? '',
+                              user?.token ?? '',
+                              couponCodeController.text,
+                              flushBarService,
+                              widget.pageStyle,
+                            );
+                          }
+                        } else {
+                          widget.onSignIn();
+                        }
+                      }
+                    },
+                    itemSpace: widget.pageStyle.unitWidth * 4,
+                  ),
+                ),
+              ],
             ],
           );
         }),

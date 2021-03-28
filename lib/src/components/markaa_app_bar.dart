@@ -70,10 +70,9 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       centerTitle: true,
       toolbarHeight: widget.pageStyle.unitHeight * 60,
       title: InkWell(
-        onTap: () => Navigator.pushNamedAndRemoveUntil(
+        onTap: () => Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         ),
         child: Container(
           width: widget.pageStyle.unitWidth * 160,

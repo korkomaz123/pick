@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/wishlist/bloc/wishlist_repository.dart';
+import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 
 class WishlistChangeNotifier extends ChangeNotifier {
   final WishlistRepository wishlistRepository;

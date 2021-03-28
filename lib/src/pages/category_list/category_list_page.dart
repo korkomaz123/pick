@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -12,9 +13,9 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/progress_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -134,19 +135,37 @@ class _CategoryListPageState extends State<CategoryListPage>
         height: pageStyle.unitHeight * 128,
         child: Stack(
           children: [
-            Image.network(
-              category.imageUrl,
-              width: pageStyle.deviceWidth,
-              height: pageStyle.unitHeight * 128,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) {
-                return Container(
-                  width: pageStyle.deviceWidth,
-                  height: pageStyle.unitHeight * 128,
-                  color: Colors.grey,
-                );
-              },
+            CachedNetworkImage(
+              imageUrl: category.imageUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                width: pageStyle.deviceWidth,
+                height: pageStyle.unitHeight * 128,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => Container(
+                width: pageStyle.deviceWidth,
+                height: pageStyle.unitHeight * 128,
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
+            // Image.network(
+            //   category.imageUrl,
+            //   width: pageStyle.deviceWidth,
+            //   height: pageStyle.unitHeight * 128,
+            //   fit: BoxFit.cover,
+            //   errorBuilder: (_, __, ___) {
+            //     return Container(
+            //       width: pageStyle.deviceWidth,
+            //       height: pageStyle.unitHeight * 128,
+            //       color: Colors.grey,
+            //     );
+            //   },
+            // ),
             Align(
               alignment:
                   lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,

@@ -36,7 +36,7 @@ class MyCartItem extends StatelessWidget {
     String priceString = cartItem.product.price;
     double price = double.parse(priceString);
     double discountPrice = price * (100 - discount) / 100;
-    String discountPriceString = discountPrice.toStringAsFixed(2);
+    String discountPriceString = discountPrice.toStringAsFixed(3);
     return Stack(
       children: [
         Container(

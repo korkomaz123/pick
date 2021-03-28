@@ -11,12 +11,12 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/progress_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -337,12 +337,12 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       }
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
-      orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(2);
+      orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
       orderDetails['orderDetails']['totalPrice'] =
-          totalPrice.toStringAsFixed(2);
+          totalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['subTotalPrice'] =
-          subtotalPrice.toStringAsFixed(2);
-      orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(2);
+          subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = jsonEncode({
         'customer_address_id': addressChangeNotifier.defaultAddress.addressId,

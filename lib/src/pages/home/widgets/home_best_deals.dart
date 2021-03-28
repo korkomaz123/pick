@@ -1,4 +1,6 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -11,8 +13,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
-
-import 'home_products_carousel.dart';
 
 class HomeBestDeals extends StatefulWidget {
   final PageStyle pageStyle;
@@ -38,37 +38,28 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        bestDealsProducts = model.bestDealsProducts;
-        title = model.bestDealsTitle;
-        if (bestDealsProducts.isNotEmpty) {
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 420,
-            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-            color: Colors.white,
-            child: Column(
+    return Container(
+      width: widget.pageStyle.deviceWidth,
+      height: widget.pageStyle.unitHeight * 380,
+      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+      color: Colors.white,
+      child: Consumer<HomeChangeNotifier>(
+        builder: (_, model, __) {
+          bestDealsProducts = model.bestDealsProducts;
+          title = model.bestDealsTitle;
+          if (bestDealsProducts.isNotEmpty) {
+            return Column(
               children: [
                 _buildHeadline(),
-                HomeProductsCarousel(
-                  pageStyle: widget.pageStyle,
-                  products: bestDealsProducts,
-                ),
-                Divider(
-                  height: widget.pageStyle.unitHeight * 4,
-                  thickness: widget.pageStyle.unitHeight * 1.5,
-                  color: greyColor.withOpacity(0.4),
-                ),
-                _buildFooter(context),
+                _buildProductsList(model.bestDealsProducts),
               ],
-            ),
-          );
-        } else {
-          return Container();
-        }
-      },
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
@@ -85,46 +76,69 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
               color: greyDarkColor,
             ),
           ),
+          Container(
+            width: widget.pageStyle.unitWidth * 90,
+            height: widget.pageStyle.unitHeight * 30,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: widget.pageStyle.unitFontSize * 15,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: primaryColor,
+              radius: 0,
+              onPressed: () {
+                ProductListArguments arguments = ProductListArguments(
+                  category: homeCategories[0],
+                  subCategory: homeCategories[0].subCategories,
+                  brand: BrandEntity(),
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildProductsList(List<ProductModel> list) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 4),
-      child: InkWell(
-        onTap: () {
-          ProductListArguments arguments = ProductListArguments(
-            category: homeCategories[0],
-            subCategory: homeCategories[0].subCategories,
-            brand: BrandEntity(),
-            selectedSubCategoryIndex: 0,
-            isFromBrand: false,
-          );
-          Navigator.pushNamed(
-            context,
-            Routes.productList,
-            arguments: arguments,
-          );
-        },
+      padding: EdgeInsets.only(
+        top: widget.pageStyle.unitHeight * 10,
+        bottom: widget.pageStyle.unitHeight * 10,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'view_all'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
-                color: primaryColor,
+          children: list.map((item) {
+            return Container(
+              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: widget.pageStyle.unitWidth,
+                ),
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
-            ),
-          ],
+              child: ProductVCard(
+                cardWidth: widget.pageStyle.unitWidth * 160,
+                cardHeight: widget.pageStyle.unitHeight * 280,
+                product: item,
+                isShoppingCart: true,
+                isLine: true,
+                isMinor: true,
+                isWishlist: true,
+                isShare: false,
+                pageStyle: widget.pageStyle,
+              ),
+            );
+          }).toList(),
         ),
       ),
     );

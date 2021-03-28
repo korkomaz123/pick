@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/checkout/bloc/checkout_repository.dart';
-import 'package:markaa/src/pages/my_cart/bloc/my_cart_repository.dart';
-import 'package:markaa/src/utils/flushbar_service.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartChangeNotifier extends ChangeNotifier {
   final MyCartRepository myCartRepository;
@@ -35,6 +34,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Map<String, CartItemEntity> reorderCartItemsMap = {};
   String errorMessage;
   String type;
+  String cartIssue = 'Something went wrong regarding your shopping cart: ';
+  bool isApplying = false;
 
   void initialize() {
     cartId = '';
@@ -48,48 +49,113 @@ class MyCartChangeNotifier extends ChangeNotifier {
     reorderCartTotalPrice = .0;
     reorderCartItemsMap = {};
     type = '';
+    couponCode = '';
+    discount = .0;
     notifyListeners();
   }
 
-  Future<void> getCartItems(String lang) async {
+  Future<void> getCartItems(
+    String lang, [
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ]) async {
     cartItemCount = 0;
     cartTotalPrice = .0;
     cartTotalCount = 0;
     cartItemsMap = {};
     processStatus = ProcessStatus.process;
-    final result = await myCartRepository.getCartItems(cartId, lang);
-    if (result['code'] == 'SUCCESS') {
-      processStatus = ProcessStatus.done;
-      cartItemCount = result['items'].length;
-      for (var item in result['items']) {
-        cartItemsMap[item.itemId] = item;
-        cartTotalPrice += item.rowPrice;
-        cartTotalCount += item.itemCount;
-      }
-      couponCode = result['couponCode'];
-      discount = result['discount'] + .0;
-      type = result['type'];
-    } else {
-      processStatus = ProcessStatus.failed;
+    if (onProcess != null) {
+      onProcess();
     }
-    notifyListeners();
+    try {
+      final result = await myCartRepository.getCartItems(cartId, lang);
+      if (result['code'] == 'SUCCESS') {
+        cartItemCount = result['items'].length;
+        for (var item in result['items']) {
+          cartItemsMap[item.itemId] = item;
+          cartTotalPrice += item.rowPrice;
+          cartTotalCount += item.itemCount;
+        }
+        couponCode = result['couponCode'];
+        discount = result['discount'] + .0;
+        type = result['type'];
+        processStatus = ProcessStatus.done;
+        if (onSuccess != null) {
+          onSuccess();
+        }
+      } else {
+        processStatus = ProcessStatus.failed;
+        if (onFailure != null) {
+          onFailure('$cartIssue$cartId');
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      onFailure('$cartIssue$cartId\nMore details: $e');
+      notifyListeners();
+    }
   }
 
-  Future<void> clearCart() async {
-    String clearCartId = cartId;
-    initialize();
-    notifyListeners();
-    cartId = clearCartId;
-    await myCartRepository.clearCartItems(clearCartId);
+  Future<void> clearCart(
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ) async {
+    onProcess();
+    try {
+      String clearCartId = cartId;
+      String clearType = type;
+      String clearCouponCode = couponCode;
+      double clearDiscount = discount;
+      final result = await myCartRepository.clearCartItems(clearCartId);
+      if (result['code'] != 'SUCCESS') {
+        onFailure('$cartIssue$cartId');
+      } else {
+        initialize();
+        notifyListeners();
+        cartId = clearCartId;
+        type = clearType;
+        couponCode = clearCouponCode;
+        discount = clearDiscount;
+        onSuccess();
+      }
+    } catch (e) {
+      onFailure('$cartIssue$cartId\nMore details: $e');
+    }
   }
 
-  Future<void> removeCartItem(String key) async {
+  Future<void> removeCartItem(String key, Function onFailure) async {
+    final item = cartItemsMap[key];
     cartTotalPrice -= cartItemsMap[key].rowPrice;
     cartItemCount -= 1;
     cartTotalCount -= cartItemsMap[key].itemCount;
     cartItemsMap.remove(key);
     notifyListeners();
-    await myCartRepository.deleteCartItem(cartId, key);
+    try {
+      final result = await myCartRepository.deleteCartItem(cartId, key);
+      if (result['code'] != 'SUCCESS') {
+        onFailure('$cartIssue$cartId');
+        cartTotalPrice += item.rowPrice;
+        cartItemCount += 1;
+        cartTotalCount += item.itemCount;
+        cartItemsMap[key] = item;
+        notifyListeners();
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
+      }
+    } catch (e) {
+      onFailure('$cartIssue$cartId\nMore details: $e');
+      cartTotalPrice += item.rowPrice;
+      cartItemCount += 1;
+      cartTotalCount += item.itemCount;
+      cartItemsMap[key] = item;
+      notifyListeners();
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
+    }
   }
 
   Future<void> addProductToCart(
@@ -100,37 +166,77 @@ class MyCartChangeNotifier extends ChangeNotifier {
     String lang,
     Map<String, dynamic> options,
   ) async {
-    final result = await myCartRepository.addCartItem(
-      cartId,
-      product.productId,
-      qty.toString(),
-      lang,
-      options,
-    );
-    if (result['code'] == 'SUCCESS') {
-      CartItemEntity newItem = result['item'];
-      if (cartItemsMap.containsKey(newItem.itemId)) {
-        cartTotalPrice -= double.parse(product.price) * qty;
+    final flushBarService = FlushBarService(context: context);
+    try {
+      final result = await myCartRepository.addCartItem(
+          cartId, product.productId, '$qty', lang, options);
+      if (result['code'] == 'SUCCESS') {
+        CartItemEntity newItem = result['item'];
+        if (cartItemsMap.containsKey(newItem.itemId)) {
+          cartTotalPrice -= cartItemsMap[newItem.itemId].rowPrice;
+        } else {
+          cartItemCount += 1;
+        }
+        cartTotalCount += qty;
+        cartTotalPrice += newItem.rowPrice;
+        cartItemsMap[newItem.itemId] = newItem;
+        notifyListeners();
+        flushBarService.showAddCartMessage(pageStyle, product);
       } else {
-        cartItemCount += 1;
+        flushBarService.showErrorMessage(pageStyle, '$cartIssue$cartId');
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
       }
-      cartTotalCount += qty;
-      cartTotalPrice += newItem.rowPrice;
-      cartItemsMap[newItem.itemId] = newItem;
-      notifyListeners();
-      final flushBarService = FlushBarService(context: context);
-      flushBarService.showAddCartMessage(pageStyle, product);
+    } catch (e) {
+      flushBarService.showErrorMessage(
+        pageStyle,
+        '$cartIssue$cartId\nMore details: $e',
+      );
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
     }
   }
 
-  Future<void> updateCartItem(CartItemEntity item, int qty) async {
+  Future<void> updateCartItem(
+    CartItemEntity item,
+    int qty,
+    Function onFailure,
+  ) async {
     int updatedQty = qty - item.itemCount;
     cartTotalCount += updatedQty;
     cartTotalPrice += double.parse(item.product.price) * updatedQty;
     cartItemsMap[item.itemId].itemCount = qty;
     cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
     notifyListeners();
-    await myCartRepository.updateCartItem(cartId, item.itemId, qty.toString());
+    try {
+      final result = await myCartRepository.updateCartItem(
+          cartId, item.itemId, qty.toString());
+      if (result['code'] != 'SUCCESS') {
+        onFailure('$cartIssue$cartId');
+        cartTotalCount -= updatedQty;
+        cartTotalPrice -= double.parse(item.product.price) * updatedQty;
+        cartItemsMap[item.itemId].itemCount = item.itemCount;
+        cartItemsMap[item.itemId].rowPrice =
+            double.parse(item.product.price) * item.itemCount;
+        notifyListeners();
+        if (processStatus != ProcessStatus.process) {
+          await getCartItems(lang);
+        }
+      }
+    } catch (e) {
+      onFailure('$cartIssue$cartId\nMore details: $e');
+      cartTotalCount -= updatedQty;
+      cartTotalPrice -= double.parse(item.product.price) * updatedQty;
+      cartItemsMap[item.itemId].itemCount = item.itemCount;
+      cartItemsMap[item.itemId].rowPrice =
+          double.parse(item.product.price) * item.itemCount;
+      notifyListeners();
+      if (processStatus != ProcessStatus.process) {
+        await getCartItems(lang);
+      }
+    }
   }
 
   Future<void> getCartId() async {
@@ -191,18 +297,24 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> applyCouponCode(
+    String deviceId,
+    String token,
     String code,
     FlushBarService flushBarService,
     PageStyle pageStyle,
   ) async {
+    isApplying = true;
+    notifyListeners();
     final result = await myCartRepository.couponCode(cartId, code, '0');
     if (result['code'] == 'SUCCESS') {
       couponCode = code;
       discount = result['discount'] + .0;
       type = result['type'];
+      isApplying = false;
     } else {
       errorMessage = result['errMessage'];
-      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      flushBarService.showErrorMessage(pageStyle, errorMessage);
+      isApplying = false;
     }
     notifyListeners();
   }
@@ -211,15 +323,19 @@ class MyCartChangeNotifier extends ChangeNotifier {
     FlushBarService flushBarService,
     PageStyle pageStyle,
   ) async {
+    isApplying = true;
     final result = await myCartRepository.couponCode(cartId, couponCode, '1');
     if (result['code'] == 'SUCCESS') {
       couponCode = '';
       discount = .0;
       type = '';
-      notifyListeners();
+      isApplying = false;
     } else {
-      flushBarService.showErrorMessage(pageStyle, 'incorrect_coupon_code'.tr());
+      errorMessage = result['errMessage'];
+      flushBarService.showErrorMessage(pageStyle, errorMessage);
+      isApplying = false;
     }
+    notifyListeners();
   }
 
   Future<void> transferCartItems() async {

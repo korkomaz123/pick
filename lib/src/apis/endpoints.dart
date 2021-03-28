@@ -1,5 +1,6 @@
 class EndPoints {
   static const String baseUrl = 'https://markaa.com/customapi/api';
+  // static const String baseUrl = 'https://api.cigaon.com/customapi/api';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
@@ -22,6 +23,8 @@ class EndPoints {
   static const String getSearchedProducts = '$baseUrl/getSearchedProducts';
   static const String getWishlist = '$baseUrl/getwishlists';
   static const String addWishlist = '$baseUrl/addWishlistItem';
+  static const String getPopup = '$baseUrl/getPopup';
+  static const String getFeaturedCategories = '$baseUrl/getFeaturedCategories';
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';
@@ -77,4 +80,6 @@ class EndPoints {
   static const String changeSaveForLaterItem = '$baseUrl/addSaveforlateritem';
   static const String getProduct = '$baseUrl/getProduct';
   static const String updateDeviceToken = '$baseUrl/updateDeviceToken';
+  static const String getCategory = '$baseUrl/getCategoryById';
+  static const String getBrand = '$baseUrl/getBrandById';
 }

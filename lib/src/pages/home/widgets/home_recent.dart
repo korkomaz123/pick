@@ -4,7 +4,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -85,13 +85,8 @@ class _HomeRecentState extends State<HomeRecent> {
                             if (index < recentlyViews.length - 1) ...[
                               Container(
                                 height: widget.pageStyle.unitHeight * 300,
-                                padding: EdgeInsets.only(
-                                  left: widget.pageStyle.unitWidth * 10,
-                                  right: widget.pageStyle.unitWidth * 10,
-                                  bottom: widget.pageStyle.unitHeight * 50,
-                                ),
                                 child: VerticalDivider(
-                                  width: widget.pageStyle.unitWidth * 4,
+                                  width: widget.pageStyle.unitWidth * 1,
                                   thickness: widget.pageStyle.unitWidth * 1,
                                   color: greyColor.withOpacity(0.4),
                                 ),
