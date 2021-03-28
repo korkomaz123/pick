@@ -482,7 +482,8 @@ class _MyCartPageState extends State<MyCartPage>
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
           pageStyle,
-          'out_stock_items_error'.tr(),
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+              'out_stock_items_error'.tr(),
         );
         return;
       }

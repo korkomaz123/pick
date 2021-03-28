@@ -169,12 +169,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final flushBarService = FlushBarService(context: context);
     try {
       final result = await myCartRepository.addCartItem(
-        cartId,
-        product.productId,
-        '0',
-        lang,
-        options,
-      );
+          cartId, product.productId, '$qty', lang, options);
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
         if (cartItemsMap.containsKey(newItem.itemId)) {

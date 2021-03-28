@@ -249,12 +249,38 @@ class _MyCartQuickAccessLoginDialogState
         buttonColor: primarySwatchColor,
         borderColor: Colors.white70,
         radius: pageStyle.unitFontSize * 10,
-        onPressed: () {
+        onPressed: () async {
+          await myCartChangeNotifier.getCartItems(
+              lang, _onProcess, _onReloadItemSuccess, _onFailure);
           widget.onClose();
-          Navigator.pushNamed(context, Routes.checkoutGuestAddress);
         },
       ),
     );
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
+  }
+
+  void _onReloadItemSuccess() {
+    progressService.hideProgress();
+    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
+      if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
+        flushBarService.showErrorMessage(
+          pageStyle,
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+              'out_stock_items_error'.tr(),
+        );
+        return;
+      }
+    }
+    Navigator.pushNamed(context, Routes.checkoutGuestAddress);
+  }
+
+  void _onFailure(String message) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(pageStyle, message);
   }
 
   void _onLogin() async {

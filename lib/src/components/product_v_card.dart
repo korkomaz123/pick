@@ -301,7 +301,7 @@ class _ProductVCardState extends State<ProductVCard>
         '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 8 : 14),
+          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
           color: Colors.white,
         ),
       ),
