@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -16,7 +17,6 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'product_no_available.dart';
 
@@ -32,6 +32,7 @@ class ProductListView extends StatefulWidget {
   final ProductViewModeEnum viewMode;
   final String sortByItem;
   final Map<String, dynamic> filterValues;
+  final double pos;
 
   ProductListView({
     this.subCategories,
@@ -45,6 +46,7 @@ class ProductListView extends StatefulWidget {
     this.viewMode,
     this.sortByItem,
     this.filterValues,
+    this.pos,
   });
 
   @override
@@ -53,7 +55,6 @@ class ProductListView extends StatefulWidget {
 
 class _ProductListViewState extends State<ProductListView>
     with TickerProviderStateMixin {
-  final _refreshController = RefreshController(initialRefresh: false);
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   BrandEntity brand;
@@ -64,7 +65,9 @@ class _ProductListViewState extends State<ProductListView>
   TabController tabController;
   int page = 1;
   ProductChangeNotifier productChangeNotifier;
+  ScrollChangeNotifier scrollChangeNotifier;
   FilterBloc filterBloc;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -77,6 +80,7 @@ class _ProductListViewState extends State<ProductListView>
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     productChangeNotifier = context.read<ProductChangeNotifier>();
+    scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     filterBloc = context.read<FilterBloc>();
     _initLoadProducts();
     tabController = TabController(
@@ -86,8 +90,17 @@ class _ProductListViewState extends State<ProductListView>
     );
     tabController.addListener(() {
       widget.onChangeTab(tabController.index);
-      // _refreshController.loadComplete();
     });
+    scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    double maxScroll = scrollController.position.maxScrollExtent;
+    double currentScroll = scrollController.position.pixels;
+    scrollChangeNotifier.controlBrandBar(currentScroll);
+    if (maxScroll - currentScroll <= 200) {
+      _onLoadMore();
+    }
   }
 
   void _initLoadProducts() async {
@@ -115,7 +128,7 @@ class _ProductListViewState extends State<ProductListView>
     });
   }
 
-  void _onRefresh() async {
+  Future<void> _onRefresh() async {
     print('///// refresh ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
@@ -143,7 +156,6 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     }
-    _refreshController.refreshCompleted();
   }
 
   void _onLoadMore() async {
@@ -194,96 +206,93 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     }
-    _refreshController.loadComplete();
+  }
+
+  void _onGotoTop() {
+    scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeIn,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    print('/////////// build ////////////');
     tabController.index = widget.activeIndex;
-    return Column(
+    return Stack(
       children: [
-        subCategories.length > 1 ? _buildCategoryTabBar() : SizedBox.shrink(),
-        Expanded(
-          child: TabBarView(
-            controller: tabController,
-            children: subCategories.map((cat) {
-              return SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: true,
-                header: MaterialClassicHeader(color: primaryColor),
-                controller: _refreshController,
-                scrollController: widget.scrollController,
-                onRefresh: _onRefresh,
-                onLoading: page != null ? _onLoadMore : null,
-                footer: CustomFooter(
-                  builder: (BuildContext context, LoadStatus mode) {
-                    if (mode == LoadStatus.loading) {
-                      return RippleLoadingSpinner();
-                    } else if (mode == LoadStatus.noMore) {
-                      if (page != null && page > 1) {
-                        return Container(
-                          width: pageStyle.deviceWidth,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.only(
-                            top: pageStyle.unitHeight * 10,
-                          ),
-                          child: Text(
-                            'no_more_products'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: pageStyle.unitFontSize * 14,
-                            ),
-                          ),
-                        );
+        Column(
+          children: [
+            subCategories.length > 1
+                ? _buildCategoryTabBar()
+                : SizedBox.shrink(),
+            Expanded(
+              child: TabBarView(
+                controller: tabController,
+                children: subCategories.map((cat) {
+                  return Consumer<ProductChangeNotifier>(
+                    builder: (ctx, notifier, _) {
+                      String index;
+                      if (widget.viewMode == ProductViewModeEnum.category) {
+                        index = cat.id;
+                      } else if (widget.viewMode == ProductViewModeEnum.brand) {
+                        index = brand.optionId + '_' + cat.id;
+                      } else if (widget.viewMode == ProductViewModeEnum.sort) {
+                        index = widget.sortByItem +
+                            '_' +
+                            (brand.optionId ?? '') +
+                            '_' +
+                            (cat.id ?? '');
+                      } else if (widget.viewMode ==
+                          ProductViewModeEnum.filter) {
+                        index = 'filter_' +
+                            (brand.optionId ?? '') +
+                            '_' +
+                            (cat.id ?? 'all');
                       }
-                    }
-                    return SizedBox.shrink();
-                  },
-                ),
-                child: Consumer<ProductChangeNotifier>(
-                  builder: (ctx, notifier, _) {
-                    if (productChangeNotifier.isReachedMax) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _refreshController.loadNoData();
-                      });
-                    } else {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _refreshController.loadComplete();
-                      });
-                    }
-                    String index;
-                    if (widget.viewMode == ProductViewModeEnum.category) {
-                      index = cat.id;
-                    } else if (widget.viewMode == ProductViewModeEnum.brand) {
-                      index = brand.optionId + '_' + cat.id;
-                    } else if (widget.viewMode == ProductViewModeEnum.sort) {
-                      index = widget.sortByItem +
-                          '_' +
-                          (brand.optionId ?? '') +
-                          '_' +
-                          (cat.id ?? '');
-                    } else if (widget.viewMode == ProductViewModeEnum.filter) {
-                      index = 'filter_' +
-                          (brand.optionId ?? '') +
-                          '_' +
-                          (cat.id ?? 'all');
-                    }
-                    if (!productChangeNotifier.data.containsKey(index) ||
-                        productChangeNotifier.data[index] == null) {
-                      return Center(child: PulseLoadingSpinner());
-                    } else if (productChangeNotifier.data[index].isEmpty) {
-                      return ProductNoAvailable(pageStyle: pageStyle);
-                    } else {
-                      return _buildProductList(
-                          productChangeNotifier.data[index]);
-                    }
-                  },
-                ),
-              );
-            }).toList(),
+                      if (!productChangeNotifier.data.containsKey(index) ||
+                          productChangeNotifier.data[index] == null) {
+                        return Center(child: PulseLoadingSpinner());
+                      } else if (productChangeNotifier.data[index].isEmpty) {
+                        return ProductNoAvailable(pageStyle: pageStyle);
+                      } else {
+                        return _buildProductList(
+                            productChangeNotifier.data[index]);
+                      }
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+        _buildArrowButton(),
+      ],
+    );
+  }
+
+  Widget _buildArrowButton() {
+    return AnimatedPositioned(
+      right: pageStyle.unitWidth * 4,
+      bottom: pageStyle.unitHeight * 4 - widget.pos,
+      duration: Duration(milliseconds: 500),
+      child: InkWell(
+        onTap: () => _onGotoTop(),
+        child: Container(
+          width: pageStyle.unitHeight * 40,
+          height: pageStyle.unitHeight * 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: primarySwatchColor.withOpacity(0.8),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.keyboard_arrow_up,
+            size: pageStyle.unitFontSize * 30,
+            color: Colors.white70,
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -320,45 +329,105 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList(List<ProductModel> products) {
-    return SingleChildScrollView(
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        children: List.generate(
-          products.length,
-          (index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  right: lang == 'en' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  left: lang == 'ar' && index % 2 == 0
-                      ? BorderSide(
-                          color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
-                        )
-                      : BorderSide.none,
-                  bottom: BorderSide(
-                    color: greyColor,
-                    width: pageStyle.unitWidth * 0.5,
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      backgroundColor: Colors.white,
+      color: primaryColor,
+      child: ListView.builder(
+        controller: scrollController,
+        shrinkWrap: true,
+        itemCount: (products.length / 2).ceil() + 1,
+        itemBuilder: (ctx, index) {
+          if (index >= (products.length / 2).ceil()) {
+            if (productChangeNotifier.isReachedMax) {
+              return Container(
+                width: pageStyle.deviceWidth,
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  top: pageStyle.unitHeight * 10,
+                ),
+                child: Text(
+                  'no_more_products'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: pageStyle.unitFontSize * 14,
                   ),
                 ),
-              ),
-              child: ProductVCard(
-                pageStyle: pageStyle,
-                product: products[index],
-                cardWidth: pageStyle.unitWidth * 187.25,
-                cardHeight: pageStyle.unitHeight * 280,
-                isShoppingCart: true,
-                isWishlist: true,
-                isShare: true,
-              ),
+              );
+            } else {
+              return RippleLoadingSpinner();
+            }
+          } else {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: lang == 'en'
+                          ? BorderSide(
+                              color: greyColor,
+                              width: pageStyle.unitWidth * 0.5,
+                            )
+                          : BorderSide.none,
+                      left: lang == 'ar'
+                          ? BorderSide(
+                              color: greyColor,
+                              width: pageStyle.unitWidth * 0.5,
+                            )
+                          : BorderSide.none,
+                      bottom: BorderSide(
+                        color: greyColor,
+                        width: pageStyle.unitWidth * 0.5,
+                      ),
+                    ),
+                  ),
+                  child: ProductVCard(
+                    pageStyle: pageStyle,
+                    product: products[2 * index],
+                    cardWidth: pageStyle.unitWidth * 187,
+                    cardHeight: pageStyle.unitHeight * 280,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                  ),
+                ),
+                if (index * 2 <= products.length - 2) ...[
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: lang == 'ar'
+                            ? BorderSide(
+                                color: greyColor,
+                                width: pageStyle.unitWidth * 0.5,
+                              )
+                            : BorderSide.none,
+                        left: lang == 'en'
+                            ? BorderSide(
+                                color: greyColor,
+                                width: pageStyle.unitWidth * 0.5,
+                              )
+                            : BorderSide.none,
+                        bottom: BorderSide(
+                          color: greyColor,
+                          width: pageStyle.unitWidth * 0.5,
+                        ),
+                      ),
+                    ),
+                    child: ProductVCard(
+                      pageStyle: pageStyle,
+                      product: products[2 * index + 1],
+                      cardWidth: pageStyle.unitWidth * 187,
+                      cardHeight: pageStyle.unitHeight * 280,
+                      isShoppingCart: true,
+                      isWishlist: true,
+                      isShare: true,
+                    ),
+                  ),
+                ]
+              ],
             );
-          },
-        ),
+          }
+        },
       ),
     );
   }

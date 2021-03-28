@@ -470,21 +470,24 @@ class _MyCartPageState extends State<MyCartPage>
     }
   }
 
-  void _onCheckout() {
-    bool isStock = true;
+  void _onCheckout() async {
+    await myCartChangeNotifier.getCartItems(
+        lang, _onProcess, _onReloadItemSuccess, _onFailure);
+  }
+
+  void _onReloadItemSuccess() {
+    progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        isStock = false;
         flushBarService.showErrorMessage(
           pageStyle,
           'out_stock_items_error'.tr(),
         );
+        return;
       }
     }
-    if (isStock) {
-      Navigator.pushNamed(context, Routes.checkoutAddress);
-    }
+    Navigator.pushNamed(context, Routes.checkoutAddress);
   }
 
   void _onRemoveFailure(String message) {

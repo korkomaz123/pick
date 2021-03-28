@@ -3,8 +3,8 @@ const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
 class MarkaaVersion {
-  static const int androidVersion = 147000;
-  static const int iOSVersion = 147000;
+  static const int androidVersion = 148000;
+  static const int iOSVersion = 148000;
 }
 
 class GoSellSdk {

@@ -118,13 +118,13 @@ class _ProductHCardState extends State<ProductHCard>
             if (widget.product.discount > 0) ...[
               if (lang == 'en') ...[
                 Positioned(
-                  top: widget.cardHeight / 2,
+                  top: 0,
                   left: 0,
                   child: _buildDiscount(),
                 ),
               ] else ...[
                 Positioned(
-                  top: widget.cardHeight / 2,
+                  top: 0,
                   right: 0,
                   child: _buildDiscount(),
                 ),
@@ -225,8 +225,9 @@ class _ProductHCardState extends State<ProductHCard>
                           ),
                           if (widget.product.discount > 0) ...[
                             SizedBox(
-                                width: widget.pageStyle.unitWidth *
-                                    (widget.isMinor ? 4 : 10)),
+                              width: widget.pageStyle.unitWidth *
+                                  (widget.isMinor ? 4 : 10),
+                            ),
                             Text(
                               widget.product.beforePrice +
                                   ' ' +
@@ -244,22 +245,22 @@ class _ProductHCardState extends State<ProductHCard>
                         ],
                       ),
                     ),
-                    widget.isShoppingCart &&
-                            (widget.product.typeId != 'simple' ||
-                                widget.product.stockQty != null &&
-                                    widget.product.stockQty > 0)
-                        ? InkWell(
-                            onTap: () => _onAddProductToCart(context),
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: widget.pageStyle.unitHeight * 32,
-                                height: widget.pageStyle.unitHeight * 32,
-                                child: SvgPicture.asset(addCartIcon),
-                              ),
-                            ),
-                          )
-                        : SizedBox.shrink(),
+                    if (widget.isShoppingCart &&
+                        (widget.product.typeId != 'simple' ||
+                            widget.product.stockQty != null &&
+                                widget.product.stockQty > 0)) ...[
+                      InkWell(
+                        onTap: () => _onAddProductToCart(context),
+                        child: ScaleTransition(
+                          scale: _addToCartScaleAnimation,
+                          child: Container(
+                            width: widget.pageStyle.unitHeight * 32,
+                            height: widget.pageStyle.unitHeight * 32,
+                            child: SvgPicture.asset(addCartIcon),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -276,15 +277,7 @@ class _ProductHCardState extends State<ProductHCard>
         horizontal: widget.pageStyle.unitWidth * 4,
         vertical: widget.pageStyle.unitHeight * 2,
       ),
-      decoration: BoxDecoration(
-        color: Colors.redAccent,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-          topRight: Radius.circular(lang == 'en' ? 30 : 0),
-          bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-          bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
-        ),
-      ),
+      color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
         '${widget.product.discount}% ${'off'.tr()}',

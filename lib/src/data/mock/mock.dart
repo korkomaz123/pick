@@ -41,7 +41,7 @@ List<MessageEntity> messages = List.generate(20, (index) => message).toList();
 UserEntity user;
 String deviceToken = '';
 String lang = 'en';
-bool isNotification = false;
+bool isNotification = true;
 
 List<Map<String, dynamic>> countries = [
   {"name": "Kuwait", "dial_code": "+965", "code": "KW"},

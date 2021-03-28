@@ -128,6 +128,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
                       double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
+                      double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
                         top: isFromBrand
                             ? pageStyle.unitHeight * 120 - extra
@@ -148,6 +149,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           viewMode: viewMode,
                           sortByItem: sortByItem,
                           filterValues: filterValues,
+                          pos: pos,
                         ),
                       );
                     },
@@ -161,7 +163,6 @@ class _ProductListPageState extends State<ProductListPage> {
             },
           ),
           _buildAppBar(),
-          _buildArrowButton(),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -266,36 +267,6 @@ class _ProductListPageState extends State<ProductListPage> {
               width: pageStyle.unitWidth * 120,
               height: pageStyle.unitHeight * 60,
               fit: BoxFit.fitHeight,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildArrowButton() {
-    return Consumer<ScrollChangeNotifier>(
-      builder: (ctx, notifier, child) {
-        double extra = !scrollChangeNotifier.showScrollBar ? 40 : 0;
-        return AnimatedPositioned(
-          right: pageStyle.unitWidth * 4,
-          bottom: pageStyle.unitHeight * 4 - extra,
-          duration: Duration(milliseconds: 500),
-          child: InkWell(
-            onTap: () => _onGotoTop(),
-            child: Container(
-              width: pageStyle.unitHeight * 40,
-              height: pageStyle.unitHeight * 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: primarySwatchColor.withOpacity(0.8),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.keyboard_arrow_up,
-                size: pageStyle.unitFontSize * 30,
-                color: Colors.white70,
-              ),
             ),
           ),
         );
@@ -435,13 +406,5 @@ class _ProductListPageState extends State<ProductListPage> {
   void _onScrolling() {
     double pos = scrollController.position.pixels;
     scrollChangeNotifier.controlBrandBar(pos);
-  }
-
-  void _onGotoTop() {
-    scrollController.animateTo(
-      0,
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeIn,
-    );
   }
 }

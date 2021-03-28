@@ -120,13 +120,13 @@ class _ProductVCardState extends State<ProductVCard>
               if (widget.product.discount > 0) ...[
                 if (lang == 'en') ...[
                   Positioned(
-                    top: widget.cardHeight / 2,
+                    top: 0,
                     left: 0,
                     child: _buildDiscount(),
                   ),
                 ] else ...[
                   Positioned(
-                    top: widget.cardHeight / 2,
+                    top: 0,
                     right: 0,
                     child: _buildDiscount(),
                   ),
@@ -295,15 +295,7 @@ class _ProductVCardState extends State<ProductVCard>
         horizontal: widget.pageStyle.unitWidth * 4,
         vertical: widget.pageStyle.unitHeight * 2,
       ),
-      decoration: BoxDecoration(
-        color: Colors.redAccent,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-          topRight: Radius.circular(lang == 'en' ? 30 : 0),
-          bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-          bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
-        ),
-      ),
+      color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
         '${widget.product.discount}% ${'off'.tr()}',

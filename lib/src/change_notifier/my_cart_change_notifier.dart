@@ -54,12 +54,20 @@ class MyCartChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCartItems(String lang, [Function onFailure]) async {
+  Future<void> getCartItems(
+    String lang, [
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  ]) async {
     cartItemCount = 0;
     cartTotalPrice = .0;
     cartTotalCount = 0;
     cartItemsMap = {};
     processStatus = ProcessStatus.process;
+    if (onProcess != null) {
+      onProcess();
+    }
     try {
       final result = await myCartRepository.getCartItems(cartId, lang);
       if (result['code'] == 'SUCCESS') {
@@ -73,6 +81,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         discount = result['discount'] + .0;
         type = result['type'];
         processStatus = ProcessStatus.done;
+        if (onSuccess != null) {
+          onSuccess();
+        }
       } else {
         processStatus = ProcessStatus.failed;
         if (onFailure != null) {
@@ -160,7 +171,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       final result = await myCartRepository.addCartItem(
         cartId,
         product.productId,
-        qty.toString(),
+        '0',
         lang,
         options,
       );

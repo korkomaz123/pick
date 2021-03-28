@@ -7,6 +7,19 @@ class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<CategoryEntity> getCategory(String id, String lang) async {
+    String url = EndPoints.getCategory;
+    final params = {'categoryId': id, 'lang': lang};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return CategoryEntity.fromJson(result['category']);
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<List<CategoryEntity>> getAllCategoriesEntity(String lang) async {
     String url = EndPoints.getCategories;
     final result = await Api.getMethod(url, data: {'lang': lang});
