@@ -114,7 +114,6 @@ class _SplashPageState extends State<SplashPage> {
       var data = await deviceInfoPlugin.iosInfo;
       deviceId = data.identifierForVendor; //UUID for iOS
     }
-    print(deviceId);
   }
 
   Future<void> _getCurrentUser() async {

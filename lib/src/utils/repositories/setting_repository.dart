@@ -86,15 +86,34 @@ class SettingRepository {
     String token,
     String aToken,
     String iToken,
+    String aLang,
+    String iLang,
   ) async {
     String url = EndPoints.updateDeviceToken;
     final params = {
       'token': token,
       'android_token': aToken,
-      'ios_token': iToken
+      'ios_token': iToken,
+      'android_lang': aLang,
+      'ios_lang': iLang,
     };
-    print(url);
-    print(params);
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> updateGuestFcmToken(
+    String deviceId,
+    String token,
+    String lang,
+  ) async {
+    String url = EndPoints.updateGuestFcmToken;
+    final params = {
+      'device_id': deviceId,
+      'token': token,
+      'lang': lang,
+    };
     return await Api.postMethod(url, data: params);
   }
 }

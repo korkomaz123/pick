@@ -93,6 +93,8 @@ class _MyCartQuickAccessLoginDialogState
         user.token,
         Platform.isAndroid ? deviceToken : '',
         Platform.isIOS ? deviceToken : '',
+        Platform.isAndroid ? lang : '',
+        Platform.isIOS ? lang : '',
       );
     } catch (e) {
       print(e.toString());

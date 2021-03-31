@@ -177,8 +177,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           user.token,
           Platform.isAndroid ? token : '',
           Platform.isIOS ? token : '',
+          Platform.isAndroid ? lang : '',
+          Platform.isIOS ? lang : '',
         );
       }
+      await settingRepository.updateGuestFcmToken(deviceId, token, lang);
     });
   }
 

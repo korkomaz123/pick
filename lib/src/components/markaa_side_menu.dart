@@ -341,7 +341,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
   }
 
   void _logoutUser() async {
-    await settingRepo.updateFcmDeviceToken(user.token, '', '');
+    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     await localRepo.setToken('');
     user = null;
     myCartChangeNotifier.initialize();

@@ -80,6 +80,7 @@ class EndPoints {
   static const String changeSaveForLaterItem = '$baseUrl/addSaveforlateritem';
   static const String getProduct = '$baseUrl/getProduct';
   static const String updateDeviceToken = '$baseUrl/updateDeviceToken';
+  static const String updateGuestFcmToken = '$baseUrl/registerGuestFCMToken';
   static const String getCategory = '$baseUrl/getCategoryById';
   static const String getBrand = '$baseUrl/getBrandById';
 }
