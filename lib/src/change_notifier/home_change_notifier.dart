@@ -25,6 +25,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> recentlyViewedProducts = [];
   SliderImageEntity ads;
   SliderImageEntity popupItem;
+  SliderImageEntity megaBanner;
   String message;
   String bestDealsTitle = '';
   String newArrivalsTitle = '';
@@ -226,6 +227,20 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('error customer');
       print(e.toString());
     }
+  }
+
+  void loadMegaBanner(String lang) async {
+    final result = await homeRepository.getHomeMegaBanner(lang);
+    try {
+    if (result['code'] == 'SUCCESS') {
+      megaBanner = SliderImageEntity.fromJson(result['data'][0]);
+    } else {
+      megaBanner = null;
+    }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
   }
 
   void loadBestDealsBanner(String lang) async {

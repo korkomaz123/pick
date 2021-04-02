@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage>
     searchController.addListener(_getSuggestion);
     _getSearchHistories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      suggestionChangeNotifier.initializeSuggestion();
+      suggestionChangeNotifier.initializeSuggestion(false);
       searchNode.requestFocus();
     });
   }
@@ -88,7 +88,7 @@ class _SearchPageState extends State<SearchPage>
       markaaAppChangeNotifier.rebuild();
     } else {
       if (suggestionChangeNotifier.suggestions.isNotEmpty) {
-        suggestionChangeNotifier.initializeSuggestion();
+        suggestionChangeNotifier.initializeSuggestion(true);
         markaaAppChangeNotifier.rebuild();
       }
     }

@@ -44,6 +44,7 @@ import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_perfumes.dart';
 import 'widgets/home_recent.dart';
 import 'widgets/home_popup_dialog.dart';
+import 'widgets/home_mega_banner.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -96,7 +97,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     productChangeNotifier.initialize();
     _initializeLocalNotification();
     _configureMessaging();
-    _subscribeToTopic();
     homeChangeNotifier.loadPopup(lang, _onShowPopup);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
@@ -269,16 +269,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  void _subscribeToTopic() {
-    print(isNotification);
-    if (isNotification) {
-      print('subscribing now');
-      firebaseMessaging.subscribeToTopic('guest').then((_) {
-        print('subscribed to guest channel');
-      });
-    }
-  }
-
   void _onShowPopup(SliderImageEntity popupItem) async {
     await showDialog(
       context: context,
@@ -310,6 +300,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _onRefresh() async {
+    homeChangeNotifier.loadMegaBanner(lang);
     homeChangeNotifier.loadSliderImages(lang);
     homeChangeNotifier.loadBestDeals(lang);
     homeChangeNotifier.loadBestDealsBanner(lang);
@@ -355,6 +346,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               children: [
                 HomeHeaderCarousel(pageStyle: pageStyle),
                 HomeFeaturedCategories(pageStyle: pageStyle),
+                HomeMegaBanner(pageStyle: pageStyle),
                 HomeBestDeals(pageStyle: pageStyle),
                 HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),

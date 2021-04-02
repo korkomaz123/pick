@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -13,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 
@@ -42,13 +46,27 @@ class _AccountPageState extends State<AccountPage> {
   SnackBarService snackBarService;
   ProgressService progressService;
 
+  File imageFile;
+  String name;
+  Uint8List image;
+  ImageCustomPickerService imageCustomPickerService;
+
+  ProfileBloc profileBloc;
+
   @override
   void initState() {
     super.initState();
+    profileBloc = context.read<ProfileBloc>();
     progressService = ProgressService(context: context);
     snackBarService = SnackBarService(
       context: context,
       scaffoldKey: scaffoldKey,
+    );
+    imageCustomPickerService = ImageCustomPickerService(
+      context: context,
+      backgroundColor: Colors.white,
+      titleColor: primaryColor,
+      video: false,
     );
   }
 
@@ -61,15 +79,34 @@ class _AccountPageState extends State<AccountPage> {
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
       drawerEnableOpenDragGesture: false,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildAccountPicture(),
-            Divider(color: greyColor, thickness: 0.5),
-            user != null ? _buildAccountProfile() : SizedBox.shrink(),
-            _buildAccountGeneralSetting(),
-          ],
-        ),
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileImageUpdatedInProcess) {
+            progressService.showProgress();
+          }
+          if (state is ProfileImageUpdatedSuccess) {
+            progressService.hideProgress();
+          }
+          if (state is ProfileImageUpdatedFailure) {
+            progressService.hideProgress();
+            snackBarService.showErrorSnackBar(state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileImageUpdatedSuccess) {
+            user.profileUrl = state.url;
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildAccountPicture(),
+                Divider(color: greyColor, thickness: 0.5),
+                user != null ? _buildAccountProfile() : SizedBox.shrink(),
+                _buildAccountGeneralSetting(),
+              ],
+            ),
+          );
+        },
       ),
       bottomNavigationBar: MarkaaBottomBar(
         pageStyle: pageStyle,
@@ -87,35 +124,62 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Row(
         children: [
-          if (user != null) ...[
-            Container(
-              width: pageStyle.unitWidth * 107,
-              height: pageStyle.unitWidth * 107,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: user.profileUrl.isEmpty
-                      ? AssetImage('lib/public/images/profile.png')
-                      : NetworkImage(user.profileUrl),
-                  fit: BoxFit.cover,
-                ),
-                shape: BoxShape.circle,
-              ),
-            )
-          ] else ...[
-            Container(
-              width: pageStyle.unitWidth * 107,
-              height: pageStyle.unitWidth * 107,
-              decoration: BoxDecoration(
-                color: primaryColor,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: SvgPicture.asset(
-                'lib/public/icons/icon2.svg',
-                width: pageStyle.unitWidth * 67,
-              ),
-            )
-          ],
+          Container(
+            width: pageStyle.unitWidth * 107,
+            height: pageStyle.unitWidth * 107,
+            child: Stack(
+              children: [
+                if (user != null) ...[
+                  Container(
+                    width: pageStyle.unitWidth * 107,
+                    height: pageStyle.unitWidth * 107,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: user.profileUrl.isEmpty
+                            ? AssetImage('lib/public/images/profile.png')
+                            : NetworkImage(user.profileUrl),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                  )
+                ] else ...[
+                  Container(
+                    width: pageStyle.unitWidth * 107,
+                    height: pageStyle.unitWidth * 107,
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      'lib/public/icons/icon2.svg',
+                      width: pageStyle.unitWidth * 67,
+                    ),
+                  )
+                ],
+                if (user != null) ...[
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: InkWell(
+                      onTap: () => _onChangeImage(),
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          right: lang == 'en' ? pageStyle.unitHeight * 10 : 0,
+                          left: lang == 'ar' ? pageStyle.unitHeight * 10 : 0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(addIcon),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
           if (user != null) ...[
             Expanded(
               child: Container(
@@ -375,5 +439,18 @@ class _AccountPageState extends State<AccountPage> {
   void _login() async {
     await Navigator.pushNamed(context, Routes.signIn);
     setState(() {});
+  }
+
+  void _onChangeImage() async {
+    imageFile = await imageCustomPickerService.getImageWithDialog();
+    if (imageFile != null) {
+      name = imageFile.path.split('/').last;
+      image = imageFile.readAsBytesSync();
+      profileBloc.add(ProfileImageUpdated(
+        token: user.token,
+        image: image,
+        name: name,
+      ));
+    }
   }
 }

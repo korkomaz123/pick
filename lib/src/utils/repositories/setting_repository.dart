@@ -114,6 +114,7 @@ class SettingRepository {
       'token': token,
       'lang': lang,
     };
+    print(params);
     return await Api.postMethod(url, data: params);
   }
 }

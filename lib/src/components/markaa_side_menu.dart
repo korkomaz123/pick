@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -34,19 +38,28 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu>
+    with WidgetsBindingObserver {
+  final dataKey = GlobalKey();
+  int activeIndex;
   PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
-  HomeChangeNotifier homeChangeNotifier;
+  String language = '';
+
   SignInBloc signInBloc;
+
   ProgressService progressService;
   FlushBarService flushBarService;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
+
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
@@ -65,6 +78,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
 
   @override
   Widget build(BuildContext context) {
+    language = EasyLocalization.of(context).locale.languageCode.toUpperCase();
     menuWidth = pageStyle.unitWidth * 300;
     return Container(
       width: menuWidth,
@@ -113,9 +127,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
 
   Widget _buildHeaderLogo() {
     return Align(
-      alignment: Alignment.topCenter,
+      alignment: lang == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
-        padding: EdgeInsets.only(top: pageStyle.unitHeight * 40),
+        padding: EdgeInsets.only(
+          top: pageStyle.unitHeight * 40,
+          left: lang == 'en' ? pageStyle.unitWidth * 15 : 0,
+          right: lang == 'ar' ? pageStyle.unitWidth * 15 : 0,
+        ),
         child: user != null
             ? Row(
                 children: [
@@ -161,23 +179,55 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
         onTap: () => user != null ? _logout() : _login(),
         child: Container(
           padding: EdgeInsets.only(
-            left: pageStyle.unitWidth * 30,
-            right: pageStyle.unitWidth * 30,
+            left: pageStyle.unitWidth * 15,
+            right: pageStyle.unitWidth * 15,
             bottom: pageStyle.unitHeight * 10,
           ),
           width: double.infinity,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SvgPicture.asset(
-                sideLoginIcon,
-                height: pageStyle.unitHeight * 15,
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    sideLoginIcon,
+                    height: pageStyle.unitHeight * 15,
+                  ),
+                  SizedBox(width: pageStyle.unitWidth * 4),
+                  Text(
+                    user != null ? 'logout'.tr() : 'login'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: pageStyle.unitFontSize * 14,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: pageStyle.unitWidth * 4),
-              Text(
-                user != null ? 'logout'.tr() : 'login'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: pageStyle.unitFontSize * 14,
+              Container(
+                width: pageStyle.unitWidth * 100,
+                height: pageStyle.unitHeight * 20,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey.shade300,
+                ),
+                child: SelectOptionCustom(
+                  items: ['EN', 'AR'],
+                  value: language,
+                  itemWidth: pageStyle.unitWidth * 50,
+                  itemHeight: pageStyle.unitHeight * 20,
+                  itemSpace: 0,
+                  titleSize: pageStyle.unitFontSize * 10,
+                  radius: 8,
+                  selectedColor: primaryColor,
+                  selectedTitleColor: Colors.white,
+                  selectedBorderColor: Colors.transparent,
+                  unSelectedColor: Colors.grey.shade300,
+                  unSelectedTitleColor: greyColor,
+                  unSelectedBorderColor: Colors.transparent,
+                  isVertical: false,
+                  listStyle: true,
+                  onTap: (value) => _onChangeLanguage(value),
                 ),
               ),
             ],
@@ -193,9 +243,11 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
       child: Column(
         children: sideMenus.map((menu) {
+          int index = sideMenus.indexOf(menu);
           return Column(
+            key: activeIndex == index ? dataKey : null,
             children: [
-              _buildParentMenu(menu),
+              _buildParentMenu(menu, index),
               Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: pageStyle.unitHeight * 4,
@@ -213,10 +265,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     );
   }
 
-  Widget _buildParentMenu(CategoryMenuEntity menu) {
+  Widget _buildParentMenu(CategoryMenuEntity menu, int index) {
     return InkWell(
       onTap: () => menu.subMenu.isNotEmpty
-          ? _displaySubmenu(menu)
+          ? _displaySubmenu(menu, index)
           : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
@@ -231,12 +283,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
             Row(
               children: [
                 if (menu.iconUrl.isNotEmpty) ...[
-                  Row(
-                    children: [
-                      Image.network(menu.iconUrl, width: 25, height: 25),
-                      SizedBox(width: 6),
-                    ],
-                  )
+                  Row(children: [
+                    Image.network(menu.iconUrl, width: 25, height: 25),
+                    SizedBox(width: 6),
+                  ])
                 ],
                 Text(
                   menu.title.toUpperCase(),
@@ -298,13 +348,17 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
     );
   }
 
-  void _displaySubmenu(CategoryMenuEntity menu) {
+  void _displaySubmenu(CategoryMenuEntity menu, int index) {
     if (activeMenu == menu.id) {
       activeMenu = '';
     } else {
       activeMenu = menu.id;
     }
+    activeIndex = index;
     setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(dataKey.currentContext);
+    });
   }
 
   void _viewCategory(CategoryMenuEntity parentMenu, int index) {
@@ -357,5 +411,36 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> {
       context,
       (route) => route.settings.name == Routes.home,
     );
+  }
+
+  void _onChangeLanguage(String value) async {
+    if (language != value) {
+      progressService.showProgress();
+      language = value;
+      if (language == 'EN') {
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.first;
+        lang = 'en';
+      } else {
+        EasyLocalization.of(context).locale =
+            EasyLocalization.of(context).supportedLocales.last;
+        lang = 'ar';
+      }
+      firebaseMessaging.getToken().then((String token) async {
+        deviceToken = token;
+        if (user?.token != null) {
+          await settingRepo.updateFcmDeviceToken(
+            user.token,
+            Platform.isAndroid ? token : '',
+            Platform.isIOS ? token : '',
+            Platform.isAndroid ? lang : '',
+            Platform.isIOS ? lang : '',
+          );
+        }
+        await settingRepo.updateGuestFcmToken(deviceId, token, lang);
+        progressService.hideProgress();
+        Phoenix.rebirth(context);
+      });
+    }
   }
 }

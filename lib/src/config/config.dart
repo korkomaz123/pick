@@ -2,9 +2,14 @@ const double designWidth = 375;
 const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
+class MarkaaReporter {
+  static const String email = 'reporter@markaa.com';
+  static const String password = 'markaa2021';
+}
+
 class MarkaaVersion {
-  static const int androidVersion = 149000;
-  static const int iOSVersion = 149000;
+  static const int androidVersion = 150000;
+  static const int iOSVersion = 150000;
 }
 
 class GoSellSdk {

@@ -141,7 +141,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           color: Colors.white,
           child: Column(
             children: [
-              if (preCachedImages.isNotEmpty) ...[
+              if (widget?.model?.selectedVariant?.productId != null) ...[
+                Container(
+                  width: double.infinity,
+                  height: pageStyle.unitHeight * 460,
+                  child: Image.network(
+                    widget?.model?.selectedVariant?.imageUrl,
+                  ),
+                )
+              ] else if (preCachedImages.isNotEmpty) ...[
                 _buildImageCarousel()
               ] else if (productEntity.gallery.isNotEmpty) ...[
                 Container(
@@ -158,12 +166,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   width: double.infinity,
                   height: pageStyle.unitHeight * 460,
                   child: Image.asset(
-                      'lib/public/images/loading/image_loading.jpg'),
+                    'lib/public/images/loading/image_loading.jpg',
+                  ),
                 )
               ],
               Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: pageStyle.unitWidth * 10,
+                ),
                 child: Column(
                   children: [
                     _buildTitle(),
@@ -226,7 +236,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               width: pageStyle.unitWidth * 26,
               height: pageStyle.unitHeight * 26,
               child: SvgPicture.asset(
-                  lang == 'en' ? arrowBackEnIcon : arrowBackArIcon),
+                lang == 'en' ? arrowBackEnIcon : arrowBackArIcon,
+              ),
             ),
           ),
           Column(

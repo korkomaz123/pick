@@ -22,6 +22,7 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/filter_repository.dart';
+import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
@@ -61,6 +62,7 @@ class MarkaaApp extends StatelessWidget {
   final myCartRepository = MyCartRepository();
   final searchRepository = SearchRepository();
   final checkoutRepository = CheckoutRepository();
+  final firebaseRepository = FirebaseRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +157,7 @@ class MarkaaApp extends StatelessWidget {
             myCartRepository: myCartRepository,
             localStorageRepository: localStorageRepository,
             checkoutRepository: checkoutRepository,
+            firebaseRepository: firebaseRepository,
           ),
         ),
         ChangeNotifierProvider(

@@ -162,6 +162,8 @@ class ProductRepository {
         'page': '$page'
       };
     }
+    print(params);
+    print(url);
     return await Api.getMethod(url, data: params);
   }
 

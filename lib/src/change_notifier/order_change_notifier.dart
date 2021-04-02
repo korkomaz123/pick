@@ -1,13 +1,20 @@
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/apis/firebase_path.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 
 class OrderChangeNotifier extends ChangeNotifier {
   final OrderRepository orderRepository;
+  final FirebaseRepository firebaseRepository;
 
-  OrderChangeNotifier({this.orderRepository});
+  OrderChangeNotifier({this.orderRepository, this.firebaseRepository});
 
   Map<String, OrderEntity> ordersMap = {};
   List<String> keys = [];
@@ -62,9 +69,11 @@ class OrderChangeNotifier extends ChangeNotifier {
         onSuccess(newOrder.orderNo);
       } else {
         onFailure(result['errorMessage']);
+        reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
       onFailure(e.toString());
+      reportOrderIssue(e.toString(), orderDetails);
     }
   }
 
@@ -120,5 +129,23 @@ class OrderChangeNotifier extends ChangeNotifier {
     } catch (e) {
       onFailure(e.toString());
     }
+  }
+
+  void reportOrderIssue(dynamic result, dynamic orderDetails) async {
+    final date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final reportData = {
+      'result': result,
+      'orderDetails': orderDetails,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.ORDER_ISSUE_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.addToCollection(reportData, path);
   }
 }

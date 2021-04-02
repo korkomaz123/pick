@@ -153,19 +153,6 @@ class _CategoryListPageState extends State<CategoryListPage>
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
-            // Image.network(
-            //   category.imageUrl,
-            //   width: pageStyle.deviceWidth,
-            //   height: pageStyle.unitHeight * 128,
-            //   fit: BoxFit.cover,
-            //   errorBuilder: (_, __, ___) {
-            //     return Container(
-            //       width: pageStyle.deviceWidth,
-            //       height: pageStyle.unitHeight * 128,
-            //       color: Colors.grey,
-            //     );
-            //   },
-            // ),
             Align(
               alignment:
                   lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,

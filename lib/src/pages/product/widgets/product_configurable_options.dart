@@ -34,7 +34,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  key.toLowerCase(),
+                  _getOptionNameFromKey(key),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 20,
                     color: primaryColor,
@@ -90,5 +90,15 @@ class ProductConfigurableOptions extends StatelessWidget {
         ),
       );
     });
+  }
+
+  String _getOptionNameFromKey(String key) {
+    String optionName = '';
+    List<String> keyArr = key.split('_');
+    for (var item in keyArr) {
+      String firstStr = item.substring(0, 1).toUpperCase();
+      optionName += '${item.replaceFirst(item.substring(0, 1), firstStr)} ';
+    }
+    return optionName;
   }
 }
