@@ -1,12 +1,17 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 
 class LanguageSettingItem extends StatefulWidget {
@@ -23,11 +28,15 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
   ProgressService progressService;
   String language;
 
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  SettingRepository settingRepository;
+
   @override
   void initState() {
     super.initState();
     pageStyle = widget.pageStyle;
     progressService = ProgressService(context: context);
+    settingRepository = context.read<SettingRepository>();
   }
 
   @override
@@ -103,7 +112,18 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
-      Future.delayed(Duration(milliseconds: 2000), () {
+      firebaseMessaging.getToken().then((String token) async {
+        deviceToken = token;
+        if (user?.token != null) {
+          await settingRepository.updateFcmDeviceToken(
+            user.token,
+            Platform.isAndroid ? token : '',
+            Platform.isIOS ? token : '',
+            Platform.isAndroid ? lang : '',
+            Platform.isIOS ? lang : '',
+          );
+        }
+        await settingRepository.updateGuestFcmToken(deviceId, token, lang);
         progressService.hideProgress();
         Phoenix.rebirth(context);
       });

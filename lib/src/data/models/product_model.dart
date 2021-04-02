@@ -63,10 +63,12 @@ class ProductModel {
         metaDescription = json['meta_description'],
         price = json['special_price'] != null
             ? double.parse(json['special_price']).toStringAsFixed(3)
-            : double.parse(json['price']).toStringAsFixed(3),
+            : json['price'] != null
+                ? double.parse(json['price']).toStringAsFixed(3)
+                : null,
         beforePrice = json['price'] != null
             ? double.parse(json['price']).toStringAsFixed(3)
-            : '0.000',
+            : null,
         discount = _getDiscount(
             json['special_price'] != null
                 ? json['special_price']
@@ -103,6 +105,9 @@ class ProductModel {
         afterPriceString != null ? double.parse(afterPriceString) : 0;
     double beforePrice =
         beforePriceString != null ? double.parse(beforePriceString) : 0;
+    if (beforePrice == 0) {
+      return 0;
+    }
     return ((beforePrice - afterPrice) / beforePrice * 100).floor();
   }
 }

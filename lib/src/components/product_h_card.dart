@@ -216,7 +216,9 @@ class _ProductHCardState extends State<ProductHCard>
                       child: Row(
                         children: [
                           Text(
-                            widget.product.price + ' ' + 'currency'.tr(),
+                            widget.product.price != null
+                                ? (widget.product.price + ' ' + 'currency'.tr())
+                                : '',
                             style: mediumTextStyle.copyWith(
                               fontSize: widget.pageStyle.unitFontSize * 14,
                               color: greyColor,

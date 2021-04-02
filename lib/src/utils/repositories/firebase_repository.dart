@@ -1,29 +1,30 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseRepository {
   final _firestoreClient = FirebaseFirestore.instance;
-  // final _firestorageClient = FirebaseStorage.instance;
+  final _firestorageClient = FirebaseStorage.instance;
 
-  // //////////////////////////////////////////////////////////////////////////////
-  // ///
-  // //////////////////////////////////////////////////////////////////////////////
-  // Future<dynamic> uploadMedia(File file, String path) async {
-  //   final UploadTask uploadTask =
-  //       _firestorageClient.ref().child(path).putFile(file);
-  //   final TaskSnapshot storageTaskSnapshot = await uploadTask.whenComplete();
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> uploadMedia(File file, String path) async {
+    final UploadTask uploadTask =
+        _firestorageClient.ref().child(path).putFile(file);
 
-  //   return storageTaskSnapshot.ref.getDownloadURL();
-  // }
+    final taskSnapshot = await uploadTask.whenComplete(() {});
+    return taskSnapshot.ref.getDownloadURL();
+  }
 
-  // //////////////////////////////////////////////////////////////////////////////
-  // ///
-  // //////////////////////////////////////////////////////////////////////////////
-  // Future<void> deleteMedia(String url) async {
-  //   final StorageReference storageRef =
-  //       await _firestorageClient.getReferenceFromUrl(url);
-  //   await storageRef.delete();
-  // }
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<void> deleteMedia(String url) async {
+    final Reference storageRef = _firestorageClient.refFromURL(url);
+    await storageRef.delete();
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   ///

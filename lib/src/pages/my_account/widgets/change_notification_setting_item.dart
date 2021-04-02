@@ -83,18 +83,5 @@ class _ChangeNotificationSettingItemState
       token: user.token,
       isActive: value,
     ));
-    if (value) {
-      firebaseMessaging.subscribeToTopic('guest').then((_) {
-        print('subscribed success');
-        isNotification = value;
-        markaaAppChangeNotifier.rebuild();
-      });
-    } else {
-      firebaseMessaging.unsubscribeFromTopic('guest').then((_) {
-        print('unsubscribed success');
-        isNotification = value;
-        markaaAppChangeNotifier.rebuild();
-      });
-    }
   }
 }

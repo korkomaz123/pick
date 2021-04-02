@@ -42,6 +42,7 @@ class _SplashPageState extends State<SplashPage> {
   WishlistRepository wishlistRepo;
   CategoryRepository categoryRepo;
   SettingRepository settingRepo;
+  SignInRepository signInRepo;
   PageStyle pageStyle;
   bool isFirstTime;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -61,6 +62,7 @@ class _SplashPageState extends State<SplashPage> {
     localRepo = context.read<LocalStorageRepository>();
     categoryRepo = context.read<CategoryRepository>();
     settingRepo = context.read<SettingRepository>();
+    signInRepo = context.read<SignInRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
@@ -83,6 +85,10 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _loadAssets() async {
+    if (signInRepo.getFirebaseUser() == null) {
+      await signInRepo.loginFirebase(
+          email: MarkaaReporter.email, password: MarkaaReporter.password);
+    }
     orderChangeNotifier.initializeOrders();
     brandChangeNotifier.getBrandsList(lang, 'brand');
     brandChangeNotifier.getBrandsList(lang, 'home');
@@ -114,7 +120,6 @@ class _SplashPageState extends State<SplashPage> {
       var data = await deviceInfoPlugin.iosInfo;
       deviceId = data.identifierForVendor; //UUID for iOS
     }
-    print(deviceId);
   }
 
   Future<void> _getCurrentUser() async {

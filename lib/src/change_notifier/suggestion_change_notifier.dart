@@ -6,9 +6,11 @@ class SuggestionChangeNotifier extends ChangeNotifier {
   List<ProductModel> suggestions = [];
   List<ProductModel> searchedProducts = [];
 
-  void initializeSuggestion() {
+  void initializeSuggestion(bool onlySuggestion) {
     suggestions = [];
-    searchedProducts = [];
+    if (!onlySuggestion) {
+      searchedProducts = [];
+    }
     notifyListeners();
   }
 

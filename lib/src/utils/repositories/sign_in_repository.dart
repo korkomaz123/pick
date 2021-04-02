@@ -1,7 +1,38 @@
+import 'package:meta/meta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 
 class SignInRepository {
+  SignInRepository({
+    FirebaseAuth firebaseAuth,
+  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+
+  final FirebaseAuth _firebaseAuth;
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  String getFirebaseUser() {
+    final user = _firebaseAuth.currentUser;
+    return user?.uid;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<void> loginFirebase({
+    @required String email,
+    @required String password,
+  }) async {
+    assert(email != null && password != null);
+    await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////

@@ -24,4 +24,14 @@ class UserEntity {
         phoneNumber = json['phoneNumber'],
         email = json['email'],
         profileUrl = json['profileUrl'] ?? '';
+
+  Map<String, dynamic> toJson() => {
+        'token': token,
+        'customerId': customerId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+        'email': email,
+        'profileUrl': profileUrl
+      };
 }

@@ -229,7 +229,9 @@ class _ProductVCardState extends State<ProductVCard>
                       child: Row(
                         children: [
                           Text(
-                            widget.product.price + ' ' + 'currency'.tr(),
+                            widget.product.price != null
+                                ? (widget.product.price + ' ' + 'currency'.tr())
+                                : '',
                             style: mediumTextStyle.copyWith(
                               fontSize: widget.pageStyle.unitFontSize *
                                   (widget.isMinor ? 12 : 14),

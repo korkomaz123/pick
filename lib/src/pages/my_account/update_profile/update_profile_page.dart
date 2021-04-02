@@ -163,13 +163,13 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Center(
       child: Container(
         width: pageStyle.unitWidth * 140,
-        height: pageStyle.unitHeight * 140,
+        height: pageStyle.unitWidth * 140,
         margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
         child: Stack(
           children: [
             Container(
               width: pageStyle.unitWidth * 140,
-              height: pageStyle.unitHeight * 140,
+              height: pageStyle.unitWidth * 140,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: user.profileUrl.isNotEmpty
@@ -185,7 +185,10 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               child: InkWell(
                 onTap: () => _onChangeImage(),
                 child: Container(
-                  margin: EdgeInsets.only(right: pageStyle.unitWidth * 20),
+                  margin: EdgeInsets.only(
+                    right: lang == 'en' ? pageStyle.unitHeight * 20 : 0,
+                    left: lang == 'ar' ? pageStyle.unitHeight * 20 : 0,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
