@@ -144,8 +144,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {},
+            child: Text('Ok okay okay'),
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.categoryList);
+            },
           )
         ],
       ),
@@ -207,8 +209,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
-      message['notification']['title'],
-      message['notification']['body'],
+      Platform.isAndroid ? message['notification']['title'] : message['title'],
+      Platform.isAndroid ? message['notification']['body'] : message['body'],
       NotificationDetails(
         AndroidNotificationDetails(
           channel.id,
@@ -223,7 +225,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
     try {
-      Map<dynamic, dynamic> data = message['data'];
+      Map<dynamic, dynamic> data = Platform.isAndroid? message['data'] : message;
       int target = int.parse(data['target']);
       if (target != 0) {
         String id = data['id'];

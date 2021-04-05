@@ -318,7 +318,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       width: pageStyle.deviceWidth,
       height: pageStyle.unitHeight * 50,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
+        horizontal: pageStyle.unitWidth * 10,
         vertical: pageStyle.unitHeight * 30,
       ),
       child: MaterialButton(
