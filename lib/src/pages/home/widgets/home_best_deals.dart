@@ -127,7 +127,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
                 ),
               ),
               child: ProductVCard(
-                cardWidth: widget.pageStyle.unitWidth * 160,
+                cardWidth: widget.pageStyle.unitWidth * 170,
                 cardHeight: widget.pageStyle.unitHeight * 280,
                 product: item,
                 isShoppingCart: true,
