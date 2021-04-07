@@ -268,29 +268,30 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // Clear all session partner parameters.
     Adjust.resetSessionPartnerParameters();
 
-    // Ask for tracking consent.
-    Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
-      print('[Adjust]: Authorization status update!');
-      switch (status) {
-        case 0:
-          print(
-              '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusNotDetermined');
-          break;
-        case 1:
-          print(
-              '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusRestricted');
-          break;
-        case 2:
-          print(
-              '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusDenied');
-          break;
-        case 3:
-          print(
-              '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusAuthorized');
-          break;
-      }
-    });
-
+    if (Platform.isIOS) {
+      // Ask for tracking consent.
+      Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
+        print('[Adjust]: Authorization status update!');
+        switch (status) {
+          case 0:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusNotDetermined');
+            break;
+          case 1:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusRestricted');
+            break;
+          case 2:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusDenied');
+            break;
+          case 3:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusAuthorized');
+            break;
+        }
+      });
+    }
     // Start SDK.
     Adjust.start(config);
   }
