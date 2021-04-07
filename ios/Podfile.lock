@@ -212,6 +212,12 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - Adjust (4.28.0):
+    - Adjust/Core (= 4.28.0)
+  - Adjust/Core (4.28.0)
+  - adjust_sdk (4.28.0):
+    - Adjust (= 4.28.0)
+    - Flutter
   - AppAuth (1.4.0):
     - AppAuth/Core (= 1.4.0)
     - AppAuth/ExternalUserAgent (= 1.4.0)
@@ -472,6 +478,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - adjust_sdk (from `.symlinks/plugins/adjust_sdk/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - Firebase/Analytics
@@ -508,6 +515,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - Adjust
     - AppAuth
     - BoringSSL-GRPC
     - FBSDKCoreKit
@@ -541,6 +549,8 @@ SPEC REPOS:
     - TOCropViewController
 
 EXTERNAL SOURCES:
+  adjust_sdk:
+    :path: ".symlinks/plugins/adjust_sdk/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   device_info:
@@ -598,6 +608,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
+  Adjust: 131c77905f67b26e946d1b831fad20ed2b41134c
+  adjust_sdk: 0f2eca502e94cf4b78d15e895533c294c2953d77
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   cloud_firestore: b8c0e15fa49dfff87c2817d288b577e5dca2df13
