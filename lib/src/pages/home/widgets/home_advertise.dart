@@ -33,7 +33,6 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, ___) {
         if (model.ads != null) {
-          print('ads');
           return Container(
             width: widget.pageStyle.deviceWidth,
             color: Colors.white,
@@ -79,8 +78,8 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                   child: Row(
                     children: model.perfumesItems.map((item) {
                       return ProductCard(
-                        cardWidth: widget.pageStyle.unitWidth * 100,
-                        cardHeight: widget.pageStyle.unitWidth * 125,
+                        cardWidth: widget.pageStyle.unitWidth * 120,
+                        cardHeight: widget.pageStyle.unitWidth * 165,
                         product: item,
                         isWishlist: true,
                         pageStyle: widget.pageStyle,

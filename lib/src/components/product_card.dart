@@ -144,73 +144,70 @@ class _ProductCardState extends State<ProductCard>
           Container(
             child: Image.network(
               widget.product.imageUrl,
-              width: widget.cardWidth * 0.8,
-              height: widget.cardWidth * 0.8,
-              fit: BoxFit.fitWidth,
+              width: widget.cardWidth,
+              height: widget.cardWidth,
+              fit: BoxFit.fitHeight,
             ),
           ),
           Expanded(
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.isLine) ...[Divider(color: greyColor)],
-                    InkWell(
-                      onTap: () {
-                        if (widget?.product?.brandEntity?.optionId != null) {
-                          ProductListArguments arguments = ProductListArguments(
-                            category: CategoryEntity(),
-                            subCategory: [],
-                            brand: widget.product.brandEntity,
-                            selectedSubCategoryIndex: 0,
-                            isFromBrand: true,
-                          );
-                          Navigator.pushNamed(
-                            context,
-                            Routes.productList,
-                            arguments: arguments,
-                          );
-                        }
-                      },
-                      child: Text(
-                        widget?.product?.brandEntity?.brandLabel ?? '',
-                        style: mediumTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: widget.pageStyle.unitFontSize * 10,
-                        ),
-                      ),
+                if (widget.isLine) ...[Divider(color: greyColor)],
+                InkWell(
+                  onTap: () {
+                    if (widget?.product?.brandEntity?.optionId != null) {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: widget.product.brandEntity,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(
+                        context,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    }
+                  },
+                  child: Text(
+                    widget?.product?.brandEntity?.brandLabel ?? '',
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: widget.pageStyle.unitFontSize * 10,
                     ),
-                    Text(
-                      widget.product.price != null
-                          ? (widget.product.price + ' ' + 'currency'.tr())
-                          : '',
-                      style: mediumTextStyle.copyWith(
-                        fontSize: widget.pageStyle.unitFontSize *
-                            (widget.isMinor ? 8 : 8),
-                        color: greyColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (widget.product.discount > 0) ...[
-                      SizedBox(
-                          width: widget.pageStyle.unitWidth *
-                              (widget.isMinor ? 4 : 4)),
-                      Text(
-                        widget.product.beforePrice + ' ' + 'currency'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          decorationStyle: TextDecorationStyle.solid,
-                          decoration: TextDecoration.lineThrough,
-                          decorationColor: dangerColor,
-                          fontSize: widget.pageStyle.unitFontSize *
-                              (widget.isMinor ? 8 : 8),
-                          color: greyColor,
-                        ),
-                      ),
-                    ],
-                    SizedBox(height: widget.pageStyle.unitHeight * 5),
-                  ],
+                  ),
                 ),
+                Text(
+                  widget.product.price != null
+                      ? (widget.product.price + ' ' + 'currency'.tr())
+                      : '',
+                  style: mediumTextStyle.copyWith(
+                    fontSize: widget.pageStyle.unitFontSize *
+                        (widget.isMinor ? 10 : 10),
+                    color: greyColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (widget.product.discount > 0) ...[
+                  SizedBox(
+                      width: widget.pageStyle.unitWidth *
+                          (widget.isMinor ? 4 : 4)),
+                  Text(
+                    widget.product.beforePrice + ' ' + 'currency'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      decorationStyle: TextDecorationStyle.solid,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: dangerColor,
+                      fontSize: widget.pageStyle.unitFontSize *
+                          (widget.isMinor ? 10 : 10),
+                      color: greyColor,
+                    ),
+                  ),
+                ],
+                SizedBox(height: widget.pageStyle.unitHeight * 5),
               ],
             ),
           ),

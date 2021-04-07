@@ -44,3 +44,12 @@ class AlgoliaIndexes {
   static const String arCreatedAtAscProducts =
       'magento2_arabic_products_created_at_asc';
 }
+
+class AdjustSDKConfig {
+  static const String appToken = '6zku7sd3x7gg';
+  static const String addToCartToken = '4gustj';
+  static const String completePurchaseToken = 'mw1hfm';
+  static const String initiateCheckoutToken = 'a5budz';
+  static const String registerToken = 'rznvj2';
+  static const String viewProduct = 'p3ode4';
+}

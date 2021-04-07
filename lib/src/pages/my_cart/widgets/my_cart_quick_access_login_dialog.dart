@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:faker/faker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -252,6 +254,9 @@ class _MyCartQuickAccessLoginDialogState
         borderColor: Colors.white70,
         radius: pageStyle.unitFontSize * 10,
         onPressed: () async {
+          AdjustEvent adjustEvent =
+              new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+          Adjust.trackEvent(adjustEvent);
           await myCartChangeNotifier.getCartItems(
               lang, _onProcess, _onReloadItemSuccess, _onFailure);
           widget.onClose();

@@ -15,6 +15,7 @@ dependencies:
     sdk: flutter
   isco_custom_widgets:
     git: https://github.com/iscojin/isco_flutter_custom_widgets.git
+  adjust_sdk: ^4.28.0
   algolia: ^0.1.7
   badges: ^1.1.1
   bloc: ^6.0.1
