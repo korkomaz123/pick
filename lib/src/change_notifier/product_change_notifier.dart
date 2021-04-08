@@ -88,7 +88,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[categoryId].add(ProductModel.fromJson(productList[i]));
       }
-      if (productList.isEmpty && page > 0) {
+      if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
       notifyListeners();
@@ -104,7 +104,7 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[categoryId].add(ProductModel.fromJson(productList[i]));
         }
-        if (productList.isEmpty && page > 0) {
+        if (productList.length < 50 && page > 0) {
           isReachedMax = true;
         }
         notifyListeners();
@@ -169,7 +169,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
       }
-      if (productList.isEmpty && page > 0) {
+      if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
       notifyListeners();
@@ -186,7 +186,7 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
         }
-        if (productList.isEmpty && page > 0) {
+        if (productList.length < 50 && page > 0) {
           isReachedMax = true;
         }
         notifyListeners();
@@ -255,7 +255,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       for (int i = 0; i < productList.length; i++) {
         data[index].add(ProductModel.fromJson(productList[i]));
       }
-      if (productList.isEmpty && page > 0) {
+      if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
       notifyListeners();
@@ -326,7 +326,7 @@ class ProductChangeNotifier extends ChangeNotifier {
         for (int i = 0; i < productList.length; i++) {
           data[index].add(ProductModel.fromJson(productList[i]));
         }
-        if (productList.isEmpty && page > 0) {
+        if (productList.length < 50 && page > 0) {
           isReachedMax = true;
         }
         notifyListeners();

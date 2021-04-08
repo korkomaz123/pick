@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/utils/repositories/home_repository.dart';
@@ -23,18 +24,22 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> newArrivalsProducts = [];
   List<ProductModel> perfumesProducts = [];
   List<ProductModel> recentlyViewedProducts = [];
+  List<ProductModel> orientalProducts = [];
   SliderImageEntity ads;
   SliderImageEntity popupItem;
   SliderImageEntity megaBanner;
+  SliderImageEntity exculisiveBanner;
   String message;
   String bestDealsTitle = '';
   String newArrivalsTitle = '';
   String perfumesTitle = '';
   String bestDealsBannerTitle = '';
   String newArrivalsBannerTitle = '';
+  String orientalTitle = '';
   List<ProductModel> bestDealsItems = [];
   List<ProductModel> newArrivalsItems = [];
   List<ProductModel> perfumesItems = [];
+  CategoryEntity orientalCategory;
 
   void loadPopup(String lang, Function onSuccess) async {
     try {
@@ -275,6 +280,56 @@ class HomeChangeNotifier extends ChangeNotifier {
       print(e.toString());
     }
     notifyListeners();
+  }
+
+  void loadExculisiveBanner(String lang) async {
+    final result = await homeRepository.getHomeExculisiveBanner(lang);
+    try {
+      if (result['code'] == 'SUCCESS') {
+        exculisiveBanner = SliderImageEntity.fromJson(result['data'][0]);
+      } else {
+        exculisiveBanner = null;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+  void loadOrientalProducts(String lang) async {
+    try {
+      String key = 'oriental-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        orientalTitle = await localStorageRepository.getItem(key + 'title');
+        orientalCategory = CategoryEntity.fromJson(
+            await localStorageRepository.getItem(key + 'category'));
+        List<dynamic> orientalList = await localStorageRepository.getItem(key);
+        orientalProducts = [];
+        for (int i = 0; i < orientalList.length; i++) {
+          orientalProducts.add(ProductModel.fromJson(orientalList[i]));
+        }
+      }
+      final result = await productRepository.getOrientalProducts(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(key, result['products']);
+        await localStorageRepository.setItem(key + 'title', result['title']);
+        await localStorageRepository.setItem(
+            key + 'category', result['category']);
+        if (!exist) {
+          orientalTitle = result['title'];
+          orientalCategory = CategoryEntity.fromJson(result['category']);
+          List<dynamic> orientalList = result['products'];
+          orientalProducts = [];
+          for (int i = 0; i < orientalList.length; i++) {
+            orientalProducts.add(ProductModel.fromJson(orientalList[i]));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void loadBestDealsBanner(String lang) async {

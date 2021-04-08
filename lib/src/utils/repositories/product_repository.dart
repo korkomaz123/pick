@@ -56,6 +56,14 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getOrientalProducts(String lang) async {
+    String url = EndPoints.getOrientalFragrances;
+    return await Api.getMethod(url, data: {'lang': lang});
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getHomeRecentlyViewedGuestProducts(
     List<String> ids,
     String lang,
@@ -88,8 +96,6 @@ class ProductRepository {
     String lang,
   ) async {
     String url = EndPoints.getViewedProducts;
-    print(url);
-    print({'token': token, 'lang': lang});
     return await Api.postMethod(
       url,
       data: {'token': token, 'lang': lang},
@@ -162,8 +168,6 @@ class ProductRepository {
         'page': '$page'
       };
     }
-    print(params);
-    print(url);
     return await Api.getMethod(url, data: params);
   }
 

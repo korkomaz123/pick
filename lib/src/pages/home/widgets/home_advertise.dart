@@ -79,7 +79,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                     children: model.perfumesItems.map((item) {
                       return ProductCard(
                         cardWidth: widget.pageStyle.unitWidth * 120,
-                        cardHeight: widget.pageStyle.unitWidth * 165,
+                        cardHeight: widget.pageStyle.unitWidth * 175,
                         product: item,
                         isWishlist: true,
                         pageStyle: widget.pageStyle,

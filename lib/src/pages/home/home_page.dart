@@ -53,6 +53,8 @@ import 'widgets/home_perfumes.dart';
 import 'widgets/home_recent.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_mega_banner.dart';
+import 'widgets/home_exculisive_banner.dart';
+import 'widgets/home_oriental_fragrances.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -347,7 +349,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  void _configureMessaging() {
+  void _configureMessaging() async {
     firebaseMessaging.configure(
       onMessage: _onForegroundMessage,
       onResume: _onLaunchMessage,
@@ -376,8 +378,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           Platform.isIOS ? lang : '',
         );
       }
-      await settingRepository.updateGuestFcmToken(deviceId, token, lang);
     });
+    String topic = lang == 'en'
+        ? MarkaaNotificationChannels.enChannel
+        : MarkaaNotificationChannels.arChannel;
+    await firebaseMessaging.subscribeToTopic(topic);
   }
 
   static Future<dynamic> _onBackgroundMessageHandler(
@@ -512,6 +517,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeChangeNotifier.loadBestDealsBanner(lang);
     homeChangeNotifier.loadNewArrivals(lang);
     homeChangeNotifier.loadNewArrivalsBanner(lang);
+    homeChangeNotifier.loadExculisiveBanner(lang);
+    homeChangeNotifier.loadOrientalProducts(lang);
     homeChangeNotifier.loadPerfumes(lang);
     categoryChangeNotifier.getCategoriesList(lang);
     categoryChangeNotifier.getFeaturedCategoriesList(lang);
@@ -557,12 +564,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),
                 HomeNewArrivalsBanner(pageStyle: pageStyle),
+                HomeExculisiveBanner(pageStyle: pageStyle),
+                HomeOrientalFragrances(pageStyle: pageStyle),
                 HomePerfumes(pageStyle: pageStyle),
+                HomeAdvertise(pageStyle: pageStyle),
+                SizedBox(height: pageStyle.unitHeight * 10),
                 HomeExploreCategories(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 HomeDiscoverStores(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                HomeAdvertise(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 HomeRecent(pageStyle: pageStyle),
               ],

@@ -43,6 +43,8 @@ class _SplashPageState extends State<SplashPage> {
   CategoryRepository categoryRepo;
   SettingRepository settingRepo;
   SignInRepository signInRepo;
+  CheckoutRepository checkoutRepo;
+  ShippingAddressRepository shippingAddressRepo;
   PageStyle pageStyle;
   bool isFirstTime;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -63,6 +65,8 @@ class _SplashPageState extends State<SplashPage> {
     categoryRepo = context.read<CategoryRepository>();
     settingRepo = context.read<SettingRepository>();
     signInRepo = context.read<SignInRepository>();
+    checkoutRepo = context.read<CheckoutRepository>();
+    shippingAddressRepo = context.read<ShippingAddressRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
@@ -174,23 +178,19 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _getShippingMethod() async {
-    shippingMethods =
-        await context.read<CheckoutRepository>().getShippingMethod(lang);
+    shippingMethods = await checkoutRepo.getShippingMethod(lang);
   }
 
   void _getPaymentMethod() async {
-    paymentMethods =
-        await context.read<CheckoutRepository>().getPaymentMethod(lang);
+    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
   }
 
   void _getSideMenu() async {
-    print(lang);
-    sideMenus =
-        await context.read<CategoryRepository>().getMenuCategories(lang);
+    sideMenus = await categoryRepo.getMenuCategories(lang);
   }
 
   void _getRegions() async {
-    regions = await context.read<ShippingAddressRepository>().getRegions(lang);
+    regions = await shippingAddressRepo.getRegions(lang);
   }
 
   void _navigator() {

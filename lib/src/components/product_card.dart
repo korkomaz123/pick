@@ -50,8 +50,8 @@ class _ProductCardState extends State<ProductCard>
   bool isWishlist;
   int index;
   FlushBarService flushBarService;
-  AnimationController _addToCartController;
-  Animation<double> _addToCartScaleAnimation;
+  // AnimationController _addToCartController;
+  // Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -74,18 +74,18 @@ class _ProductCardState extends State<ProductCard>
   }
 
   void _initAnimation() {
-    _addToCartController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      reverseDuration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _addToCartScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 3.0,
-    ).animate(CurvedAnimation(
-      parent: _addToCartController,
-      curve: Curves.easeIn,
-    ));
+    // _addToCartController = AnimationController(
+    //   duration: const Duration(milliseconds: 300),
+    //   reverseDuration: const Duration(milliseconds: 300),
+    //   vsync: this,
+    // );
+    // _addToCartScaleAnimation = Tween<double>(
+    //   begin: 1.0,
+    //   end: 3.0,
+    // ).animate(CurvedAnimation(
+    //   parent: _addToCartController,
+    //   curve: Curves.easeIn,
+    // ));
 
     /// add to wishlist button animation
     _addToWishlistController = AnimationController(

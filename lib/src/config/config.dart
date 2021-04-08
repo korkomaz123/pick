@@ -53,3 +53,8 @@ class AdjustSDKConfig {
   static const String registerToken = 'rznvj2';
   static const String viewProduct = 'p3ode4';
 }
+
+class MarkaaNotificationChannels {
+  static const String enChannel = 'markaa-all-en';
+  static const String arChannel = 'markaa-all-ar';
+}

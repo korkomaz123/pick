@@ -98,7 +98,8 @@ class _ProductListViewState extends State<ProductListView>
     double maxScroll = scrollController.position.maxScrollExtent;
     double currentScroll = scrollController.position.pixels;
     scrollChangeNotifier.controlBrandBar(currentScroll);
-    if (maxScroll - currentScroll <= 200) {
+    if (!productChangeNotifier.isReachedMax &&
+        (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
