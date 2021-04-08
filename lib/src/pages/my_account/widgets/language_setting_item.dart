@@ -5,6 +5,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -112,6 +113,10 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             EasyLocalization.of(context).supportedLocales.last;
         lang = 'ar';
       }
+      String topic = lang == 'en'
+          ? MarkaaNotificationChannels.arChannel
+          : MarkaaNotificationChannels.enChannel;
+      await firebaseMessaging.unsubscribeFromTopic(topic);
       firebaseMessaging.getToken().then((String token) async {
         deviceToken = token;
         if (user?.token != null) {
@@ -123,7 +128,6 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
             Platform.isIOS ? lang : '',
           );
         }
-        await settingRepository.updateGuestFcmToken(deviceId, token, lang);
         progressService.hideProgress();
         Phoenix.rebirth(context);
       });

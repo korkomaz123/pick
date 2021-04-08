@@ -132,12 +132,13 @@ class OrderChangeNotifier extends ChangeNotifier {
   }
 
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
-    final date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
         'android': MarkaaVersion.androidVersion,
         'iOS': MarkaaVersion.iOSVersion

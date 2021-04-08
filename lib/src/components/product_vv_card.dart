@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -14,39 +15,41 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class ProductHCard extends StatefulWidget {
+class ProductVVCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
   final ProductModel product;
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
+  final bool isLine;
   final bool isMinor;
   final PageStyle pageStyle;
 
-  ProductHCard({
+  ProductVVCard({
     this.cardWidth,
     this.cardHeight,
     this.product,
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
+    this.isLine = false,
     this.isMinor = true,
     this.pageStyle,
   });
 
   @override
-  _ProductHCardState createState() => _ProductHCardState();
+  _ProductVVCardState createState() => _ProductVVCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard>
+class _ProductVVCardState extends State<ProductVVCard>
     with TickerProviderStateMixin {
   bool isWishlist;
   int index;
@@ -75,7 +78,6 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   void _initAnimation() {
-    /// add to cart button animation
     _addToCartController = AnimationController(
       duration: const Duration(milliseconds: 300),
       reverseDuration: const Duration(milliseconds: 300),
@@ -83,7 +85,7 @@ class _ProductHCardState extends State<ProductHCard>
     );
     _addToCartScaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 3.0,
+      end: 1.5,
     ).animate(CurvedAnimation(
       parent: _addToCartController,
       curve: Curves.easeIn,
@@ -106,39 +108,46 @@ class _ProductHCardState extends State<ProductHCard>
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(
-        context,
-        Routes.product,
-        arguments: widget.product,
-      ),
-      child: Container(
+    if (widget?.product?.productId != null) {
+      return InkWell(
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.product,
+          arguments: widget.product,
+        ),
+        child: Container(
+          width: widget.cardWidth,
+          height: widget.cardHeight,
+          child: Stack(
+            children: [
+              _buildProductCard(),
+              if (widget.product.discount > 0) ...[
+                if (lang == 'en') ...[
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: _buildDiscount(),
+                  ),
+                ] else ...[
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: _buildDiscount(),
+                  ),
+                ],
+              ],
+              _buildToolbar(),
+              _buildOutofStock(),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container(
         width: widget.cardWidth,
         height: widget.cardHeight,
-        child: Stack(
-          children: [
-            _buildProductCard(),
-            if (widget.product.discount > 0) ...[
-              if (lang == 'en') ...[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: _buildDiscount(),
-                ),
-              ] else ...[
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: _buildDiscount(),
-                ),
-              ],
-            ],
-            _buildToolbar(),
-            _buildOutofStock(),
-          ],
-        ),
-      ),
-    );
+      );
+    }
   }
 
   Widget _buildProductCard() {
@@ -149,18 +158,13 @@ class _ProductHCardState extends State<ProductHCard>
       padding: EdgeInsets.symmetric(
         horizontal: widget.pageStyle.unitWidth * 8,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(
-              right: lang == 'en' ? widget.pageStyle.unitWidth * 5 : 0,
-              left: lang == 'ar' ? widget.pageStyle.unitWidth * 5 : 0,
-            ),
             child: Image.network(
               widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.8,
+              height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
             ),
           ),
@@ -168,7 +172,6 @@ class _ProductHCardState extends State<ProductHCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: widget.cardHeight * 0.1),
                 InkWell(
                   onTap: () {
                     if (widget?.product?.brandEntity?.optionId != null) {
@@ -194,12 +197,22 @@ class _ProductHCardState extends State<ProductHCard>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    right: lang == 'en' ? widget.pageStyle.unitWidth * 20 : 0,
-                    left: lang == 'ar' ? widget.pageStyle.unitWidth * 20 : 0,
-                  ),
-                  child: Text(
+                if (widget.isLine || widget.isMinor) ...[
+                  Expanded(
+                    child: Text(
+                      widget.product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: mediumTextStyle.copyWith(
+                        color: greyDarkColor,
+                        fontSize: widget.pageStyle.unitFontSize *
+                            (widget.isMinor ? 12 : 16),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  )
+                ] else ...[
+                  Text(
                     widget.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -209,11 +222,12 @@ class _ProductHCardState extends State<ProductHCard>
                           (widget.isMinor ? 12 : 16),
                       fontWeight: FontWeight.w700,
                     ),
-                  ),
-                ),
-                SizedBox(height: widget.pageStyle.unitHeight * 10),
+                  )
+                ],
+                if (widget.isLine) ...[Divider(color: greyColor)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
                       child: Row(
@@ -223,16 +237,16 @@ class _ProductHCardState extends State<ProductHCard>
                                 ? (widget.product.price + ' ' + 'currency'.tr())
                                 : '',
                             style: mediumTextStyle.copyWith(
-                              fontSize: widget.pageStyle.unitFontSize * 14,
+                              fontSize: widget.pageStyle.unitFontSize *
+                                  (widget.isMinor ? 12 : 14),
                               color: greyColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (widget.product.discount > 0) ...[
                             SizedBox(
-                              width: widget.pageStyle.unitWidth *
-                                  (widget.isMinor ? 4 : 10),
-                            ),
+                                width: widget.pageStyle.unitWidth *
+                                    (widget.isMinor ? 4 : 10)),
                             Text(
                               widget.product.beforePrice +
                                   ' ' +
@@ -254,20 +268,28 @@ class _ProductHCardState extends State<ProductHCard>
                         (widget.product.typeId != 'simple' ||
                             widget.product.stockQty != null &&
                                 widget.product.stockQty > 0)) ...[
-                      InkWell(
-                        onTap: () => _onAddProductToCart(context),
-                        child: ScaleTransition(
-                          scale: _addToCartScaleAnimation,
-                          child: Container(
-                            width: widget.pageStyle.unitHeight * 32,
-                            height: widget.pageStyle.unitHeight * 32,
-                            child: SvgPicture.asset(addCartIcon),
+                      ScaleTransition(
+                        scale: _addToCartScaleAnimation,
+                        child: Container(
+                          width: widget.cardWidth -
+                              widget.pageStyle.unitWidth * 16,
+                          height: widget.pageStyle.unitHeight * 40,
+                          child: MarkaaTextButton(
+                            title: 'wishlist_add_cart_button_title'.tr(),
+                            titleColor: Colors.white,
+                            titleSize: widget.pageStyle.unitFontSize * 14,
+                            borderColor: Colors.transparent,
+                            buttonColor: primaryColor,
+                            onPressed: () => _onAddProductToCart(context),
                           ),
                         ),
-                      ),
+                      )
+                    ] else ...[
+                      SizedBox.shrink()
                     ],
                   ],
                 ),
+                SizedBox(height: widget.pageStyle.unitHeight * 5),
               ],
             ),
           ),
@@ -347,7 +369,7 @@ class _ProductHCardState extends State<ProductHCard>
         ),
       );
     }
-    return Container();
+    return SizedBox.shrink();
   }
 
   void _onAddProductToCart(BuildContext context) async {

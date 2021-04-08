@@ -8,8 +8,8 @@ class MarkaaReporter {
 }
 
 class MarkaaVersion {
-  static const int androidVersion = 150000;
-  static const int iOSVersion = 150000;
+  static const int androidVersion = 151000;
+  static const int iOSVersion = 151000;
 }
 
 class GoSellSdk {
@@ -43,4 +43,18 @@ class AlgoliaIndexes {
       'magento2_arabic_products_created_at_desc';
   static const String arCreatedAtAscProducts =
       'magento2_arabic_products_created_at_asc';
+}
+
+class AdjustSDKConfig {
+  static const String appToken = '6zku7sd3x7gg';
+  static const String addToCartToken = '4gustj';
+  static const String completePurchaseToken = 'mw1hfm';
+  static const String initiateCheckoutToken = 'a5budz';
+  static const String registerToken = 'rznvj2';
+  static const String viewProduct = 'p3ode4';
+}
+
+class MarkaaNotificationChannels {
+  static const String enChannel = 'markaa-all-en';
+  static const String arChannel = 'markaa-all-ar';
 }

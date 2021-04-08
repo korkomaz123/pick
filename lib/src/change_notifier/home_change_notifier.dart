@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/utils/repositories/home_repository.dart';
@@ -23,15 +24,22 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> newArrivalsProducts = [];
   List<ProductModel> perfumesProducts = [];
   List<ProductModel> recentlyViewedProducts = [];
+  List<ProductModel> orientalProducts = [];
   SliderImageEntity ads;
   SliderImageEntity popupItem;
   SliderImageEntity megaBanner;
+  SliderImageEntity exculisiveBanner;
   String message;
   String bestDealsTitle = '';
   String newArrivalsTitle = '';
   String perfumesTitle = '';
   String bestDealsBannerTitle = '';
   String newArrivalsBannerTitle = '';
+  String orientalTitle = '';
+  List<ProductModel> bestDealsItems = [];
+  List<ProductModel> newArrivalsItems = [];
+  List<ProductModel> perfumesItems = [];
+  CategoryEntity orientalCategory;
 
   void loadPopup(String lang, Function onSuccess) async {
     try {
@@ -176,15 +184,46 @@ class HomeChangeNotifier extends ChangeNotifier {
       String key = 'homeads-$lang';
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
-        dynamic data = await localStorageRepository.getItem(key);
-        ads = SliderImageEntity.fromJson(data);
-        notifyListeners();
+        final result = await localStorageRepository.getItem(key);
+        final adsData = result.containsKey('data') ? result['data'] : null;
+        final adsItems = result.containsKey('items') ? result['items'] : [];
+        if (adsData != null) {
+          ads = SliderImageEntity.fromJson(adsData);
+          perfumesItems = [];
+          for (var item in adsItems) {
+            perfumesItems.add(ProductModel.fromJson(item));
+          }
+          notifyListeners();
+        }
       }
-      final result = await homeRepository.getHomeAds(lang);
-      await localStorageRepository.setItem(key, result['data']);
-      if (!exist) {
-        ads = SliderImageEntity.fromJson(result['data']);
-        notifyListeners();
+      var result = await homeRepository.getHomeAds(lang);
+      if (result['code'] == 'SUCCESS') {
+        final adsData = result['data'];
+        var response;
+        if (adsData['category_id'] != null) {
+          response = await productRepository.getProducts(
+              adsData['category_id'], lang, 1);
+        } else if (adsData['brand_id'] != null) {
+          response = await productRepository.getBrandProducts(
+              adsData['brand_id'], 'all', lang, 1);
+        }
+        if (response['code'] == 'SUCCESS') {
+          result['items'] = response['products'];
+        } else {
+          result['items'] = [];
+        }
+        await localStorageRepository.setItem(
+          key,
+          {'data': result['data'], 'items': result['items']},
+        );
+        if (!exist) {
+          perfumesItems = [];
+          for (var item in result['items']) {
+            perfumesItems.add(ProductModel.fromJson(item));
+          }
+          ads = SliderImageEntity.fromJson(result['data']);
+          notifyListeners();
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -232,15 +271,65 @@ class HomeChangeNotifier extends ChangeNotifier {
   void loadMegaBanner(String lang) async {
     final result = await homeRepository.getHomeMegaBanner(lang);
     try {
-    if (result['code'] == 'SUCCESS') {
-      megaBanner = SliderImageEntity.fromJson(result['data'][0]);
-    } else {
-      megaBanner = null;
-    }
+      if (result['code'] == 'SUCCESS') {
+        megaBanner = SliderImageEntity.fromJson(result['data'][0]);
+      } else {
+        megaBanner = null;
+      }
     } catch (e) {
       print(e.toString());
     }
     notifyListeners();
+  }
+
+  void loadExculisiveBanner(String lang) async {
+    final result = await homeRepository.getHomeExculisiveBanner(lang);
+    try {
+      if (result['code'] == 'SUCCESS') {
+        exculisiveBanner = SliderImageEntity.fromJson(result['data'][0]);
+      } else {
+        exculisiveBanner = null;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+  void loadOrientalProducts(String lang) async {
+    try {
+      String key = 'oriental-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        orientalTitle = await localStorageRepository.getItem(key + 'title');
+        orientalCategory = CategoryEntity.fromJson(
+            await localStorageRepository.getItem(key + 'category'));
+        List<dynamic> orientalList = await localStorageRepository.getItem(key);
+        orientalProducts = [];
+        for (int i = 0; i < orientalList.length; i++) {
+          orientalProducts.add(ProductModel.fromJson(orientalList[i]));
+        }
+      }
+      final result = await productRepository.getOrientalProducts(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(key, result['products']);
+        await localStorageRepository.setItem(key + 'title', result['title']);
+        await localStorageRepository.setItem(
+            key + 'category', result['category']);
+        if (!exist) {
+          orientalTitle = result['title'];
+          orientalCategory = CategoryEntity.fromJson(result['category']);
+          List<dynamic> orientalList = result['products'];
+          orientalProducts = [];
+          for (int i = 0; i < orientalList.length; i++) {
+            orientalProducts.add(ProductModel.fromJson(orientalList[i]));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void loadBestDealsBanner(String lang) async {
@@ -251,30 +340,58 @@ class HomeChangeNotifier extends ChangeNotifier {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         bestDealsBannerTitle = data['title'];
         List<dynamic> sliderImageList = data['banners'];
+        List<dynamic> sliderItems =
+            data.containsKey('items') ? data['items'] : [];
         bestDealsBanners = [];
-        for (int i = 0; i < sliderImageList.length; i++) {
-          bestDealsBanners.add(SliderImageEntity.fromJson(sliderImageList[i]));
+        bestDealsItems = [];
+        for (var banner in sliderImageList) {
+          bestDealsBanners.add(SliderImageEntity.fromJson(banner));
+        }
+        for (var item in sliderItems) {
+          bestDealsItems.add(ProductModel.fromJson(item));
         }
         notifyListeners();
       }
       final result = await homeRepository.getHomeBestDealsBanners(lang);
       if (result['code'] == 'SUCCESS') {
+        dynamic response;
+        if (result['data'][0]['category_id'] != null) {
+          response = await productRepository.getProducts(
+              result['data'][0]['category_id'], lang, 1);
+        } else if (result['data'][0]['brand_id'] != null) {
+          response = await productRepository.getBrandProducts(
+              result['data'][0]['brand_id'], 'all', lang, 1);
+        }
+        if (response['code'] == 'SUCCESS') {
+          result['items'] = response['products'];
+        } else {
+          result['items'] = [];
+        }
         await localStorageRepository.setItem(
           key,
-          {'title': result['title'], 'banners': result['data']},
+          {
+            'title': result['title'],
+            'banners': result['data'],
+            'items': result['items']
+          },
         );
         if (!exist) {
           bestDealsBannerTitle = result['title'];
           List<dynamic> sliderImageList = result['data'];
+          List<dynamic> sliderItems = result['items'];
           bestDealsBanners = [];
-          for (int i = 0; i < sliderImageList.length; i++) {
-            bestDealsBanners
-                .add(SliderImageEntity.fromJson(sliderImageList[i]));
+          bestDealsItems = [];
+          for (var banner in sliderImageList) {
+            bestDealsBanners.add(SliderImageEntity.fromJson(banner));
+          }
+          for (var item in sliderItems) {
+            bestDealsItems.add(ProductModel.fromJson(item));
           }
           notifyListeners();
         }
       }
     } catch (e) {
+      print('best deals banner');
       print(e.toString());
     }
   }
@@ -287,26 +404,52 @@ class HomeChangeNotifier extends ChangeNotifier {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         newArrivalsBannerTitle = data['title'];
         List<dynamic> sliderImageList = data['banners'];
+        List<dynamic> sliderItems =
+            data.containsKey('items') ? data['items'] : [];
         newArrivalsBanners = [];
-        for (int i = 0; i < sliderImageList.length; i++) {
-          newArrivalsBanners
-              .add(SliderImageEntity.fromJson(sliderImageList[i]));
+        newArrivalsItems = [];
+        for (var banner in sliderImageList) {
+          newArrivalsBanners.add(SliderImageEntity.fromJson(banner));
+        }
+        for (var item in sliderItems) {
+          newArrivalsItems.add(ProductModel.fromJson(item));
         }
         notifyListeners();
       }
       final result = await homeRepository.getHomeNewArrivalsBanners(lang);
       if (result['code'] == 'SUCCESS') {
+        dynamic response;
+        if (result['data'][0]['category_id'] != null) {
+          response = await productRepository.getProducts(
+              result['data'][0]['category_id'], lang, 1);
+        } else if (result['data'][0]['brand_id'] != null) {
+          response = await productRepository.getBrandProducts(
+              result['data'][0]['brand_id'], 'all', lang, 1);
+        }
+        if (response['code'] == 'SUCCESS') {
+          result['items'] = response['products'];
+        } else {
+          result['items'] = [];
+        }
         await localStorageRepository.setItem(
           key,
-          {'title': result['title'], 'banners': result['data']},
+          {
+            'title': result['title'],
+            'banners': result['data'],
+            'items': result['items']
+          },
         );
         if (!exist) {
           newArrivalsBannerTitle = result['title'];
           List<dynamic> sliderImageList = result['data'];
+          List<dynamic> sliderItems = result['items'];
           newArrivalsBanners = [];
-          for (int i = 0; i < sliderImageList.length; i++) {
-            newArrivalsBanners
-                .add(SliderImageEntity.fromJson(sliderImageList[i]));
+          newArrivalsItems = [];
+          for (var banner in sliderImageList) {
+            newArrivalsBanners.add(SliderImageEntity.fromJson(banner));
+          }
+          for (var item in sliderItems) {
+            newArrivalsItems.add(ProductModel.fromJson(item));
           }
           notifyListeners();
         }

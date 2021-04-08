@@ -27,6 +27,7 @@ class _ProductReviewState extends State<ProductReview> {
   void initState() {
     super.initState();
     model = context.read<ProductReviewChangeNotifier>();
+    model.getProductReviews(widget.product.productId);
   }
 
   @override

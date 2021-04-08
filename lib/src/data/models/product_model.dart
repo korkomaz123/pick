@@ -108,6 +108,6 @@ class ProductModel {
     if (beforePrice == 0) {
       return 0;
     }
-    return ((beforePrice - afterPrice) / beforePrice * 100).floor();
+    return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
   }
 }

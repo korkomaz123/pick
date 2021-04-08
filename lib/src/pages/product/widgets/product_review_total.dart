@@ -34,6 +34,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
   void initState() {
     super.initState();
     model = context.read<ProductReviewChangeNotifier>();
+    model.getProductReviews(widget.product.productId);
   }
 
   @override

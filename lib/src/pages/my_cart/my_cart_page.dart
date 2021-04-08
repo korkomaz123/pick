@@ -1,3 +1,5 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -473,6 +475,9 @@ class _MyCartPageState extends State<MyCartPage>
   void _onCheckout() async {
     await myCartChangeNotifier.getCartItems(
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    AdjustEvent adjustEvent =
+        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+    Adjust.trackEvent(adjustEvent);
   }
 
   void _onReloadItemSuccess() {

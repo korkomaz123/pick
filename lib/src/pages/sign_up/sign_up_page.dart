@@ -1,3 +1,5 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -60,6 +62,8 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _saveToken(UserEntity loggedInUser) async {
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.registerToken);
+    Adjust.trackEvent(adjustEvent);
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
     await myCartChangeNotifier.getCartId();

@@ -3,6 +3,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/components/product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +89,20 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                     }
                   },
                   child: Image.network(banner.bannerImage),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: model.bestDealsItems.map((item) {
+                      return ProductCard(
+                        cardWidth: widget.pageStyle.unitWidth * 120,
+                        cardHeight: widget.pageStyle.unitWidth * 175,
+                        product: item,
+                        isWishlist: true,
+                        pageStyle: widget.pageStyle,
+                      );
+                    }).toList(),
+                  ),
                 ),
               ],
             ),

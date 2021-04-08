@@ -1,6 +1,6 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/components/product_vv_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -14,26 +14,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class HomeBestDeals extends StatefulWidget {
+class HomeOrientalFragrances extends StatefulWidget {
   final PageStyle pageStyle;
 
-  HomeBestDeals({this.pageStyle});
+  HomeOrientalFragrances({this.pageStyle});
 
   @override
-  _HomeBestDealsState createState() => _HomeBestDealsState();
+  _HomeOrientalFragrancesState createState() => _HomeOrientalFragrancesState();
 }
 
-class _HomeBestDealsState extends State<HomeBestDeals> {
-  CategoryEntity bestDeals = homeCategories[0];
-  List<ProductModel> bestDealsProducts;
+class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
   String title;
+  CategoryEntity orientalCategory;
+  List<ProductModel> orientalProducts;
   HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadBestDeals(lang);
+    homeChangeNotifier.loadOrientalProducts(lang);
   }
 
   @override
@@ -46,13 +46,14 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
       color: Colors.white,
       child: Consumer<HomeChangeNotifier>(
         builder: (_, model, __) {
-          bestDealsProducts = model.bestDealsProducts;
-          title = model.bestDealsTitle;
-          if (bestDealsProducts.isNotEmpty) {
+          orientalProducts = model.orientalProducts;
+          title = model.orientalTitle;
+          orientalCategory = model.orientalCategory;
+          if (orientalProducts.isNotEmpty) {
             return Column(
               children: [
                 _buildHeadline(),
-                _buildProductsList(model.bestDealsProducts),
+                _buildProductsList(model.orientalProducts),
               ],
             );
           } else {
@@ -88,8 +89,8 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(
-                  category: homeCategories[0],
-                  subCategory: homeCategories[0].subCategories,
+                  category: orientalCategory,
+                  subCategory: orientalCategory.subCategories,
                   brand: BrandEntity(),
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
@@ -120,18 +121,12 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
           children: list.map((item) {
             return Container(
               margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: widget.pageStyle.unitWidth,
-                ),
-              ),
-              child: ProductVCard(
+              child: ProductVVCard(
                 cardWidth: widget.pageStyle.unitWidth * 170,
                 cardHeight: widget.pageStyle.unitHeight * 280,
                 product: item,
                 isShoppingCart: true,
-                isLine: true,
+                isLine: false,
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,

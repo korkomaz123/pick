@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
@@ -79,6 +81,8 @@ class _ProductPageState extends State<ProductPage>
     _loadDetails();
     _initAnimation();
     _sendViewedProduct();
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.viewProduct);
+    Adjust.trackEvent(adjustEvent);
   }
 
   void _loadDetails() async {
@@ -290,6 +294,8 @@ class _ProductPageState extends State<ProductPage>
     });
     await myCartChangeNotifier.addProductToCart(
         context, pageStyle, product, 1, lang, model.selectedOptions);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    Adjust.trackEvent(adjustEvent);
   }
 
   void _onBuyNow(ProductChangeNotifier model) {
@@ -308,6 +314,8 @@ class _ProductPageState extends State<ProductPage>
     myCartChangeNotifier.addProductToCart(
         context, pageStyle, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    Adjust.trackEvent(adjustEvent);
   }
 
   void _onFirstReview(ProductEntity product) async {

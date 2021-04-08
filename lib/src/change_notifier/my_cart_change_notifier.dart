@@ -413,12 +413,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   void reportCartIssue(dynamic result, dynamic data) async {
     data['cartId'] = cartId;
-    final date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
       'collectData': data,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
         'android': MarkaaVersion.androidVersion,
         'iOS': MarkaaVersion.iOSVersion

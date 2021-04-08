@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
@@ -353,6 +355,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
+    AdjustEvent adjustEvent =
+        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
       context,

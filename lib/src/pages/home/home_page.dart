@@ -24,14 +24,22 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_config.dart';
+import 'package:adjust_sdk/adjust_attribution.dart';
+import 'package:adjust_sdk/adjust_event_failure.dart';
+import 'package:adjust_sdk/adjust_event_success.dart';
+import 'package:adjust_sdk/adjust_session_failure.dart';
+import 'package:adjust_sdk/adjust_session_success.dart';
 
 import 'widgets/home_featured_categories.dart';
 import 'widgets/home_advertise.dart';
@@ -45,6 +53,8 @@ import 'widgets/home_perfumes.dart';
 import 'widgets/home_recent.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_mega_banner.dart';
+import 'widgets/home_exculisive_banner.dart';
+import 'widgets/home_oriental_fragrances.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -85,6 +95,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _setupAdjustSDK();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
@@ -101,6 +112,190 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
+  }
+
+  void _setupAdjustSDK() async {
+    AdjustConfig config = new AdjustConfig(
+      AdjustSDKConfig.appToken,
+      AdjustEnvironment.sandbox,
+    );
+    config.logLevel = AdjustLogLevel.verbose;
+    // config.isDeviceKnown = false;
+    // config.defaultTracker = 'abc123';
+    // config.processName = 'com.adjust.examples';
+    // config.sendInBackground = true;
+    // config.eventBufferingEnabled = true;
+    // config.delayStart = 6.0;
+    // config.setAppSecret(1000, 1, 2, 3, 4);
+    // config.externalDeviceId = 'random-external-device-id';
+    // config.deactivateSKAdNetworkHandling();
+
+    config.attributionCallback = (AdjustAttribution attributionChangedData) {
+      print('[Adjust]: Attribution changed!');
+
+      if (attributionChangedData.trackerToken != null) {
+        print(
+            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
+      }
+      if (attributionChangedData.trackerName != null) {
+        print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
+      }
+      if (attributionChangedData.campaign != null) {
+        print('[Adjust]: Campaign: ' + attributionChangedData.campaign);
+      }
+      if (attributionChangedData.network != null) {
+        print('[Adjust]: Network: ' + attributionChangedData.network);
+      }
+      if (attributionChangedData.creative != null) {
+        print('[Adjust]: Creative: ' + attributionChangedData.creative);
+      }
+      if (attributionChangedData.adgroup != null) {
+        print('[Adjust]: Adgroup: ' + attributionChangedData.adgroup);
+      }
+      if (attributionChangedData.clickLabel != null) {
+        print('[Adjust]: Click label: ' + attributionChangedData.clickLabel);
+      }
+      if (attributionChangedData.adid != null) {
+        print('[Adjust]: Adid: ' + attributionChangedData.adid);
+      }
+    };
+
+    config.sessionSuccessCallback = (AdjustSessionSuccess sessionSuccessData) {
+      print('[Adjust]: Session tracking success!');
+
+      if (sessionSuccessData.message != null) {
+        print('[Adjust]: Message: ' + sessionSuccessData.message);
+      }
+      if (sessionSuccessData.timestamp != null) {
+        print('[Adjust]: Timestamp: ' + sessionSuccessData.timestamp);
+      }
+      if (sessionSuccessData.adid != null) {
+        print('[Adjust]: Adid: ' + sessionSuccessData.adid);
+      }
+      if (sessionSuccessData.jsonResponse != null) {
+        print('[Adjust]: JSON response: ' + sessionSuccessData.jsonResponse);
+      }
+    };
+
+    config.sessionFailureCallback = (AdjustSessionFailure sessionFailureData) {
+      print('[Adjust]: Session tracking failure!');
+
+      if (sessionFailureData.message != null) {
+        print('[Adjust]: Message: ' + sessionFailureData.message);
+      }
+      if (sessionFailureData.timestamp != null) {
+        print('[Adjust]: Timestamp: ' + sessionFailureData.timestamp);
+      }
+      if (sessionFailureData.adid != null) {
+        print('[Adjust]: Adid: ' + sessionFailureData.adid);
+      }
+      if (sessionFailureData.willRetry != null) {
+        print(
+            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+      }
+      if (sessionFailureData.jsonResponse != null) {
+        print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
+      }
+    };
+
+    config.eventSuccessCallback = (AdjustEventSuccess eventSuccessData) {
+      print('[Adjust]: Event tracking success!');
+
+      if (eventSuccessData.eventToken != null) {
+        print('[Adjust]: Event token: ' + eventSuccessData.eventToken);
+      }
+      if (eventSuccessData.message != null) {
+        print('[Adjust]: Message: ' + eventSuccessData.message);
+      }
+      if (eventSuccessData.timestamp != null) {
+        print('[Adjust]: Timestamp: ' + eventSuccessData.timestamp);
+      }
+      if (eventSuccessData.adid != null) {
+        print('[Adjust]: Adid: ' + eventSuccessData.adid);
+      }
+      if (eventSuccessData.callbackId != null) {
+        print('[Adjust]: Callback ID: ' + eventSuccessData.callbackId);
+      }
+      if (eventSuccessData.jsonResponse != null) {
+        print('[Adjust]: JSON response: ' + eventSuccessData.jsonResponse);
+      }
+    };
+
+    config.eventFailureCallback = (AdjustEventFailure eventFailureData) {
+      print('[Adjust]: Event tracking failure!');
+
+      if (eventFailureData.eventToken != null) {
+        print('[Adjust]: Event token: ' + eventFailureData.eventToken);
+      }
+      if (eventFailureData.message != null) {
+        print('[Adjust]: Message: ' + eventFailureData.message);
+      }
+      if (eventFailureData.timestamp != null) {
+        print('[Adjust]: Timestamp: ' + eventFailureData.timestamp);
+      }
+      if (eventFailureData.adid != null) {
+        print('[Adjust]: Adid: ' + eventFailureData.adid);
+      }
+      if (eventFailureData.callbackId != null) {
+        print('[Adjust]: Callback ID: ' + eventFailureData.callbackId);
+      }
+      if (eventFailureData.willRetry != null) {
+        print('[Adjust]: Will retry: ' + eventFailureData.willRetry.toString());
+      }
+      if (eventFailureData.jsonResponse != null) {
+        print('[Adjust]: JSON response: ' + eventFailureData.jsonResponse);
+      }
+    };
+
+    config.launchDeferredDeeplink = true;
+    config.deferredDeeplinkCallback = (String uri) {
+      print('[Adjust]: Received deferred deeplink: ' + uri);
+    };
+
+    // Add session callback parameters.
+    Adjust.addSessionCallbackParameter('scp_foo_1', 'scp_bar');
+    Adjust.addSessionCallbackParameter('scp_foo_2', 'scp_value');
+
+    // Add session Partner parameters.
+    Adjust.addSessionPartnerParameter('spp_foo_1', 'spp_bar');
+    Adjust.addSessionPartnerParameter('spp_foo_2', 'spp_value');
+
+    // Remove session callback parameters.
+    Adjust.removeSessionCallbackParameter('scp_foo_1');
+    Adjust.removeSessionPartnerParameter('spp_foo_1');
+
+    // Clear all session callback parameters.
+    Adjust.resetSessionCallbackParameters();
+
+    // Clear all session partner parameters.
+    Adjust.resetSessionPartnerParameters();
+
+    if (Platform.isIOS) {
+      // Ask for tracking consent.
+      Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
+        print('[Adjust]: Authorization status update!');
+        switch (status) {
+          case 0:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusNotDetermined');
+            break;
+          case 1:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusRestricted');
+            break;
+          case 2:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusDenied');
+            break;
+          case 3:
+            print(
+                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusAuthorized');
+            break;
+        }
+      });
+    }
+    // Start SDK.
+    Adjust.start(config);
   }
 
   void _initializeLocalNotification() async {
@@ -144,15 +339,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {},
+            child: Text('Ok okay okay'),
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.categoryList);
+            },
           )
         ],
       ),
     );
   }
 
-  void _configureMessaging() {
+  void _configureMessaging() async {
     firebaseMessaging.configure(
       onMessage: _onForegroundMessage,
       onResume: _onLaunchMessage,
@@ -181,8 +378,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           Platform.isIOS ? lang : '',
         );
       }
-      await settingRepository.updateGuestFcmToken(deviceId, token, lang);
     });
+    String topic = lang == 'en'
+        ? MarkaaNotificationChannels.enChannel
+        : MarkaaNotificationChannels.arChannel;
+    await firebaseMessaging.subscribeToTopic(topic);
   }
 
   static Future<dynamic> _onBackgroundMessageHandler(
@@ -207,8 +407,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
-      message['notification']['title'],
-      message['notification']['body'],
+      Platform.isAndroid ? message['notification']['title'] : message['title'],
+      Platform.isAndroid ? message['notification']['body'] : message['body'],
       NotificationDetails(
         AndroidNotificationDetails(
           channel.id,
@@ -223,7 +423,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
     try {
-      Map<dynamic, dynamic> data = message['data'];
+      Map<dynamic, dynamic> data =
+          Platform.isAndroid ? message['data'] : message;
       int target = int.parse(data['target']);
       if (target != 0) {
         String id = data['id'];
@@ -280,13 +481,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      timerLink = new Timer(
-        const Duration(milliseconds: 1000),
-        () {
-          dynamicLinkService.retrieveDynamicLink(context);
-        },
-      );
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        Adjust.onResume();
+        timerLink = new Timer(
+          const Duration(milliseconds: 1000),
+          () {
+            dynamicLinkService.retrieveDynamicLink(context);
+          },
+        );
+        break;
+      case AppLifecycleState.paused:
+        Adjust.onPause();
+        break;
+      case AppLifecycleState.detached:
+        break;
     }
   }
 
@@ -306,6 +517,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     homeChangeNotifier.loadBestDealsBanner(lang);
     homeChangeNotifier.loadNewArrivals(lang);
     homeChangeNotifier.loadNewArrivalsBanner(lang);
+    homeChangeNotifier.loadExculisiveBanner(lang);
+    homeChangeNotifier.loadOrientalProducts(lang);
     homeChangeNotifier.loadPerfumes(lang);
     categoryChangeNotifier.getCategoriesList(lang);
     categoryChangeNotifier.getFeaturedCategoriesList(lang);
@@ -351,12 +564,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),
                 HomeNewArrivalsBanner(pageStyle: pageStyle),
+                HomeExculisiveBanner(pageStyle: pageStyle),
+                HomeOrientalFragrances(pageStyle: pageStyle),
                 HomePerfumes(pageStyle: pageStyle),
+                HomeAdvertise(pageStyle: pageStyle),
+                SizedBox(height: pageStyle.unitHeight * 10),
                 HomeExploreCategories(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 HomeDiscoverStores(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                HomeAdvertise(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),
                 HomeRecent(pageStyle: pageStyle),
               ],
