@@ -451,8 +451,7 @@ class _SearchPageState extends State<SearchPage>
                             Row(
                               children: [
                                 Text(
-                                  'items'.tr().replaceFirst(
-                                      '0', '${brands[index].productsCount}'),
+                                  'view_all'.tr(),
                                   style: mediumTextStyle.copyWith(
                                     color: primaryColor,
                                     fontSize: pageStyle.unitFontSize * 10,
@@ -640,8 +639,7 @@ class _SearchPageState extends State<SearchPage>
                               Row(
                                 children: [
                                   Text(
-                                    'items'.tr().replaceFirst(
-                                        '0', '${brands[index].productsCount}'),
+                                    'view_all'.tr(),
                                     style: mediumTextStyle.copyWith(
                                       color: primaryColor,
                                       fontSize: pageStyle.unitFontSize * 10,

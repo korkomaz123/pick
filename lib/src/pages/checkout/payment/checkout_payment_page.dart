@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
@@ -370,7 +371,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   void _onGeneratePaymentUrl() async {
     final address = jsonDecode(orderDetails['orderAddress']);
     String cartId = orderDetails['cartId'];
-    String now = DateTime.now().millisecondsSinceEpoch.toString();
+    int version = Platform.isAndroid
+        ? MarkaaVersion.androidVersion
+        : MarkaaVersion.iOSVersion;
     Map<String, dynamic> data = {
       "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
       "currency": "KWD",
@@ -384,8 +387,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         "gateway": "gateway",
         "payment": "payment",
         "track": "track",
-        "transaction": "trans_$cartId\_$now",
-        "order": "order_$cartId\_$now",
+        "transaction": "trans_$cartId\_$version",
+        "order": "order_$cartId\_$version",
       },
       "receipt": {"email": true, "sms": false},
       "customer": {

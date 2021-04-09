@@ -217,9 +217,7 @@ class _BrandListPageState extends State<BrandListPage> {
             Row(
               children: [
                 Text(
-                  'items'
-                      .tr()
-                      .replaceFirst('0', '${brands[index].productsCount}'),
+                  'view_all'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: pageStyle.unitFontSize * 11,

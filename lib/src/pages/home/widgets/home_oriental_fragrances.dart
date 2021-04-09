@@ -40,9 +40,9 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 380,
+      height: widget.pageStyle.unitHeight * 410,
+      margin: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
       padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
       color: Colors.white,
       child: Consumer<HomeChangeNotifier>(
         builder: (_, model, __) {
@@ -113,7 +113,6 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
       width: double.infinity,
       padding: EdgeInsets.only(
         top: widget.pageStyle.unitHeight * 10,
-        bottom: widget.pageStyle.unitHeight * 10,
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -123,7 +122,7 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
               margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
               child: ProductVVCard(
                 cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 280,
+                cardHeight: widget.pageStyle.unitHeight * 330,
                 product: item,
                 isShoppingCart: true,
                 isLine: false,
