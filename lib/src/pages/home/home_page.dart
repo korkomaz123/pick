@@ -117,18 +117,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void _setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.appToken,
-      AdjustEnvironment.sandbox,
+      AdjustEnvironment.production,
     );
     config.logLevel = AdjustLogLevel.verbose;
-    // config.isDeviceKnown = false;
-    // config.defaultTracker = 'abc123';
-    // config.processName = 'com.adjust.examples';
-    // config.sendInBackground = true;
-    // config.eventBufferingEnabled = true;
-    // config.delayStart = 6.0;
-    // config.setAppSecret(1000, 1, 2, 3, 4);
-    // config.externalDeviceId = 'random-external-device-id';
-    // config.deactivateSKAdNetworkHandling();
 
     config.attributionCallback = (AdjustAttribution attributionChangedData) {
       print('[Adjust]: Attribution changed!');
@@ -270,30 +261,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // Clear all session partner parameters.
     Adjust.resetSessionPartnerParameters();
 
-    if (Platform.isIOS) {
-      // Ask for tracking consent.
-      Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
-        print('[Adjust]: Authorization status update!');
-        switch (status) {
-          case 0:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusNotDetermined');
-            break;
-          case 1:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusRestricted');
-            break;
-          case 2:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusDenied');
-            break;
-          case 3:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusAuthorized');
-            break;
-        }
-      });
-    }
     // Start SDK.
     Adjust.start(config);
   }
@@ -563,9 +530,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 HomeBestDeals(pageStyle: pageStyle),
                 HomeBestDealsBanner(pageStyle: pageStyle),
                 HomeNewArrivals(pageStyle: pageStyle),
-                HomeNewArrivalsBanner(pageStyle: pageStyle),
                 HomeExculisiveBanner(pageStyle: pageStyle),
                 HomeOrientalFragrances(pageStyle: pageStyle),
+                HomeNewArrivalsBanner(pageStyle: pageStyle),
                 HomePerfumes(pageStyle: pageStyle),
                 HomeAdvertise(pageStyle: pageStyle),
                 SizedBox(height: pageStyle.unitHeight * 10),

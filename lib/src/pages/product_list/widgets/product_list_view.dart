@@ -364,18 +364,6 @@ class _ProductListViewState extends State<ProductListView>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      right: lang == 'en'
-                          ? BorderSide(
-                              color: greyColor,
-                              width: pageStyle.unitWidth * 0.5,
-                            )
-                          : BorderSide.none,
-                      left: lang == 'ar'
-                          ? BorderSide(
-                              color: greyColor,
-                              width: pageStyle.unitWidth * 0.5,
-                            )
-                          : BorderSide.none,
                       bottom: BorderSide(
                         color: greyColor,
                         width: pageStyle.unitWidth * 0.5,
@@ -385,7 +373,7 @@ class _ProductListViewState extends State<ProductListView>
                   child: ProductVCard(
                     pageStyle: pageStyle,
                     product: products[2 * index],
-                    cardWidth: pageStyle.unitWidth * 187,
+                    cardWidth: pageStyle.unitWidth * 187.25,
                     cardHeight: pageStyle.unitHeight * 280,
                     isShoppingCart: true,
                     isWishlist: true,
@@ -394,20 +382,15 @@ class _ProductListViewState extends State<ProductListView>
                 ),
                 if (index * 2 <= products.length - 2) ...[
                   Container(
+                    height: pageStyle.unitHeight * 280,
+                    child: VerticalDivider(
+                      color: greyColor,
+                      width: pageStyle.unitWidth * 0.5,
+                    ),
+                  ),
+                  Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        right: lang == 'ar'
-                            ? BorderSide(
-                                color: greyColor,
-                                width: pageStyle.unitWidth * 0.5,
-                              )
-                            : BorderSide.none,
-                        left: lang == 'en'
-                            ? BorderSide(
-                                color: greyColor,
-                                width: pageStyle.unitWidth * 0.5,
-                              )
-                            : BorderSide.none,
                         bottom: BorderSide(
                           color: greyColor,
                           width: pageStyle.unitWidth * 0.5,
@@ -417,7 +400,7 @@ class _ProductListViewState extends State<ProductListView>
                     child: ProductVCard(
                       pageStyle: pageStyle,
                       product: products[2 * index + 1],
-                      cardWidth: pageStyle.unitWidth * 187,
+                      cardWidth: pageStyle.unitWidth * 187.25,
                       cardHeight: pageStyle.unitHeight * 280,
                       isShoppingCart: true,
                       isWishlist: true,

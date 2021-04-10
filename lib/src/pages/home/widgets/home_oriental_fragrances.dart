@@ -78,7 +78,8 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
             ),
           ),
           Container(
-            width: widget.pageStyle.unitWidth * 90,
+            padding: EdgeInsets.symmetric(
+                horizontal: widget.pageStyle.unitWidth * 5),
             height: widget.pageStyle.unitHeight * 30,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
