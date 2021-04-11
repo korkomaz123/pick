@@ -185,7 +185,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ],
           ),
         ),
-        if (product.discount > 0 ||
+        if (productEntity.discount > 0 ||
             (widget?.model?.selectedVariant?.discount != null &&
                 widget.model.selectedVariant.discount > 0)) ...[
           if (lang == 'en') ...[
@@ -213,7 +213,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       decoration: BoxDecoration(color: Colors.redAccent),
       alignment: Alignment.center,
       child: Text(
-        '${product.discount > 0 ? product.discount : widget.model.selectedVariant.discount}%',
+        '${productEntity.discount > 0 ? productEntity.discount : widget.model.selectedVariant.discount}%',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: pageStyle.unitFontSize * 16,
@@ -477,12 +477,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
           Row(
             children: [
-              if (product.discount > 0 ||
+              if (productEntity.discount > 0 ||
                   (widget?.model?.selectedVariant?.discount != null &&
                       widget.model.selectedVariant.discount > 0)) ...[
                 SizedBox(width: pageStyle.unitWidth * 10),
                 Text(
-                  (product.beforePrice ??
+                  (productEntity.beforePrice ??
                           widget.model.selectedVariant.beforePrice) +
                       ' ' +
                       'currency'.tr(),
@@ -500,8 +500,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    product.price != null
-                        ? product.price
+                    productEntity.price != null
+                        ? productEntity.price
                         : widget?.model?.selectedVariant?.price != null
                             ? widget.model.selectedVariant.price
                             : '',

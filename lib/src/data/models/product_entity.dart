@@ -13,6 +13,8 @@ class ProductEntity {
   final String name;
   final String metaDescription;
   final String price;
+  final String beforePrice;
+  final int discount;
   final String imageUrl;
   final String hasOptions;
   final String addCartUrl;
@@ -35,6 +37,8 @@ class ProductEntity {
     this.name,
     this.metaDescription,
     this.price,
+    this.beforePrice,
+    this.discount,
     this.imageUrl,
     this.hasOptions,
     this.addCartUrl,
@@ -57,9 +61,19 @@ class ProductEntity {
         shortDescription = json['short_description'] ?? '',
         name = json['name'],
         metaDescription = json['meta_description'],
-        price = json['price'] == null
-            ? null
-            : double.parse(json['price']).toStringAsFixed(3),
+        price = json['special_price'] != null
+            ? double.parse(json['special_price']).toStringAsFixed(3)
+            : json['price'] != null
+                ? double.parse(json['price']).toStringAsFixed(3)
+                : null,
+        beforePrice = json['price'] != null
+            ? double.parse(json['price']).toStringAsFixed(3)
+            : null,
+        discount = _getDiscount(
+            json['special_price'] != null
+                ? json['special_price']
+                : json['price'],
+            json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -85,5 +99,16 @@ class ProductEntity {
       }
     }
     return variants;
+  }
+
+  static int _getDiscount(String afterPriceString, String beforePriceString) {
+    double afterPrice =
+        afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice =
+        beforePriceString != null ? double.parse(beforePriceString) : 0;
+    if (beforePrice == 0) {
+      return 0;
+    }
+    return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
   }
 }

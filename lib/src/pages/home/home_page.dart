@@ -105,9 +105,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     productRepository = context.read<ProductRepository>();
     categoryRepository = context.read<CategoryRepository>();
     brandRepository = context.read<BrandRepository>();
-    productChangeNotifier.initialize();
     _initializeLocalNotification();
     _configureMessaging();
+    productChangeNotifier.initialize();
     homeChangeNotifier.loadPopup(lang, _onShowPopup);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
