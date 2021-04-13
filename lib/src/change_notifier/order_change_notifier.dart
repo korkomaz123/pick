@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -61,6 +61,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);
+      submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);
         ordersMap[newOrder.orderId] = newOrder;
@@ -148,5 +149,24 @@ class OrderChangeNotifier extends ChangeNotifier {
     };
     final path = FirebasePath.ORDER_ISSUE_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.addToCollection(reportData, path);
+  }
+
+  void submitOrderResult(dynamic result, dynamic orderDetails) async {
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'result': result,
+      'orderDetails': orderDetails,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.addToCollection(resultData, path);
   }
 }

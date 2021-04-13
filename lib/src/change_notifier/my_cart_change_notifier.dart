@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/config/constants.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -401,8 +402,36 @@ class MyCartChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await checkoutRepository.checkPaymentStatus(chargeId);
+      submitPaymentResult(result, chargeId);
       if (result['status'] == 'CAPTURED') {
         onSuccess();
+      } else {
+        onFailure(result['response']['message']);
+      }
+    } catch (e) {
+      onFailure(e.toString());
+    }
+  }
+
+  Future<void> refundPayment(
+    Map<String, dynamic> data,
+    Function onSuccess,
+    Function onFailure,
+  ) async {
+    try {
+      final result = await checkoutRepository.refundPayment(data);
+      if (result['status'] == REFUND_PENDING ||
+          result['status'] == REFUND_REFUNDED) {
+        onSuccess();
+      } else if (result['status'] == REFUND_IN_PROGRESS) {
+        final result1 =
+            await checkoutRepository.checkRefundStatus(result['id']);
+        if (result1['status'] == REFUND_PENDING ||
+            result1['status'] == REFUND_REFUNDED) {
+          onSuccess();
+        } else {
+          onFailure(result1['response']['message']);
+        }
       } else {
         onFailure(result['response']['message']);
       }
@@ -429,5 +458,25 @@ class MyCartChangeNotifier extends ChangeNotifier {
     };
     final path = FirebasePath.CART_ISSUE_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.addToCollection(reportData, path);
+  }
+
+  void submitPaymentResult(dynamic result, String chargeId) async {
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'result': result,
+      'chargeId': chargeId,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion,
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path =
+        FirebasePath.PAYMENT_RESULT_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.addToCollection(resultData, path);
   }
 }
