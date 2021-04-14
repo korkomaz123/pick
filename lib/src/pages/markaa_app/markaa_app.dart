@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -17,6 +18,7 @@ import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
@@ -31,6 +33,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
@@ -42,6 +45,8 @@ import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:provider/provider.dart';
+
+import 'no_network_access_page.dart';
 
 class MarkaaApp extends StatelessWidget {
   MarkaaApp({Key key}) : super(key: key);
@@ -245,6 +250,35 @@ class MarkaaAppView extends StatelessWidget {
         initialRoute: '/',
         onGenerateRoute: (settings) {
           return RouteGenerator.generateRoute(settings);
+        },
+        builder: (context, child) {
+          return StreamBuilder<DataConnectionStatus>(
+            stream: DataConnectionChecker().onStatusChange,
+            builder: (context, networkSnapshot) {
+              if (!networkSnapshot.hasData) {
+                return Material(
+                  color: primarySwatchColor,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 250,
+                        height: 160,
+                        margin: EdgeInsets.only(top: 250),
+                        child: SvgPicture.asset(vLogoIcon),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                if (networkSnapshot.data == DataConnectionStatus.connected) {
+                  return child;
+                } else {
+                  return NoNetworkAccessPage();
+                }
+              }
+            },
+          );
         },
       ),
     );

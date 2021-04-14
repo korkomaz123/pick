@@ -3,7 +3,7 @@ description: Ecommerce app for multi-vendor
 
 publish_to: 'none'
 
-version: 1.5.2+20
+version: 1.5.3+21
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -25,6 +25,7 @@ dependencies:
   cupertino_back_gesture: ^0.0.3
   cupertino_icons: ^0.1.3
   custom_refresh_indicator: ^0.9.0
+  data_connection_checker: ^0.3.4
   device_info: ^1.0.0
   easy_localization: ^2.3.2
   enum_to_string: ^1.0.9

@@ -66,3 +66,4 @@ const String arrowBackArIcon = '$iconsAssetPath/arrow-back-ar-icon.svg';
 const String favoriteIcon = '$iconsAssetPath/favorite-icon.svg';
 const String addressIcon = '$iconsAssetPath/address-icon.svg';
 const String errorIcon = '$iconsAssetPath/error-icon.svg';
+const String noNetworkIcon = '$iconsAssetPath/no-network-icon.svg';
