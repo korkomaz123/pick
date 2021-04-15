@@ -7,6 +7,7 @@ import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
@@ -25,10 +26,12 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   int activeIndex = 0;
   List<SliderImageEntity> sliderImages;
   HomeChangeNotifier homeChangeNotifier;
+  ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
+    productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     homeChangeNotifier.loadSliderImages(lang);
   }
@@ -74,7 +77,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         itemBuilder: (context, index) {
           final banner = sliderImages[index];
           return InkWell(
-            onTap: () {
+            onTap: () async {
               if (banner.categoryId != null) {
                 final arguments = ProductListArguments(
                   category: CategoryEntity(
@@ -103,6 +106,15 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
                   context,
                   Routes.productList,
                   arguments: arguments,
+                );
+              } else if (banner?.productId != null) {
+                final product =
+                    await productRepository.getProduct(banner.productId, lang);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Routes.product,
+                  (route) => route.settings.name == Routes.home,
+                  arguments: product,
                 );
               }
             },

@@ -7,6 +7,7 @@ import 'package:markaa/src/components/product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -21,10 +22,12 @@ class HomeBestDealsBanner extends StatefulWidget {
 
 class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
   HomeChangeNotifier homeChangeNotifier;
+  ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
+    productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     homeChangeNotifier.loadBestDealsBanner(lang);
   }
@@ -56,7 +59,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     if (banner.categoryId != null) {
                       final arguments = ProductListArguments(
                         category: CategoryEntity(
@@ -85,6 +88,15 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                         context,
                         Routes.productList,
                         arguments: arguments,
+                      );
+                    } else if (banner?.productId != null) {
+                      final product = await productRepository.getProduct(
+                          banner.productId, lang);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.product,
+                        (route) => route.settings.name == Routes.home,
+                        arguments: product,
                       );
                     }
                   },

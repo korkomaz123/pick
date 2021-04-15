@@ -5,6 +5,7 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -20,10 +21,12 @@ class HomeAdvertise extends StatefulWidget {
 
 class _HomeAdvertiseState extends State<HomeAdvertise> {
   HomeChangeNotifier homeChangeNotifier;
+  ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
+    productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     homeChangeNotifier.loadAds(lang);
   }
@@ -39,7 +42,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
             child: Column(
               children: [
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     if (model.ads.categoryId != null) {
                       final arguments = ProductListArguments(
                         category: CategoryEntity(
@@ -68,6 +71,15 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                         context,
                         Routes.productList,
                         arguments: arguments,
+                      );
+                    } else if (model?.ads?.productId != null) {
+                      final product = await productRepository.getProduct(
+                          model.ads.productId, lang);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.product,
+                        (route) => route.settings.name == Routes.home,
+                        arguments: product,
                       );
                     }
                   },
