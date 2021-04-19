@@ -185,6 +185,7 @@ class MarkaaApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => OrderChangeNotifier(
             orderRepository: orderRepository,
+            firebaseRepository: firebaseRepository,
           ),
         ),
         ChangeNotifierProvider(

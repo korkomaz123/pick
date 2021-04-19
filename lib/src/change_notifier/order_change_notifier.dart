@@ -61,6 +61,8 @@ class OrderChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);
+      print('result');
+      print(result);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);

@@ -175,7 +175,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       "description":
           "We need to refund this amount to our customer because this order can not be processed",
       "reason": "requested_by_customer",
-      "reference": {"merchant": "txn_6008426"},
+      "reference": {"merchant": "6008426"},
       "metadata": {"udf1": "r live1", "udf2": "r live2"},
       "post": {"url": "https://www.google.com"}
     };

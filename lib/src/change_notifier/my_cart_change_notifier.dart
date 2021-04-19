@@ -387,6 +387,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await checkoutRepository.tapPaymentCheckout(data, lang);
+      print(result);
       onSuccess(result['transaction']['url'], result['id']);
     } catch (e) {
       onFailure(e.toString());

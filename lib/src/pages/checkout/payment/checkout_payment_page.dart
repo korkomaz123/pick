@@ -399,7 +399,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         "email": address['email'],
         "phone": {"country_code": "965", "number": address['phoneNumber']},
       },
-      "merchant": {"id": "txn_6008426"},
+      "merchant": {"id": "6008426"},
       "source": {
         "id":
             orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
