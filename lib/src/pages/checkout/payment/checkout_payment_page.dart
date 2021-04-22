@@ -356,8 +356,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
+    double price = double.parse(orderDetails['orderDetails']['totalPrice']);
     AdjustEvent adjustEvent =
         new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(

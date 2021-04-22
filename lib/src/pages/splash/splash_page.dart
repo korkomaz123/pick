@@ -99,20 +99,21 @@ class _SplashPageState extends State<SplashPage> {
     categoryChangeNotifier.getCategoriesList(lang);
     await _getDeviceId();
     await _getCurrentUser();
-    await _getHomeCategories();
     if (user?.token != null) {
       isNotification = await settingRepo.getNotificationSetting(user.token);
-      wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      orderChangeNotifier.loadOrderHistories(user.token, lang);
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+      await orderChangeNotifier.loadOrderHistories(user.token, lang);
       addressChangeNotifier.initialize();
-      addressChangeNotifier.loadAddresses(user.token);
+      await addressChangeNotifier.loadAddresses(user.token);
     }
-    _getCartItems();
-    _getShippingMethod();
-    _getPaymentMethod();
-    _getSideMenu();
-    _getRegions();
-    _navigator();
+    homeCategories = await categoryRepo.getHomeCategories(lang);
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
+    shippingMethods = await checkoutRepo.getShippingMethod(lang);
+    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
+    sideMenus = await categoryRepo.getMenuCategories(lang);
+    regions = await shippingAddressRepo.getRegions(lang);
+    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   Future<void> _getDeviceId() async {
@@ -166,35 +167,6 @@ class _SplashPageState extends State<SplashPage> {
         }
       }
     }
-  }
-
-  Future<void> _getHomeCategories() async {
-    homeCategories = await categoryRepo.getHomeCategories(lang);
-  }
-
-  void _getCartItems() async {
-    await myCartChangeNotifier.getCartId();
-    await myCartChangeNotifier.getCartItems(lang);
-  }
-
-  void _getShippingMethod() async {
-    shippingMethods = await checkoutRepo.getShippingMethod(lang);
-  }
-
-  void _getPaymentMethod() async {
-    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-  }
-
-  void _getSideMenu() async {
-    sideMenus = await categoryRepo.getMenuCategories(lang);
-  }
-
-  void _getRegions() async {
-    regions = await shippingAddressRepo.getRegions(lang);
-  }
-
-  void _navigator() {
-    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   void _onEnglish() async {

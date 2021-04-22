@@ -265,7 +265,6 @@ class MarkaaAppView extends StatelessWidget {
                       Container(
                         width: 250,
                         height: 160,
-                        margin: EdgeInsets.only(top: 250),
                         child: SvgPicture.asset(vLogoIcon),
                       ),
                     ],
