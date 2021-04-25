@@ -255,7 +255,7 @@ class _MyCartQuickAccessLoginDialogState
         radius: pageStyle.unitFontSize * 10,
         onPressed: () async {
           AdjustEvent adjustEvent =
-              new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+              new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
           Adjust.trackEvent(adjustEvent);
           await myCartChangeNotifier.getCartItems(
               lang, _onProcess, _onReloadItemSuccess, _onFailure);

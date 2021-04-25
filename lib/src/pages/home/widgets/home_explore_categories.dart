@@ -1,5 +1,4 @@
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -31,7 +30,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   void initState() {
     super.initState();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-    categoryChangeNotifier.getCategoriesList(lang);
   }
 
   @override

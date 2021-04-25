@@ -28,7 +28,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-import 'widgets/my_cart_clear_dialog.dart';
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
 import 'widgets/my_cart_save_for_later_items.dart';
@@ -103,7 +102,6 @@ class _MyCartPageState extends State<MyCartPage>
                       return Column(
                         children: [
                           _buildTitleBar(),
-                          _buildTotalItemsTitle(),
                           _buildTotalItems(),
                           MyCartCouponCode(
                             pageStyle: pageStyle,
@@ -196,45 +194,25 @@ class _MyCartPageState extends State<MyCartPage>
               fontSize: pageStyle.unitFontSize * 23,
             ),
           ),
-          InkWell(
-            onTap: () => _onClearCartItems(),
-            child: Text(
-              'my_cart_clear_cart'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: dangerColor,
-                fontSize: pageStyle.unitFontSize * 11,
+          Row(
+            children: [
+              Text(
+                'total'.tr() + ' ',
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: pageStyle.unitFontSize * 16,
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTotalItemsTitle() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
-      ),
-      child: Row(
-        children: [
-          Text(
-            'total'.tr() + ' ',
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 16,
-            ),
-          ),
-          Text(
-            'items'
-                .tr()
-                .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 13,
-            ),
+              Text(
+                'items'
+                    .tr()
+                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: pageStyle.unitFontSize * 13,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -457,21 +435,6 @@ class _MyCartPageState extends State<MyCartPage>
     markaaAppChangeNotifier.rebuild();
   }
 
-  void _onClearCartItems() async {
-    if (myCartChangeNotifier.cartItemCount > 0) {
-      final result = await showDialog(
-        context: context,
-        builder: (context) {
-          return MyCartClearDialog(pageStyle: pageStyle);
-        },
-      );
-      if (result != null) {
-        await myCartChangeNotifier.clearCart(
-            _onProcess, _onSuccess, _onFailure);
-      }
-    }
-  }
-
   void _onCheckout() async {
     await myCartChangeNotifier.getCartItems(
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
@@ -502,10 +465,6 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onProcess() {
     progressService.showProgress();
-  }
-
-  void _onSuccess() {
-    progressService.hideProgress();
   }
 
   void _onFailure(String message) {

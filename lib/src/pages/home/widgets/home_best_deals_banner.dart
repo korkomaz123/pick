@@ -29,7 +29,6 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
     super.initState();
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadBestDealsBanner(lang);
   }
 
   @override

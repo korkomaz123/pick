@@ -298,5 +298,8 @@
     "maybe_later": "ربما في وقت لاحق",
     "update": "تحديث",
     "off": "خصم",
-    "no_network_access": "ليس لديك وصول إلى الشبكة الآن."
+    "no_network_access": "ليس لديك وصول إلى الشبكة الآن.",
+    "view_all_fragrances": "عرض جميع منتجات العطور",
+    "view_all_grooming": "عرض منتجات الحلاقة والعناية بالبشرة",
+    "view_all_smart_tech": "عرض جميع منتجات سمارت تك"
 }

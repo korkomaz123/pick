@@ -28,7 +28,6 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
     super.initState();
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadAds(lang);
   }
 
   @override

@@ -33,7 +33,6 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
     super.initState();
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadSliderImages(lang);
   }
 
   @override

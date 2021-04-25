@@ -14,6 +14,7 @@ class MarkaaTextIconButton extends StatelessWidget {
   final double elevation;
   final double borderWidth;
   final PageStyle pageStyle;
+  final bool leading;
 
   MarkaaTextIconButton({
     @required this.title,
@@ -23,6 +24,7 @@ class MarkaaTextIconButton extends StatelessWidget {
     @required this.borderColor,
     @required this.icon,
     @required this.onPressed,
+    this.leading = true,
     this.elevation = 0,
     this.radius = 10,
     this.borderWidth = 1,
@@ -42,15 +44,22 @@ class MarkaaTextIconButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          icon,
-          SizedBox(width: pageStyle.unitWidth * 6),
+          if (leading) ...[
+            icon,
+            SizedBox(width: pageStyle.unitWidth * 6),
+          ],
           Text(
             title,
             style: mediumTextStyle.copyWith(
               color: titleColor,
               fontSize: titleSize,
+              fontWeight: FontWeight.w500,
             ),
           ),
+          if (!leading) ...[
+            SizedBox(width: pageStyle.unitWidth * 6),
+            icon,
+          ],
         ],
       ),
     );

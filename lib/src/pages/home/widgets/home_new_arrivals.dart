@@ -33,7 +33,6 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   void initState() {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadNewArrivals(lang);
   }
 
   @override

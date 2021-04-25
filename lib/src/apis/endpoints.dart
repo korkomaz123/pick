@@ -86,4 +86,8 @@ class EndPoints {
   static const String getMegaBanner = '$baseUrl/getMegaBanner';
   static const String getOrientalFragrances = '$baseUrl/getOrientalFragrances';
   static const String getExculisiveBanner = '$baseUrl/getExculisiveBanner';
+  static const String getFragrancesBanner = '$baseUrl/getFragrancesBanner';
+  static const String getWatchesSection = '$baseUrl/getWatchesbanner';
+  static const String getGroomingSection = '$baseUrl/getGroomingBanner';
+  static const String getSmartTechSection = '$baseUrl/getSmarttechBanner';
 }

@@ -331,8 +331,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> applyCouponCode(
-    String deviceId,
-    String token,
     String code,
     FlushBarService flushBarService,
     PageStyle pageStyle,

@@ -26,6 +26,7 @@ class ProductListView extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final PageStyle pageStyle;
   final bool isFromBrand;
+  final bool isFilter;
   final BrandEntity brand;
   final Function onChangeTab;
   final ScrollController scrollController;
@@ -39,6 +40,7 @@ class ProductListView extends StatefulWidget {
     this.activeIndex,
     this.scaffoldKey,
     this.pageStyle,
+    this.isFilter,
     this.isFromBrand,
     this.brand,
     this.onChangeTab,
@@ -107,7 +109,14 @@ class _ProductListViewState extends State<ProductListView>
   void _initLoadProducts() async {
     print('//// initial load ////');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (widget.viewMode == ProductViewModeEnum.category) {
+      if (widget.viewMode == ProductViewModeEnum.filter) {
+        await productChangeNotifier.initialLoadFilteredProducts(
+          brand.optionId,
+          subCategories[widget.activeIndex].id,
+          widget.filterValues,
+          lang,
+        );
+      } else if (widget.viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
           subCategories[widget.activeIndex].id,
           lang,

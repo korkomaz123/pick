@@ -157,6 +157,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     }
     AdjustEvent adjustEvent =
         new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    adjustEvent.setRevenue(double.parse(orderDetails['totalPrice']), 'KWD');
     Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(

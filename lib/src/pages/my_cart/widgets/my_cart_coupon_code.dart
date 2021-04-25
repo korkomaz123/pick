@@ -117,8 +117,6 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                             );
                           } else {
                             model.applyCouponCode(
-                              deviceId ?? '',
-                              user?.token ?? '',
                               couponCodeController.text,
                               flushBarService,
                               widget.pageStyle,

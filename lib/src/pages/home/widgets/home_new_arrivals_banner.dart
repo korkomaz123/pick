@@ -29,7 +29,6 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
     super.initState();
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadNewArrivalsBanner(lang);
   }
 
   @override

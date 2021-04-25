@@ -64,4 +64,40 @@ class HomeRepository {
     final params = {'lang': lang};
     return await Api.getMethod(url, data: params);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeFragrancesBanners(String lang) async {
+    String url = EndPoints.getFragrancesBanner;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeBestWatches(String lang) async {
+    String url = EndPoints.getWatchesSection;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeGrooming(String lang) async {
+    String url = EndPoints.getGroomingSection;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getHomeSmartTech(String lang) async {
+    String url = EndPoints.getSmartTechSection;
+    final params = {'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
 }

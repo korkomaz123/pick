@@ -33,7 +33,6 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
   void initState() {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadBestDeals(lang);
   }
 
   @override

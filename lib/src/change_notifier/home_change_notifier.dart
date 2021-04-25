@@ -20,15 +20,25 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> sliderImages = [];
   List<SliderImageEntity> newArrivalsBanners = [];
   List<SliderImageEntity> bestDealsBanners = [];
+  List<SliderImageEntity> fragrancesBanners = [];
+  List<SliderImageEntity> smartTechBanners = [];
   List<ProductModel> bestDealsProducts = [];
   List<ProductModel> newArrivalsProducts = [];
   List<ProductModel> perfumesProducts = [];
   List<ProductModel> recentlyViewedProducts = [];
   List<ProductModel> orientalProducts = [];
+  List<ProductModel> bestDealsItems = [];
+  List<ProductModel> newArrivalsItems = [];
+  List<ProductModel> perfumesItems = [];
+  List<ProductModel> bestWatchesItems = [];
+  List<ProductModel> groomingItems = [];
+  List<ProductModel> smartTechItems = [];
+  List<CategoryEntity> groomingCategories = [];
   SliderImageEntity ads;
   SliderImageEntity popupItem;
   SliderImageEntity megaBanner;
   SliderImageEntity exculisiveBanner;
+  SliderImageEntity bestWatchesBanner;
   String message;
   String bestDealsTitle = '';
   String newArrivalsTitle = '';
@@ -36,10 +46,12 @@ class HomeChangeNotifier extends ChangeNotifier {
   String bestDealsBannerTitle = '';
   String newArrivalsBannerTitle = '';
   String orientalTitle = '';
-  List<ProductModel> bestDealsItems = [];
-  List<ProductModel> newArrivalsItems = [];
-  List<ProductModel> perfumesItems = [];
+  String fragrancesBannersTitle = '';
+  String groomingTitle = '';
+  String smartTechTitle = '';
   CategoryEntity orientalCategory;
+  CategoryEntity groomingCategory;
+  CategoryEntity smartTechCategory;
 
   void loadPopup(String lang, Function onSuccess) async {
     try {
@@ -450,6 +462,187 @@ class HomeChangeNotifier extends ChangeNotifier {
           }
           for (var item in sliderItems) {
             newArrivalsItems.add(ProductModel.fromJson(item));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void loadFragrancesBanner(String lang) async {
+    try {
+      String key = 'fragrances-banners-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        fragrancesBannersTitle = data['title'];
+        List<dynamic> sliderImageList = data['banners'];
+        fragrancesBanners = [];
+        for (var banner in sliderImageList) {
+          fragrancesBanners.add(SliderImageEntity.fromJson(banner));
+        }
+        notifyListeners();
+      }
+      final result = await homeRepository.getHomeFragrancesBanners(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {'title': result['title'], 'banners': result['data']},
+        );
+        if (!exist) {
+          fragrancesBannersTitle = result['title'];
+          List<dynamic> sliderImageList = result['data'];
+          fragrancesBanners = [];
+          for (var banner in sliderImageList) {
+            fragrancesBanners.add(SliderImageEntity.fromJson(banner));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void loadBestWatches(String lang) async {
+    try {
+      String key = 'best-watches-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        List<dynamic> sliderImageList = data['banners'];
+        List<dynamic> sliderItems =
+            data.containsKey('items') ? data['items'] : [];
+        bestWatchesBanner = null;
+        bestWatchesItems = [];
+        bestWatchesBanner = SliderImageEntity.fromJson(sliderImageList[0]);
+        for (var item in sliderItems) {
+          bestWatchesItems.add(ProductModel.fromJson(item));
+        }
+        notifyListeners();
+      }
+      final result = await homeRepository.getHomeBestWatches(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {'banners': result['data'], 'items': result['products']},
+        );
+        if (!exist) {
+          List<dynamic> sliderImageList = result['data'];
+          List<dynamic> sliderItems = result['products'];
+          bestWatchesBanner = null;
+          bestWatchesItems = [];
+          bestWatchesBanner = SliderImageEntity.fromJson(sliderImageList[0]);
+          for (var item in sliderItems) {
+            bestWatchesItems.add(ProductModel.fromJson(item));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void loadGrooming(String lang) async {
+    try {
+      String key = 'grooming-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        List<dynamic> groomingCategoriesList = data['categories'];
+        List<dynamic> groomingItemsList =
+            data.containsKey('items') ? data['items'] : [];
+        groomingTitle = data['title'];
+        groomingCategory = CategoryEntity.fromJson(data['category']);
+        groomingCategories = [];
+        groomingItems = [];
+        for (var item in groomingCategoriesList) {
+          groomingCategories.add(CategoryEntity.fromJson(item));
+        }
+        for (var item in groomingItemsList) {
+          groomingItems.add(ProductModel.fromJson(item));
+        }
+        notifyListeners();
+      }
+      final result = await homeRepository.getHomeGrooming(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {
+            'title': result['title'],
+            'categories': result['data'],
+            'items': result['products'],
+            'category': result['category'],
+          },
+        );
+        if (!exist) {
+          List<dynamic> groomingCategoriesList = result['data'];
+          List<dynamic> groomingItemsList = result['products'];
+          groomingTitle = result['title'];
+          groomingCategory = CategoryEntity.fromJson(result['category']);
+          groomingCategories = [];
+          groomingItems = [];
+          for (var item in groomingCategoriesList) {
+            groomingCategories.add(CategoryEntity.fromJson(item));
+          }
+          for (var item in groomingItemsList) {
+            groomingItems.add(ProductModel.fromJson(item));
+          }
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void loadSmartTech(String lang) async {
+    try {
+      String key = 'smart-tech-$lang';
+      final exist = await localStorageRepository.existItem(key);
+      if (exist) {
+        Map<String, dynamic> data = await localStorageRepository.getItem(key);
+        List<dynamic> sliderImageList = data['banners'];
+        List<dynamic> sliderItems =
+            data.containsKey('items') ? data['items'] : [];
+        smartTechTitle = data['title'];
+        smartTechCategory = CategoryEntity.fromJson(data['category']);
+        smartTechBanners = [];
+        smartTechItems = [];
+        for (var item in sliderImageList) {
+          smartTechBanners.add(SliderImageEntity.fromJson(item));
+        }
+        for (var item in sliderItems) {
+          smartTechItems.add(ProductModel.fromJson(item));
+        }
+        notifyListeners();
+      }
+      final result = await homeRepository.getHomeSmartTech(lang);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(
+          key,
+          {
+            'title': result['title'],
+            'banners': result['data'],
+            'items': result['products'],
+            'category': result['category'],
+          },
+        );
+        if (!exist) {
+          List<dynamic> sliderImageList = result['data'];
+          List<dynamic> sliderItems = result['products'];
+          smartTechTitle = result['title'];
+          smartTechCategory = CategoryEntity.fromJson(result['category']);
+          smartTechBanners = [];
+          smartTechItems = [];
+          for (var item in sliderImageList) {
+            smartTechBanners.add(SliderImageEntity.fromJson(item));
+          }
+          for (var item in sliderItems) {
+            smartTechItems.add(ProductModel.fromJson(item));
           }
           notifyListeners();
         }

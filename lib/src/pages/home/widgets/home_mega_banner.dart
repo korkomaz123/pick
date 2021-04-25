@@ -27,7 +27,6 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier.loadMegaBanner(lang);
   }
 
   @override

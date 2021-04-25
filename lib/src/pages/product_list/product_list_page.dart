@@ -49,6 +49,7 @@ class _ProductListPageState extends State<ProductListPage> {
   BrandEntity brand;
   int activeSubcategoryIndex;
   bool isFromBrand;
+  bool isFilter;
   FilterBloc filterBloc;
   ProgressService progressService;
   SnackBarService snackBarService;
@@ -114,7 +115,6 @@ class _ProductListPageState extends State<ProductListPage> {
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
               if (!model.isLoading) {
-                print(model.subCategories);
                 if (model.subCategories == null) {
                   return Container();
                 }
@@ -143,6 +143,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           scaffoldKey: scaffoldKey,
                           pageStyle: pageStyle,
                           isFromBrand: isFromBrand,
+                          isFilter: isFilter,
                           brand: brand,
                           onChangeTab: (index) => _onChangeTab(index),
                           scrollController: scrollController,
