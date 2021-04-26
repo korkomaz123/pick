@@ -67,12 +67,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
           ),
           _buildForm(widget?.placeChangeNotifier),
           _buildUseMyLocationButton(),
-          widget?.placeChangeNotifier?.listPlace != null && searchNode.hasFocus
-              ? _buildSearchedAddressList()
-              : Container(),
-          formattedAddresses.isNotEmpty && !searchNode.hasFocus
-              ? _buildFormattedAddressList()
-              : SizedBox.shrink(),
+          widget?.placeChangeNotifier?.listPlace != null && searchNode.hasFocus ? _buildSearchedAddressList() : Container(),
+          formattedAddresses.isNotEmpty && !searchNode.hasFocus ? _buildFormattedAddressList() : SizedBox.shrink(),
         ],
       ),
     );
@@ -131,14 +127,10 @@ class _SearchAddressViewState extends State<SearchAddressView> {
               widget?.placeChangeNotifier?.listPlace[index]?.name,
             ),
             subtitle: Text(
-              widget?.placeChangeNotifier?.listPlace[index]?.formattedAddress ??
-                  '',
+              widget?.placeChangeNotifier?.listPlace[index]?.formattedAddress ?? '',
             ),
             onTap: () {
-              widget?.placeChangeNotifier
-                  ?.selectLocation(
-                      widget?.placeChangeNotifier?.listPlace[index])
-                  ?.then((_) {
+              widget?.placeChangeNotifier?.selectLocation(widget?.placeChangeNotifier?.listPlace[index])?.then((_) {
                 toLocation = widget?.placeChangeNotifier?.locationSelect?.name;
                 FocusScope.of(context).requestFocus(searchNode);
                 final newPosition = CameraPosition(
@@ -176,8 +168,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                   InkWell(
                     onTap: () => _onSelectAddress(address),
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Row(
                         children: [
                           Icon(Icons.location_on, color: greyColor, size: 18),
@@ -187,10 +178,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                       ),
                     ),
                   ),
-                  formattedAddresses.indexOf(address) <
-                          (formattedAddresses.length - 1)
-                      ? Divider()
-                      : SizedBox.shrink(),
+                  formattedAddresses.indexOf(address) < (formattedAddresses.length - 1) ? Divider() : SizedBox.shrink(),
                 ],
               );
             }).toList(),
@@ -249,8 +237,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         flushBarService.showErrorMessage(
           pageStyle,
           'Location permissions are denied (actual value: $permission).',
@@ -277,7 +264,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
     final result = await http.get(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey',
+      Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey'),
     );
     // print(
     //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');

@@ -64,7 +64,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
   'High Importance Notifications', // title
   'This channel is used for important notifications.', // description
-  importance: Importance.Max,
+  importance: Importance.max,
 );
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   PageStyle pageStyle;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   HomeChangeNotifier homeChangeNotifier;
   BrandChangeNotifier brandChangeNotifier;
@@ -146,8 +146,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print('[Adjust]: Attribution changed!');
 
       if (attributionChangedData.trackerToken != null) {
-        print(
-            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
+        print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
       }
       if (attributionChangedData.trackerName != null) {
         print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
@@ -202,8 +201,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         print('[Adjust]: Adid: ' + sessionFailureData.adid);
       }
       if (sessionFailureData.willRetry != null) {
-        print(
-            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+        print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
       }
       if (sessionFailureData.jsonResponse != null) {
         print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
@@ -287,22 +285,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _initializeLocalNotification() async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
     var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid,
-      initializationSettingsIOS,
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
     );
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: onSelectNotification,
     );
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
@@ -338,23 +334,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _configureMessaging() async {
-    firebaseMessaging.configure(
-      onMessage: _onForegroundMessage,
-      onResume: _onLaunchMessage,
-      onLaunch: _onLaunchMessage,
-      onBackgroundMessage: _onBackgroundMessageHandler,
-    );
-    firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-      sound: true,
-      badge: true,
-      alert: true,
-      provisional: true,
-    ));
-    firebaseMessaging.onIosSettingsRegistered.listen(
-      (IosNotificationSettings settings) {
-        print("Settings registered: $settings");
-      },
-    );
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) => _onForegroundMessage(event.data));
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) => _onLaunchMessage(event.data));
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage event) => _onBackgroundMessageHandler(event.data));
+    firebaseMessaging.requestPermission(sound: true, badge: true, alert: true, provisional: true);
+
     firebaseMessaging.getToken().then((String token) async {
       deviceToken = token;
       if (user?.token != null) {
@@ -367,9 +351,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         );
       }
     });
-    String topic = lang == 'en'
-        ? MarkaaNotificationChannels.enChannel
-        : MarkaaNotificationChannels.arChannel;
+    String topic = lang == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel;
     await firebaseMessaging.subscribeToTopic(topic);
   }
 
@@ -381,12 +363,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       message['notification']['title'],
       message['notification']['body'],
       NotificationDetails(
-        AndroidNotificationDetails(
+        android: AndroidNotificationDetails(
           channel.id,
           channel.name,
           channel.description,
         ),
-        IOSNotificationDetails(),
+        iOS: IOSNotificationDetails(),
       ),
       payload: jsonEncode(message),
     );
@@ -398,12 +380,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       Platform.isAndroid ? message['notification']['title'] : message['title'],
       Platform.isAndroid ? message['notification']['body'] : message['body'],
       NotificationDetails(
-        AndroidNotificationDetails(
+        android: AndroidNotificationDetails(
           channel.id,
           channel.name,
           channel.description,
         ),
-        IOSNotificationDetails(),
+        iOS: IOSNotificationDetails(),
       ),
       payload: jsonEncode(message),
     );
@@ -411,8 +393,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
     try {
-      Map<dynamic, dynamic> data =
-          Platform.isAndroid ? message['data'] : message;
+      Map<dynamic, dynamic> data = Platform.isAndroid ? message['data'] : message;
       int target = int.parse(data['target']);
       if (target != 0) {
         String id = data['id'];

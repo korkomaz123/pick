@@ -29,7 +29,7 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
   ProgressService progressService;
   String language;
 
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   SettingRepository settingRepository;
 
   @override
@@ -105,17 +105,13 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
       progressService.showProgress();
       language = value;
       if (language == 'EN') {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.first;
+        context.setLocale(EasyLocalization.of(context).supportedLocales.first);
         lang = 'en';
       } else {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.last;
+        context.setLocale(EasyLocalization.of(context).supportedLocales.last);
         lang = 'ar';
       }
-      String topic = lang == 'en'
-          ? MarkaaNotificationChannels.arChannel
-          : MarkaaNotificationChannels.enChannel;
+      String topic = lang == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel;
       await firebaseMessaging.unsubscribeFromTopic(topic);
       firebaseMessaging.getToken().then((String token) async {
         deviceToken = token;

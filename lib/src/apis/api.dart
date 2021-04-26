@@ -12,7 +12,7 @@ class Api {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     // print(requestUrl);
     final response = await http.get(
-      requestUrl,
+      Uri.parse(requestUrl),
       headers: headers ?? _getHeader(),
     );
     return jsonDecode(response.body);
@@ -26,7 +26,7 @@ class Api {
     // print(url);
     // print(data);
     final response = await http.post(
-      url,
+      Uri.parse(url),
       headers: headers ?? _getHeader(),
       body: headers != null ? jsonEncode(data) : data,
     );

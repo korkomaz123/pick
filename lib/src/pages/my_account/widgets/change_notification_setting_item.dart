@@ -20,17 +20,15 @@ class ChangeNotificationSettingItem extends StatefulWidget {
   ChangeNotificationSettingItem({this.pageStyle, this.snackBarService});
 
   @override
-  _ChangeNotificationSettingItemState createState() =>
-      _ChangeNotificationSettingItemState();
+  _ChangeNotificationSettingItemState createState() => _ChangeNotificationSettingItemState();
 }
 
-class _ChangeNotificationSettingItemState
-    extends State<ChangeNotificationSettingItem> {
+class _ChangeNotificationSettingItemState extends State<ChangeNotificationSettingItem> {
   PageStyle pageStyle;
   SettingBloc settingBloc;
   SnackBarService snackBarService;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {

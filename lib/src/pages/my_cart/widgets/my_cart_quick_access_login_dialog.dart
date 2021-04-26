@@ -43,12 +43,10 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
   MyCartQuickAccessLoginDialog({this.cartId, this.onClose, this.isCheckout});
 
   @override
-  _MyCartQuickAccessLoginDialogState createState() =>
-      _MyCartQuickAccessLoginDialogState();
+  _MyCartQuickAccessLoginDialogState createState() => _MyCartQuickAccessLoginDialogState();
 }
 
-class _MyCartQuickAccessLoginDialogState
-    extends State<MyCartQuickAccessLoginDialog> {
+class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDialog> {
   SignInBloc signInBloc;
   PageStyle pageStyle;
   LocalStorageRepository localRepo;
@@ -254,11 +252,9 @@ class _MyCartQuickAccessLoginDialogState
         borderColor: Colors.white70,
         radius: pageStyle.unitFontSize * 10,
         onPressed: () async {
-          AdjustEvent adjustEvent =
-              new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+          AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
           Adjust.trackEvent(adjustEvent);
-          await myCartChangeNotifier.getCartItems(
-              lang, _onProcess, _onReloadItemSuccess, _onFailure);
+          await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
           widget.onClose();
         },
       ),
@@ -276,8 +272,7 @@ class _MyCartQuickAccessLoginDialogState
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
           pageStyle,
-          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
-              'out_stock_items_error'.tr(),
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' + 'out_stock_items_error'.tr(),
         );
         return;
       }
@@ -327,8 +322,8 @@ class _MyCartQuickAccessLoginDialogState
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse =
+          await http.get(Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
       final profile = jsonDecode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

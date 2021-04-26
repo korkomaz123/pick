@@ -137,9 +137,7 @@ class _SignInPageState extends State<SignInPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -351,9 +349,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
           Text(
@@ -364,9 +360,7 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           Container(
-            width: lang == 'en'
-                ? pageStyle.unitWidth * 100
-                : pageStyle.unitWidth * 80,
+            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
             child: Divider(color: greyLightColor, thickness: 0.5),
           ),
         ],
@@ -463,8 +457,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse =
+          await http.get(Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
       final profile = json.decode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

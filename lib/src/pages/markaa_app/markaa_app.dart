@@ -46,6 +46,7 @@ import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:provider/provider.dart';
 
+import '../../../config.dart';
 import 'no_network_access_page.dart';
 
 class MarkaaApp extends StatelessWidget {
@@ -229,14 +230,12 @@ class MarkaaApp extends StatelessWidget {
 }
 
 class MarkaaAppView extends StatelessWidget {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
   @override
   Widget build(BuildContext context) {
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
       child: MaterialApp(
-        navigatorKey: _navigatorKey,
+        navigatorKey: Config.navigatorKey,
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -285,16 +284,14 @@ class MarkaaAppView extends StatelessWidget {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate
-    extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) =>
-      DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;

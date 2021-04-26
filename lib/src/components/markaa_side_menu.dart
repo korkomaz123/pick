@@ -38,8 +38,7 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu>
-    with WidgetsBindingObserver {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int activeIndex;
   PageStyle pageStyle;
@@ -51,7 +50,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   ProgressService progressService;
   FlushBarService flushBarService;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
@@ -142,9 +141,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     height: pageStyle.unitWidth * 60,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: user.profileUrl.isNotEmpty
-                            ? NetworkImage(user.profileUrl)
-                            : AssetImage('lib/public/images/profile.png'),
+                        image: user.profileUrl.isNotEmpty ? NetworkImage(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
                         fit: BoxFit.cover,
                       ),
                       shape: BoxShape.circle,
@@ -267,9 +264,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   Widget _buildParentMenu(CategoryMenuEntity menu, int index) {
     return InkWell(
-      onTap: () => menu.subMenu.isNotEmpty
-          ? _displaySubmenu(menu, index)
-          : _viewCategory(menu, 0),
+      onTap: () => menu.subMenu.isNotEmpty ? _displaySubmenu(menu, index) : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: pageStyle.unitHeight * 15),
@@ -299,9 +294,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             ),
             if (menu.subMenu.isNotEmpty) ...[
               Icon(
-                activeMenu == menu.id
-                    ? Icons.arrow_drop_down
-                    : Icons.arrow_right,
+                activeMenu == menu.id ? Icons.arrow_drop_down : Icons.arrow_right,
                 size: pageStyle.unitFontSize * 25,
                 color: greyDarkColor,
               )
@@ -418,12 +411,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       progressService.showProgress();
       language = value;
       if (language == 'EN') {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.first;
+        context.setLocale(EasyLocalization.of(context).supportedLocales.first);
         lang = 'en';
       } else {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.last;
+        context.setLocale(EasyLocalization.of(context).supportedLocales.last);
         lang = 'ar';
       }
       firebaseMessaging.getToken().then((String token) async {
@@ -438,7 +429,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           );
         }
         progressService.hideProgress();
-        Phoenix.rebirth(context);
+        // Phoenix.rebirth(context);
       });
     }
   }

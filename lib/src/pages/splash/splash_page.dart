@@ -136,8 +136,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> checkAppVersion() async {
-    final versionEntity =
-        await appRepository.checkAppVersion(Platform.isAndroid, lang);
+    final versionEntity = await appRepository.checkAppVersion(Platform.isAndroid, lang);
     if (versionEntity.updateMandatory) {
       Navigator.pushReplacementNamed(
         context,
@@ -163,8 +162,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onEnglish() async {
-    EasyLocalization.of(context).locale =
-        EasyLocalization.of(context).supportedLocales.first;
+    context.setLocale(EasyLocalization.of(context).supportedLocales.first);
     lang = 'en';
     isFirstTime = false;
     await localRepo.setItem('usage', 'markaa');
@@ -173,8 +171,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onArabic() async {
-    EasyLocalization.of(context).locale =
-        EasyLocalization.of(context).supportedLocales.last;
+    context.setLocale(EasyLocalization.of(context).supportedLocales.last);
     lang = 'ar';
     isFirstTime = false;
     await localRepo.setItem('usage', 'markaa');
