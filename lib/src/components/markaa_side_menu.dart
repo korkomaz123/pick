@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -429,7 +428,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
           );
         }
         progressService.hideProgress();
-        // Phoenix.rebirth(context);
       });
     }
   }
