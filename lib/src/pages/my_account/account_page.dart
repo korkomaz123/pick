@@ -77,7 +77,7 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       drawerEnableOpenDragGesture: false,
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {

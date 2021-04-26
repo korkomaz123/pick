@@ -61,7 +61,7 @@ class _BrandListPageState extends State<BrandListPage> {
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

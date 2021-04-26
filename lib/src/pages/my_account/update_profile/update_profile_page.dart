@@ -73,11 +73,10 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess ||
-              state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -172,9 +171,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: pageStyle.unitWidth * 140,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty
-                      ? NetworkImage(user.profileUrl)
-                      : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty ? NetworkImage(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,

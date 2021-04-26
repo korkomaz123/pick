@@ -38,8 +38,7 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage>
-    with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
   bool isDeleting = false;
@@ -90,7 +89,7 @@ class _MyCartPageState extends State<MyCartPage>
         scaffoldKey: scaffoldKey,
         isCartPage: true,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -117,8 +116,7 @@ class _MyCartPageState extends State<MyCartPage>
                         builder: (_, model, ___) {
                           return Padding(
                             padding: EdgeInsets.symmetric(
-                              vertical: pageStyle.unitHeight *
-                                  (model.wishlistItemsCount > 0 ? 100 : 250),
+                              vertical: pageStyle.unitHeight * (model.wishlistItemsCount > 0 ? 100 : 250),
                             ),
                             child: Center(
                               child: NoAvailableData(
@@ -204,9 +202,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -242,20 +238,15 @@ class _MyCartPageState extends State<MyCartPage>
                       children: [
                         MyCartItem(
                           pageStyle: pageStyle,
-                          cartItem:
-                              myCartChangeNotifier.cartItemsMap[keys[index]],
+                          cartItem: myCartChangeNotifier.cartItemsMap[keys[index]],
                           discount: myCartChangeNotifier.discount,
                           type: myCartChangeNotifier.type,
                           cartId: cartId,
-                          onRemoveCartItem: () =>
-                              _onRemoveCartItem(keys[index]),
-                          onSaveForLaterItem: () =>
-                              _onSaveForLaterItem(keys[index]),
+                          onRemoveCartItem: () => _onRemoveCartItem(keys[index]),
+                          onSaveForLaterItem: () => _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
                         ),
-                        index < (myCartChangeNotifier.cartItemCount - 1)
-                            ? Divider(color: greyColor, thickness: 0.5)
-                            : SizedBox.shrink(),
+                        index < (myCartChangeNotifier.cartItemCount - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -271,9 +262,7 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildTotalPrice() {
     double subTotal = myCartChangeNotifier.cartTotalPrice;
     print(myCartChangeNotifier.type);
-    double discount = myCartChangeNotifier.type == 'fixed'
-        ? myCartChangeNotifier.discount
-        : subTotal * myCartChangeNotifier.discount / 100;
+    double discount = myCartChangeNotifier.type == 'fixed' ? myCartChangeNotifier.discount : subTotal * myCartChangeNotifier.discount / 100;
     double totalPrice = subTotal - discount;
     return Container(
       width: pageStyle.deviceWidth,
@@ -303,9 +292,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: pageStyle.unitFontSize * 13,
@@ -436,10 +423,8 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(
-        lang, _onProcess, _onReloadItemSuccess, _onFailure);
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+    await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
     Adjust.trackEvent(adjustEvent);
   }
 
@@ -450,8 +435,7 @@ class _MyCartPageState extends State<MyCartPage>
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
           pageStyle,
-          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
-              'out_stock_items_error'.tr(),
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' + 'out_stock_items_error'.tr(),
         );
         return;
       }

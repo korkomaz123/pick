@@ -122,7 +122,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -170,8 +170,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'address_title'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -180,8 +179,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'first_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -190,8 +188,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'last_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -200,8 +197,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
                   MarkaaTextInput(
@@ -228,8 +224,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_country_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
@@ -241,8 +236,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectState(),
@@ -253,8 +247,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -263,8 +256,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -282,8 +274,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
@@ -431,18 +422,20 @@ class _EditAddressPageState extends State<EditAddressPage> {
         email: emailController.text,
         defaultBillingAddress: addressParam?.defaultBillingAddress != null
             ? addressParam?.defaultBillingAddress
-            : isCheckout ? 1 : 0,
+            : isCheckout
+                ? 1
+                : 0,
         defaultShippingAddress: addressParam?.defaultShippingAddress != null
             ? addressParam?.defaultShippingAddress
-            : isCheckout ? 1 : 0,
+            : isCheckout
+                ? 1
+                : 0,
         addressId: addressParam?.addressId ?? '',
       );
       if (isNew) {
-        await model.addAddress(
-            user.token, address, _onProcess, _onSuccess, _onFailure);
+        await model.addAddress(user.token, address, _onProcess, _onSuccess, _onFailure);
       } else {
-        await model.updateAddress(
-            user.token, address, _onProcess, _onSuccess, _onFailure);
+        await model.updateAddress(user.token, address, _onProcess, _onSuccess, _onFailure);
       }
     }
   }

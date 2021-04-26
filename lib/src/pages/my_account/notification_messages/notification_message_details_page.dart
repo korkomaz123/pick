@@ -16,12 +16,10 @@ class NotificationMessageDetailsPage extends StatefulWidget {
   NotificationMessageDetailsPage({this.message});
 
   @override
-  _NotificationMessageDetailsPageState createState() =>
-      _NotificationMessageDetailsPageState();
+  _NotificationMessageDetailsPageState createState() => _NotificationMessageDetailsPageState();
 }
 
-class _NotificationMessageDetailsPageState
-    extends State<NotificationMessageDetailsPage> {
+class _NotificationMessageDetailsPageState extends State<NotificationMessageDetailsPage> {
   PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -32,7 +30,7 @@ class _NotificationMessageDetailsPageState
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

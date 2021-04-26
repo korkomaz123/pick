@@ -32,8 +32,7 @@ import 'package:string_validator/string_validator.dart';
 
 class CheckoutGuestAddressPage extends StatefulWidget {
   @override
-  _CheckoutGuestAddressPageState createState() =>
-      _CheckoutGuestAddressPageState();
+  _CheckoutGuestAddressPageState createState() => _CheckoutGuestAddressPageState();
 }
 
 class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
@@ -124,7 +123,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -172,8 +171,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'first_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -182,8 +180,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'last_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -192,8 +189,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
                   MarkaaTextInput(
@@ -220,8 +216,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_country_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
@@ -233,8 +228,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectState(),
@@ -245,8 +239,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -255,8 +248,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -274,8 +266,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
@@ -415,17 +406,13 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       double discount = .0;
       discount = myCartChangeNotifier.type == 'fixed'
           ? myCartChangeNotifier.discount
-          : myCartChangeNotifier.discount *
-              myCartChangeNotifier.cartTotalPrice /
-              100;
+          : myCartChangeNotifier.discount * myCartChangeNotifier.cartTotalPrice / 100;
       subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-      orderDetails['orderDetails']['totalPrice'] =
-          totalPrice.toStringAsFixed(3);
-      orderDetails['orderDetails']['subTotalPrice'] =
-          subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = '';
       final address = {

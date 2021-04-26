@@ -90,7 +90,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

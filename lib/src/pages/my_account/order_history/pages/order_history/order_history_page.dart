@@ -60,7 +60,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaOrderHistoryAppBar(pageStyle: pageStyle),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: SmartRefresher(
         enablePullDown: true,
         enablePullUp: false,
@@ -90,8 +90,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         vertical: pageStyle.unitHeight * 30,
                       ),
                       child: Text(
-                        'items'.tr().replaceFirst(
-                            '0', '${model.ordersMap.keys.toList().length}'),
+                        'items'.tr().replaceFirst('0', '${model.ordersMap.keys.toList().length}'),
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
                           fontSize: pageStyle.unitFontSize * 14,

@@ -86,7 +86,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

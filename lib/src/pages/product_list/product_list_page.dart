@@ -108,7 +108,7 @@ class _ProductListPageState extends State<ProductListPage> {
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           if (isFromBrand) ...[_buildBrandBar()],
@@ -130,9 +130,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
                       double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
-                        top: isFromBrand
-                            ? pageStyle.unitHeight * 120 - extra
-                            : pageStyle.unitHeight * 45,
+                        top: isFromBrand ? pageStyle.unitHeight * 120 - extra : pageStyle.unitHeight * 45,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -283,21 +281,11 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories[activeSubcategoryIndex].id,
           brandId: brand.optionId,
-          minPrice: filterValues.containsKey('minPrice')
-              ? filterValues['minPrice']
-              : null,
-          maxPrice: filterValues.containsKey('maxPrice')
-              ? filterValues['maxPrice']
-              : null,
-          selectedCategories: filterValues.containsKey('selectedCategories')
-              ? filterValues['selectedCategories']
-              : [],
-          selectedGenders: filterValues.containsKey('selectedGenders')
-              ? filterValues['selectedGenders']
-              : [],
-          selectedValues: filterValues.containsKey('selectedValues')
-              ? filterValues['selectedValues']
-              : {},
+          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
+          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
+          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
+          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
+          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
         );
       },
     );
@@ -396,8 +384,7 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       filterValues = {};
       filterBloc.add(FilterAttributesLoaded(
-        categoryId:
-            subCategories[index].id == 'all' ? null : subCategories[index].id,
+        categoryId: subCategories[index].id == 'all' ? null : subCategories[index].id,
         brandId: brand.optionId,
         lang: lang,
       ));

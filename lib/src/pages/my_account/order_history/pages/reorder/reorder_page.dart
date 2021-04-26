@@ -120,7 +120,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           Column(
@@ -296,9 +296,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                       ],
                     ],
                   ),
-                  if (index < (model.reorderCartItemCount - 1)) ...[
-                    Divider(color: greyColor, thickness: 0.5)
-                  ],
+                  if (index < (model.reorderCartItemCount - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
                 ],
               );
             },
@@ -360,8 +358,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               ),
             ),
             Text(
-              'currency'.tr() +
-                  ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
+              'currency'.tr() + ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: pageStyle.unitFontSize * 14,
@@ -404,8 +401,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
-      double totalPrice =
-          order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
+      double totalPrice = order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -456,9 +452,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              order.address.title.isNotEmpty
-                  ? '${order.address.title}: '
-                  : 'Unnamed title: ',
+              order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
               style: boldTextStyle.copyWith(
                 fontSize: pageStyle.unitFontSize * 14,
                 color: primaryColor,

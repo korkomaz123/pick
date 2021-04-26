@@ -1,4 +1,3 @@
-import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/message_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
@@ -9,7 +8,7 @@ import 'package:markaa/src/data/models/shipping_method_entity.dart';
 /// category list for home screen
 List<CategoryEntity> homeCategories = [];
 
-List<CategoryMenuEntity> sideMenus = [];
+// List<CategoryMenuEntity> sideMenus = [];
 List<RegionEntity> regions = [];
 int wishlistCount = 0;
 List<ProductModel> wishlistItems = [];

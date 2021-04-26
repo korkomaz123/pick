@@ -13,8 +13,7 @@ import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class NotificationMessagesPage extends StatefulWidget {
   @override
-  _NotificationMessagesPageState createState() =>
-      _NotificationMessagesPageState();
+  _NotificationMessagesPageState createState() => _NotificationMessagesPageState();
 }
 
 class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
@@ -28,7 +27,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

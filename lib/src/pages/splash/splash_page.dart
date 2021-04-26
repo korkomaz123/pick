@@ -131,7 +131,7 @@ class _SplashPageState extends State<SplashPage> {
   void _loadExtraData() async {
     shippingMethods = await checkoutRepo.getShippingMethod(lang);
     paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-    sideMenus = await categoryRepo.getMenuCategories(lang);
+    // sideMenus = await categoryRepo.getMenuCategories(lang);
     regions = await shippingAddressRepo.getRegions(lang);
   }
 

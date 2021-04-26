@@ -28,8 +28,7 @@ class WishlistPage extends StatefulWidget {
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage>
-    with TickerProviderStateMixin {
+class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   PageStyle pageStyle;
@@ -64,7 +63,7 @@ class _WishlistPageState extends State<WishlistPage>
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           Column(
@@ -154,9 +153,7 @@ class _WishlistPageState extends State<WishlistPage>
                     onAddToCart: () => _onAddToCart(product),
                   ),
                 ),
-                index < (wishlistChangeNotifier.wishlistItemsCount - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
+                index < (wishlistChangeNotifier.wishlistItemsCount - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
               ],
             ),
           );
@@ -182,7 +179,6 @@ class _WishlistPageState extends State<WishlistPage>
 
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
-    myCartChangeNotifier
-        .addProductToCart(context, pageStyle, product, 1, lang, {});
+    myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1, lang, {});
   }
 }

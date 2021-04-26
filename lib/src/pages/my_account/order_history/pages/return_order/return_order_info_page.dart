@@ -87,7 +87,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

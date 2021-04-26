@@ -30,7 +30,7 @@ class _TermsPageState extends State<TermsPage> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),

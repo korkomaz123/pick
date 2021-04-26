@@ -49,7 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is PasswordUpdatedInProcess) {

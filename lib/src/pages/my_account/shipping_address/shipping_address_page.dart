@@ -74,7 +74,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -291,8 +291,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       },
     );
     if (result != null) {
-      await model.deleteAddress(
-          user.token, key, _onProcess, _onSuccess, _onFailure);
+      await model.deleteAddress(user.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
@@ -300,8 +299,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final address = model.addressesMap[key];
     address.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await model.updateAddress(
-        user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
+    await model.updateAddress(user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
   }
 
   void _onProcess() {

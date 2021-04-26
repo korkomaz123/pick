@@ -48,8 +48,7 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage>
-    with TickerProviderStateMixin {
+class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   PageStyle pageStyle;
@@ -107,8 +106,7 @@ class _ProductPageState extends State<ProductPage>
 
   void _sendViewedProduct() async {
     if (user?.token != null) {
-      await productRepository.setRecentlyViewedCustomerProduct(
-          user.token, product.productId, lang);
+      await productRepository.setRecentlyViewedCustomerProduct(user.token, product.productId, lang);
       homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
       await localStorageRepository.addRecentlyViewedItem(product.productId);
@@ -140,13 +138,11 @@ class _ProductPageState extends State<ProductPage>
       key: scaffoldKey,
       backgroundColor: backgroundColor,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Consumer<ProductChangeNotifier>(
         builder: (_, model, ___) {
           if (model.productDetails != null) {
-            isStock = model.productDetails.typeId == 'configurable' ||
-                (model.productDetails.stockQty != null &&
-                    model.productDetails.stockQty > 0);
+            isStock = model.productDetails.typeId == 'configurable' || (model.productDetails.stockQty != null && model.productDetails.stockQty > 0);
             return Stack(
               children: [
                 SmartRefresher(
@@ -174,8 +170,7 @@ class _ProductPageState extends State<ProductPage>
                         ProductReviewTotal(
                           pageStyle: pageStyle,
                           product: model.productDetails,
-                          onFirstReview: () =>
-                              _onFirstReview(model.productDetails),
+                          onFirstReview: () => _onFirstReview(model.productDetails),
                           onReviews: () => _onReviews(model.productDetails),
                         ),
                         ProductRelatedItems(
@@ -276,14 +271,11 @@ class _ProductPageState extends State<ProductPage>
 
   void _onAddToCart(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
+        model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
       flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
+    if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
@@ -292,27 +284,22 @@ class _ProductPageState extends State<ProductPage>
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
-    await myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang, model.selectedOptions);
+    await myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1, lang, model.selectedOptions);
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
   }
 
   void _onBuyNow(ProductChangeNotifier model) {
     if (model.productDetails.typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
+        model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
       flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
+    if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
       return;
     }
-    myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang, model.selectedOptions);
+    myCartChangeNotifier.addProductToCart(context, pageStyle, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);

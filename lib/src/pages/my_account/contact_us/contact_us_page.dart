@@ -58,7 +58,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {

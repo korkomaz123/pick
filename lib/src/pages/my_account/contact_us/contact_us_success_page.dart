@@ -30,7 +30,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
