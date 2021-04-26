@@ -21,8 +21,9 @@ class OrderRepository {
     params['paymentMethod'] = orderDetails['paymentMethod'];
     params['lang'] = lang;
     params['cartId'] = orderDetails['cartId'];
-    params['orderDetails'] = json.encode(orderDetails['orderDetails']);
-    print(params);
+    params['orderDetails'] = jsonEncode(orderDetails['orderDetails']);
+    // print(params);
+    // print(url);
     final result = await Api.postMethod(url, data: params);
     return result;
   }

@@ -1,6 +1,5 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -29,18 +28,6 @@ class _HomeRecentState extends State<HomeRecent> {
     super.initState();
     localStorageRepository = context.read<LocalStorageRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    if (user?.token != null) {
-      print('customer');
-      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
-    } else {
-      print('guest');
-      _loadGuestViewed();
-    }
-  }
-
-  void _loadGuestViewed() async {
-    List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
   }
 
   @override

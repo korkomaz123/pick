@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:device_info/device_info.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -91,15 +90,17 @@ class _SplashPageState extends State<SplashPage> {
   void _loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
       await signInRepo.loginFirebase(
-          email: MarkaaReporter.email, password: MarkaaReporter.password);
+        email: MarkaaReporter.email,
+        password: MarkaaReporter.password,
+      );
     }
     orderChangeNotifier.initializeOrders();
     brandChangeNotifier.getBrandsList(lang, 'brand');
     brandChangeNotifier.getBrandsList(lang, 'home');
     categoryChangeNotifier.getCategoriesList(lang);
-    await _getDeviceId();
     await _getCurrentUser();
-    await _getHomeCategories();
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
     if (user?.token != null) {
       isNotification = await settingRepo.getNotificationSetting(user.token);
       wishlistChangeNotifier.getWishlistItems(user.token, lang);
@@ -107,23 +108,9 @@ class _SplashPageState extends State<SplashPage> {
       addressChangeNotifier.initialize();
       addressChangeNotifier.loadAddresses(user.token);
     }
-    _getCartItems();
-    _getShippingMethod();
-    _getPaymentMethod();
-    _getSideMenu();
-    _getRegions();
-    _navigator();
-  }
-
-  Future<void> _getDeviceId() async {
-    final deviceInfoPlugin = new DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      var build = await deviceInfoPlugin.androidInfo;
-      deviceId = build.androidId; //UUID for Android
-    } else if (Platform.isIOS) {
-      var data = await deviceInfoPlugin.iosInfo;
-      deviceId = data.identifierForVendor; //UUID for iOS
-    }
+    homeCategories = await categoryRepo.getHomeCategories(lang);
+    _loadExtraData();
+    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   Future<void> _getCurrentUser() async {
@@ -139,6 +126,13 @@ class _SplashPageState extends State<SplashPage> {
         await localRepo.removeToken();
       }
     }
+  }
+
+  void _loadExtraData() async {
+    shippingMethods = await checkoutRepo.getShippingMethod(lang);
+    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
+    sideMenus = await categoryRepo.getMenuCategories(lang);
+    regions = await shippingAddressRepo.getRegions(lang);
   }
 
   Future<void> checkAppVersion() async {
@@ -166,35 +160,6 @@ class _SplashPageState extends State<SplashPage> {
         }
       }
     }
-  }
-
-  Future<void> _getHomeCategories() async {
-    homeCategories = await categoryRepo.getHomeCategories(lang);
-  }
-
-  void _getCartItems() async {
-    await myCartChangeNotifier.getCartId();
-    await myCartChangeNotifier.getCartItems(lang);
-  }
-
-  void _getShippingMethod() async {
-    shippingMethods = await checkoutRepo.getShippingMethod(lang);
-  }
-
-  void _getPaymentMethod() async {
-    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-  }
-
-  void _getSideMenu() async {
-    sideMenus = await categoryRepo.getMenuCategories(lang);
-  }
-
-  void _getRegions() async {
-    regions = await shippingAddressRepo.getRegions(lang);
-  }
-
-  void _navigator() {
-    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   void _onEnglish() async {

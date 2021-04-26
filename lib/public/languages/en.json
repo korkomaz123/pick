@@ -299,5 +299,9 @@
     "go_shopping_cart_button_title": "GOTO MY SHOPPING CART",
     "maybe_later": "Maybe Later",
     "update": "Update",
-    "off": "OFF"
+    "off": "OFF",
+    "no_network_access": "You have no network access now.",
+    "view_all_fragrances": "View All Fragrances",
+    "view_all_grooming": "View All Grooming",
+    "view_all_smart_tech": "View All Smart Tech"
 }

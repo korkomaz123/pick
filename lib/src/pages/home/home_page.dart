@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -30,7 +31,6 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 import 'package:adjust_sdk/adjust.dart';
@@ -55,6 +55,10 @@ import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_mega_banner.dart';
 import 'widgets/home_exculisive_banner.dart';
 import 'widgets/home_oriental_fragrances.dart';
+import 'widgets/home_fragrances_banners.dart';
+import 'widgets/home_best_watches.dart';
+import 'widgets/home_grooming.dart';
+import 'widgets/home_smart_tech.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -72,7 +76,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final _refreshController = RefreshController(initialRefresh: false);
 
   PageStyle pageStyle;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -81,6 +84,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
   ProductChangeNotifier productChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
 
   LocalStorageRepository localStorageRepository;
   SettingRepository settingRepository;
@@ -91,6 +95,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Timer timerLink;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
+  int loadingIndex = 0;
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -100,35 +107,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     brandChangeNotifier = context.read<BrandChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     localStorageRepository = context.read<LocalStorageRepository>();
     settingRepository = context.read<SettingRepository>();
     productRepository = context.read<ProductRepository>();
     categoryRepository = context.read<CategoryRepository>();
     brandRepository = context.read<BrandRepository>();
     productChangeNotifier.initialize();
-    _initializeLocalNotification();
-    _configureMessaging();
     homeChangeNotifier.loadPopup(lang, _onShowPopup);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
+    _initializeLocalNotification();
+    _configureMessaging();
+    _onLoadHomePage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (loadingIndex < 2) {
+      double maxScroll = _scrollController.position.maxScrollExtent;
+      double currentScroll = _scrollController.position.pixels;
+      if (maxScroll - currentScroll <= 300) {
+        loadingIndex += 1;
+        _onLoadHomePage();
+      }
+    }
   }
 
   void _setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.appToken,
-      AdjustEnvironment.sandbox,
+      AdjustEnvironment.production,
     );
     config.logLevel = AdjustLogLevel.verbose;
-    // config.isDeviceKnown = false;
-    // config.defaultTracker = 'abc123';
-    // config.processName = 'com.adjust.examples';
-    // config.sendInBackground = true;
-    // config.eventBufferingEnabled = true;
-    // config.delayStart = 6.0;
-    // config.setAppSecret(1000, 1, 2, 3, 4);
-    // config.externalDeviceId = 'random-external-device-id';
-    // config.deactivateSKAdNetworkHandling();
 
     config.attributionCallback = (AdjustAttribution attributionChangedData) {
       print('[Adjust]: Attribution changed!');
@@ -270,30 +282,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // Clear all session partner parameters.
     Adjust.resetSessionPartnerParameters();
 
-    if (Platform.isIOS) {
-      // Ask for tracking consent.
-      Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
-        print('[Adjust]: Authorization status update!');
-        switch (status) {
-          case 0:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusNotDetermined');
-            break;
-          case 1:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusRestricted');
-            break;
-          case 2:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusDenied');
-            break;
-          case 3:
-            print(
-                '[Adjust]: Authorization status update: ATTrackingManagerAuthorizationStatusAuthorized');
-            break;
-        }
-      });
-    }
     // Start SDK.
     Adjust.start(config);
   }
@@ -510,28 +498,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  void _onRefresh() async {
-    homeChangeNotifier.loadMegaBanner(lang);
+  Future<void> _onRefresh() async {
+    loadingIndex = 1;
+    _onLoadHomePage();
+  }
+
+  void _onLoadHomePage() async {
     homeChangeNotifier.loadSliderImages(lang);
+    categoryChangeNotifier.getFeaturedCategoriesList(lang);
+    homeChangeNotifier.loadMegaBanner(lang);
     homeChangeNotifier.loadBestDeals(lang);
     homeChangeNotifier.loadBestDealsBanner(lang);
     homeChangeNotifier.loadNewArrivals(lang);
-    homeChangeNotifier.loadNewArrivalsBanner(lang);
     homeChangeNotifier.loadExculisiveBanner(lang);
     homeChangeNotifier.loadOrientalProducts(lang);
+    homeChangeNotifier.loadNewArrivalsBanner(lang);
+    homeChangeNotifier.loadFragrancesBanner(lang);
     homeChangeNotifier.loadPerfumes(lang);
-    categoryChangeNotifier.getCategoriesList(lang);
-    categoryChangeNotifier.getFeaturedCategoriesList(lang);
-    brandChangeNotifier.getBrandsList(lang, 'home');
+    homeChangeNotifier.loadBestWatches(lang);
+    homeChangeNotifier.loadGrooming(lang);
     homeChangeNotifier.loadAds(lang);
+    homeChangeNotifier.loadSmartTech(lang);
+    categoryChangeNotifier.getCategoriesList(lang);
+    brandChangeNotifier.getBrandsList(lang, 'home');
     if (user?.token != null) {
       homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
       List<String> ids = await localStorageRepository.getRecentlyViewedIds();
       homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     }
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.refreshCompleted();
   }
 
   @override
@@ -542,40 +537,44 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       key: scaffoldKey,
       appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: false,
-        header: MaterialClassicHeader(color: primaryColor),
-        controller: _refreshController,
+      body: RefreshIndicator(
         onRefresh: _onRefresh,
-        onLoading: () => null,
+        backgroundColor: Colors.white,
+        color: primaryColor,
         child: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (notification) {
             notification.disallowGlow();
             return true;
           },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                HomeHeaderCarousel(pageStyle: pageStyle),
-                HomeFeaturedCategories(pageStyle: pageStyle),
-                HomeMegaBanner(pageStyle: pageStyle),
-                HomeBestDeals(pageStyle: pageStyle),
-                HomeBestDealsBanner(pageStyle: pageStyle),
-                HomeNewArrivals(pageStyle: pageStyle),
-                HomeNewArrivalsBanner(pageStyle: pageStyle),
-                HomeExculisiveBanner(pageStyle: pageStyle),
-                HomeOrientalFragrances(pageStyle: pageStyle),
-                HomePerfumes(pageStyle: pageStyle),
-                HomeAdvertise(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                HomeExploreCategories(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                HomeDiscoverStores(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 10),
-                HomeRecent(pageStyle: pageStyle),
-              ],
-            ),
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (ctx, index) {
+              return Column(
+                children: [
+                  HomeHeaderCarousel(pageStyle: pageStyle),
+                  HomeFeaturedCategories(pageStyle: pageStyle),
+                  HomeMegaBanner(pageStyle: pageStyle),
+                  HomeBestDeals(pageStyle: pageStyle),
+                  HomeBestDealsBanner(pageStyle: pageStyle),
+                  HomeNewArrivals(pageStyle: pageStyle),
+                  HomeExculisiveBanner(pageStyle: pageStyle),
+                  HomeOrientalFragrances(pageStyle: pageStyle),
+                  HomeNewArrivalsBanner(pageStyle: pageStyle),
+                  HomeFragrancesBanners(pageStyle: pageStyle),
+                  HomePerfumes(pageStyle: pageStyle),
+                  HomeBestWatches(pageStyle: pageStyle),
+                  HomeGrooming(pageStyle: pageStyle),
+                  HomeAdvertise(pageStyle: pageStyle),
+                  HomeSmartTech(pageStyle: pageStyle),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  HomeExploreCategories(pageStyle: pageStyle),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  HomeDiscoverStores(pageStyle: pageStyle),
+                  SizedBox(height: pageStyle.unitHeight * 10),
+                  HomeRecent(pageStyle: pageStyle),
+                ],
+              );
+            },
           ),
         ),
       ),

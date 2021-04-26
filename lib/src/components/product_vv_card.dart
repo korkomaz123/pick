@@ -221,74 +221,69 @@ class _ProductVVCardState extends State<ProductVVCard>
                       fontSize: widget.pageStyle.unitFontSize *
                           (widget.isMinor ? 12 : 16),
                       fontWeight: FontWeight.w700,
+                      height: 0.5,
                     ),
                   )
                 ],
                 if (widget.isLine) ...[Divider(color: greyColor)],
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Text(
-                            widget.product.price != null
-                                ? (widget.product.price + ' ' + 'currency'.tr())
-                                : '',
-                            style: mediumTextStyle.copyWith(
-                              fontSize: widget.pageStyle.unitFontSize *
-                                  (widget.isMinor ? 12 : 14),
-                              color: greyColor,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          if (widget.product.discount > 0) ...[
-                            SizedBox(
-                                width: widget.pageStyle.unitWidth *
-                                    (widget.isMinor ? 4 : 10)),
-                            Text(
-                              widget.product.beforePrice +
-                                  ' ' +
-                                  'currency'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                decorationStyle: TextDecorationStyle.solid,
-                                decoration: TextDecoration.lineThrough,
-                                decorationColor: dangerColor,
-                                fontSize: widget.pageStyle.unitFontSize *
-                                    (widget.isMinor ? 12 : 14),
-                                color: greyColor,
-                              ),
-                            ),
-                          ],
-                        ],
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: widget.pageStyle.unitHeight * 5,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.product.price != null
+                            ? (widget.product.price + ' ' + 'currency'.tr())
+                            : '',
+                        style: mediumTextStyle.copyWith(
+                          fontSize: widget.pageStyle.unitFontSize *
+                              (widget.isMinor ? 12 : 14),
+                          color: greyColor,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    if (widget.isShoppingCart &&
-                        (widget.product.typeId != 'simple' ||
-                            widget.product.stockQty != null &&
-                                widget.product.stockQty > 0)) ...[
-                      ScaleTransition(
-                        scale: _addToCartScaleAnimation,
-                        child: Container(
-                          width: widget.cardWidth -
-                              widget.pageStyle.unitWidth * 16,
-                          height: widget.pageStyle.unitHeight * 40,
-                          child: MarkaaTextButton(
-                            title: 'wishlist_add_cart_button_title'.tr(),
-                            titleColor: Colors.white,
-                            titleSize: widget.pageStyle.unitFontSize * 14,
-                            borderColor: Colors.transparent,
-                            buttonColor: primaryColor,
-                            onPressed: () => _onAddProductToCart(context),
+                      if (widget.product.discount > 0) ...[
+                        SizedBox(
+                            width: widget.pageStyle.unitWidth *
+                                (widget.isMinor ? 4 : 10)),
+                        Text(
+                          widget.product.beforePrice + ' ' + 'currency'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            decorationStyle: TextDecorationStyle.solid,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: dangerColor,
+                            fontSize: widget.pageStyle.unitFontSize *
+                                (widget.isMinor ? 12 : 14),
+                            color: greyColor,
                           ),
                         ),
-                      )
-                    ] else ...[
-                      SizedBox.shrink()
+                      ],
                     ],
-                  ],
+                  ),
                 ),
+                if (widget.isShoppingCart &&
+                    (widget.product.typeId != 'simple' ||
+                        widget.product.stockQty != null &&
+                            widget.product.stockQty > 0)) ...[
+                  ScaleTransition(
+                    scale: _addToCartScaleAnimation,
+                    child: Container(
+                      width: widget.cardWidth - widget.pageStyle.unitWidth * 16,
+                      height: widget.pageStyle.unitHeight * 35,
+                      child: MarkaaTextButton(
+                        title: 'wishlist_add_cart_button_title'.tr(),
+                        titleColor: Colors.white,
+                        titleSize: widget.pageStyle.unitFontSize * 14,
+                        borderColor: Colors.transparent,
+                        buttonColor: primaryColor,
+                        onPressed: () => _onAddProductToCart(context),
+                      ),
+                    ),
+                  )
+                ] else ...[
+                  SizedBox.shrink()
+                ],
                 SizedBox(height: widget.pageStyle.unitHeight * 5),
               ],
             ),

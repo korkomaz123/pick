@@ -44,7 +44,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   @override
   void initState() {
     super.initState();
-    print('init state');
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -137,8 +136,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPaymentSuccess() async {
-    await orderChangeNotifier.submitOrder(
-        orderDetails, lang, _onProcess, _onOrderSubmittedSuccess, _onFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang, _onProcess,
+        _onOrderSubmittedSuccess, _onOrderSubmittedFailure);
   }
 
   void _onPaymentFailure(String error) {
@@ -158,6 +157,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     }
     AdjustEvent adjustEvent =
         new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    adjustEvent.setRevenue(double.parse(orderDetails['totalPrice']), 'KWD');
     Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
     Navigator.pushNamedAndRemoveUntil(
@@ -168,7 +168,28 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     );
   }
 
-  void _onFailure(String error) {
+  void _onOrderSubmittedFailure(String error) async {
+    final refundData = {
+      "charge_id": chargeId,
+      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
+      "currency": "KWD",
+      "description":
+          "We need to refund this amount to our customer because this order can not be processed",
+      "reason": "requested_by_customer",
+      "reference": {"merchant": "6008426"},
+      "metadata": {"udf1": "r live1", "udf2": "r live2"},
+      "post": {"url": "https://www.google.com"}
+    };
+    await myCartChangeNotifier.refundPayment(
+        refundData, _onRefundedSuccess, _onRefundedFailure);
+  }
+
+  void _onRefundedSuccess() {
+    progressService.hideProgress();
+    Navigator.pushReplacementNamed(context, Routes.paymentFailed);
+  }
+
+  void _onRefundedFailure(String error) {
     progressService.hideProgress();
     Navigator.pop(context, error);
   }

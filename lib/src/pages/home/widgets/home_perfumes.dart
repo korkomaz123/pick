@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -6,7 +7,6 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +35,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
   void initState() {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    homeChangeNotifier.loadPerfumes(lang);
   }
 
   @override
@@ -52,12 +51,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
           if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
             return Column(
               children: [
-                _buildHeadline(),
-                Divider(
-                  height: widget.pageStyle.unitHeight * 1.5,
-                  thickness: widget.pageStyle.unitHeight * 1.5,
-                  color: greyColor.withOpacity(0.4),
-                ),
                 _buildProductView(),
                 Divider(
                   height: widget.pageStyle.unitHeight * 1.5,
@@ -76,30 +69,15 @@ class _HomePerfumesState extends State<HomePerfumes> {
     );
   }
 
-  Widget _buildHeadline() {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title ?? '',
-            style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 26,
-              color: greyDarkColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFooter(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 4),
-      child: InkWell(
-        onTap: () {
+      padding: EdgeInsets.symmetric(
+        vertical: widget.pageStyle.unitHeight * 4,
+        horizontal: widget.pageStyle.unitWidth * 10,
+      ),
+      child: MarkaaTextIconButton(
+        onPressed: () {
           ProductListArguments arguments = ProductListArguments(
             category: homeCategories[2],
             subCategory: homeCategories[2].subCategories,
@@ -113,23 +91,18 @@ class _HomePerfumesState extends State<HomePerfumes> {
             arguments: arguments,
           );
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'view_all'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
-                color: primaryColor,
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
-            ),
-          ],
+        title: 'view_all_fragrances'.tr(),
+        titleColor: Colors.white,
+        titleSize: widget.pageStyle.unitFontSize * 18,
+        icon: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white,
+          size: widget.pageStyle.unitFontSize * 24,
         ),
+        borderColor: primaryColor,
+        buttonColor: primaryColor,
+        pageStyle: widget.pageStyle,
+        leading: false,
       ),
     );
   }

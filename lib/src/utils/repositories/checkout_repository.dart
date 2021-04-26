@@ -77,4 +77,34 @@ class CheckoutRepository {
     };
     return Api.getMethod(url, headers: headers);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> refundPayment(Map<String, dynamic> data) async {
+    String url = 'https://api.tap.company/v2/refunds';
+
+    /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
+    /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
+
+    Map<String, String> headers = {
+      'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
+    };
+    return Api.postMethod(url, data: data, headers: headers);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> checkRefundStatus(String refundId) async {
+    String url = 'https://api.tap.company/v2/refunds/$refundId';
+
+    /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
+    /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
+
+    Map<String, String> headers = {
+      'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
+    };
+    return Api.getMethod(url, headers: headers);
+  }
 }

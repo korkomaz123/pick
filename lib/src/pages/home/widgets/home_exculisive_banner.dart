@@ -27,7 +27,6 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier.loadExculisiveBanner(lang);
   }
 
   @override

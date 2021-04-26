@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -25,7 +24,6 @@ class _HomeFeaturedCategoriesState extends State<HomeFeaturedCategories> {
   void initState() {
     super.initState();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-    categoryChangeNotifier.getFeaturedCategoriesList(lang);
   }
 
   @override

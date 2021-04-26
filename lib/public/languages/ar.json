@@ -31,7 +31,7 @@
     "side_stores": "المتاجر",
     "side_new_arrivals": "وصل حديثاً",
     "all": "الكل",
-    "view_all": "مشاهدة الكل",
+    "view_all": "عرض الكل",
     "view_more_categories": "مشاهدة الكل",
     "view_more_brands": "مشاهدة الكل",
     "search_items_hint": "البحث",
@@ -297,5 +297,9 @@
     "go_shopping_cart_button_title": "اذهب إلى عربة التسوق الخاصة بي",
     "maybe_later": "ربما في وقت لاحق",
     "update": "تحديث",
-    "off": "خصم"
+    "off": "خصم",
+    "no_network_access": "ليس لديك وصول إلى الشبكة الآن.",
+    "view_all_fragrances": "عرض جميع منتجات العطور",
+    "view_all_grooming": "عرض منتجات الحلاقة والعناية بالبشرة",
+    "view_all_smart_tech": "عرض جميع منتجات سمارت تك"
 }

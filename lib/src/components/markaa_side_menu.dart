@@ -437,7 +437,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             Platform.isIOS ? lang : '',
           );
         }
-        await settingRepo.updateGuestFcmToken(deviceId, token, lang);
         progressService.hideProgress();
         Phoenix.rebirth(context);
       });
