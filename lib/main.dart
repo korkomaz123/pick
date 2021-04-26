@@ -13,6 +13,7 @@ const bool USE_FIRESTORE_EMULATOR = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   EquatableConfig.stringify = kDebugMode;
