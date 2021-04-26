@@ -28,6 +28,7 @@ import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../config.dart';
 import 'update_available_dialog.dart';
 
 class SplashPage extends StatefulWidget {
@@ -44,7 +45,6 @@ class _SplashPageState extends State<SplashPage> {
   SignInRepository signInRepo;
   CheckoutRepository checkoutRepo;
   ShippingAddressRepository shippingAddressRepo;
-  PageStyle pageStyle;
   bool isFirstTime;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -181,21 +181,21 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
+    Config.pageStyle = PageStyle(context, designWidth, designHeight);
+    Config.pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
       body: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.deviceHeight,
+        width: Config.pageStyle.deviceWidth,
+        height: Config.pageStyle.deviceHeight,
         child: Stack(
           children: [
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                width: pageStyle.unitWidth * 260.94,
-                height: pageStyle.unitHeight * 180,
-                margin: EdgeInsets.only(top: pageStyle.unitHeight * 262.7),
+                width: Config.pageStyle.unitWidth * 260.94,
+                height: Config.pageStyle.unitHeight * 180,
+                margin: EdgeInsets.only(top: Config.pageStyle.unitHeight * 262.7),
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
@@ -204,18 +204,18 @@ class _SplashPageState extends State<SplashPage> {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   padding: EdgeInsets.only(
-                    bottom: pageStyle.unitHeight * 141,
+                    bottom: Config.pageStyle.unitHeight * 141,
                   ),
                   width: double.infinity,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: pageStyle.unitWidth * 145,
-                        height: pageStyle.unitHeight * 49,
+                        width: Config.pageStyle.unitWidth * 145,
+                        height: Config.pageStyle.unitHeight * 49,
                         child: MarkaaTextButton(
                           title: 'English',
-                          titleSize: pageStyle.unitFontSize * 20,
+                          titleSize: Config.pageStyle.unitFontSize * 20,
                           titleColor: Colors.white,
                           buttonColor: Color(0xFFF7941D),
                           borderColor: Colors.transparent,
@@ -223,13 +223,13 @@ class _SplashPageState extends State<SplashPage> {
                           radius: 30,
                         ),
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 13),
+                      SizedBox(width: Config.pageStyle.unitWidth * 13),
                       Container(
-                        width: pageStyle.unitWidth * 145,
-                        height: pageStyle.unitHeight * 49,
+                        width: Config.pageStyle.unitWidth * 145,
+                        height: Config.pageStyle.unitHeight * 49,
                         child: MarkaaTextButton(
                           title: 'عربى',
-                          titleSize: pageStyle.unitFontSize * 20,
+                          titleSize: Config.pageStyle.unitFontSize * 20,
                           titleColor: Colors.white,
                           buttonColor: Color(0xFFF7941D),
                           borderColor: Colors.transparent,

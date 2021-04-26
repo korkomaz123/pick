@@ -10,7 +10,7 @@ class Api {
     Map<String, dynamic> headers,
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
-    // print(requestUrl);
+    print(requestUrl);
     final response = await http.get(
       Uri.parse(requestUrl),
       headers: headers ?? _getHeader(),

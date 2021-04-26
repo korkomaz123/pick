@@ -135,9 +135,7 @@ class _AccountPageState extends State<AccountPage> {
                     height: pageStyle.unitWidth * 107,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: user.profileUrl.isEmpty
-                            ? AssetImage('lib/public/images/profile.png')
-                            : NetworkImage(user.profileUrl),
+                        image: user.profileUrl.isEmpty ? AssetImage('lib/public/images/profile.png') : NetworkImage(user.profileUrl),
                         fit: BoxFit.cover,
                       ),
                       shape: BoxShape.circle,
@@ -397,7 +395,7 @@ class _AccountPageState extends State<AccountPage> {
               ],
             )
           ],
-          LanguageSettingItem(pageStyle: pageStyle),
+          LanguageSettingItem(),
           SizedBox(height: pageStyle.unitHeight * 5),
           RateAppItem(pageStyle: pageStyle),
           SizedBox(height: pageStyle.unitHeight * 5),

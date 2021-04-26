@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -162,7 +163,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
     String payload,
   ) async {
     showDialog(
-      context: context,
+      context: Config.navigatorKey.currentContext,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text(title),
         content: Text(body),
@@ -213,7 +214,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
         String id = data['id'];
         if (target == 1) {
           final product = await productRepository.getProduct(id, lang);
-          Navigator.pushNamed(context, Routes.product, arguments: product);
+          Navigator.pushNamed(Config.navigatorKey.currentContext, Routes.product, arguments: product);
         } else if (target == 2) {
           final category = await categoryRepository.getCategory(id, lang);
           if (category != null) {
@@ -225,7 +226,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
               isFromBrand: false,
             );
             Navigator.pushNamed(
-              context,
+              Config.navigatorKey.currentContext,
               Routes.productList,
               arguments: arguments,
             );
@@ -241,7 +242,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
               isFromBrand: true,
             );
             Navigator.pushNamed(
-              context,
+              Config.navigatorKey.currentContext,
               Routes.productList,
               arguments: arguments,
             );
@@ -309,6 +310,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
   Widget _buildMultiProvider() {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => GlobalProvider()),
         ChangeNotifierProvider(
           create: (context) => MarkaaAppChangeNotifier(),
         ),
