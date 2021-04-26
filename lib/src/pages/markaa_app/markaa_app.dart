@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
@@ -12,12 +17,17 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
+import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
@@ -49,30 +59,202 @@ import 'package:provider/provider.dart';
 import '../../../config.dart';
 import 'no_network_access_page.dart';
 
-class MarkaaApp extends StatelessWidget {
+class MarkaaApp extends StatefulWidget {
   MarkaaApp({Key key}) : super(key: key);
 
+  @override
+  _MarkaaAppState createState() => _MarkaaAppState();
+}
+
+class _MarkaaAppState extends State<MarkaaApp> {
   final appRepository = AppRepository();
+
   final homeRepository = HomeRepository();
+
   final signInRepository = SignInRepository();
+
   final categoryRepository = CategoryRepository();
+
   final productRepository = ProductRepository();
+
   final brandRepository = BrandRepository();
+
   final localStorageRepository = LocalStorageRepository();
+
   final wishlistRepository = WishlistRepository();
+
   final settingRepository = SettingRepository();
+
   final shippingAddressRepository = ShippingAddressRepository();
+
   final orderRepository = OrderRepository();
+
   final profileRepository = ProfileRepository();
+
   final filterRepository = FilterRepository();
+
   final myCartRepository = MyCartRepository();
+
   final searchRepository = SearchRepository();
+
   final checkoutRepository = CheckoutRepository();
+
   final firebaseRepository = FirebaseRepository();
+
+  void _configureMessaging() async {
+    FirebaseMessaging.instance.requestPermission(sound: true, badge: true, alert: true, provisional: true);
+
+    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) => _onLaunchMessage(event.data));
+    FirebaseMessaging.onBackgroundMessage(_onForegroundMessage);
+    FirebaseMessaging.instance.getToken().then((String token) async {
+      deviceToken = token;
+      if (user?.token != null) {
+        await settingRepository.updateFcmDeviceToken(
+          user.token,
+          Platform.isAndroid ? token : '',
+          Platform.isIOS ? token : '',
+          Platform.isAndroid ? lang : '',
+          Platform.isIOS ? lang : '',
+        );
+      }
+    });
+    String topic = lang == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel;
+    await FirebaseMessaging.instance.subscribeToTopic(topic);
+  }
+
+  @override
+  void initState() {
+    _configureMessaging();
+    _initializeLocalNotification();
+
+    super.initState();
+  }
+  void _initializeLocalNotification() async {
+    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    );
+    var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: onSelectNotification,
+    );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+      await _onLaunchMessage(jsonDecode(payload));
+    }
+  }
+
+  Future onDidReceiveLocalNotification(
+    int id,
+    String title,
+    String body,
+    String payload,
+  ) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok okay okay'),
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.categoryList);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    'This channel is used for important notifications.', // description
+    importance: Importance.max,
+  );
+
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  Future<void> _onForegroundMessage(RemoteMessage message) async {
+    await flutterLocalNotificationsPlugin.show(
+      message.hashCode,
+      Platform.isAndroid ? message.data['notification']['title'] : message.data['title'],
+      Platform.isAndroid ? message.data['notification']['body'] : message.data['body'],
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+        ),
+        iOS: IOSNotificationDetails(),
+      ),
+      payload: jsonEncode(message),
+    );
+  }
+
+  Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
+    try {
+      Map<dynamic, dynamic> data = Platform.isAndroid ? message['data'] : message;
+      int target = int.parse(data['target']);
+      if (target != 0) {
+        String id = data['id'];
+        if (target == 1) {
+          final product = await productRepository.getProduct(id, lang);
+          Navigator.pushNamed(context, Routes.product, arguments: product);
+        } else if (target == 2) {
+          final category = await categoryRepository.getCategory(id, lang);
+          if (category != null) {
+            ProductListArguments arguments = ProductListArguments(
+              category: category,
+              subCategory: [],
+              brand: BrandEntity(),
+              selectedSubCategoryIndex: 0,
+              isFromBrand: false,
+            );
+            Navigator.pushNamed(
+              context,
+              Routes.productList,
+              arguments: arguments,
+            );
+          }
+        } else if (target == 3) {
+          final brand = await brandRepository.getBrand(id, lang);
+          if (brand != null) {
+            ProductListArguments arguments = ProductListArguments(
+              category: CategoryEntity(),
+              subCategory: [],
+              brand: brand,
+              selectedSubCategoryIndex: 0,
+              isFromBrand: true,
+            );
+            Navigator.pushNamed(
+              context,
+              Routes.productList,
+              arguments: arguments,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print('catch error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    lang = EasyLocalization.of(context).locale.languageCode;
     return RepositoryProvider.value(
       value: localStorageRepository,
       child: RepositoryProvider.value(

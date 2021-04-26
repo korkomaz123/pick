@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io' show Platform;
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
@@ -14,13 +11,9 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
@@ -78,7 +71,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   PageStyle pageStyle;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   HomeChangeNotifier homeChangeNotifier;
   BrandChangeNotifier brandChangeNotifier;
@@ -118,8 +110,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dynamicLinkService.initialDynamicLink(context);
     });
-    _initializeLocalNotification();
-    _configureMessaging();
     _onLoadHomePage();
     _scrollController.addListener(_onScroll);
   }
@@ -282,161 +272,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     // Start SDK.
     Adjust.start(config);
-  }
-
-  void _initializeLocalNotification() async {
-    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
-    var initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onSelectNotification: onSelectNotification,
-    );
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-  }
-
-  Future onSelectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-      await _onLaunchMessage(jsonDecode(payload));
-    }
-  }
-
-  Future onDidReceiveLocalNotification(
-    int id,
-    String title,
-    String body,
-    String payload,
-  ) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok okay okay'),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.categoryList);
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  void _configureMessaging() async {
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) => _onForegroundMessage(event.data));
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) => _onLaunchMessage(event.data));
-    FirebaseMessaging.onBackgroundMessage((RemoteMessage event) => _onBackgroundMessageHandler(event.data));
-    firebaseMessaging.requestPermission(sound: true, badge: true, alert: true, provisional: true);
-
-    firebaseMessaging.getToken().then((String token) async {
-      deviceToken = token;
-      if (user?.token != null) {
-        await settingRepository.updateFcmDeviceToken(
-          user.token,
-          Platform.isAndroid ? token : '',
-          Platform.isIOS ? token : '',
-          Platform.isAndroid ? lang : '',
-          Platform.isIOS ? lang : '',
-        );
-      }
-    });
-    String topic = lang == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel;
-    await firebaseMessaging.subscribeToTopic(topic);
-  }
-
-  static Future<dynamic> _onBackgroundMessageHandler(
-    Map<String, dynamic> message,
-  ) async {
-    await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message['notification']['title'],
-      message['notification']['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      payload: jsonEncode(message),
-    );
-  }
-
-  Future<dynamic> _onForegroundMessage(Map<String, dynamic> message) async {
-    await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      Platform.isAndroid ? message['notification']['title'] : message['title'],
-      Platform.isAndroid ? message['notification']['body'] : message['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      payload: jsonEncode(message),
-    );
-  }
-
-  Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
-    try {
-      Map<dynamic, dynamic> data = Platform.isAndroid ? message['data'] : message;
-      int target = int.parse(data['target']);
-      if (target != 0) {
-        String id = data['id'];
-        if (target == 1) {
-          final product = await productRepository.getProduct(id, lang);
-          Navigator.pushNamed(context, Routes.product, arguments: product);
-        } else if (target == 2) {
-          final category = await categoryRepository.getCategory(id, lang);
-          if (category != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: category,
-              subCategory: [],
-              brand: BrandEntity(),
-              selectedSubCategoryIndex: 0,
-              isFromBrand: false,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.productList,
-              arguments: arguments,
-            );
-          }
-        } else if (target == 3) {
-          final brand = await brandRepository.getBrand(id, lang);
-          if (brand != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: CategoryEntity(),
-              subCategory: [],
-              brand: brand,
-              selectedSubCategoryIndex: 0,
-              isFromBrand: true,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.productList,
-              arguments: arguments,
-            );
-          }
-        }
-      }
-    } catch (e) {
-      print('catch error $e');
-    }
   }
 
   void _onShowPopup(SliderImageEntity popupItem) async {

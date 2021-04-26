@@ -49,7 +49,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
 
   ProgressService progressService;
   FlushBarService flushBarService;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
@@ -407,7 +406,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
 
   void _onChangeLanguage(String value) async {
     if (language != value) {
-      progressService.showProgress();
       language = value;
       if (language == 'EN') {
         context.setLocale(EasyLocalization.of(context).supportedLocales.first);
@@ -416,19 +414,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
         context.setLocale(EasyLocalization.of(context).supportedLocales.last);
         lang = 'ar';
       }
-      firebaseMessaging.getToken().then((String token) async {
-        deviceToken = token;
-        if (user?.token != null) {
-          await settingRepo.updateFcmDeviceToken(
-            user.token,
-            Platform.isAndroid ? token : '',
-            Platform.isIOS ? token : '',
-            Platform.isAndroid ? lang : '',
-            Platform.isIOS ? lang : '',
-          );
-        }
-        progressService.hideProgress();
-      });
     }
   }
 }

@@ -28,7 +28,6 @@ class _ChangeNotificationSettingItemState extends State<ChangeNotificationSettin
   SettingBloc settingBloc;
   SnackBarService snackBarService;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
