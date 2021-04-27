@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -20,7 +21,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+
+import '../../config.dart';
 
 class ProductVVCard extends StatefulWidget {
   final double cardWidth;
@@ -31,7 +33,6 @@ class ProductVVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductVVCard({
     this.cardWidth,
@@ -42,15 +43,13 @@ class ProductVVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
   _ProductVVCardState createState() => _ProductVVCardState();
 }
 
-class _ProductVVCardState extends State<ProductVVCard>
-    with TickerProviderStateMixin {
+class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateMixin {
   bool isWishlist;
   int index;
   FlushBarService flushBarService;
@@ -60,7 +59,6 @@ class _ProductVVCardState extends State<ProductVVCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
 
   @override
   void initState() {
@@ -156,16 +154,19 @@ class _ProductVVCardState extends State<ProductVVCard>
       height: widget.cardHeight,
       color: Colors.white,
       padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
+        horizontal: Config.pageStyle.unitWidth * 8,
       ),
       child: Column(
         children: [
           Container(
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
           Expanded(
@@ -193,7 +194,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 14,
+                      fontSize: Config.pageStyle.unitFontSize * 14,
                     ),
                   ),
                 ),
@@ -205,8 +206,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: widget.pageStyle.unitFontSize *
-                            (widget.isMinor ? 12 : 16),
+                        fontSize: Config.pageStyle.unitFontSize * (widget.isMinor ? 12 : 16),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -218,8 +218,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 12 : 16),
+                      fontSize: Config.pageStyle.unitFontSize * (widget.isMinor ? 12 : 16),
                       fontWeight: FontWeight.w700,
                       height: 0.5,
                     ),
@@ -228,33 +227,27 @@ class _ProductVVCardState extends State<ProductVVCard>
                 if (widget.isLine) ...[Divider(color: greyColor)],
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    vertical: widget.pageStyle.unitHeight * 5,
+                    vertical: Config.pageStyle.unitHeight * 5,
                   ),
                   child: Row(
                     children: [
                       Text(
-                        widget.product.price != null
-                            ? (widget.product.price + ' ' + 'currency'.tr())
-                            : '',
+                        widget.product.price != null ? (widget.product.price + ' ' + 'currency'.tr()) : '',
                         style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize *
-                              (widget.isMinor ? 12 : 14),
+                          fontSize: Config.pageStyle.unitFontSize * (widget.isMinor ? 12 : 14),
                           color: greyColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       if (widget.product.discount > 0) ...[
-                        SizedBox(
-                            width: widget.pageStyle.unitWidth *
-                                (widget.isMinor ? 4 : 10)),
+                        SizedBox(width: Config.pageStyle.unitWidth * (widget.isMinor ? 4 : 10)),
                         Text(
                           widget.product.beforePrice + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,
                             decorationColor: dangerColor,
-                            fontSize: widget.pageStyle.unitFontSize *
-                                (widget.isMinor ? 12 : 14),
+                            fontSize: Config.pageStyle.unitFontSize * (widget.isMinor ? 12 : 14),
                             color: greyColor,
                           ),
                         ),
@@ -263,18 +256,16 @@ class _ProductVVCardState extends State<ProductVVCard>
                   ),
                 ),
                 if (widget.isShoppingCart &&
-                    (widget.product.typeId != 'simple' ||
-                        widget.product.stockQty != null &&
-                            widget.product.stockQty > 0)) ...[
+                    (widget.product.typeId != 'simple' || widget.product.stockQty != null && widget.product.stockQty > 0)) ...[
                   ScaleTransition(
                     scale: _addToCartScaleAnimation,
                     child: Container(
-                      width: widget.cardWidth - widget.pageStyle.unitWidth * 16,
-                      height: widget.pageStyle.unitHeight * 35,
+                      width: widget.cardWidth - Config.pageStyle.unitWidth * 16,
+                      height: Config.pageStyle.unitHeight * 35,
                       child: MarkaaTextButton(
                         title: 'wishlist_add_cart_button_title'.tr(),
                         titleColor: Colors.white,
-                        titleSize: widget.pageStyle.unitFontSize * 14,
+                        titleSize: Config.pageStyle.unitFontSize * 14,
                         borderColor: Colors.transparent,
                         buttonColor: primaryColor,
                         onPressed: () => _onAddProductToCart(context),
@@ -284,7 +275,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                 ] else ...[
                   SizedBox.shrink()
                 ],
-                SizedBox(height: widget.pageStyle.unitHeight * 5),
+                SizedBox(height: Config.pageStyle.unitHeight * 5),
               ],
             ),
           ),
@@ -296,8 +287,8 @@ class _ProductVVCardState extends State<ProductVVCard>
   Widget _buildDiscount() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 4,
-        vertical: widget.pageStyle.unitHeight * 2,
+        horizontal: Config.pageStyle.unitWidth * 4,
+        vertical: Config.pageStyle.unitHeight * 2,
       ),
       color: Colors.redAccent,
       alignment: Alignment.center,
@@ -305,7 +296,7 @@ class _ProductVVCardState extends State<ProductVVCard>
         '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
+          fontSize: Config.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
           color: Colors.white,
         ),
       ),
@@ -321,17 +312,13 @@ class _ProductVVCardState extends State<ProductVVCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  child: isWishlist
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  width: Config.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  height: Config.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -344,20 +331,19 @@ class _ProductVVCardState extends State<ProductVVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.typeId == 'simple' && (widget.product.stockQty == null || widget.product.stockQty == 0)) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 15,
-            vertical: widget.pageStyle.unitHeight * 5,
+            horizontal: Config.pageStyle.unitWidth * 15,
+            vertical: Config.pageStyle.unitHeight * 5,
           ),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 14,
+              fontSize: Config.pageStyle.unitFontSize * 14,
               color: Colors.white70,
             ),
           ),
@@ -377,11 +363,10 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier.addProductToCart(
-            context, widget.pageStyle, widget.product, 1, lang, {});
+        await myCartChangeNotifier.addProductToCart(context, Config.pageStyle, widget.product, 1, lang, {});
       } else {
         flushBarService.showErrorMessage(
-          widget.pageStyle,
+          Config.pageStyle,
           'out_of_stock_error'.tr(),
         );
       }
@@ -400,11 +385,9 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }

@@ -60,7 +60,7 @@ class _SignInPageState extends State<SignInPage> {
   FlushBarService flushBarService;
   LocalStorageRepository localRepo;
   WishlistRepository wishlistRepo;
-  SettingRepository settingRepo;
+  SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -74,7 +74,6 @@ class _SignInPageState extends State<SignInPage> {
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     wishlistRepo = context.read<WishlistRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();

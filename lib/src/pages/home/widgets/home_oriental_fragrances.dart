@@ -10,56 +10,23 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class HomeOrientalFragrances extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeOrientalFragrances({this.pageStyle});
-
-  @override
-  _HomeOrientalFragrancesState createState() => _HomeOrientalFragrancesState();
-}
-
-class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
-  String title;
-  CategoryEntity orientalCategory;
-  List<ProductModel> orientalProducts;
-  HomeChangeNotifier homeChangeNotifier;
-
-  @override
-  void initState() {
-    super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-  }
-
-  @override
+class HomeOrientalFragrances extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeOrientalFragrances({@required this.homeChangeNotifier});
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 410,
-      margin: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      color: Colors.white,
-      child: Consumer<HomeChangeNotifier>(
-        builder: (_, model, __) {
-          orientalProducts = model.orientalProducts;
-          title = model.orientalTitle;
-          orientalCategory = model.orientalCategory;
-          if (orientalProducts.isNotEmpty) {
-            return Column(
-              children: [
-                _buildHeadline(),
-                _buildProductsList(model.orientalProducts),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
-    );
+    if (homeChangeNotifier.orientalProducts.isNotEmpty) {
+      return Column(
+        children: [
+          _buildHeadline(),
+          Expanded(child: _buildProductsList(homeChangeNotifier.orientalProducts)),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildHeadline() {
@@ -69,34 +36,34 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            title ?? '',
+            homeChangeNotifier.orientalTitle ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 26,
+              fontSize: Config.pageStyle.unitFontSize * 26,
               color: greyDarkColor,
             ),
           ),
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: widget.pageStyle.unitWidth * 5,
+              horizontal: Config.pageStyle.unitWidth * 5,
             ),
-            height: widget.pageStyle.unitHeight * 30,
+            height: Config.pageStyle.unitHeight * 30,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: widget.pageStyle.unitFontSize * 15,
+              titleSize: Config.pageStyle.unitFontSize * 15,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(
-                  category: orientalCategory,
-                  subCategory: orientalCategory.subCategories,
+                  category: homeChangeNotifier.orientalCategory,
+                  subCategory: homeChangeNotifier.orientalCategory.subCategories,
                   brand: BrandEntity(),
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  context,
+                  Config.navigatorKey.currentContext,
                   Routes.productList,
                   arguments: arguments,
                 );
@@ -109,30 +76,21 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
   }
 
   Widget _buildProductsList(List<ProductModel> list) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: widget.pageStyle.unitHeight * 10,
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: list.map((item) {
-            return Container(
-              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
-              child: ProductVVCard(
-                cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 330,
-                product: item,
-                isShoppingCart: true,
-                isLine: false,
-                isMinor: true,
-                isWishlist: true,
-                isShare: false,
-                pageStyle: widget.pageStyle,
-              ),
-            );
-          }).toList(),
+    return ListView.builder(
+      padding: EdgeInsets.only(top: Config.pageStyle.unitHeight * 10),
+      scrollDirection: Axis.horizontal,
+      itemCount: list.length,
+      itemBuilder: (context, index) => Container(
+        margin: EdgeInsets.only(left: Config.pageStyle.unitWidth * 5),
+        child: ProductVVCard(
+          cardWidth: Config.pageStyle.unitWidth * 170,
+          cardHeight: Config.pageStyle.unitHeight * 325,
+          product: list[index],
+          isShoppingCart: true,
+          isLine: false,
+          isMinor: true,
+          isWishlist: true,
+          isShare: false,
         ),
       ),
     );

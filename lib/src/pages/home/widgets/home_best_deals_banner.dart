@@ -41,53 +41,54 @@ class HomeBestDealsBanner extends StatelessWidget {
               ),
             ),
             InkWell(
-                onTap: () async {
-                  if (banner.categoryId != null) {
-                    final arguments = ProductListArguments(
-                      category: CategoryEntity(
-                        id: banner.categoryId,
-                        name: banner.categoryName,
-                      ),
-                      brand: BrandEntity(),
-                      subCategory: [],
-                      selectedSubCategoryIndex: 0,
-                      isFromBrand: false,
-                    );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
-                  } else if (banner?.brand?.optionId != null) {
-                    final arguments = ProductListArguments(
-                      category: CategoryEntity(),
-                      brand: banner.brand,
-                      subCategory: [],
-                      selectedSubCategoryIndex: 0,
-                      isFromBrand: true,
-                    );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
-                  } else if (banner?.productId != null) {
-                    final product = await context.read<ProductRepository>().getProduct(banner.productId);
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      Routes.product,
-                      (route) => route.settings.name == Routes.home,
-                      arguments: product,
-                    );
-                  }
-                },
-                child: CachedNetworkImage(
-                  imageUrl: banner.bannerImage,
-                  fit: BoxFit.fitHeight,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                  errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                )),
+              onTap: () async {
+                if (banner.categoryId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(
+                      id: banner.categoryId,
+                      name: banner.categoryName,
+                    ),
+                    brand: BrandEntity(),
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: false,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
+                } else if (banner?.brand?.optionId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(),
+                    brand: banner.brand,
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: true,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
+                } else if (banner?.productId != null) {
+                  final product = await context.read<ProductRepository>().getProduct(banner.productId);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.product,
+                    (route) => route.settings.name == Routes.home,
+                    arguments: product,
+                  );
+                }
+              },
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage,
+                fit: BoxFit.fitHeight,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,

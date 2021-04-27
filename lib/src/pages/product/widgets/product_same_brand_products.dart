@@ -18,8 +18,7 @@ class ProductSameBrandProducts extends StatefulWidget {
   ProductSameBrandProducts({this.pageStyle, this.product});
 
   @override
-  _ProductSameBrandProductsState createState() =>
-      _ProductSameBrandProductsState();
+  _ProductSameBrandProductsState createState() => _ProductSameBrandProductsState();
 }
 
 class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
@@ -37,9 +36,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   }
 
   void _getSameBrandProducts() async {
-    sameBrandProducts = await context
-        .read<ProductRepository>()
-        .getSameBrandProducts(product.productId, lang);
+    sameBrandProducts = await context.read<ProductRepository>().getSameBrandProducts(product.productId, lang);
     if (mounted) setState(() {});
   }
 
@@ -81,8 +78,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
             width: widget.pageStyle.unitWidth * 350,
             height: widget.pageStyle.unitHeight * 220,
             child: Swiper(
-              itemCount:
-                  sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              itemCount: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -96,7 +92,6 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
                   cardWidth: widget.pageStyle.unitWidth * 343,
                   cardHeight: widget.pageStyle.unitHeight * 208,
                   product: sameBrandProducts[index],
-                  pageStyle: widget.pageStyle,
                 );
               },
             ),
@@ -109,9 +104,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: sameBrandProducts.length > 10
-                    ? 10
-                    : sameBrandProducts.length,
+                count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

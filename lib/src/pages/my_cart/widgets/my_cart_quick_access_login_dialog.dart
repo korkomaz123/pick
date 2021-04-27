@@ -54,7 +54,7 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
   ProgressService progressService;
   FlushBarService flushBarService;
   WishlistRepository wishlistRepo;
-  SettingRepository settingRepo;
+  SettingRepository settingRepo = SettingRepository();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -70,7 +70,6 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     localRepo = context.read<LocalStorageRepository>();
     wishlistRepo = context.read<WishlistRepository>();
-    settingRepo = context.read<SettingRepository>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();

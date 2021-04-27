@@ -4,18 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:equatable/equatable.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
-import 'package:meta/meta.dart';
 
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  SignInBloc({@required SignInRepository signInRepository})
-      : assert(signInRepository != null),
-        _signInRepository = signInRepository,
-        super(SignInInitial());
+  SignInBloc() : super(SignInInitial());
 
-  final SignInRepository _signInRepository;
+  final SignInRepository _signInRepository = SignInRepository();
 
   @override
   Stream<SignInState> mapEventToState(
@@ -85,8 +81,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignInSubmittedInProcess();
     try {
-      final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang, appleId);
+      final result = await _signInRepository.socialLogin(email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
@@ -106,8 +101,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignUpSubmittedInProcess();
     try {
-      final result = await _signInRepository.register(
-          firstName, lastName, email, password);
+      final result = await _signInRepository.register(firstName, lastName, email, password);
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];

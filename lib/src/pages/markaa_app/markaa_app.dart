@@ -17,7 +17,6 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -34,7 +33,6 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/filter_repository.dart';
 import 'package:markaa/src/utils/repositories/firebase_repository.dart';
-import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -48,9 +46,7 @@ import 'package:markaa/src/utils/repositories/order_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/profile_repository.dart';
 import 'package:markaa/src/utils/repositories/search_repository.dart';
-import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
-import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -66,10 +62,6 @@ class MarkaaApp extends StatefulWidget {
 }
 
 class _MarkaaAppState extends State<MarkaaApp> {
-  final homeRepository = HomeRepository();
-
-  final signInRepository = SignInRepository();
-
   final categoryRepository = CategoryRepository();
 
   final productRepository = ProductRepository();
@@ -79,8 +71,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
   final localStorageRepository = LocalStorageRepository();
 
   final wishlistRepository = WishlistRepository();
-
-  final settingRepository = SettingRepository();
 
   final shippingAddressRepository = ShippingAddressRepository();
 
@@ -104,20 +94,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) => _onLaunchMessage(event.data));
     // FirebaseMessaging.onBackgroundMessage(_onForegroundMessage);
-    FirebaseMessaging.instance.getToken().then((String token) async {
-      deviceToken = token;
-      if (user?.token != null) {
-        await settingRepository.updateFcmDeviceToken(
-          user.token,
-          Platform.isAndroid ? token : '',
-          Platform.isIOS ? token : '',
-          Platform.isAndroid ? lang : '',
-          Platform.isIOS ? lang : '',
-        );
-      }
-    });
-    String topic = lang == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel;
-    await FirebaseMessaging.instance.subscribeToTopic(topic);
   }
 
   @override
@@ -256,37 +232,28 @@ class _MarkaaAppState extends State<MarkaaApp> {
     return RepositoryProvider.value(
       value: localStorageRepository,
       child: RepositoryProvider.value(
-        value: homeRepository,
+        value: categoryRepository,
         child: RepositoryProvider.value(
-          value: signInRepository,
+          value: productRepository,
           child: RepositoryProvider.value(
-            value: categoryRepository,
+            value: brandRepository,
             child: RepositoryProvider.value(
-              value: productRepository,
+              value: wishlistRepository,
               child: RepositoryProvider.value(
-                value: brandRepository,
+                value: shippingAddressRepository,
                 child: RepositoryProvider.value(
-                  value: wishlistRepository,
+                  value: orderRepository,
                   child: RepositoryProvider.value(
-                    value: settingRepository,
+                    value: profileRepository,
                     child: RepositoryProvider.value(
-                      value: shippingAddressRepository,
+                      value: filterRepository,
                       child: RepositoryProvider.value(
-                        value: orderRepository,
+                        value: myCartRepository,
                         child: RepositoryProvider.value(
-                          value: profileRepository,
+                          value: checkoutRepository,
                           child: RepositoryProvider.value(
-                            value: filterRepository,
-                            child: RepositoryProvider.value(
-                              value: myCartRepository,
-                              child: RepositoryProvider.value(
-                                value: checkoutRepository,
-                                child: RepositoryProvider.value(
-                                  value: searchRepository,
-                                  child: _buildMultiProvider(),
-                                ),
-                              ),
-                            ),
+                            value: searchRepository,
+                            child: _buildMultiProvider(),
                           ),
                         ),
                       ),
@@ -375,14 +342,10 @@ class _MarkaaAppState extends State<MarkaaApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SignInBloc(
-            signInRepository: signInRepository,
-          ),
+          create: (context) => SignInBloc(),
         ),
         BlocProvider(
-          create: (context) => SettingBloc(
-            settingRepository: settingRepository,
-          ),
+          create: (context) => SettingBloc(),
         ),
         BlocProvider(
           create: (context) => ProfileBloc(

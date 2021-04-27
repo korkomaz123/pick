@@ -34,10 +34,13 @@ import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 
+import 'widgets/home_exculisive_banner.dart';
 import 'widgets/home_featured_categories.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
 import 'widgets/home_header_carousel.dart';
+import 'widgets/home_new_arrivals.dart';
+import 'widgets/home_oriental_fragrances.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_mega_banner.dart';
 
@@ -83,7 +86,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _setupAdjustSDK();
-    // homeChangeNotifier = context.read<HomeChangeNotifier>();
     // brandChangeNotifier = context.read<BrandChangeNotifier>();
     // categoryChangeNotifier = context.read<CategoryChangeNotifier>();
     // productChangeNotifier = context.read<ProductChangeNotifier>();
@@ -308,9 +310,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _onLoadHomePage() async {
-    // homeChangeNotifier.loadNewArrivals(lang);
-    // homeChangeNotifier.loadExculisiveBanner(lang);
-    // homeChangeNotifier.loadOrientalProducts(lang);
     // homeChangeNotifier.loadNewArrivalsBanner(lang);
     // homeChangeNotifier.loadFragrancesBanner(lang);
     // homeChangeNotifier.loadPerfumes(lang);
@@ -390,9 +389,38 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ? Center(child: CircularProgressIndicator())
                     : HomeBestDealsBanner(homeChangeNotifier: _homeChangeNotifier),
               ),
-              // HomeNewArrivals(pageStyle: pageStyle),
-              // HomeExculisiveBanner(pageStyle: pageStyle),
-              // HomeOrientalFragrances(pageStyle: pageStyle),
+              Container(
+                width: Config.pageStyle.deviceWidth,
+                height: Config.pageStyle.unitHeight * 300,
+                padding: EdgeInsets.all(Config.pageStyle.unitWidth * 8),
+                margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeChangeNotifier.loadNewArrivals(),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeNewArrivals(homeChangeNotifier: _homeChangeNotifier),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeChangeNotifier.loadExculisiveBanner(),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeExculisiveBanner(homeChangeNotifier: _homeChangeNotifier),
+              ),
+              Container(
+                width: Config.pageStyle.deviceWidth,
+                height: Config.pageStyle.unitHeight * 410,
+                margin: EdgeInsets.symmetric(vertical: Config.pageStyle.unitHeight * 10),
+                padding: EdgeInsets.all(Config.pageStyle.unitWidth * 8),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeChangeNotifier.loadOrientalProducts(),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeOrientalFragrances(homeChangeNotifier: _homeChangeNotifier),
+                ),
+              ),
               // HomeNewArrivalsBanner(pageStyle: pageStyle),
               // HomeFragrancesBanners(pageStyle: pageStyle),
               // HomePerfumes(pageStyle: pageStyle),

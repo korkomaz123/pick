@@ -45,7 +45,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
   FlushBarService flushBarService;
 
   LocalStorageRepository localRepo;
-  SettingRepository settingRepo;
+  SettingRepository settingRepo = SettingRepository();
 
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -58,7 +58,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();

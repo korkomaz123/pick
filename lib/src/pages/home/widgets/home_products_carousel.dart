@@ -6,16 +6,15 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../../../config.dart';
+
 class HomeProductsCarousel extends StatefulWidget {
-  final PageStyle pageStyle;
   final List<ProductModel> products;
   final bool isVerticalCard;
 
   HomeProductsCarousel({
-    this.pageStyle,
     this.products,
     this.isVerticalCard = true,
   });
@@ -40,8 +39,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
       child: Stack(
         children: [
           Container(
-            width: widget.pageStyle.deviceWidth,
-            height: !widget.isVerticalCard ? widget.pageStyle.unitHeight * 200 : widget.pageStyle.unitHeight * 320,
+            width: Config.pageStyle.deviceWidth,
+            height: !widget.isVerticalCard ? Config.pageStyle.unitHeight * 200 : Config.pageStyle.unitHeight * 320,
             child: Swiper(
               itemCount: widget.products.length,
               autoplay: false,
@@ -55,8 +54,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
               itemBuilder: (context, index) {
                 if (widget.isVerticalCard) {
                   return ProductVCard(
-                    cardWidth: widget.pageStyle.unitWidth * 355,
-                    cardHeight: widget.pageStyle.unitHeight * 300,
+                    cardWidth: Config.pageStyle.unitWidth * 355,
+                    cardHeight: Config.pageStyle.unitHeight * 300,
                     product: widget.products[index],
                     isShoppingCart: true,
                     isWishlist: true,
@@ -65,8 +64,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                   );
                 } else {
                   return ProductHCard(
-                    cardWidth: widget.pageStyle.unitWidth * 355,
-                    cardHeight: widget.pageStyle.unitHeight * 180,
+                    cardWidth: Config.pageStyle.unitWidth * 355,
+                    cardHeight: Config.pageStyle.unitHeight * 180,
                     product: widget.products[index],
                     isShoppingCart: true,
                     isWishlist: true,
@@ -81,7 +80,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
+                bottom: Config.pageStyle.unitHeight * 20,
               ),
               child: Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
@@ -92,8 +91,8 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     effect: SlideEffect(
                       spacing: 8.0,
                       radius: 30,
-                      dotWidth: widget.pageStyle.unitHeight * 8,
-                      dotHeight: widget.pageStyle.unitHeight * 8,
+                      dotWidth: Config.pageStyle.unitHeight * 8,
+                      dotHeight: Config.pageStyle.unitHeight * 8,
                       paintStyle: PaintingStyle.fill,
                       strokeWidth: 0,
                       dotColor: greyLightColor,
