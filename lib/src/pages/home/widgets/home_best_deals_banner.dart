@@ -72,7 +72,7 @@ class HomeBestDealsBanner extends StatelessWidget {
                     arguments: arguments,
                   );
                 } else if (banner?.productId != null) {
-                  final product = await context.read<ProductRepository>().getProduct(banner.productId);
+                  final product = await ProductRepository().getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.product,
@@ -99,7 +99,6 @@ class HomeBestDealsBanner extends StatelessWidget {
                       cardHeight: Config.pageStyle.unitWidth * 175,
                       product: homeChangeNotifier.bestDealsItems[index],
                       isWishlist: true,
-                      pageStyle: Config.pageStyle,
                     );
                   }),
             ),

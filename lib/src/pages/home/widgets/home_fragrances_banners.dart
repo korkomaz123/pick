@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -7,37 +8,22 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
-class HomeFragrancesBanners extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeFragrancesBanners({this.pageStyle});
+class HomeFragrancesBanners extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeFragrancesBanners({@required this.homeChangeNotifier});
 
-  @override
-  _HomeFragrancesBannersState createState() => _HomeFragrancesBannersState();
-}
-
-class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
-  PageStyle pageStyle;
-  HomeChangeNotifier homeChangeNotifier;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    pageStyle = widget.pageStyle;
-    productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-  }
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
         return Container(
-          width: pageStyle.deviceWidth,
+          width: Config.pageStyle.deviceWidth,
           color: Colors.white,
           child: Column(
             children: [
@@ -54,13 +40,13 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: Config.pageStyle.unitWidth * 10,
+        vertical: Config.pageStyle.unitHeight * 10,
       ),
       child: Text(
         title,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
+          fontSize: Config.pageStyle.unitFontSize * 26,
         ),
       ),
     );
@@ -72,7 +58,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
       child: Column(
         children: banners.map((banner) {
           return Padding(
-            padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 5),
+            padding: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 5),
             child: InkWell(
               onTap: () async {
                 if (banner.categoryId != null) {
@@ -87,7 +73,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: false,
                   );
                   Navigator.pushNamed(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
@@ -100,21 +86,26 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: true,
                   );
                   Navigator.pushNamed(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
                 } else if (banner?.productId != null) {
                   final product = await productRepository.getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.product,
                     (route) => route.settings.name == Routes.home,
                     arguments: product,
                   );
                 }
               },
-              child: Image.network(banner.bannerImage),
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+              ),
             ),
           );
         }).toList(),

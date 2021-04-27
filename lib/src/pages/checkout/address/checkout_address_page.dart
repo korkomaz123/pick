@@ -82,9 +82,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 if (model.keys.isEmpty) ...[
                   _buildNoAddress(),
                 ],
-                if (model.defaultAddress == null && model.keys.isNotEmpty) ...[
-                  SizedBox(height: pageStyle.unitHeight * 50)
-                ],
+                if (model.defaultAddress == null && model.keys.isNotEmpty) ...[SizedBox(height: pageStyle.unitHeight * 50)],
                 if (model.defaultAddress != null) ...[
                   _buildChangeAddressButton(),
                 ] else if (model.keys.isNotEmpty) ...[
@@ -199,7 +197,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onChangeAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
@@ -218,7 +215,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onChangeAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
@@ -241,7 +237,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           arguments: {'isCheckout': true},
         ),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
@@ -330,18 +325,14 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       } else {
         discount = myCartChangeNotifier.type == 'fixed'
             ? myCartChangeNotifier.discount
-            : myCartChangeNotifier.discount *
-                myCartChangeNotifier.cartTotalPrice /
-                100;
+            : myCartChangeNotifier.discount * myCartChangeNotifier.cartTotalPrice / 100;
         subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-      orderDetails['orderDetails']['totalPrice'] =
-          totalPrice.toStringAsFixed(3);
-      orderDetails['orderDetails']['subTotalPrice'] =
-          subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = jsonEncode({

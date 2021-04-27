@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/components/product_vv_card.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -6,47 +7,26 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-class HomeBestWatches extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeBestWatches({@required this.pageStyle});
+class HomeBestWatches extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeBestWatches({@required this.homeChangeNotifier});
 
-  @override
-  _HomeBestWatchSecties createState() => _HomeBestWatchSecties();
-}
+  final ProductRepository productRepository = ProductRepository();
 
-class _HomeBestWatchSecties extends State<HomeBestWatches> {
-  PageStyle pageStyle;
-  HomeChangeNotifier homeChangeNotifier;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    pageStyle = widget.pageStyle;
-    productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        return Container(
-          width: pageStyle.deviceWidth,
-          child: Column(
-            children: [
-              if (model.bestWatchesBanner != null) ...[_buildBanner(model.bestWatchesBanner)],
-              if (model.bestWatchesItems.isNotEmpty) ...[_buildProducts(model.bestWatchesItems)]
-            ],
-          ),
-        );
-      },
+    return Container(
+      width: Config.pageStyle.deviceWidth,
+      child: Column(
+        children: [
+          if (homeChangeNotifier.bestWatchesBanner != null) ...[_buildBanner(homeChangeNotifier.bestWatchesBanner)],
+          if (homeChangeNotifier.bestWatchesItems.isNotEmpty) ...[_buildProducts(homeChangeNotifier.bestWatchesItems)]
+        ],
+      ),
     );
   }
 
@@ -65,7 +45,7 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-            context,
+            Config.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );
@@ -78,49 +58,47 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
             isFromBrand: true,
           );
           Navigator.pushNamed(
-            context,
+            Config.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );
         } else if (banner?.productId != null) {
           final product = await productRepository.getProduct(banner.productId);
           Navigator.pushNamedAndRemoveUntil(
-            context,
+            Config.navigatorKey.currentContext,
             Routes.product,
             (route) => route.settings.name == Routes.home,
             arguments: product,
           );
         }
       },
-      child: Image.network(banner.bannerImage),
+      child: CachedNetworkImage(
+        imageUrl: banner.bannerImage,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+        errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+      ),
     );
   }
 
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: widget.pageStyle.unitHeight * 15,
-        bottom: widget.pageStyle.unitHeight * 10,
-      ),
-      child: SingleChildScrollView(
+      padding: EdgeInsets.only(top: Config.pageStyle.unitHeight * 15, bottom: Config.pageStyle.unitHeight * 10),
+      height: Config.pageStyle.unitHeight * 350,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: list.map((item) {
-            return Container(
-              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
-              child: ProductVVCard(
-                cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 330,
-                product: item,
-                isShoppingCart: true,
-                isLine: false,
-                isMinor: true,
-                isWishlist: true,
-                isShare: false,
-              ),
-            );
-          }).toList(),
+        itemCount: list.length,
+        itemBuilder: (context, index) => Container(
+          margin: EdgeInsets.only(left: Config.pageStyle.unitWidth * 5),
+          child: ProductVVCard(
+            cardWidth: Config.pageStyle.unitWidth * 170,
+            cardHeight: Config.pageStyle.unitHeight * 330,
+            product: list[index],
+            isShoppingCart: true,
+            isLine: false,
+            isMinor: true,
+            isWishlist: true,
+            isShare: false,
+          ),
         ),
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/config.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -7,13 +9,11 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
 class HomeCategoryCard extends StatelessWidget {
-  final PageStyle pageStyle;
   final CategoryEntity category;
 
-  HomeCategoryCard({this.pageStyle, this.category});
+  HomeCategoryCard({this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -33,49 +33,49 @@ class HomeCategoryCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 249,
+        width: Config.pageStyle.deviceWidth,
+        height: Config.pageStyle.unitHeight * 249,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(category.imageUrl),
+            image: CachedNetworkImageProvider(category.imageUrl),
             fit: BoxFit.cover,
           ),
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 18,
-          vertical: pageStyle.unitHeight * 23,
+          horizontal: Config.pageStyle.unitWidth * 18,
+          vertical: Config.pageStyle.unitHeight * 23,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: pageStyle.deviceWidth / 2,
+              width: Config.pageStyle.deviceWidth / 2,
               child: Text(
                 category.name,
                 style: mediumTextStyle.copyWith(
                   color: darkColor,
-                  fontSize: pageStyle.unitFontSize * 23,
+                  fontSize: Config.pageStyle.unitFontSize * 23,
                 ),
               ),
             ),
             Container(
-              width: pageStyle.deviceWidth / 2,
-              padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+              width: Config.pageStyle.deviceWidth / 2,
+              padding: EdgeInsets.only(top: Config.pageStyle.unitHeight * 10),
               child: Text(
                 category.description ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 10,
+                  fontSize: Config.pageStyle.unitFontSize * 10,
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
+              padding: EdgeInsets.only(top: Config.pageStyle.unitHeight * 4),
               child: MarkaaTextButton(
                 title: 'view_all'.tr(),
-                titleSize: pageStyle.unitFontSize * 18,
+                titleSize: Config.pageStyle.unitFontSize * 18,
                 titleColor: greyDarkColor,
                 buttonColor: Colors.transparent,
                 borderColor: greyDarkColor,

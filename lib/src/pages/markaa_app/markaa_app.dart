@@ -80,8 +80,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
   final filterRepository = FilterRepository();
 
-  final myCartRepository = MyCartRepository();
-
   final searchRepository = SearchRepository();
 
   final checkoutRepository = CheckoutRepository();
@@ -234,28 +232,22 @@ class _MarkaaAppState extends State<MarkaaApp> {
       child: RepositoryProvider.value(
         value: categoryRepository,
         child: RepositoryProvider.value(
-          value: productRepository,
+          value: brandRepository,
           child: RepositoryProvider.value(
-            value: brandRepository,
+            value: wishlistRepository,
             child: RepositoryProvider.value(
-              value: wishlistRepository,
+              value: shippingAddressRepository,
               child: RepositoryProvider.value(
-                value: shippingAddressRepository,
+                value: orderRepository,
                 child: RepositoryProvider.value(
-                  value: orderRepository,
+                  value: profileRepository,
                   child: RepositoryProvider.value(
-                    value: profileRepository,
+                    value: filterRepository,
                     child: RepositoryProvider.value(
-                      value: filterRepository,
+                      value: checkoutRepository,
                       child: RepositoryProvider.value(
-                        value: myCartRepository,
-                        child: RepositoryProvider.value(
-                          value: checkoutRepository,
-                          child: RepositoryProvider.value(
-                            value: searchRepository,
-                            child: _buildMultiProvider(),
-                          ),
-                        ),
+                        value: searchRepository,
+                        child: _buildMultiProvider(),
                       ),
                     ),
                   ),
@@ -285,10 +277,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
           create: (context) => SuggestionChangeNotifier(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ProductChangeNotifier(
-            productRepository: productRepository,
-            localStorageRepository: localStorageRepository,
-          ),
+          create: (context) => ProductChangeNotifier(),
         ),
         ChangeNotifierProvider(
           create: (context) => CategoryChangeNotifier(
@@ -312,15 +301,10 @@ class _MarkaaAppState extends State<MarkaaApp> {
           ),
         ),
         ChangeNotifierProvider(
-          create: (context) => ProductReviewChangeNotifier(
-            productRepository: productRepository,
-          ),
+          create: (context) => ProductReviewChangeNotifier(),
         ),
         ChangeNotifierProvider(
-          create: (context) => HomeChangeNotifier(
-            productRepository: productRepository,
-            localStorageRepository: localStorageRepository,
-          ),
+          create: (context) => HomeChangeNotifier(),
         ),
         ChangeNotifierProvider(
           create: (context) => OrderChangeNotifier(

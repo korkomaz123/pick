@@ -7,7 +7,6 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -22,13 +21,7 @@ class HomeHeaderCarousel extends StatefulWidget {
 
 class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   int activeIndex = 0;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    productRepository = context.read<ProductRepository>();
-  }
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {

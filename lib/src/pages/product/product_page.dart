@@ -53,10 +53,9 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   final _refreshController = RefreshController(initialRefresh: false);
   PageStyle pageStyle;
   ProductModel product;
-  MyCartRepository cartRepo;
   ProgressService progressService;
-  LocalStorageRepository localStorageRepository;
-  ProductRepository productRepository;
+  LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  ProductRepository productRepository = ProductRepository();
   HomeChangeNotifier homeChangeNotifier;
   FlushBarService flushBarService;
   bool isBuyNow = false;
@@ -72,8 +71,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     product = widget.arguments as ProductModel;
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    productRepository = context.read<ProductRepository>();
-    localStorageRepository = context.read<LocalStorageRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();

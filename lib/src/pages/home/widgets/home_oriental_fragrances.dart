@@ -2,7 +2,6 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_vv_card.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';

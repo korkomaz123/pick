@@ -5,103 +5,75 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/routes/routes.dart';
 
-class HomeAdvertise extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeAdvertise({this.pageStyle});
+class HomeAdvertise extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeAdvertise({@required this.homeChangeNotifier});
 
-  @override
-  _HomeAdvertiseState createState() => _HomeAdvertiseState();
-}
-
-class _HomeAdvertiseState extends State<HomeAdvertise> {
-  HomeChangeNotifier homeChangeNotifier;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-  }
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, ___) {
-        if (model.ads != null) {
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            color: Colors.white,
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    if (model.ads.categoryId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(
-                          id: model.ads.categoryId,
-                          name: model.ads.categoryName,
-                        ),
-                        brand: BrandEntity(),
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: false,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (model?.ads?.brand?.optionId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(),
-                        brand: model.ads.brand,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (model?.ads?.productId != null) {
-                      final product = await productRepository.getProduct(model.ads.productId);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.product,
-                        (route) => route.settings.name == Routes.home,
-                        arguments: product,
-                      );
-                    }
-                  },
-                  child: Image.network(model.ads.bannerImage),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: model.perfumesItems.map((item) {
-                      return ProductCard(
-                        cardWidth: widget.pageStyle.unitWidth * 120,
-                        cardHeight: widget.pageStyle.unitWidth * 175,
-                        product: item,
-                        isWishlist: true,
-                        pageStyle: widget.pageStyle,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+    if (homeChangeNotifier.ads != null) {
+      return Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            InkWell(
+              onTap: () async {
+                if (homeChangeNotifier.ads.categoryId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(
+                      id: homeChangeNotifier.ads.categoryId,
+                      name: homeChangeNotifier.ads.categoryName,
+                    ),
+                    brand: BrandEntity(),
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: false,
+                  );
+                  Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+                } else if (homeChangeNotifier?.ads?.brand?.optionId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(),
+                    brand: homeChangeNotifier.ads.brand,
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: true,
+                  );
+                  Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+                } else if (homeChangeNotifier?.ads?.productId != null) {
+                  final product = await productRepository.getProduct(homeChangeNotifier.ads.productId);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.product,
+                    (route) => route.settings.name == Routes.home,
+                    arguments: product,
+                  );
+                }
+              },
+              child: Image.network(homeChangeNotifier.ads.bannerImage),
             ),
-          );
-        }
-        return Container();
-      },
-    );
+            Container(
+              height: Config.pageStyle.unitWidth * 175,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: homeChangeNotifier.perfumesItems.length,
+                itemBuilder: (context, index) => ProductCard(
+                  cardWidth: Config.pageStyle.unitWidth * 120,
+                  cardHeight: Config.pageStyle.unitWidth * 175,
+                  product: homeChangeNotifier.perfumesItems[index],
+                  isWishlist: true,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Container();
   }
 }

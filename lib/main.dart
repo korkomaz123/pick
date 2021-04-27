@@ -29,7 +29,6 @@ void main() async {
 
   String token = await Config.localRepo.getToken();
   print("token ====> $token");
-// Routes.signIn or Routes.home
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
@@ -39,7 +38,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: MarkaaApp(home: token != null && token.isNotEmpty ? Routes.home : Routes.signIn),
+      child: MarkaaApp(home: token != null && token.isNotEmpty ? Routes.home : Routes.home),
     ),
   );
 }

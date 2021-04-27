@@ -6,13 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
-  ProductChangeNotifier({
-    @required this.productRepository,
-    @required this.localStorageRepository,
-  });
-
-  final ProductRepository productRepository;
-  final LocalStorageRepository localStorageRepository;
+  final ProductRepository productRepository = ProductRepository();
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -174,8 +169,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(
-        brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -245,8 +239,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(
-        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {

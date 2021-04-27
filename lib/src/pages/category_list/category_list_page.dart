@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -28,8 +29,7 @@ class CategoryListPage extends StatefulWidget {
   _CategoryListPageState createState() => _CategoryListPageState();
 }
 
-class _CategoryListPageState extends State<CategoryListPage>
-    with WidgetsBindingObserver {
+class _CategoryListPageState extends State<CategoryListPage> with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String category;
@@ -43,8 +43,7 @@ class _CategoryListPageState extends State<CategoryListPage>
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
-    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-    categoryChangeNotifier.getCategoriesList(lang);
+    context.read<HomeChangeNotifier>().getCategoriesList();
   }
 
   @override
@@ -63,8 +62,8 @@ class _CategoryListPageState extends State<CategoryListPage>
       body: Column(
         children: [
           _buildAppBar(),
-          Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
-            categories = categoryChangeNotifier.categories;
+          Consumer<HomeChangeNotifier>(builder: (_, _homeChangeNotifier, ___) {
+            categories = _homeChangeNotifier.categories;
             return Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -76,9 +75,7 @@ class _CategoryListPageState extends State<CategoryListPage>
                           key: activeIndex == index ? dataKey : null,
                           child: _buildCategoryCard(categories[index]),
                         ),
-                        activeIndex == index
-                            ? _buildSubcategoriesList(categories[index])
-                            : SizedBox.shrink(),
+                        activeIndex == index ? _buildSubcategoriesList(categories[index]) : SizedBox.shrink(),
                         SizedBox(height: pageStyle.unitHeight * 6),
                       ],
                     ),
@@ -154,8 +151,7 @@ class _CategoryListPageState extends State<CategoryListPage>
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Align(
-              alignment:
-                  lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+              alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(
                   left: pageStyle.unitWidth * (lang == 'en' ? 31 : 150),

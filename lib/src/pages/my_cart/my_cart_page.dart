@@ -48,8 +48,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -65,8 +63,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();

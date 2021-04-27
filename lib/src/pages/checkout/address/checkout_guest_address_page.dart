@@ -299,7 +299,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
         icon: SvgPicture.asset(searchAddrIcon),
         onPressed: () => _onSearchAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }

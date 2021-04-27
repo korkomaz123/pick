@@ -45,7 +45,7 @@ class HomeMegaBanner extends StatelessWidget {
             arguments: arguments,
           );
         } else if (homeChangeNotifier.megaBanner?.productId != null) {
-          final product = await context.read<ProductRepository>().getProduct(homeChangeNotifier.megaBanner.productId);
+          final product = await ProductRepository().getProduct(homeChangeNotifier.megaBanner.productId);
           Navigator.pushNamedAndRemoveUntil(
             Config.navigatorKey.currentContext,
             Routes.product,

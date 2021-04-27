@@ -362,9 +362,9 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
         timer.cancel();
       });
       if (isWishlist) {
-        context.read<WishlistChangeNotifier>().removeItemFromWishlist(user.token, widget.product);
+        await Config.navigatorKey.currentContext.read<WishlistChangeNotifier>().removeItemFromWishlist(user.token, widget.product);
       } else {
-        context.read<WishlistChangeNotifier>().addItemToWishlist(user.token, widget.product, 1, {});
+        await Config.navigatorKey.currentContext.read<WishlistChangeNotifier>().addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }

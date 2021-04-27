@@ -11,7 +11,7 @@ import 'src/utils/repositories/sign_in_repository.dart';
 class Config {
   static String baseUrl = "";
   static String imagesUrl = "";
-  static String language = "";
+  static String language = "en";
 
   static PageStyle pageStyle;
   static GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
@@ -46,17 +46,16 @@ class Config {
     // }
   }
 
-  static _loadAssets() async {
+  static loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
       await signInRepo.loginFirebase(email: MarkaaReporter.email, password: MarkaaReporter.password);
     }
     // orderChangeNotifier.initializeOrders();
     // brandChangeNotifier.getBrandsList(lang, 'brand');
     // brandChangeNotifier.getBrandsList(lang, 'home');
-    // categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
-    await myCartChangeNotifier.getCartId();
-    // await myCartChangeNotifier.getCartItems(lang);
+    // await myCartChangeNotifier.getCartId();
+    // await myCartChangeNotifier.getCartItems(language);
     // if (user?.token != null) {
     //   isNotification = await settingRepo.getNotificationSetting(user.token);
     //   wishlistChangeNotifier.getWishlistItems(user.token, lang);
@@ -79,6 +78,8 @@ class Config {
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
       final result = await signInRepo.getCurrentUser(token);
+      print("result");
+      print(result);
       if (result['code'] == 'SUCCESS') {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
@@ -93,7 +94,7 @@ class Config {
     await checkAppVersion();
     bool isExist = await LocalStorageRepository().existItem('usage');
     if (isExist) {
-      _loadAssets();
+      loadAssets();
     }
   }
 }

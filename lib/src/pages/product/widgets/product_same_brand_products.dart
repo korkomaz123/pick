@@ -36,7 +36,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   }
 
   void _getSameBrandProducts() async {
-    sameBrandProducts = await context.read<ProductRepository>().getSameBrandProducts(product.productId, lang);
+    sameBrandProducts = await ProductRepository().getSameBrandProducts(product.productId, lang);
     if (mounted) setState(() {});
   }
 

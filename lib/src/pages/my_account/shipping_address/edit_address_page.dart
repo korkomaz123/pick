@@ -307,7 +307,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
         icon: SvgPicture.asset(searchAddrIcon),
         onPressed: () => _onSearchAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }

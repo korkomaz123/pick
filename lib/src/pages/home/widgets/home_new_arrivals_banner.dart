@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -7,120 +8,103 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class HomeNewArrivalsBanner extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeNewArrivalsBanner({this.pageStyle});
-
-  @override
-  _HomeNewArrivalsBannerState createState() => _HomeNewArrivalsBannerState();
-}
-
-class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
-  HomeChangeNotifier homeChangeNotifier;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-  }
+class HomeNewArrivalsBanner extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeNewArrivalsBanner({@required this.homeChangeNotifier});
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        if (model.newArrivalsBanners.isNotEmpty) {
-          final banner = model.newArrivalsBanners[0];
-          return Container(
-            width: widget.pageStyle.deviceWidth,
-            color: Colors.white,
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.pageStyle.unitWidth * 10,
-                    vertical: widget.pageStyle.unitHeight * 10,
-                  ),
-                  child: Text(
-                    model.newArrivalsBannerTitle,
-                    style: mediumTextStyle.copyWith(
-                      fontSize: widget.pageStyle.unitFontSize * 26,
-                    ),
-                  ),
+    if (homeChangeNotifier.newArrivalsBanners.isNotEmpty) {
+      final banner = homeChangeNotifier.newArrivalsBanners[0];
+      return Container(
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: Config.pageStyle.unitWidth * 10,
+                vertical: Config.pageStyle.unitHeight * 10,
+              ),
+              child: Text(
+                homeChangeNotifier.newArrivalsBannerTitle,
+                style: mediumTextStyle.copyWith(
+                  fontSize: Config.pageStyle.unitFontSize * 26,
                 ),
-                InkWell(
-                  onTap: () async {
-                    if (banner.categoryId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(
-                          id: banner.categoryId,
-                          name: banner.categoryName,
-                        ),
-                        brand: BrandEntity(),
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: false,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner?.brand?.optionId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(),
-                        brand: banner.brand,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner?.productId != null) {
-                      final product = await productRepository.getProduct(
-                          banner.productId);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.product,
-                        (route) => route.settings.name == Routes.home,
-                        arguments: product,
-                      );
-                    }
-                  },
-                  child: Image.network(banner.bannerImage),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: model.newArrivalsItems.map((item) {
-                      return ProductCard(
-                        cardWidth: widget.pageStyle.unitWidth * 120,
-                        cardHeight: widget.pageStyle.unitWidth * 175,
-                        product: item,
-                        isWishlist: true,
-                        pageStyle: widget.pageStyle,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+              ),
             ),
-          );
-        } else {
-          return Container();
-        }
-      },
-    );
+            InkWell(
+              onTap: () async {
+                if (banner.categoryId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(
+                      id: banner.categoryId,
+                      name: banner.categoryName,
+                    ),
+                    brand: BrandEntity(),
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: false,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
+                } else if (banner?.brand?.optionId != null) {
+                  final arguments = ProductListArguments(
+                    category: CategoryEntity(),
+                    brand: banner.brand,
+                    subCategory: [],
+                    selectedSubCategoryIndex: 0,
+                    isFromBrand: true,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
+                } else if (banner?.productId != null) {
+                  final product = await productRepository.getProduct(banner.productId);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.product,
+                    (route) => route.settings.name == Routes.home,
+                    arguments: product,
+                  );
+                }
+              },
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+              ),
+            ),
+            Container(
+              height: Config.pageStyle.unitWidth * 175,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: homeChangeNotifier.newArrivalsItems.length,
+                itemBuilder: (context, index) => ProductCard(
+                  cardWidth: Config.pageStyle.unitWidth * 120,
+                  cardHeight: Config.pageStyle.unitWidth * 175,
+                  product: homeChangeNotifier.newArrivalsItems[index],
+                  isWishlist: true,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
