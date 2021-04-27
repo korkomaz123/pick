@@ -33,10 +33,13 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../../../config.dart';
+
 class SignInPage extends StatefulWidget {
   final bool isFromCheckout;
+  final bool isFromSplash;
 
-  SignInPage({this.isFromCheckout = false});
+  SignInPage({this.isFromCheckout = false, this.isFromSplash = false});
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -62,7 +65,6 @@ class _SignInPageState extends State<SignInPage> {
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
-
   @override
   void initState() {
     super.initState();
@@ -102,13 +104,17 @@ class _SignInPageState extends State<SignInPage> {
     }
     homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     progressService.hideProgress();
-    Navigator.pop(context);
+    if (Navigator.of(Config.navigatorKey.currentContext).canPop())
+      Navigator.of(Config.navigatorKey.currentContext).pop(context);
+    else
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
+    Config.pageStyle = PageStyle(context, designWidth, designHeight);
+    Config.pageStyle.initializePageStyles();
+    Config.language = EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
@@ -132,10 +138,10 @@ class _SignInPageState extends State<SignInPage> {
               child: Column(
                 children: [
                   Container(
-                    width: pageStyle.deviceWidth,
+                    width: Config.pageStyle.deviceWidth,
                     padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 30,
-                      bottom: pageStyle.unitHeight * 30,
+                      top: Config.pageStyle.unitHeight * 30,
+                      bottom: Config.pageStyle.unitHeight * 30,
                     ),
                     alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
@@ -145,14 +151,14 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 40,
-                      bottom: pageStyle.unitHeight * 100,
+                      top: Config.pageStyle.unitHeight * 40,
+                      bottom: Config.pageStyle.unitHeight * 100,
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       hLogoIcon,
-                      width: pageStyle.unitWidth * 120,
-                      height: pageStyle.unitHeight * 45,
+                      width: Config.pageStyle.unitWidth * 120,
+                      height: Config.pageStyle.unitHeight * 45,
                     ),
                   ),
                   _buildEmail(),
@@ -178,15 +184,15 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildEmail() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: Config.pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: Config.pageStyle.unitWidth * 20,
       ),
       child: TextFormField(
         controller: emailController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: Config.pageStyle.unitFontSize * 15,
         ),
         validator: (value) {
           if (value.isEmpty) {
@@ -204,11 +210,11 @@ class _SignInPageState extends State<SignInPage> {
           hintText: 'email'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: Config.pageStyle.unitFontSize * 15,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: Config.pageStyle.unitFontSize * 12,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -232,16 +238,16 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildPassword() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: Config.pageStyle.deviceWidth,
       padding: EdgeInsets.symmetric(
-        vertical: pageStyle.unitHeight * 10,
-        horizontal: pageStyle.unitWidth * 20,
+        vertical: Config.pageStyle.unitHeight * 10,
+        horizontal: Config.pageStyle.unitWidth * 20,
       ),
       child: TextFormField(
         controller: passwordController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: Config.pageStyle.unitFontSize * 15,
         ),
         validator: (value) {
           if (value.isEmpty) {
@@ -261,11 +267,11 @@ class _SignInPageState extends State<SignInPage> {
           hintText: 'password'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: Config.pageStyle.unitFontSize * 15,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: Config.pageStyle.unitFontSize * 12,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -291,7 +297,7 @@ class _SignInPageState extends State<SignInPage> {
             child: Icon(
               !isShowPass ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
               color: Colors.white54,
-              size: pageStyle.unitFontSize * 20,
+              size: Config.pageStyle.unitFontSize * 20,
             ),
           ),
         ),
@@ -302,14 +308,14 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildSignInButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
+      width: Config.pageStyle.deviceWidth,
+      height: Config.pageStyle.unitHeight * 50,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: Config.pageStyle.unitWidth * 20,
       ),
       child: MarkaaTextButton(
         title: 'sign_in'.tr(),
-        titleSize: pageStyle.unitFontSize * 19,
+        titleSize: Config.pageStyle.unitFontSize * 19,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
@@ -321,8 +327,8 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildForgotPassword() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
+      width: Config.pageStyle.deviceWidth,
+      padding: EdgeInsets.symmetric(horizontal: Config.pageStyle.unitWidth * 20),
       alignment: Alignment.centerRight,
       child: InkWell(
         onTap: () => Navigator.pushNamed(
@@ -334,7 +340,7 @@ class _SignInPageState extends State<SignInPage> {
           'ask_forgot_password'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white54,
-            fontSize: pageStyle.unitFontSize * 14,
+            fontSize: Config.pageStyle.unitFontSize * 14,
           ),
         ),
       ),
@@ -343,26 +349,20 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildOrDivider() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 50),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: Config.pageStyle.unitWidth * 50),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
-            child: Divider(color: greyLightColor, thickness: 0.5),
-          ),
+          Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
           Text(
             'or_divider'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 17,
+              fontSize: Config.pageStyle.unitFontSize * 17,
               color: Colors.white,
             ),
           ),
-          Container(
-            width: lang == 'en' ? pageStyle.unitWidth * 100 : pageStyle.unitWidth * 80,
-            child: Divider(color: greyLightColor, thickness: 0.5),
-          ),
+          Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
         ],
       ),
     );
@@ -370,7 +370,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildExternalSignInButtons() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: Config.pageStyle.deviceWidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -378,7 +378,7 @@ class _SignInPageState extends State<SignInPage> {
             onTap: () => _onFacebookSign(),
             child: SvgPicture.asset(facebookIcon),
           ),
-          SizedBox(width: pageStyle.unitWidth * 20),
+          SizedBox(width: Config.pageStyle.unitWidth * 20),
           InkWell(
             onTap: () => _onGoogleSign(),
             child: SvgPicture.asset(googleIcon),
@@ -386,7 +386,7 @@ class _SignInPageState extends State<SignInPage> {
           if (Platform.isIOS) ...[
             Row(
               children: [
-                SizedBox(width: pageStyle.unitWidth * 20),
+                SizedBox(width: Config.pageStyle.unitWidth * 20),
                 InkWell(
                   onTap: () => _onAppleSign(),
                   child: SvgPicture.asset(appleIcon),
@@ -401,8 +401,8 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildSignUpPhase() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 60),
+      width: Config.pageStyle.deviceWidth,
+      padding: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 60),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -410,7 +410,7 @@ class _SignInPageState extends State<SignInPage> {
             'ask_have_account'.tr() + ' ',
             style: mediumTextStyle.copyWith(
               color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
+              fontSize: Config.pageStyle.unitFontSize * 17,
             ),
           ),
           InkWell(
@@ -419,7 +419,7 @@ class _SignInPageState extends State<SignInPage> {
               'sign_up'.tr(),
               style: mediumTextStyle.copyWith(
                 color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 17,
+                fontSize: Config.pageStyle.unitFontSize * 17,
               ),
             ),
           ),

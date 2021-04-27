@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
@@ -29,7 +28,6 @@ import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dar
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
@@ -45,7 +43,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
@@ -61,15 +58,14 @@ import '../../../config.dart';
 import 'no_network_access_page.dart';
 
 class MarkaaApp extends StatefulWidget {
-  MarkaaApp({Key key}) : super(key: key);
+  final String home;
+  MarkaaApp({Key key, @required this.home}) : super(key: key);
 
   @override
   _MarkaaAppState createState() => _MarkaaAppState();
 }
 
 class _MarkaaAppState extends State<MarkaaApp> {
-  final appRepository = AppRepository();
-
   final homeRepository = HomeRepository();
 
   final signInRepository = SignInRepository();
@@ -260,37 +256,34 @@ class _MarkaaAppState extends State<MarkaaApp> {
     return RepositoryProvider.value(
       value: localStorageRepository,
       child: RepositoryProvider.value(
-        value: appRepository,
+        value: homeRepository,
         child: RepositoryProvider.value(
-          value: homeRepository,
+          value: signInRepository,
           child: RepositoryProvider.value(
-            value: signInRepository,
+            value: categoryRepository,
             child: RepositoryProvider.value(
-              value: categoryRepository,
+              value: productRepository,
               child: RepositoryProvider.value(
-                value: productRepository,
+                value: brandRepository,
                 child: RepositoryProvider.value(
-                  value: brandRepository,
+                  value: wishlistRepository,
                   child: RepositoryProvider.value(
-                    value: wishlistRepository,
+                    value: settingRepository,
                     child: RepositoryProvider.value(
-                      value: settingRepository,
+                      value: shippingAddressRepository,
                       child: RepositoryProvider.value(
-                        value: shippingAddressRepository,
+                        value: orderRepository,
                         child: RepositoryProvider.value(
-                          value: orderRepository,
+                          value: profileRepository,
                           child: RepositoryProvider.value(
-                            value: profileRepository,
+                            value: filterRepository,
                             child: RepositoryProvider.value(
-                              value: filterRepository,
+                              value: myCartRepository,
                               child: RepositoryProvider.value(
-                                value: myCartRepository,
+                                value: checkoutRepository,
                                 child: RepositoryProvider.value(
-                                  value: checkoutRepository,
-                                  child: RepositoryProvider.value(
-                                    value: searchRepository,
-                                    child: _buildMultiProvider(),
-                                  ),
+                                  value: searchRepository,
+                                  child: _buildMultiProvider(),
                                 ),
                               ),
                             ),
@@ -344,12 +337,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
           ),
         ),
         ChangeNotifierProvider(
-          create: (context) => MyCartChangeNotifier(
-            myCartRepository: myCartRepository,
-            localStorageRepository: localStorageRepository,
-            checkoutRepository: checkoutRepository,
-            firebaseRepository: firebaseRepository,
-          ),
+          create: (context) => MyCartChangeNotifier(),
         ),
         ChangeNotifierProvider(
           create: (context) => WishlistChangeNotifier(
@@ -408,12 +396,14 @@ class _MarkaaAppState extends State<MarkaaApp> {
           ),
         ),
       ],
-      child: MarkaaAppView(),
+      child: MarkaaAppView(home: widget.home),
     );
   }
 }
 
 class MarkaaAppView extends StatelessWidget {
+  final String home;
+  MarkaaAppView({@required this.home});
   @override
   Widget build(BuildContext context) {
     return BackGestureWidthTheme(
@@ -431,34 +421,16 @@ class MarkaaAppView extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: markaaAppTheme,
         title: 'Markaa',
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          return RouteGenerator.generateRoute(settings);
-        },
+        initialRoute: home,
+        onGenerateRoute: RouteGenerator.generateRoute,
         builder: (context, child) {
           return StreamBuilder<DataConnectionStatus>(
             stream: DataConnectionChecker().onStatusChange,
             builder: (context, networkSnapshot) {
-              if (!networkSnapshot.hasData) {
-                return Material(
-                  color: primarySwatchColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 250,
-                        height: 160,
-                        child: SvgPicture.asset(vLogoIcon),
-                      ),
-                    ],
-                  ),
-                );
+              if (networkSnapshot.data == DataConnectionStatus.connected || !networkSnapshot.hasData) {
+                return child;
               } else {
-                if (networkSnapshot.data == DataConnectionStatus.connected) {
-                  return child;
-                } else {
-                  return NoNetworkAccessPage();
-                }
+                return NoNetworkAccessPage();
               }
             },
           );

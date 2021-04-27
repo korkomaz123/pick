@@ -37,7 +37,7 @@ import 'package:markaa/src/pages/product_review/product_review_page.dart';
 import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
-import 'package:markaa/src/pages/splash/splash_page.dart';
+// import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,11 +49,11 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final params = settings.arguments;
     switch (settings.name) {
-      case Routes.start:
-        return CupertinoPageRoute(
-          builder: (context) => SplashPage(),
-          settings: RouteSettings(name: Routes.start),
-        );
+      // case Routes.start:
+      //   return CupertinoPageRoute(
+      //     builder: (context) => SplashPage(),
+      //     settings: RouteSettings(name: Routes.start),
+      //   );
       case Routes.update:
         return CupertinoPageRoute(
           builder: (context) => UpdatePage(storeLink: params),
@@ -269,11 +269,12 @@ class RouteGenerator {
           builder: (context) => AddProductReviewPage(product: params),
           settings: RouteSettings(name: Routes.addProductReview),
         );
-      default:
-        return CupertinoPageRoute(
-          builder: (context) => SplashPage(),
-          settings: RouteSettings(name: Routes.start),
-        );
+        break;
+      // default:
+      //   return CupertinoPageRoute(
+      //     builder: (context) => SignInPage(isFromCheckout: params ?? false),
+      //     settings: RouteSettings(name: Routes.signIn),
+      //   );
     }
   }
 }

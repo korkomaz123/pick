@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'config.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
+import 'src/routes/routes.dart';
 
 const bool USE_FIRESTORE_EMULATOR = false;
 
@@ -19,14 +21,15 @@ void main() async {
 
   /// Firebase initialize
   await Firebase.initializeApp();
-  if (USE_FIRESTORE_EMULATOR) {
-    FirebaseFirestore.instance.settings = const Settings(
-      host: 'localhost:8080',
-      sslEnabled: false,
-      persistenceEnabled: false,
-    );
-  }
+  if (USE_FIRESTORE_EMULATOR)
+    FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
 
+  //Start Loading Assets
+  await Config.appOpen();
+
+  String token = await Config.localRepo.getToken();
+  print("token ====> $token");
+// Routes.signIn or Routes.home
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
@@ -36,7 +39,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: MarkaaApp(),
+      child: MarkaaApp(home: token != null && token.isNotEmpty ? Routes.home : Routes.signIn),
     ),
   );
 }

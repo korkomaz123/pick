@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/config.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
@@ -329,6 +330,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    Config.pageStyle = PageStyle(context, designWidth, designHeight);
+    Config.pageStyle.initializePageStyles();
+    Config.language = EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
     HomeChangeNotifier _homeChangeNotifier = context.read<HomeChangeNotifier>();
     return Scaffold(
       key: scaffoldKey,
