@@ -127,12 +127,12 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
-  void _loadExtraData() async {
-    shippingMethods = await checkoutRepo.getShippingMethod(lang);
-    paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-    // sideMenus = await categoryRepo.getMenuCategories(lang);
-    regions = await shippingAddressRepo.getRegions(lang);
-  }
+  // void _loadExtraData() async {
+  //   shippingMethods = await checkoutRepo.getShippingMethod(lang);
+  //   paymentMethods = await checkoutRepo.getPaymentMethod(lang);
+  //   // sideMenus = await categoryRepo.getMenuCategories(lang);
+  //   regions = await shippingAddressRepo.getRegions(lang);
+  // }
 
   Future<void> checkAppVersion() async {
     final versionEntity = await appRepository.checkAppVersion(Platform.isAndroid, lang);

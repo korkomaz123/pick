@@ -11,10 +11,8 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/pages/home/widgets/home_explore_categories.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
@@ -36,23 +34,11 @@ import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 
 import 'widgets/home_featured_categories.dart';
-import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
-import 'widgets/home_new_arrivals_banner.dart';
-import 'widgets/home_discover_stores.dart';
 import 'widgets/home_header_carousel.dart';
-import 'widgets/home_new_arrivals.dart';
-import 'widgets/home_perfumes.dart';
-import 'widgets/home_recent.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_mega_banner.dart';
-import 'widgets/home_exculisive_banner.dart';
-import 'widgets/home_oriental_fragrances.dart';
-import 'widgets/home_fragrances_banners.dart';
-import 'widgets/home_best_watches.dart';
-import 'widgets/home_grooming.dart';
-import 'widgets/home_smart_tech.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id

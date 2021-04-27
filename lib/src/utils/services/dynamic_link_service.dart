@@ -4,7 +4,6 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 
 class DynamicLinkService {
   Future<Uri> productSharableLink(ProductModel product) async {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/components/product_vv_card.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';

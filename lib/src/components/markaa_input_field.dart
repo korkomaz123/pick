@@ -178,9 +178,7 @@ class MarkaaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null
-                                  ? focusedColor
-                                  : Color(0xFF82B1FF),
+                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),
@@ -199,7 +197,7 @@ class MarkaaInputField extends StatelessWidget {
                   ),
                   readOnly: readOnly,
                   obscureText: obsecureText,
-                  autovalidate: false,
+                  autovalidateMode: AutovalidateMode.disabled,
                   validator: validator,
                 )
               : TextFormField(
@@ -258,9 +256,7 @@ class MarkaaInputField extends StatelessWidget {
                               Radius.circular(radius),
                             ),
                             borderSide: BorderSide(
-                              color: focusedColor != null
-                                  ? focusedColor
-                                  : Color(0xFF82B1FF),
+                              color: focusedColor != null ? focusedColor : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
                             ),
@@ -278,7 +274,7 @@ class MarkaaInputField extends StatelessWidget {
                     filled: true,
                   ),
                   readOnly: readOnly,
-                  autovalidate: false,
+                  autovalidateMode: AutovalidateMode.disabled,
                   validator: validator,
                   maxLines: maxLines,
                 ),
