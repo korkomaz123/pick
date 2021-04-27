@@ -1,93 +1,68 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
-class HomeMegaBanner extends StatefulWidget {
-  final PageStyle pageStyle;
+import '../../../../config.dart';
 
-  HomeMegaBanner({this.pageStyle});
-
-  @override
-  _HomeMegaBannerState createState() => _HomeMegaBannerState();
-}
-
-class _HomeMegaBannerState extends State<HomeMegaBanner> {
-  HomeChangeNotifier homeChangeNotifier;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-    productRepository = context.read<ProductRepository>();
-  }
+class HomeMegaBanner extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeMegaBanner({@required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        if (model.megaBanner != null) {
-          final banner = model.megaBanner;
-          return InkWell(
-            onTap: () async {
-              if (banner.categoryId != null) {
-                final arguments = ProductListArguments(
-                  category: CategoryEntity(
-                    id: banner.categoryId,
-                    name: banner.categoryName,
-                  ),
-                  brand: BrandEntity(),
-                  subCategory: [],
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: false,
-                );
-                Navigator.pushNamed(
-                  context,
-                  Routes.productList,
-                  arguments: arguments,
-                );
-              } else if (banner?.brand?.optionId != null) {
-                final arguments = ProductListArguments(
-                  category: CategoryEntity(),
-                  brand: banner.brand,
-                  subCategory: [],
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: true,
-                );
-                Navigator.pushNamed(
-                  context,
-                  Routes.productList,
-                  arguments: arguments,
-                );
-              } else if (banner?.productId != null) {
-                final product =
-                    await productRepository.getProduct(banner.productId, lang);
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  Routes.product,
-                  (route) => route.settings.name == Routes.home,
-                  arguments: product,
-                );
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 10,
-              ),
-              child: Image.network(banner.bannerImage),
+    if (homeChangeNotifier.megaBanner == null) return Container();
+    return InkWell(
+      onTap: () async {
+        if (homeChangeNotifier.megaBanner.categoryId != null) {
+          final arguments = ProductListArguments(
+            category: CategoryEntity(
+              id: homeChangeNotifier.megaBanner.categoryId,
+              name: homeChangeNotifier.megaBanner.categoryName,
             ),
+            brand: BrandEntity(),
+            subCategory: [],
+            selectedSubCategoryIndex: 0,
+            isFromBrand: false,
           );
-        } else {
-          return Container();
+          Navigator.pushNamed(Config.navigatorKey.currentContext, Routes.productList, arguments: arguments);
+        } else if (homeChangeNotifier.megaBanner?.brand?.optionId != null) {
+          final arguments = ProductListArguments(
+            category: CategoryEntity(),
+            brand: homeChangeNotifier.megaBanner.brand,
+            subCategory: [],
+            selectedSubCategoryIndex: 0,
+            isFromBrand: true,
+          );
+          Navigator.pushNamed(
+            Config.navigatorKey.currentContext,
+            Routes.productList,
+            arguments: arguments,
+          );
+        } else if (homeChangeNotifier.megaBanner?.productId != null) {
+          final product = await context.read<ProductRepository>().getProduct(homeChangeNotifier.megaBanner.productId);
+          Navigator.pushNamedAndRemoveUntil(
+            Config.navigatorKey.currentContext,
+            Routes.product,
+            (route) => route.settings.name == Routes.home,
+            arguments: product,
+          );
         }
       },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Config.pageStyle.unitWidth * 10),
+        child: CachedNetworkImage(
+          imageUrl: homeChangeNotifier.megaBanner.bannerImage,
+          fit: BoxFit.fill,
+          progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+          errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+        ),
+      ),
     );
   }
 }

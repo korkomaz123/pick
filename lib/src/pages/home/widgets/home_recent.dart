@@ -64,7 +64,6 @@ class _HomeRecentState extends State<HomeRecent> {
                               cardWidth: widget.pageStyle.unitWidth * 175,
                               cardHeight: widget.pageStyle.unitHeight * 300,
                               product: recentlyViews[index],
-                              pageStyle: widget.pageStyle,
                               isShoppingCart: true,
                               isWishlist: true,
                               isShare: true,

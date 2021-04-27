@@ -114,9 +114,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
       child: Center(
         child: SmoothIndicator(
           offset: activeIndex.toDouble(),
-          count: perfumesProducts.length > 40
-              ? 10
-              : (perfumesProducts.length / 4).floor(),
+          count: perfumesProducts.length > 40 ? 10 : (perfumesProducts.length / 4).floor(),
           axisDirection: Axis.horizontal,
           effect: SlideEffect(
             spacing: 8.0,
@@ -138,9 +136,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
       width: widget.pageStyle.deviceWidth,
       height: widget.pageStyle.unitHeight * 590,
       child: Swiper(
-        itemCount: perfumesProducts.length > 40
-            ? 10
-            : (perfumesProducts.length / 4).floor(),
+        itemCount: perfumesProducts.length > 40 ? 10 : (perfumesProducts.length / 4).floor(),
         autoplay: false,
         curve: Curves.easeIn,
         duration: 300,
@@ -159,7 +155,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -176,7 +171,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 1],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -199,7 +193,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 2],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -216,7 +209,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
                     cardWidth: widget.pageStyle.unitWidth * 179,
                     cardHeight: widget.pageStyle.unitHeight * 290,
                     product: perfumesProducts[4 * index + 3],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,

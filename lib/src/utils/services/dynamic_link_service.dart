@@ -49,7 +49,7 @@ class DynamicLinkService {
           if (deepLink != null) {
             if (deepLink.queryParameters.containsKey('id')) {
               String id = deepLink.queryParameters['id'];
-              final product = await productRepository.getProduct(id, lang);
+              final product = await productRepository.getProduct(id);
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 Routes.product,
@@ -74,7 +74,7 @@ class DynamicLinkService {
       if (deepLink != null) {
         if (deepLink.queryParameters.containsKey('id')) {
           String id = deepLink.queryParameters['id'];
-          final product = await productRepository.getProduct(id, lang);
+          final product = await productRepository.getProduct(id);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.product,

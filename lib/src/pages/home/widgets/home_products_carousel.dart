@@ -41,9 +41,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
         children: [
           Container(
             width: widget.pageStyle.deviceWidth,
-            height: !widget.isVerticalCard
-                ? widget.pageStyle.unitHeight * 200
-                : widget.pageStyle.unitHeight * 320,
+            height: !widget.isVerticalCard ? widget.pageStyle.unitHeight * 200 : widget.pageStyle.unitHeight * 320,
             child: Swiper(
               itemCount: widget.products.length,
               autoplay: false,
@@ -60,7 +58,6 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     cardWidth: widget.pageStyle.unitWidth * 355,
                     cardHeight: widget.pageStyle.unitHeight * 300,
                     product: widget.products[index],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -71,7 +68,6 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     cardWidth: widget.pageStyle.unitWidth * 355,
                     cardHeight: widget.pageStyle.unitHeight * 180,
                     product: widget.products[index],
-                    pageStyle: widget.pageStyle,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,

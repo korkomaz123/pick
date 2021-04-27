@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
+import '../../config.dart';
+
 class HomeChangeNotifier extends ChangeNotifier {
-  final HomeRepository homeRepository;
+  final HomeRepository homeRepository = HomeRepository();
+  final CategoryRepository categoryRepository = CategoryRepository();
   final ProductRepository productRepository;
   final LocalStorageRepository localStorageRepository;
 
   HomeChangeNotifier({
-    this.homeRepository,
     this.productRepository,
     this.localStorageRepository,
   });
 
-  List<SliderImageEntity> sliderImages = [];
   List<SliderImageEntity> newArrivalsBanners = [];
-  List<SliderImageEntity> bestDealsBanners = [];
   List<SliderImageEntity> fragrancesBanners = [];
   List<SliderImageEntity> smartTechBanners = [];
-  List<ProductModel> bestDealsProducts = [];
   List<ProductModel> newArrivalsProducts = [];
   List<ProductModel> perfumesProducts = [];
   List<ProductModel> recentlyViewedProducts = [];
@@ -35,12 +38,10 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> smartTechItems = [];
   List<CategoryEntity> groomingCategories = [];
   SliderImageEntity ads;
-  SliderImageEntity popupItem;
   SliderImageEntity megaBanner;
   SliderImageEntity exculisiveBanner;
   SliderImageEntity bestWatchesBanner;
   String message;
-  String bestDealsTitle = '';
   String newArrivalsTitle = '';
   String perfumesTitle = '';
   String bestDealsBannerTitle = '';
@@ -53,74 +54,83 @@ class HomeChangeNotifier extends ChangeNotifier {
   CategoryEntity groomingCategory;
   CategoryEntity smartTechCategory;
 
-  void loadPopup(String lang, Function onSuccess) async {
+  changeLanguage() {
+    loadSliderImages();
+    getFeaturedCategoriesList();
+    loadBestDeals();
+    getHomeCategories();
+  }
+
+  List<SliderImageEntity> sliderImages = [];
+  Future loadSliderImages() async {
     try {
-      final result = await homeRepository.getPopupItem(lang);
+      String key = 'slider-images-${Config.language}';
+      final result = await homeRepository.getHomeSliderImages(Config.language);
+      if (result['code'] == 'SUCCESS') {
+        await localStorageRepository.setItem(key, result['data']);
+        sliderImages.clear();
+        for (int i = 0; i < result['data'].length; i++) {
+          sliderImages.add(SliderImageEntity.fromJson(result['data'][i]));
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+  List<CategoryEntity> featuredCategories = [];
+  Future getFeaturedCategoriesList() async {
+    final result = await categoryRepository.getFeaturedCategories(Config.language);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> categoryList = result['categories'];
+      featuredCategories.clear();
+      for (int i = 0; i < categoryList.length; i++) {
+        featuredCategories.add(CategoryEntity.fromJson(categoryList[i]));
+      }
+    }
+    notifyListeners();
+  }
+
+  String bestDealsTitle = '';
+  List<ProductModel> bestDealsProducts = [];
+  Future loadBestDeals() async {
+    try {
+      final result = await productRepository.getBestDealsProducts(Config.language);
+      if (result['code'] == 'SUCCESS') {
+        bestDealsTitle = result['title'];
+        bestDealsProducts.clear();
+        for (int i = 0; i < result['products'].length; i++) {
+          bestDealsProducts.add(ProductModel.fromJson(result['products'][i]));
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    await getHomeCategories();
+    notifyListeners();
+  }
+
+  Future getHomeCategories() async {
+    final params = {'lang': Config.language};
+    final result = await Api.getMethod(EndPoints.getHomeCategories, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> categoriesList = result['categories'];
+      homeCategories.clear();
+      for (int i = 0; i < categoriesList.length; i++) {
+        homeCategories.add(CategoryEntity.fromJson(categoriesList[i]));
+      }
+    }
+    notifyListeners();
+  }
+
+  SliderImageEntity popupItem;
+  Future loadPopup(Function onSuccess) async {
+    try {
+      final result = await homeRepository.getPopupItem(Config.language);
       if (result['code'] == 'SUCCESS') {
         popupItem = SliderImageEntity.fromJson(result['data'][0]);
         onSuccess(popupItem);
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  void loadSliderImages(String lang) async {
-    try {
-      String key = 'slider-images-$lang';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        List<dynamic> sliderImageList =
-            await localStorageRepository.getItem(key);
-        sliderImages = [];
-        for (int i = 0; i < sliderImageList.length; i++) {
-          sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
-        }
-        notifyListeners();
-      }
-      final result = await homeRepository.getHomeSliderImages(lang);
-      if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['data']);
-        if (!exist) {
-          List<dynamic> sliderImageList = result['data'];
-          sliderImages = [];
-          for (int i = 0; i < sliderImageList.length; i++) {
-            sliderImages.add(SliderImageEntity.fromJson(sliderImageList[i]));
-          }
-          notifyListeners();
-        }
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  void loadBestDeals(String lang) async {
-    try {
-      String key = 'bestdeals-$lang';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        bestDealsTitle = await localStorageRepository.getItem(key + 'title');
-        List<dynamic> bestDealsList = await localStorageRepository.getItem(key);
-        bestDealsProducts = [];
-        for (int i = 0; i < bestDealsList.length; i++) {
-          bestDealsProducts.add(ProductModel.fromJson(bestDealsList[i]));
-        }
-        notifyListeners();
-      }
-      final result = await productRepository.getBestDealsProducts(lang);
-      if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['products']);
-        await localStorageRepository.setItem(key + 'title', result['title']);
-        if (!exist) {
-          bestDealsTitle = result['title'];
-          List<dynamic> bestDealsList = result['products'];
-          bestDealsProducts = [];
-          for (int i = 0; i < bestDealsList.length; i++) {
-            bestDealsProducts.add(ProductModel.fromJson(bestDealsList[i]));
-          }
-          notifyListeners();
-        }
       }
     } catch (e) {
       print(e.toString());
@@ -133,8 +143,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         newArrivalsTitle = await localStorageRepository.getItem(key + 'title');
-        List<dynamic> newArrivalsList =
-            await localStorageRepository.getItem(key);
+        List<dynamic> newArrivalsList = await localStorageRepository.getItem(key);
         newArrivalsProducts = [];
         for (int i = 0; i < newArrivalsList.length; i++) {
           newArrivalsProducts.add(ProductModel.fromJson(newArrivalsList[i]));
@@ -213,11 +222,9 @@ class HomeChangeNotifier extends ChangeNotifier {
         final adsData = result['data'];
         var response;
         if (adsData['category_id'] != null) {
-          response = await productRepository.getProducts(
-              adsData['category_id'], lang, 1);
+          response = await productRepository.getProducts(adsData['category_id'], lang, 1);
         } else if (adsData['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              adsData['brand_id'], 'all', lang, 1);
+          response = await productRepository.getBrandProducts(adsData['brand_id'], 'all', lang, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -244,14 +251,12 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   void loadRecentlyViewedGuest(List<String> ids, String lang) async {
     try {
-      final result =
-          await productRepository.getHomeRecentlyViewedGuestProducts(ids, lang);
+      final result = await productRepository.getHomeRecentlyViewedGuestProducts(ids, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> recentlyViewedList = result['items'];
         recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts
-              .add(ProductModel.fromJson(recentlyViewedList[i]));
+          recentlyViewedProducts.add(ProductModel.fromJson(recentlyViewedList[i]));
         }
         notifyListeners();
       }
@@ -263,14 +268,12 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   void loadRecentlyViewedCustomer(String token, String lang) async {
     try {
-      final result = await productRepository
-          .getHomeRecentlyViewedCustomerProducts(token, lang);
+      final result = await productRepository.getHomeRecentlyViewedCustomerProducts(token, lang);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> recentlyViewedList = result['products'];
         recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts
-              .add(ProductModel.fromJson(recentlyViewedList[i]));
+          recentlyViewedProducts.add(ProductModel.fromJson(recentlyViewedList[i]));
         }
         notifyListeners();
       }
@@ -280,8 +283,8 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadMegaBanner(String lang) async {
-    final result = await homeRepository.getHomeMegaBanner(lang);
+  Future loadMegaBanner() async {
+    final result = await homeRepository.getHomeMegaBanner(Config.language);
     try {
       if (result['code'] == 'SUCCESS') {
         megaBanner = SliderImageEntity.fromJson(result['data'][0]);
@@ -314,8 +317,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       final exist = await localStorageRepository.existItem(key);
       if (exist) {
         orientalTitle = await localStorageRepository.getItem(key + 'title');
-        orientalCategory = CategoryEntity.fromJson(
-            await localStorageRepository.getItem(key + 'category'));
+        orientalCategory = CategoryEntity.fromJson(await localStorageRepository.getItem(key + 'category'));
         List<dynamic> orientalList = await localStorageRepository.getItem(key);
         orientalProducts = [];
         for (int i = 0; i < orientalList.length; i++) {
@@ -326,8 +328,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['products']);
         await localStorageRepository.setItem(key + 'title', result['title']);
-        await localStorageRepository.setItem(
-            key + 'category', result['category']);
+        await localStorageRepository.setItem(key + 'category', result['category']);
         if (!exist) {
           orientalTitle = result['title'];
           orientalCategory = CategoryEntity.fromJson(result['category']);
@@ -344,68 +345,37 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadBestDealsBanner(String lang) async {
+  List<SliderImageEntity> bestDealsBanners = [];
+  Future loadBestDealsBanner() async {
     try {
-      String key = 'best-deals-banners-$lang';
-      final exist = await localStorageRepository.existItem(key);
-      if (exist) {
-        Map<String, dynamic> data = await localStorageRepository.getItem(key);
-        bestDealsBannerTitle = data['title'];
-        List<dynamic> sliderImageList = data['banners'];
-        List<dynamic> sliderItems =
-            data.containsKey('items') ? data['items'] : [];
-        bestDealsBanners = [];
-        bestDealsItems = [];
-        for (var banner in sliderImageList) {
-          bestDealsBanners.add(SliderImageEntity.fromJson(banner));
-        }
-        for (var item in sliderItems) {
-          bestDealsItems.add(ProductModel.fromJson(item));
-        }
-        notifyListeners();
-      }
-      final result = await homeRepository.getHomeBestDealsBanners(lang);
+      final result = await homeRepository.getHomeBestDealsBanners(Config.language);
       if (result['code'] == 'SUCCESS') {
         dynamic response;
         if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(
-              result['data'][0]['category_id'], lang, 1);
+          response = await productRepository.getProducts(result['data'][0]['category_id'], Config.language, 1);
         } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', lang, 1);
+          response = await productRepository.getBrandProducts(result['data'][0]['brand_id'], 'all', Config.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
         } else {
           result['items'] = [];
         }
-        await localStorageRepository.setItem(
-          key,
-          {
-            'title': result['title'],
-            'banners': result['data'],
-            'items': result['items']
-          },
-        );
-        if (!exist) {
-          bestDealsBannerTitle = result['title'];
-          List<dynamic> sliderImageList = result['data'];
-          List<dynamic> sliderItems = result['items'];
-          bestDealsBanners = [];
-          bestDealsItems = [];
-          for (var banner in sliderImageList) {
-            bestDealsBanners.add(SliderImageEntity.fromJson(banner));
-          }
-          for (var item in sliderItems) {
-            bestDealsItems.add(ProductModel.fromJson(item));
-          }
-          notifyListeners();
+        bestDealsBannerTitle = result['title'];
+        bestDealsBanners.clear();
+        bestDealsItems.clear();
+        for (var banner in result['data']) {
+          bestDealsBanners.add(SliderImageEntity.fromJson(banner));
+        }
+        for (var item in result['items']) {
+          bestDealsItems.add(ProductModel.fromJson(item));
         }
       }
     } catch (e) {
       print('best deals banner');
       print(e.toString());
     }
+    notifyListeners();
   }
 
   void loadNewArrivalsBanner(String lang) async {
@@ -416,8 +386,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         newArrivalsBannerTitle = data['title'];
         List<dynamic> sliderImageList = data['banners'];
-        List<dynamic> sliderItems =
-            data.containsKey('items') ? data['items'] : [];
+        List<dynamic> sliderItems = data.containsKey('items') ? data['items'] : [];
         newArrivalsBanners = [];
         newArrivalsItems = [];
         for (var banner in sliderImageList) {
@@ -432,11 +401,9 @@ class HomeChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         dynamic response;
         if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(
-              result['data'][0]['category_id'], lang, 1);
+          response = await productRepository.getProducts(result['data'][0]['category_id'], lang, 1);
         } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', lang, 1);
+          response = await productRepository.getBrandProducts(result['data'][0]['brand_id'], 'all', lang, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -445,11 +412,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
         await localStorageRepository.setItem(
           key,
-          {
-            'title': result['title'],
-            'banners': result['data'],
-            'items': result['items']
-          },
+          {'title': result['title'], 'banners': result['data'], 'items': result['items']},
         );
         if (!exist) {
           newArrivalsBannerTitle = result['title'];
@@ -513,8 +476,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       if (exist) {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         List<dynamic> sliderImageList = data['banners'];
-        List<dynamic> sliderItems =
-            data.containsKey('items') ? data['items'] : [];
+        List<dynamic> sliderItems = data.containsKey('items') ? data['items'] : [];
         bestWatchesBanner = null;
         bestWatchesItems = [];
         bestWatchesBanner = SliderImageEntity.fromJson(sliderImageList[0]);
@@ -553,8 +515,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       if (exist) {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         List<dynamic> groomingCategoriesList = data['categories'];
-        List<dynamic> groomingItemsList =
-            data.containsKey('items') ? data['items'] : [];
+        List<dynamic> groomingItemsList = data.containsKey('items') ? data['items'] : [];
         groomingTitle = data['title'];
         groomingCategory = CategoryEntity.fromJson(data['category']);
         groomingCategories = [];
@@ -606,8 +567,7 @@ class HomeChangeNotifier extends ChangeNotifier {
       if (exist) {
         Map<String, dynamic> data = await localStorageRepository.getItem(key);
         List<dynamic> sliderImageList = data['banners'];
-        List<dynamic> sliderItems =
-            data.containsKey('items') ? data['items'] : [];
+        List<dynamic> sliderItems = data.containsKey('items') ? data['items'] : [];
         smartTechTitle = data['title'];
         smartTechCategory = CategoryEntity.fromJson(data['category']);
         smartTechBanners = [];

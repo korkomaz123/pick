@@ -82,7 +82,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                       );
                     } else if (widget.item?.productId != null) {
                       final product = await productRepository.getProduct(
-                          widget.item.productId, lang);
+                          widget.item.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,

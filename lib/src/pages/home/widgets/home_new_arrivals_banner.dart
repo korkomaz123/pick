@@ -90,7 +90,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                       );
                     } else if (banner?.productId != null) {
                       final product = await productRepository.getProduct(
-                          banner.productId, lang);
+                          banner.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,

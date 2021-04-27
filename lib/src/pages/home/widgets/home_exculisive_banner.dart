@@ -67,8 +67,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
                   arguments: arguments,
                 );
               } else if (banner?.productId != null) {
-                final product =
-                    await productRepository.getProduct(banner.productId, lang);
+                final product = await productRepository.getProduct(banner.productId);
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.product,

@@ -42,12 +42,8 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
           width: pageStyle.deviceWidth,
           child: Column(
             children: [
-              if (model.bestWatchesBanner != null) ...[
-                _buildBanner(model.bestWatchesBanner)
-              ],
-              if (model.bestWatchesItems.isNotEmpty) ...[
-                _buildProducts(model.bestWatchesItems)
-              ]
+              if (model.bestWatchesBanner != null) ...[_buildBanner(model.bestWatchesBanner)],
+              if (model.bestWatchesItems.isNotEmpty) ...[_buildProducts(model.bestWatchesItems)]
             ],
           ),
         );
@@ -88,8 +84,7 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
             arguments: arguments,
           );
         } else if (banner?.productId != null) {
-          final product =
-              await productRepository.getProduct(banner.productId, lang);
+          final product = await productRepository.getProduct(banner.productId);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.product,

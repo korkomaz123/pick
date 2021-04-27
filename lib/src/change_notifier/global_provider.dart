@@ -6,6 +6,9 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 
+import 'home_change_notifier.dart';
+import 'package:provider/provider.dart';
+
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];
@@ -17,7 +20,10 @@ class GlobalProvider extends ChangeNotifier {
     FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     fetchCategories();
+    Config.language = currentLanguage;
     notifyListeners();
+    //ModalRoute.of(context).settings.name
+    Config.navigatorKey.currentContext.read<HomeChangeNotifier>().changeLanguage();
   }
 
   GlobalProvider() {

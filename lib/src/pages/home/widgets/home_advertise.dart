@@ -72,8 +72,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                         arguments: arguments,
                       );
                     } else if (model?.ads?.productId != null) {
-                      final product = await productRepository.getProduct(
-                          model.ads.productId, lang);
+                      final product = await productRepository.getProduct(model.ads.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,

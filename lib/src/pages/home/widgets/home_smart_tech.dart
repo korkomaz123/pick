@@ -47,18 +47,10 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
           color: Colors.white,
           child: Column(
             children: [
-              if (model.smartTechTitle.isNotEmpty) ...[
-                _buildTitle(model.smartTechTitle)
-              ],
-              if (model.smartTechBanners.isNotEmpty) ...[
-                _buildBanners(model.smartTechBanners)
-              ],
-              if (model.smartTechItems.isNotEmpty) ...[
-                _buildProducts(model.smartTechItems)
-              ],
-              if (model.smartTechCategory != null) ...[
-                _buildFooter(model.smartTechCategory, model.smartTechTitle)
-              ],
+              if (model.smartTechTitle.isNotEmpty) ...[_buildTitle(model.smartTechTitle)],
+              if (model.smartTechBanners.isNotEmpty) ...[_buildBanners(model.smartTechBanners)],
+              if (model.smartTechItems.isNotEmpty) ...[_buildProducts(model.smartTechItems)],
+              if (model.smartTechCategory != null) ...[_buildFooter(model.smartTechCategory, model.smartTechTitle)],
             ],
           ),
         );
@@ -121,8 +113,7 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
                     arguments: arguments,
                   );
                 } else if (banner?.productId != null) {
-                  final product = await productRepository.getProduct(
-                      banner.productId, lang);
+                  final product = await productRepository.getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.product,

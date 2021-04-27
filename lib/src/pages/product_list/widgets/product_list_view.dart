@@ -55,8 +55,7 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView>
-    with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   BrandEntity brand;
@@ -100,8 +99,7 @@ class _ProductListViewState extends State<ProductListView>
     double maxScroll = scrollController.position.maxScrollExtent;
     double currentScroll = scrollController.position.pixels;
     scrollChangeNotifier.controlBrandBar(currentScroll);
-    if (!productChangeNotifier.isReachedMax &&
-        (maxScroll - currentScroll <= 200)) {
+    if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
@@ -129,9 +127,7 @@ class _ProductListViewState extends State<ProductListView>
         );
       }
       filterBloc.add(FilterAttributesLoaded(
-        categoryId: subCategories[widget.activeIndex].id == 'all'
-            ? null
-            : subCategories[widget.activeIndex].id,
+        categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
         brandId: brand.optionId,
         lang: lang,
       ));
@@ -179,8 +175,7 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      page = productChangeNotifier
-          .pages[brand.optionId + '_' + subCategories[tabController.index].id];
+      page = productChangeNotifier.pages[brand.optionId + '_' + subCategories[tabController.index].id];
       page += 1;
       await productChangeNotifier.loadMoreBrandProducts(
         page,
@@ -189,11 +184,7 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      page = productChangeNotifier.pages[widget.sortByItem +
-          '_' +
-          (brand.optionId ?? '') +
-          '_' +
-          (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages[widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreSortedProducts(
         page,
@@ -203,10 +194,7 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      page = productChangeNotifier.pages['filter_' +
-          (brand.optionId ?? '') +
-          '_' +
-          (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages['filter_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreFilteredProducts(
         page,
@@ -233,9 +221,7 @@ class _ProductListViewState extends State<ProductListView>
       children: [
         Column(
           children: [
-            subCategories.length > 1
-                ? _buildCategoryTabBar()
-                : SizedBox.shrink(),
+            subCategories.length > 1 ? _buildCategoryTabBar() : SizedBox.shrink(),
             Expanded(
               child: TabBarView(
                 controller: tabController,
@@ -248,26 +234,16 @@ class _ProductListViewState extends State<ProductListView>
                       } else if (widget.viewMode == ProductViewModeEnum.brand) {
                         index = brand.optionId + '_' + cat.id;
                       } else if (widget.viewMode == ProductViewModeEnum.sort) {
-                        index = widget.sortByItem +
-                            '_' +
-                            (brand.optionId ?? '') +
-                            '_' +
-                            (cat.id ?? '');
-                      } else if (widget.viewMode ==
-                          ProductViewModeEnum.filter) {
-                        index = 'filter_' +
-                            (brand.optionId ?? '') +
-                            '_' +
-                            (cat.id ?? 'all');
+                        index = widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
+                      } else if (widget.viewMode == ProductViewModeEnum.filter) {
+                        index = 'filter_' + (brand.optionId ?? '') + '_' + (cat.id ?? 'all');
                       }
-                      if (!productChangeNotifier.data.containsKey(index) ||
-                          productChangeNotifier.data[index] == null) {
+                      if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
                         return Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable(pageStyle: pageStyle);
                       } else {
-                        return _buildProductList(
-                            productChangeNotifier.data[index]);
+                        return _buildProductList(productChangeNotifier.data[index]);
                       }
                     },
                   );
@@ -380,7 +356,6 @@ class _ProductListViewState extends State<ProductListView>
                     ),
                   ),
                   child: ProductVCard(
-                    pageStyle: pageStyle,
                     product: products[2 * index],
                     cardWidth: pageStyle.unitWidth * 187.25,
                     cardHeight: pageStyle.unitHeight * 280,
@@ -407,7 +382,6 @@ class _ProductListViewState extends State<ProductListView>
                       ),
                     ),
                     child: ProductVCard(
-                      pageStyle: pageStyle,
                       product: products[2 * index + 1],
                       cardWidth: pageStyle.unitWidth * 187.25,
                       cardHeight: pageStyle.unitHeight * 280,

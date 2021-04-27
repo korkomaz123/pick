@@ -42,12 +42,8 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
           color: Colors.white,
           child: Column(
             children: [
-              if (model.fragrancesBannersTitle.isNotEmpty) ...[
-                _buildTitle(model.fragrancesBannersTitle)
-              ],
-              if (model.fragrancesBanners.isNotEmpty) ...[
-                _buildBanners(model.fragrancesBanners)
-              ]
+              if (model.fragrancesBannersTitle.isNotEmpty) ...[_buildTitle(model.fragrancesBannersTitle)],
+              if (model.fragrancesBanners.isNotEmpty) ...[_buildBanners(model.fragrancesBanners)]
             ],
           ),
         );
@@ -110,8 +106,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     arguments: arguments,
                   );
                 } else if (banner?.productId != null) {
-                  final product = await productRepository.getProduct(
-                      banner.productId, lang);
+                  final product = await productRepository.getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.product,

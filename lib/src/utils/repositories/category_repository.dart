@@ -71,24 +71,4 @@ class CategoryRepository {
       return <CategoryMenuEntity>[];
     }
   }
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
-  Future<List<CategoryEntity>> getHomeCategories(String lang) async {
-    final url = EndPoints.getHomeCategories;
-    final params = {'lang': lang};
-    print(url);
-    print(params);
-    final result = await Api.getMethod(url, data: params);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> categoriesList = result['categories'];
-      List<CategoryEntity> categories = [];
-      for (int i = 0; i < categoriesList.length; i++) {
-        categories.add(CategoryEntity.fromJson(categoriesList[i]));
-      }
-      return categories;
-    }
-    return [];
-  }
 }

@@ -107,7 +107,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) => _onLaunchMessage(event.data));
-    FirebaseMessaging.onBackgroundMessage(_onForegroundMessage);
+    // FirebaseMessaging.onBackgroundMessage(_onForegroundMessage);
     FirebaseMessaging.instance.getToken().then((String token) async {
       deviceToken = token;
       if (user?.token != null) {
@@ -131,6 +131,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
     super.initState();
   }
+
   void _initializeLocalNotification() async {
     var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
@@ -213,7 +214,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
       if (target != 0) {
         String id = data['id'];
         if (target == 1) {
-          final product = await productRepository.getProduct(id, lang);
+          final product = await productRepository.getProduct(id);
           Navigator.pushNamed(Config.navigatorKey.currentContext, Routes.product, arguments: product);
         } else if (target == 2) {
           final category = await categoryRepository.getCategory(id, lang);
@@ -362,7 +363,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => HomeChangeNotifier(
-            homeRepository: homeRepository,
             productRepository: productRepository,
             localStorageRepository: localStorageRepository,
           ),

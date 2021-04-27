@@ -94,23 +94,22 @@ class _SplashPageState extends State<SplashPage> {
         password: MarkaaReporter.password,
       );
     }
-    orderChangeNotifier.initializeOrders();
-    brandChangeNotifier.getBrandsList(lang, 'brand');
-    brandChangeNotifier.getBrandsList(lang, 'home');
-    categoryChangeNotifier.getCategoriesList(lang);
+    // orderChangeNotifier.initializeOrders();
+    // brandChangeNotifier.getBrandsList(lang, 'brand');
+    // brandChangeNotifier.getBrandsList(lang, 'home');
+    // categoryChangeNotifier.getCategoriesList(lang);
     await _getCurrentUser();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-    if (user?.token != null) {
-      isNotification = await settingRepo.getNotificationSetting(user.token);
-      wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      orderChangeNotifier.loadOrderHistories(user.token, lang);
-      addressChangeNotifier.initialize();
-      addressChangeNotifier.loadAddresses(user.token);
-    }
-    homeCategories = await categoryRepo.getHomeCategories(lang);
-    _loadExtraData();
-    Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
+    // if (user?.token != null) {
+    //   isNotification = await settingRepo.getNotificationSetting(user.token);
+    //   wishlistChangeNotifier.getWishlistItems(user.token, lang);
+    //   orderChangeNotifier.loadOrderHistories(user.token, lang);
+    //   addressChangeNotifier.initialize();
+    //   addressChangeNotifier.loadAddresses(user.token);
+    // }
+    // _loadExtraData();
+    Navigator.pushNamedAndRemoveUntil(Config.navigatorKey.currentContext, Routes.home, (route) => false);
   }
 
   Future<void> _getCurrentUser() async {
@@ -183,6 +182,7 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     Config.pageStyle = PageStyle(context, designWidth, designHeight);
     Config.pageStyle.initializePageStyles();
+    Config.language = EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
     return Scaffold(
       backgroundColor: primarySwatchColor,
       body: Container(

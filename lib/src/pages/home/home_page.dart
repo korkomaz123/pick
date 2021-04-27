@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:markaa/config.dart';
 import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   PageStyle pageStyle;
 
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier = Config.navigatorKey.currentContext.read<HomeChangeNotifier>();
   BrandChangeNotifier brandChangeNotifier;
   CategoryChangeNotifier categoryChangeNotifier;
   ProductChangeNotifier productChangeNotifier;
@@ -95,21 +96,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _setupAdjustSDK();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
-    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-    productChangeNotifier = context.read<ProductChangeNotifier>();
-    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    localStorageRepository = context.read<LocalStorageRepository>();
-    settingRepository = context.read<SettingRepository>();
-    productRepository = context.read<ProductRepository>();
-    categoryRepository = context.read<CategoryRepository>();
-    brandRepository = context.read<BrandRepository>();
-    productChangeNotifier.initialize();
-    homeChangeNotifier.loadPopup(lang, _onShowPopup);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dynamicLinkService.initialDynamicLink(context);
-    });
+    // homeChangeNotifier = context.read<HomeChangeNotifier>();
+    // brandChangeNotifier = context.read<BrandChangeNotifier>();
+    // categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    // productChangeNotifier = context.read<ProductChangeNotifier>();
+    // myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    // localStorageRepository = context.read<LocalStorageRepository>();
+    // settingRepository = context.read<SettingRepository>();
+    // productRepository = context.read<ProductRepository>();
+    // categoryRepository = context.read<CategoryRepository>();
+    // brandRepository = context.read<BrandRepository>();
+    // productChangeNotifier.initialize();
+    homeChangeNotifier.loadPopup(_onShowPopup);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   dynamicLinkService.initialDynamicLink(context);
+    // });
     _onLoadHomePage();
     _scrollController.addListener(_onScroll);
   }
@@ -320,38 +321,32 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _onLoadHomePage() async {
-    homeChangeNotifier.loadSliderImages(lang);
-    categoryChangeNotifier.getFeaturedCategoriesList(lang);
-    homeChangeNotifier.loadMegaBanner(lang);
-    homeChangeNotifier.loadBestDeals(lang);
-    homeChangeNotifier.loadBestDealsBanner(lang);
-    homeChangeNotifier.loadNewArrivals(lang);
-    homeChangeNotifier.loadExculisiveBanner(lang);
-    homeChangeNotifier.loadOrientalProducts(lang);
-    homeChangeNotifier.loadNewArrivalsBanner(lang);
-    homeChangeNotifier.loadFragrancesBanner(lang);
-    homeChangeNotifier.loadPerfumes(lang);
-    homeChangeNotifier.loadBestWatches(lang);
-    homeChangeNotifier.loadGrooming(lang);
-    homeChangeNotifier.loadAds(lang);
-    homeChangeNotifier.loadSmartTech(lang);
-    categoryChangeNotifier.getCategoriesList(lang);
-    brandChangeNotifier.getBrandsList(lang, 'home');
-    if (user?.token != null) {
-      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
-    } else {
-      List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-      homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
-    }
+    // homeChangeNotifier.loadNewArrivals(lang);
+    // homeChangeNotifier.loadExculisiveBanner(lang);
+    // homeChangeNotifier.loadOrientalProducts(lang);
+    // homeChangeNotifier.loadNewArrivalsBanner(lang);
+    // homeChangeNotifier.loadFragrancesBanner(lang);
+    // homeChangeNotifier.loadPerfumes(lang);
+    // homeChangeNotifier.loadBestWatches(lang);
+    // homeChangeNotifier.loadGrooming(lang);
+    // homeChangeNotifier.loadAds(lang);
+    // homeChangeNotifier.loadSmartTech(lang);
+    // categoryChangeNotifier.getCategoriesList(lang);
+    // brandChangeNotifier.getBrandsList(lang, 'home');
+    // if (user?.token != null) {
+    //   homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    // } else {
+    //   List<String> ids = await localStorageRepository.getRecentlyViewedIds();
+    //   homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
+    HomeChangeNotifier _homeChangeNotifier = context.read<HomeChangeNotifier>();
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
+      appBar: MarkaaAppBar(pageStyle: Config.pageStyle, scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
@@ -362,42 +357,70 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             notification.disallowGlow();
             return true;
           },
-          child: ListView.builder(
-            itemCount: 1,
-            itemBuilder: (ctx, index) {
-              return Column(
-                children: [
-                  HomeHeaderCarousel(pageStyle: pageStyle),
-                  HomeFeaturedCategories(pageStyle: pageStyle),
-                  HomeMegaBanner(pageStyle: pageStyle),
-                  HomeBestDeals(pageStyle: pageStyle),
-                  HomeBestDealsBanner(pageStyle: pageStyle),
-                  HomeNewArrivals(pageStyle: pageStyle),
-                  HomeExculisiveBanner(pageStyle: pageStyle),
-                  HomeOrientalFragrances(pageStyle: pageStyle),
-                  HomeNewArrivalsBanner(pageStyle: pageStyle),
-                  HomeFragrancesBanners(pageStyle: pageStyle),
-                  HomePerfumes(pageStyle: pageStyle),
-                  HomeBestWatches(pageStyle: pageStyle),
-                  HomeGrooming(pageStyle: pageStyle),
-                  HomeAdvertise(pageStyle: pageStyle),
-                  HomeSmartTech(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeExploreCategories(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeDiscoverStores(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeRecent(pageStyle: pageStyle),
-                ],
-              );
-            },
+          child: ListView(
+            children: [
+              Container(
+                width: double.infinity,
+                height: Config.pageStyle.deviceWidth * 579 / 1125,
+                child: FutureBuilder(
+                  future: _homeChangeNotifier.loadSliderImages(),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeHeaderCarousel(homeChangeNotifier: _homeChangeNotifier),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: FutureBuilder(
+                  future: _homeChangeNotifier.getFeaturedCategoriesList(),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeFeaturedCategories(homeChangeNotifier: _homeChangeNotifier),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeChangeNotifier.loadMegaBanner(),
+                builder: (_, snapShot) => HomeMegaBanner(homeChangeNotifier: _homeChangeNotifier),
+              ),
+              Container(
+                height: Config.pageStyle.unitHeight * 380,
+                padding: EdgeInsets.all(Config.pageStyle.unitWidth * 8),
+                margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeChangeNotifier.loadBestDeals(),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeBestDeals(homeChangeNotifier: _homeChangeNotifier),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeChangeNotifier.loadBestDealsBanner(),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeBestDealsBanner(homeChangeNotifier: _homeChangeNotifier),
+              ),
+              // HomeNewArrivals(pageStyle: pageStyle),
+              // HomeExculisiveBanner(pageStyle: pageStyle),
+              // HomeOrientalFragrances(pageStyle: pageStyle),
+              // HomeNewArrivalsBanner(pageStyle: pageStyle),
+              // HomeFragrancesBanners(pageStyle: pageStyle),
+              // HomePerfumes(pageStyle: pageStyle),
+              // HomeBestWatches(pageStyle: pageStyle),
+              // HomeGrooming(pageStyle: pageStyle),
+              // HomeAdvertise(pageStyle: pageStyle),
+              // HomeSmartTech(pageStyle: pageStyle),
+              // SizedBox(height: pageStyle.unitHeight * 10),
+              // HomeExploreCategories(pageStyle: pageStyle),
+              // SizedBox(height: pageStyle.unitHeight * 10),
+              // HomeDiscoverStores(pageStyle: pageStyle),
+              // SizedBox(height: pageStyle.unitHeight * 10),
+              // HomeRecent(pageStyle: pageStyle),
+            ],
           ),
         ),
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
-        activeItem: BottomEnum.home,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(pageStyle: Config.pageStyle, activeItem: BottomEnum.home),
     );
   }
 }
