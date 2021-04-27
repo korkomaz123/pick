@@ -35,7 +35,7 @@ class _LogoutItemState extends State<LogoutItem> {
   SnackBarService snackBarService;
   ProgressService progressService;
   SignInBloc signInBloc;
-  LocalStorageRepository localRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -48,7 +48,6 @@ class _LogoutItemState extends State<LogoutItem> {
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();

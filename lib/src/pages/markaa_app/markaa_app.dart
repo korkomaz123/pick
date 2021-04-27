@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
@@ -77,8 +76,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
   final orderRepository = OrderRepository();
 
   final profileRepository = ProfileRepository();
-
-  final filterRepository = FilterRepository();
 
   final searchRepository = SearchRepository();
 
@@ -227,96 +224,25 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: localStorageRepository,
-      child: RepositoryProvider.value(
-        value: categoryRepository,
-        child: RepositoryProvider.value(
-          value: brandRepository,
-          child: RepositoryProvider.value(
-            value: wishlistRepository,
-            child: RepositoryProvider.value(
-              value: shippingAddressRepository,
-              child: RepositoryProvider.value(
-                value: orderRepository,
-                child: RepositoryProvider.value(
-                  value: profileRepository,
-                  child: RepositoryProvider.value(
-                    value: filterRepository,
-                    child: RepositoryProvider.value(
-                      value: checkoutRepository,
-                      child: RepositoryProvider.value(
-                        value: searchRepository,
-                        child: _buildMultiProvider(),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    return _buildMultiProvider();
   }
 
   Widget _buildMultiProvider() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => GlobalProvider()),
-        ChangeNotifierProvider(
-          create: (context) => MarkaaAppChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => PlaceChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ScrollChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SuggestionChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProductChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => CategoryChangeNotifier(
-            categoryRepository: categoryRepository,
-            brandRepository: brandRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => BrandChangeNotifier(
-            brandRepository: brandRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => MyCartChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => WishlistChangeNotifier(
-            wishlistRepository: wishlistRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProductReviewChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => HomeChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => OrderChangeNotifier(
-            orderRepository: orderRepository,
-            firebaseRepository: firebaseRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AddressChangeNotifier(
-            addressRepository: shippingAddressRepository,
-          ),
-        ),
+        ChangeNotifierProvider(create: (context) => MarkaaAppChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => PlaceChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => ScrollChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => SuggestionChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => ProductChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => CategoryChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => MyCartChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => WishlistChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => ProductReviewChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => HomeChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => OrderChangeNotifier()),
+        ChangeNotifierProvider(create: (context) => AddressChangeNotifier()),
       ],
       child: _buildMultiBlocProvider(),
     );
@@ -337,10 +263,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
           ),
         ),
         BlocProvider(
-          create: (context) => FilterBloc(
-            filterRepository: filterRepository,
-            localStorageRepository: localStorageRepository,
-          ),
+          create: (context) => FilterBloc(),
         ),
       ],
       child: MarkaaAppView(home: widget.home),

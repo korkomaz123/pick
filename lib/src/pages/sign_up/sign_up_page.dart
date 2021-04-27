@@ -47,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
   ProgressService progressService;
   FlushBarService flushBarService;
   PageStyle pageStyle;
-  LocalStorageRepository localRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
 
   @override
@@ -55,7 +55,6 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -69,7 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     Navigator.pop(context);
     if (!widget.isFromCheckout) {
@@ -108,9 +107,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       top: pageStyle.unitHeight * 30,
                       bottom: pageStyle.unitHeight * 30,
                     ),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -191,8 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_first_name'.tr(),
+        validator: (value) => value.isNotEmpty ? null : 'required_first_name'.tr(),
       ),
     );
   }
@@ -238,8 +234,7 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_last_name'.tr(),
+        validator: (value) => value.isNotEmpty ? null : 'required_last_name'.tr(),
       ),
     );
   }

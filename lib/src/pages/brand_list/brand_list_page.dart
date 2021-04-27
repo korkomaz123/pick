@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -14,11 +12,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import '../../../config.dart';
 
 class BrandListPage extends StatefulWidget {
   const BrandListPage();
@@ -30,75 +28,54 @@ class BrandListPage extends StatefulWidget {
 class _BrandListPageState extends State<BrandListPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
-  List<BrandEntity> brands = [];
-  PageStyle pageStyle;
-  BrandChangeNotifier brandChangeNotifier;
-  ProgressService progressService;
 
-  @override
-  void initState() {
-    super.initState();
-    progressService = ProgressService(context: context);
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
-    brandChangeNotifier.getBrandsList(lang, 'brand');
-  }
-
-  void _onRefresh() async {
-    brandChangeNotifier.getBrandsList(lang, 'brand');
-    await Future.delayed(Duration(milliseconds: 1000));
+  void _onRefresh(HomeChangeNotifier _homeChangeNotifier) async {
+    await _homeChangeNotifier.getBrandsList('brand');
     _refreshController.refreshCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
+    HomeChangeNotifier _homeChangeNotifier = context.read<HomeChangeNotifier>();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(pageStyle: Config.pageStyle, scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
-          Consumer<BrandChangeNotifier>(
-            builder: (_, __, ___) {
-              brands = brandChangeNotifier.sortedBrandList;
-              if (brands.isEmpty) {
-                return Expanded(
-                  child: Center(
-                    child: PulseLoadingSpinner(),
-                  ),
-                );
-              }
-              return Expanded(
-                child: SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  header: MaterialClassicHeader(color: primaryColor),
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  onLoading: () => null,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        brands.length,
-                        (index) => _buildBrandCard(index),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
+          Expanded(
+            child: FutureBuilder(
+              future: _homeChangeNotifier.getBrandsList('brand'),
+              builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                  ? Center(child: CircularProgressIndicator())
+                  : (_homeChangeNotifier.sortedBrandList.isEmpty
+                      ? Center(
+                          child: PulseLoadingSpinner(),
+                        )
+                      : SmartRefresher(
+                          enablePullDown: true,
+                          enablePullUp: false,
+                          header: MaterialClassicHeader(color: primaryColor),
+                          controller: _refreshController,
+                          onRefresh: () => _onRefresh(_homeChangeNotifier),
+                          onLoading: () => null,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: List.generate(
+                                _homeChangeNotifier.sortedBrandList.length,
+                                (index) => _buildBrandCard(_homeChangeNotifier, index),
+                              ),
+                            ),
+                          ),
+                        )),
+            ),
           ),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
+        pageStyle: Config.pageStyle,
         activeItem: BottomEnum.store,
       ),
     );
@@ -106,13 +83,13 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildAppBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 40,
+      width: Config.pageStyle.deviceWidth,
+      height: Config.pageStyle.unitHeight * 40,
       color: primarySwatchColor,
       padding: EdgeInsets.only(
-        left: pageStyle.unitWidth * 10,
-        right: pageStyle.unitWidth * 10,
-        bottom: pageStyle.unitHeight * 10,
+        left: Config.pageStyle.unitWidth * 10,
+        right: Config.pageStyle.unitWidth * 10,
+        bottom: Config.pageStyle.unitHeight * 10,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +125,7 @@ class _BrandListPageState extends State<BrandListPage> {
           'home_categories'.tr(),
           style: mediumTextStyle.copyWith(
             color: greyColor,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: Config.pageStyle.unitFontSize * 12,
           ),
         ),
       ),
@@ -157,7 +134,7 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildBrandButton() {
     return Container(
-      // width: pageStyle.unitWidth * 100,
+      // width: Config.pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(
@@ -174,44 +151,44 @@ class _BrandListPageState extends State<BrandListPage> {
           'brands_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: Config.pageStyle.unitFontSize * 12,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBrandCard(int index) {
+  Widget _buildBrandCard(HomeChangeNotifier _homeChangeNotifier, int index) {
     return InkWell(
       onTap: () {
         ProductListArguments arguments = ProductListArguments(
           category: CategoryEntity(),
           subCategory: [],
-          brand: brands[index],
+          brand: _homeChangeNotifier.sortedBrandList[index],
           selectedSubCategoryIndex: 0,
           isFromBrand: true,
         );
         Navigator.pushNamed(context, Routes.productList, arguments: arguments);
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 58,
-        margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 10),
-        padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+        width: Config.pageStyle.deviceWidth,
+        height: Config.pageStyle.unitHeight * 58,
+        margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),
+        padding: EdgeInsets.symmetric(horizontal: Config.pageStyle.unitWidth * 10),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl: brands[index].brandThumbnail,
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Text(
-              brands[index].brandLabel,
+              _homeChangeNotifier.sortedBrandList[index].brandLabel,
               style: mediumTextStyle.copyWith(
                 color: darkColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: Config.pageStyle.unitFontSize * 14,
               ),
             ),
             Row(
@@ -220,7 +197,7 @@ class _BrandListPageState extends State<BrandListPage> {
                   'view_all'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 11,
+                    fontSize: Config.pageStyle.unitFontSize * 11,
                   ),
                 ),
                 Icon(Icons.arrow_forward_ios, size: 22, color: primaryColor),

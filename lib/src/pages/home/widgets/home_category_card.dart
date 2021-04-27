@@ -49,7 +49,7 @@ class HomeCategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: Config.pageStyle.deviceWidth / 2,
+              width: Config.pageStyle.deviceWidth / 1.5,
               child: Text(
                 category.name,
                 style: mediumTextStyle.copyWith(

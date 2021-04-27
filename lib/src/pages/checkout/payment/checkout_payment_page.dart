@@ -42,7 +42,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localStorageRepo;
+  final LocalStorageRepository localStorageRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
@@ -59,7 +59,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
@@ -133,8 +132,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         activeColor: primaryColor,
         title: Row(
           children: [
-            if (method.title == 'Cash On Delivery' ||
-                method.title == 'الدفع عند التوصيل') ...[
+            if (method.title == 'Cash On Delivery' || method.title == 'الدفع عند التوصيل') ...[
               SvgPicture.asset(
                 'lib/public/icons/cashondelivery.svg',
                 height: 19,
@@ -198,8 +196,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                'currency'.tr() +
-                    ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
+                'currency'.tr() + ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -221,8 +218,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   ),
                 ),
                 Text(
-                  'currency'.tr() +
-                      ' ${orderDetails['orderDetails']['discount']}',
+                  'currency'.tr() + ' ${orderDetails['orderDetails']['discount']}',
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
                     fontSize: pageStyle.unitFontSize * 14,
@@ -244,10 +240,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                double.parse(orderDetails['orderDetails']['fees']) == .0
-                    ? 'free'.tr()
-                    : 'currency'.tr() +
-                        ' ${orderDetails['orderDetails']['fees']}',
+                double.parse(orderDetails['orderDetails']['fees']) == .0 ? 'free'.tr() : 'currency'.tr() + ' ${orderDetails['orderDetails']['fees']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 14,
@@ -267,8 +260,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 ),
               ),
               Text(
-                'currency'.tr() +
-                    ' ${orderDetails['orderDetails']['totalPrice']}',
+                'currency'.tr() + ' ${orderDetails['orderDetails']['totalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
                   fontSize: pageStyle.unitFontSize * 17,
@@ -357,8 +349,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       await myCartChangeNotifier.getCartId();
     }
     double price = double.parse(orderDetails['orderDetails']['totalPrice']);
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
@@ -373,9 +364,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   void _onGeneratePaymentUrl() async {
     final address = jsonDecode(orderDetails['orderAddress']);
     String cartId = orderDetails['cartId'];
-    int version = Platform.isAndroid
-        ? MarkaaVersion.androidVersion
-        : MarkaaVersion.iOSVersion;
+    int version = Platform.isAndroid ? MarkaaVersion.androidVersion : MarkaaVersion.iOSVersion;
     Map<String, dynamic> data = {
       "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
       "currency": "KWD",
@@ -402,16 +391,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         "phone": {"country_code": "965", "number": address['phoneNumber']},
       },
       "merchant": {"id": "6008426"},
-      "source": {
-        "id":
-            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
-      },
+      "source": {"id": orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"},
       "destinations": {"destination": []},
       "post": {"url": "https://www.google.com"},
       "redirect": {"url": "https://www.google.com"}
     };
-    await myCartChangeNotifier.generatePaymentUrl(
-        data, lang, _onProcess, _onSuccessGenerated, _onFailure);
+    await myCartChangeNotifier.generatePaymentUrl(data, lang, _onProcess, _onSuccessGenerated, _onFailure);
   }
 
   void _onSuccessGenerated(String url, String chargeId) async {

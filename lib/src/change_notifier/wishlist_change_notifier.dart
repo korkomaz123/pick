@@ -3,9 +3,7 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 
 class WishlistChangeNotifier extends ChangeNotifier {
-  final WishlistRepository wishlistRepository;
-
-  WishlistChangeNotifier({this.wishlistRepository});
+  final WishlistRepository wishlistRepository = WishlistRepository();
 
   Map<String, ProductModel> wishlistItemsMap = {};
   int wishlistItemsCount = 0;
@@ -60,8 +58,7 @@ class WishlistChangeNotifier extends ChangeNotifier {
       count = 1;
     }
     notifyListeners();
-    final result = await wishlistRepository.changeSaveForLaterItem(
-        token, product.productId, '', 'add', qty, options);
+    final result = await wishlistRepository.changeSaveForLaterItem(token, product.productId, '', 'add', qty, options);
     if (result['code'] != 'SUCCESS') {
       wishlistItemsCount -= count;
       wishlistItemsMap.remove(productId);
@@ -87,7 +84,6 @@ class WishlistChangeNotifier extends ChangeNotifier {
     wishlistItemsMap.remove(productId);
     wishlistItemsCount -= 1;
     notifyListeners();
-    await wishlistRepository.changeSaveForLaterItem(token, productId, parentId,
-        'delete_new', item.qtySaveForLater, {}, item.wishlistItemId);
+    await wishlistRepository.changeSaveForLaterItem(token, productId, parentId, 'delete_new', item.qtySaveForLater, {}, item.wishlistItemId);
   }
 }

@@ -58,8 +58,8 @@ class _SignInPageState extends State<SignInPage> {
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  WishlistRepository wishlistRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final WishlistRepository wishlistRepo = WishlistRepository();
   SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -72,8 +72,6 @@ class _SignInPageState extends State<SignInPage> {
     flushBarService = FlushBarService(context: context);
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -101,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     if (Navigator.of(Config.navigatorKey.currentContext).canPop())
       Navigator.of(Config.navigatorKey.currentContext).pop(context);

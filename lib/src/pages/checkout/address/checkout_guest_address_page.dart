@@ -41,11 +41,11 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  ShippingAddressRepository shippingRepo;
+  final ShippingAddressRepository shippingRepo=ShippingAddressRepository();
   String shippingMethodId;
   double serviceFees;
   MyCartChangeNotifier myCartChangeNotifier;
-  LocalStorageRepository localStorageRepository;
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -80,9 +80,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
     countryController.text = 'Kuwait';
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    shippingRepo = context.read<ShippingAddressRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    localStorageRepository = context.read<LocalStorageRepository>();
     _initForm();
   }
 

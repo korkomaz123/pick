@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
@@ -17,19 +19,14 @@ class HomeChangeNotifier extends ChangeNotifier {
   final CategoryRepository categoryRepository = CategoryRepository();
   final ProductRepository productRepository = ProductRepository();
   final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final BrandRepository brandRepository = BrandRepository();
 
-  List<ProductModel> recentlyViewedProducts = [];
   List<ProductModel> bestDealsItems = [];
   SliderImageEntity megaBanner;
   String message;
   String bestDealsBannerTitle = '';
 
-  changeLanguage() {
-    loadSliderImages();
-    getFeaturedCategoriesList();
-    loadBestDeals();
-    getHomeCategories();
-  }
+  changeLanguage() {}
 
   List<SliderImageEntity> sliderImages = [];
   Future loadSliderImages() async {
@@ -126,13 +123,13 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> newArrivalsItems = [];
   Future loadNewArrivalsBanner() async {
     try {
-      final result = await homeRepository.getHomeNewArrivalsBanners(lang);
+      final result = await homeRepository.getHomeNewArrivalsBanners(Config.language);
       if (result['code'] == 'SUCCESS') {
         dynamic response;
         if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(result['data'][0]['category_id'], lang, 1);
+          response = await productRepository.getProducts(result['data'][0]['category_id'], Config.language, 1);
         } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(result['data'][0]['brand_id'], 'all', lang, 1);
+          response = await productRepository.getBrandProducts(result['data'][0]['brand_id'], 'all', Config.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -159,7 +156,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   String newArrivalsTitle = '';
   Future loadNewArrivals() async {
     try {
-      final result = await productRepository.getNewArrivalsProducts(lang);
+      final result = await productRepository.getNewArrivalsProducts(Config.language);
       if (result['code'] == 'SUCCESS') {
         newArrivalsTitle = result['title'];
         newArrivalsProducts.clear();
@@ -193,7 +190,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   String orientalTitle = '';
   Future loadOrientalProducts() async {
     try {
-      final result = await productRepository.getOrientalProducts(lang);
+      final result = await productRepository.getOrientalProducts(Config.language);
       if (result['code'] == 'SUCCESS') {
         orientalTitle = result['title'];
         orientalCategory = CategoryEntity.fromJson(result['category']);
@@ -245,7 +242,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> fragrancesBanners = [];
   Future loadFragrancesBanner() async {
     try {
-      final result = await homeRepository.getHomeFragrancesBanners(lang);
+      final result = await homeRepository.getHomeFragrancesBanners(Config.language);
       if (result['code'] == 'SUCCESS') {
         fragrancesBannersTitle = result['title'];
         fragrancesBanners.clear();
@@ -263,7 +260,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> perfumesProducts = [];
   Future loadPerfumes() async {
     try {
-      final result = await productRepository.getPerfumesProducts(lang);
+      final result = await productRepository.getPerfumesProducts(Config.language);
       if (result['code'] == 'SUCCESS') {
         perfumesTitle = result['title'];
         perfumesProducts.clear();
@@ -305,9 +302,9 @@ class HomeChangeNotifier extends ChangeNotifier {
         final adsData = result['data'];
         var response;
         if (adsData['category_id'] != null) {
-          response = await productRepository.getProducts(adsData['category_id'], lang, 1);
+          response = await productRepository.getProducts(adsData['category_id'], Config.language, 1);
         } else if (adsData['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(adsData['brand_id'], 'all', lang, 1);
+          response = await productRepository.getBrandProducts(adsData['brand_id'], 'all', Config.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -326,38 +323,50 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadRecentlyViewedGuest(List<String> ids, String lang) async {
+  Future getViewedProducts() async {
+    print("user ==>");
+    print(user);
+    if (user?.token != null) {
+      await loadRecentlyViewedCustomer();
+    } else {
+      await loadRecentlyViewedGuest();
+    }
+  }
+
+  List<ProductModel> recentlyViewedProducts = [];
+  Future loadRecentlyViewedGuest() async {
+    List<String> ids = await localStorageRepository.getRecentlyViewedIds();
     try {
-      final result = await productRepository.getHomeRecentlyViewedGuestProducts(ids, lang);
+      final result = await productRepository.getHomeRecentlyViewedGuestProducts(ids, Config.language);
       if (result['code'] == 'SUCCESS') {
-        List<dynamic> recentlyViewedList = result['items'];
-        recentlyViewedProducts = [];
-        for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts.add(ProductModel.fromJson(recentlyViewedList[i]));
+        recentlyViewedProducts.clear();
+        for (int i = 0; i < result['items'].length; i++) {
+          recentlyViewedProducts.add(ProductModel.fromJson(result['items'][i]));
         }
-        notifyListeners();
       }
     } catch (e) {
       print('error guest');
       print(e.toString());
     }
+
+    notifyListeners();
   }
 
-  void loadRecentlyViewedCustomer(String token, String lang) async {
+  Future loadRecentlyViewedCustomer() async {
     try {
-      final result = await productRepository.getHomeRecentlyViewedCustomerProducts(token, lang);
+      final result = await productRepository.getHomeRecentlyViewedCustomerProducts(user.token, Config.language);
       if (result['code'] == 'SUCCESS') {
         List<dynamic> recentlyViewedList = result['products'];
         recentlyViewedProducts = [];
         for (int i = 0; i < recentlyViewedList.length; i++) {
           recentlyViewedProducts.add(ProductModel.fromJson(recentlyViewedList[i]));
         }
-        notifyListeners();
       }
     } catch (e) {
       print('error customer');
       print(e.toString());
     }
+    notifyListeners();
   }
 
   List<ProductModel> groomingItems = [];
@@ -366,7 +375,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   CategoryEntity groomingCategory;
   Future loadGrooming() async {
     try {
-      final result = await homeRepository.getHomeGrooming(lang);
+      final result = await homeRepository.getHomeGrooming(Config.language);
       if (result['code'] == 'SUCCESS') {
         groomingTitle = result['title'];
         groomingCategory = CategoryEntity.fromJson(result['category']);
@@ -419,6 +428,24 @@ class HomeChangeNotifier extends ChangeNotifier {
       categories = [];
       for (int i = 0; i < categoryList.length; i++) {
         categories.add(CategoryEntity.fromJson(categoryList[i]));
+      }
+    }
+    notifyListeners();
+  }
+
+  List<BrandEntity> brandList = [];
+  List<BrandEntity> sortedBrandList = [];
+  Future getBrandsList(String from) async {
+    final result = await brandRepository.getAllBrands(Config.language, from);
+    if (result['code'] == 'SUCCESS') {
+      List<BrandEntity> brands = [];
+      for (int i = 0; i < result['brand'].length; i++) {
+        brands.add(BrandEntity.fromJson(result['brand'][i]));
+      }
+      if (from == 'home') {
+        brandList = brands;
+      } else {
+        sortedBrandList = brands;
       }
     }
     notifyListeners();

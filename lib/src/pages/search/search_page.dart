@@ -1,4 +1,4 @@
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
@@ -29,8 +29,7 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   PageStyle pageStyle;
   TextEditingController searchController = TextEditingController();
   TabController tabController;
@@ -51,20 +50,18 @@ class _SearchPageState extends State<SearchPage>
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
   List<ProductModel> suggestions = [];
-  LocalStorageRepository localStorageRepository;
-  SearchRepository searchRepository;
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final SearchRepository searchRepository = SearchRepository();
   SuggestionChangeNotifier suggestionChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  BrandChangeNotifier brandChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
-    searchRepository = context.read<SearchRepository>();
-    localStorageRepository = context.read<LocalStorageRepository>();
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
-    brandChangeNotifier.getBrandsList(lang, 'brand');
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.getBrandsList('brand');
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
@@ -96,8 +93,7 @@ class _SearchPageState extends State<SearchPage>
 
   void _getSearchHistories() async {
     bool isExist = await localStorageRepository.existItem('search_history');
-    searchHistory =
-        isExist ? await localStorageRepository.getItem('search_history') : [];
+    searchHistory = isExist ? await localStorageRepository.getItem('search_history') : [];
     markaaAppChangeNotifier.rebuild();
   }
 
@@ -164,10 +160,7 @@ class _SearchPageState extends State<SearchPage>
                             ] else ...[
                               _buildBrandResult()
                             ],
-                            if (!searchNode.hasFocus &&
-                                searchHistory.isNotEmpty) ...[
-                              _buildSearchHistory()
-                            ],
+                            if (!searchNode.hasFocus && searchHistory.isNotEmpty) ...[_buildSearchHistory()],
                           ],
                         ),
                       ],
@@ -176,9 +169,7 @@ class _SearchPageState extends State<SearchPage>
                 ),
                 Consumer<SuggestionChangeNotifier>(
                   builder: (_, __, ___) {
-                    if (tabController.index == 0 &&
-                        searchNode.hasFocus &&
-                        suggestionChangeNotifier.suggestions.isNotEmpty) {
+                    if (tabController.index == 0 && searchNode.hasFocus && suggestionChangeNotifier.suggestions.isNotEmpty) {
                       return _buildSuggestion();
                     }
                     return SizedBox.shrink();
@@ -245,8 +236,7 @@ class _SearchPageState extends State<SearchPage>
                   'search_items_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 14,
-                    color:
-                        tabController.index == 0 ? primaryColor : greyDarkColor,
+                    color: tabController.index == 0 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: pageStyle.unitWidth * 4),
@@ -257,15 +247,11 @@ class _SearchPageState extends State<SearchPage>
                       vertical: pageStyle.unitHeight * 4,
                     ),
                     decoration: BoxDecoration(
-                      color: tabController.index == 0
-                          ? primaryColor
-                          : greyDarkColor,
+                      color: tabController.index == 0 ? primaryColor : greyDarkColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      suggestionChangeNotifier?.searchedProducts?.length
-                              ?.toString() ??
-                          '0',
+                      suggestionChangeNotifier?.searchedProducts?.length?.toString() ?? '0',
                       style: mediumTextStyle.copyWith(
                         fontSize: pageStyle.unitFontSize * 12,
                         color: Colors.white,
@@ -284,21 +270,18 @@ class _SearchPageState extends State<SearchPage>
                   'search_brands_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: pageStyle.unitFontSize * 14,
-                    color:
-                        tabController.index == 1 ? primaryColor : greyDarkColor,
+                    color: tabController.index == 1 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: pageStyle.unitWidth * 4),
-                Consumer<BrandChangeNotifier>(
-                  builder: (_, __, ___) {
+                Consumer<HomeChangeNotifier>(
+                  builder: (_, homeChangeNotifier, ___) {
                     int count = 0;
-                    for (var brand in brandChangeNotifier.sortedBrandList) {
+                    for (var brand in homeChangeNotifier.sortedBrandList) {
                       bool isEmpty = searchController.text.isEmpty;
                       String searchText = searchController.text.toLowerCase();
-                      String brandLabel =
-                          brand.brandLabel.toString().toLowerCase();
-                      if ((!isEmpty && brandLabel.contains(searchText)) &&
-                          brand.productsCount > 0) {
+                      String brandLabel = brand.brandLabel.toString().toLowerCase();
+                      if ((!isEmpty && brandLabel.contains(searchText)) && brand.productsCount > 0) {
                         count += 1;
                       }
                     }
@@ -308,9 +291,7 @@ class _SearchPageState extends State<SearchPage>
                         vertical: pageStyle.unitHeight * 4,
                       ),
                       decoration: BoxDecoration(
-                        color: tabController.index == 1
-                            ? primaryColor
-                            : greyDarkColor,
+                        color: tabController.index == 1 ? primaryColor : greyDarkColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -341,9 +322,7 @@ class _SearchPageState extends State<SearchPage>
         child: Container(
           padding: EdgeInsets.all(pageStyle.unitWidth * 10),
           color: Colors.white,
-          child: tabController.index == 0
-              ? _buildProductsSuggestion()
-              : _buildBrandsSuggestion(),
+          child: tabController.index == 0 ? _buildProductsSuggestion() : _buildBrandsSuggestion(),
         ),
       ),
     );
@@ -352,8 +331,7 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildProductsSuggestion() {
     return Consumer<SuggestionChangeNotifier>(
       builder: (ctx, notifier, _) {
-        if (notifier.suggestions.isNotEmpty &&
-            searchController.text.isNotEmpty) {
+        if (notifier.suggestions.isNotEmpty && searchController.text.isNotEmpty) {
           return Column(
             children: List.generate(
               notifier.suggestions.length,
@@ -372,9 +350,7 @@ class _SearchPageState extends State<SearchPage>
                         product: notifier.suggestions[index],
                       ),
                     ),
-                    index < (notifier.suggestions.length - 1)
-                        ? Divider(color: greyColor, thickness: 0.5)
-                        : SizedBox.shrink(),
+                    index < (notifier.suggestions.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                   ],
                 );
               },
@@ -387,9 +363,9 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildBrandsSuggestion() {
-    return Consumer<BrandChangeNotifier>(
-      builder: (_, __, ___) {
-        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, homeChangeNotifier, ___) {
+        List<BrandEntity> brands = homeChangeNotifier.sortedBrandList;
         int rIndex = 0;
         return Column(
           children: List.generate(
@@ -397,10 +373,8 @@ class _SearchPageState extends State<SearchPage>
             (index) {
               bool isEmpty = searchController.text.isEmpty;
               String searchText = searchController.text.toLowerCase();
-              String brandLabel =
-                  brands[index].brandLabel.toString().toLowerCase();
-              if ((!isEmpty && brandLabel.contains(searchText)) &&
-                  brands[index].productsCount > 0) {
+              String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+              if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount > 0) {
                 rIndex += 1;
                 return Column(
                   children: [
@@ -549,20 +523,14 @@ class _SearchPageState extends State<SearchPage>
                       onTap: () => Navigator.pushNamed(
                         context,
                         Routes.product,
-                        arguments:
-                            suggestionChangeNotifier.searchedProducts[index],
+                        arguments: suggestionChangeNotifier.searchedProducts[index],
                       ),
                       child: SearchProductCard(
                         pageStyle: pageStyle,
-                        product:
-                            suggestionChangeNotifier.searchedProducts[index],
+                        product: suggestionChangeNotifier.searchedProducts[index],
                       ),
                     ),
-                    index <
-                            (suggestionChangeNotifier.searchedProducts.length -
-                                1)
-                        ? Divider(color: greyColor, thickness: 0.5)
-                        : SizedBox.shrink(),
+                    index < (suggestionChangeNotifier.searchedProducts.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                   ],
                 );
               },
@@ -574,9 +542,9 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildBrandResult() {
-    return Consumer<BrandChangeNotifier>(
-      builder: (_, __, ___) {
-        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, homeChangeNotifier, ___) {
+        List<BrandEntity> brands = homeChangeNotifier.sortedBrandList;
         int rIndex = 0;
         return SingleChildScrollView(
           child: Column(
@@ -585,10 +553,8 @@ class _SearchPageState extends State<SearchPage>
               (index) {
                 bool isEmpty = searchController.text.isEmpty;
                 String searchText = searchController.text.toLowerCase();
-                String brandLabel =
-                    brands[index].brandLabel.toString().toLowerCase();
-                if ((!isEmpty && brandLabel.contains(searchText)) &&
-                    brands[index].productsCount > 0) {
+                String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+                if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount > 0) {
                   rIndex += 1;
                   return Column(
                     children: [

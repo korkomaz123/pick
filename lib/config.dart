@@ -50,12 +50,7 @@ class Config {
     if (signInRepo.getFirebaseUser() == null) {
       await signInRepo.loginFirebase(email: MarkaaReporter.email, password: MarkaaReporter.password);
     }
-    // orderChangeNotifier.initializeOrders();
-    // brandChangeNotifier.getBrandsList(lang, 'brand');
-    // brandChangeNotifier.getBrandsList(lang, 'home');
     await _getCurrentUser();
-    // await myCartChangeNotifier.getCartId();
-    // await myCartChangeNotifier.getCartItems(language);
     // if (user?.token != null) {
     //   isNotification = await settingRepo.getNotificationSetting(user.token);
     //   wishlistChangeNotifier.getWishlistItems(user.token, lang);
@@ -78,8 +73,6 @@ class Config {
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
       final result = await signInRepo.getCurrentUser(token);
-      print("result");
-      print(result);
       if (result['code'] == 'SUCCESS') {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];

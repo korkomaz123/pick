@@ -104,11 +104,10 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   void _sendViewedProduct() async {
     if (user?.token != null) {
       await productRepository.setRecentlyViewedCustomerProduct(user.token, product.productId, lang);
-      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+      homeChangeNotifier.loadRecentlyViewedCustomer();
     } else {
       await localStorageRepository.addRecentlyViewedItem(product.productId);
-      List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-      homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
+      homeChangeNotifier.loadRecentlyViewedGuest();
     }
   }
 

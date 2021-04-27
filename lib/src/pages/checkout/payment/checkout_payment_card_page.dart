@@ -22,12 +22,10 @@ class CheckoutPaymentCardPage extends StatefulWidget {
   CheckoutPaymentCardPage({this.params});
 
   @override
-  _CheckoutPaymentCardPageState createState() =>
-      _CheckoutPaymentCardPageState();
+  _CheckoutPaymentCardPageState createState() => _CheckoutPaymentCardPageState();
 }
 
-class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
-    with WidgetsBindingObserver {
+class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with WidgetsBindingObserver {
   PageStyle pageStyle;
   WebViewController webViewController;
   Map<String, dynamic> data = {};
@@ -35,7 +33,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   ProgressService progressService;
   FlushBarService flushBarService;
   MyCartChangeNotifier myCartChangeNotifier;
-  LocalStorageRepository localStorageRepo;
+  final LocalStorageRepository localStorageRepo = LocalStorageRepository();
   var orderDetails;
   var reorder;
   var url;
@@ -47,7 +45,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _initialData();
   }
@@ -126,8 +123,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
     if (params.containsKey('tap_id')) {
-      await myCartChangeNotifier.checkChargeStatus(
-          chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
+      await myCartChangeNotifier.checkChargeStatus(chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
     }
   }
 
@@ -136,8 +132,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPaymentSuccess() async {
-    await orderChangeNotifier.submitOrder(orderDetails, lang, _onProcess,
-        _onOrderSubmittedSuccess, _onOrderSubmittedFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang, _onProcess, _onOrderSubmittedSuccess, _onOrderSubmittedFailure);
   }
 
   void _onPaymentFailure(String error) {
@@ -155,8 +150,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       }
       await myCartChangeNotifier.getCartId();
     }
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(double.parse(orderDetails['totalPrice']), 'KWD');
     Adjust.trackEvent(adjustEvent);
     progressService.hideProgress();
@@ -173,15 +167,13 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       "charge_id": chargeId,
       "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
       "currency": "KWD",
-      "description":
-          "We need to refund this amount to our customer because this order can not be processed",
+      "description": "We need to refund this amount to our customer because this order can not be processed",
       "reason": "requested_by_customer",
       "reference": {"merchant": "6008426"},
       "metadata": {"udf1": "r live1", "udf2": "r live2"},
       "post": {"url": "https://www.google.com"}
     };
-    await myCartChangeNotifier.refundPayment(
-        refundData, _onRefundedSuccess, _onRefundedFailure);
+    await myCartChangeNotifier.refundPayment(refundData, _onRefundedSuccess, _onRefundedFailure);
   }
 
   void _onRefundedSuccess() {

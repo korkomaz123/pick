@@ -49,11 +49,11 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
 class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDialog> {
   SignInBloc signInBloc;
   PageStyle pageStyle;
-  LocalStorageRepository localRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
-  WishlistRepository wishlistRepo;
+  final WishlistRepository wishlistRepo = WishlistRepository();
   SettingRepository settingRepo = SettingRepository();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -68,8 +68,6 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    localRepo = context.read<LocalStorageRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -98,7 +96,7 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
     widget.onClose();

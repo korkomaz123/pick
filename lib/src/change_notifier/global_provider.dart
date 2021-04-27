@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/config.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 
@@ -20,6 +21,7 @@ class GlobalProvider extends ChangeNotifier {
     FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     fetchCategories();
+    lang = currentLanguage;
     Config.language = currentLanguage;
     notifyListeners();
     //ModalRoute.of(context).settings.name

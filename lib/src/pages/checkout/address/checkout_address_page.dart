@@ -47,7 +47,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   TextEditingController noteController = TextEditingController();
   String shippingMethodId;
   double serviceFees;
-  LocalStorageRepository localRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
@@ -56,7 +56,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
     super.initState();
     shippingMethodId = shippingMethods[0].id;
     serviceFees = shippingMethods[0].serviceFees;
-    localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     flushBarService = FlushBarService(context: context);

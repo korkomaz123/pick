@@ -44,7 +44,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  ShippingAddressRepository shippingRepo;
+  final ShippingAddressRepository shippingRepo = ShippingAddressRepository();
   AddressChangeNotifier model;
   AddressEntity addressParam;
   bool isCheckout;
@@ -102,7 +102,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    shippingRepo = context.read<ShippingAddressRepository>();
   }
 
   @override

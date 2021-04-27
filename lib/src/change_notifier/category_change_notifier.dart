@@ -5,15 +5,9 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
-  CategoryChangeNotifier({
-    this.localStorageRepository,
-    this.categoryRepository,
-    this.brandRepository,
-  });
-
-  final LocalStorageRepository localStorageRepository;
-  final CategoryRepository categoryRepository;
-  final BrandRepository brandRepository;
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final CategoryRepository categoryRepository = CategoryRepository();
+  final BrandRepository brandRepository = BrandRepository();
 
   List<CategoryEntity> subCategories;
   bool isLoading = false;

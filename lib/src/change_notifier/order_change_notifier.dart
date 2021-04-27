@@ -11,14 +11,14 @@ import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 
 class OrderChangeNotifier extends ChangeNotifier {
-  final OrderRepository orderRepository;
-  final FirebaseRepository firebaseRepository;
-
-  OrderChangeNotifier({this.orderRepository, this.firebaseRepository});
+  final OrderRepository orderRepository = OrderRepository();
+  final FirebaseRepository firebaseRepository = FirebaseRepository();
 
   Map<String, OrderEntity> ordersMap = {};
   List<String> keys = [];
-
+  OrderChangeNotifier() {
+    initializeOrders();
+  }
   void initializeOrders() {
     ordersMap = {};
     keys = [];
@@ -91,8 +91,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
@@ -120,8 +119,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.returnOrder(
-          token, orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         onSuccess();
       } else {
@@ -138,12 +136,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -157,12 +151,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
