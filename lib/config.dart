@@ -59,12 +59,10 @@ class Config {
     //   addressChangeNotifier.loadAddresses(user.token);
     // }
     // _loadExtraData();
-    // Navigator.pushNamedAndRemoveUntil(Config.navigatorKey.currentContext, Routes.home, (route) => false);
   }
 // void _loadExtraData() async {
 //   shippingMethods = await checkoutRepo.getShippingMethod(lang);
 //   paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-//   // sideMenus = await categoryRepo.getMenuCategories(lang);
 //   regions = await shippingAddressRepo.getRegions(lang);
 // }
 
