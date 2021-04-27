@@ -118,7 +118,6 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,
-                pageStyle: widget.pageStyle,
               ),
             );
           }).toList(),
