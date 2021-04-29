@@ -9,6 +9,7 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_round_image_button.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -29,7 +30,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'widgets/product_related_items.dart';
@@ -52,7 +53,6 @@ class _ProductPageState extends State<ProductPage>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
-  PageStyle pageStyle;
   ProductModel product;
   MyCartRepository cartRepo;
   ProgressService progressService;
@@ -134,13 +134,11 @@ class _ProductPageState extends State<ProductPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(),
       body: Consumer<ProductChangeNotifier>(
         builder: (_, model, ___) {
           if (model.productDetails != null) {
@@ -160,7 +158,6 @@ class _ProductPageState extends State<ProductPage>
                     child: Column(
                       children: [
                         ProductSingleProduct(
-                          pageStyle: pageStyle,
                           product: product,
                           productEntity: model.productDetails,
                           model: model,
@@ -168,33 +165,27 @@ class _ProductPageState extends State<ProductPage>
                         if (model.productDetails.typeId == 'configurable') ...[
                           ProductConfigurableOptions(
                             productEntity: model.productDetails,
-                            pageStyle: pageStyle,
                           )
                         ],
                         ProductReviewTotal(
-                          pageStyle: pageStyle,
                           product: model.productDetails,
                           onFirstReview: () =>
                               _onFirstReview(model.productDetails),
                           onReviews: () => _onReviews(model.productDetails),
                         ),
                         ProductRelatedItems(
-                          pageStyle: pageStyle,
                           product: product,
                         ),
                         ProductSameBrandProducts(
-                          pageStyle: pageStyle,
                           product: product,
                         ),
                         ProductMoreAbout(
-                          pageStyle: pageStyle,
                           productEntity: model.productDetails,
                         ),
                         ProductReview(
-                          pageStyle: pageStyle,
                           product: model.productDetails,
                         ),
-                        SizedBox(height: pageStyle.unitHeight * 50),
+                        SizedBox(height: 50.h),
                       ],
                     ),
                   ),
@@ -213,7 +204,6 @@ class _ProductPageState extends State<ProductPage>
         },
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
     );
@@ -221,18 +211,18 @@ class _ProductPageState extends State<ProductPage>
 
   Widget _buildToolbar(ProductChangeNotifier model) {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 60,
+      width: 375.w,
+      height: 60.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (isStock) ...[
             Container(
-              width: pageStyle.unitWidth * 317,
-              height: pageStyle.unitHeight * 60,
+              width: 317.w,
+              height: 60.h,
               child: MarkaaTextButton(
                 title: 'product_buy_now'.tr(),
-                titleSize: pageStyle.unitFontSize * 23,
+                titleSize: 23.sp,
                 titleColor: Colors.white,
                 buttonColor: Color(0xFFFF8B00),
                 borderColor: Colors.transparent,
@@ -243,20 +233,20 @@ class _ProductPageState extends State<ProductPage>
             )
           ] else ...[
             Container(
-              width: pageStyle.unitWidth * 317,
-              height: pageStyle.unitHeight * 60,
+              width: 317.w,
+              height: 60.h,
             )
           ],
           if (isStock) ...[
-            RoundImageButton(
-              width: pageStyle.unitWidth * 58,
-              height: pageStyle.unitHeight * 60,
+            MarkaaRoundImageButton(
+              width: 58.w,
+              height: 60.h,
               color: primarySwatchColor,
               child: ScaleTransition(
                 scale: _addToCartScaleAnimation,
                 child: Container(
-                  width: pageStyle.unitWidth * 25,
-                  height: pageStyle.unitHeight * 25,
+                  width: 25.w,
+                  height: 25.h,
                   child: SvgPicture.asset(
                     shoppingCartIcon,
                     color: Colors.white,
@@ -278,13 +268,13 @@ class _ProductPageState extends State<ProductPage>
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
     _addToCartController.repeat(reverse: true);
@@ -293,7 +283,7 @@ class _ProductPageState extends State<ProductPage>
       timer.cancel();
     });
     await myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang, model.selectedOptions);
+        context, product, 1, lang, model.selectedOptions);
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
   }
@@ -302,17 +292,17 @@ class _ProductPageState extends State<ProductPage>
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
     myCartChangeNotifier.addProductToCart(
-        context, pageStyle, product, 1, lang, model.selectedOptions);
+        context, product, 1, lang, model.selectedOptions);
     Navigator.pushNamed(context, Routes.myCart);
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);

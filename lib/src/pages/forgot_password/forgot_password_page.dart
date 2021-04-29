@@ -1,5 +1,4 @@
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -11,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:string_validator/string_validator.dart';
@@ -26,7 +25,6 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  PageStyle pageStyle;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   SignInBloc signInBloc;
@@ -43,8 +41,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
       body: BlocConsumer<SignInBloc, SignInState>(
@@ -54,7 +50,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           }
           if (state is NewPasswordRequestSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
+            flushBarService.showErrorMessage(state.message);
           }
           if (state is NewPasswordRequestSubmittedSuccess) {
             progressService.hideProgress();
@@ -68,11 +64,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               child: Column(
                 children: [
                   Container(
-                    width: pageStyle.deviceWidth,
-                    padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 30,
-                      bottom: pageStyle.unitHeight * 30,
-                    ),
+                    width: 375.w,
+                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
                     alignment: lang == 'en'
                         ? Alignment.centerLeft
                         : Alignment.centerRight,
@@ -82,15 +75,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 60,
-                      bottom: pageStyle.unitHeight * 120,
-                    ),
+                    padding: EdgeInsets.only(top: 60.h, bottom: 120.h),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       hLogoIcon,
-                      width: pageStyle.unitWidth * 120,
-                      height: pageStyle.unitHeight * 45,
+                      width: 120.w,
+                      height: 45.h,
                     ),
                   ),
                   Container(
@@ -99,7 +89,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       'forgot_password_title'.tr(),
                       style: mediumTextStyle.copyWith(
                         color: Colors.white,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
@@ -121,27 +111,25 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _buildUsernameOrEmail() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: TextFormField(
         controller: emailController,
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'email'.tr().toUpperCase(),
           hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
-            fontSize: pageStyle.unitFontSize * 14,
+            fontSize: 14.sp,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
@@ -181,14 +169,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _buildGetNewPassButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 60,
-      ),
+      width: 375.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 60.w),
       child: MarkaaTextButton(
         title: 'get_new_password'.tr(),
-        titleSize: pageStyle.unitFontSize * 16,
+        titleSize: 16.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
@@ -200,8 +186,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _buildAuthChoiceDivider() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 50),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 50.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -211,13 +197,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               'login'.tr(),
               style: mediumTextStyle.copyWith(
                 color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
           ),
           if (!widget.isFromCheckout) ...[
             Container(
-              height: pageStyle.unitHeight * 20,
+              height: 20.h,
               child: VerticalDivider(color: Colors.white, thickness: 0.5),
             ),
             InkWell(
@@ -227,7 +213,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 'register'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ),
@@ -247,7 +233,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     await showDialog(
       context: context,
       builder: (context) {
-        return NewPasswordSentDialog(pageStyle: pageStyle);
+        return NewPasswordSentDialog();
       },
     );
     Navigator.pop(context);

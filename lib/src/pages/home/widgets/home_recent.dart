@@ -7,13 +7,9 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeRecent extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeRecent({this.pageStyle});
-
   @override
   _HomeRecentState createState() => _HomeRecentState();
 }
@@ -37,10 +33,10 @@ class _HomeRecentState extends State<HomeRecent> {
         recentlyViews = model.recentlyViewedProducts;
         if (recentlyViews.isNotEmpty) {
           return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 370,
-            padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+            width: 375.w,
+            height: 370.h,
+            padding: EdgeInsets.all(8.w),
+            margin: EdgeInsets.only(bottom: 10.h),
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +44,7 @@ class _HomeRecentState extends State<HomeRecent> {
                 Text(
                   'home_recently_view'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 23,
+                    fontSize: 23.sp,
                     color: greyDarkColor,
                   ),
                 ),
@@ -61,20 +57,19 @@ class _HomeRecentState extends State<HomeRecent> {
                         return Row(
                           children: [
                             ProductVCard(
-                              cardWidth: widget.pageStyle.unitWidth * 175,
-                              cardHeight: widget.pageStyle.unitHeight * 300,
+                              cardWidth: 175.w,
+                              cardHeight: 300.h,
                               product: recentlyViews[index],
-                              pageStyle: widget.pageStyle,
                               isShoppingCart: true,
                               isWishlist: true,
                               isShare: true,
                             ),
                             if (index < recentlyViews.length - 1) ...[
                               Container(
-                                height: widget.pageStyle.unitHeight * 300,
+                                height: 300.h,
                                 child: VerticalDivider(
-                                  width: widget.pageStyle.unitWidth * 1,
-                                  thickness: widget.pageStyle.unitWidth * 1,
+                                  width: 1.w,
+                                  thickness: 1.w,
                                   color: greyColor.withOpacity(0.4),
                                 ),
                               )

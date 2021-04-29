@@ -4,18 +4,16 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 
 class FilterOptionSelectDialog extends StatefulWidget {
-  final PageStyle pageStyle;
   final String title;
   final String code;
   final List<dynamic> options;
   final List<dynamic> values;
 
   FilterOptionSelectDialog({
-    this.pageStyle,
     this.title,
     this.code,
     this.options,
@@ -59,7 +57,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           icon: Icon(
             Icons.arrow_back_ios,
             color: primaryColor,
-            size: widget.pageStyle.unitFontSize * 22,
+            size: 22.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -67,21 +65,19 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           widget.title,
           style: mediumTextStyle.copyWith(
             color: primaryColor,
-            fontSize: widget.pageStyle.unitFontSize * 25,
+            fontSize: 25.sp,
           ),
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: widget.pageStyle.unitWidth * 4,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Center(
               child: InkWell(
                 onTap: () => _onClear(),
                 child: Text(
                   'reset'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     color: primaryColor,
                   ),
                 ),
@@ -106,21 +102,16 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
 
   Widget _buildDialogSearchInput() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 20,
-        vertical: widget.pageStyle.unitHeight * 10,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: TextFormField(
         controller: searchController,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
           color: greyColor,
         ),
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 10,
-          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: greyColor),
@@ -156,12 +147,8 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
             return InkWell(
               onTap: () => _onSelectItem(selIdx, options[index]),
               child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 30,
-                ),
-                padding: EdgeInsets.symmetric(
-                  vertical: widget.pageStyle.unitHeight * 5,
-                ),
+                margin: EdgeInsets.symmetric(horizontal: 30.w),
+                padding: EdgeInsets.symmetric(vertical: 5.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -169,11 +156,9 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                       children: [
                         if (code == 'color') ...[
                           Container(
-                            width: widget.pageStyle.unitWidth * 30,
-                            height: widget.pageStyle.unitWidth * 30,
-                            margin: EdgeInsets.only(
-                              right: widget.pageStyle.unitWidth * 10,
-                            ),
+                            width: 30.w,
+                            height: 30.w,
+                            margin: EdgeInsets.only(right: 10.w),
                             decoration: BoxDecoration(
                               color: _getColorFromHex(
                                   options[index]['color_code']),
@@ -185,7 +170,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                           title,
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
-                            fontSize: widget.pageStyle.unitFontSize * 18,
+                            fontSize: 18.sp,
                           ),
                         ),
                       ],
@@ -193,7 +178,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                     if (isSelected) ...[
                       Icon(
                         Icons.check,
-                        size: widget.pageStyle.unitFontSize * 20,
+                        size: 20.sp,
                         color: primaryColor,
                       )
                     ],
@@ -212,9 +197,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           if (index < options.length - 1) {
             if (item.contains(query)) {
               return Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 20,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Divider(color: primaryColor),
               );
             } else {
@@ -230,11 +213,11 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
 
   Widget _buildApplyButton() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 60,
+      width: 375.w,
+      height: 60.h,
       child: MarkaaTextButton(
         title: 'apply_button_title'.tr(),
-        titleSize: widget.pageStyle.unitFontSize * 24,
+        titleSize: 24.sp,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,

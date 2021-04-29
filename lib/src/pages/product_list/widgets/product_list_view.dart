@@ -13,7 +13,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +24,6 @@ class ProductListView extends StatefulWidget {
   final List<CategoryEntity> subCategories;
   final int activeIndex;
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final PageStyle pageStyle;
   final bool isFromBrand;
   final bool isFilter;
   final BrandEntity brand;
@@ -39,7 +38,6 @@ class ProductListView extends StatefulWidget {
     this.subCategories,
     this.activeIndex,
     this.scaffoldKey,
-    this.pageStyle,
     this.isFilter,
     this.isFromBrand,
     this.brand,
@@ -61,7 +59,6 @@ class _ProductListViewState extends State<ProductListView>
   List<CategoryEntity> subCategories;
   BrandEntity brand;
   bool isFromBrand;
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   TabController tabController;
@@ -76,7 +73,6 @@ class _ProductListViewState extends State<ProductListView>
     super.initState();
     subCategories = widget.subCategories;
     scaffoldKey = widget.scaffoldKey;
-    pageStyle = widget.pageStyle;
     isFromBrand = widget.isFromBrand;
     brand = widget.brand;
     progressService = ProgressService(context: context);
@@ -264,7 +260,7 @@ class _ProductListViewState extends State<ProductListView>
                           productChangeNotifier.data[index] == null) {
                         return Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
-                        return ProductNoAvailable(pageStyle: pageStyle);
+                        return ProductNoAvailable();
                       } else {
                         return _buildProductList(
                             productChangeNotifier.data[index]);
@@ -283,14 +279,14 @@ class _ProductListViewState extends State<ProductListView>
 
   Widget _buildArrowButton() {
     return AnimatedPositioned(
-      right: pageStyle.unitWidth * 4,
-      bottom: pageStyle.unitHeight * 4 - widget.pos,
+      right: 4.w,
+      bottom: 4.h - widget.pos,
       duration: Duration(milliseconds: 500),
       child: InkWell(
         onTap: () => _onGotoTop(),
         child: Container(
-          width: pageStyle.unitHeight * 40,
-          height: pageStyle.unitHeight * 40,
+          width: 40.h,
+          height: 40.h,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: primarySwatchColor.withOpacity(0.8),
@@ -298,7 +294,7 @@ class _ProductListViewState extends State<ProductListView>
           ),
           child: Icon(
             Icons.keyboard_arrow_up,
-            size: pageStyle.unitFontSize * 30,
+            size: 30.sp,
             color: Colors.white70,
           ),
         ),
@@ -308,10 +304,10 @@ class _ProductListViewState extends State<ProductListView>
 
   Widget _buildCategoryTabBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
+      width: 375.w,
+      height: 50.h,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: TabBar(
         controller: tabController,
         indicator: BoxDecoration(
@@ -328,7 +324,7 @@ class _ProductListViewState extends State<ProductListView>
               child: Text(
                 index == 0 ? 'all'.tr() : subCategories[index].name,
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             );
@@ -351,15 +347,15 @@ class _ProductListViewState extends State<ProductListView>
           if (index >= (products.length / 2).ceil()) {
             if (productChangeNotifier.isReachedMax) {
               return Container(
-                width: pageStyle.deviceWidth,
+                width: 375.w,
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(
-                  top: pageStyle.unitHeight * 10,
+                  top: 10.h,
                 ),
                 child: Text(
                   'no_more_products'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               );
@@ -375,15 +371,14 @@ class _ProductListViewState extends State<ProductListView>
                     border: Border(
                       bottom: BorderSide(
                         color: greyColor,
-                        width: pageStyle.unitWidth * 0.5,
+                        width: 0.5.w,
                       ),
                     ),
                   ),
                   child: ProductVCard(
-                    pageStyle: pageStyle,
                     product: products[2 * index],
-                    cardWidth: pageStyle.unitWidth * 187.25,
-                    cardHeight: pageStyle.unitHeight * 280,
+                    cardWidth: 187.25.w,
+                    cardHeight: 280.h,
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -391,10 +386,10 @@ class _ProductListViewState extends State<ProductListView>
                 ),
                 if (index * 2 <= products.length - 2) ...[
                   Container(
-                    height: pageStyle.unitHeight * 280,
+                    height: 280.h,
                     child: VerticalDivider(
                       color: greyColor,
-                      width: pageStyle.unitWidth * 0.5,
+                      width: 0.5.w,
                     ),
                   ),
                   Container(
@@ -402,15 +397,14 @@ class _ProductListViewState extends State<ProductListView>
                       border: Border(
                         bottom: BorderSide(
                           color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
+                          width: 0.5.w,
                         ),
                       ),
                     ),
                     child: ProductVCard(
-                      pageStyle: pageStyle,
                       product: products[2 * index + 1],
-                      cardWidth: pageStyle.unitWidth * 187.25,
-                      cardHeight: pageStyle.unitHeight * 280,
+                      cardWidth: 187.25.w,
+                      cardHeight: 280.h,
                       isShoppingCart: true,
                       isWishlist: true,
                       isShare: true,

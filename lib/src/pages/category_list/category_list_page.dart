@@ -3,7 +3,6 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -19,7 +18,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryListPage extends StatefulWidget {
   const CategoryListPage();
@@ -35,7 +34,6 @@ class _CategoryListPageState extends State<CategoryListPage>
   String category;
   int activeIndex;
   List<CategoryEntity> categories = [];
-  PageStyle pageStyle;
   CategoryChangeNotifier categoryChangeNotifier;
   ProgressService progressService;
 
@@ -49,17 +47,14 @@ class _CategoryListPageState extends State<CategoryListPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -79,7 +74,7 @@ class _CategoryListPageState extends State<CategoryListPage>
                         activeIndex == index
                             ? _buildSubcategoriesList(categories[index])
                             : SizedBox.shrink(),
-                        SizedBox(height: pageStyle.unitHeight * 6),
+                        SizedBox(height: 6.h),
                       ],
                     ),
                   ),
@@ -90,7 +85,6 @@ class _CategoryListPageState extends State<CategoryListPage>
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.category,
       ),
     );
@@ -98,14 +92,10 @@ class _CategoryListPageState extends State<CategoryListPage>
 
   Widget _buildAppBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 40,
+      width: 375.w,
+      height: 40.h,
       color: primarySwatchColor,
-      padding: EdgeInsets.only(
-        left: pageStyle.unitWidth * 10,
-        right: pageStyle.unitWidth * 10,
-        bottom: pageStyle.unitHeight * 10,
-      ),
+      padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -131,15 +121,15 @@ class _CategoryListPageState extends State<CategoryListPage>
         });
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 128,
+        width: 375.w,
+        height: 128.h,
         child: Stack(
           children: [
             CachedNetworkImage(
               imageUrl: category.imageUrl,
               imageBuilder: (context, imageProvider) => Container(
-                width: pageStyle.deviceWidth,
-                height: pageStyle.unitHeight * 128,
+                width: 375.w,
+                height: 128.h,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: imageProvider,
@@ -148,8 +138,8 @@ class _CategoryListPageState extends State<CategoryListPage>
                 ),
               ),
               placeholder: (context, url) => Container(
-                width: pageStyle.deviceWidth,
-                height: pageStyle.unitHeight * 128,
+                width: 375.w,
+                height: 128.h,
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
@@ -158,13 +148,13 @@ class _CategoryListPageState extends State<CategoryListPage>
                   lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: pageStyle.unitWidth * (lang == 'en' ? 31 : 150),
-                  right: pageStyle.unitWidth * (lang == 'en' ? 150 : 31),
+                  left: lang == 'en' ? 31.w : 150.w,
+                  right: lang == 'en' ? 150.w : 31.w,
                 ),
                 child: Text(
                   category.name,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 26,
+                    fontSize: 26.sp,
                     color: greyDarkColor,
                   ),
                 ),
@@ -204,13 +194,11 @@ class _CategoryListPageState extends State<CategoryListPage>
                     );
                   },
                   child: Container(
-                    width: pageStyle.deviceWidth,
+                    width: 375.w,
                     color: greyLightColor,
-                    margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: pageStyle.unitWidth * 20,
-                      vertical: pageStyle.unitHeight * 10,
-                    ),
+                    margin: EdgeInsets.only(bottom: 1.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -218,12 +206,12 @@ class _CategoryListPageState extends State<CategoryListPage>
                           'all'.tr(),
                           style: mediumTextStyle.copyWith(
                             color: greyColor,
-                            fontSize: pageStyle.unitFontSize * 18,
+                            fontSize: 18.sp,
                           ),
                         ),
                         Icon(
                           Icons.arrow_forward_ios,
-                          size: pageStyle.unitFontSize * 22,
+                          size: 22.sp,
                           color: primaryColor,
                         ),
                       ],
@@ -260,13 +248,11 @@ class _CategoryListPageState extends State<CategoryListPage>
                         );
                       },
                       child: Container(
-                        width: pageStyle.deviceWidth,
+                        width: 375.w,
                         color: greyLightColor,
-                        margin: EdgeInsets.only(bottom: pageStyle.unitHeight),
+                        margin: EdgeInsets.only(bottom: 1.h),
                         padding: EdgeInsets.symmetric(
-                          horizontal: pageStyle.unitWidth * 20,
-                          vertical: pageStyle.unitHeight * 10,
-                        ),
+                            horizontal: 20.w, vertical: 10.h),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -274,12 +260,12 @@ class _CategoryListPageState extends State<CategoryListPage>
                               category.subCategories[index].name,
                               style: mediumTextStyle.copyWith(
                                 color: greyColor,
-                                fontSize: pageStyle.unitFontSize * 18,
+                                fontSize: 18.sp,
                               ),
                             ),
                             Icon(
                               Icons.arrow_forward_ios,
-                              size: pageStyle.unitFontSize * 22,
+                              size: 22.sp,
                               color: primaryColor,
                             ),
                           ],
@@ -314,7 +300,7 @@ class _CategoryListPageState extends State<CategoryListPage>
           'home_categories'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
         ),
       ),
@@ -345,7 +331,7 @@ class _CategoryListPageState extends State<CategoryListPage>
           'brands_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: greyColor,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
         ),
       ),

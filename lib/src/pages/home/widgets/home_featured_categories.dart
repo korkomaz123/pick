@@ -5,14 +5,10 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 
 class HomeFeaturedCategories extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeFeaturedCategories({this.pageStyle});
-
   @override
   _HomeFeaturedCategoriesState createState() => _HomeFeaturedCategoriesState();
 }
@@ -29,10 +25,8 @@ class _HomeFeaturedCategoriesState extends State<HomeFeaturedCategories> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 15,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(vertical: 15.h),
       child: Consumer<CategoryChangeNotifier>(
         builder: (_, model, __) {
           if (model.featuredCategories.isNotEmpty) {
@@ -42,9 +36,7 @@ class _HomeFeaturedCategoriesState extends State<HomeFeaturedCategories> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: model.featuredCategories.map((category) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: widget.pageStyle.unitWidth * 5,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: Column(
                       children: [
                         InkWell(
@@ -64,8 +56,8 @@ class _HomeFeaturedCategoriesState extends State<HomeFeaturedCategories> {
                             );
                           },
                           child: Container(
-                            width: widget.pageStyle.unitWidth * 70,
-                            height: widget.pageStyle.unitWidth * 70,
+                            width: 70.w,
+                            height: 70.w,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: NetworkImage(category.imageUrl),
@@ -74,21 +66,21 @@ class _HomeFeaturedCategoriesState extends State<HomeFeaturedCategories> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: primaryColor,
-                                width: widget.pageStyle.unitWidth * 2,
+                                width: 2.w,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: widget.pageStyle.unitHeight * 5),
+                        SizedBox(height: 5.h),
                         Container(
-                          width: widget.pageStyle.unitWidth * 75,
+                          width: 75.w,
                           child: Text(
                             category.name,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: mediumTextStyle.copyWith(
-                              fontSize: widget.pageStyle.unitFontSize * 10,
+                              fontSize: 10.sp,
                               color: greyDarkColor,
                             ),
                           ),

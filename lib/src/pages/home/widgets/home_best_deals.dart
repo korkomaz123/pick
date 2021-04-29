@@ -12,13 +12,9 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeBestDeals extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeBestDeals({this.pageStyle});
-
   @override
   _HomeBestDealsState createState() => _HomeBestDealsState();
 }
@@ -38,10 +34,10 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 380,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+      width: 375.w,
+      height: 380.h,
+      padding: EdgeInsets.all(8.w),
+      margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,
       child: Consumer<HomeChangeNotifier>(
         builder: (_, model, __) {
@@ -71,17 +67,16 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
           Text(
             title ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 26,
+              fontSize: 26.sp,
               color: greyDarkColor,
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 5),
-            height: widget.pageStyle.unitHeight * 30,
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: widget.pageStyle.unitFontSize * 15,
+              titleSize: 15.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
@@ -111,31 +106,30 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
-        top: widget.pageStyle.unitHeight * 10,
-        bottom: widget.pageStyle.unitHeight * 10,
+        top: 10.h,
+        bottom: 10.h,
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: list.map((item) {
             return Container(
-              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
+              margin: EdgeInsets.only(left: 5.w),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.grey.shade300,
-                  width: widget.pageStyle.unitWidth,
+                  width: 1.w,
                 ),
               ),
               child: ProductVCard(
-                cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 280,
+                cardWidth: 170.w,
+                cardHeight: 280.h,
                 product: item,
                 isShoppingCart: true,
                 isLine: true,
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,
-                pageStyle: widget.pageStyle,
               ),
             );
           }).toList(),

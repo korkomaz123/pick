@@ -10,26 +10,20 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeGrooming extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeGrooming({@required this.pageStyle});
-
   @override
   _HomeGroomingState createState() => _HomeGroomingState();
 }
 
 class _HomeGroomingState extends State<HomeGrooming> {
-  PageStyle pageStyle;
   HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
 
@@ -38,7 +32,7 @@ class _HomeGroomingState extends State<HomeGrooming> {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
         return Container(
-          width: pageStyle.deviceWidth,
+          width: 375.w,
           color: Colors.white,
           child: Column(
             children: [
@@ -65,13 +59,13 @@ class _HomeGroomingState extends State<HomeGrooming> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 10.w,
+        vertical: 10.h,
       ),
       child: Text(
         title,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
+          fontSize: 26.sp,
         ),
       ),
     );
@@ -80,7 +74,7 @@ class _HomeGroomingState extends State<HomeGrooming> {
   Widget _buildCategories(List<CategoryEntity> categories) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -103,17 +97,17 @@ class _HomeGroomingState extends State<HomeGrooming> {
                 }
               },
               child: Container(
-                width: pageStyle.unitWidth * 151,
-                height: pageStyle.unitHeight * 276,
-                margin: EdgeInsets.only(right: pageStyle.unitWidth * 5),
-                padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 10),
+                width: 151.w,
+                height: 276.h,
+                margin: EdgeInsets.only(right: 5.w),
+                padding: EdgeInsets.only(bottom: 10.h),
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(category.imageUrl),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(
-                    pageStyle.unitFontSize * 10,
+                    10.sp,
                   ),
                 ),
               ),
@@ -127,7 +121,7 @@ class _HomeGroomingState extends State<HomeGrooming> {
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 5),
+      margin: EdgeInsets.only(bottom: 5.h),
       color: backgroundColor,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -136,15 +130,14 @@ class _HomeGroomingState extends State<HomeGrooming> {
             int index = list.indexOf(item);
             return Container(
               padding: EdgeInsets.only(
-                left: pageStyle.unitWidth * (index > 0 ? 2 : 0),
-                bottom: pageStyle.unitHeight * 3,
+                left: index > 0 ? 2.w : 0,
+                bottom: 3.h,
               ),
               child: ProductCard(
-                cardWidth: widget.pageStyle.unitWidth * 120,
-                cardHeight: widget.pageStyle.unitWidth * 175,
+                cardWidth: 120.w,
+                cardHeight: 175.w,
                 product: item,
                 isWishlist: true,
-                pageStyle: widget.pageStyle,
               ),
             );
           }).toList(),
@@ -157,8 +150,8 @@ class _HomeGroomingState extends State<HomeGrooming> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 4,
-        horizontal: widget.pageStyle.unitWidth * 10,
+        vertical: 4.h,
+        horizontal: 10.w,
       ),
       child: MarkaaTextIconButton(
         onPressed: () {
@@ -177,15 +170,14 @@ class _HomeGroomingState extends State<HomeGrooming> {
         },
         title: 'view_all_grooming'.tr(),
         titleColor: Colors.white,
-        titleSize: widget.pageStyle.unitFontSize * 18,
+        titleSize: 18.sp,
         icon: Icon(
           Icons.arrow_forward_ios,
           color: Colors.white,
-          size: widget.pageStyle.unitFontSize * 24,
+          size: 24.sp,
         ),
         borderColor: primaryColor,
         buttonColor: primaryColor,
-        pageStyle: widget.pageStyle,
         leading: false,
       ),
     );

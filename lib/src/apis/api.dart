@@ -10,9 +10,8 @@ class Api {
     Map<String, dynamic> headers,
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
-    // print(requestUrl);
     final response = await http.get(
-      requestUrl,
+      Uri.dataFromString(requestUrl),
       headers: headers ?? _getHeader(),
     );
     return jsonDecode(response.body);
@@ -23,10 +22,8 @@ class Api {
     Map<String, dynamic> data,
     Map<String, String> headers,
   }) async {
-    // print(url);
-    // print(data);
     final response = await http.post(
-      url,
+      Uri.dataFromString(url),
       headers: headers ?? _getHeader(),
       body: headers != null ? jsonEncode(data) : data,
     );

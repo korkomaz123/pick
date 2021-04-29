@@ -9,7 +9,6 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -24,7 +23,7 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -39,7 +38,6 @@ class CheckoutGuestAddressPage extends StatefulWidget {
 class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   String countryId;
   String regionId;
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   ShippingAddressRepository shippingRepo;
@@ -115,16 +113,13 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -132,7 +127,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -141,17 +135,17 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'shipping_address_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -168,9 +162,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                 children: [
                   MarkaaTextInput(
                     controller: firstNameController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'first_name'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -178,9 +172,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: lastNameController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'last_name'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -188,9 +182,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: phoneNumberController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'phone_number_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -198,9 +192,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: emailController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'email'.tr(),
                     validator: (value) {
                       if (value.isEmpty) {
@@ -216,22 +210,21 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   MarkaaCountryInput(
                     controller: countryController,
                     countryCode: countryId,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_country_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
-                    pageStyle: pageStyle,
                   ),
                   MarkaaTextInput(
                     controller: stateController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_state_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -241,9 +234,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: companyController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -251,9 +244,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: streetController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_street_name_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -261,18 +254,18 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   MarkaaTextInput(
                     controller: postCodeController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_post_code_hint'.tr(),
                     validator: (value) => null,
                     inputType: TextInputType.number,
                   ),
                   MarkaaTextInputMulti(
                     controller: cityController,
-                    width: pageStyle.deviceWidth,
-                    padding: pageStyle.unitWidth * 10,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
                     hint: 'checkout_city_hint'.tr(),
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
@@ -291,36 +284,28 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
 
   Widget _buildSearchingAddressButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      margin: EdgeInsets.symmetric(
-        vertical: pageStyle.unitHeight * 20,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-      ),
+      width: 375.w,
+      height: 50.h,
+      margin: EdgeInsets.symmetric(vertical: 20.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: MarkaaTextIconButton(
         title: 'checkout_searching_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
         icon: SvgPicture.asset(searchAddrIcon),
         onPressed: () => _onSearchAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
 
   Widget _buildSaveButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 30,
-      ),
+      width: 375.w,
+      height: 50.h,
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 30.h),
       child: MaterialButton(
         onPressed: () => _onContinue(),
         color: primaryColor,
@@ -332,7 +317,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
           'checkout_continue_payment_button_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 16,
+            fontSize: 16.sp,
           ),
         ),
       ),
@@ -373,7 +358,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return SelectCountryDialog(pageStyle: pageStyle, value: countryId);
+        return SelectCountryDialog(value: countryId);
       },
     );
     if (result != null && countryId != result['code']) {
@@ -390,7 +375,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return SelectRegionDialog(pageStyle: pageStyle, value: regionId);
+        return SelectRegionDialog(value: regionId);
       },
     );
     if (result != null) {

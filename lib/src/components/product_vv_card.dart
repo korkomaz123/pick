@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductVVCard extends StatefulWidget {
   final double cardWidth;
@@ -31,7 +31,6 @@ class ProductVVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductVVCard({
     this.cardWidth,
@@ -42,7 +41,6 @@ class ProductVVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
@@ -155,9 +153,7 @@ class _ProductVVCardState extends State<ProductVVCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
           Container(
@@ -193,7 +189,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -205,8 +201,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: widget.pageStyle.unitFontSize *
-                            (widget.isMinor ? 12 : 16),
+                        fontSize: widget.isMinor ? 12.sp : 16.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -218,8 +213,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 12 : 16),
+                      fontSize: widget.isMinor ? 12.sp : 16.sp,
                       fontWeight: FontWeight.w700,
                       height: 0.5,
                     ),
@@ -227,9 +221,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                 ],
                 if (widget.isLine) ...[Divider(color: greyColor)],
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: widget.pageStyle.unitHeight * 5,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 5.h),
                   child: Row(
                     children: [
                       Text(
@@ -237,24 +229,20 @@ class _ProductVVCardState extends State<ProductVVCard>
                             ? (widget.product.price + ' ' + 'currency'.tr())
                             : '',
                         style: mediumTextStyle.copyWith(
-                          fontSize: widget.pageStyle.unitFontSize *
-                              (widget.isMinor ? 12 : 14),
+                          fontSize: widget.isMinor ? 12.sp : 14.sp,
                           color: greyColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       if (widget.product.discount > 0) ...[
-                        SizedBox(
-                            width: widget.pageStyle.unitWidth *
-                                (widget.isMinor ? 4 : 10)),
+                        SizedBox(width: widget.isMinor ? 4.w : 10.w),
                         Text(
                           widget.product.beforePrice + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,
                             decorationColor: dangerColor,
-                            fontSize: widget.pageStyle.unitFontSize *
-                                (widget.isMinor ? 12 : 14),
+                            fontSize: widget.isMinor ? 12.sp : 14.sp,
                             color: greyColor,
                           ),
                         ),
@@ -269,12 +257,12 @@ class _ProductVVCardState extends State<ProductVVCard>
                   ScaleTransition(
                     scale: _addToCartScaleAnimation,
                     child: Container(
-                      width: widget.cardWidth - widget.pageStyle.unitWidth * 16,
-                      height: widget.pageStyle.unitHeight * 35,
+                      width: widget.cardWidth - 16.w,
+                      height: 35.h,
                       child: MarkaaTextButton(
                         title: 'wishlist_add_cart_button_title'.tr(),
                         titleColor: Colors.white,
-                        titleSize: widget.pageStyle.unitFontSize * 14,
+                        titleSize: 14.sp,
                         borderColor: Colors.transparent,
                         buttonColor: primaryColor,
                         onPressed: () => _onAddProductToCart(context),
@@ -284,7 +272,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                 ] else ...[
                   SizedBox.shrink()
                 ],
-                SizedBox(height: widget.pageStyle.unitHeight * 5),
+                SizedBox(height: 5.h),
               ],
             ),
           ),
@@ -295,17 +283,14 @@ class _ProductVVCardState extends State<ProductVVCard>
 
   Widget _buildDiscount() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 4,
-        vertical: widget.pageStyle.unitHeight * 2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
         '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
+          fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
         ),
       ),
@@ -327,8 +312,8 @@ class _ProductVVCardState extends State<ProductVVCard>
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  width: isWishlist ? 22.w : 25.w,
+                  height: isWishlist ? 22.w : 25.w,
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
@@ -349,15 +334,12 @@ class _ProductVVCardState extends State<ProductVVCard>
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 15,
-            vertical: widget.pageStyle.unitHeight * 5,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               color: Colors.white70,
             ),
           ),
@@ -377,11 +359,10 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier.addProductToCart(
-            context, widget.pageStyle, widget.product, 1, lang, {});
+        await myCartChangeNotifier
+            .addProductToCart(context, widget.product, 1, lang, {});
       } else {
         flushBarService.showErrorMessage(
-          widget.pageStyle,
           'out_of_stock_error'.tr(),
         );
       }

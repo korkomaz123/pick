@@ -7,13 +7,9 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeExculisiveBanner extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeExculisiveBanner({this.pageStyle});
-
   @override
   _HomeExculisiveBannerState createState() => _HomeExculisiveBannerState();
 }
@@ -78,10 +74,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
               }
             },
             child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 10,
-                vertical: widget.pageStyle.unitHeight * 15,
-              ),
+              margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
               child: Image.network(banner.bannerImage),
             ),
           );

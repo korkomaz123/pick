@@ -8,27 +8,21 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeFragrancesBanners extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeFragrancesBanners({this.pageStyle});
-
   @override
   _HomeFragrancesBannersState createState() => _HomeFragrancesBannersState();
 }
 
 class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
-  PageStyle pageStyle;
   HomeChangeNotifier homeChangeNotifier;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
@@ -38,7 +32,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
         return Container(
-          width: pageStyle.deviceWidth,
+          width: 375.w,
           color: Colors.white,
           child: Column(
             children: [
@@ -58,15 +52,10 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
   Widget _buildTitle(String title) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Text(
         title,
-        style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
-        ),
+        style: mediumTextStyle.copyWith(fontSize: 26.sp),
       ),
     );
   }
@@ -77,7 +66,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
       child: Column(
         children: banners.map((banner) {
           return Padding(
-            padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 5),
+            padding: EdgeInsets.only(bottom: 5.h),
             child: InkWell(
               onTap: () async {
                 if (banner.categoryId != null) {

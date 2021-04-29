@@ -9,14 +9,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeDiscoverStores({this.pageStyle});
-
   @override
   _HomeDiscoverStoresState createState() => _HomeDiscoverStoresState();
 }
@@ -35,10 +31,10 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 395,
+      width: 375.w,
+      height: 395.h,
       color: Colors.white,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 15),
+      padding: EdgeInsets.all(15.w),
       child: Consumer<BrandChangeNotifier>(builder: (_, __, ___) {
         brands = brandChangeNotifier.brandList;
         if (brands.isNotEmpty) {
@@ -46,11 +42,11 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTitle(),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               _buildStoresSlider(),
               Divider(
-                height: widget.pageStyle.unitHeight * 4,
-                thickness: widget.pageStyle.unitHeight * 1.5,
+                height: 4.h,
+                thickness: 1.5.h,
                 color: greyColor.withOpacity(0.4),
               ),
               _buildFooter(),
@@ -68,7 +64,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       'brands_title'.tr(),
       style: mediumTextStyle.copyWith(
         color: greyDarkColor,
-        fontSize: widget.pageStyle.unitFontSize * 26,
+        fontSize: 26.sp,
       ),
     );
   }
@@ -79,8 +75,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       child: Stack(
         children: [
           Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 380,
+            width: 375.w,
+            height: 380.h,
             child: Swiper(
               itemCount: length,
               autoplay: true,
@@ -109,12 +105,12 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     );
                   },
                   child: Container(
-                    width: widget.pageStyle.deviceWidth,
-                    height: widget.pageStyle.unitHeight * 380,
+                    width: 375.w,
+                    height: 380.h,
                     padding: EdgeInsets.only(
-                      left: widget.pageStyle.unitWidth * 30,
-                      right: widget.pageStyle.unitWidth * 30,
-                      bottom: widget.pageStyle.unitHeight * 50,
+                      left: 30.w,
+                      right: 30.w,
+                      bottom: 50.h,
                     ),
                     child: Image.network(
                       brand.brandThumbnail,
@@ -129,7 +125,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
+                bottom: 20.h,
               ),
               child: SmoothIndicator(
                 offset: (activeIndex / 2).floor().toDouble(),
@@ -138,8 +134,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 effect: SlideEffect(
                   spacing: 8.0,
                   radius: 30,
-                  dotWidth: widget.pageStyle.unitHeight * 8,
-                  dotHeight: widget.pageStyle.unitHeight * 8,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,
                   dotColor: greyLightColor,
@@ -157,7 +153,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 4,
+        vertical: 4.h,
       ),
       child: InkWell(
         onTap: () => Navigator.pushNamed(
@@ -171,14 +167,14 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             Text(
               'view_more_brands'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
+                fontSize: 15.sp,
                 color: primaryColor,
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
+              size: 15.sp,
             ),
           ],
         ),

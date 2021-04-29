@@ -13,27 +13,21 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeSmartTech extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeSmartTech({@required this.pageStyle});
-
   @override
   _HomeSmartTechState createState() => _HomeSmartTechState();
 }
 
 class _HomeSmartTechState extends State<HomeSmartTech> {
-  PageStyle pageStyle;
   HomeChangeNotifier homeChangeNotifier;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
@@ -43,7 +37,7 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
         return Container(
-          width: pageStyle.deviceWidth,
+          width: 375.w,
           color: Colors.white,
           child: Column(
             children: [
@@ -70,13 +64,13 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 10.w,
+        vertical: 10.h,
       ),
       child: Text(
         title,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
+          fontSize: 26.sp,
         ),
       ),
     );
@@ -88,7 +82,7 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
       child: Column(
         children: banners.map((banner) {
           return Padding(
-            padding: EdgeInsets.only(bottom: pageStyle.unitHeight * 5),
+            padding: EdgeInsets.only(bottom: 5.h),
             child: InkWell(
               onTap: () async {
                 if (banner.categoryId != null) {
@@ -141,19 +135,18 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
 
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       color: backgroundColor,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: list.map((item) {
             return Padding(
-              padding: EdgeInsets.only(left: pageStyle.unitWidth * 8),
+              padding: EdgeInsets.only(left: 8.w),
               child: AmazingProductCard(
-                cardSize: pageStyle.unitWidth * 302,
-                contentSize: pageStyle.unitWidth * 96,
-                pageStyle: pageStyle,
+                cardSize: 302.w,
+                contentSize: 96.w,
                 product: item,
               ),
             );
@@ -167,8 +160,8 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 4,
-        horizontal: widget.pageStyle.unitWidth * 10,
+        vertical: 4.h,
+        horizontal: 10.w,
       ),
       color: backgroundColor,
       child: MarkaaTextIconButton(
@@ -188,15 +181,14 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
         },
         title: 'view_all_smart_tech'.tr(),
         titleColor: Colors.white,
-        titleSize: widget.pageStyle.unitFontSize * 18,
+        titleSize: 18.sp,
         icon: Icon(
           Icons.arrow_forward_ios,
           color: Colors.white,
-          size: widget.pageStyle.unitFontSize * 24,
+          size: 24.sp,
         ),
         borderColor: primaryColor,
         buttonColor: primaryColor,
-        pageStyle: widget.pageStyle,
         leading: false,
       ),
     );

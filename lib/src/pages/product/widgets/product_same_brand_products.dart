@@ -7,15 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductSameBrandProducts extends StatefulWidget {
-  final PageStyle pageStyle;
   final ProductModel product;
 
-  ProductSameBrandProducts({this.pageStyle, this.product});
+  ProductSameBrandProducts({this.product});
 
   @override
   _ProductSameBrandProductsState createState() =>
@@ -23,7 +22,6 @@ class ProductSameBrandProducts extends StatefulWidget {
 }
 
 class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
-  PageStyle pageStyle;
   ProductModel product;
   int activeIndex = 0;
   List<ProductModel> sameBrandProducts = [];
@@ -31,7 +29,6 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     product = widget.product;
     _getSameBrandProducts();
   }
@@ -47,12 +44,12 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   Widget build(BuildContext context) {
     return sameBrandProducts.isNotEmpty
         ? Container(
-            width: pageStyle.deviceWidth,
+            width: 375.w,
             color: Colors.white,
-            margin: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+            margin: EdgeInsets.only(top: 10.h),
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              horizontal: 10.w,
+              vertical: 15.h,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +58,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
                   'product_same_brand'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 _buildProductCarousel(),
@@ -73,13 +70,13 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
 
   Widget _buildProductCarousel() {
     return Container(
-      width: widget.pageStyle.unitWidth * 350,
-      height: widget.pageStyle.unitHeight * 220,
+      width: 350.w,
+      height: 220.h,
       child: Stack(
         children: [
           Container(
-            width: widget.pageStyle.unitWidth * 350,
-            height: widget.pageStyle.unitHeight * 220,
+            width: 350.w,
+            height: 220.h,
             child: Swiper(
               itemCount:
                   sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
@@ -93,10 +90,9 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               },
               itemBuilder: (context, index) {
                 return ProductHCard(
-                  cardWidth: widget.pageStyle.unitWidth * 343,
-                  cardHeight: widget.pageStyle.unitHeight * 208,
+                  cardWidth: 343.w,
+                  cardHeight: 208.h,
                   product: sameBrandProducts[index],
-                  pageStyle: widget.pageStyle,
                 );
               },
             ),
@@ -105,7 +101,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
+                bottom: 20.h,
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
@@ -116,8 +112,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
                 effect: SlideEffect(
                   spacing: 8.0,
                   radius: 30,
-                  dotWidth: widget.pageStyle.unitHeight * 8,
-                  dotHeight: widget.pageStyle.unitHeight * 8,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,
                   dotColor: greyLightColor,

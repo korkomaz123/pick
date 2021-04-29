@@ -9,13 +9,9 @@ import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeNewArrivalsBanner({this.pageStyle});
-
   @override
   _HomeNewArrivalsBannerState createState() => _HomeNewArrivalsBannerState();
 }
@@ -38,22 +34,22 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         if (model.newArrivalsBanners.isNotEmpty) {
           final banner = model.newArrivalsBanners[0];
           return Container(
-            width: widget.pageStyle.deviceWidth,
+            width: 375.w,
             color: Colors.white,
-            margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+            margin: EdgeInsets.only(bottom: 10.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(
-                    horizontal: widget.pageStyle.unitWidth * 10,
-                    vertical: widget.pageStyle.unitHeight * 10,
+                    horizontal: 10.w,
+                    vertical: 10.h,
                   ),
                   child: Text(
                     model.newArrivalsBannerTitle,
                     style: mediumTextStyle.copyWith(
-                      fontSize: widget.pageStyle.unitFontSize * 26,
+                      fontSize: 26.sp,
                     ),
                   ),
                 ),
@@ -106,11 +102,10 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                   child: Row(
                     children: model.newArrivalsItems.map((item) {
                       return ProductCard(
-                        cardWidth: widget.pageStyle.unitWidth * 120,
-                        cardHeight: widget.pageStyle.unitWidth * 175,
+                        cardWidth: 120.w,
+                        cardHeight: 175.w,
                         product: item,
                         isWishlist: true,
-                        pageStyle: widget.pageStyle,
                       );
                     }).toList(),
                   ),

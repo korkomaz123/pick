@@ -31,7 +31,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_config.dart';
@@ -77,7 +77,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  PageStyle pageStyle;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   HomeChangeNotifier homeChangeNotifier;
@@ -531,12 +530,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         backgroundColor: Colors.white,
@@ -551,27 +548,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             itemBuilder: (ctx, index) {
               return Column(
                 children: [
-                  HomeHeaderCarousel(pageStyle: pageStyle),
-                  HomeFeaturedCategories(pageStyle: pageStyle),
-                  HomeMegaBanner(pageStyle: pageStyle),
-                  HomeBestDeals(pageStyle: pageStyle),
-                  HomeBestDealsBanner(pageStyle: pageStyle),
-                  HomeNewArrivals(pageStyle: pageStyle),
-                  HomeExculisiveBanner(pageStyle: pageStyle),
-                  HomeOrientalFragrances(pageStyle: pageStyle),
-                  HomeNewArrivalsBanner(pageStyle: pageStyle),
-                  HomeFragrancesBanners(pageStyle: pageStyle),
-                  HomePerfumes(pageStyle: pageStyle),
-                  HomeBestWatches(pageStyle: pageStyle),
-                  HomeGrooming(pageStyle: pageStyle),
-                  HomeAdvertise(pageStyle: pageStyle),
-                  HomeSmartTech(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeExploreCategories(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeDiscoverStores(pageStyle: pageStyle),
-                  SizedBox(height: pageStyle.unitHeight * 10),
-                  HomeRecent(pageStyle: pageStyle),
+                  HomeHeaderCarousel(),
+                  HomeFeaturedCategories(),
+                  HomeMegaBanner(),
+                  HomeBestDeals(),
+                  HomeBestDealsBanner(),
+                  HomeNewArrivals(),
+                  HomeExculisiveBanner(),
+                  HomeOrientalFragrances(),
+                  HomeNewArrivalsBanner(),
+                  HomeFragrancesBanners(),
+                  HomePerfumes(),
+                  HomeBestWatches(),
+                  HomeGrooming(),
+                  HomeAdvertise(),
+                  HomeSmartTech(),
+                  SizedBox(height: 10.h),
+                  HomeExploreCategories(),
+                  SizedBox(height: 10.h),
+                  HomeDiscoverStores(),
+                  SizedBox(height: 10.h),
+                  HomeRecent(),
                 ],
               );
             },
@@ -579,7 +576,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
     );

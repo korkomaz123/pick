@@ -24,7 +24,7 @@ import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 import 'package:markaa/src/config/config.dart';
@@ -50,7 +50,6 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
 class _MyCartQuickAccessLoginDialogState
     extends State<MyCartQuickAccessLoginDialog> {
   SignInBloc signInBloc;
-  PageStyle pageStyle;
   LocalStorageRepository localRepo;
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
@@ -109,14 +108,12 @@ class _MyCartQuickAccessLoginDialogState
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Stack(
       children: [
         _buildBloc(),
         Container(
-          width: pageStyle.deviceWidth,
-          padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+          width: 375.w,
+          padding: EdgeInsets.symmetric(vertical: 10.h),
           color: primarySwatchColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -126,15 +123,15 @@ class _MyCartQuickAccessLoginDialogState
                 'login_with'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: pageStyle.unitHeight * 10),
+              SizedBox(height: 10.h),
               _buildSocialSignInButtons(),
-              SizedBox(height: pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               _buildAuthChoice(),
-              SizedBox(height: pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               if (widget.isCheckout) ...[
                 _buildContinueAsGuest(),
               ]
@@ -164,12 +161,12 @@ class _MyCartQuickAccessLoginDialogState
         }
         if (state is SignInSubmittedFailure) {
           progressService.hideProgress();
-          flushBarService.showErrorMessage(pageStyle, state.message);
+          flushBarService.showErrorMessage(state.message);
         }
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.deviceHeight,
+        width: 375.w,
+        height: 812.h,
         color: Colors.black38,
       ),
     );
@@ -177,7 +174,7 @@ class _MyCartQuickAccessLoginDialogState
 
   Widget _buildSocialSignInButtons() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -185,7 +182,7 @@ class _MyCartQuickAccessLoginDialogState
             onTap: () => _onFacebookSign(),
             child: SvgPicture.asset(facebookIcon),
           ),
-          SizedBox(width: pageStyle.unitWidth * 20),
+          SizedBox(width: 20.w),
           InkWell(
             onTap: () => _onGoogleSign(),
             child: SvgPicture.asset(googleIcon),
@@ -193,7 +190,7 @@ class _MyCartQuickAccessLoginDialogState
           if (Platform.isIOS) ...[
             Row(
               children: [
-                SizedBox(width: pageStyle.unitWidth * 20),
+                SizedBox(width: 20.w),
                 InkWell(
                   onTap: () => _onAppleSign(),
                   child: SvgPicture.asset(appleIcon),
@@ -208,8 +205,8 @@ class _MyCartQuickAccessLoginDialogState
 
   Widget _buildAuthChoice() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 50),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 50.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -219,12 +216,12 @@ class _MyCartQuickAccessLoginDialogState
               'login'.tr(),
               style: mediumTextStyle.copyWith(
                 color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
           ),
           Container(
-            height: pageStyle.unitHeight * 20,
+            height: 20.h,
             child: VerticalDivider(color: Colors.white, thickness: 0.5),
           ),
           InkWell(
@@ -233,7 +230,7 @@ class _MyCartQuickAccessLoginDialogState
               'register'.tr(),
               style: mediumTextStyle.copyWith(
                 color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
           ),
@@ -245,14 +242,14 @@ class _MyCartQuickAccessLoginDialogState
   Widget _buildContinueAsGuest() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
+      padding: EdgeInsets.symmetric(horizontal: 60.w),
       child: MarkaaTextButton(
         title: 'continue_as_guest'.tr(),
         titleColor: Colors.white70,
-        titleSize: pageStyle.unitFontSize * 16,
+        titleSize: 16.sp,
         buttonColor: primarySwatchColor,
         borderColor: Colors.white70,
-        radius: pageStyle.unitFontSize * 10,
+        radius: 10.sp,
         onPressed: () async {
           AdjustEvent adjustEvent =
               new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
@@ -275,7 +272,6 @@ class _MyCartQuickAccessLoginDialogState
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
-          pageStyle,
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
@@ -287,7 +283,7 @@ class _MyCartQuickAccessLoginDialogState
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 
   void _onLogin() async {
@@ -314,12 +310,12 @@ class _MyCartQuickAccessLoginDialogState
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        flushBarService.showErrorMessage(pageStyle, 'Canceled by User');
+        flushBarService.showErrorMessage('Canceled by User');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');
         print(result.errorMessage);
-        flushBarService.showErrorMessage(pageStyle, result.errorMessage);
+        flushBarService.showErrorMessage(result.errorMessage);
         break;
     }
   }
@@ -327,8 +323,8 @@ class _MyCartQuickAccessLoginDialogState
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final graphResponse = await http.get(Uri.dataFromString(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
       final profile = jsonDecode(graphResponse.body);
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];

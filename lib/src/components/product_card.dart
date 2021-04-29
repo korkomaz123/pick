@@ -16,7 +16,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductCard extends StatefulWidget {
   final double cardWidth;
@@ -27,7 +27,6 @@ class ProductCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductCard({
     this.cardWidth,
@@ -38,7 +37,6 @@ class ProductCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
@@ -136,9 +134,7 @@ class _ProductCardState extends State<ProductCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
           Container(
@@ -176,7 +172,7 @@ class _ProductCardState extends State<ProductCard>
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 10,
+                      fontSize: 10.sp,
                     ),
                   ),
                 ),
@@ -185,29 +181,25 @@ class _ProductCardState extends State<ProductCard>
                       ? (widget.product.price + ' ' + 'currency'.tr())
                       : '',
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize *
-                        (widget.isMinor ? 10 : 10),
+                    fontSize: 10.sp,
                     color: greyColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (widget.product.discount > 0) ...[
-                  SizedBox(
-                      width: widget.pageStyle.unitWidth *
-                          (widget.isMinor ? 4 : 4)),
+                  SizedBox(width: 4.w),
                   Text(
                     widget.product.beforePrice + ' ' + 'currency'.tr(),
                     style: mediumTextStyle.copyWith(
                       decorationStyle: TextDecorationStyle.solid,
                       decoration: TextDecoration.lineThrough,
                       decorationColor: dangerColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 10 : 10),
+                      fontSize: 10.sp,
                       color: greyColor,
                     ),
                   ),
                 ],
-                SizedBox(height: widget.pageStyle.unitHeight * 5),
+                SizedBox(height: 5.h),
               ],
             ),
           ),
@@ -231,8 +223,8 @@ class _ProductCardState extends State<ProductCard>
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 18 : 22),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 18 : 22),
+                  width: isWishlist ? 18.w : 22.w,
+                  height: isWishlist ? 18.w : 22.w,
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
@@ -254,14 +246,14 @@ class _ProductCardState extends State<ProductCard>
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 10,
-            vertical: widget.pageStyle.unitHeight * 3,
+            horizontal: 10.w,
+            vertical: 3.h,
           ),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 10,
+              fontSize: 10.sp,
               color: Colors.white70,
             ),
           ),

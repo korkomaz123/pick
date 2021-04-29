@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductHCard extends StatefulWidget {
   final double cardWidth;
@@ -29,7 +29,6 @@ class ProductHCard extends StatefulWidget {
   final bool isWishlist;
   final bool isShare;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductHCard({
     this.cardWidth,
@@ -39,7 +38,6 @@ class ProductHCard extends StatefulWidget {
     this.isWishlist = false,
     this.isShare = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
@@ -146,16 +144,14 @@ class _ProductHCardState extends State<ProductHCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: EdgeInsets.only(
-              right: lang == 'en' ? widget.pageStyle.unitWidth * 5 : 0,
-              left: lang == 'ar' ? widget.pageStyle.unitWidth * 5 : 0,
+              right: lang == 'en' ? 5.w : 0,
+              left: lang == 'ar' ? 5.w : 0,
             ),
             child: Image.network(
               widget.product.imageUrl,
@@ -189,15 +185,13 @@ class _ProductHCardState extends State<ProductHCard>
                   child: Text(
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 14,
-                    ),
+                        color: primaryColor, fontSize: 14.sp),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    right: lang == 'en' ? widget.pageStyle.unitWidth * 20 : 0,
-                    left: lang == 'ar' ? widget.pageStyle.unitWidth * 20 : 0,
+                    right: lang == 'en' ? 20.w : 0,
+                    left: lang == 'ar' ? 20.w : 0,
                   ),
                   child: Text(
                     widget.product.name,
@@ -205,13 +199,12 @@ class _ProductHCardState extends State<ProductHCard>
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 12 : 16),
+                      fontSize: widget.isMinor ? 12.sp : 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                SizedBox(height: widget.pageStyle.unitHeight * 10),
+                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -223,15 +216,14 @@ class _ProductHCardState extends State<ProductHCard>
                                 ? (widget.product.price + ' ' + 'currency'.tr())
                                 : '',
                             style: mediumTextStyle.copyWith(
-                              fontSize: widget.pageStyle.unitFontSize * 14,
+                              fontSize: 14.sp,
                               color: greyColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (widget.product.discount > 0) ...[
                             SizedBox(
-                              width: widget.pageStyle.unitWidth *
-                                  (widget.isMinor ? 4 : 10),
+                              width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
                               widget.product.beforePrice +
@@ -241,8 +233,7 @@ class _ProductHCardState extends State<ProductHCard>
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: dangerColor,
-                                fontSize: widget.pageStyle.unitFontSize *
-                                    (widget.isMinor ? 12 : 14),
+                                fontSize: widget.isMinor ? 12.sp : 14.sp,
                                 color: greyColor,
                               ),
                             ),
@@ -259,8 +250,8 @@ class _ProductHCardState extends State<ProductHCard>
                         child: ScaleTransition(
                           scale: _addToCartScaleAnimation,
                           child: Container(
-                            width: widget.pageStyle.unitHeight * 32,
-                            height: widget.pageStyle.unitHeight * 32,
+                            width: 32.h,
+                            height: 32.h,
                             child: SvgPicture.asset(addCartIcon),
                           ),
                         ),
@@ -278,17 +269,14 @@ class _ProductHCardState extends State<ProductHCard>
 
   Widget _buildDiscount() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 4,
-        vertical: widget.pageStyle.unitHeight * 2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
         '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
+          fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
         ),
       ),
@@ -310,8 +298,8 @@ class _ProductHCardState extends State<ProductHCard>
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  width: isWishlist ? 22.sp : 25.sp,
+                  height: isWishlist ? 22.sp : 25.sp,
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
@@ -333,14 +321,14 @@ class _ProductHCardState extends State<ProductHCard>
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 15,
-            vertical: widget.pageStyle.unitHeight * 5,
+            horizontal: 15.w,
+            vertical: 5.h,
           ),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               color: Colors.white70,
             ),
           ),
@@ -360,11 +348,10 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier.addProductToCart(
-            context, widget.pageStyle, widget.product, 1, lang, {});
+        await myCartChangeNotifier
+            .addProductToCart(context, widget.product, 1, lang, {});
       } else {
         flushBarService.showErrorMessage(
-          widget.pageStyle,
           'out_of_stock_error'.tr(),
         );
       }

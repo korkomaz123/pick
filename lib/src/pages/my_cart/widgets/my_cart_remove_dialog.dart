@@ -3,14 +3,13 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCartRemoveDialog extends StatelessWidget {
-  final PageStyle pageStyle;
   final String title;
   final String text;
 
-  MyCartRemoveDialog({this.pageStyle, this.title, this.text});
+  MyCartRemoveDialog({this.title, this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,7 @@ class MyCartRemoveDialog extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
+          fontSize: 26.sp,
           color: Colors.black,
         ),
       ),
@@ -27,27 +26,29 @@ class MyCartRemoveDialog extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
           color: Colors.black87,
         ),
       ),
       actions: [
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () => Navigator.pop(context, 'yes'),
           child: Text(
             'yes_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 18,
+              fontSize: 18.sp,
               color: primaryColor,
             ),
           ),
         ),
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
             'no_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 18,
+              fontSize: 18.sp,
               color: primaryColor,
             ),
           ),

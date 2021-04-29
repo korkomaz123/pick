@@ -7,13 +7,9 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeMegaBanner extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeMegaBanner({this.pageStyle});
-
   @override
   _HomeMegaBannerState createState() => _HomeMegaBannerState();
 }
@@ -78,9 +74,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
               }
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 10,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Image.network(banner.bannerImage),
             ),
           );

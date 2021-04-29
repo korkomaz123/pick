@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -8,19 +8,18 @@ import 'package:markaa/src/theme/theme.dart';
 
 class ProductConfigurableOptions extends StatelessWidget {
   final ProductEntity productEntity;
-  final PageStyle pageStyle;
 
-  ProductConfigurableOptions({this.productEntity, this.pageStyle});
+  ProductConfigurableOptions({this.productEntity});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProductChangeNotifier>(builder: (_, model, __) {
       return Container(
-        width: pageStyle.deviceWidth,
-        margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+        width: 375.w,
+        margin: EdgeInsets.symmetric(vertical: 10.h),
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 20,
-          vertical: pageStyle.unitHeight * 10,
+          horizontal: 20.w,
+          vertical: 10.h,
         ),
         color: Colors.white,
         child: Column(
@@ -36,7 +35,7 @@ class ProductConfigurableOptions extends StatelessWidget {
                 Text(
                   _getOptionNameFromKey(key),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 20,
+                    fontSize: 20.sp,
                     color: primaryColor,
                   ),
                 ),
@@ -55,12 +54,12 @@ class ProductConfigurableOptions extends StatelessWidget {
                         ),
                         child: Container(
                           margin: EdgeInsets.symmetric(
-                            horizontal: pageStyle.unitWidth * 4,
-                            vertical: pageStyle.unitHeight * 5,
+                            horizontal: 4.w,
+                            vertical: 5.h,
                           ),
                           padding: EdgeInsets.symmetric(
-                            horizontal: pageStyle.unitWidth * 20,
-                            vertical: pageStyle.unitHeight * 3,
+                            horizontal: 20.w,
+                            vertical: 3.h,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
@@ -75,7 +74,7 @@ class ProductConfigurableOptions extends StatelessWidget {
                           child: Text(
                             attr['option_label'],
                             style: mediumTextStyle.copyWith(
-                              fontSize: pageStyle.unitFontSize * 14,
+                              fontSize: 14.sp,
                               color: isSelected ? Colors.white : greyDarkColor,
                             ),
                           ),

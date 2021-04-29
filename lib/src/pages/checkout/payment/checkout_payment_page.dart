@@ -24,7 +24,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
   final OrderEntity reorder;
@@ -39,7 +39,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController noteController = TextEditingController();
   String payment;
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   LocalStorageRepository localStorageRepo;
@@ -70,22 +69,18 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, error);
+    flushBarService.showErrorMessage(error);
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 3),
+      appBar: MarkaaCheckoutAppBar(currentIndex: 3),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: pageStyle.unitWidth * 10,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -98,14 +93,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   }),
                 );
               }),
-              SizedBox(height: pageStyle.unitHeight * 50),
+              SizedBox(height: 50.h),
               Divider(
                 color: greyLightColor,
-                height: pageStyle.unitHeight * 10,
-                thickness: pageStyle.unitHeight * 1,
+                height: 10.h,
+                thickness: 1.h,
               ),
               _buildDetails(),
-              SizedBox(height: pageStyle.unitHeight * 30),
+              SizedBox(height: 30.h),
               _buildPlacePaymentButton(),
               _buildBackToReviewButton(),
             ],
@@ -118,10 +113,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   Widget _buildPaymentCard(PaymentMethodEntity method) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      padding: EdgeInsets.all(pageStyle.unitWidth * 10),
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.all(10.w),
       color: greyLightColor,
       child: RadioListTile(
         value: method.id,
@@ -144,7 +137,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 "    " + method.title,
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ] else if (method.title == 'Knet' || method.title == 'كي نت') ...[
@@ -194,7 +187,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'checkout_subtotal_title'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -202,13 +195,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                     ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               )
             ],
           ),
           if (double.parse(orderDetails['orderDetails']['discount']) > 0) ...[
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -216,7 +209,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   'discount'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -225,14 +218,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                       ' ${orderDetails['orderDetails']['discount']}',
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 )
               ],
             ),
           ],
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -240,7 +233,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'checkout_shipping_cost_title'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -250,12 +243,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                         ' ${orderDetails['orderDetails']['fees']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               )
             ],
           ),
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -263,7 +256,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'total'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -271,7 +264,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                     ' ${orderDetails['orderDetails']['totalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 17,
+                  fontSize: 17.sp,
                 ),
               )
             ],
@@ -284,6 +277,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   Widget _buildPlacePaymentButton() {
     return SizedBox(
       height: 45,
+      // ignore: deprecated_member_use
       child: RaisedButton(
         color: primaryColor,
         clipBehavior: Clip.hardEdge,
@@ -332,11 +326,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   Widget _buildBackToReviewButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 60.w),
       child: MarkaaTextButton(
         title: 'checkout_back_review_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 12,
+        titleSize: 12.sp,
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
@@ -428,7 +422,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     );
     if (result != null) {
       flushBarService.showErrorMessage(
-        pageStyle,
         'payment_canceled'.tr(),
       );
     }

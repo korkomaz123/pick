@@ -8,26 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
-  final PageStyle pageStyle;
 
-  OrderCard({this.order, this.pageStyle});
+  OrderCard({this.order});
 
   @override
   _OrderCardState createState() => _OrderCardState();
 }
 
 class _OrderCardState extends State<OrderCard> {
-  PageStyle pageStyle;
   bool isStock = false;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     _checkOrderItems();
   }
 
@@ -85,8 +82,8 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 15,
+              horizontal: 10.w,
+              vertical: 15.h,
             ),
             color: Colors.grey.shade200,
             child: Row(
@@ -96,7 +93,7 @@ class _OrderCardState extends State<OrderCard> {
                   'order_order_no'.tr() + ' #${widget.order.orderNo}',
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 SvgPicture.asset(icon),
@@ -106,8 +103,8 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 10,
+              horizontal: 10.w,
+              vertical: 10.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,14 +113,14 @@ class _OrderCardState extends State<OrderCard> {
                   'order_order_date'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 Text(
                   widget.order.orderDate,
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
@@ -132,8 +129,8 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 10,
+              horizontal: 10.w,
+              vertical: 10.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,14 +139,14 @@ class _OrderCardState extends State<OrderCard> {
                   'order_status'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 Text(
                   status,
                   style: mediumTextStyle.copyWith(
                     color: color,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
@@ -158,8 +155,8 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 10,
+              horizontal: 10.w,
+              vertical: 10.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,14 +165,14 @@ class _OrderCardState extends State<OrderCard> {
                   'order_payment_method'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 Text(
                   widget.order.paymentMethod.title,
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
@@ -184,8 +181,8 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 10,
-              vertical: pageStyle.unitHeight * 10,
+              horizontal: 10.w,
+              vertical: 10.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,14 +191,14 @@ class _OrderCardState extends State<OrderCard> {
                   'total'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 Text(
                   'currency'.tr() + ' ${widget.order.totalPrice}',
                   style: mediumTextStyle.copyWith(
                     color: greyDarkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
@@ -210,7 +207,7 @@ class _OrderCardState extends State<OrderCard> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              vertical: pageStyle.unitHeight * 10,
+              vertical: 10.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +219,7 @@ class _OrderCardState extends State<OrderCard> {
                     Routes.viewOrder,
                     arguments: widget.order,
                   ),
-                  height: pageStyle.unitHeight * 45,
+                  height: 45.h,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -233,20 +230,20 @@ class _OrderCardState extends State<OrderCard> {
                       Icon(
                         FontAwesomeIcons.eye,
                         color: Colors.white54,
-                        size: pageStyle.unitFontSize * 20,
+                        size: 20.sp,
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 6),
+                      SizedBox(width: 6.w),
                       Text(
                         'view_order_button_title'.tr(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 15,
+                          fontSize: 15.sp,
                           color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: pageStyle.unitWidth * 5),
+                SizedBox(width: 5.w),
                 MaterialButton(
                   elevation: 0,
                   onPressed: !isStock ||
@@ -257,8 +254,8 @@ class _OrderCardState extends State<OrderCard> {
                             Routes.reOrder,
                             arguments: widget.order,
                           ),
-                  minWidth: pageStyle.unitWidth * 150,
-                  height: pageStyle.unitHeight * 45,
+                  minWidth: 150.w,
+                  height: 45.h,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -272,13 +269,13 @@ class _OrderCardState extends State<OrderCard> {
                       Icon(
                         FontAwesomeIcons.history,
                         color: Colors.white54,
-                        size: pageStyle.unitFontSize * 20,
+                        size: 20.sp,
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 4),
+                      SizedBox(width: 4.w),
                       Text(
                         'reorder_button_title'.tr(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 17,
+                          fontSize: 17.sp,
                           color: Colors.white,
                         ),
                       ),

@@ -7,14 +7,10 @@ import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/routes/routes.dart';
 
 class HomeAdvertise extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeAdvertise({this.pageStyle});
-
   @override
   _HomeAdvertiseState createState() => _HomeAdvertiseState();
 }
@@ -36,7 +32,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
       builder: (_, model, ___) {
         if (model.ads != null) {
           return Container(
-            width: widget.pageStyle.deviceWidth,
+            width: 375.w,
             color: Colors.white,
             child: Column(
               children: [
@@ -89,11 +85,10 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                   child: Row(
                     children: model.perfumesItems.map((item) {
                       return ProductCard(
-                        cardWidth: widget.pageStyle.unitWidth * 120,
-                        cardHeight: widget.pageStyle.unitWidth * 175,
+                        cardWidth: 120.w,
+                        cardHeight: 175.w,
                         product: item,
                         isWishlist: true,
-                        pageStyle: widget.pageStyle,
                       );
                     }).toList(),
                   ),

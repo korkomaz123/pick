@@ -2,12 +2,9 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/styles/page_style.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCartShopCounter extends StatefulWidget {
-  /// page style
-  final PageStyle pageStyle;
-
   /// the value of counter
   final int value;
 
@@ -18,7 +15,6 @@ class MyCartShopCounter extends StatefulWidget {
   final Function onIncrement;
 
   MyCartShopCounter({
-    @required this.pageStyle,
     @required this.value,
     this.onDecrement,
     this.onIncrement,
@@ -58,7 +54,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               ? () => _onDecrement()
               : widget.onDecrement,
           child: Container(
-            height: widget.pageStyle.unitHeight * 25,
+            height: 25.h,
             padding: EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -71,11 +67,11 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               ),
             ),
             alignment: Alignment.center,
-            child: Icon(Icons.remove, size: widget.pageStyle.unitFontSize * 18),
+            child: Icon(Icons.remove, size: 18.sp),
           ),
         ),
         Container(
-          height: widget.pageStyle.unitHeight * 25,
+          height: 25.h,
           padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -89,7 +85,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             widget.value.toString(),
             style: mediumTextStyle.copyWith(
               color: primarySwatchColor,
-              fontSize: widget.pageStyle.unitFontSize * 15,
+              fontSize: 15.sp,
             ),
           ),
         ),
@@ -98,7 +94,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               ? () => _onIncrement()
               : widget.onIncrement,
           child: Container(
-            height: widget.pageStyle.unitHeight * 25,
+            height: 25.h,
             padding: EdgeInsets.symmetric(horizontal: 4),
             alignment: Alignment.center,
             decoration: BoxDecoration(
@@ -111,7 +107,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
                 bottomLeft: Radius.circular(lang == 'ar' ? 10 : 0),
               ),
             ),
-            child: Icon(Icons.add, size: widget.pageStyle.unitFontSize * 18),
+            child: Icon(Icons.add, size: 18.sp),
           ),
         ),
       ],

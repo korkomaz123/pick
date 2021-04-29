@@ -7,13 +7,12 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeCategoryCard extends StatelessWidget {
-  final PageStyle pageStyle;
   final CategoryEntity category;
 
-  HomeCategoryCard({this.pageStyle, this.category});
+  HomeCategoryCard({this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +32,8 @@ class HomeCategoryCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 249,
+        width: 375.w,
+        height: 249.h,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(category.imageUrl),
@@ -42,40 +41,40 @@ class HomeCategoryCard extends StatelessWidget {
           ),
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 18,
-          vertical: pageStyle.unitHeight * 23,
+          horizontal: 18.w,
+          vertical: 23.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: pageStyle.deviceWidth / 2,
+              width: 375.w / 2,
               child: Text(
                 category.name,
                 style: mediumTextStyle.copyWith(
                   color: darkColor,
-                  fontSize: pageStyle.unitFontSize * 23,
+                  fontSize: 23.sp,
                 ),
               ),
             ),
             Container(
-              width: pageStyle.deviceWidth / 2,
-              padding: EdgeInsets.only(top: pageStyle.unitHeight * 10),
+              width: 375.w / 2,
+              padding: EdgeInsets.only(top: 10.h),
               child: Text(
                 category.description ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 10,
+                  fontSize: 10.sp,
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: pageStyle.unitHeight * 4),
+              padding: EdgeInsets.only(top: 4.h),
               child: MarkaaTextButton(
                 title: 'view_all'.tr(),
-                titleSize: pageStyle.unitFontSize * 18,
+                titleSize: 18.sp,
                 titleColor: greyDarkColor,
                 buttonColor: Colors.transparent,
                 borderColor: greyDarkColor,

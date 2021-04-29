@@ -26,7 +26,7 @@ import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
@@ -45,7 +45,6 @@ class _MyCartPageState extends State<MyCartPage>
   bool isDeleting = false;
   String cartId = '';
   double totalPrice = 0;
-  PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
@@ -80,17 +79,14 @@ class _MyCartPageState extends State<MyCartPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCartPage: true,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -104,7 +100,6 @@ class _MyCartPageState extends State<MyCartPage>
                           _buildTitleBar(),
                           _buildTotalItems(),
                           MyCartCouponCode(
-                            pageStyle: pageStyle,
                             cartId: cartId,
                             onSignIn: () => _onSignIn(false),
                           ),
@@ -117,12 +112,11 @@ class _MyCartPageState extends State<MyCartPage>
                         builder: (_, model, ___) {
                           return Padding(
                             padding: EdgeInsets.symmetric(
-                              vertical: pageStyle.unitHeight *
-                                  (model.wishlistItemsCount > 0 ? 100 : 250),
+                              vertical:
+                                  model.wishlistItemsCount > 0 ? 100.h : 250.h,
                             ),
                             child: Center(
                               child: NoAvailableData(
-                                pageStyle: pageStyle,
                                 message: 'no_cart_items_available',
                               ),
                             ),
@@ -134,7 +128,6 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
                 if (user?.token != null) ...[
                   MyCartSaveForLaterItems(
-                    pageStyle: pageStyle,
                     progressService: progressService,
                     flushBarService: flushBarService,
                     myCartChangeNotifier: myCartChangeNotifier,
@@ -171,7 +164,6 @@ class _MyCartPageState extends State<MyCartPage>
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
     );
@@ -179,10 +171,10 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildTitleBar() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +183,7 @@ class _MyCartPageState extends State<MyCartPage>
             'my_cart_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: darkColor,
-              fontSize: pageStyle.unitFontSize * 23,
+              fontSize: 23.sp,
             ),
           ),
           Row(
@@ -200,7 +192,7 @@ class _MyCartPageState extends State<MyCartPage>
                 'total'.tr() + ' ',
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                 ),
               ),
               Text(
@@ -209,7 +201,7 @@ class _MyCartPageState extends State<MyCartPage>
                     .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
@@ -222,10 +214,10 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildTotalItems() {
     final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: AnimationLimiter(
         child: Column(
@@ -241,7 +233,6 @@ class _MyCartPageState extends State<MyCartPage>
                     child: Column(
                       children: [
                         MyCartItem(
-                          pageStyle: pageStyle,
                           cartItem:
                               myCartChangeNotifier.cartItemsMap[keys[index]],
                           discount: myCartChangeNotifier.discount,
@@ -276,14 +267,14 @@ class _MyCartPageState extends State<MyCartPage>
         : subTotal * myCartChangeNotifier.discount / 100;
     double totalPrice = subTotal - discount;
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 6,
+        horizontal: 10.w,
+        vertical: 6.h,
       ),
       decoration: BoxDecoration(
         color: greyLightColor,
@@ -299,7 +290,7 @@ class _MyCartPageState extends State<MyCartPage>
                 'products'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               ),
               Text(
@@ -308,13 +299,13 @@ class _MyCartPageState extends State<MyCartPage>
                     .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               )
             ],
           ),
           if (discount > 0) ...[
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -322,19 +313,19 @@ class _MyCartPageState extends State<MyCartPage>
                   'checkout_subtotal_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 17,
+                    fontSize: 17.sp,
                   ),
                 ),
                 Text(
                   '${subTotal.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 18,
+                    fontSize: 18.sp,
                   ),
                 )
               ],
             ),
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -342,7 +333,7 @@ class _MyCartPageState extends State<MyCartPage>
                   'discount'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 17,
+                    fontSize: 17.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -350,13 +341,13 @@ class _MyCartPageState extends State<MyCartPage>
                   '${discount.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 18,
+                    fontSize: 18.sp,
                   ),
                 )
               ],
             )
           ],
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -364,14 +355,14 @@ class _MyCartPageState extends State<MyCartPage>
                 'total'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 17,
+                  fontSize: 17.sp,
                 ),
               ),
               Text(
                 '${totalPrice.toStringAsFixed(3)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 18,
+                  fontSize: 18.sp,
                 ),
               )
             ],
@@ -383,15 +374,15 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildCheckoutButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 80,
+      width: 375.w,
+      height: 80.h,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: MarkaaTextButton(
         title: 'checkout_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 23,
+        titleSize: 23.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
@@ -406,7 +397,6 @@ class _MyCartPageState extends State<MyCartPage>
       context: context,
       builder: (context) {
         return MyCartRemoveDialog(
-          pageStyle: pageStyle,
           title: 'my_cart_remove_item_dialog_title'.tr(),
           text: 'my_cart_remove_item_dialog_text'.tr(),
         );
@@ -449,7 +439,6 @@ class _MyCartPageState extends State<MyCartPage>
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
-          pageStyle,
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
@@ -460,7 +449,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onRemoveFailure(String message) {
-    flushBarService.showErrorMessage(pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 
   void _onProcess() {
@@ -469,6 +458,6 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 }

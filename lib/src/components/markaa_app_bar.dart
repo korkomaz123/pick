@@ -8,16 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool isCartPage;
   final bool isCenter;
 
   MarkaaAppBar({
-    this.pageStyle,
     @required this.scaffoldKey,
     this.isCartPage = false,
     this.isCenter = true,
@@ -55,27 +53,27 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    logoWidth = widget.pageStyle.unitWidth * 66.17;
-    logoHeight = widget.pageStyle.unitHeight * 37.4;
-    pageTitleSize = widget.pageStyle.unitFontSize * 23;
-    pageSubtitleSize = widget.pageStyle.unitFontSize * 18;
-    pageDescSize = widget.pageStyle.unitFontSize * 15;
-    pagePriceSize = widget.pageStyle.unitFontSize * 12;
-    pageTagSize = widget.pageStyle.unitFontSize * 10;
-    pageIconSize = widget.pageStyle.unitFontSize * 25;
-    shoppingCartIconWidth = widget.pageStyle.unitWidth * 25.06;
-    shoppingCartIconHeight = widget.pageStyle.unitHeight * 23.92;
+    logoWidth = 66.17.w;
+    logoHeight = 37.4.h;
+    pageTitleSize = 23.sp;
+    pageSubtitleSize = 18.sp;
+    pageDescSize = 15.sp;
+    pagePriceSize = 12.sp;
+    pageTagSize = 10.sp;
+    pageIconSize = 25.sp;
+    shoppingCartIconWidth = 25.06.w;
+    shoppingCartIconHeight = 23.92.h;
     return AppBar(
       elevation: 0,
       centerTitle: true,
-      toolbarHeight: widget.pageStyle.unitHeight * 60,
+      toolbarHeight: 60.h,
       title: InkWell(
         onTap: () => Navigator.popUntil(
           context,
           (route) => route.settings.name == Routes.home,
         ),
         child: Container(
-          width: widget.pageStyle.unitWidth * 160,
+          width: 160.w,
           child: SvgPicture.asset(hLogoIcon),
         ),
       ),
@@ -88,8 +86,8 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       actions: [
         Padding(
           padding: EdgeInsets.only(
-            right: widget.pageStyle.unitWidth * 20,
-            left: widget.pageStyle.unitWidth * 20,
+            right: 20.w,
+            left: 20.w,
           ),
           child: InkWell(
             onTap: () => widget.isCartPage
@@ -102,24 +100,21 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
                     badgeColor: badgeColor,
                     badgeContent: Text(
                       '${model.cartTotalCount}',
-                      style: TextStyle(
-                        fontSize: widget.pageStyle.unitFontSize * 8,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontSize: 8.sp, color: Colors.white),
                     ),
                     showBadge: model.cartItemCount > 0,
                     toAnimate: false,
                     animationDuration: Duration.zero,
                     position: lang == 'ar'
                         ? BadgePosition.topStart(
-                            start: -widget.pageStyle.unitWidth * 8,
+                            start: -8.w,
                           )
                         : BadgePosition.topEnd(
-                            end: -widget.pageStyle.unitWidth * 8,
+                            end: -8.w,
                           ),
                     child: Container(
-                      width: widget.pageStyle.unitWidth * 25,
-                      height: widget.pageStyle.unitHeight * 25,
+                      width: 25.w,
+                      height: 25.h,
                       child: SvgPicture.asset(shoppingCartIcon),
                     ),
                   );
@@ -130,32 +125,32 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
         ),
       ],
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(widget.pageStyle.unitHeight * 40),
+        preferredSize: Size.fromHeight(40),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 10,
+            horizontal: 10.w,
           ),
           margin: EdgeInsets.only(
-            bottom: widget.pageStyle.unitHeight * (widget.isCenter ? 15 : 10),
+            bottom: (widget.isCenter ? 15.h : 10.h),
           ),
           width: double.infinity,
-          height: widget.pageStyle.unitHeight * 40,
+          height: 40.h,
           child: TextFormField(
             controller: _searchController,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(
-                horizontal: widget.pageStyle.unitWidth * 20,
+                horizontal: 20.w,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30.sp),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30.sp),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30.sp),
                 borderSide: BorderSide.none,
               ),
               filled: true,
@@ -165,7 +160,7 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
               suffixIcon: Icon(
                 Icons.search,
                 color: greyDarkColor,
-                size: widget.pageStyle.unitFontSize * 25,
+                size: 25.sp,
               ),
             ),
             readOnly: true,

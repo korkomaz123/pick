@@ -8,28 +8,22 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeBestWatches extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeBestWatches({@required this.pageStyle});
-
   @override
   _HomeBestWatchSecties createState() => _HomeBestWatchSecties();
 }
 
 class _HomeBestWatchSecties extends State<HomeBestWatches> {
-  PageStyle pageStyle;
   HomeChangeNotifier homeChangeNotifier;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     productRepository = context.read<ProductRepository>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
@@ -39,7 +33,7 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
         return Container(
-          width: pageStyle.deviceWidth,
+          width: 375.w,
           child: Column(
             children: [
               if (model.bestWatchesBanner != null) ...[
@@ -105,26 +99,22 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(
-        top: widget.pageStyle.unitHeight * 15,
-        bottom: widget.pageStyle.unitHeight * 10,
-      ),
+      padding: EdgeInsets.only(top: 15.h, bottom: 10.h),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: list.map((item) {
             return Container(
-              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
+              margin: EdgeInsets.only(left: 5.w),
               child: ProductVVCard(
-                cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 330,
+                cardWidth: 170.w,
+                cardHeight: 330.h,
                 product: item,
                 isShoppingCart: true,
                 isLine: false,
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,
-                pageStyle: widget.pageStyle,
               ),
             );
           }).toList(),

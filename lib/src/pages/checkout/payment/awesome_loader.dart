@@ -67,7 +67,6 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
       widget.controller._awesomeLoaderState = this;
     }
 
-    // TODO(khaled): clarify this equation and exctract a constant
     // controls the smoothness of the arc animation
     arcIncrement = 2 *
         2 *

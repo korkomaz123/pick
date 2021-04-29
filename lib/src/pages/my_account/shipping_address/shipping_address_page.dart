@@ -2,7 +2,6 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -17,7 +16,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'widgets/shipping_address_remove_dialog.dart';
@@ -35,7 +34,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final dataKey = GlobalKey();
   final _refreshController = RefreshController(initialRefresh: false);
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   List<AddressEntity> shippingAddresses;
@@ -64,17 +62,14 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -82,7 +77,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -91,17 +85,17 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'shipping_address_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -123,7 +117,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                 model = notifier;
                 if (model.keys.isEmpty) {
                   return NoAvailableData(
-                    pageStyle: pageStyle,
                     message: 'no_saved_addresses'.tr(),
                   );
                 } else {
@@ -132,7 +125,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                       children: List.generate(
                         model.keys.length,
                         (index) => _buildAddressCard(model.keys[index]),
-                      )..add(SizedBox(height: pageStyle.unitHeight * 60)),
+                      )..add(SizedBox(height: 60.h)),
                     ),
                   );
                 }
@@ -152,11 +145,11 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   Widget _buildAddNewButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
+      width: 375.w,
+      height: 50.h,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: MaterialButton(
         onPressed: () => Navigator.pushNamed(context, Routes.editAddress),
@@ -169,7 +162,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
           'add_new_address_button_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 16,
+            fontSize: 16.sp,
           ),
         ),
       ),
@@ -181,10 +174,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     return InkWell(
       onTap: () => _onUpdate(key),
       child: Container(
-        width: pageStyle.deviceWidth,
+        width: 375.w,
         margin: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 15,
+          horizontal: 10.w,
+          vertical: 15.h,
         ),
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
@@ -197,8 +190,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 60,
-                  vertical: pageStyle.unitHeight * 15,
+                  horizontal: 60.w,
+                  vertical: 15.h,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,40 +200,40 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                       address.title,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
-                        fontSize: pageStyle.unitFontSize * 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 6),
+                    SizedBox(height: 6.h),
                     Text(
                       address.country,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 6),
+                    SizedBox(height: 6.h),
                     Text(
                       address.city,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 6),
+                    SizedBox(height: 6.h),
                     Text(
                       address.street,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 6),
+                    SizedBox(height: 6.h),
                     Text(
                       'phone_number_hint'.tr() + ': ' + address.phoneNumber,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ],
@@ -287,7 +280,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return ShippingAddressRemoveDialog(pageStyle: pageStyle);
+        return ShippingAddressRemoveDialog();
       },
     );
     if (result != null) {
@@ -321,6 +314,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, error);
+    flushBarService.showErrorMessage(error);
   }
 }

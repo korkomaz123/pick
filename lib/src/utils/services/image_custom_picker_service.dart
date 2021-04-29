@@ -36,14 +36,12 @@ class ImageCustomPickerService {
     if (result == null) {
       return null;
     }
-    File file;
+    PickedFile file;
     try {
       if (result.toString() == 'gallery') {
-        // ignore: deprecated_member_use
-        file = await ImagePicker.pickImage(source: ImageSource.gallery);
+        file = await ImagePicker().getImage(source: ImageSource.gallery);
       } else {
-        // ignore: deprecated_member_use
-        file = await ImagePicker.pickImage(source: ImageSource.camera);
+        file = await ImagePicker().getImage(source: ImageSource.camera);
       }
       File croppedFile = await ImageCropper.cropImage(
         sourcePath: file.path,

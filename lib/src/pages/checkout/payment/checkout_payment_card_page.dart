@@ -2,7 +2,7 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
@@ -28,7 +28,6 @@ class CheckoutPaymentCardPage extends StatefulWidget {
 
 class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     with WidgetsBindingObserver {
-  PageStyle pageStyle;
   WebViewController webViewController;
   Map<String, dynamic> data = {};
   OrderChangeNotifier orderChangeNotifier;
@@ -61,8 +60,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -72,9 +69,9 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
         appBar: AppBar(
           backgroundColor: backgroundColor,
           leading: Container(
-            width: pageStyle.unitHeight * 40,
-            height: pageStyle.unitHeight * 40,
-            margin: EdgeInsets.all(pageStyle.unitHeight * 10),
+            width: 40.h,
+            height: 40.h,
+            margin: EdgeInsets.all(10.h),
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
@@ -87,20 +84,20 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           title: Text(
             'Markaa',
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 16,
+              fontSize: 16.sp,
               color: greyColor,
             ),
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: pageStyle.unitWidth * 8),
+              padding: EdgeInsets.only(right: 8.w),
               child: Center(
                 child: InkWell(
                   onTap: () => Navigator.pop(context, 'cancel'),
                   child: Text(
                     'cancel_button_title'.tr(),
                     style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 12,
+                      fontSize: 12.sp,
                       color: greyColor,
                     ),
                   ),

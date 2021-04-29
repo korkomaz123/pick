@@ -4,7 +4,6 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -20,7 +19,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +40,6 @@ class _ProductListPageState extends State<ProductListPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
   TabController tabController;
-  PageStyle pageStyle;
   ProductListArguments arguments;
   CategoryEntity category;
   List<CategoryEntity> subCategories;
@@ -98,17 +96,14 @@ class _ProductListPageState extends State<ProductListPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           if (isFromBrand) ...[_buildBrandBar()],
@@ -131,8 +126,8 @@ class _ProductListPageState extends State<ProductListPage> {
                       double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
                         top: isFromBrand
-                            ? pageStyle.unitHeight * 120 - extra
-                            : pageStyle.unitHeight * 45,
+                            ? 120.h - extra
+                            : 45.h,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -141,7 +136,6 @@ class _ProductListPageState extends State<ProductListPage> {
                           subCategories: subCategories,
                           activeIndex: activeSubcategoryIndex,
                           scaffoldKey: scaffoldKey,
-                          pageStyle: pageStyle,
                           isFromBrand: isFromBrand,
                           isFilter: isFilter,
                           brand: brand,
@@ -167,7 +161,6 @@ class _ProductListPageState extends State<ProductListPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: isFromBrand ? BottomEnum.store : BottomEnum.category,
       ),
     );
@@ -179,14 +172,14 @@ class _ProductListPageState extends State<ProductListPage> {
       left: 0,
       right: 0,
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 40,
+        width: 375.w,
+        height: 40.h,
         color: primarySwatchColor,
         alignment: Alignment.center,
         padding: EdgeInsets.only(
-          left: pageStyle.unitWidth * 10,
-          right: pageStyle.unitWidth * 10,
-          bottom: pageStyle.unitHeight * 10,
+          left: 10.w,
+          right: 10.w,
+          bottom: 10.h,
         ),
         child: Stack(
           alignment: AlignmentDirectional.center,
@@ -200,7 +193,7 @@ class _ProductListPageState extends State<ProductListPage> {
                     child: Icon(
                       Icons.arrow_back_ios,
                       color: Colors.white,
-                      size: pageStyle.unitFontSize * 20,
+                      size: 20.sp,
                     ),
                     onTap: () => Navigator.pop(context),
                   ),
@@ -211,15 +204,15 @@ class _ProductListPageState extends State<ProductListPage> {
                         child: Icon(
                           Icons.sort,
                           color: Colors.white,
-                          size: pageStyle.unitFontSize * 25,
+                          size: 25.sp,
                         ),
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 10),
+                      SizedBox(width: 10.w),
                       InkWell(
                         onTap: () => _showFilterDialog(),
                         child: Container(
-                          width: pageStyle.unitWidth * 20,
-                          height: pageStyle.unitHeight * 17,
+                          width: 20.w,
+                          height: 17.h,
                           child: SvgPicture.asset(filterIcon),
                         ),
                       ),
@@ -238,7 +231,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         : category.name,
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
-                  fontSize: pageStyle.unitFontSize * 17,
+                  fontSize: 17.sp,
                 ),
               ),
             )
@@ -253,20 +246,20 @@ class _ProductListPageState extends State<ProductListPage> {
       builder: (ctx, notifier, child) {
         double extra = scrollChangeNotifier.showBrandBar ? 0 : 40;
         return AnimatedPositioned(
-          top: pageStyle.unitHeight * 40 - extra,
+          top: 40.h - extra,
           left: 0,
           right: 0,
           duration: Duration(milliseconds: 500),
           child: Container(
-            width: pageStyle.deviceWidth,
-            height: pageStyle.unitHeight * 80,
-            margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 8),
+            width: 375.w,
+            height: 80.h,
+            margin: EdgeInsets.only(bottom: 8.h),
             alignment: Alignment.center,
             color: Colors.white,
             child: Image.network(
               brand.brandThumbnail,
-              width: pageStyle.unitWidth * 120,
-              height: pageStyle.unitHeight * 60,
+              width: 120.w,
+              height: 60.h,
               fit: BoxFit.fitHeight,
             ),
           ),
@@ -332,7 +325,7 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
         duration: Duration(milliseconds: 300),
         builder: (context, state) {
-          return ProductSortByDialog(pageStyle: pageStyle);
+          return ProductSortByDialog();
         },
       );
     });

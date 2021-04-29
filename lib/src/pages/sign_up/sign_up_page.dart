@@ -16,7 +16,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:string_validator/string_validator.dart';
@@ -46,7 +46,6 @@ class _SignUpPageState extends State<SignUpPage> {
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
-  PageStyle pageStyle;
   LocalStorageRepository localRepo;
   MyCartChangeNotifier myCartChangeNotifier;
 
@@ -79,8 +78,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
       body: BlocConsumer<SignInBloc, SignInState>(
@@ -93,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
           }
           if (state is SignUpSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
+            flushBarService.showErrorMessage(state.message);
           }
         },
         builder: (context, state) {
@@ -103,10 +100,10 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   Container(
-                    width: pageStyle.deviceWidth,
+                    width: 375.w,
                     padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 30,
-                      bottom: pageStyle.unitHeight * 30,
+                      top: 30.h,
+                      bottom: 30.h,
                     ),
                     alignment: lang == 'en'
                         ? Alignment.centerLeft
@@ -118,14 +115,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: pageStyle.unitHeight * 20,
-                      bottom: pageStyle.unitHeight * 60,
+                      top: 20.h,
+                      bottom: 60.h,
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       hLogoIcon,
-                      width: pageStyle.unitWidth * 120,
-                      height: pageStyle.unitHeight * 45,
+                      width: 120.w,
+                      height: 45.h,
                     ),
                   ),
                   _buildFirstName(),
@@ -152,15 +149,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildFirstName() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: 20.w,
       ),
       child: TextFormField(
         controller: firstNameController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
         focusNode: firstnameNode,
         textInputAction: TextInputAction.next,
@@ -169,11 +166,11 @@ class _SignUpPageState extends State<SignUpPage> {
           hintText: 'first_name'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: 15.sp,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -199,15 +196,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildLastName() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: 20.w,
       ),
       child: TextFormField(
         controller: lastNameController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
         focusNode: lastnameNode,
         textInputAction: TextInputAction.next,
@@ -216,11 +213,11 @@ class _SignUpPageState extends State<SignUpPage> {
           hintText: 'last_name'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: 15.sp,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -246,15 +243,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildEmail() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: 20.w,
       ),
       child: TextFormField(
         controller: emailController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
         focusNode: emailNode,
         textInputAction: TextInputAction.next,
@@ -263,11 +260,11 @@ class _SignUpPageState extends State<SignUpPage> {
           hintText: 'email_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: 15.sp,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -300,15 +297,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildPassword() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: 20.w,
       ),
       child: TextFormField(
         controller: passwordController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
         focusNode: passNode,
         textInputAction: TextInputAction.done,
@@ -317,11 +314,11 @@ class _SignUpPageState extends State<SignUpPage> {
           hintText: 'password_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 15,
+            fontSize: 15.sp,
           ),
           errorStyle: mediumTextStyle.copyWith(
             color: Color(0xFF00F5FF),
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -358,8 +355,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildTermsAndConditions() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: CheckboxListTile(
         value: agreeTerms,
         onChanged: (value) {
@@ -374,7 +371,7 @@ class _SignUpPageState extends State<SignUpPage> {
               'prefix_agree_terms'.tr() + ' ',
               style: mediumTextStyle.copyWith(
                 color: Colors.white,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
               ),
             ),
             InkWell(
@@ -383,7 +380,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 'suffix_agree_terms'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: Colors.white54,
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                 ),
               ),
             )
@@ -395,14 +392,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildSignUpButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
+      width: 375.w,
+      height: 50.h,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
+        horizontal: 20.w,
       ),
       child: MarkaaTextButton(
         title: 'create_account'.tr(),
-        titleSize: pageStyle.unitFontSize * 19,
+        titleSize: 19.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
@@ -414,15 +411,16 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildSignInPhase() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       alignment: Alignment.center,
+      // ignore: deprecated_member_use
       child: FlatButton(
         onPressed: () => Navigator.pop(context),
         child: Text(
           'login_account'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 17,
+            fontSize: 17.sp,
           ),
         ),
       ),
@@ -445,7 +443,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService.showErrorMessage(pageStyle, 'can_not_launch_url'.tr());
+      flushBarService.showErrorMessage('can_not_launch_url'.tr());
     }
   }
 }

@@ -10,15 +10,11 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeNewArrivals({this.pageStyle});
-
   @override
   _HomeNewArrivalsState createState() => _HomeNewArrivalsState();
 }
@@ -38,10 +34,10 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 300,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
-      margin: EdgeInsets.only(bottom: widget.pageStyle.unitHeight * 10),
+      width: 375.w,
+      height: 300.h,
+      padding: EdgeInsets.all(8.w),
+      margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,
       child: Consumer<HomeChangeNotifier>(
         builder: (_, model, __) {
@@ -52,13 +48,12 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
               children: [
                 _buildHeadline(),
                 HomeProductsCarousel(
-                  pageStyle: widget.pageStyle,
                   products: newArrivalsProducts,
                   isVerticalCard: false,
                 ),
                 Divider(
-                  height: widget.pageStyle.unitHeight * 4,
-                  thickness: widget.pageStyle.unitHeight * 1.5,
+                  height: 4.h,
+                  thickness: 1.5.h,
                   color: greyColor.withOpacity(0.4),
                 ),
                 _buildFooter(context),
@@ -81,7 +76,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
           Text(
             title ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 26,
+              fontSize: 26.sp,
               color: greyDarkColor,
             ),
           ),
@@ -93,7 +88,7 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   Widget _buildFooter(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 4),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: InkWell(
         onTap: () {
           ProductListArguments arguments = ProductListArguments(
@@ -115,14 +110,14 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
             Text(
               'view_all'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
+                fontSize: 15.sp,
                 color: primaryColor,
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
+              size: 15.sp,
             ),
           ],
         ),

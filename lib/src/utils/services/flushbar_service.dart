@@ -9,22 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FlushBarService {
   final BuildContext context;
 
   FlushBarService({this.context});
 
-  void showAddCartMessage(PageStyle pageStyle, ProductModel product) {
+  void showAddCartMessage(ProductModel product) {
     Flushbar(
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
-      borderRadius: pageStyle.unitFontSize * 10,
+      borderRadius: 10.sp,
       messageText: Container(
-        width: pageStyle.unitWidth * 300,
+        width: 300.w,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -33,7 +33,7 @@ class FlushBarService {
                 product.name,
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 15,
+                  fontSize: 15.sp,
                 ),
               ),
             ),
@@ -46,7 +46,7 @@ class FlushBarService {
                       'cart_total'.tr(),
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
-                        fontSize: pageStyle.unitFontSize * 13,
+                        fontSize: 13.sp,
                       ),
                     ),
                     Text(
@@ -54,7 +54,7 @@ class FlushBarService {
                           ' ${model.cartTotalPrice.toStringAsFixed(3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
-                        fontSize: pageStyle.unitFontSize * 13,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
@@ -66,8 +66,8 @@ class FlushBarService {
       ),
       icon: SvgPicture.asset(
         orderedSuccessIcon,
-        width: pageStyle.unitWidth * 20,
-        height: pageStyle.unitHeight * 20,
+        width: 20.w,
+        height: 20.h,
       ),
       duration: Duration(seconds: 3),
       flushbarPosition: FlushbarPosition.TOP,
@@ -75,13 +75,13 @@ class FlushBarService {
     )..show(context);
   }
 
-  void showErrorMessage(PageStyle pageStyle, String message) {
+  void showErrorMessage(String message) {
     Flushbar(
       messageText: Text(
         message,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
       ),
       icon: Icon(Icons.error, color: Colors.white),
@@ -92,13 +92,13 @@ class FlushBarService {
     )..show(context);
   }
 
-  void showSuccessMessage(PageStyle pageStyle, String message) {
+  void showSuccessMessage(String message) {
     Flushbar(
       messageText: Text(
         message,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
       ),
       icon: Icon(Icons.check, color: Colors.white),
@@ -109,13 +109,13 @@ class FlushBarService {
     )..show(context);
   }
 
-  void showInformMessage(PageStyle pageStyle, String message) {
+  void showInformMessage(String message) {
     Flushbar(
       messageText: Text(
         message,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
         ),
       ),
       icon: Icon(Icons.info, color: Colors.white),

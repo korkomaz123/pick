@@ -7,18 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartQtyHorizontalPicker extends StatefulWidget {
-  final PageStyle pageStyle;
   final CartItemEntity cartItem;
   final String cartId;
   final Function onChange;
   final bool isDefaultValue;
 
   MyCartQtyHorizontalPicker({
-    this.pageStyle,
     this.cartItem,
     this.cartId,
     this.onChange,
@@ -31,14 +29,12 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 }
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
-  PageStyle pageStyle;
   MyCartChangeNotifier myCartChangeNotifier;
   FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
@@ -51,8 +47,8 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
           : () => null,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 6,
-          vertical: pageStyle.unitHeight * 5,
+          horizontal: 6.w,
+          vertical: 5.h,
         ),
         decoration: BoxDecoration(
           color: widget.cartItem.availableCount > 0 ? primaryColor : greyColor,
@@ -65,14 +61,14 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
                   ? (widget.cartItem.itemCount.toString() + ' ' + 'qty'.tr())
                   : 'select_quantity'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 8,
+                fontSize: 8.sp,
                 color: Colors.white,
               ),
             ),
             Icon(
               Icons.keyboard_arrow_down,
               color: Colors.white,
-              size: pageStyle.unitFontSize * 16,
+              size: 16.sp,
             ),
           ],
         ),
@@ -86,7 +82,6 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
       context: context,
       builder: (context) {
         return QtyDropdownDialog(
-          pageStyle: pageStyle,
           cartItem: widget.cartItem,
         );
       },
@@ -98,15 +93,14 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   }
 
   void _onFailure(String message) {
-    flushBarService.showErrorMessage(widget.pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 }
 
 class QtyDropdownDialog extends StatefulWidget {
-  final PageStyle pageStyle;
   final CartItemEntity cartItem;
 
-  QtyDropdownDialog({this.pageStyle, this.cartItem});
+  QtyDropdownDialog({this.cartItem});
 
   @override
   _QtyDropdownDialogState createState() => _QtyDropdownDialogState();
@@ -115,7 +109,6 @@ class QtyDropdownDialog extends StatefulWidget {
 class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
   int availableCount;
   String productId;
-  PageStyle pageStyle;
 
   @override
   void initState() {
@@ -123,14 +116,13 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
     availableCount = widget.cartItem.availableCount > 20
         ? 20
         : widget.cartItem.availableCount;
-    pageStyle = widget.pageStyle;
     productId = widget.cartItem.product.productId;
   }
 
   @override
   Widget build(BuildContext context) {
-    double topPadding = pageStyle.appBarHeight + pageStyle.unitHeight * 60;
-    double bottomPadding = pageStyle.unitHeight * 60;
+    double topPadding = 120.h;
+    double bottomPadding = 60.h;
     return Padding(
       padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
       child: Material(
@@ -139,8 +131,8 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              width: pageStyle.deviceWidth,
-              height: pageStyle.unitHeight * 95,
+              width: 375.w,
+              height: 95.h,
               child: Stack(
                 children: [
                   Positioned(
@@ -148,7 +140,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                     right: 0,
                     bottom: 0,
                     child: Container(
-                      width: pageStyle.deviceWidth,
+                      width: 375.w,
                       color: primarySwatchColor,
                       height: 60,
                       child: SingleChildScrollView(
@@ -166,7 +158,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                   ),
                   if (lang == 'en') ...[
                     Positioned(
-                      bottom: pageStyle.unitHeight * 45,
+                      bottom: 45.h,
                       right: 0,
                       child: IconButton(
                         icon: SvgPicture.asset('lib/public/icons/close.svg'),
@@ -175,7 +167,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                     )
                   ] else ...[
                     Positioned(
-                      bottom: pageStyle.unitHeight * 45,
+                      bottom: 45.h,
                       left: 0,
                       child: IconButton(
                         icon: SvgPicture.asset('lib/public/icons/close.svg'),
@@ -199,10 +191,10 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
         availableCount - index,
       ),
       child: Container(
-        width: pageStyle.unitHeight * 45,
-        height: pageStyle.unitHeight * 45,
+        width: 45.h,
+        height: 45.h,
         margin: EdgeInsets.symmetric(
-          horizontal: widget.pageStyle.unitWidth * 10,
+          horizontal: 10.w,
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white, width: 1),
@@ -212,7 +204,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
           (availableCount - index).toString(),
           textAlign: TextAlign.center,
           style: mediumTextStyle.copyWith(
-            fontSize: widget.pageStyle.unitFontSize * 16,
+            fontSize: 16.sp,
             color: Colors.white,
           ),
         ),

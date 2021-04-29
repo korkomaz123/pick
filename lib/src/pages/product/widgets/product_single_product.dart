@@ -18,19 +18,17 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:string_validator/string_validator.dart';
 
 class ProductSingleProduct extends StatefulWidget {
-  final PageStyle pageStyle;
   final ProductModel product;
   final ProductEntity productEntity;
   final ProductChangeNotifier model;
 
   ProductSingleProduct({
-    this.pageStyle,
     this.product,
     this.productEntity,
     this.model,
@@ -52,7 +50,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   Animation<double> _favoriteScaleAnimation;
   ProductModel product;
   ProductEntity productEntity;
-  PageStyle pageStyle;
   FlushBarService flushBarService;
   WishlistChangeNotifier wishlistChangeNotifier;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
@@ -61,7 +58,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     product = widget.product;
     productEntity = widget.productEntity;
     isStock = productEntity.stockQty != null && productEntity.stockQty > 0;
@@ -77,14 +73,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       for (int i = 0; i < productEntity.gallery.length; i++) {
         preCachedImages.add(Image.network(
           productEntity.gallery[i],
-          width: widget.pageStyle.deviceWidth,
-          height: pageStyle.unitHeight * 400,
+          width: 375.w,
+          height: 400.h,
           fit: BoxFit.fitHeight,
           loadingBuilder: (_, child, chunk) {
             if (chunk != null) {
               return Center(
                 child: CupertinoActivityIndicator(
-                  radius: pageStyle.unitWidth * 30,
+                  radius: 30.w,
                 ),
               );
             }
@@ -137,14 +133,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Stack(
       children: [
         Container(
-          width: pageStyle.deviceWidth,
+          width: 375.w,
           color: Colors.white,
           child: Column(
             children: [
               if (widget?.model?.selectedVariant?.productId != null) ...[
                 Container(
                   width: double.infinity,
-                  height: pageStyle.unitHeight * 460,
+                  height: 460.h,
                   child: Image.network(
                     widget?.model?.selectedVariant?.imageUrl,
                   ),
@@ -154,17 +150,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ] else if (productEntity.gallery.isNotEmpty) ...[
                 Container(
                   width: double.infinity,
-                  height: pageStyle.unitHeight * 460,
+                  height: 460.h,
                   alignment: Alignment.center,
                   color: Colors.white,
                   child: CupertinoActivityIndicator(
-                    radius: pageStyle.unitWidth * 30,
+                    radius: 30.w,
                   ),
                 ),
               ] else ...[
                 Container(
                   width: double.infinity,
-                  height: pageStyle.unitHeight * 460,
+                  height: 460.h,
                   child: Image.asset(
                     'lib/public/images/loading/image_loading.jpg',
                   ),
@@ -172,7 +168,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ],
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
+                  horizontal: 10.w,
                 ),
                 child: Column(
                   children: [
@@ -190,13 +186,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 widget.model.selectedVariant.discount > 0)) ...[
           if (lang == 'en') ...[
             Positioned(
-              top: pageStyle.unitHeight * 320,
+              top: 320.h,
               right: 0,
               child: _buildDiscount(),
             ),
           ] else ...[
             Positioned(
-              top: pageStyle.unitHeight * 320,
+              top: 320.h,
               left: 0,
               child: _buildDiscount(),
             ),
@@ -208,15 +204,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   Widget _buildDiscount() {
     return Container(
-      width: pageStyle.unitWidth * 60,
-      height: pageStyle.unitHeight * 35,
+      width: 60.w,
+      height: 35.h,
       decoration: BoxDecoration(color: Colors.redAccent),
       alignment: Alignment.center,
       child: Text(
         '${productEntity.discount > 0 ? productEntity.discount : widget.model.selectedVariant.discount}%',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 16,
+          fontSize: 16.sp,
           color: Colors.white,
         ),
       ),
@@ -233,8 +229,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: Container(
-              width: pageStyle.unitWidth * 26,
-              height: pageStyle.unitHeight * 26,
+              width: 26.w,
+              height: 26.h,
               child: SvgPicture.asset(
                 lang == 'en' ? arrowBackEnIcon : arrowBackArIcon,
               ),
@@ -263,8 +259,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     icon: ScaleTransition(
                       scale: _favoriteScaleAnimation,
                       child: Container(
-                        width: pageStyle.unitWidth * 26,
-                        height: pageStyle.unitHeight * 26,
+                        width: 26.w,
+                        height: 26.h,
                         child: SvgPicture.asset(
                           isWishlist ? wishlistedIcon : favoriteIcon,
                         ),
@@ -283,7 +279,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   Widget _buildImageCarousel() {
     return Container(
       width: double.infinity,
-      height: widget.pageStyle.unitHeight * 460,
+      height: 460.h,
       child: Stack(
         children: [
           _buildProduct(),
@@ -291,7 +287,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
+                bottom: 20.h,
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
@@ -300,8 +296,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 effect: SlideEffect(
                   spacing: 8.0,
                   radius: 30,
-                  dotWidth: widget.pageStyle.unitHeight * 8,
-                  dotHeight: widget.pageStyle.unitHeight * 8,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,
                   dotColor: greyLightColor,
@@ -345,8 +341,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     productEntity?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize:
-                          pageStyle.unitFontSize * (lang == 'en' ? 16 : 18),
+                      fontSize: lang == 'en' ? 16.sp : 18.sp,
                     ),
                   ),
                 )
@@ -357,7 +352,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
                   color: isStock ? succeedColor : dangerColor,
-                  fontSize: pageStyle.unitFontSize * (lang == 'en' ? 14 : 18),
+                  fontSize: lang == 'en' ? 14.sp : 18.sp,
                 ),
               ),
             ],
@@ -365,7 +360,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Text(
             productEntity.name,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 20,
+              fontSize: 20.sp,
             ),
           ),
         ],
@@ -375,8 +370,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   Widget _buildProduct() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 420,
+      width: 375.w,
+      height: 420.h,
       child: productEntity.gallery.length < 2
           ? InkWell(
               onTap: () => Navigator.pushNamed(
@@ -414,7 +409,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   Widget _buildDescription() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -422,21 +417,21 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             Text(
               productEntity.shortDescription,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             )
           ] else if (isLength(productEntity.shortDescription, 110)) ...[
             Text(
               productEntity.shortDescription.substring(0, 110) + ' ...',
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             )
           ] else ...[
             Text(
               productEntity.shortDescription,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             )
           ],
@@ -450,7 +445,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 isMore ? 'product_less'.tr() : 'product_more'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             )
@@ -471,7 +466,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Text(
             'sku'.tr() + ': ' + productEntity.sku,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 12,
+              fontSize: 12.sp,
               color: primaryColor,
             ),
           ),
@@ -480,7 +475,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               if (productEntity.discount > 0 ||
                   (widget?.model?.selectedVariant?.discount != null &&
                       widget.model.selectedVariant.discount > 0)) ...[
-                SizedBox(width: pageStyle.unitWidth * 10),
+                SizedBox(width: 10.w),
                 Text(
                   (productEntity.beforePrice ??
                           widget.model.selectedVariant.beforePrice) +
@@ -490,11 +485,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     decorationStyle: TextDecorationStyle.solid,
                     decoration: TextDecoration.lineThrough,
                     decorationColor: dangerColor,
-                    fontSize: widget.pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     color: greyColor,
                   ),
                 ),
-                SizedBox(width: widget.pageStyle.unitWidth * 10),
+                SizedBox(width: 10.w),
               ],
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -506,18 +501,18 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                             ? widget.model.selectedVariant.price
                             : '',
                     style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 20,
+                      fontSize: 20.sp,
                       color: greyColor,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(width: pageStyle.unitWidth * 1),
+                  SizedBox(width: 1.w),
                   if (product.price != null ||
                       widget?.model?.selectedVariant?.price != null) ...[
                     Text(
                       'currency'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
+                        fontSize: 12.sp,
                         color: greyColor,
                       ),
                     )
@@ -535,13 +530,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorMessage(pageStyle, 'required_options'.tr());
+      flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage(pageStyle, 'out_of_stock_error'.tr());
+      flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
     _updateWishlist(model);

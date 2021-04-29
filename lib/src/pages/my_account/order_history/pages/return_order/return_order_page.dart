@@ -2,7 +2,6 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -17,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReturnOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -30,7 +29,6 @@ class ReturnOrderPage extends StatefulWidget {
 
 class _ReturnOrderPageState extends State<ReturnOrderPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  PageStyle pageStyle;
   FlushBarService flushBarService;
   OrderEntity order;
   String icon = '';
@@ -75,32 +73,29 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     if (order.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
+        width: 35.w,
+        height: 20.h,
       );
     } else if (order.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
+        width: 35.w,
+        height: 20.h,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     _setPaymentWidget();
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -108,7 +103,6 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -117,17 +111,17 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'return_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -138,25 +132,25 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: pageStyle.unitWidth * 10,
-            vertical: pageStyle.unitHeight * 20,
+            horizontal: 10.w,
+            vertical: 20.h,
           ),
           child: Column(
             children: [
               _buildOrderNo(),
-              SizedBox(height: pageStyle.unitHeight * 10),
+              SizedBox(height: 10.h),
               _buildOrderDate(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildOrderStatus(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
                   return _buildOrderItems();
                 },
               ),
-              SizedBox(height: pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               _buildOrderPaymentMethod(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
                   return Column(
@@ -181,8 +175,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       color: Colors.grey.shade200,
       child: Row(
@@ -192,7 +186,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'order_order_no'.tr() + ' #${order.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           SvgPicture.asset(icon),
@@ -205,7 +199,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,14 +208,14 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'order_order_date'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             order.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -233,7 +227,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,14 +236,14 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'order_status'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             status,
             style: mediumTextStyle.copyWith(
               color: color,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -295,29 +289,29 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     bool isDefaultValue =
         returnItemsMap.containsKey(cartItem.itemId.toString());
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 20,
+        horizontal: 10.w,
+        vertical: 20.h,
       ),
       child: Row(
         children: [
           Image.network(
             cartItem.product.imageUrl,
-            width: pageStyle.unitWidth * 90,
-            height: pageStyle.unitHeight * 120,
+            width: 90.w,
+            height: 120.h,
             fit: BoxFit.fitHeight,
             loadingBuilder: (_, child, chunkEvent) {
               return chunkEvent != null
                   ? Image.asset(
                       'lib/public/images/loading/image_loading.jpg',
-                      width: pageStyle.unitWidth * 90,
-                      height: pageStyle.unitHeight * 120,
+                      width: 90.w,
+                      height: 120.h,
                     )
                   : child;
             },
           ),
-          SizedBox(width: pageStyle.unitWidth * 5),
+          SizedBox(width: 5.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +321,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 Text(
@@ -335,22 +329,21 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+                    fontSize: 12.sp,
                   ),
                 ),
-                SizedBox(height: pageStyle.unitHeight * 10),
+                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       cartItem.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
+                        fontSize: 16.sp,
                         color: primaryColor,
                       ),
                     ),
                     MyCartQtyHorizontalPicker(
-                      pageStyle: pageStyle,
                       cartItem: cartItem,
                       cartId: 'cartId',
                       isDefaultValue: isDefaultValue,
@@ -392,7 +385,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -401,7 +394,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'order_payment_method'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Row(
@@ -411,7 +404,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                 order.paymentMethod.title,
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ],
@@ -425,8 +418,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -435,14 +428,14 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'return_request_price'.tr(),
             style: mediumTextStyle.copyWith(
               color: dangerColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' ${returnPrice.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: dangerColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -454,8 +447,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -464,7 +457,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'checkout_subtotal_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
@@ -472,7 +465,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                 ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -484,8 +477,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -494,14 +487,14 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'checkout_shipping_cost_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -513,8 +506,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 10.w,
+        vertical: 10.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -523,7 +516,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             'total'.tr().toUpperCase(),
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -532,7 +525,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                 ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -544,8 +537,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   Widget _buildNextButton() {
     return MaterialButton(
       onPressed: () => _onNext(),
-      minWidth: pageStyle.unitWidth * 150,
-      height: pageStyle.unitHeight * 45,
+      minWidth: 150.w,
+      height: 45.h,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -553,7 +546,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       child: Text(
         'next_button_title'.tr(),
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
           color: Colors.white,
         ),
       ),
@@ -566,7 +559,6 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       context: context,
       builder: (context) {
         return QtyDropdownDialog(
-          pageStyle: pageStyle,
           cartItem: order.cartItems[index],
         );
       },
@@ -595,7 +587,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       Navigator.pushNamed(context, Routes.returnOrderInfo, arguments: params);
     } else {
       String message = 'return_order_no_selected_item'.tr();
-      flushBarService.showErrorMessage(pageStyle, message);
+      flushBarService.showErrorMessage(message);
     }
   }
 }

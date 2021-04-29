@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_select_option.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -16,6 +17,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -24,16 +26,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 
 class MarkaaSideMenu extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  MarkaaSideMenu({this.pageStyle});
-
   @override
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
@@ -42,7 +40,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int activeIndex;
-  PageStyle pageStyle;
   double menuWidth;
   String activeMenu = '';
   String language = '';
@@ -55,6 +52,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
+  CategoryRepository categoryRepo;
 
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -64,14 +62,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    signInBloc = context.read<SignInBloc>();
+    localRepo = context.read<LocalStorageRepository>();
+    settingRepo = context.read<SettingRepository>();
+    categoryRepo = context.read<CategoryRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -79,10 +77,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   @override
   Widget build(BuildContext context) {
     language = EasyLocalization.of(context).locale.languageCode.toUpperCase();
-    menuWidth = pageStyle.unitWidth * 300;
+    menuWidth = 300.w;
     return Container(
       width: menuWidth,
-      height: pageStyle.deviceHeight,
+      height: 812.h,
       color: Colors.white,
       child: BlocConsumer<SignInBloc, SignInState>(
         listener: (context, state) {
@@ -94,7 +92,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           }
           if (state is SignOutSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(pageStyle, state.message);
+            flushBarService.showErrorMessage(state.message);
           }
         },
         builder: (context, state) {
@@ -114,7 +112,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   Widget _buildMenuHeader() {
     return Container(
       width: menuWidth,
-      height: pageStyle.unitHeight * 160,
+      height: 160.h,
       color: primarySwatchColor,
       child: Stack(
         children: [
@@ -130,16 +128,16 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       alignment: lang == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(
-          top: pageStyle.unitHeight * 40,
-          left: lang == 'en' ? pageStyle.unitWidth * 15 : 0,
-          right: lang == 'ar' ? pageStyle.unitWidth * 15 : 0,
+          top: 40.h,
+          left: lang == 'en' ? 15.w : 0,
+          right: lang == 'ar' ? 15.w : 0,
         ),
         child: user != null
             ? Row(
                 children: [
                   Container(
-                    width: pageStyle.unitWidth * 60,
-                    height: pageStyle.unitWidth * 60,
+                    width: 60.w,
+                    height: 60.w,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: user.profileUrl.isNotEmpty
@@ -150,22 +148,22 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(width: pageStyle.unitWidth * 10),
+                  SizedBox(width: 10.w),
                   Text(
                     'Hello, ' + (user?.firstName ?? user?.lastName ?? ''),
                     style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 18,
+                      fontSize: 18.sp,
                       color: Colors.white,
                     ),
                   ),
                 ],
               )
             : Padding(
-                padding: EdgeInsets.only(top: pageStyle.unitHeight * 5),
+                padding: EdgeInsets.only(top: 5.h),
                 child: SvgPicture.asset(
                   hLogoIcon,
-                  width: pageStyle.unitWidth * 95,
-                  height: pageStyle.unitHeight * 35,
+                  width: 95.w,
+                  height: 35.h,
                 ),
               ),
       ),
@@ -179,9 +177,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
         onTap: () => user != null ? _logout() : _login(),
         child: Container(
           padding: EdgeInsets.only(
-            left: pageStyle.unitWidth * 15,
-            right: pageStyle.unitWidth * 15,
-            bottom: pageStyle.unitHeight * 10,
+            left: 15.w,
+            right: 15.w,
+            bottom: 10.h,
           ),
           width: double.infinity,
           child: Row(
@@ -191,33 +189,33 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 children: [
                   SvgPicture.asset(
                     sideLoginIcon,
-                    height: pageStyle.unitHeight * 15,
+                    height: 15.h,
                   ),
-                  SizedBox(width: pageStyle.unitWidth * 4),
+                  SizedBox(width: 4.w),
                   Text(
                     user != null ? 'logout'.tr() : 'login'.tr(),
                     style: mediumTextStyle.copyWith(
                       color: Colors.white,
-                      fontSize: pageStyle.unitFontSize * 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ],
               ),
               Container(
-                width: pageStyle.unitWidth * 100,
-                height: pageStyle.unitHeight * 20,
+                width: 100.w,
+                height: 20.h,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.grey.shade300,
                 ),
-                child: SelectOptionCustom(
+                child: MarkaaSelectOption(
                   items: ['EN', 'AR'],
                   value: language,
-                  itemWidth: pageStyle.unitWidth * 50,
-                  itemHeight: pageStyle.unitHeight * 20,
+                  itemWidth: 50.w,
+                  itemHeight: 20.h,
                   itemSpace: 0,
-                  titleSize: pageStyle.unitFontSize * 10,
+                  titleSize: 10.sp,
                   radius: 8,
                   selectedColor: primaryColor,
                   selectedTitleColor: Colors.white,
@@ -240,27 +238,40 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   Widget _buildMenuItems() {
     return Container(
       width: menuWidth,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
-      child: Column(
-        children: sideMenus.map((menu) {
-          int index = sideMenus.indexOf(menu);
-          return Column(
-            key: activeIndex == index ? dataKey : null,
-            children: [
-              _buildParentMenu(menu, index),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: pageStyle.unitHeight * 4,
-                ),
-                child: Divider(
-                  color: Colors.grey.shade400,
-                  height: pageStyle.unitHeight * 1,
-                ),
-              ),
-              activeMenu == menu.id ? _buildSubmenu(menu) : SizedBox.shrink(),
-            ],
-          );
-        }).toList(),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
+      child: FutureBuilder(
+        future: categoryRepo.getMenuCategories(lang),
+        initialData: sideMenus,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            sideMenus = snapshot.data;
+            return Column(
+              children: sideMenus.map((menu) {
+                int index = sideMenus.indexOf(menu);
+                return Column(
+                  key: activeIndex == index ? dataKey : null,
+                  children: [
+                    _buildParentMenu(menu, index),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 4.h,
+                      ),
+                      child: Divider(
+                        color: Colors.grey.shade400,
+                        height: 1.h,
+                      ),
+                    ),
+                    activeMenu == menu.id
+                        ? _buildSubmenu(menu)
+                        : SizedBox.shrink(),
+                  ],
+                );
+              }).toList(),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }
@@ -272,10 +283,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: pageStyle.unitHeight * 15),
+        margin: EdgeInsets.only(top: 15.h),
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 20,
-          vertical: pageStyle.unitHeight * 4,
+          horizontal: 20.w,
+          vertical: 4.h,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -291,7 +302,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 Text(
                   menu.title.toUpperCase(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     color: darkColor,
                   ),
                 ),
@@ -302,7 +313,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 activeMenu == menu.id
                     ? Icons.arrow_drop_down
                     : Icons.arrow_right,
-                size: pageStyle.unitFontSize * 25,
+                size: 25.sp,
                 color: greyDarkColor,
               )
             ],
@@ -328,13 +339,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
-                      horizontal: pageStyle.unitWidth * 40,
-                      vertical: pageStyle.unitHeight * 10,
+                      horizontal: 40.w,
+                      vertical: 10.h,
                     ),
                     child: Text(
                       menu.subMenu[index].title,
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                         color: darkColor,
                       ),
                     ),
@@ -386,7 +397,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return LogoutConfirmDialog(pageStyle: pageStyle);
+        return LogoutConfirmDialog();
       },
     );
     if (result != null) {

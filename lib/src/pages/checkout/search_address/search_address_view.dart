@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class SearchAddressView extends StatefulWidget {
@@ -31,7 +30,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
   FlushBarService flushBarService;
-  PageStyle pageStyle;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -48,8 +46,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Container(
       color: Colors.white,
       child: Stack(
@@ -234,7 +230,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       flushBarService.showErrorMessage(
-        pageStyle,
         'Location services are disabled.',
       );
     }
@@ -242,7 +237,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
       flushBarService.showErrorMessage(
-        pageStyle,
         'Location permissions are permantly denied, we cannot request permissions.',
       );
     }
@@ -252,12 +246,11 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
         flushBarService.showErrorMessage(
-          pageStyle,
           'Location permissions are denied (actual value: $permission).',
         );
       }
     }
-    flushBarService.showInformMessage(pageStyle, 'Fetching the location');
+    flushBarService.showInformMessage('Fetching the location');
     Position position = await Geolocator.getCurrentPosition(
       forceAndroidLocationManager: true,
       desiredAccuracy: LocationAccuracy.high,
@@ -277,12 +270,10 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
     final result = await http.get(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey',
+      Uri.dataFromString(
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey'),
     );
-    // print(
-    //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
     final response = jsonDecode(result.body);
-    print(response);
     List<dynamic> addressList = response['results'];
     formattedAddresses = addressList.map((address) {
       Map<String, dynamic> formattedJson = {};

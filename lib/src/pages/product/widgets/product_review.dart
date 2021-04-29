@@ -8,13 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductReview extends StatefulWidget {
   final ProductEntity product;
-  final PageStyle pageStyle;
 
-  ProductReview({this.product, this.pageStyle});
+  ProductReview({this.product});
 
   @override
   _ProductReviewState createState() => _ProductReviewState();
@@ -36,13 +35,13 @@ class _ProductReviewState extends State<ProductReview> {
       builder: (_, __, ___) {
         if (model.reviews.isNotEmpty) {
           return Container(
-            width: widget.pageStyle.deviceWidth,
+            width: 375.w,
             margin: EdgeInsets.only(
-              top: widget.pageStyle.unitHeight * 10,
+              top: 10.h,
             ),
             padding: EdgeInsets.symmetric(
-              horizontal: widget.pageStyle.unitWidth * 20,
-              vertical: widget.pageStyle.unitHeight * 20,
+              horizontal: 20.w,
+              vertical: 20.h,
             ),
             color: Colors.white,
             child: Column(
@@ -51,7 +50,7 @@ class _ProductReviewState extends State<ProductReview> {
                 Text(
                   'product_reviews'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize * 19,
+                    fontSize: 19.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -72,7 +71,7 @@ class _ProductReviewState extends State<ProductReview> {
   Widget _buildProductReview(ReviewEntity review) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 20),
+      padding: EdgeInsets.only(top: 20.h),
       child: Column(
         children: [
           Row(
@@ -81,7 +80,7 @@ class _ProductReviewState extends State<ProductReview> {
               Text(
                 review.nickname,
                 style: mediumTextStyle.copyWith(
-                  fontSize: widget.pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                   color: greyColor,
                 ),
@@ -92,7 +91,7 @@ class _ProductReviewState extends State<ProductReview> {
                 direction: Axis.horizontal,
                 allowHalfRating: true,
                 itemCount: 5,
-                itemSize: widget.pageStyle.unitFontSize * 18,
+                itemSize: 18.sp,
                 ratingWidget: RatingWidget(
                   empty: Icon(Icons.star_border, color: Colors.grey.shade300),
                   full: Icon(Icons.star, color: Colors.amber),
@@ -105,14 +104,14 @@ class _ProductReviewState extends State<ProductReview> {
               ),
             ],
           ),
-          Divider(color: darkColor, height: widget.pageStyle.unitHeight * 4),
+          Divider(color: darkColor, height: 4.h),
           Container(
             width: double.infinity,
             alignment: Alignment.centerRight,
             child: Text(
               review.createdAt,
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 9,
+                fontSize: 9.sp,
                 color: primaryColor,
               ),
             ),
@@ -122,7 +121,7 @@ class _ProductReviewState extends State<ProductReview> {
             child: Text(
               review.detail,
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
                 color: greyColor,
                 fontWeight: FontWeight.w100,
               ),

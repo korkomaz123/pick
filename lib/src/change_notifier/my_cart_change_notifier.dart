@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/config/constants.dart';
@@ -179,7 +178,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> addProductToCart(
     BuildContext context,
-    PageStyle pageStyle,
     ProductModel product,
     int qty,
     String lang,
@@ -206,9 +204,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalPrice += newItem.rowPrice;
         cartItemsMap[newItem.itemId] = newItem;
         notifyListeners();
-        flushBarService.showAddCartMessage(pageStyle, product);
+        flushBarService.showAddCartMessage(product);
       } else {
-        flushBarService.showErrorMessage(pageStyle, '$cartIssue$cartId');
+        flushBarService.showErrorMessage('$cartIssue$cartId');
         if (processStatus != ProcessStatus.process) {
           await getCartItems(lang);
         }
@@ -216,7 +214,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
     } catch (e) {
       flushBarService.showErrorMessage(
-        pageStyle,
         '$cartIssue$cartId\nMore details: $e',
       );
       if (processStatus != ProcessStatus.process) {
@@ -274,23 +271,27 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> getCartId() async {
-    if (user?.token != null) {
-      final result = await myCartRepository.getCartId(user.token);
-      if (result['code'] == 'SUCCESS') {
-        cartId = result['cartId'];
-      }
-    } else {
-      if (await localStorageRepository.existItem('cartId')) {
-        cartId = await localStorageRepository.getCartId();
-      } else {
-        final result = await myCartRepository.createCart();
+    try {
+      if (user?.token != null) {
+        final result = await myCartRepository.getCartId(user.token);
         if (result['code'] == 'SUCCESS') {
           cartId = result['cartId'];
-          await localStorageRepository.setCartId(cartId);
+        }
+      } else {
+        if (await localStorageRepository.existItem('cartId')) {
+          cartId = await localStorageRepository.getCartId();
+        } else {
+          final result = await myCartRepository.createCart();
+          if (result['code'] == 'SUCCESS') {
+            cartId = result['cartId'];
+            await localStorageRepository.setCartId(cartId);
+          }
         }
       }
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
     }
-    notifyListeners();
   }
 
   Future<void> getReorderCartItems(String lang) async {
@@ -333,7 +334,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> applyCouponCode(
     String code,
     FlushBarService flushBarService,
-    PageStyle pageStyle,
   ) async {
     isApplying = true;
     notifyListeners();
@@ -345,7 +345,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       isApplying = false;
     } else {
       errorMessage = result['errMessage'];
-      flushBarService.showErrorMessage(pageStyle, errorMessage);
+      flushBarService.showErrorMessage(errorMessage);
       isApplying = false;
     }
     notifyListeners();
@@ -353,7 +353,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> cancelCouponCode(
     FlushBarService flushBarService,
-    PageStyle pageStyle,
   ) async {
     isApplying = true;
     final result = await myCartRepository.couponCode(cartId, couponCode, '1');
@@ -364,7 +363,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       isApplying = false;
     } else {
       errorMessage = result['errMessage'];
-      flushBarService.showErrorMessage(pageStyle, errorMessage);
+      flushBarService.showErrorMessage(errorMessage);
       isApplying = false;
     }
     notifyListeners();

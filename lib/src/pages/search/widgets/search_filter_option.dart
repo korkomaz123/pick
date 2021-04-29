@@ -3,12 +3,11 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'search_basic_select.dart';
 
 class SearchFilterOption extends StatefulWidget {
-  final PageStyle pageStyle;
   final List<dynamic> categories;
   final List<dynamic> brands;
   final List<dynamic> genders;
@@ -19,7 +18,6 @@ class SearchFilterOption extends StatefulWidget {
   final Function onSelectGender;
 
   SearchFilterOption({
-    this.pageStyle,
     this.categories,
     this.brands,
     this.genders,
@@ -51,11 +49,11 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        width: widget.pageStyle.deviceWidth,
+        width: 375.w,
         color: Colors.white,
         padding: EdgeInsets.symmetric(
-          horizontal: widget.pageStyle.unitWidth * 20,
-          vertical: widget.pageStyle.unitHeight * 30,
+          horizontal: 20.w,
+          vertical: 30.h,
         ),
         child: AnimationLimiter(
           child: Column(
@@ -71,7 +69,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       'bottom_category'.tr(),
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: widget.pageStyle.unitFontSize * 23,
+                        fontSize: 23.sp,
                       ),
                     ),
                   ),
@@ -84,7 +82,6 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
                     child: SearchBasicSelect(
-                      pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: categories,
                       values: widget.selectedCategories,
@@ -93,7 +90,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   ),
                 ),
               ),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               AnimationConfiguration.staggeredList(
                 position: 0,
                 duration: Duration(milliseconds: 375),
@@ -104,7 +101,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                       'brands_title'.tr(),
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: widget.pageStyle.unitFontSize * 23,
+                        fontSize: 23.sp,
                       ),
                     ),
                   ),
@@ -117,7 +114,6 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
                     child: SearchBasicSelect(
-                      pageStyle: widget.pageStyle,
                       width: double.infinity,
                       options: brands,
                       values: widget.selectedBrands,

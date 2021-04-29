@@ -2,7 +2,6 @@ import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -11,7 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 
@@ -30,7 +29,6 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController commentController = TextEditingController();
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   ProductReviewChangeNotifier model;
@@ -45,8 +43,6 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -54,21 +50,21 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           icon: Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
-            size: pageStyle.unitFontSize * 18,
+            size: 18.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'add_review_page_title'.tr(),
           style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
         ),
       ),
       body: Container(
-        width: pageStyle.deviceWidth,
+        width: 375.w,
         child: _buildForm(),
       ),
     );
@@ -82,12 +78,12 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           children: [
             Container(
               padding: EdgeInsets.symmetric(
-                vertical: pageStyle.unitHeight * 4,
+                vertical: 4.h,
               ),
               child: Text(
                 'add_review_subtitle'.tr(),
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                   color: primaryColor,
                 ),
               ),
@@ -95,16 +91,16 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
             Text(
               widget.product.name,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 15,
+                fontSize: 15.sp,
                 color: greyColor,
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: pageStyle.unitHeight * 20),
+              padding: EdgeInsets.only(top: 20.h),
               child: Text(
                 'add_review_rate_title'.tr(),
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 12,
+                  fontSize: 12.sp,
                   color: primaryColor,
                 ),
               ),
@@ -115,7 +111,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
               direction: Axis.horizontal,
               allowHalfRating: false,
               itemCount: 5,
-              itemSize: pageStyle.unitFontSize * 25,
+              itemSize: 25.sp,
               ratingWidget: RatingWidget(
                 empty: Icon(Icons.star_border, color: Colors.grey.shade300),
                 full: Icon(Icons.star, color: Colors.amber),
@@ -128,14 +124,14 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
             ),
             if (user?.token == null) ...[
               Container(
-                width: pageStyle.deviceWidth,
+                width: 375.w,
                 padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitFontSize * 20,
+                  horizontal: 20.sp,
                 ),
                 child: MarkaaTextInput(
                   width: double.infinity,
                   controller: usernameController,
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                   hint: 'username'.tr(),
                   validator: (value) =>
                       value.isEmpty ? 'required_field'.tr() : null,
@@ -145,14 +141,14 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
               )
             ],
             Container(
-              width: pageStyle.deviceWidth,
+              width: 375.w,
               padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitFontSize * 20,
+                horizontal: 20.sp,
               ),
               child: MarkaaTextInput(
                 width: double.infinity,
                 controller: titleController,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
                 hint: 'add_review_form_review_title'.tr(),
                 validator: (value) =>
                     value.isEmpty ? 'required_field'.tr() : null,
@@ -161,21 +157,21 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
               ),
             ),
             Container(
-              width: pageStyle.deviceWidth,
+              width: 375.w,
               padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitFontSize * 20,
-                vertical: pageStyle.unitHeight * 20,
+                horizontal: 20.sp,
+                vertical: 20.h,
               ),
               child: MarkaaInputField(
                 width: double.infinity,
                 controller: commentController,
-                space: pageStyle.unitHeight * 10,
+                space: 10.h,
                 radius: 10,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
                 fontColor: greyDarkColor,
                 label: 'add_review_form_review_comment'.tr(),
                 labelColor: greyColor,
-                labelSize: pageStyle.unitFontSize * 16,
+                labelSize: 16.sp,
                 fillColor: Colors.white,
                 bordered: true,
                 borderColor: greyColor,
@@ -185,10 +181,10 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
               ),
             ),
             Container(
-              width: pageStyle.unitWidth * 150,
+              width: 150.w,
               child: MarkaaTextButton(
                 title: 'submit_button_title'.tr(),
-                titleSize: pageStyle.unitFontSize * 16,
+                titleSize: 16.sp,
                 titleColor: Colors.white,
                 buttonColor: primaryColor,
                 radius: 30,
@@ -217,7 +213,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           _onFailure,
         );
       } else {
-        flushBarService.showErrorMessage(pageStyle, 'rating_required'.tr());
+        flushBarService.showErrorMessage('rating_required'.tr());
       }
     }
   }
@@ -233,6 +229,6 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
 
   void _onFailure() {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, 'failed'.tr());
+    flushBarService.showErrorMessage('failed'.tr());
   }
 }

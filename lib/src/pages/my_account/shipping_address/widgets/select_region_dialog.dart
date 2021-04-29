@@ -3,13 +3,12 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectRegionDialog extends StatefulWidget {
-  final PageStyle pageStyle;
   final String value;
 
-  SelectRegionDialog({this.pageStyle, this.value});
+  SelectRegionDialog({this.value});
 
   @override
   _SelectRegionDialogState createState() => _SelectRegionDialogState();
@@ -36,18 +35,18 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: widget.pageStyle.unitWidth * 4,
-              vertical: widget.pageStyle.unitHeight * 5,
+              horizontal: 4.w,
+              vertical: 5.h,
             ),
             child: TextFormField(
               controller: searchController,
               style: mediumTextStyle.copyWith(
                 color: greyColor,
-                fontSize: widget.pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
               ),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 10,
+                  horizontal: 10.w,
                 ),
                 hintText: 'search_region_hint'.tr(),
                 border: OutlineInputBorder(borderSide: BorderSide.none),
@@ -56,7 +55,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                 prefixIcon: Icon(
                   Icons.search,
                   color: greyDarkColor,
-                  size: widget.pageStyle.unitFontSize * 20,
+                  size: 20.sp,
                 ),
               ),
             ),
@@ -70,12 +69,12 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
   Widget _buildNoRegions() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 20),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Text(
         'no_available_regions'.tr(),
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * 18,
+          fontSize: 18.sp,
         ),
       ),
     );
@@ -90,7 +89,11 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
           children: regions.map((region) {
             bool isSelected = widget.value == region.regionId;
             int index = regions.indexOf(region);
-            bool contain = searchController.text.isEmpty || region.defaultName.toString().toUpperCase().contains(searchController.text.toUpperCase());
+            bool contain = searchController.text.isEmpty ||
+                region.defaultName
+                    .toString()
+                    .toUpperCase()
+                    .contains(searchController.text.toUpperCase());
             return contain
                 ? Column(
                     children: [
@@ -98,8 +101,8 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                         onTap: () => Navigator.pop(context, region),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: widget.pageStyle.unitWidth * 10,
-                            vertical: widget.pageStyle.unitHeight * 10,
+                            horizontal: 10.w,
+                            vertical: 10.h,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,22 +110,25 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                               Text(
                                 region.defaultName,
                                 style: mediumTextStyle.copyWith(
-                                  fontSize: widget.pageStyle.unitFontSize * 16,
-                                  color: isSelected ? primaryColor : greyDarkColor,
+                                  fontSize: 16.sp,
+                                  color:
+                                      isSelected ? primaryColor : greyDarkColor,
                                 ),
                               ),
                               isSelected
                                   ? Icon(
                                       Icons.check,
                                       color: primaryColor,
-                                      size: widget.pageStyle.unitFontSize * 20,
+                                      size: 20.sp,
                                     )
                                   : SizedBox.shrink(),
                             ],
                           ),
                         ),
                       ),
-                      index < countries.length - 1 ? Divider(color: greyColor) : SizedBox.shrink(),
+                      index < countries.length - 1
+                          ? Divider(color: greyColor)
+                          : SizedBox.shrink(),
                     ],
                   )
                 : SizedBox.shrink();

@@ -12,6 +12,7 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
@@ -32,6 +33,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
@@ -235,51 +237,54 @@ class MarkaaAppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
-      child: MaterialApp(
-        navigatorKey: _navigatorKey,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          EasyLocalization.of(context).delegate,
-          const FallbackCupertinoLocalisationsDelegate(),
-        ],
-        supportedLocales: EasyLocalization.of(context).supportedLocales,
-        locale: EasyLocalization.of(context).locale,
-        debugShowCheckedModeBanner: false,
-        theme: markaaAppTheme,
-        title: 'Markaa',
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          return RouteGenerator.generateRoute(settings);
-        },
-        builder: (context, child) {
-          return StreamBuilder<DataConnectionStatus>(
-            stream: DataConnectionChecker().onStatusChange,
-            builder: (context, networkSnapshot) {
-              if (!networkSnapshot.hasData) {
-                return Material(
-                  color: primarySwatchColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 250,
-                        height: 160,
-                        child: SvgPicture.asset(vLogoIcon),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                if (networkSnapshot.data == DataConnectionStatus.connected) {
-                  return child;
+      child: ScreenUtilInit(
+        designSize: Size(designWidth, designHeight),
+        builder: () => MaterialApp(
+          navigatorKey: _navigatorKey,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            EasyLocalization.of(context).delegate,
+            const FallbackCupertinoLocalisationsDelegate(),
+          ],
+          supportedLocales: EasyLocalization.of(context).supportedLocales,
+          locale: EasyLocalization.of(context).locale,
+          debugShowCheckedModeBanner: false,
+          theme: markaaAppTheme,
+          title: 'Markaa',
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            return RouteGenerator.generateRoute(settings);
+          },
+          builder: (context, child) {
+            return StreamBuilder<DataConnectionStatus>(
+              stream: DataConnectionChecker().onStatusChange,
+              builder: (context, networkSnapshot) {
+                if (!networkSnapshot.hasData) {
+                  return Material(
+                    color: primarySwatchColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: 250.w,
+                          height: 160.h,
+                          child: SvgPicture.asset(vLogoIcon),
+                        ),
+                      ],
+                    ),
+                  );
                 } else {
-                  return NoNetworkAccessPage();
+                  if (networkSnapshot.data == DataConnectionStatus.connected) {
+                    return child;
+                  } else {
+                    return NoNetworkAccessPage();
+                  }
                 }
-              }
-            },
-          );
-        },
+              },
+            );
+          },
+        ),
       ),
     );
   }

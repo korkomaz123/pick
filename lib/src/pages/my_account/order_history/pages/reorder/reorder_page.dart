@@ -4,7 +4,6 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_review_product_card.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -19,7 +18,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../widgets/reorder_remove_dialog.dart';
 
@@ -39,7 +38,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Color color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -95,32 +93,29 @@ class _ReOrderPageState extends State<ReOrderPage> {
     if (order.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
+        width: 35.w,
+        height: 20.h,
       );
     } else if (order.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
-        width: pageStyle.unitWidth * 35,
-        height: pageStyle.unitHeight * 20,
+        width: 35.w,
+        height: 20.h,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     _setPaymentWidget();
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           Column(
@@ -132,7 +127,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -141,17 +135,17 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'reorder_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -162,21 +156,21 @@ class _ReOrderPageState extends State<ReOrderPage> {
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: pageStyle.unitWidth * 10,
-            vertical: pageStyle.unitHeight * 20,
+            horizontal: 10.w,
+            vertical: 20.h,
           ),
           child: Column(
             children: [
               _buildOrderNo(),
-              SizedBox(height: pageStyle.unitHeight * 10),
+              SizedBox(height: 10.h),
               _buildOrderDate(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildOrderStatus(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildOrderItems(),
-              SizedBox(height: pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               _buildOrderPaymentMethod(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildSubtotal(),
               _buildShippingCost(),
               _buildTotal(),
@@ -193,8 +187,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       color: Colors.grey.shade200,
       child: Row(
@@ -204,7 +198,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             'order_order_no'.tr() + ' #${order.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           SvgPicture.asset(icon),
@@ -217,7 +211,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,14 +220,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
             'order_order_date'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             order.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -245,7 +239,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,14 +248,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
             'order_status'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             status,
             style: mediumTextStyle.copyWith(
               color: color,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -282,7 +276,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   Stack(
                     children: [
                       MarkaaReviewProductCard(
-                        pageStyle: pageStyle,
                         cartItem: model.reorderCartItemsMap[keys[index]],
                       ),
                       if (model.reorderCartItemCount > 1) ...[
@@ -312,7 +305,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -321,7 +314,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             'order_payment_method'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Row(
@@ -331,7 +324,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                 order.paymentMethod.title,
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ],
@@ -346,8 +339,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 5,
+          horizontal: 10.w,
+          vertical: 5.h,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -356,7 +349,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               'checkout_subtotal_title'.tr(),
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
             Text(
@@ -364,7 +357,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
           ],
@@ -377,8 +370,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -387,14 +380,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
             'checkout_shipping_cost_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -409,8 +402,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 10,
+          horizontal: 10.w,
+          vertical: 10.h,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -419,7 +412,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               'total'.tr().toUpperCase(),
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -427,7 +420,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               'currency'.tr() + ' ${totalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -440,13 +433,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildAddressBar() {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 30,
+        horizontal: 10.w,
+        vertical: 30.h,
       ),
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 30,
+          horizontal: 10.w,
+          vertical: 30.h,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(2),
@@ -460,14 +453,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   ? '${order.address.title}: '
                   : 'Unnamed title: ',
               style: boldTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
                 color: primaryColor,
               ),
             ),
             Text(
               '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
           ],
@@ -479,8 +472,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildNextButton() {
     return MaterialButton(
       onPressed: () => _onNext(),
-      minWidth: pageStyle.unitWidth * 150,
-      height: pageStyle.unitHeight * 45,
+      minWidth: 150.w,
+      height: 45.h,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -488,7 +481,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       child: Text(
         'next_button_title'.tr(),
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
           color: Colors.white,
         ),
       ),
@@ -499,7 +492,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return ReorderRemoveDialog(pageStyle: pageStyle);
+        return ReorderRemoveDialog();
       },
     );
     if (result != null) {
@@ -512,7 +505,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       addressChangeNotifier.setDefaultAddress(widget.order.address);
       Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
     } else {
-      flushBarService.showErrorMessage(pageStyle, 'reorder_items_error'.tr());
+      flushBarService.showErrorMessage('reorder_items_error'.tr());
     }
   }
 }

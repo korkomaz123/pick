@@ -4,7 +4,6 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -17,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class BrandListPage extends StatefulWidget {
@@ -31,7 +30,6 @@ class _BrandListPageState extends State<BrandListPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
   List<BrandEntity> brands = [];
-  PageStyle pageStyle;
   BrandChangeNotifier brandChangeNotifier;
   ProgressService progressService;
 
@@ -51,17 +49,14 @@ class _BrandListPageState extends State<BrandListPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
       appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -98,7 +93,6 @@ class _BrandListPageState extends State<BrandListPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.store,
       ),
     );
@@ -106,14 +100,10 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildAppBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 40,
+      width: 375.w,
+      height: 40.h,
       color: primarySwatchColor,
-      padding: EdgeInsets.only(
-        left: pageStyle.unitWidth * 10,
-        right: pageStyle.unitWidth * 10,
-        bottom: pageStyle.unitHeight * 10,
-      ),
+      padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -148,7 +138,7 @@ class _BrandListPageState extends State<BrandListPage> {
           'home_categories'.tr(),
           style: mediumTextStyle.copyWith(
             color: greyColor,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
         ),
       ),
@@ -157,7 +147,6 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildBrandButton() {
     return Container(
-      // width: pageStyle.unitWidth * 100,
       child: MaterialButton(
         onPressed: () => null,
         shape: RoundedRectangleBorder(
@@ -174,7 +163,7 @@ class _BrandListPageState extends State<BrandListPage> {
           'brands_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: Colors.white,
-            fontSize: pageStyle.unitFontSize * 12,
+            fontSize: 12.sp,
           ),
         ),
       ),
@@ -194,10 +183,10 @@ class _BrandListPageState extends State<BrandListPage> {
         Navigator.pushNamed(context, Routes.productList, arguments: arguments);
       },
       child: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.unitHeight * 58,
-        margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 10),
-        padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+        width: 375.w,
+        height: 58.h,
+        margin: EdgeInsets.only(bottom: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,7 +200,7 @@ class _BrandListPageState extends State<BrandListPage> {
               brands[index].brandLabel,
               style: mediumTextStyle.copyWith(
                 color: darkColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
             ),
             Row(
@@ -220,7 +209,7 @@ class _BrandListPageState extends State<BrandListPage> {
                   'view_all'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 11,
+                    fontSize: 11.sp,
                   ),
                 ),
                 Icon(Icons.arrow_forward_ios, size: 22, color: primaryColor),

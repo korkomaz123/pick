@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -23,7 +22,6 @@ class HomePopupDialog extends StatefulWidget {
 
 class _HomePopupDialogState extends State<HomePopupDialog>
     with WidgetsBindingObserver {
-  PageStyle pageStyle;
   ProductRepository productRepository;
 
   @override
@@ -34,8 +32,6 @@ class _HomePopupDialogState extends State<HomePopupDialog>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -44,11 +40,11 @@ class _HomePopupDialogState extends State<HomePopupDialog>
         color: Colors.black.withOpacity(0.3),
         child: Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 30),
+          padding: EdgeInsets.symmetric(horizontal: 30.w),
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.all(pageStyle.unitWidth * 10),
+                padding: EdgeInsets.all(10.w),
                 child: InkWell(
                   onTap: () async {
                     if (widget.item.categoryId != null) {

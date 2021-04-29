@@ -3,27 +3,24 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectCountryDialog extends StatefulWidget {
-  final PageStyle pageStyle;
   final String value;
 
-  SelectCountryDialog({this.pageStyle, this.value});
+  SelectCountryDialog({this.value});
 
   @override
   _SelectCountryDialogState createState() => _SelectCountryDialogState();
 }
 
 class _SelectCountryDialogState extends State<SelectCountryDialog> {
-  PageStyle pageStyle;
   String value;
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     value = widget.value;
     searchController.addListener(() {
       setState(() {});
@@ -35,8 +32,8 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
     return Dialog(
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        horizontal: 20.w,
+        vertical: 20.h,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -44,18 +41,18 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: pageStyle.unitWidth * 4,
-              vertical: pageStyle.unitHeight * 5,
+              horizontal: 4.w,
+              vertical: 5.h,
             ),
             child: TextFormField(
               controller: searchController,
               style: mediumTextStyle.copyWith(
                 color: greyColor,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
               ),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
+                  horizontal: 10.w,
                 ),
                 hintText: 'search_country_hint'.tr(),
                 border: OutlineInputBorder(borderSide: BorderSide.none),
@@ -64,7 +61,7 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                 prefixIcon: Icon(
                   Icons.search,
                   color: greyDarkColor,
-                  size: pageStyle.unitFontSize * 20,
+                  size: 20.sp,
                 ),
               ),
             ),
@@ -82,7 +79,11 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
           children: countries.map((country) {
             bool isSelected = value == country['code'];
             int index = countries.indexOf(country);
-            bool contain = searchController.text.isEmpty || country['name'].toString().toUpperCase().contains(searchController.text.toUpperCase());
+            bool contain = searchController.text.isEmpty ||
+                country['name']
+                    .toString()
+                    .toUpperCase()
+                    .contains(searchController.text.toUpperCase());
             return contain
                 ? Column(
                     children: [
@@ -91,14 +92,14 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                         child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
-                            horizontal: pageStyle.unitWidth * 20,
-                            vertical: pageStyle.unitHeight * 10,
+                            horizontal: 20.w,
+                            vertical: 10.h,
                           ),
                           child: Row(
                             children: [
                               Container(
-                                width: pageStyle.unitWidth * 30,
-                                height: pageStyle.unitHeight * 20,
+                                width: 30.w,
+                                height: 20.h,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4),
                                   image: DecorationImage(
@@ -109,18 +110,22 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: pageStyle.unitWidth * 10),
+                              SizedBox(width: 10.w),
                               Expanded(
                                 child: Text(
                                   country['name'] + ' (${country['code']})',
                                   style: mediumTextStyle.copyWith(
-                                      fontSize: pageStyle.unitFontSize * 14, color: isSelected ? primarySwatchColor : greyDarkColor),
+                                    fontSize: 14.sp,
+                                    color: isSelected
+                                        ? primarySwatchColor
+                                        : greyDarkColor,
+                                  ),
                                 ),
                               ),
                               isSelected
                                   ? Icon(
                                       Icons.check,
-                                      size: pageStyle.unitFontSize * 18,
+                                      size: 18.sp,
                                       color: primarySwatchColor,
                                     )
                                   : SizedBox.shrink(),
@@ -128,7 +133,9 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                           ),
                         ),
                       ),
-                      index < countries.length - 1 ? Divider(color: greyColor) : SizedBox.shrink(),
+                      index < countries.length - 1
+                          ? Divider(color: greyColor)
+                          : SizedBox.shrink(),
                     ],
                   )
                 : SizedBox.shrink();

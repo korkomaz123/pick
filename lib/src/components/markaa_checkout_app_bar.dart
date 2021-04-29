@@ -4,14 +4,13 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaCheckoutAppBar extends StatefulWidget
     implements PreferredSizeWidget {
-  final PageStyle pageStyle;
   final int currentIndex;
 
-  MarkaaCheckoutAppBar({this.pageStyle, this.currentIndex});
+  MarkaaCheckoutAppBar({this.currentIndex});
 
   @override
   _MarkaaCheckoutAppBarState createState() => _MarkaaCheckoutAppBarState();
@@ -21,7 +20,6 @@ class MarkaaCheckoutAppBar extends StatefulWidget
 }
 
 class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
-  PageStyle pageStyle;
   List<String> steps = [
     'checkout_step_address'.tr(),
     'checkout_step_payment'.tr(),
@@ -30,7 +28,6 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
   }
 
   @override
@@ -40,7 +37,7 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,
-          size: pageStyle.unitFontSize * 25,
+          size: 25.sp,
           color: greyColor,
         ),
         onPressed: () => Navigator.pop(context),
@@ -49,16 +46,16 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
         'checkout_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
-          fontSize: pageStyle.unitFontSize * 23,
+          fontSize: 23.sp,
         ),
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(right: pageStyle.unitWidth * 8),
+          padding: EdgeInsets.only(right: 8.sp),
           child: IconButton(
             icon: Icon(
               Icons.close,
-              size: pageStyle.unitFontSize * 25,
+              size: 25.sp,
               color: greyColor,
             ),
             onPressed: () {
@@ -87,7 +84,7 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
                           color: widget.currentIndex == index
                               ? primaryColor
                               : Colors.black,
-                          fontSize: pageStyle.unitFontSize * 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     );

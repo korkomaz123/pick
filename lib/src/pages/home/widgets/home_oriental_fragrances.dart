@@ -11,13 +11,9 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeOrientalFragrances extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeOrientalFragrances({this.pageStyle});
-
   @override
   _HomeOrientalFragrancesState createState() => _HomeOrientalFragrancesState();
 }
@@ -37,10 +33,10 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 410,
-      margin: EdgeInsets.symmetric(vertical: widget.pageStyle.unitHeight * 10),
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 8),
+      width: 375.w,
+      height: 410.h,
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.all(8.w),
       color: Colors.white,
       child: Consumer<HomeChangeNotifier>(
         builder: (_, model, __) {
@@ -71,18 +67,18 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
           Text(
             title ?? '',
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 26,
+              fontSize: 26.sp,
               color: greyDarkColor,
             ),
           ),
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: widget.pageStyle.unitWidth * 5,
+              horizontal: 5.w,
             ),
-            height: widget.pageStyle.unitHeight * 30,
+            height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: widget.pageStyle.unitFontSize * 15,
+              titleSize: 15.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
@@ -112,24 +108,23 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
-        top: widget.pageStyle.unitHeight * 10,
+        top: 10.h,
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: list.map((item) {
             return Container(
-              margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 5),
+              margin: EdgeInsets.only(left: 5.w),
               child: ProductVVCard(
-                cardWidth: widget.pageStyle.unitWidth * 170,
-                cardHeight: widget.pageStyle.unitHeight * 330,
+                cardWidth: 170.w,
+                cardHeight: 330.h,
                 product: item,
                 isShoppingCart: true,
                 isLine: false,
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,
-                pageStyle: widget.pageStyle,
               ),
             );
           }).toList(),

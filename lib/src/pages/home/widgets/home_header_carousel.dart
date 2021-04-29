@@ -10,14 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeHeaderCarousel({this.pageStyle});
-
   @override
   _HomeHeaderCarouselState createState() => _HomeHeaderCarouselState();
 }
@@ -42,8 +38,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         sliderImages = model.sliderImages;
         if (sliderImages.isNotEmpty) {
           return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.deviceWidth * 579 / 1125,
+            width: 375.w,
+            height: 375.w * 579 / 1125,
             child: Stack(
               children: [
                 _buildImageSlider(),
@@ -53,8 +49,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           );
         } else {
           return Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.deviceWidth * 579 / 1125,
+            width: 375.w,
+            height: 375.w * 579 / 1125,
           );
         }
       },
@@ -63,8 +59,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
 
   Widget _buildImageSlider() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.deviceWidth * 579 / 1125,
+      width: 375.w,
+      height: 375.w * 579 / 1125,
       child: Swiper(
         itemCount: sliderImages.length,
         autoplay: true,
@@ -119,8 +115,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             },
             child: Image.network(
               banner.bannerImage,
-              width: widget.pageStyle.deviceWidth,
-              height: widget.pageStyle.deviceWidth * 579 / 1125,
+              width: 375.w,
+              height: 375.w * 579 / 1125,
               fit: BoxFit.fill,
             ),
           );
@@ -131,7 +127,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
 
   Widget _buildIndicator() {
     return Positioned(
-      bottom: widget.pageStyle.unitWidth * 20,
+      bottom: 20.h,
       left: 0,
       right: 0,
       child: Center(
@@ -142,8 +138,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           effect: SlideEffect(
             spacing: 8.0,
             radius: 10,
-            dotWidth: widget.pageStyle.deviceWidth / (sliderImages.length * 3),
-            dotHeight: widget.pageStyle.unitHeight * 3,
+            dotWidth: 375.w / (sliderImages.length * 3),
+            dotHeight: 3.h,
             paintStyle: PaintingStyle.fill,
             strokeWidth: 0,
             dotColor: Colors.white,

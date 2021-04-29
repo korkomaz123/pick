@@ -7,16 +7,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'home_category_card.dart';
 
 class HomeExploreCategories extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeExploreCategories({this.pageStyle});
-
   @override
   _HomeExploreCategoriesState createState() => _HomeExploreCategoriesState();
 }
@@ -35,39 +31,39 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 340,
+      width: 375.w,
+      height: 340.h,
       color: Colors.white,
-      child: Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
-        categories = categoryChangeNotifier.categories;
-        if (categories.isNotEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              _buildCategorySliders(),
-              _buildFooter(),
-            ],
-          );
-        } else {
-          return Container();
-        }
-      }),
+      child: Consumer<CategoryChangeNotifier>(
+        builder: (_, __, ___) {
+          categories = categoryChangeNotifier.categories;
+          if (categories.isNotEmpty) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitle(),
+                _buildCategorySliders(),
+                _buildFooter(),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
   Widget _buildTitle() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 15,
-      ),
+      width: 375.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Text(
         'home_categories'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
-          fontSize: widget.pageStyle.unitFontSize * 26,
+          fontSize: 26.sp,
         ),
       ),
     );
@@ -75,11 +71,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildFooter() {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 40,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 15,
-      ),
+      width: 375.w,
+      height: 40.h,
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       alignment: Alignment.centerLeft,
       child: InkWell(
         onTap: () => Navigator.pushNamed(
@@ -93,14 +87,14 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             Text(
               'view_more_categories'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
+                fontSize: 15.sp,
                 color: primaryColor,
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
+              size: 15.sp,
             ),
           ],
         ),
@@ -113,8 +107,8 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       child: Stack(
         children: [
           Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 250,
+            width: 375.w,
+            height: 250.h,
             color: Colors.white,
             child: Swiper(
               itemCount: categories.length > 10 ? 10 : categories.length,
@@ -128,7 +122,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               },
               itemBuilder: (context, index) {
                 return HomeCategoryCard(
-                  pageStyle: widget.pageStyle,
                   category: categories[index],
                 );
               },
@@ -137,9 +130,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
-              ),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
                 count: categories.length > 10 ? 10 : categories.length,
@@ -148,7 +139,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                   spacing: 8.0,
                   radius: 0,
                   dotWidth: 24.0,
-                  dotHeight: widget.pageStyle.unitHeight * 2,
+                  dotHeight: 2.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,
                   dotColor: Colors.white,

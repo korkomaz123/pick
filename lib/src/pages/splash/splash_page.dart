@@ -20,7 +20,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/styles/page_style.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
@@ -44,7 +44,6 @@ class _SplashPageState extends State<SplashPage> {
   SignInRepository signInRepo;
   CheckoutRepository checkoutRepo;
   ShippingAddressRepository shippingAddressRepo;
-  PageStyle pageStyle;
   bool isFirstTime;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -80,14 +79,15 @@ class _SplashPageState extends State<SplashPage> {
     bool isExist = await localRepo.existItem('usage');
     if (isExist) {
       isFirstTime = false;
-      _loadAssets();
+      // await _loadAssets();
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
     } else {
       isFirstTime = true;
       setState(() {});
     }
   }
 
-  void _loadAssets() async {
+  Future<void> _loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
       await signInRepo.loginFirebase(
         email: MarkaaReporter.email,
@@ -131,7 +131,6 @@ class _SplashPageState extends State<SplashPage> {
   void _loadExtraData() async {
     shippingMethods = await checkoutRepo.getShippingMethod(lang);
     paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-    sideMenus = await categoryRepo.getMenuCategories(lang);
     regions = await shippingAddressRepo.getRegions(lang);
   }
 
@@ -184,21 +183,19 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: primarySwatchColor,
       body: Container(
-        width: pageStyle.deviceWidth,
-        height: pageStyle.deviceHeight,
+        width: 375.w,
+        height: 812.h,
         child: Stack(
           children: [
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                width: pageStyle.unitWidth * 260.94,
-                height: pageStyle.unitHeight * 180,
-                margin: EdgeInsets.only(top: pageStyle.unitHeight * 262.7),
+                width: 260.94.w,
+                height: 180.h,
+                margin: EdgeInsets.only(top: 262.7.h),
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
@@ -207,18 +204,18 @@ class _SplashPageState extends State<SplashPage> {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   padding: EdgeInsets.only(
-                    bottom: pageStyle.unitHeight * 141,
+                    bottom: 141.h,
                   ),
                   width: double.infinity,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: pageStyle.unitWidth * 145,
-                        height: pageStyle.unitHeight * 49,
+                        width: 145.w,
+                        height: 49.h,
                         child: MarkaaTextButton(
                           title: 'English',
-                          titleSize: pageStyle.unitFontSize * 20,
+                          titleSize: 20.sp,
                           titleColor: Colors.white,
                           buttonColor: Color(0xFFF7941D),
                           borderColor: Colors.transparent,
@@ -226,13 +223,13 @@ class _SplashPageState extends State<SplashPage> {
                           radius: 30,
                         ),
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 13),
+                      SizedBox(width: 13.w),
                       Container(
-                        width: pageStyle.unitWidth * 145,
-                        height: pageStyle.unitHeight * 49,
+                        width: 145.w,
+                        height: 49.h,
                         child: MarkaaTextButton(
                           title: 'عربى',
-                          titleSize: pageStyle.unitFontSize * 20,
+                          titleSize: 20.sp,
                           titleColor: Colors.white,
                           buttonColor: Color(0xFFF7941D),
                           borderColor: Colors.transparent,

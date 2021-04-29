@@ -4,7 +4,6 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -19,7 +18,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutAddressPage extends StatefulWidget {
   final OrderEntity reorder;
@@ -31,7 +30,6 @@ class CheckoutAddressPage extends StatefulWidget {
 }
 
 class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
-  PageStyle pageStyle;
   FlushBarService flushBarService;
   ProgressService progressService;
   TextEditingController firstNameController = TextEditingController();
@@ -65,11 +63,9 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 0),
+      appBar: MarkaaCheckoutAppBar(currentIndex: 0),
       body: Consumer<AddressChangeNotifier>(
         builder: (_, model, __) {
           addressChangeNotifier = model;
@@ -83,7 +79,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                   _buildNoAddress(),
                 ],
                 if (model.defaultAddress == null && model.keys.isNotEmpty) ...[
-                  SizedBox(height: pageStyle.unitHeight * 50)
+                  SizedBox(height: 50.h)
                 ],
                 if (model.defaultAddress != null) ...[
                   _buildChangeAddressButton(),
@@ -104,16 +100,16 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
 
   Widget _buildNoAddress() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
         children: [
           SvgPicture.asset(addressIcon),
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Text(
             'no_saved_addresses'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 12,
+              fontSize: 12.sp,
               color: greyDarkColor,
             ),
           ),
@@ -124,15 +120,9 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
 
   Widget _buildSelectedAddress(AddressChangeNotifier model) {
     return Container(
-      width: pageStyle.deviceWidth,
-      margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 15,
-      ),
+      width: 375.w,
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(10),
@@ -144,40 +134,40 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             model.defaultAddress.title,
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 6),
+          SizedBox(height: 6.h),
           Text(
             model.defaultAddress.country,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 6),
+          SizedBox(height: 6.h),
           Text(
             model.defaultAddress.city,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 6),
+          SizedBox(height: 6.h),
           Text(
             model.defaultAddress.street,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 6),
+          SizedBox(height: 6.h),
           Text(
             'phone_number_hint'.tr() + ': ' + model.defaultAddress.phoneNumber,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -187,50 +177,48 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
 
   Widget _buildChangeAddressButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      width: 375.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: MarkaaTextIconButton(
         title: 'checkout_change_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
         icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onChangeAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
 
   Widget _buildSelectAddressButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      width: 375.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: MarkaaTextIconButton(
         title: 'checkout_select_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
         icon: SvgPicture.asset(selectAddrIcon),
         onPressed: () => _onChangeAddress(),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
 
   Widget _buildCreateAddressButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+      width: 375.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: MarkaaTextIconButton(
         title: 'create_address_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
@@ -241,17 +229,13 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           arguments: {'isCheckout': true},
         ),
         radius: 0,
-        pageStyle: pageStyle,
       ),
     );
   }
 
   Widget _buildNote() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 20,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -259,7 +243,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
             'checkout_note_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 17,
+              fontSize: 17.sp,
             ),
           ),
           Container(
@@ -268,7 +252,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
               controller: noteController,
               style: mediumTextStyle.copyWith(
                 color: greyColor,
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
               ),
               decoration: InputDecoration(
                 hintText: 'checkout_note_hint'.tr(),
@@ -289,10 +273,10 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
 
   Widget _buildToolbarButtons() {
     return Container(
-      width: pageStyle.unitWidth * 210,
+      width: 210.w,
       child: MarkaaTextButton(
         title: 'checkout_continue_payment_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 12,
+        titleSize: 12.sp,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -367,7 +351,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       );
     } else {
       flushBarService.showErrorMessage(
-        pageStyle,
         'required_address_title'.tr(),
       );
     }
