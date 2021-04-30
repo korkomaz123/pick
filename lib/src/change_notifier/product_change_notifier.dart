@@ -23,11 +23,15 @@ class ProductChangeNotifier extends ChangeNotifier {
     isReachedMax = false;
   }
 
+  setInitalInfo(ProductModel product) {
+    productDetails = ProductEntity.fronProduct(product);
+  }
+
   Future<void> getProductDetails(String productId, String lang) async {
     selectedOptions = {};
-    productDetails = null;
     selectedVariant = null;
     final result = await productRepository.getProductDetails(productId, lang);
+    productDetails = null;
     if (result['code'] == 'SUCCESS') {
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }

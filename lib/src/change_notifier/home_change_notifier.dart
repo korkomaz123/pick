@@ -26,15 +26,34 @@ class HomeChangeNotifier extends ChangeNotifier {
   String message;
   String bestDealsBannerTitle = '';
 
-  changeLanguage() {}
+  changeLanguage() {
+    print("changeLanguage");
+    loadSliderImages();
+    getFeaturedCategoriesList();
+    loadBestDeals();
+    getHomeCategories();
+    loadMegaBanner();
+    loadNewArrivalsBanner();
+    loadNewArrivals();
+    loadExculisiveBanner();
+    loadOrientalProducts();
+    loadBestDealsBanner();
+    loadFragrancesBanner();
+    loadPerfumes();
+    loadBestWatches();
+    loadAds();
+    getViewedProducts();
+    loadGrooming();
+    loadSmartTech();
+    getCategoriesList();
+    getBrandsList('home');
+  }
 
   List<SliderImageEntity> sliderImages = [];
   Future loadSliderImages() async {
     try {
-      String key = 'slider-images-${Config.language}';
       final result = await homeRepository.getHomeSliderImages(Config.language);
       if (result['code'] == 'SUCCESS') {
-        await localStorageRepository.setItem(key, result['data']);
         sliderImages.clear();
         for (int i = 0; i < result['data'].length; i++) {
           sliderImages.add(SliderImageEntity.fromJson(result['data'][i]));
@@ -324,7 +343,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   Future getViewedProducts() async {
-    print("user ==>");
+    print("user ==> 111");
     print(user);
     if (user?.token != null) {
       await loadRecentlyViewedCustomer();
