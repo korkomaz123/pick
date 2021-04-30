@@ -11,6 +11,7 @@ const String storeIcon = '$iconsAssetPath/store-icon.svg';
 const String wishlistIcon = '$iconsAssetPath/wishlist-icon.svg';
 const String wishlistOpacityIcon = '$iconsAssetPath/wishlist-opacity-icon.svg';
 const String addCartIcon = '$iconsAssetPath/addtocart.svg';
+const String addCart1Icon = '$iconsAssetPath/add-cart-icon.svg';
 const String wishlistedIcon = '$iconsAssetPath/wishlisted-icon.svg';
 const String userIcon = '$iconsAssetPath/user-icon.svg';
 const String filterIcon = '$iconsAssetPath/filter-icon.svg';

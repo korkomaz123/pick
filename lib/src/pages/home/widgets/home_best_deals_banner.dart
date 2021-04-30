@@ -12,109 +12,105 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeBestDealsBanner extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeBestDealsBanner({@required this.model});
+
   @override
   _HomeBestDealsBannerState createState() => _HomeBestDealsBannerState();
 }
 
 class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        if (model.bestDealsBanners.isNotEmpty) {
-          final banner = model.bestDealsBanners[0];
-          return Container(
-            width: 375.w,
-            color: Colors.white,
-            margin: EdgeInsets.only(bottom: 10.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 10.h,
-                  ),
-                  child: Text(
-                    model.bestDealsBannerTitle,
-                    style: mediumTextStyle.copyWith(fontSize: 26.sp),
-                  ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (banner.categoryId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(
-                          id: banner.categoryId,
-                          name: banner.categoryName,
-                        ),
-                        brand: BrandEntity(),
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: false,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner?.brand?.optionId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(),
-                        brand: banner.brand,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner?.productId != null) {
-                      final product = await productRepository.getProduct(
-                          banner.productId, lang);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.product,
-                        (route) => route.settings.name == Routes.home,
-                        arguments: product,
-                      );
-                    }
-                  },
-                  child: Image.network(banner.bannerImage),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: model.bestDealsItems.map((item) {
-                      return ProductCard(
-                        cardWidth: 120.w,
-                        cardHeight: 175.w,
-                        product: item,
-                        isWishlist: true,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+    final banner = model.bestDealsBanners[0];
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      margin: EdgeInsets.only(bottom: 10.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 10.h,
             ),
-          );
-        } else {
-          return Container();
-        }
-      },
+            child: Text(
+              model.bestDealsBannerTitle,
+              style: mediumTextStyle.copyWith(fontSize: 26.sp),
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              if (banner.categoryId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(
+                    id: banner.categoryId,
+                    name: banner.categoryName,
+                  ),
+                  brand: BrandEntity(),
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: banner.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.productId != null) {
+                final product =
+                    await productRepository.getProduct(banner.productId, lang);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Routes.product,
+                  (route) => route.settings.name == Routes.home,
+                  arguments: product,
+                );
+              }
+            },
+            child: Image.network(banner.bannerImage),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: model.bestDealsItems.map((item) {
+                return ProductCard(
+                  cardWidth: 120.w,
+                  cardHeight: 175.w,
+                  product: item,
+                  isWishlist: true,
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

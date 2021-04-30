@@ -16,6 +16,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomePerfumes extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomePerfumes({this.model});
+
   @override
   _HomePerfumesState createState() => _HomePerfumesState();
 }
@@ -24,13 +28,15 @@ class _HomePerfumesState extends State<HomePerfumes> {
   CategoryEntity perfumes = homeCategories[2];
   List<ProductModel> perfumesProducts;
   String title;
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   int activeIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
+    perfumesProducts = model.perfumesProducts;
+    title = model.perfumesTitle;
   }
 
   @override
@@ -40,27 +46,17 @@ class _HomePerfumesState extends State<HomePerfumes> {
       padding: EdgeInsets.all(8.w),
       margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,
-      child: Consumer<HomeChangeNotifier>(
-        builder: (_, model, __) {
-          perfumesProducts = model.perfumesProducts;
-          title = model.perfumesTitle;
-          if (perfumesProducts.isNotEmpty && perfumesProducts.length > 4) {
-            return Column(
-              children: [
-                _buildProductView(),
-                Divider(
-                  height: 1.5.h,
-                  thickness: 1.5.h,
-                  color: greyColor.withOpacity(0.4),
-                ),
-                _buildIndicator(),
-                _buildFooter(context),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        children: [
+          _buildProductView(),
+          Divider(
+            height: 1.5.h,
+            thickness: 1.5.h,
+            color: greyColor.withOpacity(0.4),
+          ),
+          _buildIndicator(),
+          _buildFooter(context),
+        ],
       ),
     );
   }

@@ -95,7 +95,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
   int loadingIndex = 0;
-  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -119,19 +118,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
     _initializeLocalNotification();
     _configureMessaging();
-    _onLoadHomePage();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (loadingIndex < 2) {
-      double maxScroll = _scrollController.position.maxScrollExtent;
-      double currentScroll = _scrollController.position.pixels;
-      if (maxScroll - currentScroll <= 300) {
-        loadingIndex += 1;
-        _onLoadHomePage();
-      }
-    }
   }
 
   void _setupAdjustSDK() async {
@@ -497,34 +483,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> _onRefresh() async {
-    loadingIndex = 1;
-    _onLoadHomePage();
-  }
+  Future<void> _onRefresh() async {}
 
-  void _onLoadHomePage() async {
-    homeChangeNotifier.loadSliderImages(lang);
-    categoryChangeNotifier.getFeaturedCategoriesList(lang);
-    homeChangeNotifier.loadMegaBanner(lang);
-    homeChangeNotifier.loadBestDeals(lang);
-    homeChangeNotifier.loadBestDealsBanner(lang);
-    homeChangeNotifier.loadNewArrivals(lang);
-    homeChangeNotifier.loadExculisiveBanner(lang);
-    homeChangeNotifier.loadOrientalProducts(lang);
-    homeChangeNotifier.loadNewArrivalsBanner(lang);
-    homeChangeNotifier.loadFragrancesBanner(lang);
-    homeChangeNotifier.loadPerfumes(lang);
-    homeChangeNotifier.loadBestWatches(lang);
-    homeChangeNotifier.loadGrooming(lang);
-    homeChangeNotifier.loadAds(lang);
-    homeChangeNotifier.loadSmartTech(lang);
-    categoryChangeNotifier.getCategoriesList(lang);
-    brandChangeNotifier.getBrandsList(lang, 'home');
+  Future<dynamic> loadRecentViews() async {
     if (user?.token != null) {
-      homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+      await homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
     } else {
       List<String> ids = await localStorageRepository.getRecentlyViewedIds();
-      homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
+      await homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     }
   }
 
@@ -548,27 +514,193 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             itemBuilder: (ctx, index) {
               return Column(
                 children: [
-                  HomeHeaderCarousel(),
-                  HomeFeaturedCategories(),
-                  HomeMegaBanner(),
-                  HomeBestDeals(),
-                  HomeBestDealsBanner(),
-                  HomeNewArrivals(),
-                  HomeExculisiveBanner(),
-                  HomeOrientalFragrances(),
-                  HomeNewArrivalsBanner(),
-                  HomeFragrancesBanners(),
-                  HomePerfumes(),
-                  HomeBestWatches(),
-                  HomeGrooming(),
-                  HomeAdvertise(),
-                  HomeSmartTech(),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadSliderImages(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeHeaderCarousel(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future:
+                        categoryChangeNotifier.getFeaturedCategoriesList(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeFeaturedCategories(
+                            model: categoryChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadMegaBanner(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeMegaBanner(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadBestDeals(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeBestDeals(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadBestDealsBanner(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeBestDealsBanner(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadNewArrivals(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeNewArrivals(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadExculisiveBanner(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeExculisiveBanner(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadOrientalProducts(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeOrientalFragrances(
+                            model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadNewArrivalsBanner(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeNewArrivalsBanner(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadFragrancesBanner(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeFragrancesBanners(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadPerfumes(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomePerfumes(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadBestWatches(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeBestWatches(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadGrooming(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeGrooming(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadAds(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeAdvertise(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: homeChangeNotifier.loadSmartTech(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeSmartTech(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                   SizedBox(height: 10.h),
-                  HomeExploreCategories(),
+                  FutureBuilder(
+                    future: categoryChangeNotifier.getCategoriesList(lang),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeExploreCategories(
+                            model: categoryChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                   SizedBox(height: 10.h),
-                  HomeDiscoverStores(),
+                  FutureBuilder(
+                    future: brandChangeNotifier.getBrandsList(lang, 'home'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeDiscoverStores(model: brandChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                   SizedBox(height: 10.h),
-                  HomeRecent(),
+                  FutureBuilder(
+                    future: loadRecentViews(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeRecent(model: homeChangeNotifier);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                 ],
               );
             },

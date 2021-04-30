@@ -79,7 +79,7 @@ class _SplashPageState extends State<SplashPage> {
     bool isExist = await localRepo.existItem('usage');
     if (isExist) {
       isFirstTime = false;
-      // await _loadAssets();
+      await _loadAssets();
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
     } else {
       isFirstTime = true;
@@ -132,6 +132,7 @@ class _SplashPageState extends State<SplashPage> {
     shippingMethods = await checkoutRepo.getShippingMethod(lang);
     paymentMethods = await checkoutRepo.getPaymentMethod(lang);
     regions = await shippingAddressRepo.getRegions(lang);
+    sideMenus = await categoryRepo.getMenuCategories(lang);
   }
 
   Future<void> checkAppVersion() async {

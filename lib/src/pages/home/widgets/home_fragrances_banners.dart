@@ -12,40 +12,40 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeFragrancesBanners extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeFragrancesBanners({this.model});
+
   @override
   _HomeFragrancesBannersState createState() => _HomeFragrancesBannersState();
 }
 
 class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        return Container(
-          width: 375.w,
-          color: Colors.white,
-          child: Column(
-            children: [
-              if (model.fragrancesBannersTitle.isNotEmpty) ...[
-                _buildTitle(model.fragrancesBannersTitle)
-              ],
-              if (model.fragrancesBanners.isNotEmpty) ...[
-                _buildBanners(model.fragrancesBanners)
-              ]
-            ],
-          ),
-        );
-      },
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      child: Column(
+        children: [
+          if (model.fragrancesBannersTitle.isNotEmpty) ...[
+            _buildTitle(model.fragrancesBannersTitle)
+          ],
+          if (model.fragrancesBanners.isNotEmpty) ...[
+            _buildBanners(model.fragrancesBanners)
+          ]
+        ],
+      ),
     );
   }
 

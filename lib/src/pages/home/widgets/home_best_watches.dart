@@ -13,39 +13,39 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeBestWatches extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeBestWatches({this.model});
+
   @override
   _HomeBestWatchSecties createState() => _HomeBestWatchSecties();
 }
 
 class _HomeBestWatchSecties extends State<HomeBestWatches> {
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        return Container(
-          width: 375.w,
-          child: Column(
-            children: [
-              if (model.bestWatchesBanner != null) ...[
-                _buildBanner(model.bestWatchesBanner)
-              ],
-              if (model.bestWatchesItems.isNotEmpty) ...[
-                _buildProducts(model.bestWatchesItems)
-              ]
-            ],
-          ),
-        );
-      },
+    return Container(
+      width: 375.w,
+      child: Column(
+        children: [
+          if (model.bestWatchesBanner != null) ...[
+            _buildBanner(model.bestWatchesBanner)
+          ],
+          if (model.bestWatchesItems.isNotEmpty) ...[
+            _buildProducts(model.bestWatchesItems)
+          ]
+        ],
+      ),
     );
   }
 
@@ -108,13 +108,14 @@ class _HomeBestWatchSecties extends State<HomeBestWatches> {
               margin: EdgeInsets.only(left: 5.w),
               child: ProductVVCard(
                 cardWidth: 170.w,
-                cardHeight: 330.h,
+                cardHeight: 350.h,
                 product: item,
                 isShoppingCart: true,
-                isLine: false,
+                isLine: true,
                 isMinor: true,
                 isWishlist: true,
                 isShare: false,
+                isPrimary: false,
               ),
             );
           }).toList(),

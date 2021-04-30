@@ -14,6 +14,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeOrientalFragrances extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeOrientalFragrances({this.model});
+
   @override
   _HomeOrientalFragrancesState createState() => _HomeOrientalFragrancesState();
 }
@@ -22,12 +26,15 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
   String title;
   CategoryEntity orientalCategory;
   List<ProductModel> orientalProducts;
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
+    orientalProducts = model.orientalProducts;
+    title = model.orientalTitle;
+    orientalCategory = model.orientalCategory;
   }
 
   @override
@@ -38,22 +45,11 @@ class _HomeOrientalFragrancesState extends State<HomeOrientalFragrances> {
       margin: EdgeInsets.symmetric(vertical: 10.h),
       padding: EdgeInsets.all(8.w),
       color: Colors.white,
-      child: Consumer<HomeChangeNotifier>(
-        builder: (_, model, __) {
-          orientalProducts = model.orientalProducts;
-          title = model.orientalTitle;
-          orientalCategory = model.orientalCategory;
-          if (orientalProducts.isNotEmpty) {
-            return Column(
-              children: [
-                _buildHeadline(),
-                _buildProductsList(model.orientalProducts),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        children: [
+          _buildHeadline(),
+          _buildProductsList(model.orientalProducts),
+        ],
       ),
     );
   }

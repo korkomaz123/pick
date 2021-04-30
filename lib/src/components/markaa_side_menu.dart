@@ -52,7 +52,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
-  CategoryRepository categoryRepo;
 
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -69,7 +68,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     signInBloc = context.read<SignInBloc>();
     localRepo = context.read<LocalStorageRepository>();
     settingRepo = context.read<SettingRepository>();
-    categoryRepo = context.read<CategoryRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -239,39 +237,26 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     return Container(
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
-      child: FutureBuilder(
-        future: categoryRepo.getMenuCategories(lang),
-        initialData: sideMenus,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            sideMenus = snapshot.data;
-            return Column(
-              children: sideMenus.map((menu) {
-                int index = sideMenus.indexOf(menu);
-                return Column(
-                  key: activeIndex == index ? dataKey : null,
-                  children: [
-                    _buildParentMenu(menu, index),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 4.h,
-                      ),
-                      child: Divider(
-                        color: Colors.grey.shade400,
-                        height: 1.h,
-                      ),
-                    ),
-                    activeMenu == menu.id
-                        ? _buildSubmenu(menu)
-                        : SizedBox.shrink(),
-                  ],
-                );
-              }).toList(),
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        children: sideMenus.map((menu) {
+          int index = sideMenus.indexOf(menu);
+          return Column(
+            key: activeIndex == index ? dataKey : null,
+            children: [
+              _buildParentMenu(menu, index),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 4.h,
+                ),
+                child: Divider(
+                  color: Colors.grey.shade400,
+                  height: 1.h,
+                ),
+              ),
+              activeMenu == menu.id ? _buildSubmenu(menu) : SizedBox.shrink(),
+            ],
+          );
+        }).toList(),
       ),
     );
   }

@@ -26,7 +26,7 @@ class CategoryChangeNotifier extends ChangeNotifier {
     // notifyListeners();
   }
 
-  void getFeaturedCategoriesList(String lang) async {
+  Future<void> getFeaturedCategoriesList(String lang) async {
     String key = 'featured-categories-$lang';
     final exist = await localStorageRepository.existItem(key);
     if (exist) {
@@ -51,7 +51,7 @@ class CategoryChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void getCategoriesList(String lang) async {
+  Future<void> getCategoriesList(String lang) async {
     String key = 'categories-$lang';
     final exist = await localStorageRepository.existItem(key);
     if (exist) {

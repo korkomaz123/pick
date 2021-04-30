@@ -13,6 +13,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
+  final BrandChangeNotifier model;
+
+  HomeDiscoverStores({@required this.model});
   @override
   _HomeDiscoverStoresState createState() => _HomeDiscoverStoresState();
 }
@@ -20,12 +23,13 @@ class HomeDiscoverStores extends StatefulWidget {
 class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   int activeIndex = 0;
   List<BrandEntity> brands = [];
-  BrandChangeNotifier brandChangeNotifier;
+  BrandChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
+    model = widget.model;
+    brands = model.brandList;
   }
 
   @override
@@ -35,27 +39,20 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       height: 395.h,
       color: Colors.white,
       padding: EdgeInsets.all(15.w),
-      child: Consumer<BrandChangeNotifier>(builder: (_, __, ___) {
-        brands = brandChangeNotifier.brandList;
-        if (brands.isNotEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              SizedBox(height: 20.h),
-              _buildStoresSlider(),
-              Divider(
-                height: 4.h,
-                thickness: 1.5.h,
-                color: greyColor.withOpacity(0.4),
-              ),
-              _buildFooter(),
-            ],
-          );
-        } else {
-          return Container();
-        }
-      }),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitle(),
+          SizedBox(height: 20.h),
+          _buildStoresSlider(),
+          Divider(
+            height: 4.h,
+            thickness: 1.5.h,
+            color: greyColor.withOpacity(0.4),
+          ),
+          _buildFooter(),
+        ],
+      ),
     );
   }
 

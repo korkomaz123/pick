@@ -15,6 +15,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeNewArrivals({this.model});
+
   @override
   _HomeNewArrivalsState createState() => _HomeNewArrivalsState();
 }
@@ -23,12 +27,14 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
   CategoryEntity newArrivals = homeCategories[1];
   List<ProductModel> newArrivalsProducts;
   String title;
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
+    newArrivalsProducts = model.newArrivalsProducts;
+    title = model.newArrivalsTitle;
   }
 
   @override
@@ -39,30 +45,20 @@ class _HomeNewArrivalsState extends State<HomeNewArrivals> {
       padding: EdgeInsets.all(8.w),
       margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,
-      child: Consumer<HomeChangeNotifier>(
-        builder: (_, model, __) {
-          newArrivalsProducts = model.newArrivalsProducts;
-          title = model.newArrivalsTitle;
-          if (newArrivalsProducts.isNotEmpty) {
-            return Column(
-              children: [
-                _buildHeadline(),
-                HomeProductsCarousel(
-                  products: newArrivalsProducts,
-                  isVerticalCard: false,
-                ),
-                Divider(
-                  height: 4.h,
-                  thickness: 1.5.h,
-                  color: greyColor.withOpacity(0.4),
-                ),
-                _buildFooter(context),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        children: [
+          _buildHeadline(),
+          HomeProductsCarousel(
+            products: newArrivalsProducts,
+            isVerticalCard: false,
+          ),
+          Divider(
+            height: 4.h,
+            thickness: 1.5.h,
+            color: greyColor.withOpacity(0.4),
+          ),
+          _buildFooter(context),
+        ],
       ),
     );
   }

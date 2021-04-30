@@ -463,13 +463,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'sku'.tr() + ': ' + productEntity.sku,
-            style: mediumTextStyle.copyWith(
-              fontSize: 12.sp,
-              color: primaryColor,
-            ),
-          ),
           Row(
             children: [
               if (productEntity.discount > 0 ||
@@ -520,6 +513,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 ],
               ),
             ],
+          ),
+          Text(
+            'sku'.tr() + ': ' + productEntity.sku,
+            style: mediumTextStyle.copyWith(
+              fontSize: 12.sp,
+              color: primaryColor,
+            ),
           ),
         ],
       ),

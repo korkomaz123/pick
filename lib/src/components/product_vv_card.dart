@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -31,6 +32,7 @@ class ProductVVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
+  final bool isPrimary;
 
   ProductVVCard({
     this.cardWidth,
@@ -41,6 +43,7 @@ class ProductVVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
+    this.isPrimary = true,
   });
 
   @override
@@ -219,7 +222,6 @@ class _ProductVVCardState extends State<ProductVVCard>
                     ),
                   )
                 ],
-                if (widget.isLine) ...[Divider(color: greyColor)],
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.h),
                   child: Row(
@@ -250,25 +252,46 @@ class _ProductVVCardState extends State<ProductVVCard>
                     ],
                   ),
                 ),
+                if (widget.isLine) ...[Divider(color: primaryColor)],
                 if (widget.isShoppingCart &&
                     (widget.product.typeId != 'simple' ||
                         widget.product.stockQty != null &&
                             widget.product.stockQty > 0)) ...[
-                  ScaleTransition(
-                    scale: _addToCartScaleAnimation,
-                    child: Container(
-                      width: widget.cardWidth - 16.w,
-                      height: 35.h,
-                      child: MarkaaTextButton(
-                        title: 'wishlist_add_cart_button_title'.tr(),
-                        titleColor: Colors.white,
-                        titleSize: 14.sp,
-                        borderColor: Colors.transparent,
-                        buttonColor: primaryColor,
-                        onPressed: () => _onAddProductToCart(context),
+                  if (widget.isPrimary) ...[
+                    ScaleTransition(
+                      scale: _addToCartScaleAnimation,
+                      child: Container(
+                        width: widget.cardWidth - 16.w,
+                        height: 35.h,
+                        child: MarkaaTextButton(
+                          title: 'wishlist_add_cart_button_title'.tr(),
+                          titleColor: Colors.white,
+                          titleSize: 14.sp,
+                          borderColor: Colors.transparent,
+                          buttonColor: primaryColor,
+                          onPressed: () => _onAddProductToCart(context),
+                        ),
+                      ),
+                    )
+                  ] else ...[
+                    ScaleTransition(
+                      scale: _addToCartScaleAnimation,
+                      child: Container(
+                        width: widget.cardWidth,
+                        height: 35.h,
+                        child: MarkaaTextIconButton(
+                          title: 'wishlist_add_cart_button_title'.tr(),
+                          titleColor: primaryColor,
+                          titleSize: 14.sp,
+                          icon: SvgPicture.asset(addCart1Icon, width: 24.w),
+                          leading: false,
+                          borderColor: Colors.transparent,
+                          buttonColor: Colors.white,
+                          onPressed: () => _onAddProductToCart(context),
+                        ),
                       ),
                     ),
-                  )
+                  ]
                 ] else ...[
                   SizedBox.shrink()
                 ],

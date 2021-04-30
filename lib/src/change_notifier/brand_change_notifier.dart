@@ -12,7 +12,7 @@ class BrandChangeNotifier extends ChangeNotifier {
   List<BrandEntity> brandList = [];
   List<BrandEntity> sortedBrandList = [];
 
-  void getBrandsList(String lang, String from) async {
+  Future<void> getBrandsList(String lang, String from) async {
     String key = 'brands-$lang-$from';
     final exist = await localStorageRepository.existItem(key);
     if (exist) {

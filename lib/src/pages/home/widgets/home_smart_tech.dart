@@ -17,46 +17,46 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeSmartTech extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeSmartTech({this.model});
+
   @override
   _HomeSmartTechState createState() => _HomeSmartTechState();
 }
 
 class _HomeSmartTechState extends State<HomeSmartTech> {
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        return Container(
-          width: 375.w,
-          color: Colors.white,
-          child: Column(
-            children: [
-              if (model.smartTechTitle.isNotEmpty) ...[
-                _buildTitle(model.smartTechTitle)
-              ],
-              if (model.smartTechBanners.isNotEmpty) ...[
-                _buildBanners(model.smartTechBanners)
-              ],
-              if (model.smartTechItems.isNotEmpty) ...[
-                _buildProducts(model.smartTechItems)
-              ],
-              if (model.smartTechCategory != null) ...[
-                _buildFooter(model.smartTechCategory, model.smartTechTitle)
-              ],
-            ],
-          ),
-        );
-      },
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      child: Column(
+        children: [
+          if (model.smartTechTitle.isNotEmpty) ...[
+            _buildTitle(model.smartTechTitle)
+          ],
+          if (model.smartTechBanners.isNotEmpty) ...[
+            _buildBanners(model.smartTechBanners)
+          ],
+          if (model.smartTechItems.isNotEmpty) ...[
+            _buildProducts(model.smartTechItems)
+          ],
+          if (model.smartTechCategory != null) ...[
+            _buildFooter(model.smartTechCategory, model.smartTechTitle)
+          ],
+        ],
+      ),
     );
   }
 

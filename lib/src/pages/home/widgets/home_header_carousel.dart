@@ -14,6 +14,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeHeaderCarousel({this.model});
+
   @override
   _HomeHeaderCarouselState createState() => _HomeHeaderCarouselState();
 }
@@ -21,40 +25,36 @@ class HomeHeaderCarousel extends StatefulWidget {
 class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   int activeIndex = 0;
   List<SliderImageEntity> sliderImages;
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
   ProductRepository productRepository;
 
   @override
   void initState() {
     super.initState();
     productRepository = context.read<ProductRepository>();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
+    sliderImages = model.sliderImages;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        sliderImages = model.sliderImages;
-        if (sliderImages.isNotEmpty) {
-          return Container(
-            width: 375.w,
-            height: 375.w * 579 / 1125,
-            child: Stack(
-              children: [
-                _buildImageSlider(),
-                _buildIndicator(),
-              ],
-            ),
-          );
-        } else {
-          return Container(
-            width: 375.w,
-            height: 375.w * 579 / 1125,
-          );
-        }
-      },
-    );
+    if (sliderImages.isNotEmpty) {
+      return Container(
+        width: 375.w,
+        height: 375.w * 579 / 1125,
+        child: Stack(
+          children: [
+            _buildImageSlider(),
+            _buildIndicator(),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        width: 375.w,
+        height: 375.w * 579 / 1125,
+      );
+    }
   }
 
   Widget _buildImageSlider() {

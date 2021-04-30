@@ -30,6 +30,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   ProcessStatus processStatus = ProcessStatus.none;
   String cartId = '';
   double cartTotalPrice = .0;
+  double cartDiscountedTotalPrice = .0;
   int cartItemCount = 0;
   int cartTotalCount = 0;
   String couponCode = '';
@@ -50,6 +51,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartItemCount = 0;
     cartTotalPrice = .0;
     cartTotalCount = 0;
+    cartDiscountedTotalPrice = 0;
     cartItemsMap = {};
     reorderCartId = '';
     reorderCartItemCount = 0;
@@ -71,8 +73,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final data = {'action': 'getCartItems'};
     cartItemCount = 0;
     cartTotalPrice = .0;
+    cartDiscountedTotalPrice = 0;
     cartTotalCount = 0;
     cartItemsMap = {};
+    discount = 0;
+    couponCode = '';
+    type = '';
     processStatus = ProcessStatus.process;
     if (onProcess != null) {
       onProcess();
@@ -80,15 +86,21 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await myCartRepository.getCartItems(cartId, lang);
       if (result['code'] == 'SUCCESS') {
+        couponCode = result['couponCode'];
+        discount = result['discount'] + .0;
+        type = result['type'];
+
         cartItemCount = result['items'].length;
         for (var item in result['items']) {
           cartItemsMap[item.itemId] = item;
           cartTotalPrice += item.rowPrice;
           cartTotalCount += item.itemCount;
+          cartDiscountedTotalPrice +=
+              item.product.beforePrice == item?.product?.price
+                  ? item.rowPrice * (100 - discount) / 100
+                  : item.rowPrice;
         }
-        couponCode = result['couponCode'];
-        discount = result['discount'] + .0;
-        type = result['type'];
+
         processStatus = ProcessStatus.done;
         if (onSuccess != null) {
           onSuccess();
@@ -144,6 +156,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final data = {'action': 'removeCartItem', 'productId': key};
     final item = cartItemsMap[key];
     cartTotalPrice -= cartItemsMap[key].rowPrice;
+    cartDiscountedTotalPrice -= item.product.beforePrice == item?.product?.price
+        ? item.rowPrice * (100 - discount) / 100
+        : item.rowPrice;
     cartItemCount -= 1;
     cartTotalCount -= cartItemsMap[key].itemCount;
     cartItemsMap.remove(key);
@@ -153,6 +168,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (result['code'] != 'SUCCESS') {
         onFailure('$cartIssue$cartId');
         cartTotalPrice += item.rowPrice;
+        cartDiscountedTotalPrice +=
+            item.product.beforePrice == item?.product?.price
+                ? item.rowPrice * (100 - discount) / 100
+                : item.rowPrice;
         cartItemCount += 1;
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
@@ -165,6 +184,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
     } catch (e) {
       onFailure('$cartIssue$cartId\nMore details: $e');
       cartTotalPrice += item.rowPrice;
+      cartDiscountedTotalPrice +=
+          item.product.beforePrice == item?.product?.price
+              ? item.rowPrice * (100 - discount) / 100
+              : item.rowPrice;
       cartItemCount += 1;
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
@@ -195,13 +218,22 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartId, product.productId, '$qty', lang, options);
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
+        CartItemEntity oldItem = cartItemsMap[newItem.itemId];
         if (cartItemsMap.containsKey(newItem.itemId)) {
-          cartTotalPrice -= cartItemsMap[newItem.itemId].rowPrice;
+          cartTotalPrice -= oldItem.rowPrice;
+          cartDiscountedTotalPrice -=
+              oldItem.product.beforePrice == oldItem?.product?.price
+                  ? oldItem.rowPrice * (100 - discount) / 100
+                  : oldItem.rowPrice;
         } else {
           cartItemCount += 1;
         }
         cartTotalCount += qty;
         cartTotalPrice += newItem.rowPrice;
+        cartDiscountedTotalPrice +=
+            newItem.product.beforePrice == newItem?.product?.price
+                ? newItem.rowPrice * (100 - discount) / 100
+                : newItem.rowPrice;
         cartItemsMap[newItem.itemId] = newItem;
         notifyListeners();
         flushBarService.showAddCartMessage(product);
@@ -234,8 +266,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'qty': qty
     };
     int updatedQty = qty - item.itemCount;
+    double updatedPrice = double.parse(item.product.price) * updatedQty;
     cartTotalCount += updatedQty;
-    cartTotalPrice += double.parse(item.product.price) * updatedQty;
+    cartTotalPrice += updatedPrice;
+    cartDiscountedTotalPrice += item.product.beforePrice == item?.product?.price
+        ? updatedPrice * (100 - discount) / 100
+        : updatedPrice;
     cartItemsMap[item.itemId].itemCount = qty;
     cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
     notifyListeners();
@@ -245,7 +281,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (result['code'] != 'SUCCESS') {
         onFailure('$cartIssue$cartId');
         cartTotalCount -= updatedQty;
-        cartTotalPrice -= double.parse(item.product.price) * updatedQty;
+        cartTotalPrice -= updatedPrice;
+        cartDiscountedTotalPrice -=
+            item.product.beforePrice == item?.product?.price
+                ? updatedPrice * (100 - discount) / 100
+                : updatedPrice;
         cartItemsMap[item.itemId].itemCount = item.itemCount;
         cartItemsMap[item.itemId].rowPrice =
             double.parse(item.product.price) * item.itemCount;
@@ -258,7 +298,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
     } catch (e) {
       onFailure('$cartIssue$cartId\nMore details: $e');
       cartTotalCount -= updatedQty;
-      cartTotalPrice -= double.parse(item.product.price) * updatedQty;
+      cartTotalPrice -= updatedPrice;
+      cartDiscountedTotalPrice -=
+          item.product.beforePrice == item?.product?.price
+              ? updatedPrice * (100 - discount) / 100
+              : updatedPrice;
       cartItemsMap[item.itemId].itemCount = item.itemCount;
       cartItemsMap[item.itemId].rowPrice =
           double.parse(item.product.price) * item.itemCount;
@@ -343,12 +387,24 @@ class MyCartChangeNotifier extends ChangeNotifier {
       discount = result['discount'] + .0;
       type = result['type'];
       isApplying = false;
+      resetDiscountPrice();
     } else {
       errorMessage = result['errMessage'];
       flushBarService.showErrorMessage(errorMessage);
       isApplying = false;
     }
     notifyListeners();
+  }
+
+  void resetDiscountPrice() {
+    cartDiscountedTotalPrice = 0;
+    for (var key in cartItemsMap.keys.toList()) {
+      final item = cartItemsMap[key];
+      cartDiscountedTotalPrice +=
+          item.product.beforePrice != item?.product?.price
+              ? item.rowPrice
+              : item.rowPrice * (100 - discount) / 100;
+    }
   }
 
   Future<void> cancelCouponCode(
@@ -361,6 +417,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       discount = .0;
       type = '';
       isApplying = false;
+      cartDiscountedTotalPrice = 0;
     } else {
       errorMessage = result['errMessage'];
       flushBarService.showErrorMessage(errorMessage);

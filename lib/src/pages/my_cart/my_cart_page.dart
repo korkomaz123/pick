@@ -261,10 +261,10 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildTotalPrice() {
     double subTotal = myCartChangeNotifier.cartTotalPrice;
-    print(myCartChangeNotifier.type);
     double discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : subTotal * myCartChangeNotifier.discount / 100;
+        : myCartChangeNotifier.cartTotalPrice -
+            myCartChangeNotifier.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,

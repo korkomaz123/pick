@@ -314,9 +314,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       } else {
         discount = myCartChangeNotifier.type == 'fixed'
             ? myCartChangeNotifier.discount
-            : myCartChangeNotifier.discount *
-                myCartChangeNotifier.cartTotalPrice /
-                100;
+            : myCartChangeNotifier.cartTotalPrice -
+                myCartChangeNotifier.cartDiscountedTotalPrice;
         subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
       totalPrice = subtotalPrice + serviceFees - discount;

@@ -1,14 +1,15 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
+import 'package:markaa/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'my_cart_qty_horizontal_picker.dart';
 
 class MyCartItem extends StatelessWidget {
   final CartItemEntity cartItem;
@@ -42,12 +43,16 @@ class MyCartItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              InkWell(
-                onTap: onRemoveCartItem,
-                child: Icon(
-                  Icons.remove_circle_outline,
-                  size: 22.sp,
-                  color: greyDarkColor,
+              Container(
+                height: 150.h,
+                alignment: Alignment.topCenter,
+                child: InkWell(
+                  onTap: onRemoveCartItem,
+                  child: SvgPicture.asset(
+                    trashIcon,
+                    width: 16.w,
+                    color: greyColor,
+                  ),
                 ),
               ),
               Image.network(
@@ -109,7 +114,10 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          discount != 0 && type == 'percentage'
+                          discount != 0 &&
+                                  type == 'percentage' &&
+                                  cartItem?.product?.beforePrice ==
+                                      cartItem?.product?.price
                               ? discountPriceString + ' ' + 'currency'.tr()
                               : priceString + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
@@ -119,9 +127,14 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          discount != 0 && type == 'percentage'
-                              ? priceString + ' ' + 'currency'.tr()
-                              : '',
+                          cartItem?.product?.beforePrice !=
+                                  cartItem?.product?.price
+                              ? cartItem.product.beforePrice +
+                                  ' ' +
+                                  'currency'.tr()
+                              : discount != 0 && type == 'percentage'
+                                  ? priceString + ' ' + 'currency'.tr()
+                                  : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,
@@ -148,10 +161,12 @@ class MyCartItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        MyCartQtyHorizontalPicker(
-                          cartItem: cartItem,
-                          cartId: cartId,
-                        ),
+                        if (cartItem.availableCount > 0) ...[
+                          MyCartShopCounter(
+                            cartItem: cartItem,
+                            cartId: cartId,
+                          ),
+                        ]
                       ],
                     ),
                   ],

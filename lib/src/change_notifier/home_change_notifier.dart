@@ -65,7 +65,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadSliderImages(String lang) async {
+  Future<void> loadSliderImages(String lang) async {
     try {
       String key = 'slider-images-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -95,7 +95,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadBestDeals(String lang) async {
+  Future<void> loadBestDeals(String lang) async {
     try {
       String key = 'bestdeals-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -127,7 +127,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadNewArrivals(String lang) async {
+  Future<void> loadNewArrivals(String lang) async {
     try {
       String key = 'newarrivals-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -160,7 +160,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadPerfumes(String lang) async {
+  Future<void> loadPerfumes(String lang) async {
     try {
       String key = 'perfumes-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -191,7 +191,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadAds(String lang) async {
+  Future<void> loadAds(String lang) async {
     try {
       String key = 'homeads-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -242,7 +242,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadRecentlyViewedGuest(List<String> ids, String lang) async {
+  Future<void> loadRecentlyViewedGuest(List<String> ids, String lang) async {
     try {
       final result =
           await productRepository.getHomeRecentlyViewedGuestProducts(ids, lang);
@@ -261,7 +261,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadRecentlyViewedCustomer(String token, String lang) async {
+  Future<void> loadRecentlyViewedCustomer(String token, String lang) async {
     try {
       final result = await productRepository
           .getHomeRecentlyViewedCustomerProducts(token, lang);
@@ -280,7 +280,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadMegaBanner(String lang) async {
+  Future<void> loadMegaBanner(String lang) async {
     final result = await homeRepository.getHomeMegaBanner(lang);
     try {
       if (result['code'] == 'SUCCESS') {
@@ -294,7 +294,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadExculisiveBanner(String lang) async {
+  Future<void> loadExculisiveBanner(String lang) async {
     final result = await homeRepository.getHomeExculisiveBanner(lang);
     try {
       if (result['code'] == 'SUCCESS') {
@@ -308,7 +308,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadOrientalProducts(String lang) async {
+  Future<void> loadOrientalProducts(String lang) async {
     try {
       String key = 'oriental-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -344,7 +344,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadBestDealsBanner(String lang) async {
+  Future<void> loadBestDealsBanner(String lang) async {
     try {
       String key = 'best-deals-banners-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -408,7 +408,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadNewArrivalsBanner(String lang) async {
+  Future<void> loadNewArrivalsBanner(String lang) async {
     try {
       String key = 'new-arrivals-banners-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -471,7 +471,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadFragrancesBanner(String lang) async {
+  Future<void> loadFragrancesBanner(String lang) async {
     try {
       String key = 'fragrances-banners-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -506,7 +506,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadBestWatches(String lang) async {
+  Future<void> loadBestWatches(String lang) async {
     try {
       String key = 'best-watches-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -546,7 +546,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadGrooming(String lang) async {
+  Future<void> loadGrooming(String lang) async {
     try {
       String key = 'grooming-$lang';
       final exist = await localStorageRepository.existItem(key);
@@ -599,7 +599,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void loadSmartTech(String lang) async {
+  Future<void> loadSmartTech(String lang) async {
     try {
       String key = 'smart-tech-$lang';
       final exist = await localStorageRepository.existItem(key);

@@ -15,6 +15,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeBestDeals extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeBestDeals({@required this.model});
+
   @override
   _HomeBestDealsState createState() => _HomeBestDealsState();
 }
@@ -23,12 +27,14 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
   CategoryEntity bestDeals = homeCategories[0];
   List<ProductModel> bestDealsProducts;
   String title;
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
+    bestDealsProducts = model.bestDealsProducts;
+    title = model.bestDealsTitle;
   }
 
   @override
@@ -39,21 +45,11 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
       padding: EdgeInsets.all(8.w),
       margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,
-      child: Consumer<HomeChangeNotifier>(
-        builder: (_, model, __) {
-          bestDealsProducts = model.bestDealsProducts;
-          title = model.bestDealsTitle;
-          if (bestDealsProducts.isNotEmpty) {
-            return Column(
-              children: [
-                _buildHeadline(),
-                _buildProductsList(model.bestDealsProducts),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        children: [
+          _buildHeadline(),
+          _buildProductsList(),
+        ],
       ),
     );
   }
@@ -102,7 +98,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
     );
   }
 
-  Widget _buildProductsList(List<ProductModel> list) {
+  Widget _buildProductsList() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
@@ -112,7 +108,7 @@ class _HomeBestDealsState extends State<HomeBestDeals> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: list.map((item) {
+          children: bestDealsProducts.map((item) {
             return Container(
               margin: EdgeInsets.only(left: 5.w),
               decoration: BoxDecoration(

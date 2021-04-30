@@ -14,44 +14,44 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 class HomeGrooming extends StatefulWidget {
+  final HomeChangeNotifier model;
+
+  HomeGrooming({this.model});
+
   @override
   _HomeGroomingState createState() => _HomeGroomingState();
 }
 
 class _HomeGroomingState extends State<HomeGrooming> {
-  HomeChangeNotifier homeChangeNotifier;
+  HomeChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    model = widget.model;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        return Container(
-          width: 375.w,
-          color: Colors.white,
-          child: Column(
-            children: [
-              if (model.groomingTitle.isNotEmpty) ...[
-                _buildTitle(model.groomingTitle)
-              ],
-              if (model.groomingCategories.isNotEmpty) ...[
-                _buildCategories(model.groomingCategories)
-              ],
-              if (model.groomingItems.isNotEmpty) ...[
-                _buildProducts(model.groomingItems)
-              ],
-              if (model.groomingCategory != null) ...[
-                _buildFooter(model.groomingCategory, model.groomingTitle)
-              ],
-            ],
-          ),
-        );
-      },
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      child: Column(
+        children: [
+          if (model.groomingTitle.isNotEmpty) ...[
+            _buildTitle(model.groomingTitle)
+          ],
+          if (model.groomingCategories.isNotEmpty) ...[
+            _buildCategories(model.groomingCategories)
+          ],
+          if (model.groomingItems.isNotEmpty) ...[
+            _buildProducts(model.groomingItems)
+          ],
+          if (model.groomingCategory != null) ...[
+            _buildFooter(model.groomingCategory, model.groomingTitle)
+          ],
+        ],
+      ),
     );
   }
 

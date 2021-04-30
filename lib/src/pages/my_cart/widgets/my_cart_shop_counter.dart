@@ -1,23 +1,22 @@
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartShopCounter extends StatefulWidget {
-  /// the value of counter
-  final int value;
-
-  /// method handler called when click the left toolbar
-  final Function onDecrement;
-
-  /// method handler called when click the right toolbar
-  final Function onIncrement;
+  final CartItemEntity cartItem;
+  final String cartId;
+  final bool isDefaultValue;
 
   MyCartShopCounter({
-    @required this.value,
-    this.onDecrement,
-    this.onIncrement,
+    @required this.cartItem,
+    @required this.cartId,
+    this.isDefaultValue = true,
   });
 
   @override
@@ -25,24 +24,14 @@ class MyCartShopCounter extends StatefulWidget {
 }
 
 class _MyCartShopCounterState extends State<MyCartShopCounter> {
-  int value;
+  MyCartChangeNotifier myCartChangeNotifier;
+  FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
-    value = widget.value;
-  }
-
-  void _onIncrement() {
-    setState(() {
-      value++;
-    });
-  }
-
-  void _onDecrement() {
-    setState(() {
-      value--;
-    });
+    flushBarService = FlushBarService(context: context);
+    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
   }
 
   @override
@@ -50,9 +39,8 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
     return Row(
       children: [
         InkWell(
-          onTap: widget.onDecrement == null
-              ? () => _onDecrement()
-              : widget.onDecrement,
+          onTap: () =>
+              widget.cartItem.itemCount == 1 ? null : _onChangeQty(false),
           child: Container(
             height: 25.h,
             padding: EdgeInsets.symmetric(horizontal: 4),
@@ -67,7 +55,10 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               ),
             ),
             alignment: Alignment.center,
-            child: Icon(Icons.remove, size: 18.sp),
+            child: Icon(
+              widget.cartItem.itemCount == 1 ? Icons.block : Icons.remove,
+              size: 18.sp,
+            ),
           ),
         ),
         Container(
@@ -82,7 +73,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
           ),
           alignment: Alignment.center,
           child: Text(
-            widget.value.toString(),
+            widget.cartItem.itemCount.toString(),
             style: mediumTextStyle.copyWith(
               color: primarySwatchColor,
               fontSize: 15.sp,
@@ -90,9 +81,10 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
           ),
         ),
         InkWell(
-          onTap: widget.onIncrement == null
-              ? () => _onIncrement()
-              : widget.onIncrement,
+          onTap: () =>
+              widget.cartItem.itemCount == widget.cartItem.availableCount
+                  ? null
+                  : _onChangeQty(true),
           child: Container(
             height: 25.h,
             padding: EdgeInsets.symmetric(horizontal: 4),
@@ -107,10 +99,24 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
                 bottomLeft: Radius.circular(lang == 'ar' ? 10 : 0),
               ),
             ),
-            child: Icon(Icons.add, size: 18.sp),
+            child: Icon(
+              widget.cartItem.itemCount == widget.cartItem.availableCount
+                  ? Icons.block
+                  : Icons.add,
+              size: 18.sp,
+            ),
           ),
         ),
       ],
     );
+  }
+
+  void _onChangeQty(bool isIncreament) async {
+    int qty = widget.cartItem.itemCount + (isIncreament ? 1 : -1);
+    await myCartChangeNotifier.updateCartItem(widget.cartItem, qty, _onFailure);
+  }
+
+  void _onFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 }

@@ -13,6 +13,10 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'home_category_card.dart';
 
 class HomeExploreCategories extends StatefulWidget {
+  final CategoryChangeNotifier model;
+
+  HomeExploreCategories({this.model});
+
   @override
   _HomeExploreCategoriesState createState() => _HomeExploreCategoriesState();
 }
@@ -20,12 +24,13 @@ class HomeExploreCategories extends StatefulWidget {
 class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
   List<CategoryEntity> categories = [];
-  CategoryChangeNotifier categoryChangeNotifier;
+  CategoryChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
-    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
+    model = widget.model;
+    categories = model.categories;
   }
 
   @override
@@ -34,22 +39,13 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       width: 375.w,
       height: 340.h,
       color: Colors.white,
-      child: Consumer<CategoryChangeNotifier>(
-        builder: (_, __, ___) {
-          categories = categoryChangeNotifier.categories;
-          if (categories.isNotEmpty) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTitle(),
-                _buildCategorySliders(),
-                _buildFooter(),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitle(),
+          _buildCategorySliders(),
+          _buildFooter(),
+        ],
       ),
     );
   }

@@ -11,7 +11,7 @@ class Api {
   }) async {
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     final response = await http.get(
-      Uri.dataFromString(requestUrl),
+      Uri.parse(requestUrl),
       headers: headers ?? _getHeader(),
     );
     return jsonDecode(response.body);
@@ -23,7 +23,7 @@ class Api {
     Map<String, String> headers,
   }) async {
     final response = await http.post(
-      Uri.dataFromString(url),
+      Uri.parse(url),
       headers: headers ?? _getHeader(),
       body: headers != null ? jsonEncode(data) : data,
     );
