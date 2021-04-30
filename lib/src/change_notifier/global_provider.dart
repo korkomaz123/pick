@@ -10,22 +10,28 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'home_change_notifier.dart';
 import 'package:provider/provider.dart';
 
+import 'product_change_notifier.dart';
+
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];
   Future<void> changeLanguage(String val) async {
+    BuildContext _context = Config.navigatorKey.currentContext;
     String _current = currentLanguage;
     _current == 'ar'
-        ? Config.navigatorKey.currentContext.setLocale(EasyLocalization.of(Config.navigatorKey.currentContext).supportedLocales.first)
-        : Config.navigatorKey.currentContext.setLocale(EasyLocalization.of(Config.navigatorKey.currentContext).supportedLocales.last);
+        ? _context.setLocale(EasyLocalization.of(_context).supportedLocales.first)
+        : _context.setLocale(EasyLocalization.of(_context).supportedLocales.last);
     FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     fetchCategories();
     lang = currentLanguage;
     Config.language = currentLanguage;
     notifyListeners();
-    //ModalRoute.of(context).settings.name
-    Config.navigatorKey.currentContext.read<HomeChangeNotifier>().changeLanguage();
+    // Update Details page if i am in details page
+    if (_context.read<ProductChangeNotifier>().productDetails != null)
+      _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
+    // update homde data
+    _context.read<HomeChangeNotifier>().changeLanguage();
   }
 
   GlobalProvider() {
@@ -49,9 +55,6 @@ class GlobalProvider extends ChangeNotifier {
     }
     activeIndex = index;
     notifyListeners();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Scrollable.ensureVisible(dataKey.currentContext);
-    // });
   }
 
   String get currentLanguage => EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();

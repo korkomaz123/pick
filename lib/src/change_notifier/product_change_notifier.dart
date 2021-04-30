@@ -5,6 +5,8 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
+import '../../config.dart';
+
 class ProductChangeNotifier extends ChangeNotifier {
   final ProductRepository productRepository = ProductRepository();
   final LocalStorageRepository localStorageRepository = LocalStorageRepository();
@@ -17,6 +19,10 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
 
+  close() {
+    productDetails = null;
+  }
+
   void initialize() {
     data = {};
     pages = {};
@@ -27,10 +33,10 @@ class ProductChangeNotifier extends ChangeNotifier {
     productDetails = ProductEntity.fronProduct(product);
   }
 
-  Future<void> getProductDetails(String productId, String lang) async {
+  Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
     selectedVariant = null;
-    final result = await productRepository.getProductDetails(productId, lang);
+    final result = await productRepository.getProductDetails(productId, Config.language);
     productDetails = null;
     if (result['code'] == 'SUCCESS') {
       productDetails = ProductEntity.fromJson(result['moreAbout']);

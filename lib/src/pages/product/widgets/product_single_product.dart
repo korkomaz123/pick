@@ -137,7 +137,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
         ),
         if (widget.model.productDetails.discount > 0 ||
             (widget?.model?.selectedVariant?.discount != null && widget.model.selectedVariant.discount > 0)) ...[
-          if (lang == 'en') ...[
+          if (Config.language == 'en') ...[
             Positioned(
               top: Config.pageStyle.unitHeight * 320,
               right: 0,
@@ -185,7 +185,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               width: Config.pageStyle.unitWidth * 26,
               height: Config.pageStyle.unitHeight * 26,
               child: SvgPicture.asset(
-                lang == 'en' ? arrowBackEnIcon : arrowBackArIcon,
+                Config.language == 'en' ? arrowBackEnIcon : arrowBackArIcon,
               ),
             ),
           ),
@@ -289,7 +289,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                     widget.model.productDetails?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: Config.pageStyle.unitFontSize * (lang == 'en' ? 16 : 18),
+                      fontSize: Config.pageStyle.unitFontSize * (Config.language == 'en' ? 16 : 18),
                     ),
                   ),
                 )
@@ -298,7 +298,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 isStock ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
                   color: isStock ? succeedColor : dangerColor,
-                  fontSize: Config.pageStyle.unitFontSize * (lang == 'en' ? 14 : 18),
+                  fontSize: Config.pageStyle.unitFontSize * (Config.language == 'en' ? 14 : 18),
                 ),
               ),
             ],

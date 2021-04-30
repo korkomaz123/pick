@@ -32,7 +32,7 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   }
 
   void _getRelatedItems() async {
-    relatedItems = await ProductRepository().getRelatedProducts(product.productId, lang);
+    relatedItems = await ProductRepository().getRelatedProducts(product.productId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
     });

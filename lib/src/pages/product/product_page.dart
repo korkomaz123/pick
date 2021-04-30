@@ -54,7 +54,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   ProgressService progressService;
   LocalStorageRepository localStorageRepository = LocalStorageRepository();
   ProductRepository productRepository = ProductRepository();
-  // HomeChangeNotifier homeChangeNotifier;
   FlushBarService flushBarService;
   bool isBuyNow = false;
   bool isStock = false;
@@ -77,7 +76,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   void _loadDetails() async {
-    _productChangeNotifier.getProductDetails(product.productId, lang);
+    _productChangeNotifier.getProductDetails(product.productId);
   }
 
   void _initAnimation() {
@@ -100,15 +99,16 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   void dispose() {
     isBuyNow = false;
     _addToCartController.dispose();
+    _productChangeNotifier.close();
     super.dispose();
   }
 
   void _onRefresh() async {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Future.delayed(Duration.zero, () async {
-    //     await _productChangeNotifier.getProductDetails(product.productId, lang);
-    //   });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration.zero, () async {
+        await _productChangeNotifier.getProductDetails(product.productId);
+      });
+    });
   }
 
   @override

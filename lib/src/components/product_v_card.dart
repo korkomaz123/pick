@@ -4,7 +4,6 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/config.dart';
-import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
