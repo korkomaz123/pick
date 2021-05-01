@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Config.pageStyle = PageStyle(context, designWidth, designHeight);
     Config.pageStyle.initializePageStyles();
-    Config.language = EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
+    Config.setLanguage();
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(pageStyle: Config.pageStyle, scaffoldKey: scaffoldKey),

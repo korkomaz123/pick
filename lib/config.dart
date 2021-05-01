@@ -5,6 +5,7 @@ import 'package:adjust_sdk/adjust_event_failure.dart';
 import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
@@ -18,7 +19,16 @@ import 'src/utils/repositories/sign_in_repository.dart';
 class Config {
   static String baseUrl = "";
   static String imagesUrl = "";
-  static String language = "en";
+  static String languageCode;
+  static String get language => EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
+  static set language(String val) => setLanguage(val: val);
+
+  static setLanguage({String val}) {
+    val != null && val.isNotEmpty
+        ? languageCode = val
+        : languageCode = EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
+    lang = languageCode;
+  }
 
   static PageStyle pageStyle;
   static GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();

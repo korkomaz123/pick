@@ -177,10 +177,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
           }
         },
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: Config.pageStyle,
-        activeItem: BottomEnum.home,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(pageStyle: Config.pageStyle, activeItem: BottomEnum.home),
     );
   }
 

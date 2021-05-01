@@ -24,8 +24,7 @@ class GlobalProvider extends ChangeNotifier {
     FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
     fetchCategories();
-    lang = currentLanguage;
-    Config.language = currentLanguage;
+    lang = Config.language;
     notifyListeners();
     // Update Details page if i am in details page
     if (_context.read<ProductChangeNotifier>().productDetails != null)

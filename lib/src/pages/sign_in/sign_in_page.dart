@@ -111,7 +111,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     Config.pageStyle = PageStyle(context, designWidth, designHeight);
     Config.pageStyle.initializePageStyles();
-    Config.language = EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
+    Config.setLanguage();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,

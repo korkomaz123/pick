@@ -37,8 +37,12 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedOptions = {};
     selectedVariant = null;
     final result = await productRepository.getProductDetails(productId, Config.language);
+    List<dynamic> _gallery = productDetails?.gallery ?? [];
     productDetails = null;
     if (result['code'] == 'SUCCESS') {
+      _gallery.addAll(result['moreAbout']['gallery']);
+      _gallery.removeAt(1);
+      result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }
     notifyListeners();
