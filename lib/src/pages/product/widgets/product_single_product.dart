@@ -96,7 +96,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
 
   @override
   Widget build(BuildContext context) {
-    print("widget.model.productDetails.gallery.length ${widget.model.productDetails.gallery.length}");
     return Stack(
       children: [
         Container(
@@ -108,8 +107,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 Container(
                   width: double.infinity,
                   height: Config.pageStyle.unitHeight * 460,
-                  child: 
-                  widget?.model?.selectedVariant?.imageUrl != null && widget.model.selectedVariant.imageUrl.isNotEmpty
+                  child: widget?.model?.selectedVariant?.imageUrl != null && widget.model.selectedVariant.imageUrl.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: widget?.model?.selectedVariant?.imageUrl,
                           progressIndicatorBuilder: (context, url, downloadProgress) =>
@@ -118,8 +116,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                         )
                       : null,
                 )
-              ] else 
-              if (widget.model.productDetails.gallery.isNotEmpty) ...[
+              ] else if (widget.model.productDetails.gallery.isNotEmpty) ...[
                 _buildImageCarousel()
               ],
               Padding(

@@ -116,66 +116,68 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
-      appBar: MarkaaAppBar(pageStyle: Config.pageStyle, scaffoldKey: scaffoldKey),
+      // appBar: MarkaaAppBar(pageStyle: Config.pageStyle, scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
-      body: Consumer<ProductChangeNotifier>(
-        builder: (context, productChangeNotifier, child) {
-          if (productChangeNotifier.productDetails != null) {
-            isStock = productChangeNotifier.productDetails.typeId == 'configurable' ||
-                (productChangeNotifier.productDetails.stockQty != null && productChangeNotifier.productDetails.stockQty > 0);
-            return Stack(
-              children: [
-                SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  header: MaterialClassicHeader(color: primaryColor),
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  onLoading: () => null,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ProductSingleProduct(product: product, model: productChangeNotifier),
-                        if (productChangeNotifier.productDetails.typeId == 'configurable') ...[
-                          ProductConfigurableOptions(
-                            productEntity: productChangeNotifier.productDetails,
+      body: SafeArea(
+        child: Consumer<ProductChangeNotifier>(
+          builder: (context, productChangeNotifier, child) {
+            if (productChangeNotifier.productDetails != null) {
+              isStock = productChangeNotifier.productDetails.typeId == 'configurable' ||
+                  (productChangeNotifier.productDetails.stockQty != null && productChangeNotifier.productDetails.stockQty > 0);
+              return Stack(
+                children: [
+                  SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    header: MaterialClassicHeader(color: primaryColor),
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: () => null,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ProductSingleProduct(product: product, model: productChangeNotifier),
+                          if (productChangeNotifier.productDetails.typeId == 'configurable') ...[
+                            ProductConfigurableOptions(
+                              productEntity: productChangeNotifier.productDetails,
+                              pageStyle: Config.pageStyle,
+                            )
+                          ],
+                          ProductReviewTotal(
                             pageStyle: Config.pageStyle,
-                          )
+                            product: productChangeNotifier.productDetails,
+                            onFirstReview: () => _onFirstReview(productChangeNotifier.productDetails),
+                            onReviews: () => _onReviews(productChangeNotifier.productDetails),
+                          ),
+                          ProductRelatedItems(
+                            pageStyle: Config.pageStyle,
+                            product: product,
+                          ),
+                          ProductSameBrandProducts(
+                            pageStyle: Config.pageStyle,
+                            product: product,
+                          ),
+                          ProductMoreAbout(
+                            pageStyle: Config.pageStyle,
+                            productEntity: productChangeNotifier.productDetails,
+                          ),
+                          ProductReview(
+                            pageStyle: Config.pageStyle,
+                            product: productChangeNotifier.productDetails,
+                          ),
+                          SizedBox(height: Config.pageStyle.unitHeight * 50),
                         ],
-                        ProductReviewTotal(
-                          pageStyle: Config.pageStyle,
-                          product: productChangeNotifier.productDetails,
-                          onFirstReview: () => _onFirstReview(productChangeNotifier.productDetails),
-                          onReviews: () => _onReviews(productChangeNotifier.productDetails),
-                        ),
-                        ProductRelatedItems(
-                          pageStyle: Config.pageStyle,
-                          product: product,
-                        ),
-                        ProductSameBrandProducts(
-                          pageStyle: Config.pageStyle,
-                          product: product,
-                        ),
-                        ProductMoreAbout(
-                          pageStyle: Config.pageStyle,
-                          productEntity: productChangeNotifier.productDetails,
-                        ),
-                        ProductReview(
-                          pageStyle: Config.pageStyle,
-                          product: productChangeNotifier.productDetails,
-                        ),
-                        SizedBox(height: Config.pageStyle.unitHeight * 50),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(left: 0, right: 0, bottom: 0, child: _buildToolbar(productChangeNotifier)),
-              ],
-            );
-          } else {
-            return Center(child: PulseLoadingSpinner());
-          }
-        },
+                  Positioned(left: 0, right: 0, bottom: 0, child: _buildToolbar(productChangeNotifier)),
+                ],
+              );
+            } else {
+              return Center(child: PulseLoadingSpinner());
+            }
+          },
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(pageStyle: Config.pageStyle, activeItem: BottomEnum.home),
     );

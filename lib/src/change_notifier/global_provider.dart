@@ -27,8 +27,10 @@ class GlobalProvider extends ChangeNotifier {
     lang = Config.language;
     notifyListeners();
     // Update Details page if i am in details page
-    if (_context.read<ProductChangeNotifier>().productDetails != null)
+    if (_context.read<ProductChangeNotifier>().productDetails != null) {
       _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
+      _context.read<ProductChangeNotifier>().productDetails = null;
+    }
     // update homde data
     _context.read<HomeChangeNotifier>().changeLanguage();
   }
