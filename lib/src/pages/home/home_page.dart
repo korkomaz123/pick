@@ -150,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                   width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   child: FutureBuilder(
                     future: getFeaturedCategoriesList,
                     builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting

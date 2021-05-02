@@ -23,8 +23,8 @@ class Api {
     Map<String, dynamic> data,
     Map<String, String> headers,
   }) async {
-    // print(url);
-    // print(data);
+    print(url);
+    print(data);
     final response = await http.post(
       Uri.parse(url),
       headers: headers ?? _getHeader(),

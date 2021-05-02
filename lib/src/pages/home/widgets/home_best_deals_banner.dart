@@ -20,7 +20,7 @@ class HomeBestDealsBanner extends StatelessWidget {
       final banner = homeChangeNotifier.bestDealsBanners[0];
       return Container(
         width: Config.pageStyle.deviceWidth,
-        height: Config.pageStyle.deviceHeight - (Config.pageStyle.unitHeight * 100),
+        height: Config.pageStyle.unitWidth * 550,
         color: Colors.white,
         margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),
         child: Column(

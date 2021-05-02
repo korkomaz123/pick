@@ -30,7 +30,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   setInitalInfo(ProductModel product) {
-    productDetails = ProductEntity.fronProduct(product);
+    productDetails = ProductEntity.fromProduct(product);
   }
 
   Future<void> getProductDetails(String productId) async {
