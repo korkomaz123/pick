@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/config.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -181,7 +180,6 @@ class _HomePageState extends State<HomePage> {
                       : HomeBestDealsBanner(homeChangeNotifier: _homeChangeNotifier),
                 ),
                 Container(
-                  width: Config.pageStyle.deviceWidth,
                   height: Config.pageStyle.unitHeight * 300,
                   padding: EdgeInsets.all(Config.pageStyle.unitWidth * 8),
                   margin: EdgeInsets.only(bottom: Config.pageStyle.unitHeight * 10),

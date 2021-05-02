@@ -5,7 +5,6 @@ import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
