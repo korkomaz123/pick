@@ -164,8 +164,8 @@ class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateM
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),

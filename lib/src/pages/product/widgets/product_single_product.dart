@@ -110,8 +110,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                   child: widget?.model?.selectedVariant?.imageUrl != null && widget.model.selectedVariant.imageUrl.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: widget?.model?.selectedVariant?.imageUrl,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                          // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                          //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                           errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                         )
                       : null,
@@ -340,8 +340,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               width: Config.pageStyle.deviceWidth,
               height: Config.pageStyle.unitHeight * 400,
               fit: BoxFit.fitHeight,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           );

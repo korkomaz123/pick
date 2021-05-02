@@ -117,8 +117,8 @@ class _ProductCardState extends State<ProductCard> with TickerProviderStateMixin
               width: widget.cardWidth,
               height: widget.cardWidth,
               fit: BoxFit.fitHeight,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),

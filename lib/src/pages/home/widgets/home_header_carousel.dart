@@ -91,7 +91,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             height: Config.pageStyle.deviceWidth * 579 / 1125,
             imageUrl: banner.bannerImage,
             fit: BoxFit.fill,
-            progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+            // progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
             errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
           ),
         );

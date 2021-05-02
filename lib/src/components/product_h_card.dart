@@ -160,8 +160,8 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.8,
               fit: BoxFit.fitHeight,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),

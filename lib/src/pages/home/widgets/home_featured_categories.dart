@@ -45,8 +45,8 @@ class HomeFeaturedCategories extends StatelessWidget {
                       imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
                       imageUrl: category.imageUrl,
                       fit: BoxFit.cover,
-                      progressIndicatorBuilder: (context, url, downloadProgress) =>
-                          Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                      // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                       errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),

@@ -130,8 +130,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     imageBuilder: (context, imgProvider) => CircleAvatar(radius: Config.pageStyle.unitWidth * 30, backgroundImage: imgProvider),
                     imageUrl: user.profileUrl,
                     fit: BoxFit.cover,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                    // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   )
                 else
@@ -238,8 +238,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     height: Config.pageStyle.unitWidth * 25,
                     imageUrl: menu.iconUrl,
                     fit: BoxFit.cover,
-                    progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                    // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],

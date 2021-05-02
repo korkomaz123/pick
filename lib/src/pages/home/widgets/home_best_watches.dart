@@ -74,7 +74,7 @@ class HomeBestWatches extends StatelessWidget {
       },
       child: CachedNetworkImage(
         imageUrl: banner.bannerImage,
-        progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+        // progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
         errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
       ),
     );
