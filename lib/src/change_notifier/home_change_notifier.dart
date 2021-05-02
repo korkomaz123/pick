@@ -375,10 +375,9 @@ class HomeChangeNotifier extends ChangeNotifier {
     try {
       final result = await productRepository.getHomeRecentlyViewedCustomerProducts(user.token, Config.language);
       if (result['code'] == 'SUCCESS') {
-        List<dynamic> recentlyViewedList = result['products'];
-        recentlyViewedProducts = [];
-        for (int i = 0; i < recentlyViewedList.length; i++) {
-          recentlyViewedProducts.add(ProductModel.fromJson(recentlyViewedList[i]));
+        recentlyViewedProducts.clear();
+        for (int i = 0; i < result['products'].length; i++) {
+          recentlyViewedProducts.add(ProductModel.fromJson(result['products'][i]));
         }
       }
     } catch (e) {

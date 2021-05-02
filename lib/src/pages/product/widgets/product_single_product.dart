@@ -43,20 +43,18 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
   int activeIndex = 0;
   bool isFavorite = true;
   bool isWishlist = false;
-  bool isStock = true;
   int index;
   AnimationController _favoriteController;
   Animation<double> _favoriteScaleAnimation;
-  ProductModel product;
   FlushBarService flushBarService;
   WishlistChangeNotifier wishlistChangeNotifier;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
+  bool get isStock => widget.model.productDetails.stockQty != null && widget.model.productDetails.stockQty > 0;
+
   @override
   void initState() {
     super.initState();
-    product = widget.product;
-    isStock = widget.model.productDetails.stockQty != null && widget.model.productDetails.stockQty > 0;
     flushBarService = FlushBarService(context: context);
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     _initFavorite();
@@ -65,7 +63,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
 
   void _initFavorite() async {
     if (user?.token != null) {
-      isWishlist = wishlistIds.contains(product.productId);
+      isWishlist = wishlistIds.contains(widget.model.productDetails.productId);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {});
       });
@@ -196,7 +194,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               ),
               Consumer<WishlistChangeNotifier>(
                 builder: (_, model, __) {
-                  isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
+                  isWishlist = model.wishlistItemsMap.containsKey(widget.model.productDetails.productId);
                   if (widget.model.productDetails.typeId == 'configurable') {
                     isWishlist = widget?.model?.selectedVariant != null && model.wishlistItemsMap.containsKey(widget.model.selectedVariant.productId);
                     print('wishlist $isWishlist');
@@ -268,8 +266,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (widget.model.productDetails?.brandEntity != null) ...[
-                InkWell(
+              Expanded(
+                child: InkWell(
                   onTap: () {
                     ProductListArguments arguments = ProductListArguments(
                       category: CategoryEntity(),
@@ -284,15 +282,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       arguments: arguments,
                     );
                   },
-                  child: Text(
-                    widget.model.productDetails?.brandEntity?.brandLabel ?? '',
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: Config.pageStyle.unitFontSize * (Config.language == 'en' ? 16 : 18),
-                    ),
-                  ),
-                )
-              ],
+                  child: widget.model.productDetails?.brandEntity != null
+                      ? Text(
+                          widget.model.productDetails?.brandEntity?.brandLabel ?? '',
+                          style: mediumTextStyle.copyWith(
+                            color: primaryColor,
+                            fontSize: Config.pageStyle.unitFontSize * (Config.language == 'en' ? 16 : 18),
+                          ),
+                        )
+                      : Container(),
+                ),
+              ),
               Text(
                 isStock ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
@@ -447,7 +447,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                     ),
                   ),
                   SizedBox(width: Config.pageStyle.unitWidth * 1),
-                  if (product.price != null || widget?.model?.selectedVariant?.price != null) ...[
+                  if (widget.model.productDetails.price != null || widget?.model?.selectedVariant?.price != null) ...[
                     Text(
                       'currency'.tr(),
                       style: mediumTextStyle.copyWith(
@@ -493,6 +493,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
 
   void _onShareProduct() async {
     Uri shareLink = await dynamicLinkService.productSharableLink(widget.product);
-    Share.share(shareLink.toString(), subject: product.name);
+    Share.share(shareLink.toString(), subject: widget.model.productDetails.name);
   }
 }

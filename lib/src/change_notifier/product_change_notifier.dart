@@ -38,8 +38,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedVariant = null;
     final result = await productRepository.getProductDetails(productId, Config.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
-    productDetails = null;
     if (result['code'] == 'SUCCESS') {
+      productDetails = null;
       _gallery.addAll(result['moreAbout']['gallery']);
       if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(1);
       result['moreAbout']['gallery'] = _gallery;

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -70,6 +71,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _loadDetails();
     _initAnimation();
+    _sendViewedProduct();
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.viewProduct);
     Adjust.trackEvent(adjustEvent);
   }
@@ -108,6 +110,15 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
         await _productChangeNotifier.getProductDetails(product.productId);
       });
     });
+  }
+
+  void _sendViewedProduct() async {
+    if (user?.token != null) {
+      await productRepository.setRecentlyViewedCustomerProduct(user.token, product.productId, lang);
+    } else {
+      await localStorageRepository.addRecentlyViewedItem(product.productId);
+    }
+    Config.navigatorKey.currentContext.read<HomeChangeNotifier>().getViewedProducts();
   }
 
   @override
