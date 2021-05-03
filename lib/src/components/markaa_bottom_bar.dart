@@ -12,6 +12,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 
+import '../../config.dart';
+
 class MarkaaBottomBar extends StatelessWidget {
   final PageStyle pageStyle;
   final BottomEnum activeItem;
@@ -31,58 +33,58 @@ class MarkaaBottomBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(homeIcon),
           ),
           // ignore: deprecated_member_use
           title: Text(
             'bottom_home'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 11,
+              fontSize: Config.pageStyle.unitFontSize * 11,
             ),
           ),
           activeIcon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(homeActiveIcon),
           ),
         ),
         BottomNavigationBarItem(
           icon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(categoryIcon),
           ),
           // ignore: deprecated_member_use
           title: Text(
             'bottom_category'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 11,
+              fontSize: Config.pageStyle.unitFontSize * 11,
             ),
           ),
           activeIcon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(categoryActiveIcon),
           ),
         ),
         BottomNavigationBarItem(
           icon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(storeIcon),
           ),
           // ignore: deprecated_member_use
           title: Text(
             'brands_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 11,
+              fontSize: Config.pageStyle.unitFontSize * 11,
             ),
           ),
           activeIcon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(storeActiveIcon),
           ),
         ),
@@ -92,21 +94,21 @@ class MarkaaBottomBar extends StatelessWidget {
               int count = model.wishlistItemsCount;
               return Badge(
                 position: BadgePosition.topEnd(
-                  top: -pageStyle.unitHeight * 10,
-                  end: -pageStyle.unitWidth * 5,
+                  top: -Config.pageStyle.unitHeight * 10,
+                  end: -Config.pageStyle.unitWidth * 5,
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,
                 badgeContent: Text(
                   '$count',
                   style: TextStyle(
-                    fontSize: pageStyle.unitFontSize * 8,
+                    fontSize: Config.pageStyle.unitFontSize * 8,
                     color: Colors.white,
                   ),
                 ),
                 child: Container(
-                  width: pageStyle.unitWidth * 28,
-                  height: pageStyle.unitHeight * 26,
+                  width: Config.pageStyle.unitWidth * 28,
+                  height: Config.pageStyle.unitHeight * 26,
                   child: SvgPicture.asset(wishlistIcon),
                 ),
               );
@@ -116,7 +118,7 @@ class MarkaaBottomBar extends StatelessWidget {
           title: Text(
             'bottom_wishlist'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 11,
+              fontSize: Config.pageStyle.unitFontSize * 11,
             ),
           ),
           activeIcon: Consumer<WishlistChangeNotifier>(
@@ -124,8 +126,8 @@ class MarkaaBottomBar extends StatelessWidget {
               int count = model.wishlistItemsCount;
               return Badge(
                 position: BadgePosition.topEnd(
-                  top: -pageStyle.unitHeight * 10,
-                  end: -pageStyle.unitWidth * 5,
+                  top: -Config.pageStyle.unitHeight * 10,
+                  end: -Config.pageStyle.unitWidth * 5,
                 ),
                 badgeColor: orangeColor,
                 showBadge: count > 0,
@@ -134,13 +136,13 @@ class MarkaaBottomBar extends StatelessWidget {
                 badgeContent: Text(
                   '$count',
                   style: TextStyle(
-                    fontSize: pageStyle.unitFontSize * 8,
+                    fontSize: Config.pageStyle.unitFontSize * 8,
                     color: Colors.white,
                   ),
                 ),
                 child: Container(
-                  width: pageStyle.unitWidth * 28,
-                  height: pageStyle.unitHeight * 26,
+                  width: Config.pageStyle.unitWidth * 28,
+                  height: Config.pageStyle.unitHeight * 26,
                   child: SvgPicture.asset(wishlistActiveIcon),
                 ),
               );
@@ -149,20 +151,20 @@ class MarkaaBottomBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(userIcon),
           ),
           // ignore: deprecated_member_use
           title: Text(
             'bottom_account'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 11,
+              fontSize: Config.pageStyle.unitFontSize * 11,
             ),
           ),
           activeIcon: Container(
-            width: pageStyle.unitWidth * 28,
-            height: pageStyle.unitHeight * 26,
+            width: Config.pageStyle.unitWidth * 28,
+            height: Config.pageStyle.unitHeight * 26,
             child: SvgPicture.asset(userActiveIcon),
           ),
         ),

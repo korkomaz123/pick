@@ -157,7 +157,9 @@ class _ProductListPageState extends State<ProductListPage> {
                   return Container();
                 }
               } else {
-                return Container();
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               }
             },
           ),

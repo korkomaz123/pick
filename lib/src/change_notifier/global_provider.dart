@@ -10,8 +10,6 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'home_change_notifier.dart';
 import 'package:provider/provider.dart';
 
-import 'product_change_notifier.dart';
-
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];

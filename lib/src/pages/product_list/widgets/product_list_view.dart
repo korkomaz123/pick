@@ -241,7 +241,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                       if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
                         return Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
-                        return ProductNoAvailable(pageStyle: pageStyle);
+                        return ProductNoAvailable();
                       } else {
                         return _buildProductList(productChangeNotifier.data[index]);
                       }
