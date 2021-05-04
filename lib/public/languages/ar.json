@@ -301,5 +301,22 @@
     "no_network_access": "ليس لديك وصول إلى الشبكة الآن.",
     "view_all_fragrances": "عرض جميع منتجات العطور",
     "view_all_grooming": "عرض منتجات الحلاقة والعناية بالبشرة",
-    "view_all_smart_tech": "عرض جميع منتجات سمارت تك"
+    "view_all_smart_tech": "عرض جميع منتجات سمارت تك",
+    "my_wallet": "محفظتى",
+    "wallet_details": "تفاصيل المحفظة",
+    "wallet_balance": "رصيد المحفظة",
+    "wallet_amount_hint": "أدخل المبلغ لإضافة في المحفظة",
+    "add_money": "إضافة المال",
+    "transfer_amount_to_bank": "مبلغ التحويل إلى البنك",
+    "last_transactions": "آخر المعاملات",
+    "add_money_to_wallet": "أضف الأموال إلى المحفظة",
+    "not_enough_wallet": "آسف! لا يوجد مبلغ كاف في المحفظة",
+    "select_bank_account": "الرجاء تحديد الحساب",
+    "add_new_bank_account": "إضافة حساب جديد",
+    "save_account_info": "احفظ معلومات هذا الحساب",
+    "send_amount": "أرسل المبلغ",
+    "account_title_hint": "الرجاء إدخال عنوان حسابك",
+    "payment_need_title": "الدفع في حاجة إلى بذل",
+    "amount_wallet_title": "المبلغ في محفظتك",
+    "amount_need_title": "تحتاج إلى أن تضاف"
 }

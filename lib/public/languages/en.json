@@ -303,5 +303,22 @@
     "no_network_access": "You have no network access now.",
     "view_all_fragrances": "View All Fragrances",
     "view_all_grooming": "View All Grooming",
-    "view_all_smart_tech": "View All Smart Tech"
+    "view_all_smart_tech": "View All Smart Tech",
+    "my_wallet": "My Wallet",
+    "wallet_details": "Wallet Details",
+    "wallet_balance": "Your Wallet Balance",
+    "wallet_amount_hint": "Enter Amount to add in wallet",
+    "add_money": "Add Money",
+    "transfer_amount_to_bank": "Transfer Amount To Bank",
+    "last_transactions": "Last Transactions",
+    "add_money_to_wallet": "Add Money To Wallet",
+    "not_enough_wallet": "Sorry! There is no enough amount in the wallet",
+    "select_bank_account": "Please select the account",
+    "add_new_bank_account": "Add New Account",
+    "save_account_info": "Save this account info",
+    "send_amount": "Send The Amount",
+    "account_title_hint": "Please enter your account title",
+    "payment_need_title": "Payment need to be made",
+    "amount_wallet_title": "Amount in your wallet",
+    "amount_need_title": "Need to be added"
 }

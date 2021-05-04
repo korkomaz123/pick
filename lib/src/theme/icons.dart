@@ -68,3 +68,5 @@ const String favoriteIcon = '$iconsAssetPath/favorite-icon.svg';
 const String addressIcon = '$iconsAssetPath/address-icon.svg';
 const String errorIcon = '$iconsAssetPath/error-icon.svg';
 const String noNetworkIcon = '$iconsAssetPath/no-network-icon.svg';
+const String walletIcon = '$iconsAssetPath/wallet-icon.svg';
+const String walletSimpleIcon = '$iconsAssetPath/wallet-simple-icon.svg';
