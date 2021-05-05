@@ -21,7 +21,7 @@ class _MyWalletItemState extends State<MyWalletItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, Routes.orderHistory),
+      onTap: () => Navigator.pushNamed(context, Routes.myWallet),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 5.h),

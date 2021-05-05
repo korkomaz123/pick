@@ -76,4 +76,9 @@ class Routes {
   static const String changePassword = 'change-password';
   static const String returnOrder = '/return-order';
   static const String returnOrderInfo = '/return-order-info';
+
+  /// wallet
+  static const String myWallet = '/my-wallet';
+  static const String bankList = '/bank-list';
+  static const String addNewBankAccount = '/add-new-bank-account';
 }

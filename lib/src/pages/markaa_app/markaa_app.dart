@@ -106,7 +106,7 @@ class MarkaaApp extends StatelessWidget {
                                   value: checkoutRepository,
                                   child: RepositoryProvider.value(
                                     value: searchRepository,
-                                    child: _buildMultiProvider(),
+                                    child: _buildMultiProvider(context),
                                   ),
                                 ),
                               ),
@@ -125,7 +125,7 @@ class MarkaaApp extends StatelessWidget {
     );
   }
 
-  Widget _buildMultiProvider() {
+  Widget _buildMultiProvider(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -196,11 +196,11 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
       ],
-      child: _buildMultiBlocProvider(),
+      child: _buildMultiBlocProvider(context),
     );
   }
 
-  Widget _buildMultiBlocProvider() {
+  Widget _buildMultiBlocProvider(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -225,16 +225,13 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MarkaaAppView(),
+      child: _buildApp(context),
     );
   }
-}
 
-class MarkaaAppView extends StatelessWidget {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildApp(BuildContext context) {
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
       child: ScreenUtilInit(

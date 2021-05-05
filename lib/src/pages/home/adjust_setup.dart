@@ -7,7 +7,7 @@ import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:markaa/src/config/config.dart';
 
-class HomeConfig {
+class AdjustSetup {
   static void setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.appToken,

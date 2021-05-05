@@ -22,3 +22,4 @@ enum OrderStatusEnum {
 
 enum ProductViewModeEnum { category, brand, filter, sort }
 enum ProcessStatus { none, process, done, failed }
+enum TransactionType { order, bank, debit }

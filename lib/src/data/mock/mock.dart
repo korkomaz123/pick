@@ -1,10 +1,4 @@
-import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/message_entity.dart';
-import 'package:markaa/src/data/models/payment_method_entity.dart';
-import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/data/models/region_entity.dart';
-import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
 /// category list for home screen
 List<CategoryEntity> homeCategories = [];
@@ -40,6 +34,54 @@ UserEntity user;
 String deviceToken = '';
 String lang = 'en';
 bool isNotification = true;
+
+List<TransactionEntity> transactions = [
+  TransactionEntity(
+    number: '292833',
+    amount: 1200,
+    date: '21/3/2021',
+    type: TransactionType.order,
+  ),
+  TransactionEntity(
+    number: '123456',
+    amount: -223,
+    date: '21/3/2021',
+    type: TransactionType.order,
+  ),
+  TransactionEntity(
+    number: '221123',
+    amount: 288,
+    date: '21/3/2021',
+    type: TransactionType.bank,
+  ),
+  TransactionEntity(
+    number: '2928384',
+    amount: 102,
+    date: '21/3/2021',
+    type: TransactionType.debit,
+  ),
+];
+
+List<BankAccountEntity> bankAccounts = [
+  BankAccountEntity(
+    title: 'My account',
+    bank: 'global bank',
+    name: 'name',
+    iBan: '2232222',
+  ),
+  BankAccountEntity(
+    title: 'Wife account',
+    bank: 'global bank',
+    name: 'name',
+    iBan: '2232222',
+  ),
+  BankAccountEntity(
+    title: 'mother account',
+    bank: 'global bank',
+    name: 'name',
+    iBan: '2232222',
+  ),
+];
 
 List<Map<String, dynamic>> countries = [
   {"name": "Kuwait", "dial_code": "+965", "code": "KW"},

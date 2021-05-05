@@ -36,6 +36,7 @@
     "view_more_brands": "مشاهدة الكل",
     "search_items_hint": "البحث",
     "currency": "د.ك",
+    "kwd": "د.ك",
     "total": "مجموع",
     "items": "العناصر (0)",
     "products": "منتجات",
@@ -318,5 +319,9 @@
     "account_title_hint": "الرجاء إدخال عنوان حسابك",
     "payment_need_title": "الدفع في حاجة إلى بذل",
     "amount_wallet_title": "المبلغ في محفظتك",
-    "amount_need_title": "تحتاج إلى أن تضاف"
+    "amount_need_title": "تحتاج إلى أن تضاف",
+    "select_bank_hint": "حدد البنك الخاص بك",
+    "name_hint": "اسم",
+    "iban_hint": "أنا أحظر",
+    "create_new_account": "انشاء حساب جديد"
 }

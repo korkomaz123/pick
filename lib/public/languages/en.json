@@ -36,6 +36,7 @@
     "view_more_brands": "View More Brands",
     "search_items_hint": "Search for Items",
     "currency": "KD",
+    "kwd": "KWD",
     "total": "Total",
     "items": "0 Item(s)",
     "products": "Products",
@@ -317,8 +318,12 @@
     "add_new_bank_account": "Add New Account",
     "save_account_info": "Save this account info",
     "send_amount": "Send The Amount",
-    "account_title_hint": "Please enter your account title",
+    "account_title_hint": "Please Enter Your Account Title",
     "payment_need_title": "Payment need to be made",
     "amount_wallet_title": "Amount in your wallet",
-    "amount_need_title": "Need to be added"
+    "amount_need_title": "Need to be added",
+    "select_bank_hint": "Select Your Bank",
+    "name_hint": "Name",
+    "iban_hint": "I Ban",
+    "create_new_account": "Create New Account"
 }
