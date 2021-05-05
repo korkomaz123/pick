@@ -108,7 +108,7 @@ class HomeSmartTech extends StatelessWidget {
           padding: EdgeInsets.only(left: Config.pageStyle.unitWidth * 8),
           child: AmazingProductCard(
             cardSize: Config.pageStyle.unitWidth * 302,
-            contentSize: Config.pageStyle.unitWidth * 96,
+            contentSize: Config.pageStyle.unitWidth * 100,
             product: list[index],
           ),
         ),

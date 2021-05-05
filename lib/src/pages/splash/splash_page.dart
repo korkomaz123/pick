@@ -24,16 +24,8 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
   }
 
-  void _onEnglish() async {
-    Config.navigatorKey.currentContext.read<GlobalProvider>().changeLanguage("en");
-    await localRepo.setItem('usage', 'markaa');
-    //Start Loading Assets
-    await Config.appOpen();
-    await Navigator.pushNamedAndRemoveUntil(context, Routes.signIn, (route) => false);
-  }
-
-  void _onArabic() async {
-    Config.navigatorKey.currentContext.read<GlobalProvider>().changeLanguage("ar");
+  void _onLang(String val) async {
+    Config.navigatorKey.currentContext.read<GlobalProvider>().changeLanguage(val, fromSplash: true);
     await localRepo.setItem('usage', 'markaa');
     //Start Loading Assets
     await Config.appOpen();
@@ -79,7 +71,7 @@ class _SplashPageState extends State<SplashPage> {
                         titleColor: Colors.white,
                         buttonColor: Color(0xFFF7941D),
                         borderColor: Colors.transparent,
-                        onPressed: () => _onEnglish(),
+                        onPressed: () => _onLang("en"),
                         radius: 30,
                       ),
                     ),
@@ -93,7 +85,7 @@ class _SplashPageState extends State<SplashPage> {
                         titleColor: Colors.white,
                         buttonColor: Color(0xFFF7941D),
                         borderColor: Colors.transparent,
-                        onPressed: () => _onArabic(),
+                        onPressed: () => _onLang("ar"),
                         radius: 30,
                       ),
                     ),

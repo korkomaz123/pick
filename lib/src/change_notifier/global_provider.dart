@@ -13,36 +13,37 @@ import 'package:provider/provider.dart';
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];
-  Future<void> changeLanguage(String val) async {
+  Future<void> changeLanguage(String val, {fromSplash = false}) async {
     BuildContext _context = Config.navigatorKey.currentContext;
     String _current = currentLanguage;
-    if (val == _current) return;
-    _current == 'ar'
-        ? _context.setLocale(EasyLocalization.of(_context).supportedLocales.first)
-        : _context.setLocale(EasyLocalization.of(_context).supportedLocales.last);
-    FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
-    FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+    if (_current != val) {
+      _current == 'ar'
+          ? _context.setLocale(EasyLocalization.of(_context).supportedLocales.first)
+          : _context.setLocale(EasyLocalization.of(_context).supportedLocales.last);
+      FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+
+      lang = Config.language = _current == "ar" ? "en" : "ar";
+    }
     fetchCategories();
-    lang = Config.language;
-    notifyListeners();
+    // notifyListeners();
     // Update Details page if i am in details page
     // if (_context.read<ProductChangeNotifier>().productDetails != null) {
     //   _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
     //   _context.read<ProductChangeNotifier>().productDetails = null;
     // }
     // update homde data
-    _context.read<HomeChangeNotifier>().changeLanguage();
+    if (!fromSplash) _context.read<HomeChangeNotifier>().changeLanguage();
   }
 
   GlobalProvider() {
     fetchCategories();
   }
   fetchCategories() async {
-    if (sideMenus[currentLanguage].length == 0)
-      CategoryRepository().getMenuCategories(currentLanguage).then((value) {
-        sideMenus[currentLanguage] = value;
-        notifyListeners();
-      });
+    print("currentLanguage $currentLanguage");
+    String _lang = currentLanguage;
+    if (sideMenus[_lang].length == 0) sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
+    notifyListeners();
   }
 
   String activeMenu = '';
