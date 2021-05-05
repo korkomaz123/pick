@@ -37,9 +37,8 @@ import '../../../config.dart';
 
 class SignInPage extends StatefulWidget {
   final bool isFromCheckout;
-  final bool isFromSplash;
 
-  SignInPage({this.isFromCheckout = false, this.isFromSplash = false});
+  SignInPage({this.isFromCheckout = false});
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -101,7 +100,7 @@ class _SignInPageState extends State<SignInPage> {
     }
     homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
-    if (Navigator.of(Config.navigatorKey.currentContext).canPop())
+    if (Navigator.of(Config.navigatorKey.currentContext).canPop() )
       Navigator.of(Config.navigatorKey.currentContext).pop(context);
     else
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);

@@ -16,6 +16,7 @@ class GlobalProvider extends ChangeNotifier {
   Future<void> changeLanguage(String val) async {
     BuildContext _context = Config.navigatorKey.currentContext;
     String _current = currentLanguage;
+    if (val == _current) return;
     _current == 'ar'
         ? _context.setLocale(EasyLocalization.of(_context).supportedLocales.first)
         : _context.setLocale(EasyLocalization.of(_context).supportedLocales.last);

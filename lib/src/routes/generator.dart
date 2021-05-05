@@ -37,6 +37,7 @@ import 'package:markaa/src/pages/product_review/product_review_page.dart';
 import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
+import 'package:markaa/src/pages/splash/splash_page.dart';
 // import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
@@ -49,11 +50,12 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final params = settings.arguments;
     switch (settings.name) {
-      // case Routes.start:
-      //   return CupertinoPageRoute(
-      //     builder: (context) => SplashPage(),
-      //     settings: RouteSettings(name: Routes.start),
-      //   );
+      case Routes.start:
+        return PageRouteBuilder(
+          settings: RouteSettings(name: Routes.start),
+          transitionDuration: Duration.zero,
+          pageBuilder: (_, __, ___) => SplashPage(),
+        );
       case Routes.update:
         return CupertinoPageRoute(
           builder: (context) => UpdatePage(storeLink: params),
