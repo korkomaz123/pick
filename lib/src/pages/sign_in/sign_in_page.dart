@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -24,7 +24,6 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
@@ -100,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
     }
     homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
-    if (Navigator.of(Config.navigatorKey.currentContext).canPop() )
+    if (Navigator.of(Config.navigatorKey.currentContext).canPop())
       Navigator.of(Config.navigatorKey.currentContext).pop(context);
     else
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
@@ -453,9 +452,7 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse =
-          await http.get(Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
-      final profile = json.decode(graphResponse.body);
+      final profile = await Api.getMethod('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
