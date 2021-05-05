@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -11,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 
@@ -263,12 +262,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     controller.animateCamera(CameraUpdate.newCameraPosition(newPosition));
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
-    final result = await http.get(
-      Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey'),
-    );
-    // print(
-    //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
-    final response = jsonDecode(result.body);
+    final response = await Api.getMethod('https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
     print(response);
     List<dynamic> addressList = response['results'];
     formattedAddresses = addressList.map((address) {
