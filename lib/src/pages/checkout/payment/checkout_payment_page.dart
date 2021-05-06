@@ -13,6 +13,7 @@ import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -93,6 +94,47 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   }),
                 );
               }),
+              SizedBox(height: 10.h),
+              if (payment == 'mpwalletsystem' &&
+                  double.parse(orderDetails['orderDetails']['subTotalPrice']) >
+                      user.balance) ...[
+                Container(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'not_enough_wallet'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: 14.sp,
+                          color: dangerColor,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () =>
+                            Navigator.pushNamed(context, Routes.myWallet),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'add_money_to_wallet'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 14.sp,
+                                color: primaryColor,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20.sp,
+                              color: primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               SizedBox(height: 50.h),
               Divider(
                 color: greyLightColor,
@@ -126,8 +168,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         activeColor: primaryColor,
         title: Row(
           children: [
-            if (method.title == 'Cash On Delivery' ||
-                method.title == 'الدفع عند التوصيل') ...[
+            if (method.id == 'cashondelivery') ...[
               SvgPicture.asset(
                 'lib/public/icons/cashondelivery.svg',
                 height: 19,
@@ -140,13 +181,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   fontSize: 14.sp,
                 ),
               ),
-            ] else if (method.title == 'Knet' || method.title == 'كي نت') ...[
+            ] else if (method.id == 'knet') ...[
               SvgPicture.asset(
                 'lib/public/icons/knet.svg',
                 height: 46,
                 width: 61,
               ),
-            ] else ...[
+            ] else if (method.id == 'tap') ...[
               Image.asset(
                 'lib/public/images/visa-card.png',
                 height: 35,
@@ -168,7 +209,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 height: 42,
                 width: 54,
               ),
-            ]
+            ] else ...[
+              SvgPicture.asset(walletIcon),
+              SizedBox(width: 10.w),
+              SvgPicture.asset(walletTitle),
+            ],
           ],
         ),
       ),

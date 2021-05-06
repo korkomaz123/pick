@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -32,12 +33,16 @@ class LogoutItem extends StatefulWidget {
 class _LogoutItemState extends State<LogoutItem> {
   SnackBarService snackBarService;
   ProgressService progressService;
+
   SignInBloc signInBloc;
+
   LocalStorageRepository localRepo;
   SettingRepository settingRepo;
+
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
@@ -50,6 +55,7 @@ class _LogoutItemState extends State<LogoutItem> {
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
 
   @override
@@ -118,18 +124,21 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logoutUser() async {
-    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     user = null;
+    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     await localRepo.setToken('');
     myCartChangeNotifier.initialize();
-    await myCartChangeNotifier.getCartId();
-    wishlistChangeNotifier.initialize();
     orderChangeNotifier.initializeOrders();
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
+    List<String> ids = await localRepo.getRecentlyViewedIds();
+    wishlistChangeNotifier.initialize();
+    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
     progressService.hideProgress();
-    Navigator.pushNamedAndRemoveUntil(
+    Navigator.pop(context);
+    Navigator.popUntil(
       context,
-      Routes.home,
-      (route) => false,
+      (route) => route.settings.name == Routes.home,
     );
   }
 }

@@ -70,6 +70,7 @@ const String errorIcon = '$iconsAssetPath/error-icon.svg';
 const String noNetworkIcon = '$iconsAssetPath/no-network-icon.svg';
 const String walletIcon = '$iconsAssetPath/wallet-icon.svg';
 const String walletSimpleIcon = '$iconsAssetPath/wallet-simple-icon.svg';
+const String walletTitle = '$iconsAssetPath/wallet-title.svg';
 const String boldCheckBoxCheckedIcon =
     '$iconsAssetPath/bold-checkbox-checked-icon.svg';
 const String boldCheckBoxUncheckedIcon =

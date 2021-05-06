@@ -1,8 +1,11 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -175,5 +178,7 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
     myCartChangeNotifier.addProductToCart(context, product, 1, lang, {});
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    Adjust.trackEvent(adjustEvent);
   }
 }

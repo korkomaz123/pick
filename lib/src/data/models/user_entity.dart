@@ -6,6 +6,7 @@ class UserEntity {
   String phoneNumber;
   final String email;
   String profileUrl;
+  double balance;
 
   UserEntity({
     this.token,
@@ -14,6 +15,7 @@ class UserEntity {
     this.lastName,
     this.email,
     this.profileUrl,
+    this.balance,
   });
 
   UserEntity.fromJson(Map<String, dynamic> json)
@@ -23,7 +25,8 @@ class UserEntity {
         lastName = json['lastname'],
         phoneNumber = json['phoneNumber'],
         email = json['email'],
-        profileUrl = json['profileUrl'] ?? '';
+        profileUrl = json['profileUrl'] ?? '',
+        balance = json['balance'] ?? 0;
 
   Map<String, dynamic> toJson() => {
         'token': token,
@@ -32,6 +35,7 @@ class UserEntity {
         'lastName': lastName,
         'phoneNumber': phoneNumber,
         'email': email,
-        'profileUrl': profileUrl
+        'profileUrl': profileUrl,
+        'balance': balance,
       };
 }
