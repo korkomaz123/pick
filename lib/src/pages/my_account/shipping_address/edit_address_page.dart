@@ -378,7 +378,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       countryController.text = result['name'];
       regionId = '';
       stateController.clear();
-      regions = await shippingRepo.getRegions(lang, countryId);
+      regions = await shippingRepo.getRegions(countryId);
       setState(() {});
     }
   }

@@ -8,8 +8,13 @@ import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
-import 'src/change_notifier/my_cart_change_notifier.dart';
+import 'package:provider/provider.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
 import 'src/data/models/user_entity.dart';
@@ -32,8 +37,9 @@ class Config {
 
   static PageStyle pageStyle;
   static GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
-
-  static MyCartChangeNotifier myCartChangeNotifier = MyCartChangeNotifier();
+  static CheckoutRepository checkoutRepo = CheckoutRepository();
+  static ShippingAddressRepository shippingAddressRepo = ShippingAddressRepository();
+  // static MyCartChangeNotifier myCartChangeNotifier = MyCartChangeNotifier();
   static SignInRepository signInRepo = SignInRepository();
 
   static LocalStorageRepository localRepo = LocalStorageRepository();
@@ -68,20 +74,21 @@ class Config {
       await signInRepo.loginFirebase(email: MarkaaReporter.email, password: MarkaaReporter.password);
     }
     await _getCurrentUser();
-    // if (user?.token != null) {
-    //   isNotification = await settingRepo.getNotificationSetting(user.token);
-    //   wishlistChangeNotifier.getWishlistItems(user.token, lang);
-    //   orderChangeNotifier.loadOrderHistories(user.token, lang);
-    //   addressChangeNotifier.initialize();
-    //   addressChangeNotifier.loadAddresses(user.token);
-    // }
-    // _loadExtraData();
+    if (user?.token != null) {
+      //   isNotification = await settingRepo.getNotificationSetting(user.token);
+      navigatorKey.currentContext.read<WishlistChangeNotifier>().getWishlistItems(user.token, lang);
+      navigatorKey.currentContext.read<OrderChangeNotifier>().loadOrderHistories(user.token, lang);
+      navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
+      navigatorKey.currentContext.read<AddressChangeNotifier>().loadAddresses(user.token);
+    }
+    await _loadExtraData();
   }
-// void _loadExtraData() async {
-//   shippingMethods = await checkoutRepo.getShippingMethod(lang);
-//   paymentMethods = await checkoutRepo.getPaymentMethod(lang);
-//   regions = await shippingAddressRepo.getRegions(lang);
-// }
+
+  static Future _loadExtraData() async {
+    shippingMethods = await checkoutRepo.getShippingMethod();
+    paymentMethods = await checkoutRepo.getPaymentMethod();
+    regions = await shippingAddressRepo.getRegions(lang);
+  }
 
   static Future<void> _getCurrentUser() async {
     String token = await localRepo.getToken();

@@ -41,7 +41,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
-  final ShippingAddressRepository shippingRepo=ShippingAddressRepository();
+  final ShippingAddressRepository shippingRepo = ShippingAddressRepository();
   String shippingMethodId;
   double serviceFees;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -369,7 +369,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       countryController.text = result['name'];
       regionId = '';
       stateController.clear();
-      regions = await shippingRepo.getRegions(lang, countryId);
+      regions = await shippingRepo.getRegions(countryId);
       setState(() {});
     }
   }
