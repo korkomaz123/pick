@@ -399,7 +399,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   }
 
   void _onRetrieveRegions() async {
-    regions = await shippingRepo.getRegions(lang);
+    regions = await shippingRepo.getRegions();
   }
 
   void _onSave() async {

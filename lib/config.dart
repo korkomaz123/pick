@@ -87,7 +87,9 @@ class Config {
   static Future _loadExtraData() async {
     shippingMethods = await checkoutRepo.getShippingMethod();
     paymentMethods = await checkoutRepo.getPaymentMethod();
-    regions = await shippingAddressRepo.getRegions(lang);
+    regions = await shippingAddressRepo.getRegions();
+    print("regions");
+    print(regions);
   }
 
   static Future<void> _getCurrentUser() async {

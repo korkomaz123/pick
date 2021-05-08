@@ -390,7 +390,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   }
 
   void _onRetrieveRegions() async {
-    regions = await shippingRepo.getRegions(lang);
+    regions = await shippingRepo.getRegions();
   }
 
   void _onContinue() async {
