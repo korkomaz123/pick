@@ -19,6 +19,11 @@ void main() async {
   await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   EquatableConfig.stringify = kDebugMode;
+  ErrorWidget.builder = ((FlutterErrorDetails e) {
+    return Center(
+      child: Text("There was an error! ${e.exception}"),
+    );
+  });
 
   /// Firebase initialize
   await Firebase.initializeApp();
