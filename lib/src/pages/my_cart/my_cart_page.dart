@@ -51,6 +51,10 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   WishlistChangeNotifier wishlistChangeNotifier;
   bool showSign = false;
   bool isCheckout = false;
+  _loadData() async {
+    if (myCartChangeNotifier.cartItemCount == 0) await myCartChangeNotifier.getCartItems(lang);
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -64,6 +68,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    _loadData();
   }
 
   @override

@@ -20,6 +20,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -71,17 +72,25 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   FocusNode stateNode = FocusNode();
   FocusNode companyNode = FocusNode();
 
+  final CheckoutRepository checkoutRepo = CheckoutRepository();
+
+  _loadData() async {
+    shippingMethods = await checkoutRepo.getShippingMethod();
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    shippingMethodId = shippingMethods[0].id;
-    serviceFees = shippingMethods[0].serviceFees;
-    countryId = 'KW';
-    countryController.text = 'Kuwait';
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    countryId = 'KW';
+    countryController.text = 'Kuwait';
     _initForm();
+    _loadData();
   }
 
   void _initForm() async {

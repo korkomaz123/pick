@@ -11,6 +11,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flutter/material.dart';
@@ -50,16 +51,25 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   final LocalStorageRepository localRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
+  final CheckoutRepository checkoutRepo = CheckoutRepository();
+
+  _loadData() async {
+    addressChangeNotifier.initialize();
+    if (user?.token != null) await addressChangeNotifier.loadAddresses(user.token);
+    if (shippingMethods.isEmpty) shippingMethods = await checkoutRepo.getShippingMethod();
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    shippingMethodId = shippingMethods[0].id;
-    serviceFees = shippingMethods[0].serviceFees;
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
+    _loadData();
   }
 
   @override
