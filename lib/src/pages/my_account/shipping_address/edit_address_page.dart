@@ -296,7 +296,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: pageStyle.unitWidth * 10,
                     fontSize: pageStyle.unitFontSize * 14,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) => null, //value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
