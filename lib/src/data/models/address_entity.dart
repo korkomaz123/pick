@@ -2,6 +2,7 @@ class AddressEntity {
   String title;
   String firstName;
   String lastName;
+  String fullName;
   String email;
   String addressId;
   String country;
@@ -20,6 +21,7 @@ class AddressEntity {
     this.title,
     this.firstName,
     this.lastName,
+    this.fullName,
     this.email,
     this.addressId,
     this.country,
@@ -39,6 +41,7 @@ class AddressEntity {
       : title = json['prefix'] ?? '',
         firstName = json['firstname'],
         lastName = json['lastname'],
+        fullName = json['firstname'] + " " + json['lastname'],
         email = json['email'],
         addressId = json['entity_id'],
         country = json['country_name'],
@@ -57,8 +60,9 @@ class AddressEntity {
         'addressId': addressId ?? '',
         'customer_address_id': addressId ?? '',
         'prefix': title ?? '',
-        'firstname': firstName,
-        'lastname': lastName,
+        'firstname': fullName != null && fullName.isNotEmpty ? fullName.split(' ')[0] : firstName,
+        'lastname': fullName != null && fullName.isNotEmpty ? fullName.split(' ')[1] : lastName,
+        'fullName': fullName,
         'country_name': country,
         'country_id': countryId,
         'region': regionId,

@@ -4,6 +4,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class SelectRegionDialog extends StatefulWidget {
   final PageStyle pageStyle;
@@ -17,10 +18,15 @@ class SelectRegionDialog extends StatefulWidget {
 
 class _SelectRegionDialogState extends State<SelectRegionDialog> {
   final searchController = TextEditingController();
+  _loadData() async {
+    regions = await ShippingAddressRepository().getRegions(lang);
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadData();
     searchController.addListener(() {
       setState(() {});
     });

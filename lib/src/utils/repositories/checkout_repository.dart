@@ -3,13 +3,15 @@ import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
+import '../../../config.dart';
+
 class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ShippingMethodEntity>> getShippingMethod(String lang) async {
+  Future<List<ShippingMethodEntity>> getShippingMethod() async {
     String url = EndPoints.getShippingMethod;
-    final data = {'lang': lang};
+    final data = {'lang': Config.language};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> shippingMethodList = result['data'];
@@ -26,13 +28,12 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<PaymentMethodEntity>> getPaymentMethod(String lang) async {
+  Future<List<PaymentMethodEntity>> getPaymentMethod() async {
     String url = EndPoints.getPaymentMethod;
-    final data = {'lang': lang};
+    final data = {'lang': Config.language};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
-      List<String> keys =
-          (result['data'] as Map<String, dynamic>).keys.toList();
+      List<String> keys = (result['data'] as Map<String, dynamic>).keys.toList();
       List<PaymentMethodEntity> methods = [];
       for (int i = 0; i < keys.length; i++) {
         methods.add(PaymentMethodEntity.fromJson(result['data'][keys[i]]));
@@ -55,11 +56,7 @@ class CheckoutRepository {
     /// test: sk_test_Bh6kvFjzUfPrSIMVHA0ONJ7n
     /// live: sk_live_wZnUtOjFgAIWi0S6fxvleHoa
 
-    Map<String, String> headers = {
-      'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa',
-      'lang_code': lang,
-      'Content-Type': 'application/json'
-    };
+    Map<String, String> headers = {'Authorization': 'Bearer sk_live_wZnUtOjFgAIWi0S6fxvleHoa', 'lang_code': lang, 'Content-Type': 'application/json'};
     return Api.postMethod(url, data: data, headers: headers);
   }
 
