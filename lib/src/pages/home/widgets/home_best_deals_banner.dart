@@ -21,12 +21,11 @@ class HomeBestDealsBanner extends StatefulWidget {
 
 class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
   HomeChangeNotifier model;
-  ProductRepository productRepository;
+  ProductRepository productRepository = ProductRepository();
 
   @override
   void initState() {
     super.initState();
-    productRepository = context.read<ProductRepository>();
     model = widget.model;
   }
 

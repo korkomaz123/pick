@@ -7,7 +7,6 @@ import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
@@ -24,12 +23,11 @@ class HomeFragrancesBanners extends StatefulWidget {
 
 class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
   HomeChangeNotifier model;
-  ProductRepository productRepository;
+  ProductRepository productRepository = ProductRepository();
 
   @override
   void initState() {
     super.initState();
-    productRepository = context.read<ProductRepository>();
     model = widget.model;
   }
 

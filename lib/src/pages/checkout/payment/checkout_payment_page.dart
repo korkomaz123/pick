@@ -28,6 +28,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'payment_card_form.dart';
+
 class CheckoutPaymentPage extends StatefulWidget {
   final OrderEntity reorder;
 
@@ -163,70 +165,82 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   }
 
   Widget _buildPaymentCard(PaymentMethodEntity method) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.all(10.w),
-      color: greyLightColor,
-      child: RadioListTile(
-        value: method.id,
-        groupValue: payment,
-        onChanged: (value) {
-          payment = value;
-          markaaAppChangeNotifier.rebuild();
-        },
-        activeColor: primaryColor,
-        title: Row(
-          children: [
-            if (method.id == 'cashondelivery') ...[
-              SvgPicture.asset(
-                'lib/public/icons/cashondelivery.svg',
-                height: 19,
-                width: 39,
-              ),
-              Text(
-                "    " + method.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ] else if (method.id == 'knet') ...[
-              SvgPicture.asset(
-                'lib/public/icons/knet.svg',
-                height: 46,
-                width: 61,
-              ),
-            ] else if (method.id == 'tap') ...[
-              Image.asset(
-                'lib/public/images/visa-card.png',
-                height: 35,
-                width: 95,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                'lib/public/icons/line.svg',
-                height: 41,
-                width: 10,
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              SvgPicture.asset(
-                'lib/public/icons/master-card.svg',
-                height: 42,
-                width: 54,
-              ),
-            ] else ...[
-              SvgPicture.asset(walletIcon),
-              SizedBox(width: 10.w),
-              SvgPicture.asset(walletTitle),
-            ],
-          ],
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(vertical: 10.h),
+          padding: EdgeInsets.all(10.w),
+          color: greyLightColor,
+          child: RadioListTile(
+            value: method.id,
+            groupValue: payment,
+            onChanged: (value) {
+              payment = value;
+              markaaAppChangeNotifier.rebuild();
+            },
+            activeColor: primaryColor,
+            title: Row(
+              children: [
+                if (method.id == 'cashondelivery') ...[
+                  SvgPicture.asset(
+                    'lib/public/icons/cashondelivery.svg',
+                    height: 19,
+                    width: 39,
+                  ),
+                  Text(
+                    "    " + method.title,
+                    style: mediumTextStyle.copyWith(
+                      color: greyColor,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ] else if (method.id == 'knet') ...[
+                  SvgPicture.asset(
+                    'lib/public/icons/knet.svg',
+                    height: 46,
+                    width: 61,
+                  ),
+                ] else if (method.id == 'tap') ...[
+                  Image.asset(
+                    'lib/public/images/visa-card.png',
+                    height: 35,
+                    width: 95,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SvgPicture.asset(
+                    'lib/public/icons/line.svg',
+                    height: 41,
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SvgPicture.asset(
+                    'lib/public/icons/master-card.svg',
+                    height: 42,
+                    width: 54,
+                  ),
+                ] else ...[
+                  SvgPicture.asset(walletIcon),
+                  SizedBox(width: 10.w),
+                  SvgPicture.asset(walletTitle),
+                ],
+              ],
+            ),
+          ),
         ),
-      ),
+        if (method.id == 'tap' && payment == 'tap') ...[
+          SizedBox(height: 5.h),
+          Container(
+            width: double.infinity,
+            height: 280.h,
+            child: PaymentCardForm(),
+          ),
+        ]
+      ],
     );
   }
 

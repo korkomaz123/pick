@@ -5,7 +5,6 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/routes/routes.dart';
 
@@ -19,12 +18,11 @@ class HomeAdvertise extends StatefulWidget {
 }
 
 class _HomeAdvertiseState extends State<HomeAdvertise> {
-  ProductRepository productRepository;
+  ProductRepository productRepository = ProductRepository();
 
   @override
   void initState() {
     super.initState();
-    productRepository = context.read<ProductRepository>();
   }
 
   @override

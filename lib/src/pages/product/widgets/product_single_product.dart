@@ -479,13 +479,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ],
           ),
-          Text(
-            'sku'.tr() + ': ' + widget.model.productDetails.sku,
-            style: mediumTextStyle.copyWith(
-              fontSize: 12.sp,
-              color: primaryColor,
-            ),
-          ),
         ],
       ),
     );

@@ -280,16 +280,11 @@ class _MarkaaAppState extends State<MarkaaApp> {
           create: (context) => FilterBloc(),
         ),
       ],
-      child: MarkaaAppView(home: widget.home),
+      child: _buildAppView(context),
     );
   }
-}
 
-class MarkaaAppView extends StatelessWidget {
-  final String home;
-  MarkaaAppView({@required this.home});
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildAppView(BuildContext context) {
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
       child: ScreenUtilInit(
@@ -307,7 +302,7 @@ class MarkaaAppView extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: markaaAppTheme,
           title: 'Markaa',
-          initialRoute: home,
+          initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,
           builder: (context, child) {
             return StreamBuilder<DataConnectionStatus>(

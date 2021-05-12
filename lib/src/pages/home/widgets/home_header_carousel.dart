@@ -92,7 +92,6 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             height: 375.w * 579 / 1125,
             imageUrl: banner.bannerImage,
             fit: BoxFit.fill,
-            // progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
             errorWidget: (context, url, error) =>
                 Center(child: Icon(Icons.image, size: 20)),
           ),
@@ -116,7 +115,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             radius: 10,
             dotWidth: designWidth.w /
                 (widget.homeChangeNotifier.sliderImages.length * 3),
-            dotHeight: designHeight.h * 3,
+            dotHeight: 3.h,
             paintStyle: PaintingStyle.fill,
             strokeWidth: 0,
             dotColor: Colors.white,
