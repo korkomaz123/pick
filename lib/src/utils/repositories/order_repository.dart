@@ -14,17 +14,13 @@ class OrderRepository {
     String lang,
   ) async {
     String url = EndPoints.submitOrder;
-    Map<String, dynamic> params = {};
-    params['orderAddress'] = orderDetails['orderAddress'];
-    params['token'] = orderDetails['token'];
-    params['shipping'] = orderDetails['shipping'];
-    params['paymentMethod'] = orderDetails['paymentMethod'];
-    params['lang'] = lang;
-    params['cartId'] = orderDetails['cartId'];
-    params['orderDetails'] = jsonEncode(orderDetails['orderDetails']);
+    final details = jsonEncode(orderDetails['orderDetails']);
+    orderDetails['orderDetails'] = details;
+    orderDetails['lang'] = lang;
     // print(params);
     // print(url);
-    final result = await Api.postMethod(url, data: params);
+    final result = await Api.postMethod(url, data: orderDetails);
+    print(result);
     return result;
   }
 

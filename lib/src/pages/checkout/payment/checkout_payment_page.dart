@@ -41,16 +41,23 @@ class CheckoutPaymentPage extends StatefulWidget {
 
 class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
+
   String payment;
+  String cardToken;
+
   ProgressService progressService;
   FlushBarService flushBarService;
-  final LocalStorageRepository localStorageRepo = LocalStorageRepository();
+
+  LocalStorageRepository localStorageRepo = LocalStorageRepository();
+  CheckoutRepository checkoutRepo = CheckoutRepository();
+
   MyCartChangeNotifier myCartChangeNotifier;
-  AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
-  final CheckoutRepository checkoutRepo = CheckoutRepository();
+
   _loadData() async {
     if (paymentMethods.isEmpty)
       paymentMethods = await checkoutRepo.getPaymentMethod();
@@ -232,12 +239,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
             ),
           ),
         ),
-        if (method.id == 'tap' && payment == 'tap') ...[
+        if (method.id == 'tap' && payment == 'tap' && cardToken == null) ...[
           SizedBox(height: 5.h),
           Container(
             width: double.infinity,
             height: 280.h,
-            child: PaymentCardForm(),
+            child: PaymentCardForm(
+              onAuthorizedSuccess: _onCardAuthorizedSuccess,
+            ),
           ),
         ]
       ],
@@ -353,20 +362,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusDirectional.all(Radius.circular(30)),
         ),
-        onPressed: () async {
-          orderDetails['paymentMethod'] = payment;
-          if (payment == 'cashondelivery') {
-            await orderChangeNotifier.submitOrder(
-              orderDetails,
-              lang,
-              _onProcess,
-              _onOrderSubmittedSuccess,
-              _onFailure,
-            );
-          } else {
-            _onGeneratePaymentUrl();
-          }
-        },
+        onPressed: _onPlaceOrder,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -409,7 +405,32 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     );
   }
 
-  void _onOrderSubmittedSuccess(String orderNo) async {
+  void _onCardAuthorizedSuccess(String token) {
+    cardToken = token;
+    flushBarService.showSuccessMessage('card_authorized_success'.tr());
+    setState(() {});
+  }
+
+  void _onPlaceOrder() async {
+    orderDetails['paymentMethod'] = payment;
+    if (payment == 'tap') {
+      if (cardToken == null) {
+        flushBarService.showErrorMessage('fill_card_details_error'.tr());
+        return;
+      }
+      orderDetails['tap_token'] = cardToken;
+    }
+    await orderChangeNotifier.submitOrder(
+      orderDetails,
+      lang,
+      _onProcess,
+      _onOrderSubmittedSuccess,
+      _onFailure,
+    );
+  }
+
+  void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
+    print('success');
     if (widget.reorder != null) {
       myCartChangeNotifier.initializeReorderCart();
     } else {
@@ -419,79 +440,28 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
-    double price = double.parse(orderDetails['orderDetails']['totalPrice']);
+    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    double price = double.parse(priceDetails['totalPrice']);
+
     AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
-    progressService.hideProgress();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.checkoutConfirmed,
-      (route) => route.settings.name == Routes.home,
-      arguments: orderNo,
-    );
-  }
 
-  void _onGeneratePaymentUrl() async {
-    final address = jsonDecode(orderDetails['orderAddress']);
-    String cartId = orderDetails['cartId'];
-    int version = Platform.isAndroid
-        ? MarkaaVersion.androidVersion
-        : MarkaaVersion.iOSVersion;
-    Map<String, dynamic> data = {
-      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
-      "currency": "KWD",
-      "threeDSecure": true,
-      "save_card": false,
-      "description": "purchase description",
-      "statement_descriptor": "",
-      "metadata": {"udf1": "m live"},
-      "reference": {
-        "acquirer": "acquirer",
-        "gateway": "gateway",
-        "payment": "payment",
-        "track": "track",
-        "transaction": "trans_$cartId\_$version",
-        "order": "order_$cartId\_$version",
-      },
-      "receipt": {"email": true, "sms": false},
-      "customer": {
-        "id": "",
-        "first_name": address['firstname'],
-        "middle_name": "",
-        "last_name": address['lastname'],
-        "email": address['email'],
-        "phone": {"country_code": "965", "number": address['phoneNumber']},
-      },
-      "merchant": {"id": "6008426"},
-      "source": {
-        "id":
-            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
-      },
-      "destinations": {"destination": []},
-      "post": {"url": "https://www.google.com"},
-      "redirect": {"url": "https://www.google.com"}
-    };
-    await myCartChangeNotifier.generatePaymentUrl(
-        data, lang, _onProcess, _onSuccessGenerated, _onFailure);
-  }
-
-  void _onSuccessGenerated(String url, String chargeId) async {
     progressService.hideProgress();
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.checkoutPaymentCard,
-      arguments: {
-        'orderDetails': orderDetails,
-        'reorder': widget.reorder,
-        'url': url,
-        'chargeId': chargeId,
-      },
-    );
-    if (result != null) {
-      flushBarService.showErrorMessage(
-        'payment_canceled'.tr(),
+
+    if (payment == 'cashondelivery') {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.checkoutConfirmed,
+        (route) => route.settings.name == Routes.home,
+        arguments: order.orderNo,
+      );
+    } else {
+      Navigator.pushNamed(
+        context,
+        Routes.checkoutPaymentCard,
+        arguments: {'url': payUrl, 'order': order},
       );
     }
   }

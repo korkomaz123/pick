@@ -36,14 +36,18 @@ class EditAddressPage extends StatefulWidget {
 
 class _EditAddressPageState extends State<EditAddressPage> {
   bool isNew;
+  bool isCheckout;
+
   String countryId;
   String regionId;
+
   ProgressService progressService;
   FlushBarService flushBarService;
-  ShippingAddressRepository shippingRepo;
+
+  ShippingAddressRepository shippingRepo = ShippingAddressRepository();
+
   AddressChangeNotifier model;
   AddressEntity addressParam;
-  bool isCheckout;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -103,7 +107,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    shippingRepo = context.read<ShippingAddressRepository>();
   }
 
   @override
@@ -315,14 +318,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   Widget _buildSearchingAddressButton() {
     return Container(
-      width: 60.w, //pageStyle.deviceWidth,
+      //pageStyle.deviceWidth,
       // height: pageStyle.unitHeight * 50,
       // margin: EdgeInsets.symmetric(
       //   vertical: pageStyle.unitHeight * 20,
       // ),
-      // padding: EdgeInsets.all(
-      //   pageStyle.unitWidth * 10,
-      // ),
+      padding: EdgeInsets.all(10.w),
       child: MarkaaTextIconButton(
         title: "", //'checkout_searching_address_button_title'.tr(),
         titleSize: 14.sp,

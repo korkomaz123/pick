@@ -13,15 +13,22 @@ import 'package:provider/provider.dart';
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];
+
   Future<void> changeLanguage(String val, {fromSplash = false}) async {
     BuildContext _context = Config.navigatorKey.currentContext;
     String _current = currentLanguage;
     if (_current != val) {
       _current == 'ar'
-          ? _context.setLocale(EasyLocalization.of(_context).supportedLocales.first)
-          : _context.setLocale(EasyLocalization.of(_context).supportedLocales.last);
-      FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
-      FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+          ? _context
+              .setLocale(EasyLocalization.of(_context).supportedLocales.first)
+          : _context
+              .setLocale(EasyLocalization.of(_context).supportedLocales.last);
+      FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en'
+          ? MarkaaNotificationChannels.arChannel
+          : MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance.subscribeToTopic(_current == 'ar'
+          ? MarkaaNotificationChannels.arChannel
+          : MarkaaNotificationChannels.enChannel);
 
       lang = Config.language = _current == "ar" ? "en" : "ar";
     }
@@ -42,7 +49,8 @@ class GlobalProvider extends ChangeNotifier {
   fetchCategories() async {
     print("currentLanguage $currentLanguage");
     String _lang = currentLanguage;
-    if (sideMenus[_lang].length == 0) sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
+    if (sideMenus[_lang].length == 0)
+      sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
     notifyListeners();
   }
 
@@ -58,5 +66,9 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get currentLanguage => EasyLocalization.of(Config.navigatorKey.currentContext).locale.languageCode.toLowerCase();
+  String get currentLanguage =>
+      EasyLocalization.of(Config.navigatorKey.currentContext)
+          .locale
+          .languageCode
+          .toLowerCase();
 }

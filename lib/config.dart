@@ -131,7 +131,7 @@ class Config {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.appToken,
-      AdjustEnvironment.production,
+      AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;
 

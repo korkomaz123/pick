@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentCardForm extends StatefulWidget {
+  final Function onAuthorizedSuccess;
+
+  PaymentCardForm({@required this.onAuthorizedSuccess});
+
   @override
   _PaymentCardFormState createState() => _PaymentCardFormState();
 }
@@ -25,6 +29,8 @@ class _PaymentCardFormState extends State<PaymentCardForm> {
   void _onPageLoaded(String url) async {
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    print('Params: $params');
+    if (params.containsKey('token')) {
+      widget.onAuthorizedSuccess(params['token']);
+    }
   }
 }

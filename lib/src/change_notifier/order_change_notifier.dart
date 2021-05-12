@@ -51,6 +51,14 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  void updateOrder(OrderEntity order) {
+    if (ordersMap.containsKey(order.orderId)) {
+      ordersMap[order.orderId] = order;
+      setKeys();
+      notifyListeners();
+    }
+  }
+
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
     String lang,
@@ -61,13 +69,17 @@ class OrderChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);
+      print(result);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);
-        ordersMap[newOrder.orderId] = newOrder;
-        setKeys();
-        notifyListeners();
-        onSuccess(newOrder.orderNo);
+        if (orderDetails['token'] != null && orderDetails['token'] != '') {
+          ordersMap[newOrder.orderId] = newOrder;
+          setKeys();
+          notifyListeners();
+        }
+
+        onSuccess(result['payurl'], newOrder);
       } else {
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
@@ -91,7 +103,8 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
@@ -119,7 +132,8 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.returnOrder(
+          token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         onSuccess();
       } else {
@@ -136,8 +150,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -151,8 +169,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
