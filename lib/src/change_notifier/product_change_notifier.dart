@@ -5,14 +5,11 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-class ProductChangeNotifier extends ChangeNotifier {
-  ProductChangeNotifier({
-    @required this.productRepository,
-    @required this.localStorageRepository,
-  });
+import '../../config.dart';
 
-  final ProductRepository productRepository;
-  final LocalStorageRepository localStorageRepository;
+class ProductChangeNotifier extends ChangeNotifier {
+  final ProductRepository productRepository = ProductRepository();
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -22,18 +19,30 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
 
+  close() {
+    productDetails = null;
+  }
+
   void initialize() {
     data = {};
     pages = {};
     isReachedMax = false;
   }
 
-  Future<void> getProductDetails(String productId, String lang) async {
+  setInitalInfo(ProductModel product) {
+    productDetails = ProductEntity.fromProduct(product);
+  }
+
+  Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
-    productDetails = null;
     selectedVariant = null;
-    final result = await productRepository.getProductDetails(productId, lang);
+    final result = await productRepository.getProductDetails(productId, Config.language);
+    List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
+      productDetails = null;
+      _gallery.addAll(result['moreAbout']['gallery']);
+      if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(1);
+      result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }
     notifyListeners();
@@ -174,8 +183,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(
-        brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -245,8 +253,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(
-        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {

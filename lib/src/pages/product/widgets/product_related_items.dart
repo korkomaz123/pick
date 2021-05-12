@@ -1,10 +1,8 @@
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
@@ -30,11 +28,9 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   }
 
   void _getRelatedItems() async {
-    relatedItems = await context
-        .read<ProductRepository>()
-        .getRelatedProducts(product.productId, lang);
+    relatedItems = await ProductRepository().getRelatedProducts(product.productId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 

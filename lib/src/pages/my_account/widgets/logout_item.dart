@@ -35,10 +35,8 @@ class _LogoutItemState extends State<LogoutItem> {
   ProgressService progressService;
 
   SignInBloc signInBloc;
-
-  LocalStorageRepository localRepo;
-  SettingRepository settingRepo;
-
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -50,8 +48,6 @@ class _LogoutItemState extends State<LogoutItem> {
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -125,16 +121,20 @@ class _LogoutItemState extends State<LogoutItem> {
 
   void _logoutUser() async {
     user = null;
-    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     await localRepo.setToken('');
-    myCartChangeNotifier.initialize();
+    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
+
     orderChangeNotifier.initializeOrders();
+    wishlistChangeNotifier.initialize();
+
+    myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-    List<String> ids = await localRepo.getRecentlyViewedIds();
-    wishlistChangeNotifier.initialize();
-    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
+
+    homeChangeNotifier.loadRecentlyViewedGuest();
+
     progressService.hideProgress();
+
     Navigator.pop(context);
     Navigator.popUntil(
       context,

@@ -3,50 +3,30 @@ import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomePerfumes extends StatefulWidget {
-  final HomeChangeNotifier model;
-
-  HomePerfumes({this.model});
+  final HomeChangeNotifier homeChangeNotifier;
+  HomePerfumes({@required this.homeChangeNotifier});
 
   @override
   _HomePerfumesState createState() => _HomePerfumesState();
 }
 
 class _HomePerfumesState extends State<HomePerfumes> {
-  CategoryEntity perfumes = homeCategories[2];
-  List<ProductModel> perfumesProducts;
-  String title;
-  HomeChangeNotifier model;
   int activeIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    model = widget.model;
-    perfumesProducts = model.perfumesProducts;
-    title = model.perfumesTitle;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 375.w,
-      padding: EdgeInsets.all(8.w),
-      margin: EdgeInsets.only(bottom: 10.h),
-      color: Colors.white,
-      child: Column(
+    if (widget.homeChangeNotifier.perfumesProducts.isNotEmpty &&
+        widget.homeChangeNotifier.perfumesProducts.length > 4) {
+      return Column(
         children: [
           _buildProductView(),
           Divider(
@@ -57,8 +37,10 @@ class _HomePerfumesState extends State<HomePerfumes> {
           _buildIndicator(),
           _buildFooter(context),
         ],
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildFooter(BuildContext context) {
@@ -105,9 +87,9 @@ class _HomePerfumesState extends State<HomePerfumes> {
       child: Center(
         child: SmoothIndicator(
           offset: activeIndex.toDouble(),
-          count: perfumesProducts.length > 40
+          count: widget.homeChangeNotifier.perfumesProducts.length > 40
               ? 10
-              : (perfumesProducts.length / 4).floor(),
+              : (widget.homeChangeNotifier.perfumesProducts.length / 4).floor(),
           axisDirection: Axis.horizontal,
           effect: SlideEffect(
             spacing: 8.0,
@@ -129,9 +111,9 @@ class _HomePerfumesState extends State<HomePerfumes> {
       width: 375.w,
       height: 590.h,
       child: Swiper(
-        itemCount: perfumesProducts.length > 40
+        itemCount: widget.homeChangeNotifier.perfumesProducts.length > 40
             ? 10
-            : (perfumesProducts.length / 4).floor(),
+            : (widget.homeChangeNotifier.perfumesProducts.length / 4).floor(),
         autoplay: false,
         curve: Curves.easeIn,
         duration: 300,
@@ -149,7 +131,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: perfumesProducts[4 * index],
+                    product:
+                        widget.homeChangeNotifier.perfumesProducts[4 * index],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -165,7 +148,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: perfumesProducts[4 * index + 1],
+                    product: widget
+                        .homeChangeNotifier.perfumesProducts[4 * index + 1],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -187,7 +171,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: perfumesProducts[4 * index + 2],
+                    product: widget
+                        .homeChangeNotifier.perfumesProducts[4 * index + 2],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -203,7 +188,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: perfumesProducts[4 * index + 3],
+                    product: widget
+                        .homeChangeNotifier.perfumesProducts[4 * index + 3],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,

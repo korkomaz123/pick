@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -41,8 +42,7 @@ class _CategoryListPageState extends State<CategoryListPage>
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
-    categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-    categoryChangeNotifier.getCategoriesList(lang);
+    context.read<HomeChangeNotifier>().getCategoriesList();
   }
 
   @override
@@ -58,8 +58,8 @@ class _CategoryListPageState extends State<CategoryListPage>
       body: Column(
         children: [
           _buildAppBar(),
-          Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
-            categories = categoryChangeNotifier.categories;
+          Consumer<HomeChangeNotifier>(builder: (_, _homeChangeNotifier, ___) {
+            categories = _homeChangeNotifier.categories;
             return Expanded(
               child: SingleChildScrollView(
                 child: Column(

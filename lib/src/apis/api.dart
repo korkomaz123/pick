@@ -1,20 +1,28 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class Api {
+  static Dio _dio = Dio();
+  static _dioInit() async {
+    if (_dio.interceptors.length > 0) return;
+    _dio.interceptors
+      ..add(
+          CacheInterceptor()); //..add(LogInterceptor(requestHeader: false, responseHeader: false));
+  }
+
   static Future<Map<String, dynamic>> getMethod(
     String url, {
     Map<String, dynamic> data,
     Map<String, dynamic> headers,
   }) async {
+    _dioInit();
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
-    final response = await http.get(
-      Uri.parse(requestUrl),
-      headers: headers ?? _getHeader(),
-    );
-    return jsonDecode(response.body);
+    print(requestUrl);
+    final response = await _dio.get(requestUrl,
+        options: Options(headers: headers ?? _getHeader()));
+    return response.data;
   }
 
   static Future<Map<String, dynamic>> postMethod(
@@ -22,12 +30,21 @@ class Api {
     Map<String, dynamic> data,
     Map<String, String> headers,
   }) async {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers ?? _getHeader(),
-      body: headers != null ? jsonEncode(data) : data,
+    print(url);
+    print(data);
+    final response = await _dio.post(
+      url,
+      options: Options(headers: headers ?? _getHeader()),
+      data: headers != null ? jsonEncode(data) : data,
     );
-    return jsonDecode(response.body);
+    return response.data;
+
+    // final response = await http.post(
+    //   Uri.parse(url),
+    //   headers: headers ?? _getHeader(),
+    //   body: headers != null ? jsonEncode(data) : data,
+    // );
+    // return jsonDecode(response.body);
   }
 
   static String _getFullUrl(String url, Map<String, dynamic> params) {
@@ -49,5 +66,38 @@ class Api {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': '*/*',
     };
+  }
+}
+
+class CacheInterceptor extends Interceptor {
+  CacheInterceptor();
+
+  final _cache = <Uri, Response>{};
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (options.method.toLowerCase() != "get") return handler.next(options);
+    var response = _cache[options.uri];
+    print("options.method ${options.method}");
+    if (options.extra['refresh'] == true) {
+      print('${options.uri}: force refresh, ignore cache! \n');
+      return handler.next(options);
+    } else if (response != null) {
+      print('cache hit: ${options.uri} \n');
+      return handler.resolve(response);
+    }
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    _cache[response.requestOptions.uri] = response;
+    super.onResponse(response, handler);
+  }
+
+  @override
+  void onError(DioError err, ErrorInterceptorHandler handler) {
+    print('onError: $err');
+    super.onError(err, handler);
   }
 }

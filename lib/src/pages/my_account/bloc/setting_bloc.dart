@@ -3,18 +3,14 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
-import 'package:meta/meta.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  SettingBloc({@required SettingRepository settingRepository})
-      : assert(settingRepository != null),
-        _settingRepository = settingRepository,
-        super(SettingInitial());
+  SettingBloc() : super(SettingInitial());
 
-  final SettingRepository _settingRepository;
+  final SettingRepository _settingRepository = SettingRepository();
 
   @override
   Stream<SettingState> mapEventToState(
@@ -76,8 +72,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   ) async* {
     yield PasswordUpdatedInProcess();
     try {
-      final result = await _settingRepository.updatePassword(
-          token, oldPassword, newPassword);
+      final result = await _settingRepository.updatePassword(token, oldPassword, newPassword);
       if (result['code'] == 'SUCCESS') {
         yield PasswordUpdatedSuccess();
       } else {

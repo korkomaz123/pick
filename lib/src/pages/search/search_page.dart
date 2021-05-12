@@ -1,4 +1,4 @@
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
@@ -49,20 +49,19 @@ class _SearchPageState extends State<SearchPage>
   FocusNode searchNode = FocusNode();
   List<ProductModel> products = [];
   List<ProductModel> suggestions = [];
-  LocalStorageRepository localStorageRepository;
-  SearchRepository searchRepository;
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
+  final SearchRepository searchRepository = SearchRepository();
   SuggestionChangeNotifier suggestionChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  BrandChangeNotifier brandChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
-    searchRepository = context.read<SearchRepository>();
-    localStorageRepository = context.read<LocalStorageRepository>();
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
-    brandChangeNotifier.getBrandsList(lang, 'brand');
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
+    homeChangeNotifier.getBrandsList('brand');
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
@@ -285,10 +284,10 @@ class _SearchPageState extends State<SearchPage>
                   ),
                 ),
                 SizedBox(width: 4.w),
-                Consumer<BrandChangeNotifier>(
-                  builder: (_, __, ___) {
+                Consumer<HomeChangeNotifier>(
+                  builder: (_, homeChangeNotifier, ___) {
                     int count = 0;
-                    for (var brand in brandChangeNotifier.sortedBrandList) {
+                    for (var brand in homeChangeNotifier.sortedBrandList) {
                       bool isEmpty = searchController.text.isEmpty;
                       String searchText = searchController.text.toLowerCase();
                       String brandLabel =
@@ -382,9 +381,9 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildBrandsSuggestion() {
-    return Consumer<BrandChangeNotifier>(
-      builder: (_, __, ___) {
-        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, homeChangeNotifier, ___) {
+        List<BrandEntity> brands = homeChangeNotifier.sortedBrandList;
         int rIndex = 0;
         return Column(
           children: List.generate(
@@ -567,9 +566,9 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildBrandResult() {
-    return Consumer<BrandChangeNotifier>(
-      builder: (_, __, ___) {
-        List<BrandEntity> brands = brandChangeNotifier.sortedBrandList;
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, homeChangeNotifier, ___) {
+        List<BrandEntity> brands = homeChangeNotifier.sortedBrandList;
         int rIndex = 0;
         return SingleChildScrollView(
           child: Column(

@@ -5,75 +5,18 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
-  CategoryChangeNotifier({
-    this.localStorageRepository,
-    this.categoryRepository,
-    this.brandRepository,
-  });
-
-  final LocalStorageRepository localStorageRepository;
-  final CategoryRepository categoryRepository;
-  final BrandRepository brandRepository;
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
+  final CategoryRepository categoryRepository = CategoryRepository();
+  final BrandRepository brandRepository = BrandRepository();
 
   List<CategoryEntity> subCategories;
   bool isLoading = false;
-  List<CategoryEntity> categories = [];
-  List<CategoryEntity> featuredCategories = [];
 
   void initialSubCategories() {
     subCategories = null;
     isLoading = false;
     // notifyListeners();
-  }
-
-  Future<void> getFeaturedCategoriesList(String lang) async {
-    String key = 'featured-categories-$lang';
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> categoryList = await localStorageRepository.getItem(key);
-      featuredCategories = [];
-      for (int i = 0; i < categoryList.length; i++) {
-        featuredCategories.add(CategoryEntity.fromJson(categoryList[i]));
-      }
-      notifyListeners();
-    }
-    final result = await categoryRepository.getFeaturedCategories(lang);
-    if (result['code'] == 'SUCCESS') {
-      await localStorageRepository.setItem(key, result['categories']);
-      if (!exist) {
-        List<dynamic> categoryList = result['categories'];
-        featuredCategories = [];
-        for (int i = 0; i < categoryList.length; i++) {
-          featuredCategories.add(CategoryEntity.fromJson(categoryList[i]));
-        }
-        notifyListeners();
-      }
-    }
-  }
-
-  Future<void> getCategoriesList(String lang) async {
-    String key = 'categories-$lang';
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> categoryList = await localStorageRepository.getItem(key);
-      categories = [];
-      for (int i = 0; i < categoryList.length; i++) {
-        categories.add(CategoryEntity.fromJson(categoryList[i]));
-      }
-      notifyListeners();
-    }
-    final result = await categoryRepository.getAllCategories(lang);
-    if (result['code'] == 'SUCCESS') {
-      await localStorageRepository.setItem(key, result['categories']);
-      if (!exist) {
-        List<dynamic> categoryList = result['categories'];
-        categories = [];
-        for (int i = 0; i < categoryList.length; i++) {
-          categories.add(CategoryEntity.fromJson(categoryList[i]));
-        }
-        notifyListeners();
-      }
-    }
   }
 
   void getSubCategories(String categoryId, String lang) async {

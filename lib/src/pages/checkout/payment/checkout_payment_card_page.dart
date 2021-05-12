@@ -34,7 +34,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   ProgressService progressService;
   FlushBarService flushBarService;
   MyCartChangeNotifier myCartChangeNotifier;
-  LocalStorageRepository localStorageRepo;
+  final LocalStorageRepository localStorageRepo = LocalStorageRepository();
   var orderDetails;
   var reorder;
   var url;
@@ -46,7 +46,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _initialData();
   }

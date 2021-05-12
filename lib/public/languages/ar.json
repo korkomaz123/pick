@@ -103,6 +103,8 @@
     "checkout_step_payment": "دفع",
     "phone_number_hint": "رقم الهاتف",
     "checkout_searching_address_button_title": "بحث",
+    "full_name":"الإسم بالكامل",
+    "full_name_issue":"من فضلك أدخل إسمك بالكامل",
     "checkout_search_address_title": "عنوان البحث",
     "checkout_select_address_button_title": "اختر عنوان",
     "checkout_add_address_button_title": "إضافة عنوان",

@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/config.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -9,7 +11,6 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
@@ -75,44 +76,37 @@ class _HomeGroomingState extends State<HomeGrooming> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: SingleChildScrollView(
+      height: 276.h,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: categories.map((category) {
-            return InkWell(
-              onTap: () {
-                if (category?.id != null) {
-                  final arguments = ProductListArguments(
-                    category: category,
-                    brand: BrandEntity(),
-                    subCategory: [],
-                    selectedSubCategoryIndex: 0,
-                    isFromBrand: false,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
-                }
-              },
-              child: Container(
-                width: 151.w,
-                height: 276.h,
-                margin: EdgeInsets.only(right: 5.w),
-                padding: EdgeInsets.only(bottom: 10.h),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(category.imageUrl),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    10.sp,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
+        itemCount: categories.length,
+        itemBuilder: (context, index) => InkWell(
+          onTap: () {
+            if (categories[index]?.id != null) {
+              final arguments = ProductListArguments(
+                category: categories[index],
+                brand: BrandEntity(),
+                subCategory: [],
+                selectedSubCategoryIndex: 0,
+                isFromBrand: false,
+              );
+              Navigator.pushNamed(
+                  Config.navigatorKey.currentContext, Routes.productList,
+                  arguments: arguments);
+            }
+          },
+          child: Container(
+            width: 151.w,
+            height: 276.h,
+            margin: EdgeInsets.only(right: 5.w),
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: CachedNetworkImage(
+              imageUrl: categories[index].imageUrl,
+              fit: BoxFit.fill,
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
+            ),
+          ),
         ),
       ),
     );
@@ -123,24 +117,21 @@ class _HomeGroomingState extends State<HomeGrooming> {
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 5.h),
       color: backgroundColor,
-      child: SingleChildScrollView(
+      height: 175.h,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: list.map((item) {
-            int index = list.indexOf(item);
-            return Container(
-              padding: EdgeInsets.only(
-                left: index > 0 ? 2.w : 0,
-                bottom: 3.h,
-              ),
-              child: ProductCard(
-                cardWidth: 120.w,
-                cardHeight: 175.w,
-                product: item,
-                isWishlist: true,
-              ),
-            );
-          }).toList(),
+        itemCount: list.length,
+        itemBuilder: (context, index) => Container(
+          padding: EdgeInsets.only(
+            left: index > 0 ? 2.w : 0,
+            bottom: 3.h,
+          ),
+          child: ProductCard(
+            cardWidth: 120.w,
+            cardHeight: 175.w,
+            product: list[index],
+            isWishlist: true,
+          ),
         ),
       ),
     );
@@ -163,10 +154,8 @@ class _HomeGroomingState extends State<HomeGrooming> {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-            context,
-            Routes.productList,
-            arguments: arguments,
-          );
+              Config.navigatorKey.currentContext, Routes.productList,
+              arguments: arguments);
         },
         title: 'view_all_grooming'.tr(),
         titleColor: Colors.white,

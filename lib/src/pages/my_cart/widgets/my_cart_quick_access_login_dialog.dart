@@ -1,15 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:faker/faker.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -50,17 +49,20 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
 class _MyCartQuickAccessLoginDialogState
     extends State<MyCartQuickAccessLoginDialog> {
   SignInBloc signInBloc;
-  LocalStorageRepository localRepo;
+
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final WishlistRepository wishlistRepo = WishlistRepository();
+  final SettingRepository settingRepo = SettingRepository();
+
   HomeChangeNotifier homeChangeNotifier;
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  WishlistRepository wishlistRepo;
-  SettingRepository settingRepo;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
+
+  ProgressService progressService;
+  FlushBarService flushBarService;
 
   @override
   void initState() {
@@ -69,9 +71,6 @@ class _MyCartQuickAccessLoginDialogState
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    localRepo = context.read<LocalStorageRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
-    settingRepo = context.read<SettingRepository>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -100,7 +99,7 @@ class _MyCartQuickAccessLoginDialogState
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
     widget.onClose();
@@ -323,9 +322,8 @@ class _MyCartQuickAccessLoginDialogState
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(Uri.dataFromString(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
-      final profile = jsonDecode(graphResponse.body);
+      final profile = await Api.getMethod(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];

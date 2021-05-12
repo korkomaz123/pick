@@ -125,9 +125,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
                       double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
-                        top: isFromBrand
-                            ? 120.h - extra
-                            : 45.h,
+                        top: isFromBrand ? 120.h - extra : 45.h,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -153,7 +151,9 @@ class _ProductListPageState extends State<ProductListPage> {
                   return Container();
                 }
               } else {
-                return Container();
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               }
             },
           ),

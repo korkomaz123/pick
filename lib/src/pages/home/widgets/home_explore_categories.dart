@@ -1,5 +1,6 @@
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -13,9 +14,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'home_category_card.dart';
 
 class HomeExploreCategories extends StatefulWidget {
-  final CategoryChangeNotifier model;
-
-  HomeExploreCategories({this.model});
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeExploreCategories({@required this.homeChangeNotifier});
 
   @override
   _HomeExploreCategoriesState createState() => _HomeExploreCategoriesState();
@@ -23,30 +23,26 @@ class HomeExploreCategories extends StatefulWidget {
 
 class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
-  List<CategoryEntity> categories = [];
-  CategoryChangeNotifier model;
-
-  @override
-  void initState() {
-    super.initState();
-    model = widget.model;
-    categories = model.categories;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 375.w,
+      width: designWidth.w,
       height: 340.h,
       color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(),
-          _buildCategorySliders(),
-          _buildFooter(),
-        ],
-      ),
+      child: Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
+        if (widget.homeChangeNotifier.categories.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitle(),
+              _buildCategorySliders(),
+              _buildFooter(),
+            ],
+          );
+        } else {
+          return Container();
+        }
+      }),
     );
   }
 
@@ -107,7 +103,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             height: 250.h,
             color: Colors.white,
             child: Swiper(
-              itemCount: categories.length > 10 ? 10 : categories.length,
+              itemCount: widget.homeChangeNotifier.categories.length > 10
+                  ? 10
+                  : widget.homeChangeNotifier.categories.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -118,7 +116,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               },
               itemBuilder: (context, index) {
                 return HomeCategoryCard(
-                  category: categories[index],
+                  category: widget.homeChangeNotifier.categories[index],
                 );
               },
             ),
@@ -129,7 +127,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: categories.length > 10 ? 10 : categories.length,
+                count: widget.homeChangeNotifier.categories.length > 10
+                    ? 10
+                    : widget.homeChangeNotifier.categories.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

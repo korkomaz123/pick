@@ -103,6 +103,8 @@
     "checkout_step_payment": "PAYMENT",
     "phone_number_hint": "Phone Number",
     "checkout_searching_address_button_title": "SEARCHING ADDRESS",
+    "full_name":"Full name",
+    "full_name_issue":"insert correct full name",
     "checkout_search_address_title": "Search Address",
     "checkout_select_address_button_title": "SELECT ADDRESS",
     "checkout_add_address_button_title": "ADD ADDRESS",

@@ -5,7 +5,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -64,7 +63,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
             Padding(
               padding: EdgeInsets.all(15.w),
               child: FutureBuilder(
-                future: context.watch<SettingRepository>().getAboutUs(lang),
+                future: SettingRepository().getAboutUs(lang),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Html(data: snapshot.data['data']['html']);

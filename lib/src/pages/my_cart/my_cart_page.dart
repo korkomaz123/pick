@@ -16,10 +16,8 @@ import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
@@ -48,13 +46,16 @@ class _MyCartPageState extends State<MyCartPage>
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   bool showSign = false;
   bool isCheckout = false;
+  _loadData() async {
+    if (myCartChangeNotifier.cartItemCount == 0)
+      await myCartChangeNotifier.getCartItems(lang);
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -65,11 +66,10 @@ class _MyCartPageState extends State<MyCartPage>
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    _loadData();
   }
 
   @override

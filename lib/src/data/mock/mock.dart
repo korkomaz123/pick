@@ -3,7 +3,6 @@ import 'package:markaa/src/data/models/index.dart';
 /// category list for home screen
 List<CategoryEntity> homeCategories = [];
 
-List<CategoryMenuEntity> sideMenus = [];
 List<RegionEntity> regions = [];
 int wishlistCount = 0;
 List<ProductModel> wishlistItems = [];

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "5336431605-an298hbjhi64foj918bcdk7adbn99r58.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.markaa",
+            "certificate_hash": "f66dbd7dafd3bc43e9bfb7a4c3ce3b97ea3d8da4"
+          }
+        },
+        {
           "client_id": "5336431605-j8sh80opnrt2v0h7psrgcqsqrp1m0rmd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -36,6 +44,14 @@
           "android_info": {
             "package_name": "com.app.markaa",
             "certificate_hash": "83687a4434dab19f65d99d7a5a468afeb5dd6996"
+          }
+        },
+        {
+          "client_id": "5336431605-man7teqfiapvif2ndt4j56df546hidcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.markaa",
+            "certificate_hash": "6d4394dc8e0e92787d0efebd2c00b292ff959213"
           }
         },
         {

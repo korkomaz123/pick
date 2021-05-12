@@ -1,5 +1,4 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -85,7 +84,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                 );
               } else if (banner?.productId != null) {
                 final product =
-                    await productRepository.getProduct(banner.productId, lang);
+                    await productRepository.getProduct(banner.productId);
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.product,

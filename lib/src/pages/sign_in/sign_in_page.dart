@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -23,7 +23,6 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
@@ -31,6 +30,8 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
+
+import '../../../config.dart';
 
 class SignInPage extends StatefulWidget {
   final bool isFromCheckout;
@@ -53,14 +54,13 @@ class _SignInPageState extends State<SignInPage> {
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  WishlistRepository wishlistRepo;
-  SettingRepository settingRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final WishlistRepository wishlistRepo = WishlistRepository();
+  SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
-
   @override
   void initState() {
     super.initState();
@@ -68,9 +68,6 @@ class _SignInPageState extends State<SignInPage> {
     flushBarService = FlushBarService(context: context);
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    wishlistRepo = context.read<WishlistRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -98,13 +95,17 @@ class _SignInPageState extends State<SignInPage> {
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
-    Navigator.pop(context);
+    if (Navigator.of(Config.navigatorKey.currentContext).canPop())
+      Navigator.of(Config.navigatorKey.currentContext).pop(context);
+    else
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
+    Config.setLanguage();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
@@ -129,10 +130,7 @@ class _SignInPageState extends State<SignInPage> {
                 children: [
                   Container(
                     width: 375.w,
-                    padding: EdgeInsets.only(
-                      top: 30.h,
-                      bottom: 30.h,
-                    ),
+                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
                     alignment: lang == 'en'
                         ? Alignment.centerLeft
                         : Alignment.centerRight,
@@ -341,15 +339,12 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildOrDivider() {
     return Container(
-      width: 375.w,
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 50.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: lang == 'en' ? 100.w : 80.w,
-            child: Divider(color: greyLightColor, thickness: 0.5),
-          ),
+          Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
           Text(
             'or_divider'.tr(),
             style: mediumTextStyle.copyWith(
@@ -357,10 +352,7 @@ class _SignInPageState extends State<SignInPage> {
               color: Colors.white,
             ),
           ),
-          Container(
-            width: lang == 'en' ? 100.w : 80.w,
-            child: Divider(color: greyLightColor, thickness: 0.5),
-          ),
+          Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
         ],
       ),
     );
@@ -455,9 +447,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final graphResponse = await http.get(Uri.dataFromString(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token'));
-      final profile = json.decode(graphResponse.body);
+      final profile = await Api.getMethod(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];

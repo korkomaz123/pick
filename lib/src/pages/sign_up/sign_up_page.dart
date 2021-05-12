@@ -46,7 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
   HomeChangeNotifier homeChangeNotifier;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
 
   @override
@@ -54,7 +54,6 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -68,7 +67,7 @@ class _SignUpPageState extends State<SignUpPage> {
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
-    homeChangeNotifier.loadRecentlyViewedCustomer(user.token, lang);
+    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     Navigator.pop(context);
     if (!widget.isFromCheckout) {

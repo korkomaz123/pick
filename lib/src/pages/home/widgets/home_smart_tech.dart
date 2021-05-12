@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/components/amazing_product_card.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -12,48 +13,32 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
-class HomeSmartTech extends StatefulWidget {
-  final HomeChangeNotifier model;
+import '../../../../config.dart';
 
-  HomeSmartTech({this.model});
-
-  @override
-  _HomeSmartTechState createState() => _HomeSmartTechState();
-}
-
-class _HomeSmartTechState extends State<HomeSmartTech> {
-  HomeChangeNotifier model;
-  ProductRepository productRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    productRepository = context.read<ProductRepository>();
-    model = widget.model;
-  }
-
+class HomeSmartTech extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeSmartTech({@required this.homeChangeNotifier});
+  final ProductRepository productRepository = ProductRepository();
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 375.w,
       color: Colors.white,
       child: Column(
         children: [
-          if (model.smartTechTitle.isNotEmpty) ...[
-            _buildTitle(model.smartTechTitle)
+          if (homeChangeNotifier.smartTechTitle.isNotEmpty) ...[
+            _buildTitle(homeChangeNotifier.smartTechTitle)
           ],
-          if (model.smartTechBanners.isNotEmpty) ...[
-            _buildBanners(model.smartTechBanners)
+          if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
+            _buildBanners(homeChangeNotifier.smartTechBanners)
           ],
-          if (model.smartTechItems.isNotEmpty) ...[
-            _buildProducts(model.smartTechItems)
+          if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+            _buildProducts(homeChangeNotifier.smartTechItems)
           ],
-          if (model.smartTechCategory != null) ...[
-            _buildFooter(model.smartTechCategory, model.smartTechTitle)
+          if (homeChangeNotifier.smartTechCategory != null) ...[
+            _buildFooter(homeChangeNotifier.smartTechCategory,
+                homeChangeNotifier.smartTechTitle)
           ],
         ],
       ),
@@ -77,59 +62,61 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
-    return Container(
-      width: double.infinity,
-      child: Column(
-        children: banners.map((banner) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 5.h),
-            child: InkWell(
-              onTap: () async {
-                if (banner.categoryId != null) {
-                  final arguments = ProductListArguments(
-                    category: CategoryEntity(
-                      id: banner.categoryId,
-                      name: banner.categoryName,
-                    ),
-                    brand: BrandEntity(),
-                    subCategory: [],
-                    selectedSubCategoryIndex: 0,
-                    isFromBrand: false,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
-                } else if (banner?.brand?.optionId != null) {
-                  final arguments = ProductListArguments(
-                    category: CategoryEntity(),
-                    brand: banner.brand,
-                    subCategory: [],
-                    selectedSubCategoryIndex: 0,
-                    isFromBrand: true,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
-                } else if (banner?.productId != null) {
-                  final product = await productRepository.getProduct(
-                      banner.productId, lang);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    Routes.product,
-                    (route) => route.settings.name == Routes.home,
-                    arguments: product,
-                  );
-                }
-              },
-              child: Image.network(banner.bannerImage),
+    return Column(
+      children: banners.map((banner) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 5.h),
+          child: InkWell(
+            onTap: () async {
+              if (banner.categoryId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(
+                    id: banner.categoryId,
+                    name: banner.categoryName,
+                  ),
+                  brand: BrandEntity(),
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  Config.navigatorKey.currentContext,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: banner.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
+                Navigator.pushNamed(
+                  Config.navigatorKey.currentContext,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.productId != null) {
+                final product =
+                    await productRepository.getProduct(banner.productId);
+                Navigator.pushNamedAndRemoveUntil(
+                  Config.navigatorKey.currentContext,
+                  Routes.product,
+                  (route) => route.settings.name == Routes.home,
+                  arguments: product,
+                );
+              }
+            },
+            child: CachedNetworkImage(
+              imageUrl: banner.bannerImage,
+              errorWidget: (context, url, error) => Center(
+                child: Icon(Icons.image, size: 20),
+              ),
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -138,19 +125,17 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
       width: 375.w,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       color: backgroundColor,
-      child: SingleChildScrollView(
+      height: 302.w,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: list.map((item) {
-            return Padding(
-              padding: EdgeInsets.only(left: 8.w),
-              child: AmazingProductCard(
-                cardSize: 302.w,
-                contentSize: 96.w,
-                product: item,
-              ),
-            );
-          }).toList(),
+        itemCount: list.length,
+        itemBuilder: (context, index) => Padding(
+          padding: EdgeInsets.only(left: 8.w),
+          child: AmazingProductCard(
+            cardSize: 302.w,
+            contentSize: 100.w,
+            product: list[index],
+          ),
         ),
       ),
     );
@@ -174,7 +159,7 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-            context,
+            Config.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );

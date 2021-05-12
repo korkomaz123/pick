@@ -19,6 +19,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,7 @@ import 'package:string_validator/string_validator.dart';
 
 class CheckoutGuestAddressPage extends StatefulWidget {
   @override
-  _CheckoutGuestAddressPageState createState() =>
-      _CheckoutGuestAddressPageState();
+  _CheckoutGuestAddressPageState createState() => _CheckoutGuestAddressPageState();
 }
 
 class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
@@ -40,11 +40,11 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   String regionId;
   ProgressService progressService;
   FlushBarService flushBarService;
-  ShippingAddressRepository shippingRepo;
+  final ShippingAddressRepository shippingRepo = ShippingAddressRepository();
   String shippingMethodId;
   double serviceFees;
   MyCartChangeNotifier myCartChangeNotifier;
-  LocalStorageRepository localStorageRepository;
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -70,19 +70,25 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   FocusNode stateNode = FocusNode();
   FocusNode companyNode = FocusNode();
 
+  final CheckoutRepository checkoutRepo = CheckoutRepository();
+
+  _loadData() async {
+    shippingMethods = await checkoutRepo.getShippingMethod();
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    shippingMethodId = shippingMethods[0].id;
-    serviceFees = shippingMethods[0].serviceFees;
-    countryId = 'KW';
-    countryController.text = 'Kuwait';
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    shippingRepo = context.read<ShippingAddressRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    localStorageRepository = context.read<LocalStorageRepository>();
+    countryId = 'KW';
+    countryController.text = 'Kuwait';
     _initForm();
+    _loadData();
   }
 
   void _initForm() async {
@@ -166,8 +172,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'first_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -176,8 +181,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'last_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -186,8 +190,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
                   MarkaaTextInput(
@@ -214,8 +217,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_country_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectCountry(),
@@ -226,8 +228,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: () => _onSelectState(),
@@ -238,8 +239,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -248,8 +248,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
@@ -267,8 +266,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
@@ -366,7 +364,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       countryController.text = result['name'];
       regionId = '';
       stateController.clear();
-      regions = await shippingRepo.getRegions(lang, countryId);
+      regions = await shippingRepo.getRegions(countryId);
       setState(() {});
     }
   }
@@ -387,7 +385,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   }
 
   void _onRetrieveRegions() async {
-    regions = await shippingRepo.getRegions(lang);
+    regions = await shippingRepo.getRegions();
   }
 
   void _onContinue() async {
@@ -400,17 +398,13 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       double discount = .0;
       discount = myCartChangeNotifier.type == 'fixed'
           ? myCartChangeNotifier.discount
-          : myCartChangeNotifier.discount *
-              myCartChangeNotifier.cartTotalPrice /
-              100;
+          : myCartChangeNotifier.discount * myCartChangeNotifier.cartTotalPrice / 100;
       subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-      orderDetails['orderDetails']['totalPrice'] =
-          totalPrice.toStringAsFixed(3);
-      orderDetails['orderDetails']['subTotalPrice'] =
-          subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = '';
       final address = {

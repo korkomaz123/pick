@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -10,6 +10,8 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+
+import '../../../../config.dart';
 
 class HomeFragrancesBanners extends StatefulWidget {
   final HomeChangeNotifier model;
@@ -81,7 +83,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: false,
                   );
                   Navigator.pushNamed(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
@@ -94,22 +96,28 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: true,
                   );
                   Navigator.pushNamed(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
                 } else if (banner?.productId != null) {
-                  final product = await productRepository.getProduct(
-                      banner.productId, lang);
+                  final product =
+                      await productRepository.getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
-                    context,
+                    Config.navigatorKey.currentContext,
                     Routes.product,
                     (route) => route.settings.name == Routes.home,
                     arguments: product,
                   );
                 }
               },
-              child: Image.network(banner.bannerImage),
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage,
+                // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                errorWidget: (context, url, error) =>
+                    Center(child: Icon(Icons.image, size: 20)),
+              ),
             ),
           );
         }).toList(),

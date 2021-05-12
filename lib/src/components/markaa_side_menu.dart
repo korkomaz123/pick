@@ -1,10 +1,8 @@
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
-import 'package:markaa/src/components/markaa_select_option.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -17,7 +15,6 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -31,6 +28,8 @@ import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 
+import 'toggle_language.dart';
+
 class MarkaaSideMenu extends StatefulWidget {
   @override
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
@@ -41,17 +40,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   final dataKey = GlobalKey();
   int activeIndex;
   double menuWidth;
-  String activeMenu = '';
-  String language = '';
 
   SignInBloc signInBloc;
 
   ProgressService progressService;
   FlushBarService flushBarService;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
-  LocalStorageRepository localRepo;
-  SettingRepository settingRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final SettingRepository settingRepo = SettingRepository();
 
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -66,15 +62,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    settingRepo = context.read<SettingRepository>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
 
   @override
   Widget build(BuildContext context) {
-    language = EasyLocalization.of(context).locale.languageCode.toUpperCase();
     menuWidth = 300.w;
     return Container(
       width: menuWidth,
@@ -94,13 +87,24 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildMenuHeader(),
-                _buildMenuItems(),
-              ],
-            ),
+          return Column(
+            children: [
+              _buildMenuHeader(),
+              Expanded(
+                child: Consumer<GlobalProvider>(
+                  builder: (context, _globalProvider, child) => _globalProvider
+                              .sideMenus[_globalProvider.currentLanguage]
+                              .length ==
+                          0
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : SingleChildScrollView(
+                          child: _buildMenuItems(_globalProvider),
+                        ),
+                ),
+              )
+            ],
           );
         },
       ),
@@ -108,13 +112,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   Widget _buildMenuHeader() {
-    return Container(
-      width: menuWidth,
-      height: 160.h,
-      color: primarySwatchColor,
-      child: Stack(
+    return DrawerHeader(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(color: primarySwatchColor),
+      child: Column(
         children: [
-          _buildHeaderLogo(),
+          Expanded(child: _buildHeaderLogo()),
           _buildHeaderAuth(),
         ],
       ),
@@ -183,49 +186,25 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  SvgPicture.asset(
-                    sideLoginIcon,
-                    height: 15.h,
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    user != null ? 'logout'.tr() : 'login'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: Colors.white,
-                      fontSize: 14.sp,
+              Expanded(
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      sideLoginIcon,
+                      height: 15.h,
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                width: 100.w,
-                height: 20.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade300,
-                ),
-                child: MarkaaSelectOption(
-                  items: ['EN', 'AR'],
-                  value: language,
-                  itemWidth: 50.w,
-                  itemHeight: 20.h,
-                  itemSpace: 0,
-                  titleSize: 10.sp,
-                  radius: 8,
-                  selectedColor: primaryColor,
-                  selectedTitleColor: Colors.white,
-                  selectedBorderColor: Colors.transparent,
-                  unSelectedColor: Colors.grey.shade300,
-                  unSelectedTitleColor: greyColor,
-                  unSelectedBorderColor: Colors.transparent,
-                  isVertical: false,
-                  listStyle: true,
-                  onTap: (value) => _onChangeLanguage(value),
+                    SizedBox(width: 4.w),
+                    Text(
+                      user != null ? 'logout'.tr() : 'login'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              ToggleLanguageWidget(),
             ],
           ),
         ),
@@ -233,27 +212,26 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     );
   }
 
-  Widget _buildMenuItems() {
+  Widget _buildMenuItems(GlobalProvider _globalProvider) {
     return Container(
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
-        children: sideMenus.map((menu) {
-          int index = sideMenus.indexOf(menu);
+        children: _globalProvider.sideMenus[_globalProvider.currentLanguage]
+            .map((menu) {
+          int index = _globalProvider.sideMenus[_globalProvider.currentLanguage]
+              .indexOf(menu);
           return Column(
-            key: activeIndex == index ? dataKey : null,
+            key: _globalProvider.activeIndex == index ? dataKey : null,
             children: [
-              _buildParentMenu(menu, index),
+              _buildParentMenu(_globalProvider, index),
               Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 4.h,
-                ),
-                child: Divider(
-                  color: Colors.grey.shade400,
-                  height: 1.h,
-                ),
+                padding: EdgeInsets.symmetric(vertical: 4.h),
+                child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              activeMenu == menu.id ? _buildSubmenu(menu) : SizedBox.shrink(),
+              _globalProvider.activeMenu == menu.id
+                  ? _buildSubmenu(menu)
+                  : SizedBox.shrink(),
             ],
           );
         }).toList(),
@@ -261,29 +239,35 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     );
   }
 
-  Widget _buildParentMenu(CategoryMenuEntity menu, int index) {
+  Widget _buildParentMenu(GlobalProvider _globalProvider, int index) {
+    CategoryMenuEntity menu =
+        _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
     return InkWell(
       onTap: () => menu.subMenu.isNotEmpty
-          ? _displaySubmenu(menu, index)
+          ? _globalProvider.displaySubmenu(menu, index)
           : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: 15.h),
-        padding: EdgeInsets.symmetric(
-          horizontal: 20.w,
-          vertical: 4.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
                 if (menu.iconUrl.isNotEmpty) ...[
-                  Row(children: [
-                    Image.network(menu.iconUrl, width: 25, height: 25),
-                    SizedBox(width: 6),
-                  ])
+                  CachedNetworkImage(
+                    width: 25.w,
+                    height: 25.w,
+                    imageUrl: menu.iconUrl,
+                    fit: BoxFit.cover,
+                    // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.image, size: 20)),
+                  ),
                 ],
+                SizedBox(width: 10.w),
                 Text(
                   menu.title.toUpperCase(),
                   style: mediumTextStyle.copyWith(
@@ -295,7 +279,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             ),
             if (menu.subMenu.isNotEmpty) ...[
               Icon(
-                activeMenu == menu.id
+                _globalProvider.activeMenu == menu.id
                     ? Icons.arrow_drop_down
                     : Icons.arrow_right,
                 size: 25.sp,
@@ -344,19 +328,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     );
   }
 
-  void _displaySubmenu(CategoryMenuEntity menu, int index) {
-    if (activeMenu == menu.id) {
-      activeMenu = '';
-    } else {
-      activeMenu = menu.id;
-    }
-    activeIndex = index;
-    setState(() {});
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Scrollable.ensureVisible(dataKey.currentContext);
-    });
-  }
-
   void _viewCategory(CategoryMenuEntity parentMenu, int index) {
     ProductListArguments arguments = ProductListArguments(
       category: CategoryEntity(id: parentMenu.id, name: parentMenu.title),
@@ -398,44 +369,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     orderChangeNotifier.initializeOrders();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-    List<String> ids = await localRepo.getRecentlyViewedIds();
     wishlistChangeNotifier.initialize();
-    homeChangeNotifier.loadRecentlyViewedGuest(ids, lang);
+    homeChangeNotifier.loadRecentlyViewedGuest();
     progressService.hideProgress();
     Navigator.pop(context);
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,
     );
-  }
-
-  void _onChangeLanguage(String value) async {
-    if (language != value) {
-      progressService.showProgress();
-      language = value;
-      if (language == 'EN') {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.first;
-        lang = 'en';
-      } else {
-        EasyLocalization.of(context).locale =
-            EasyLocalization.of(context).supportedLocales.last;
-        lang = 'ar';
-      }
-      firebaseMessaging.getToken().then((String token) async {
-        deviceToken = token;
-        if (user?.token != null) {
-          await settingRepo.updateFcmDeviceToken(
-            user.token,
-            Platform.isAndroid ? token : '',
-            Platform.isIOS ? token : '',
-            Platform.isAndroid ? lang : '',
-            Platform.isIOS ? lang : '',
-          );
-        }
-        progressService.hideProgress();
-        Phoenix.rebirth(context);
-      });
-    }
   }
 }

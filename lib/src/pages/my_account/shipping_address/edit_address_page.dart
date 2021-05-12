@@ -1,10 +1,10 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_country_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_text_input.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -20,11 +20,9 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:string_validator/string_validator.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'widgets/select_country_dialog.dart';
 import 'widgets/select_region_dialog.dart';
 
 class EditAddressPage extends StatefulWidget {
@@ -50,6 +48,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
+  TextEditingController fullNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController countryController = TextEditingController();
@@ -78,11 +77,15 @@ class _EditAddressPageState extends State<EditAddressPage> {
     isNew = true;
     firstNameController.text = user?.firstName;
     lastNameController.text = user?.lastName;
+    fullNameController.text =
+        firstNameController.text + " " + lastNameController.text;
     emailController.text = user?.email;
     if (addressParam != null) {
       isNew = false;
       firstNameController.text = addressParam?.firstName;
       lastNameController.text = addressParam?.lastName;
+      fullNameController.text =
+          firstNameController.text + " " + lastNameController.text;
       emailController.text = addressParam?.email;
       titleController.text = addressParam?.title;
       countryController.text = addressParam?.country;
@@ -169,25 +172,36 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     inputType: TextInputType.text,
                   ),
                   MarkaaTextInput(
-                    controller: firstNameController,
-                    width: 375.w,
-                    padding: 10.h,
+                    controller: fullNameController,
+                    width: designWidth.w,
+                    padding: 10.w,
                     fontSize: 14.sp,
-                    hint: 'first_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    hint: 'full_name'.tr(),
+                    validator: (String value) => value.isEmpty
+                        ? 'required_field'.tr()
+                        : (value.trim().indexOf(' ') == -1
+                            ? 'full_name_issue'.tr()
+                            : null),
                     inputType: TextInputType.text,
                   ),
-                  MarkaaTextInput(
-                    controller: lastNameController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'last_name'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                  ),
+                  // MarkaaTextInput(
+                  //   controller: firstNameController,
+                  //   width: pageStyle.deviceWidth,
+                  //   padding: pageStyle.unitWidth * 10,
+                  //   fontSize: pageStyle.unitFontSize * 14,
+                  //   hint: 'first_name'.tr(),
+                  //   validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                  //   inputType: TextInputType.text,
+                  // ),
+                  // MarkaaTextInput(
+                  //   controller: lastNameController,
+                  //   width: pageStyle.deviceWidth,
+                  //   padding: pageStyle.unitWidth * 10,
+                  //   fontSize: pageStyle.unitFontSize * 14,
+                  //   hint: 'last_name'.tr(),
+                  //   validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                  //   inputType: TextInputType.text,
+                  // ),
                   MarkaaTextInput(
                     controller: phoneNumberController,
                     width: 375.w,
@@ -198,36 +212,37 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
-                  MarkaaTextInput(
-                    controller: emailController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'email'.tr(),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'required_field'.tr();
-                      } else if (!isEmail(value)) {
-                        return 'invalid_field'.tr();
-                      }
-                      return null;
-                    },
-                    inputType: TextInputType.emailAddress,
-                  ),
-                  _buildSearchingAddressButton(),
-                  MarkaaCountryInput(
-                    controller: countryController,
-                    countryCode: countryId,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_country_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: () => _onSelectCountry(),
-                  ),
+                  // MarkaaTextInput(
+                  //   controller: emailController,
+                  //   width: pageStyle.deviceWidth,
+                  //   padding: pageStyle.unitWidth * 10,
+                  //   fontSize: pageStyle.unitFontSize * 14,
+                  //   hint: 'email'.tr(),
+                  //   validator: (value) {
+                  //     if (value.isEmpty) {
+                  //       return 'required_field'.tr();
+                  //     } else if (!isEmail(value)) {
+                  //       return 'invalid_field'.tr();
+                  //     }
+                  //     return null;
+                  //   },
+                  //   inputType: TextInputType.emailAddress,
+                  // ),
+                  //_buildSearchingAddressButton(),
+                  // MarkaaCountryInput(
+                  //   controller: countryController,
+                  //   countryCode: countryId,
+                  //   width: pageStyle.deviceWidth,
+                  //   padding: pageStyle.unitWidth * 10,
+                  //   fontSize: pageStyle.unitFontSize * 14,
+                  //   hint: 'checkout_country_hint'.tr(),
+                  //   validator: (value) =>
+                  //       value.isEmpty ? 'required_field'.tr() : null,
+                  //   inputType: TextInputType.text,
+                  //   readOnly: true,
+                  //   onTap: () => _onSelectCountry(),
+                  //   pageStyle: pageStyle,
+                  // ),
                   MarkaaTextInput(
                     controller: stateController,
                     width: 375.w,
@@ -250,25 +265,33 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  MarkaaTextInput(
-                    controller: streetController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: MarkaaTextInput(
+                          controller: streetController,
+                          width: designWidth.w,
+                          padding: 10.w,
+                          fontSize: 14.sp,
+                          hint: 'checkout_street_name_hint'.tr(),
+                          validator: (value) =>
+                              value.isEmpty ? 'required_field'.tr() : null,
+                          inputType: TextInputType.text,
+                        ),
+                      ),
+                      _buildSearchingAddressButton(),
+                    ],
                   ),
-                  MarkaaTextInput(
-                    controller: postCodeController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_post_code_hint'.tr(),
-                    validator: (value) => null,
-                    inputType: TextInputType.number,
-                  ),
+
+                  // MarkaaTextInput(
+                  //   controller: postCodeController,
+                  //   width: pageStyle.deviceWidth,
+                  //   padding: pageStyle.unitWidth * 10,
+                  //   fontSize: pageStyle.unitFontSize * 14,
+                  //   hint: 'checkout_post_code_hint'.tr(),
+                  //   validator: (value) => null,
+                  //   inputType: TextInputType.number,
+                  // ),
                   MarkaaTextInputMulti(
                     controller: cityController,
                     width: 375.w,
@@ -292,16 +315,16 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   Widget _buildSearchingAddressButton() {
     return Container(
-      width: 375.w,
-      height: 50.h,
-      margin: EdgeInsets.symmetric(
-        vertical: 20.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.h,
-      ),
+      width: 60.w, //pageStyle.deviceWidth,
+      // height: pageStyle.unitHeight * 50,
+      // margin: EdgeInsets.symmetric(
+      //   vertical: pageStyle.unitHeight * 20,
+      // ),
+      // padding: EdgeInsets.all(
+      //   pageStyle.unitWidth * 10,
+      // ),
       child: MarkaaTextIconButton(
-        title: 'checkout_searching_address_button_title'.tr(),
+        title: "", //'checkout_searching_address_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
@@ -369,22 +392,22 @@ class _EditAddressPageState extends State<EditAddressPage> {
     setState(() {});
   }
 
-  void _onSelectCountry() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return SelectCountryDialog(value: countryId);
-      },
-    );
-    if (result != null && countryId != result['code']) {
-      countryId = result['code'];
-      countryController.text = result['name'];
-      regionId = '';
-      stateController.clear();
-      regions = await shippingRepo.getRegions(lang, countryId);
-      setState(() {});
-    }
-  }
+  // void _onSelectCountry() async {
+  //   final result = await showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return SelectCountryDialog(value: countryId);
+  //     },
+  //   );
+  //   if (result != null && countryId != result['code']) {
+  //     countryId = result['code'];
+  //     countryController.text = result['name'];
+  //     regionId = '';
+  //     stateController.clear();
+  //     regions = await shippingRepo.getRegions(countryId);
+  //     setState(() {});
+  //   }
+  // }
 
   void _onSelectState() async {
     final result = await showDialog(
@@ -414,6 +437,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
         regionId: regionId,
         region: stateController.text,
         firstName: firstNameController.text,
+        fullName: fullNameController.text,
         lastName: lastNameController.text,
         city: cityController.text.trim(),
         street: streetController.text,

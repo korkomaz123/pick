@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -61,7 +62,6 @@ class _ProductVVCardState extends State<ProductVVCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
 
   @override
   void initState() {
@@ -160,11 +160,15 @@ class _ProductVVCardState extends State<ProductVVCard>
       child: Column(
         children: [
           Container(
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
           Expanded(

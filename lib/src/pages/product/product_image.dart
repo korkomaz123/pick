@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -32,39 +34,28 @@ class _ProductImageState extends State<ProductImage> {
         child: Stack(
           children: [
             Container(
-              width: 375.w,
-              height: 812.h,
-              child: images.length < 2
-                  ? PhotoView(
-                      backgroundDecoration: BoxDecoration(color: Colors.white),
-                      imageProvider: NetworkImage(images[0]),
-                      loadingBuilder: (_, chunk) {
-                        return Image.asset(
-                          'lib/public/images/loading/image_loading.jpg',
-                        );
-                      },
-                    )
-                  : Swiper(
-                      itemCount: images.length,
-                      autoplay: false,
-                      curve: Curves.easeIn,
-                      duration: 300,
-                      autoplayDelay: 5000,
-                      onIndexChanged: (value) => _onUpdateIndex(value),
-                      itemBuilder: (context, index) {
-                        return PhotoView(
-                          backgroundDecoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          imageProvider: NetworkImage(images[activeIndex]),
-                          loadingBuilder: (_, chunk) {
-                            return Image.asset(
-                              'lib/public/images/loading/image_loading.jpg',
-                            );
-                          },
-                        );
-                      },
+              width: designWidth.w,
+              height: designHeight.h,
+              child: Swiper(
+                itemCount: images.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) => _onUpdateIndex(value),
+                itemBuilder: (context, index) {
+                  return PhotoView(
+                    backgroundDecoration: BoxDecoration(color: Colors.white),
+                    imageProvider:
+                        CachedNetworkImageProvider(images[activeIndex]),
+                    loadingBuilder: (context, downloadProgress) => Center(
+                      child: CircularProgressIndicator(
+                          value: downloadProgress.cumulativeBytesLoaded /
+                              downloadProgress.expectedTotalBytes),
                     ),
+                  );
+                },
+              ),
             ),
             InkWell(
               onTap: () => Navigator.pop(context),

@@ -5,6 +5,8 @@ import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 
+import '../../../config.dart';
+
 class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [GET SHIPPING ADDRESSES LIST]
@@ -58,18 +60,16 @@ class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [GET REGIONS LIST]
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<RegionEntity>> getRegions(
-    String lang, [
+  Future<List<RegionEntity>> getRegions([
     String countryCode = 'KW',
   ]) async {
     String url = EndPoints.getRegions;
-    final params = {'lang': lang, 'country_code': countryCode};
+    final params = {'lang': Config.language, 'country_code': countryCode};
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> regionsList = result['regions'];
       List<RegionEntity> regions = [];
-      regions =
-          regionsList.map((region) => RegionEntity.fromJson(region)).toList();
+      regions = regionsList.map((region) => RegionEntity.fromJson(region)).toList();
       return regions;
     } else {
       return <RegionEntity>[];

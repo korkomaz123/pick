@@ -259,10 +259,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       children: List.generate(
         order.cartItems.length,
         (index) {
-          if (order.cartItems[index].availableCount == null ||
-              order.cartItems[index].availableCount == 0) {
-            order.cartItems[index].availableCount =
-                order.cartItems[index].itemCount;
+          if (order.cartItems[index].availableCount == null || order.cartItems[index].availableCount == 0) {
+            order.cartItems[index].availableCount = order.cartItems[index].itemCount;
           }
           String key = order.cartItems[index].product.productId.toString();
           bool isSelected = cancelItemsMap.containsKey(key);
@@ -275,9 +273,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                     _buildCheckButton(isSelected, key, index),
                   ],
                 ),
-                if (index < (order.cartItems.length - 1)) ...[
-                  Divider(color: greyColor, thickness: 0.5)
-                ],
+                if (index < (order.cartItems.length - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
               ],
             );
           } else {
@@ -289,8 +285,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
-    bool isDefaultValue =
-        cancelItemsMap.containsKey(cartItem.product.productId.toString());
+    bool isDefaultValue = cancelItemsMap.containsKey(cartItem.product.productId.toString());
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -369,12 +364,10 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
           if (isSelected) {
-            canceledPrice -= order.cartItems[index].itemCount *
-                double.parse(order.cartItems[index].product.price);
+            canceledPrice -= order.cartItems[index].itemCount * double.parse(order.cartItems[index].product.price);
             cancelItemsMap.remove(key);
           } else {
-            canceledPrice += order.cartItems[index].itemCount *
-                double.parse(order.cartItems[index].product.price);
+            canceledPrice += order.cartItems[index].itemCount * double.parse(order.cartItems[index].product.price);
             cancelItemsMap[key] = order.cartItems[index].itemCount;
           }
           markaaAppChangeNotifier.rebuild();
@@ -463,8 +456,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(3)}',
+            'currency'.tr() + ' ${(double.parse(order.subtotalPrice) - canceledPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -499,8 +491,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
+            'currency'.tr() + ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -581,8 +572,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ${(changedPrice - discount + fees).toStringAsFixed(3)}',
+            'currency'.tr() + ' ${(changedPrice - discount + fees).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: 16.sp,
@@ -633,8 +623,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       } else {
         updatedCount = count - order.cartItems[index].itemCount;
       }
-      canceledPrice +=
-          double.parse(order.cartItems[index].product.price) * updatedCount;
+      canceledPrice += double.parse(order.cartItems[index].product.price) * updatedCount;
       cancelItemsMap[key] = count;
       markaaAppChangeNotifier.rebuild();
     }

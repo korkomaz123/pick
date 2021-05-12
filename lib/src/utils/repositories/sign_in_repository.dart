@@ -5,11 +5,7 @@ import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 
 class SignInRepository {
-  SignInRepository({
-    FirebaseAuth firebaseAuth,
-  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
-
-  final FirebaseAuth _firebaseAuth;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   //////////////////////////////////////////////////////////////////////////////
   ///

@@ -60,7 +60,7 @@ class SearchRepository {
     Algolia algolia = AlgoliaService.algolia;
     String index =
         lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
-    AlgoliaQuery query = algolia.instance.index(index).search(q);
+    AlgoliaQuery query = algolia.instance.index(index).query(q);
     AlgoliaQuerySnapshot snap = await query.getObjects();
     List<ProductModel> products = [];
     for (int i = 0; i < snap.hits.length; i++) {
@@ -100,20 +100,20 @@ class SearchRepository {
       'manufacturer'
     ]);
     await settingsData.setSettings();
-    AlgoliaQuery query = algoliaIndex.search(q);
+    AlgoliaQuery query = algoliaIndex.query(q);
     if (categories.isNotEmpty) {
       List<String> categoryFilter = [];
       for (var category in categories) {
         categoryFilter.add('categoryIds:$category');
       }
-      query = query.setFacetFilter(categoryFilter);
+      query = query.facetFilter(categoryFilter);
     }
     if (brands.isNotEmpty) {
       List<String> brandFilter = [];
       for (var brand in brands) {
         brandFilter.add('manufacturer:$brand');
       }
-      query = query.setFacetFilter(brandFilter);
+      query = query.facetFilter(brandFilter);
     }
     AlgoliaQuerySnapshot snap = await query.getObjects();
     List<ProductModel> products = [];

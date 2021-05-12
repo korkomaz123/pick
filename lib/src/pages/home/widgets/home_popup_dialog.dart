@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:provider/provider.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -77,8 +77,8 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                         arguments: arguments,
                       );
                     } else if (widget.item?.productId != null) {
-                      final product = await productRepository.getProduct(
-                          widget.item.productId, lang);
+                      final product = await productRepository
+                          .getProduct(widget.item.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,

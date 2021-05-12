@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -8,13 +9,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -52,16 +51,11 @@ class _ProductCardState extends State<ProductCard>
   // Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
   Animation<double> _addToWishlistScaleAnimation;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
 
   @override
   void initState() {
     super.initState();
     isWishlist = false;
-    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     _initAnimation();
   }
@@ -72,32 +66,13 @@ class _ProductCardState extends State<ProductCard>
   }
 
   void _initAnimation() {
-    // _addToCartController = AnimationController(
-    //   duration: const Duration(milliseconds: 300),
-    //   reverseDuration: const Duration(milliseconds: 300),
-    //   vsync: this,
-    // );
-    // _addToCartScaleAnimation = Tween<double>(
-    //   begin: 1.0,
-    //   end: 3.0,
-    // ).animate(CurvedAnimation(
-    //   parent: _addToCartController,
-    //   curve: Curves.easeIn,
-    // ));
-
-    /// add to wishlist button animation
     _addToWishlistController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      reverseDuration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _addToWishlistScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 3.0,
-    ).animate(CurvedAnimation(
-      parent: _addToWishlistController,
-      curve: Curves.easeIn,
-    ));
+        duration: const Duration(milliseconds: 300),
+        reverseDuration: const Duration(milliseconds: 300),
+        vsync: this);
+    _addToWishlistScaleAnimation = Tween<double>(begin: 1.0, end: 3.0).animate(
+        CurvedAnimation(
+            parent: _addToWishlistController, curve: Curves.easeIn));
   }
 
   @override
@@ -138,11 +113,15 @@ class _ProductCardState extends State<ProductCard>
       child: Column(
         children: [
           Container(
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardWidth,
               height: widget.cardWidth,
               fit: BoxFit.fitHeight,
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
           Expanded(
@@ -218,7 +197,7 @@ class _ProductCardState extends State<ProductCard>
             padding: EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () => user != null
-                  ? _onWishlist()
+                  ? _onWishlist(model)
                   : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
@@ -263,7 +242,7 @@ class _ProductCardState extends State<ProductCard>
     return SizedBox.shrink();
   }
 
-  void _onWishlist() async {
+  void _onWishlist(WishlistChangeNotifier wishlistChangeNotifier) async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {

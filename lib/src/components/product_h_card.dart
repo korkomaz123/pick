@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -55,7 +56,6 @@ class _ProductHCardState extends State<ProductHCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
 
   @override
   void initState() {
@@ -153,11 +153,15 @@ class _ProductHCardState extends State<ProductHCard>
               right: lang == 'en' ? 5.w : 0,
               left: lang == 'ar' ? 5.w : 0,
             ),
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.8,
               fit: BoxFit.fitHeight,
+              // progressIndicatorBuilder: (context, url, downloadProgress) =>
+              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
           Expanded(
@@ -185,7 +189,9 @@ class _ProductHCardState extends State<ProductHCard>
                   child: Text(
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
-                        color: primaryColor, fontSize: 14.sp),
+                      color: primaryColor,
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ),
                 Padding(

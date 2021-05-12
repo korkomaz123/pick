@@ -1,10 +1,8 @@
 import 'package:markaa/src/components/product_h_card.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,8 +15,7 @@ class ProductSameBrandProducts extends StatefulWidget {
   ProductSameBrandProducts({this.product});
 
   @override
-  _ProductSameBrandProductsState createState() =>
-      _ProductSameBrandProductsState();
+  _ProductSameBrandProductsState createState() => _ProductSameBrandProductsState();
 }
 
 class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
@@ -34,9 +31,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
   }
 
   void _getSameBrandProducts() async {
-    sameBrandProducts = await context
-        .read<ProductRepository>()
-        .getSameBrandProducts(product.productId, lang);
+    sameBrandProducts = await ProductRepository().getSameBrandProducts(product.productId);
     if (mounted) setState(() {});
   }
 
@@ -78,8 +73,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
             width: 350.w,
             height: 220.h,
             child: Swiper(
-              itemCount:
-                  sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              itemCount: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -105,9 +99,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> {
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: sameBrandProducts.length > 10
-                    ? 10
-                    : sameBrandProducts.length,
+                count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

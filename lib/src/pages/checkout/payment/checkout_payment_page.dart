@@ -17,6 +17,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -42,26 +43,35 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   String payment;
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localStorageRepo;
+  final LocalStorageRepository localStorageRepo = LocalStorageRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  final CheckoutRepository checkoutRepo = CheckoutRepository();
+  _loadData() async {
+    if (paymentMethods.isEmpty)
+      paymentMethods = await checkoutRepo.getPaymentMethod();
+    if (widget.reorder != null) {
+      payment = widget.reorder.paymentMethod.id;
+    } else {
+      payment = paymentMethods[2].id;
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
-    } else {
-      payment = paymentMethods[2].id;
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    _loadData();
   }
 
   void _onProcess() {

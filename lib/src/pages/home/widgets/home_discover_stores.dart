@@ -1,4 +1,5 @@
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -7,39 +8,24 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
-  final BrandChangeNotifier model;
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeDiscoverStores({@required this.homeChangeNotifier});
 
-  HomeDiscoverStores({@required this.model});
   @override
   _HomeDiscoverStoresState createState() => _HomeDiscoverStoresState();
 }
 
 class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   int activeIndex = 0;
-  List<BrandEntity> brands = [];
-  BrandChangeNotifier model;
-
-  @override
-  void initState() {
-    super.initState();
-    model = widget.model;
-    brands = model.brandList;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 375.w,
-      height: 395.h,
-      color: Colors.white,
-      padding: EdgeInsets.all(15.w),
-      child: Column(
+    if (widget.homeChangeNotifier.brandList.isNotEmpty) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildTitle(),
@@ -52,8 +38,10 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
           ),
           _buildFooter(),
         ],
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildTitle() {
@@ -67,7 +55,9 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildStoresSlider() {
-    int length = brands.length > 20 ? 20 : brands.length;
+    int length = widget.homeChangeNotifier.brandList.length > 20
+        ? 20
+        : widget.homeChangeNotifier.brandList.length;
     return Expanded(
       child: Stack(
         children: [
@@ -85,13 +75,13 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                BrandEntity brand = brands[index];
+                BrandEntity brand = widget.homeChangeNotifier.brandList[index];
                 return InkWell(
                   onTap: () {
                     ProductListArguments arguments = ProductListArguments(
                       category: CategoryEntity(),
                       subCategory: [],
-                      brand: brands[index],
+                      brand: widget.homeChangeNotifier.brandList[index],
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
@@ -109,9 +99,13 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                       right: 30.w,
                       bottom: 50.h,
                     ),
-                    child: Image.network(
-                      brand.brandThumbnail,
+                    child: CachedNetworkImage(
+                      imageUrl: brand.brandThumbnail,
                       fit: BoxFit.fill,
+                      // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                      errorWidget: (context, url, error) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
                 );
@@ -156,7 +150,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         onTap: () => Navigator.pushNamed(
           context,
           Routes.brandList,
-          arguments: brands,
+          arguments: widget.homeChangeNotifier.brandList,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
