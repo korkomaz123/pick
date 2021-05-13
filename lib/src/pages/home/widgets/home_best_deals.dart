@@ -15,9 +15,7 @@ import '../../../../config.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
-
   HomeBestDeals({@required this.homeChangeNotifier});
-
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
@@ -64,10 +62,8 @@ class HomeBestDeals extends StatelessWidget {
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Config.navigatorKey.currentContext,
-                  Routes.productList,
-                  arguments: arguments,
-                );
+                    Config.navigatorKey.currentContext, Routes.productList,
+                    arguments: arguments);
               },
             ),
           ),
@@ -79,32 +75,34 @@ class HomeBestDeals extends StatelessWidget {
   Widget _buildProductsList() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: homeChangeNotifier.bestDealsProducts.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(left: 5.w),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey.shade300,
-                width: 1.w,
-              ),
-            ),
-            child: ProductVCard(
-              cardWidth: 170.w,
-              cardHeight: 280.h,
-              product: homeChangeNotifier.bestDealsProducts[index],
-              isShoppingCart: true,
-              isLine: true,
-              isMinor: true,
-              isWishlist: true,
-              isShare: false,
-            ),
-          );
-        },
+      padding: EdgeInsets.only(
+        top: 10.h,
+        bottom: 10.h,
       ),
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: homeChangeNotifier.bestDealsProducts.length,
+          itemBuilder: (context, index) {
+            return Container(
+              margin: EdgeInsets.only(left: 5.w),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 1.w,
+                ),
+              ),
+              child: ProductVCard(
+                cardWidth: 170.w,
+                cardHeight: 280.h,
+                product: homeChangeNotifier.bestDealsProducts[index],
+                isShoppingCart: true,
+                isLine: true,
+                isMinor: true,
+                isWishlist: true,
+                isShare: false,
+              ),
+            );
+          }),
     );
   }
 }

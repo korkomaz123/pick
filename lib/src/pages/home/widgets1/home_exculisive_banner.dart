@@ -61,14 +61,12 @@ class HomeExculisiveBanner extends StatelessWidget {
           }
         },
         child: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 15.h,
-          ),
+          margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
           child: CachedNetworkImage(
             imageUrl: homeChangeNotifier.exculisiveBanner.bannerImage,
-            errorWidget: (context, url, error) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (context, url, error) => Center(
+              child: Icon(Icons.image, size: 20),
+            ),
           ),
         ),
       );

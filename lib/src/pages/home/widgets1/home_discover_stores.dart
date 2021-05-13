@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -9,8 +8,8 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
@@ -63,7 +62,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       child: Stack(
         children: [
           Container(
-            width: designWidth.w,
+            width: 375.w,
             height: 380.h,
             child: Swiper(
               itemCount: length,
@@ -93,7 +92,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     );
                   },
                   child: Container(
-                    width: designWidth.w,
+                    width: 375.w,
                     height: 380.h,
                     padding: EdgeInsets.only(
                       left: 30.w,

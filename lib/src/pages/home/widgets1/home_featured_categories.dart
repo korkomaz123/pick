@@ -12,7 +12,9 @@ import '../../../../config.dart';
 
 class HomeFeaturedCategories extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeFeaturedCategories({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -34,10 +36,8 @@ class HomeFeaturedCategories extends StatelessWidget {
                       isFromBrand: false,
                     );
                     Navigator.pushNamed(
-                      Config.navigatorKey.currentContext,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
+                        Config.navigatorKey.currentContext, Routes.productList,
+                        arguments: arguments);
                   },
                   child: Container(
                     width: 70.w,
@@ -47,12 +47,14 @@ class HomeFeaturedCategories extends StatelessWidget {
                       border: Border.all(color: primaryColor, width: 2.w),
                     ),
                     child: CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) =>
-                          CircleAvatar(backgroundImage: imageProvider),
+                      imageBuilder: (context, imageProvider) => CircleAvatar(
+                        backgroundImage: imageProvider,
+                      ),
                       imageUrl: category.imageUrl,
                       fit: BoxFit.cover,
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.image, size: 20)),
+                      errorWidget: (context, url, error) => Center(
+                        child: Icon(Icons.image, size: 20),
+                      ),
                     ),
                   ),
                 ),

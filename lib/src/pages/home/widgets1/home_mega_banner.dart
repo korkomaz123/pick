@@ -12,6 +12,7 @@ import '../../../../config.dart';
 
 class HomeMegaBanner extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeMegaBanner({@required this.homeChangeNotifier});
 
   @override
@@ -64,8 +65,9 @@ class HomeMegaBanner extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: homeChangeNotifier.megaBanner.bannerImage,
           fit: BoxFit.fill,
-          errorWidget: (context, url, error) =>
-              Center(child: Icon(Icons.image, size: 20)),
+          errorWidget: (context, url, error) => Center(
+            child: Icon(Icons.image, size: 20),
+          ),
         ),
       ),
     );

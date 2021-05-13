@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -34,7 +33,7 @@ class HomeCategoryCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: designWidth.w,
+        width: 375.w,
         height: 249.h,
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -50,7 +49,7 @@ class HomeCategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: designWidth.w / 1.5,
+              width: 375.w / 2,
               child: Text(
                 category.name,
                 style: mediumTextStyle.copyWith(
@@ -60,7 +59,7 @@ class HomeCategoryCard extends StatelessWidget {
               ),
             ),
             Container(
-              width: designWidth.w / 2,
+              width: 375.w / 2,
               padding: EdgeInsets.only(top: 10.h),
               child: Text(
                 category.description ?? '',

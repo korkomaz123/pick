@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/product_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -16,6 +16,7 @@ import '../../../../config.dart';
 
 class HomeBestWatches extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestWatches({@required this.homeChangeNotifier});
 
   final ProductRepository productRepository = ProductRepository();
@@ -80,8 +81,9 @@ class HomeBestWatches extends StatelessWidget {
       },
       child: CachedNetworkImage(
         imageUrl: banner.bannerImage,
+        // progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
         errorWidget: (context, url, error) =>
-            Center(child: Icon(Icons.image, size: 20)),
+            Center(child: Icon(Icons.image, size: 20.sp)),
       ),
     );
   }

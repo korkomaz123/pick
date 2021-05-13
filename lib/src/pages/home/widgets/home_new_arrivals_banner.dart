@@ -12,9 +12,7 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeNewArrivalsBanner extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
-
   HomeNewArrivalsBanner({@required this.homeChangeNotifier});
-
   final ProductRepository productRepository = ProductRepository();
 
   @override

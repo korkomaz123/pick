@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -7,55 +9,51 @@ import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 import '../../../../config.dart';
 
-class HomeFragrancesBanners extends StatefulWidget {
-  final HomeChangeNotifier model;
+class HomeFragrancesBanners extends StatelessWidget {
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeFragrancesBanners({@required this.homeChangeNotifier});
 
-  HomeFragrancesBanners({this.model});
-
-  @override
-  _HomeFragrancesBannersState createState() => _HomeFragrancesBannersState();
-}
-
-class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
-  HomeChangeNotifier model;
-  ProductRepository productRepository = ProductRepository();
-
-  @override
-  void initState() {
-    super.initState();
-    model = widget.model;
-  }
+  final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 375.w,
-      color: Colors.white,
-      child: Column(
-        children: [
-          if (model.fragrancesBannersTitle.isNotEmpty) ...[
-            _buildTitle(model.fragrancesBannersTitle)
-          ],
-          if (model.fragrancesBanners.isNotEmpty) ...[
-            _buildBanners(model.fragrancesBanners)
-          ]
-        ],
-      ),
+    return Consumer<HomeChangeNotifier>(
+      builder: (_, model, __) {
+        return Container(
+          width: designWidth.w,
+          color: Colors.white,
+          child: Column(
+            children: [
+              if (model.fragrancesBannersTitle.isNotEmpty) ...[
+                _buildTitle(model.fragrancesBannersTitle)
+              ],
+              if (model.fragrancesBanners.isNotEmpty) ...[
+                _buildBanners(model.fragrancesBanners)
+              ]
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildTitle(String title) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: 10.w,
+        vertical: 10.h,
+      ),
       child: Text(
         title,
-        style: mediumTextStyle.copyWith(fontSize: 26.sp),
+        style: mediumTextStyle.copyWith(
+          fontSize: 26.sp,
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/product_h_card.dart';
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
       child: Stack(
         children: [
           Container(
-            width: designWidth.w,
+            width: 375.w,
             height: !widget.isVerticalCard ? 200.h : 320.h,
             child: Swiper(
               itemCount: widget.products.length,

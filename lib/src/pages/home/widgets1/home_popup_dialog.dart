@@ -21,7 +21,12 @@ class HomePopupDialog extends StatefulWidget {
 
 class _HomePopupDialogState extends State<HomePopupDialog>
     with WidgetsBindingObserver {
-  final ProductRepository productRepository = ProductRepository();
+  ProductRepository productRepository = ProductRepository();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

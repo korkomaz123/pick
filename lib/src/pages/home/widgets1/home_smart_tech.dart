@@ -19,10 +19,8 @@ import '../../../../config.dart';
 
 class HomeSmartTech extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  final ProductRepository productRepository = ProductRepository();
-
   HomeSmartTech({@required this.homeChangeNotifier});
-
+  final ProductRepository productRepository = ProductRepository();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -124,6 +122,7 @@ class HomeSmartTech extends StatelessWidget {
 
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
+      width: 375.w,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       color: backgroundColor,
       height: 302.w,
@@ -145,7 +144,10 @@ class HomeSmartTech extends StatelessWidget {
   Widget _buildFooter(CategoryEntity category, String title) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
+      padding: EdgeInsets.symmetric(
+        vertical: 4.h,
+        horizontal: 10.w,
+      ),
       color: backgroundColor,
       child: MarkaaTextIconButton(
         onPressed: () {
@@ -165,7 +167,11 @@ class HomeSmartTech extends StatelessWidget {
         title: 'view_all_smart_tech'.tr(),
         titleColor: Colors.white,
         titleSize: 18.sp,
-        icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 24.sp),
+        icon: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white,
+          size: 24.sp,
+        ),
         borderColor: primaryColor,
         buttonColor: primaryColor,
         leading: false,

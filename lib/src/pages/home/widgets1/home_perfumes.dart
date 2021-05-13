@@ -1,16 +1,15 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomePerfumes extends StatefulWidget {
@@ -109,7 +108,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
 
   Widget _buildProductView() {
     return Container(
-      width: designWidth.w,
+      width: 375.w,
       height: 590.h,
       child: Swiper(
         itemCount: widget.homeChangeNotifier.perfumesProducts.length > 40

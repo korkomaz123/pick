@@ -7,9 +7,9 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
@@ -26,8 +26,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: designWidth.w,
-      height: designWidth.w * 579 / 1125,
+      width: 375.w,
+      height: 375.w * 579 / 1125,
       child: Stack(
         children: [
           _buildImageSlider(),
@@ -88,8 +88,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             }
           },
           child: CachedNetworkImage(
-            width: designWidth.w,
-            height: designWidth.w * 579 / 1125,
+            width: 375.w,
+            height: 375.w * 579 / 1125,
             imageUrl: banner.bannerImage,
             fit: BoxFit.fill,
             errorWidget: (context, url, error) =>
@@ -102,7 +102,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
 
   Widget _buildIndicator() {
     return Positioned(
-      bottom: 20.w,
+      bottom: 20.h,
       left: 0,
       right: 0,
       child: Center(

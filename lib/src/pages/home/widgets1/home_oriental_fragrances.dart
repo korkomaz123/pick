@@ -8,8 +8,8 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../config.dart';
 
@@ -45,9 +45,7 @@ class HomeOrientalFragrances extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 5.w,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

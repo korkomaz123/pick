@@ -48,11 +48,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildTitle() {
     return Container(
-      width: designWidth.w,
+      width: 375.w,
       height: 50.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Text(
         'home_categories'.tr(),
         style: mediumTextStyle.copyWith(
@@ -65,11 +63,9 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildFooter() {
     return Container(
-      width: designWidth.w,
+      width: 375.w,
       height: 40.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       alignment: Alignment.centerLeft,
       child: InkWell(
         onTap: () => Navigator.pushNamed(
@@ -103,7 +99,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       child: Stack(
         children: [
           Container(
-            width: designWidth.w,
+            width: 375.w,
             height: 250.h,
             color: Colors.white,
             child: Swiper(
@@ -128,9 +124,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
                 count: widget.homeChangeNotifier.categories.length > 10
