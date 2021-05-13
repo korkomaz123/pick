@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/config.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -6,16 +7,17 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'notification_setup.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
@@ -60,9 +62,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
     Config.setupAdjustSDK();
+
+    Config.currentUser.then((data) {
+      user = data;
+      NotificationSetup().init();
+      _onLoadHomePage();
+    });
+
     dynamicLinkService.initialDynamicLink();
     dynamicLinkService.retrieveDynamicLink();
+
     _onLoadHomePage();
   }
 
@@ -105,7 +116,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 width: double.infinity,
-                height: 375.w * 579 / 1125,
+                height: designWidth.w * 579 / 1125,
                 child: FutureBuilder(
                   future: _homeProvider.loadSliderImages(),
                   builder: (_, snapShot) => snapShot.connectionState ==
@@ -146,10 +157,10 @@ class _HomePageState extends State<HomePage> {
               ),
               FutureBuilder(
                 future: _homeProvider.loadBestDealsBanner(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeBestDealsBanner(model: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
               ),
               Container(
                 height: 300.h,
@@ -195,10 +206,10 @@ class _HomePageState extends State<HomePage> {
               ),
               FutureBuilder(
                 future: _homeProvider.loadFragrancesBanner(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeFragrancesBanners(model: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
               ),
               Container(
                 width: designWidth.w,
@@ -225,14 +236,14 @@ class _HomePageState extends State<HomePage> {
                 builder: (_, snapShot) =>
                     snapShot.connectionState == ConnectionState.waiting
                         ? Center(child: CircularProgressIndicator())
-                        : HomeGrooming(model: _homeProvider),
+                        : HomeGrooming(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadAds(),
                 builder: (_, snapShot) =>
                     snapShot.connectionState == ConnectionState.waiting
                         ? Center(child: CircularProgressIndicator())
-                        : HomeAdvertise(model: _homeProvider),
+                        : HomeAdvertise(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadSmartTech(),

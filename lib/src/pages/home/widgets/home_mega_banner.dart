@@ -12,6 +12,7 @@ import '../../../../config.dart';
 
 class HomeMegaBanner extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeMegaBanner({@required this.homeChangeNotifier});
 
   @override

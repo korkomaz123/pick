@@ -4,16 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_country_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
-import 'package:markaa/src/components/markaa_text_input.dart';
-import 'package:markaa/src/components/markaa_text_input_multi.dart';
+import 'package:markaa/src/components/markaa_custom_input.dart';
+import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
-import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_country_dialog.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_block_list_dialog.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_region_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -32,7 +31,8 @@ import 'package:string_validator/string_validator.dart';
 
 class CheckoutGuestAddressPage extends StatefulWidget {
   @override
-  _CheckoutGuestAddressPageState createState() => _CheckoutGuestAddressPageState();
+  _CheckoutGuestAddressPageState createState() =>
+      _CheckoutGuestAddressPageState();
 }
 
 class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
@@ -44,11 +44,13 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   String shippingMethodId;
   double serviceFees;
   MyCartChangeNotifier myCartChangeNotifier;
-  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
+  TextEditingController fullNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController countryController = TextEditingController();
@@ -59,6 +61,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController companyController = TextEditingController();
+
   FocusNode firstNameNode = FocusNode();
   FocusNode lastNameNode = FocusNode();
   FocusNode countryNode = FocusNode();
@@ -97,6 +100,8 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       final address = await localStorageRepository.getItem('guest_address');
       firstNameController.text = address['firstname'];
       lastNameController.text = address['lastname'];
+      fullNameController.text =
+          '${address['firstname']} ${address['lastname']}';
       emailController.text = address['email'];
       regionId = address['region_id'];
       stateController.text = address['region'];
@@ -160,40 +165,39 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
   Widget _buildEditFormView() {
     return Expanded(
       child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Form(
           key: formKey,
           child: Column(
             children: [
               Column(
                 children: [
-                  MarkaaTextInput(
-                    controller: firstNameController,
+                  MarkaaCustomInput(
+                    controller: fullNameController,
                     width: 375.w,
                     padding: 10.w,
                     fontSize: 14.sp,
-                    hint: 'first_name'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    hint: 'full_name'.tr(),
+                    validator: (value) => value.isEmpty
+                        ? 'required_field'.tr()
+                        : (value.trim().indexOf(' ') == -1
+                            ? 'full_name_issue'.tr()
+                            : null),
                     inputType: TextInputType.text,
                   ),
-                  MarkaaTextInput(
-                    controller: lastNameController,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'last_name'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                  ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.w),
+                  MarkaaCustomInput(
                     controller: phoneNumberController,
                     width: 375.w,
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'phone_number_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.w),
+                  MarkaaCustomInput(
                     controller: emailController,
                     width: 375.w,
                     padding: 10.w,
@@ -209,64 +213,63 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     },
                     inputType: TextInputType.emailAddress,
                   ),
-                  _buildSearchingAddressButton(),
-                  MarkaaCountryInput(
-                    controller: countryController,
-                    countryCode: countryId,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'checkout_country_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: () => _onSelectCountry(),
-                  ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.w),
+                  MarkaaCustomInput(
                     controller: stateController,
                     width: 375.w,
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
-                    onTap: () => _onSelectState(),
+                    onTap: _onSelectState,
                   ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.w),
+                  MarkaaCustomInput(
                     controller: companyController,
                     width: 375.w,
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    readOnly: true,
+                    onTap: _onSelectBlock,
                   ),
-                  MarkaaTextInput(
-                    controller: streetController,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
+                  SizedBox(height: 10.w),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MarkaaCustomInput(
+                        controller: streetController,
+                        width: 310.w,
+                        padding: 10.w,
+                        fontSize: 14.sp,
+                        hint: 'checkout_street_name_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.text,
+                      ),
+                      Row(
+                        children: [
+                          _buildSearchingAddressButton(),
+                          SizedBox(width: 10.w),
+                        ],
+                      ),
+                    ],
                   ),
-                  MarkaaTextInput(
-                    controller: postCodeController,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'checkout_post_code_hint'.tr(),
-                    validator: (value) => null,
-                    inputType: TextInputType.number,
-                  ),
-                  MarkaaTextInputMulti(
+                  SizedBox(height: 10.w),
+                  MarkaaCustomInputMulti(
                     controller: cityController,
                     width: 375.w,
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
@@ -282,19 +285,17 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
 
   Widget _buildSearchingAddressButton() {
     return Container(
-      width: 375.w,
-      height: 50.h,
-      margin: EdgeInsets.symmetric(vertical: 20.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      width: 55.w,
+      height: 55.h,
       child: MarkaaTextIconButton(
-        title: 'checkout_searching_address_button_title'.tr(),
+        title: "", //'checkout_searching_address_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
-        icon: SvgPicture.asset(searchAddrIcon),
+        icon: SvgPicture.asset(searchAddrIcon, width: 16.sp),
         onPressed: () => _onSearchAddress(),
-        radius: 0,
+        radius: 10.sp,
       ),
     );
   }
@@ -328,44 +329,21 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       Routes.searchAddress,
     );
     if (result != null) {
-      _updateForm(result as AddressEntity);
+      final address = result as AddressEntity;
+      streetController.text = address?.street;
+      setState(() {});
     }
   }
 
-  void _updateForm([AddressEntity selectedAddress]) {
-    countryController.clear();
-    countryId = null;
-    stateController.clear();
-    cityController.clear();
-    streetController.clear();
-    postCodeController.clear();
-    companyController.clear();
-    phoneNumberController.clear();
-    countryController.text = selectedAddress?.country;
-    countryId = selectedAddress?.countryId;
-    stateController.text = selectedAddress?.region;
-    cityController.text = selectedAddress?.city;
-    streetController.text = selectedAddress?.street;
-    postCodeController.text = selectedAddress?.postCode;
-    companyController.text = selectedAddress?.company;
-    phoneNumberController.text = selectedAddress?.phoneNumber;
-    setState(() {});
-  }
-
-  void _onSelectCountry() async {
+  void _onSelectBlock() async {
     final result = await showDialog(
       context: context,
-      builder: (context) {
-        return SelectCountryDialog(value: countryId);
+      builder: (_) {
+        return SelectBlockListDialog(value: companyController.text);
       },
     );
-    if (result != null && countryId != result['code']) {
-      countryId = result['code'];
-      countryController.text = result['name'];
-      regionId = '';
-      stateController.clear();
-      regions = await shippingRepo.getRegions(countryId);
-      setState(() {});
+    if (result != null) {
+      companyController.text = result.toString();
     }
   }
 
@@ -390,6 +368,9 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
 
   void _onContinue() async {
     if (formKey.currentState.validate()) {
+      String firstName = fullNameController.text.split(' ')[0];
+      String lastName = fullNameController.text.split(' ')[1];
+
       String cartId = myCartChangeNotifier.cartId;
       orderDetails['shipping'] = shippingMethodId;
       orderDetails['cartId'] = cartId;
@@ -398,19 +379,23 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       double discount = .0;
       discount = myCartChangeNotifier.type == 'fixed'
           ? myCartChangeNotifier.discount
-          : myCartChangeNotifier.discount * myCartChangeNotifier.cartTotalPrice / 100;
+          : myCartChangeNotifier.discount *
+              myCartChangeNotifier.cartTotalPrice /
+              100;
       subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       totalPrice = subtotalPrice + serviceFees - discount;
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-      orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
-      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['totalPrice'] =
+          totalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['subTotalPrice'] =
+          subtotalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = '';
       final address = {
         'customer_address_id': '',
-        'firstname': firstNameController.text,
-        'lastname': lastNameController.text,
+        'firstname': firstName,
+        'lastname': lastName,
         'email': emailController.text,
         'region_id': regionId,
         'region': stateController.text,

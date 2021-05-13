@@ -11,8 +11,8 @@ class SignInRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   String getFirebaseUser() {
-    final user = _firebaseAuth.currentUser;
-    return user?.uid;
+    final firebaseUser = _firebaseAuth.currentUser;
+    return firebaseUser?.uid;
   }
 
   //////////////////////////////////////////////////////////////////////////////

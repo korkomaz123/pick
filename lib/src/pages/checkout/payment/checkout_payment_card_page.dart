@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -37,6 +43,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
 
   String url;
   OrderEntity order;
+  OrderEntity reorder;
 
   @override
   void initState() {
@@ -49,6 +56,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
 
     url = widget.params['url'];
     order = widget.params['order'];
+    reorder = widget.params['reorder'];
   }
 
   @override
@@ -60,28 +68,22 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       child: Scaffold(
         backgroundColor: backgroundColor,
         appBar: AppBar(
-          backgroundColor: backgroundColor,
-          leading: Container(
-            width: 40.h,
-            height: 40.h,
-            margin: EdgeInsets.all(10.h),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'lib/public/launcher/ios-app-launcher-icon.png',
-                ),
-              ),
-              shape: BoxShape.circle,
-            ),
-          ),
-          title: Text(
-            'Markaa',
-            style: mediumTextStyle.copyWith(
-              fontSize: 16.sp,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 25.sp,
               color: greyColor,
             ),
+            onPressed: () => Navigator.pop(context),
           ),
-          elevation: 0,
+          title: Text(
+            'payment_title'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: 23.sp,
+            ),
+          ),
         ),
         body: WebView(
           initialUrl: url,
@@ -98,14 +100,15 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   void _onPageLoaded(String url) async {
     final uri = Uri.dataFromString(url);
     final params = uri.queryParameters;
-    print(url);
-    if (url == 'https://cigaon.com/checkout/cart/') {
+
+    if (url == PaymentStatusUrls.failure) {
       if (user?.token != null) {
         order.status = OrderStatusEnum.canceled;
         orderChangeNotifier.updateOrder(order);
       }
       Navigator.pushNamed(context, Routes.paymentFailed);
-    } else if (url == 'https://cigaon.com/checkout/onepage/success/') {
+    } else if (url == PaymentStatusUrls.success) {
+      await _onSuccessPayment();
       if (user?.token != null) {
         order.status = OrderStatusEnum.processing;
         orderChangeNotifier.updateOrder(order);
@@ -118,5 +121,24 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     }
     print(uri.data);
     print(params);
+  }
+
+  Future<void> _onSuccessPayment() async {
+    if (reorder != null) {
+      myCartChangeNotifier.initializeReorderCart();
+    } else {
+      myCartChangeNotifier.initialize();
+      if (user?.token == null) {
+        await localStorageRepo.removeItem('cartId');
+      }
+      await myCartChangeNotifier.getCartId();
+    }
+    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    double price = double.parse(priceDetails['totalPrice']);
+
+    AdjustEvent adjustEvent =
+        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    adjustEvent.setRevenue(price, 'KWD');
+    Adjust.trackEvent(adjustEvent);
   }
 }

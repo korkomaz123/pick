@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -17,16 +12,11 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
@@ -83,156 +73,9 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
   final firebaseRepository = FirebaseRepository();
 
-  void _configureMessaging() async {
-    FirebaseMessaging.instance.requestPermission(
-        sound: true, badge: true, alert: true, provisional: true);
-
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-    FirebaseMessaging.onMessageOpenedApp
-        .listen((RemoteMessage event) => _onLaunchMessage(event.data));
-    // FirebaseMessaging.onBackgroundMessage(_onForegroundMessage);
-  }
-
   @override
   void initState() {
-    _configureMessaging();
-    _initializeLocalNotification();
-
     super.initState();
-  }
-
-  void _initializeLocalNotification() async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
-    var initializationSettingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onSelectNotification: onSelectNotification,
-    );
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-  }
-
-  Future onSelectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-      await _onLaunchMessage(jsonDecode(payload));
-    }
-  }
-
-  Future onDidReceiveLocalNotification(
-    int id,
-    String title,
-    String body,
-    String payload,
-  ) async {
-    showDialog(
-      context: Config.navigatorKey.currentContext,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok okay okay'),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.categoryList);
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
-    'This channel is used for important notifications.', // description
-    importance: Importance.max,
-  );
-
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  Future<void> _onForegroundMessage(RemoteMessage message) async {
-    await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      Platform.isAndroid
-          ? message.data['notification']['title']
-          : message.data['title'],
-      Platform.isAndroid
-          ? message.data['notification']['body']
-          : message.data['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      payload: jsonEncode(message),
-    );
-  }
-
-  Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
-    try {
-      Map<dynamic, dynamic> data =
-          Platform.isAndroid ? message['data'] : message;
-      int target = int.parse(data['target']);
-      if (target != 0) {
-        String id = data['id'];
-        if (target == 1) {
-          final product = await productRepository.getProduct(id);
-          Navigator.pushNamed(
-            Config.navigatorKey.currentContext,
-            Routes.product,
-            arguments: product,
-          );
-        } else if (target == 2) {
-          final category = await categoryRepository.getCategory(id, lang);
-          if (category != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: category,
-              subCategory: [],
-              brand: BrandEntity(),
-              selectedSubCategoryIndex: 0,
-              isFromBrand: false,
-            );
-            Navigator.pushNamed(
-              Config.navigatorKey.currentContext,
-              Routes.productList,
-              arguments: arguments,
-            );
-          }
-        } else if (target == 3) {
-          final brand = await brandRepository.getBrand(id, lang);
-          if (brand != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: CategoryEntity(),
-              subCategory: [],
-              brand: brand,
-              selectedSubCategoryIndex: 0,
-              isFromBrand: true,
-            );
-            Navigator.pushNamed(
-              Config.navigatorKey.currentContext,
-              Routes.productList,
-              arguments: arguments,
-            );
-          }
-        }
-      }
-    } catch (e) {
-      print('catch error $e');
-    }
   }
 
   @override

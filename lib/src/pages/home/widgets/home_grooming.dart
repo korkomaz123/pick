@@ -91,8 +91,10 @@ class _HomeGroomingState extends State<HomeGrooming> {
                 isFromBrand: false,
               );
               Navigator.pushNamed(
-                  Config.navigatorKey.currentContext, Routes.productList,
-                  arguments: arguments);
+                Config.navigatorKey.currentContext,
+                Routes.productList,
+                arguments: arguments,
+              );
             }
           },
           child: Container(
@@ -154,8 +156,10 @@ class _HomeGroomingState extends State<HomeGrooming> {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-              Config.navigatorKey.currentContext, Routes.productList,
-              arguments: arguments);
+            Config.navigatorKey.currentContext,
+            Routes.productList,
+            arguments: arguments,
+          );
         },
         title: 'view_all_grooming'.tr(),
         titleColor: Colors.white,

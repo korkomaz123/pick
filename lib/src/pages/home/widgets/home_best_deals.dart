@@ -15,7 +15,9 @@ import '../../../../config.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestDeals({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {

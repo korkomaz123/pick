@@ -120,9 +120,9 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logoutUser() async {
-    user = null;
     await localRepo.setToken('');
     await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
+    user = null;
 
     orderChangeNotifier.initializeOrders();
     wishlistChangeNotifier.initialize();

@@ -30,16 +30,16 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: greyLightColor,
       insetPadding: EdgeInsets.symmetric(
-        horizontal: 20.w,
+        horizontal: 10.w,
         vertical: 20.h,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: double.infinity,
+            width: 355.w,
             padding: EdgeInsets.symmetric(
               horizontal: 4.w,
               vertical: 5.h,

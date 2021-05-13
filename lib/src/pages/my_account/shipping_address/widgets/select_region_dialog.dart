@@ -18,8 +18,13 @@ class SelectRegionDialog extends StatefulWidget {
 class _SelectRegionDialogState extends State<SelectRegionDialog> {
   final searchController = TextEditingController();
   _loadData() async {
-    regions = await ShippingAddressRepository().getRegions(lang);
-    setState(() {});
+    try {
+      regions = await ShippingAddressRepository().getRegions();
+      print(regions.length);
+      setState(() {});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -34,12 +39,13 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: greyLightColor,
+      insetPadding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: double.infinity,
+            width: 355.w,
             padding: EdgeInsets.symmetric(
               horizontal: 4.w,
               vertical: 5.h,
@@ -74,7 +80,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
 
   Widget _buildNoRegions() {
     return Container(
-      width: double.infinity,
+      width: 355.w,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Text(
         'no_available_regions'.tr(),

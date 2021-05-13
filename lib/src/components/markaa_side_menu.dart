@@ -362,16 +362,21 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   void _logoutUser() async {
-    user = null;
     await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     await localRepo.setToken('');
-    myCartChangeNotifier.initialize();
+    user = null;
+
     orderChangeNotifier.initializeOrders();
+    wishlistChangeNotifier.initialize();
+
+    myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-    wishlistChangeNotifier.initialize();
+
     homeChangeNotifier.loadRecentlyViewedGuest();
+
     progressService.hideProgress();
+
     Navigator.pop(context);
     Navigator.popUntil(
       context,

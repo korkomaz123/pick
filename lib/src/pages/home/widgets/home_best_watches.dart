@@ -16,6 +16,7 @@ import '../../../../config.dart';
 
 class HomeBestWatches extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestWatches({@required this.homeChangeNotifier});
 
   final ProductRepository productRepository = ProductRepository();

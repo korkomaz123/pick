@@ -1,13 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:adjust_sdk/adjust.dart';
-import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
@@ -77,9 +71,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+
     _loadData();
   }
 
@@ -107,9 +103,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
                 return Column(
                   children: List.generate(paymentMethods.length, (index) {
-                    return _buildPaymentCard(
-                      paymentMethods[paymentMethods.length - index - 1],
-                    );
+                    if (paymentMethods[index].id == 'mpwalletsystem') {
+                      return Container();
+                    }
+                    return _buildPaymentCard(paymentMethods[index]);
                   }),
                 );
               }),
@@ -430,24 +427,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   }
 
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    print('success');
-    if (widget.reorder != null) {
-      myCartChangeNotifier.initializeReorderCart();
-    } else {
-      myCartChangeNotifier.initialize();
-      if (user?.token == null) {
-        await localStorageRepo.removeItem('cartId');
-      }
-      await myCartChangeNotifier.getCartId();
-    }
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
-    double price = double.parse(priceDetails['totalPrice']);
-
-    AdjustEvent adjustEvent =
-        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
-    adjustEvent.setRevenue(price, 'KWD');
-    Adjust.trackEvent(adjustEvent);
-
     progressService.hideProgress();
 
     if (payment == 'cashondelivery') {
@@ -461,7 +440,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       Navigator.pushNamed(
         context,
         Routes.checkoutPaymentCard,
-        arguments: {'url': payUrl, 'order': order},
+        arguments: {
+          'url': payUrl,
+          'order': order,
+          'reorder': widget.reorder,
+        },
       );
     }
   }

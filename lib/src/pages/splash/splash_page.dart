@@ -32,7 +32,10 @@ class _SplashPageState extends State<SplashPage> {
     //Start Loading Assets
     await Config.appOpen();
     await Navigator.pushNamedAndRemoveUntil(
-        context, Routes.home, (route) => false);
+      Config.navigatorKey.currentContext,
+      Routes.home,
+      (route) => false,
+    );
   }
 
   @override

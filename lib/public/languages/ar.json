@@ -327,5 +327,6 @@
     "iban_hint": "أنا أحظر",
     "create_new_account": "انشاء حساب جديد",
     "fill_card_details_error": "يرجى ملء تفاصيل بطاقتك في الأسفل",
-    "card_authorized_success": "بطاقتك أذن النجاح!"
+    "card_authorized_success": "بطاقتك أذن النجاح!",
+    "payment_title": "دفع"
 }

@@ -12,7 +12,9 @@ import '../../../../config.dart';
 
 class HomeFeaturedCategories extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeFeaturedCategories({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

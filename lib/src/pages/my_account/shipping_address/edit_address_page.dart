@@ -2,8 +2,8 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
-import 'package:markaa/src/components/markaa_text_input.dart';
-import 'package:markaa/src/components/markaa_text_input_multi.dart';
+import 'package:markaa/src/components/markaa_custom_input.dart';
+import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -24,6 +24,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/select_region_dialog.dart';
+import 'widgets/select_block_list_dialog.dart';
 
 class EditAddressPage extends StatefulWidget {
   final Map<String, dynamic> params;
@@ -126,31 +127,27 @@ class _EditAddressPageState extends State<EditAddressPage> {
       drawer: MarkaaSideMenu(),
       body: Column(
         children: [
-          _buildAppBar(),
+          AppBar(
+            elevation: 0,
+            toolbarHeight: 50.h,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios, size: 22.sp),
+            ),
+            centerTitle: true,
+            title: Text(
+              'shipping_address_title'.tr(),
+              style: mediumTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: 17.sp,
+              ),
+            ),
+          ),
           _buildEditFormView(),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.account,
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'shipping_address_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
       ),
     );
   }
@@ -164,7 +161,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
             children: [
               Column(
                 children: [
-                  MarkaaTextInput(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInput(
                     controller: titleController,
                     width: 375.w,
                     padding: 10.h,
@@ -174,7 +172,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                   ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInput(
                     controller: fullNameController,
                     width: designWidth.w,
                     padding: 10.w,
@@ -187,25 +186,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             : null),
                     inputType: TextInputType.text,
                   ),
-                  // MarkaaTextInput(
-                  //   controller: firstNameController,
-                  //   width: pageStyle.deviceWidth,
-                  //   padding: pageStyle.unitWidth * 10,
-                  //   fontSize: pageStyle.unitFontSize * 14,
-                  //   hint: 'first_name'.tr(),
-                  //   validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                  //   inputType: TextInputType.text,
-                  // ),
-                  // MarkaaTextInput(
-                  //   controller: lastNameController,
-                  //   width: pageStyle.deviceWidth,
-                  //   padding: pageStyle.unitWidth * 10,
-                  //   fontSize: pageStyle.unitFontSize * 14,
-                  //   hint: 'last_name'.tr(),
-                  //   validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                  //   inputType: TextInputType.text,
-                  // ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInput(
                     controller: phoneNumberController,
                     width: 375.w,
                     padding: 10.h,
@@ -215,38 +197,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.phone,
                   ),
-                  // MarkaaTextInput(
-                  //   controller: emailController,
-                  //   width: pageStyle.deviceWidth,
-                  //   padding: pageStyle.unitWidth * 10,
-                  //   fontSize: pageStyle.unitFontSize * 14,
-                  //   hint: 'email'.tr(),
-                  //   validator: (value) {
-                  //     if (value.isEmpty) {
-                  //       return 'required_field'.tr();
-                  //     } else if (!isEmail(value)) {
-                  //       return 'invalid_field'.tr();
-                  //     }
-                  //     return null;
-                  //   },
-                  //   inputType: TextInputType.emailAddress,
-                  // ),
-                  //_buildSearchingAddressButton(),
-                  // MarkaaCountryInput(
-                  //   controller: countryController,
-                  //   countryCode: countryId,
-                  //   width: pageStyle.deviceWidth,
-                  //   padding: pageStyle.unitWidth * 10,
-                  //   fontSize: pageStyle.unitFontSize * 14,
-                  //   hint: 'checkout_country_hint'.tr(),
-                  //   validator: (value) =>
-                  //       value.isEmpty ? 'required_field'.tr() : null,
-                  //   inputType: TextInputType.text,
-                  //   readOnly: true,
-                  //   onTap: () => _onSelectCountry(),
-                  //   pageStyle: pageStyle,
-                  // ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInput(
                     controller: stateController,
                     width: 375.w,
                     padding: 10.h,
@@ -256,9 +208,10 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
-                    onTap: () => _onSelectState(),
+                    onTap: _onSelectState,
                   ),
-                  MarkaaTextInput(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInput(
                     controller: companyController,
                     width: 375.w,
                     padding: 10.h,
@@ -267,35 +220,33 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) =>
                         value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
+                    readOnly: true,
+                    onTap: _onSelectBlock,
                   ),
+                  SizedBox(height: 10.h),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: MarkaaTextInput(
-                          controller: streetController,
-                          width: designWidth.w,
-                          padding: 10.w,
-                          fontSize: 14.sp,
-                          hint: 'checkout_street_name_hint'.tr(),
-                          validator: (value) =>
-                              value.isEmpty ? 'required_field'.tr() : null,
-                          inputType: TextInputType.text,
-                        ),
+                      MarkaaCustomInput(
+                        controller: streetController,
+                        width: 310.w,
+                        padding: 10.w,
+                        fontSize: 14.sp,
+                        hint: 'checkout_street_name_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.text,
                       ),
-                      _buildSearchingAddressButton(),
+                      Row(
+                        children: [
+                          _buildSearchingAddressButton(),
+                          SizedBox(width: 10.w),
+                        ],
+                      ),
                     ],
                   ),
-
-                  // MarkaaTextInput(
-                  //   controller: postCodeController,
-                  //   width: pageStyle.deviceWidth,
-                  //   padding: pageStyle.unitWidth * 10,
-                  //   fontSize: pageStyle.unitFontSize * 14,
-                  //   hint: 'checkout_post_code_hint'.tr(),
-                  //   validator: (value) => null,
-                  //   inputType: TextInputType.number,
-                  // ),
-                  MarkaaTextInputMulti(
+                  SizedBox(height: 10.h),
+                  MarkaaCustomInputMulti(
                     controller: cityController,
                     width: 375.w,
                     padding: 10.h,
@@ -318,21 +269,17 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   Widget _buildSearchingAddressButton() {
     return Container(
-      //pageStyle.deviceWidth,
-      // height: pageStyle.unitHeight * 50,
-      // margin: EdgeInsets.symmetric(
-      //   vertical: pageStyle.unitHeight * 20,
-      // ),
-      padding: EdgeInsets.all(10.w),
+      width: 55.w,
+      height: 55.h,
       child: MarkaaTextIconButton(
         title: "", //'checkout_searching_address_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
         borderColor: Colors.transparent,
-        icon: SvgPicture.asset(searchAddrIcon),
+        icon: SvgPicture.asset(searchAddrIcon, width: 16.sp),
         onPressed: () => _onSearchAddress(),
-        radius: 0,
+        radius: 10.sp,
       ),
     );
   }
@@ -369,46 +316,10 @@ class _EditAddressPageState extends State<EditAddressPage> {
       Routes.searchAddress,
     );
     if (result != null) {
-      _initForm(result as AddressEntity);
+      final address = result as AddressEntity;
+      streetController.text = address.street;
     }
   }
-
-  void _initForm([AddressEntity selectedAddress]) {
-    countryController.clear();
-    countryId = null;
-    stateController.clear();
-    cityController.clear();
-    streetController.clear();
-    postCodeController.clear();
-    companyController.clear();
-    phoneNumberController.clear();
-    countryController.text = selectedAddress?.country;
-    countryId = selectedAddress?.countryId;
-    stateController.text = selectedAddress?.region;
-    cityController.text = selectedAddress?.city;
-    streetController.text = selectedAddress?.street;
-    postCodeController.text = selectedAddress?.postCode;
-    companyController.text = selectedAddress?.company;
-    phoneNumberController.text = selectedAddress?.phoneNumber;
-    setState(() {});
-  }
-
-  // void _onSelectCountry() async {
-  //   final result = await showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return SelectCountryDialog(value: countryId);
-  //     },
-  //   );
-  //   if (result != null && countryId != result['code']) {
-  //     countryId = result['code'];
-  //     countryController.text = result['name'];
-  //     regionId = '';
-  //     stateController.clear();
-  //     regions = await shippingRepo.getRegions(countryId);
-  //     setState(() {});
-  //   }
-  // }
 
   void _onSelectState() async {
     final result = await showDialog(
@@ -425,21 +336,36 @@ class _EditAddressPageState extends State<EditAddressPage> {
     }
   }
 
+  void _onSelectBlock() async {
+    final result = await showDialog(
+      context: context,
+      builder: (_) {
+        return SelectBlockListDialog(value: companyController.text);
+      },
+    );
+    if (result != null) {
+      companyController.text = result.toString();
+    }
+  }
+
   void _onRetrieveRegions() async {
     regions = await shippingRepo.getRegions(lang);
   }
 
   void _onSave() async {
     if (formKey.currentState.validate()) {
+      String firstName = fullNameController.text.split(' ')[0];
+      String lastName = fullNameController.text.split(' ')[1];
+
       AddressEntity address = AddressEntity(
         title: titleController.text,
         country: countryController.text,
         countryId: countryId,
         regionId: regionId,
         region: stateController.text,
-        firstName: firstNameController.text,
+        firstName: firstName,
         fullName: fullNameController.text,
-        lastName: lastNameController.text,
+        lastName: lastName,
         city: cityController.text.trim(),
         street: streetController.text,
         postCode: postCodeController.text,

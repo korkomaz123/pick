@@ -5,6 +5,8 @@ import 'package:markaa/config.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 
 import 'home_change_notifier.dart';
@@ -13,6 +15,13 @@ import 'package:provider/provider.dart';
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'AR'];
+
+  UserEntity currentUser;
+
+  void updateUser(UserEntity loggedInUser) {
+    currentUser = loggedInUser;
+    notifyListeners();
+  }
 
   Future<void> changeLanguage(String val, {fromSplash = false}) async {
     BuildContext _context = Config.navigatorKey.currentContext;
@@ -40,7 +49,10 @@ class GlobalProvider extends ChangeNotifier {
     //   _context.read<ProductChangeNotifier>().productDetails = null;
     // }
     // update homde data
-    if (!fromSplash) _context.read<HomeChangeNotifier>().changeLanguage();
+    final _homeProvider = _context.read<HomeChangeNotifier>();
+    if (!fromSplash) _homeProvider.changeLanguage();
+
+    NotificationSetup().updateFcmDeviceToken();
   }
 
   GlobalProvider() {

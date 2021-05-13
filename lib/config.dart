@@ -8,6 +8,7 @@ import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
@@ -29,6 +30,8 @@ class Config {
       .languageCode
       .toLowerCase();
   static set language(String val) => setLanguage(val: val);
+
+  static Future<UserEntity> get currentUser => _getCurrentUser();
 
   static setLanguage({String val}) {
     val != null && val.isNotEmpty
@@ -81,6 +84,8 @@ class Config {
           email: MarkaaReporter.email, password: MarkaaReporter.password);
     }
     await _getCurrentUser();
+    navigatorKey.currentContext.read<GlobalProvider>().updateUser(user);
+    print('load assets: $user');
     if (user?.token != null) {
       //   isNotification = await settingRepo.getNotificationSetting(user.token);
       navigatorKey.currentContext
@@ -105,7 +110,7 @@ class Config {
     print(regions);
   }
 
-  static Future<void> _getCurrentUser() async {
+  static Future<UserEntity> _getCurrentUser() async {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
@@ -114,10 +119,12 @@ class Config {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         user = UserEntity.fromJson(result['data']['customer']);
+        return user;
       } else {
         await localRepo.removeToken();
       }
     }
+    return null;
   }
 
   static appOpen() async {

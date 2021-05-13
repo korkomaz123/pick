@@ -49,3 +49,4 @@ const Color favoriteColor = Color(0xFFFF5757);
 const Color dangerColor = Color(0xFFC10000);
 const Color greyLightColor = Color(0xFFEAEAEA);
 const Color orangeColor = Color(0xFFFF800A);
+const Color inputFillColor = Color(0xFFF7F7F7);

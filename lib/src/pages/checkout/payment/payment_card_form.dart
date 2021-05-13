@@ -15,6 +15,11 @@ class _PaymentCardFormState extends State<PaymentCardForm> {
   final url = 'https://cigaon.com/gatewayform.php';
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WebView(
       initialUrl: url,
