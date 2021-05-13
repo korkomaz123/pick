@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -13,7 +13,7 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<ProductModel> getProduct(String productId) async {
     String url = EndPoints.getProduct;
-    final params = {'productId': productId, 'lang': Config.language};
+    final params = {'productId': productId, 'lang': Preload.language};
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       return ProductModel.fromJson(result['product']);
@@ -155,9 +155,19 @@ class ProductRepository {
     String url = EndPoints.getBrandProducts;
     Map<String, dynamic> params = {};
     if (categoryId != 'all') {
-      params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': categoryId,
+        'lang': lang,
+        'page': '$page'
+      };
     } else {
-      params = {'brandId': brandId, 'categoryId': null, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': null,
+        'lang': lang,
+        'page': '$page'
+      };
     }
     return await Api.getMethod(url, data: params);
   }
@@ -176,7 +186,7 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<List<ProductModel>> getRelatedProducts(String productId) async {
     String url = EndPoints.getRelatedItems;
-    final params = {'productId': productId, 'lang': Config.language};
+    final params = {'productId': productId, 'lang': Preload.language};
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<ProductModel> products = [];
@@ -196,7 +206,7 @@ class ProductRepository {
     String productId,
   ) async {
     String url = EndPoints.getSameBrandProducts;
-    final params = {'productId': productId, 'lang': Config.language};
+    final params = {'productId': productId, 'lang': Preload.language};
     print(url);
     print(params);
     final result = await Api.getMethod(url, data: params);
@@ -271,7 +281,8 @@ class ProductRepository {
       'selectedBrandId': brandId.toString(),
       'lang': lang,
       'categoryIds': json.encode(filterValues['selectedCategories']),
-      'priceRanges': json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
+      'priceRanges':
+          json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
       'filter': json.encode(filterValues['selectedValues']),
       'page': page.toString(),
     };

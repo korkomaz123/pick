@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -62,8 +62,10 @@ class HomeBestDeals extends StatelessWidget {
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                    Config.navigatorKey.currentContext, Routes.productList,
-                    arguments: arguments);
+                  Preload.navigatorKey.currentContext,
+                  Routes.productList,
+                  arguments: arguments,
+                );
               },
             ),
           ),
@@ -80,29 +82,30 @@ class HomeBestDeals extends StatelessWidget {
         bottom: 10.h,
       ),
       child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: homeChangeNotifier.bestDealsProducts.length,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: EdgeInsets.only(left: 5.w),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: 1.w,
-                ),
+        scrollDirection: Axis.horizontal,
+        itemCount: homeChangeNotifier.bestDealsProducts.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.only(left: 5.w),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 1.w,
               ),
-              child: ProductVCard(
-                cardWidth: 170.w,
-                cardHeight: 280.h,
-                product: homeChangeNotifier.bestDealsProducts[index],
-                isShoppingCart: true,
-                isLine: true,
-                isMinor: true,
-                isWishlist: true,
-                isShare: false,
-              ),
-            );
-          }),
+            ),
+            child: ProductVCard(
+              cardWidth: 170.w,
+              cardHeight: 280.h,
+              product: homeChangeNotifier.bestDealsProducts[index],
+              isShoppingCart: true,
+              isLine: true,
+              isMinor: true,
+              isWishlist: true,
+              isShare: false,
+            ),
+          );
+        },
+      ),
     );
   }
 }

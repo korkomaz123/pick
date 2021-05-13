@@ -31,7 +31,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../../config.dart';
+import '../../../preload.dart';
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
@@ -63,7 +63,7 @@ class _ProductPageState extends State<ProductPage>
   Animation<double> _addToCartScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   final ProductChangeNotifier _productChangeNotifier =
-      Config.navigatorKey.currentContext.watch<ProductChangeNotifier>();
+      Preload.navigatorKey.currentContext.watch<ProductChangeNotifier>();
 
   @override
   void initState() {
@@ -123,7 +123,7 @@ class _ProductPageState extends State<ProductPage>
     } else {
       await localStorageRepository.addRecentlyViewedItem(product.productId);
     }
-    Config.navigatorKey.currentContext
+    Preload.navigatorKey.currentContext
         .read<HomeChangeNotifier>()
         .getViewedProducts();
   }

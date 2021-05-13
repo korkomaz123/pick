@@ -33,6 +33,7 @@ class CheckoutAddressPage extends StatefulWidget {
 class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   FlushBarService flushBarService;
   ProgressService progressService;
+
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -44,12 +45,15 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   TextEditingController zipCodeController = TextEditingController();
   TextEditingController companyController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+
   String shippingMethodId;
   double serviceFees;
-  final LocalStorageRepository localRepo = LocalStorageRepository();
+
   MyCartChangeNotifier myCartChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
-  final CheckoutRepository checkoutRepo = CheckoutRepository();
+
+  final localRepo = LocalStorageRepository();
+  final checkoutRepo = CheckoutRepository();
 
   _loadData() async {
     addressChangeNotifier.initialize();
@@ -142,7 +146,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            model.defaultAddress.title,
+            model.defaultAddress.street,
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: 18.sp,
@@ -160,14 +164,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
           SizedBox(height: 6.h),
           Text(
             model.defaultAddress.city,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
-          ),
-          SizedBox(height: 6.h),
-          Text(
-            model.defaultAddress.street,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

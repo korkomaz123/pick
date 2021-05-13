@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../config.dart';
+import '../../../preload.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -25,14 +25,14 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onLang(String val) async {
-    Config.navigatorKey.currentContext
+    Preload.navigatorKey.currentContext
         .read<GlobalProvider>()
         .changeLanguage(val, fromSplash: true);
     await localRepo.setItem('usage', 'markaa');
     //Start Loading Assets
-    await Config.appOpen();
+    await Preload.appOpen();
     await Navigator.pushNamedAndRemoveUntil(
-      Config.navigatorKey.currentContext,
+      Preload.navigatorKey.currentContext,
       Routes.home,
       (route) => false,
     );

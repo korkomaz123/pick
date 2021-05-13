@@ -197,7 +197,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      address.title,
+                      address.street,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 18.sp,
@@ -215,14 +215,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     SizedBox(height: 6.h),
                     Text(
                       address.city,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      address.street,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: 14.sp,
@@ -284,7 +276,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       },
     );
     if (result != null) {
-      await model.deleteAddress(user.token, key, _onProcess, _onSuccess, _onFailure);
+      await model.deleteAddress(
+          user.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
@@ -292,7 +285,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final address = model.addressesMap[key];
     address.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await model.updateAddress(user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
+    await model.updateAddress(
+        user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
   }
 
   void _onProcess() {

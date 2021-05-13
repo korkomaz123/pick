@@ -25,7 +25,7 @@ import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:string_validator/string_validator.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
@@ -138,7 +138,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (widget.model.productDetails.discount > 0 ||
             (widget?.model?.selectedVariant?.discount != null &&
                 widget.model.selectedVariant.discount > 0)) ...[
-          if (Config.language == 'en') ...[
+          if (Preload.language == 'en') ...[
             Positioned(
               top: 320.h,
               right: 0,
@@ -186,7 +186,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               width: 26.w,
               height: 26.h,
               child: SvgPicture.asset(
-                Config.language == 'en' ? arrowBackEnIcon : arrowBackArIcon,
+                Preload.language == 'en' ? arrowBackEnIcon : arrowBackArIcon,
               ),
             ),
           ),
@@ -298,19 +298,21 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                               '',
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
-                            fontSize: Config.language == 'en' ? 16.sp : 18.sp,
+                            fontSize: Preload.language == 'en' ? 16.sp : 18.sp,
                           ),
                         )
                       : Container(),
                 ),
               ),
               Text(
-                isStock
-                    ? 'in_stock'.tr().toUpperCase()
-                    : 'out_stock'.tr().toUpperCase(),
+                widget.model.productDetails?.brandEntity == null
+                    ? ''
+                    : isStock
+                        ? 'in_stock'.tr().toUpperCase()
+                        : 'out_stock'.tr().toUpperCase(),
                 style: mediumTextStyle.copyWith(
                   color: isStock ? succeedColor : dangerColor,
-                  fontSize: Config.language == 'en' ? 14.sp : 18.sp,
+                  fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
                 ),
               ),
             ],

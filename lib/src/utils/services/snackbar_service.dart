@@ -1,4 +1,4 @@
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +10,13 @@ class SnackBarService {
   SnackBarService({this.context, this.scaffoldKey});
 
   void showDefaultSnackBar(String message) {
-    ScaffoldMessenger.of(Config.navigatorKey.currentContext)
+    ScaffoldMessenger.of(Preload.navigatorKey.currentContext)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   void showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(Config.navigatorKey.currentContext)
+    ScaffoldMessenger.of(Preload.navigatorKey.currentContext)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
         content: Text(message),
@@ -25,9 +25,11 @@ class SnackBarService {
   }
 
   void showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(Config.navigatorKey.currentContext).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: succeedColor,
-    ));
+    ScaffoldMessenger.of(Preload.navigatorKey.currentContext).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: succeedColor,
+      ),
+    );
   }
 }

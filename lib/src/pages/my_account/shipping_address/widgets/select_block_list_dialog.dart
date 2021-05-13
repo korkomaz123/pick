@@ -40,8 +40,10 @@ class _SelectBlockListDialogState extends State<SelectBlockListDialog> {
                   onTap: () => Navigator.pop(context, item.toString()),
                   child: Container(
                     width: double.infinity,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 6.h,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

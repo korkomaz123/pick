@@ -92,7 +92,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       fullNameController.text =
           firstNameController.text + " " + lastNameController.text;
       emailController.text = addressParam?.email;
-      titleController.text = addressParam?.title;
+      titleController.text = addressParam?.title ?? 'title';
       countryController.text = addressParam?.country;
       countryId = addressParam?.countryId;
       stateController.text = addressParam?.region;
@@ -161,17 +161,17 @@ class _EditAddressPageState extends State<EditAddressPage> {
             children: [
               Column(
                 children: [
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: titleController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'address_title'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                  ),
+                  // SizedBox(height: 10.h),
+                  // MarkaaCustomInput(
+                  //   controller: titleController,
+                  //   width: 375.w,
+                  //   padding: 10.h,
+                  //   fontSize: 14.sp,
+                  //   hint: 'address_title'.tr(),
+                  //   validator: (value) =>
+                  //       value.isEmpty ? 'required_field'.tr() : null,
+                  //   inputType: TextInputType.text,
+                  // ),
                   SizedBox(height: 10.h),
                   MarkaaCustomInput(
                     controller: fullNameController,
@@ -272,7 +272,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       width: 55.w,
       height: 55.h,
       child: MarkaaTextIconButton(
-        title: "", //'checkout_searching_address_button_title'.tr(),
+        title: "",
         titleSize: 14.sp,
         titleColor: greyColor,
         buttonColor: greyLightColor,
@@ -358,7 +358,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       String lastName = fullNameController.text.split(' ')[1];
 
       AddressEntity address = AddressEntity(
-        title: titleController.text,
+        title: 'title',
         country: countryController.text,
         countryId: countryId,
         regionId: regionId,

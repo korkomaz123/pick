@@ -1,5 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
@@ -56,16 +56,16 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   final HomeChangeNotifier _homeProvider =
-      Config.navigatorKey.currentContext.read<HomeChangeNotifier>();
+      Preload.navigatorKey.currentContext.read<HomeChangeNotifier>();
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   @override
   void initState() {
     super.initState();
 
-    Config.setupAdjustSDK();
+    Preload.setupAdjustSDK();
 
-    Config.currentUser.then((data) {
+    Preload.currentUser.then((data) {
       user = data;
       NotificationSetup().init();
       _onLoadHomePage();
@@ -78,15 +78,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onLoadHomePage() async {
-    Config.navigatorKey.currentContext
+    Preload.navigatorKey.currentContext
         .read<ProductChangeNotifier>()
         .initialize();
-    await Config.navigatorKey.currentContext
+    await Preload.navigatorKey.currentContext
         .read<MyCartChangeNotifier>()
         .getCartId();
-    await Config.navigatorKey.currentContext
+    await Preload.navigatorKey.currentContext
         .read<MyCartChangeNotifier>()
-        .getCartItems(Config.language);
+        .getCartItems(Preload.language);
     _homeProvider.loadPopup(_onShowPopup);
   }
 
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Config.setLanguage();
+    Preload.setLanguage();
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),

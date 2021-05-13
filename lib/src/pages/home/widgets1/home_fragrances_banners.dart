@@ -10,7 +10,7 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeFragrancesBanners extends StatefulWidget {
   final HomeChangeNotifier model;
@@ -81,7 +81,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: false,
                   );
                   Navigator.pushNamed(
-                    Config.navigatorKey.currentContext,
+                    Preload.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
@@ -94,7 +94,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                     isFromBrand: true,
                   );
                   Navigator.pushNamed(
-                    Config.navigatorKey.currentContext,
+                    Preload.navigatorKey.currentContext,
                     Routes.productList,
                     arguments: arguments,
                   );
@@ -102,7 +102,7 @@ class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
                   final product =
                       await productRepository.getProduct(banner.productId);
                   Navigator.pushNamedAndRemoveUntil(
-                    Config.navigatorKey.currentContext,
+                    Preload.navigatorKey.currentContext,
                     Routes.product,
                     (route) => route.settings.name == Routes.home,
                     arguments: product,

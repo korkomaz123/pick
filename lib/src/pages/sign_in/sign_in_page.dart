@@ -31,7 +31,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
 
-import '../../../config.dart';
+import '../../../preload.dart';
 
 class SignInPage extends StatefulWidget {
   final bool isFromCheckout;
@@ -97,15 +97,15 @@ class _SignInPageState extends State<SignInPage> {
     }
     homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
-    if (Navigator.of(Config.navigatorKey.currentContext).canPop())
-      Navigator.of(Config.navigatorKey.currentContext).pop(context);
+    if (Navigator.of(Preload.navigatorKey.currentContext).canPop())
+      Navigator.of(Preload.navigatorKey.currentContext).pop(context);
     else
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
-    Config.setLanguage();
+    Preload.setLanguage();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,

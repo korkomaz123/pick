@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_attribution.dart';
 import 'package:adjust_sdk/adjust_config.dart';
@@ -6,32 +8,37 @@ import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/pages/splash/update_available_dialog.dart';
+import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
 import 'src/data/models/user_entity.dart';
 import 'src/utils/repositories/local_storage_repository.dart';
 import 'src/utils/repositories/sign_in_repository.dart';
 
-class Config {
+class Preload {
   static String baseUrl = "";
   static String imagesUrl = "";
   static String languageCode;
+
   static String get language => EasyLocalization.of(navigatorKey.currentContext)
       .locale
       .languageCode
       .toLowerCase();
   static set language(String val) => setLanguage(val: val);
-
-  static Future<UserEntity> get currentUser => _getCurrentUser();
 
   static setLanguage({String val}) {
     val != null && val.isNotEmpty
@@ -43,49 +50,58 @@ class Config {
     lang = languageCode;
   }
 
-  static GlobalKey<NavigatorState> navigatorKey =
-      new GlobalKey<NavigatorState>();
-  static CheckoutRepository checkoutRepo = CheckoutRepository();
-  static ShippingAddressRepository shippingAddressRepo =
-      ShippingAddressRepository();
-  // static MyCartChangeNotifier myCartChangeNotifier = MyCartChangeNotifier();
-  static SignInRepository signInRepo = SignInRepository();
+  static final navigatorKey = GlobalKey<NavigatorState>();
 
-  static LocalStorageRepository localRepo = LocalStorageRepository();
+  static final myCartChangeNotifier = MyCartChangeNotifier();
+  static final globalProvider =
+      navigatorKey.currentContext.read<GlobalProvider>();
+
+  static final checkoutRepo = CheckoutRepository();
+  static final shippingAddressRepo = ShippingAddressRepository();
+  static final signInRepo = SignInRepository();
+  static final localRepo = LocalStorageRepository();
+  static final appRepo = AppRepository();
+
   static Future<void> checkAppVersion() async {
-    // final versionEntity = await AppRepository().checkAppVersion(Platform.isAndroid, lang);
-    // if (versionEntity.updateMandatory) {
-    //   Navigator.pushReplacementNamed(
-    //     context,
-    //     Routes.update,
-    //     arguments: versionEntity.storeLink,
-    //   );
-    // } else if (versionEntity.canUpdate) {
-    //   final result = await showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return UpdateAvailableDialog(
-    //         title: versionEntity.dialogTitle,
-    //         content: versionEntity.dialogContent,
-    //       );
-    //     },
-    //   );
-    //   if (result != null) {
-    //     if (await canLaunch(versionEntity.storeLink)) {
-    //       await launch(versionEntity.storeLink);
-    //     }
-    //   }
-    // }
+    final versionEntity = await appRepo.checkAppVersion(
+      Platform.isAndroid,
+      languageCode,
+    );
+    if (versionEntity.updateMandatory) {
+      Navigator.pushReplacementNamed(
+        navigatorKey.currentContext,
+        Routes.update,
+        arguments: versionEntity.storeLink,
+      );
+    } else if (versionEntity.canUpdate) {
+      final result = await showDialog(
+        context: navigatorKey.currentContext,
+        builder: (context) {
+          return UpdateAvailableDialog(
+            title: versionEntity.dialogTitle,
+            content: versionEntity.dialogContent,
+          );
+        },
+      );
+      if (result != null) {
+        if (await canLaunch(versionEntity.storeLink)) {
+          await launch(versionEntity.storeLink);
+        }
+      }
+    }
   }
 
   static loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
       await signInRepo.loginFirebase(
-          email: MarkaaReporter.email, password: MarkaaReporter.password);
+        email: MarkaaReporter.email,
+        password: MarkaaReporter.password,
+      );
     }
+
     await _getCurrentUser();
-    navigatorKey.currentContext.read<GlobalProvider>().updateUser(user);
-    print('load assets: $user');
+    globalProvider.updateUser(user);
+
     if (user?.token != null) {
       //   isNotification = await settingRepo.getNotificationSetting(user.token);
       navigatorKey.currentContext
@@ -109,6 +125,8 @@ class Config {
     print("regions");
     print(regions);
   }
+
+  static Future<UserEntity> get currentUser => _getCurrentUser();
 
   static Future<UserEntity> _getCurrentUser() async {
     String token = await localRepo.getToken();

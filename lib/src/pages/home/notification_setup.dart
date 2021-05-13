@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -111,7 +111,7 @@ class NotificationSetup {
     String payload,
   ) async {
     showDialog(
-      context: Config.navigatorKey.currentContext,
+      context: Preload.navigatorKey.currentContext,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text(title),
         content: Text(body),
@@ -156,7 +156,7 @@ class NotificationSetup {
         if (target == 1) {
           final product = await productRepository.getProduct(id);
           Navigator.pushNamed(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.product,
             arguments: product,
           );
@@ -171,7 +171,7 @@ class NotificationSetup {
               isFromBrand: false,
             );
             Navigator.pushNamed(
-              Config.navigatorKey.currentContext,
+              Preload.navigatorKey.currentContext,
               Routes.productList,
               arguments: arguments,
             );
@@ -187,7 +187,7 @@ class NotificationSetup {
               isFromBrand: true,
             );
             Navigator.pushNamed(
-              Config.navigatorKey.currentContext,
+              Preload.navigatorKey.currentContext,
               Routes.productList,
               arguments: arguments,
             );

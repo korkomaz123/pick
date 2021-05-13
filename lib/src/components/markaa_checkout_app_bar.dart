@@ -49,24 +49,6 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
           fontSize: 23.sp,
         ),
       ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 8.sp),
-          child: IconButton(
-            icon: Icon(
-              Icons.close,
-              size: 25.sp,
-              color: greyColor,
-            ),
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                (route) => route.settings.name == Routes.home,
-              );
-            },
-          ),
-        ),
-      ],
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(widget.currentIndex == null ? 0 : 60),
         child: widget.currentIndex == null

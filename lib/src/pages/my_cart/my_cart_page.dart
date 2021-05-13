@@ -3,9 +3,7 @@ import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
@@ -40,17 +38,22 @@ class _MyCartPageState extends State<MyCartPage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
+
   bool isDeleting = false;
+  bool showSign = false;
+  bool isCheckout = false;
+
   String cartId = '';
   double totalPrice = 0;
+
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
+
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  bool showSign = false;
-  bool isCheckout = false;
+
   _loadData() async {
     if (myCartChangeNotifier.cartItemCount == 0)
       await myCartChangeNotifier.getCartItems(lang);
@@ -82,11 +85,18 @@ class _MyCartPageState extends State<MyCartPage>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCartPage: true,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 25.sp,
+            color: greyColor,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           SingleChildScrollView(

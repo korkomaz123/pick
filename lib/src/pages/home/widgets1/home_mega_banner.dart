@@ -8,7 +8,7 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeMegaBanner extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -32,7 +32,7 @@ class HomeMegaBanner extends StatelessWidget {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );
@@ -45,7 +45,7 @@ class HomeMegaBanner extends StatelessWidget {
             isFromBrand: true,
           );
           Navigator.pushNamed(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );
@@ -53,7 +53,7 @@ class HomeMegaBanner extends StatelessWidget {
           final product = await ProductRepository()
               .getProduct(homeChangeNotifier.megaBanner.productId);
           Navigator.pushNamedAndRemoveUntil(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.product,
             (route) => route.settings.name == Routes.home,
             arguments: product,

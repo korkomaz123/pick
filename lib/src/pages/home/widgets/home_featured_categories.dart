@@ -8,7 +8,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeFeaturedCategories extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -34,7 +34,7 @@ class HomeFeaturedCategories extends StatelessWidget {
                       isFromBrand: false,
                     );
                     Navigator.pushNamed(
-                      Config.navigatorKey.currentContext,
+                      Preload.navigatorKey.currentContext,
                       Routes.productList,
                       arguments: arguments,
                     );

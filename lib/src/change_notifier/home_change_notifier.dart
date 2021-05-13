@@ -12,7 +12,7 @@ import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-import '../../config.dart';
+import '../../preload.dart';
 
 class HomeChangeNotifier extends ChangeNotifier {
   final HomeRepository homeRepository = HomeRepository();
@@ -53,7 +53,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> sliderImages = [];
   Future loadSliderImages() async {
     try {
-      final result = await homeRepository.getHomeSliderImages(Config.language);
+      final result = await homeRepository.getHomeSliderImages(Preload.language);
       if (result['code'] == 'SUCCESS') {
         sliderImages.clear();
         for (int i = 0; i < result['data'].length; i++) {
@@ -69,7 +69,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<CategoryEntity> featuredCategories = [];
   Future getFeaturedCategoriesList() async {
     final result =
-        await categoryRepository.getFeaturedCategories(Config.language);
+        await categoryRepository.getFeaturedCategories(Preload.language);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoryList = result['categories'];
       featuredCategories.clear();
@@ -85,7 +85,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadBestDeals() async {
     try {
       final result =
-          await productRepository.getBestDealsProducts(Config.language);
+          await productRepository.getBestDealsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         bestDealsTitle = result['title'];
         bestDealsProducts.clear();
@@ -101,7 +101,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   Future getHomeCategories() async {
-    final params = {'lang': Config.language};
+    final params = {'lang': Preload.language};
     final result =
         await Api.getMethod(EndPoints.getHomeCategories, data: params);
     if (result['code'] == 'SUCCESS') {
@@ -117,7 +117,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   SliderImageEntity popupItem;
   Future loadPopup(Function onSuccess) async {
     try {
-      final result = await homeRepository.getPopupItem(Config.language);
+      final result = await homeRepository.getPopupItem(Preload.language);
       if (result['code'] == 'SUCCESS') {
         popupItem = SliderImageEntity.fromJson(result['data'][0]);
         onSuccess(popupItem);
@@ -128,7 +128,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   Future loadMegaBanner() async {
-    final result = await homeRepository.getHomeMegaBanner(Config.language);
+    final result = await homeRepository.getHomeMegaBanner(Preload.language);
     try {
       if (result['code'] == 'SUCCESS') {
         megaBanner = SliderImageEntity.fromJson(result['data'][0]);
@@ -147,15 +147,15 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadNewArrivalsBanner() async {
     try {
       final result =
-          await homeRepository.getHomeNewArrivalsBanners(Config.language);
+          await homeRepository.getHomeNewArrivalsBanners(Preload.language);
       if (result['code'] == 'SUCCESS') {
         dynamic response;
         if (result['data'][0]['category_id'] != null) {
           response = await productRepository.getProducts(
-              result['data'][0]['category_id'], Config.language, 1);
+              result['data'][0]['category_id'], Preload.language, 1);
         } else if (result['data'][0]['brand_id'] != null) {
           response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', Config.language, 1);
+              result['data'][0]['brand_id'], 'all', Preload.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -183,7 +183,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadNewArrivals() async {
     try {
       final result =
-          await productRepository.getNewArrivalsProducts(Config.language);
+          await productRepository.getNewArrivalsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         newArrivalsTitle = result['title'];
         newArrivalsProducts.clear();
@@ -200,7 +200,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   SliderImageEntity exculisiveBanner;
   Future loadExculisiveBanner() async {
     final result =
-        await homeRepository.getHomeExculisiveBanner(Config.language);
+        await homeRepository.getHomeExculisiveBanner(Preload.language);
     try {
       if (result['code'] == 'SUCCESS') {
         exculisiveBanner = SliderImageEntity.fromJson(result['data'][0]);
@@ -219,7 +219,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadOrientalProducts() async {
     try {
       final result =
-          await productRepository.getOrientalProducts(Config.language);
+          await productRepository.getOrientalProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         orientalTitle = result['title'];
         orientalCategory = CategoryEntity.fromJson(result['category']);
@@ -238,15 +238,15 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadBestDealsBanner() async {
     try {
       final result =
-          await homeRepository.getHomeBestDealsBanners(Config.language);
+          await homeRepository.getHomeBestDealsBanners(Preload.language);
       if (result['code'] == 'SUCCESS') {
         dynamic response;
         if (result['data'][0]['category_id'] != null) {
           response = await productRepository.getProducts(
-              result['data'][0]['category_id'], Config.language, 1);
+              result['data'][0]['category_id'], Preload.language, 1);
         } else if (result['data'][0]['brand_id'] != null) {
           response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', Config.language, 1);
+              result['data'][0]['brand_id'], 'all', Preload.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -275,7 +275,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadFragrancesBanner() async {
     try {
       final result =
-          await homeRepository.getHomeFragrancesBanners(Config.language);
+          await homeRepository.getHomeFragrancesBanners(Preload.language);
       if (result['code'] == 'SUCCESS') {
         fragrancesBannersTitle = result['title'];
         fragrancesBanners.clear();
@@ -294,7 +294,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadPerfumes() async {
     try {
       final result =
-          await productRepository.getPerfumesProducts(Config.language);
+          await productRepository.getPerfumesProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         perfumesTitle = result['title'];
         perfumesProducts.clear();
@@ -312,7 +312,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> bestWatchesItems = [];
   Future loadBestWatches() async {
     try {
-      final result = await homeRepository.getHomeBestWatches(Config.language);
+      final result = await homeRepository.getHomeBestWatches(Preload.language);
       if (result['code'] == 'SUCCESS') {
         bestWatchesBanner = null;
         bestWatchesBanner = SliderImageEntity.fromJson(result['data'][0]);
@@ -331,16 +331,16 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> perfumesItems = [];
   Future loadAds() async {
     try {
-      var result = await homeRepository.getHomeAds(Config.language);
+      var result = await homeRepository.getHomeAds(Preload.language);
       if (result['code'] == 'SUCCESS') {
         final adsData = result['data'];
         var response;
         if (adsData['category_id'] != null) {
           response = await productRepository.getProducts(
-              adsData['category_id'], Config.language, 1);
+              adsData['category_id'], Preload.language, 1);
         } else if (adsData['brand_id'] != null) {
           response = await productRepository.getBrandProducts(
-              adsData['brand_id'], 'all', Config.language, 1);
+              adsData['brand_id'], 'all', Preload.language, 1);
         }
         if (response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
@@ -374,7 +374,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     List<String> ids = await localStorageRepository.getRecentlyViewedIds();
     try {
       final result = await productRepository.getHomeRecentlyViewedGuestProducts(
-          ids, Config.language);
+          ids, Preload.language);
       if (result['code'] == 'SUCCESS') {
         recentlyViewedProducts.clear();
         for (int i = 0; i < result['items'].length; i++) {
@@ -392,7 +392,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadRecentlyViewedCustomer() async {
     try {
       final result = await productRepository
-          .getHomeRecentlyViewedCustomerProducts(user.token, Config.language);
+          .getHomeRecentlyViewedCustomerProducts(user.token, Preload.language);
       if (result['code'] == 'SUCCESS') {
         recentlyViewedProducts.clear();
         for (int i = 0; i < result['products'].length; i++) {
@@ -413,7 +413,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   CategoryEntity groomingCategory;
   Future loadGrooming() async {
     try {
-      final result = await homeRepository.getHomeGrooming(Config.language);
+      final result = await homeRepository.getHomeGrooming(Preload.language);
       if (result['code'] == 'SUCCESS') {
         groomingTitle = result['title'];
         groomingCategory = CategoryEntity.fromJson(result['category']);
@@ -439,7 +439,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   CategoryEntity smartTechCategory;
   Future loadSmartTech() async {
     try {
-      final result = await homeRepository.getHomeSmartTech(Config.language);
+      final result = await homeRepository.getHomeSmartTech(Preload.language);
       if (result['code'] == 'SUCCESS') {
         smartTechTitle = result['title'];
         smartTechCategory = CategoryEntity.fromJson(result['category']);
@@ -460,7 +460,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   List<CategoryEntity> categories = [];
   Future getCategoriesList() async {
-    final result = await categoryRepository.getAllCategories(Config.language);
+    final result = await categoryRepository.getAllCategories(Preload.language);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoryList = result['categories'];
       categories = [];
@@ -474,7 +474,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<BrandEntity> brandList = [];
   List<BrandEntity> sortedBrandList = [];
   Future getBrandsList(String from) async {
-    final result = await brandRepository.getAllBrands(Config.language, from);
+    final result = await brandRepository.getAllBrands(Preload.language, from);
     if (result['code'] == 'SUCCESS') {
       List<BrandEntity> brands = [];
       for (int i = 0; i < result['brand'].length; i++) {

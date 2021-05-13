@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -50,7 +50,7 @@ class DynamicLinkService {
               String id = deepLink.queryParameters['id'];
               final product = await productRepository.getProduct(id);
               Navigator.pushNamedAndRemoveUntil(
-                Config.navigatorKey.currentContext,
+                Preload.navigatorKey.currentContext,
                 Routes.product,
                 (route) => route.settings.name == Routes.home,
                 arguments: product,
@@ -66,14 +66,15 @@ class DynamicLinkService {
 
   Future<void> initialDynamicLink() async {
     try {
-      PendingDynamicLinkData dynamicLink = await FirebaseDynamicLinks.instance.getInitialLink();
+      PendingDynamicLinkData dynamicLink =
+          await FirebaseDynamicLinks.instance.getInitialLink();
       final Uri deepLink = dynamicLink?.link;
       if (deepLink != null) {
         if (deepLink.queryParameters.containsKey('id')) {
           String id = deepLink.queryParameters['id'];
           final product = await productRepository.getProduct(id);
           Navigator.pushNamedAndRemoveUntil(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.product,
             (route) => route.settings.name == Routes.home,
             arguments: product,

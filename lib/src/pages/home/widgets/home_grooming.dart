@@ -14,7 +14,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeGrooming extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -80,8 +80,10 @@ class HomeGrooming extends StatelessWidget {
                 isFromBrand: false,
               );
               Navigator.pushNamed(
-                  Config.navigatorKey.currentContext, Routes.productList,
-                  arguments: arguments);
+                Preload.navigatorKey.currentContext,
+                Routes.productList,
+                arguments: arguments,
+              );
             }
           },
           child: Container(
@@ -140,8 +142,10 @@ class HomeGrooming extends StatelessWidget {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-              Config.navigatorKey.currentContext, Routes.productList,
-              arguments: arguments);
+            Preload.navigatorKey.currentContext,
+            Routes.productList,
+            arguments: arguments,
+          );
         },
         title: 'view_all_grooming'.tr(),
         titleColor: Colors.white,

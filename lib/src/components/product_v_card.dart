@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -109,8 +109,10 @@ class _ProductVCardState extends State<ProductVCard>
     if (widget?.product?.productId != null) {
       return InkWell(
         onTap: () => Navigator.pushNamed(
-            Config.navigatorKey.currentContext, Routes.product,
-            arguments: widget.product),
+          Preload.navigatorKey.currentContext,
+          Routes.product,
+          arguments: widget.product,
+        ),
         child: Container(
           width: widget.cardWidth,
           height: widget.cardHeight,
@@ -118,7 +120,7 @@ class _ProductVCardState extends State<ProductVCard>
             children: [
               _buildProductCard(),
               if (widget.product.discount > 0) ...[
-                if (Config.language == 'en') ...[
+                if (Preload.language == 'en') ...[
                   Positioned(top: 0, left: 0, child: _buildDiscount()),
                 ] else ...[
                   Positioned(top: 0, right: 0, child: _buildDiscount()),
@@ -152,8 +154,6 @@ class _ProductVCardState extends State<ProductVCard>
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
-              // progressIndicatorBuilder: (context, url, downloadProgress) =>
-              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, error) =>
                   Center(child: Icon(Icons.image, size: 20)),
             ),
@@ -299,14 +299,16 @@ class _ProductVCardState extends State<ProductVCard>
       if (widget.isWishlist) {
         return Align(
           alignment:
-              Config.language == 'en' ? Alignment.topRight : Alignment.topLeft,
+              Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () => user != null
                   ? _onWishlist()
                   : Navigator.pushNamed(
-                      Config.navigatorKey.currentContext, Routes.signIn),
+                      Preload.navigatorKey.currentContext,
+                      Routes.signIn,
+                    ),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
@@ -330,7 +332,7 @@ class _ProductVCardState extends State<ProductVCard>
     if (widget.product.typeId == 'simple' &&
         (widget.product.stockQty == null || widget.product.stockQty == 0)) {
       return Align(
-        alignment: Config.language == 'en'
+        alignment: Preload.language == 'en'
             ? Alignment.centerRight
             : Alignment.centerLeft,
         child: Container(
@@ -351,8 +353,11 @@ class _ProductVCardState extends State<ProductVCard>
 
   void _onAddProductToCart() async {
     if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(Config.navigatorKey.currentContext, Routes.product,
-          arguments: widget.product);
+      Navigator.pushNamed(
+        Preload.navigatorKey.currentContext,
+        Routes.product,
+        arguments: widget.product,
+      );
     } else {
       _addToCartController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -374,8 +379,11 @@ class _ProductVCardState extends State<ProductVCard>
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(Config.navigatorKey.currentContext, Routes.product,
-          arguments: widget.product);
+      Navigator.pushNamed(
+        Preload.navigatorKey.currentContext,
+        Routes.product,
+        arguments: widget.product,
+      );
     } else {
       _addToWishlistController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -383,11 +391,11 @@ class _ProductVCardState extends State<ProductVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        await Config.navigatorKey.currentContext
+        await Preload.navigatorKey.currentContext
             .read<WishlistChangeNotifier>()
             .removeItemFromWishlist(user.token, widget.product);
       } else {
-        await Config.navigatorKey.currentContext
+        await Preload.navigatorKey.currentContext
             .read<WishlistChangeNotifier>()
             .addItemToWishlist(user.token, widget.product, 1, {});
       }

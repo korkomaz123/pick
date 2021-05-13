@@ -39,7 +39,7 @@ import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:provider/provider.dart';
 
-import '../../../config.dart';
+import '../../../preload.dart';
 import 'no_network_access_page.dart';
 
 class MarkaaApp extends StatefulWidget {
@@ -133,7 +133,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
       child: ScreenUtilInit(
         designSize: Size(designWidth, designHeight),
         builder: () => MaterialApp(
-          navigatorKey: Config.navigatorKey,
+          navigatorKey: Preload.navigatorKey,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

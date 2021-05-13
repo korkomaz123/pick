@@ -15,7 +15,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeSmartTech extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -80,7 +80,7 @@ class HomeSmartTech extends StatelessWidget {
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Config.navigatorKey.currentContext,
+                  Preload.navigatorKey.currentContext,
                   Routes.productList,
                   arguments: arguments,
                 );
@@ -93,7 +93,7 @@ class HomeSmartTech extends StatelessWidget {
                   isFromBrand: true,
                 );
                 Navigator.pushNamed(
-                  Config.navigatorKey.currentContext,
+                  Preload.navigatorKey.currentContext,
                   Routes.productList,
                   arguments: arguments,
                 );
@@ -101,7 +101,7 @@ class HomeSmartTech extends StatelessWidget {
                 final product =
                     await productRepository.getProduct(banner.productId);
                 Navigator.pushNamedAndRemoveUntil(
-                  Config.navigatorKey.currentContext,
+                  Preload.navigatorKey.currentContext,
                   Routes.product,
                   (route) => route.settings.name == Routes.home,
                   arguments: product,
@@ -159,7 +159,7 @@ class HomeSmartTech extends StatelessWidget {
             isFromBrand: false,
           );
           Navigator.pushNamed(
-            Config.navigatorKey.currentContext,
+            Preload.navigatorKey.currentContext,
             Routes.productList,
             arguments: arguments,
           );

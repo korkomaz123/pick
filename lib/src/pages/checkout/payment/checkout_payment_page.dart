@@ -103,10 +103,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
                 return Column(
                   children: List.generate(paymentMethods.length, (index) {
-                    if (paymentMethods[index].id == 'mpwalletsystem') {
+                    int idx = paymentMethods.length - index - 1;
+                    if (paymentMethods[idx].id == 'mpwalletsystem') {
                       return Container();
                     }
-                    return _buildPaymentCard(paymentMethods[index]);
+                    return _buildPaymentCard(paymentMethods[idx]);
                   }),
                 );
               }),
@@ -151,7 +152,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   ),
                 ),
               ],
-              SizedBox(height: 50.h),
+              // SizedBox(height: 50.h),
               Divider(
                 color: greyLightColor,
                 height: 10.h,
@@ -159,7 +160,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
               ),
               _buildDetails(),
               SizedBox(height: 30.h),
-              _buildPlacePaymentButton(),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  if (payment == 'tap') return Container();
+                  return _buildPlacePaymentButton();
+                },
+              ),
               _buildBackToReviewButton(),
             ],
           ),
@@ -404,8 +410,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onCardAuthorizedSuccess(String token) {
     cardToken = token;
-    flushBarService.showSuccessMessage('card_authorized_success'.tr());
     setState(() {});
+    Future.delayed(Duration(milliseconds: 300), _onPlaceOrder);
   }
 
   void _onPlaceOrder() async {

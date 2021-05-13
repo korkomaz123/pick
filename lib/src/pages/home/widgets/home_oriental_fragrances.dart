@@ -11,7 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeOrientalFragrances extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -66,7 +66,7 @@ class HomeOrientalFragrances extends StatelessWidget {
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Config.navigatorKey.currentContext,
+                  Preload.navigatorKey.currentContext,
                   Routes.productList,
                   arguments: arguments,
                 );

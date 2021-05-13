@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/config.dart';
+import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
@@ -24,14 +25,16 @@ class GlobalProvider extends ChangeNotifier {
   }
 
   Future<void> changeLanguage(String val, {fromSplash = false}) async {
-    BuildContext _context = Config.navigatorKey.currentContext;
+    BuildContext _context = Preload.navigatorKey.currentContext;
     String _current = currentLanguage;
     if (_current != val) {
+      final enLocale = EasyLocalization.of(_context).supportedLocales.first;
+      final arLocale = EasyLocalization.of(_context).supportedLocales.last;
+
       _current == 'ar'
-          ? _context
-              .setLocale(EasyLocalization.of(_context).supportedLocales.first)
-          : _context
-              .setLocale(EasyLocalization.of(_context).supportedLocales.last);
+          ? _context.setLocale(enLocale)
+          : _context.setLocale(arLocale);
+
       FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en'
           ? MarkaaNotificationChannels.arChannel
           : MarkaaNotificationChannels.enChannel);
@@ -39,17 +42,24 @@ class GlobalProvider extends ChangeNotifier {
           ? MarkaaNotificationChannels.arChannel
           : MarkaaNotificationChannels.enChannel);
 
-      lang = Config.language = _current == "ar" ? "en" : "ar";
+      lang = Preload.language = _current == "ar" ? "en" : "ar";
     }
     fetchCategories();
+
     // notifyListeners();
     // Update Details page if i am in details page
     // if (_context.read<ProductChangeNotifier>().productDetails != null) {
     //   _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
     //   _context.read<ProductChangeNotifier>().productDetails = null;
     // }
+
+    // update cart items
+    final _cartProvider = _context.read<MyCartChangeNotifier>();
+    _cartProvider.getCartItems(lang);
+
     // update homde data
     final _homeProvider = _context.read<HomeChangeNotifier>();
+
     if (!fromSplash) _homeProvider.changeLanguage();
 
     NotificationSetup().updateFcmDeviceToken();
@@ -79,7 +89,7 @@ class GlobalProvider extends ChangeNotifier {
   }
 
   String get currentLanguage =>
-      EasyLocalization.of(Config.navigatorKey.currentContext)
+      EasyLocalization.of(Preload.navigatorKey.currentContext)
           .locale
           .languageCode
           .toLowerCase();

@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../config.dart';
+import '../../../../preload.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -64,7 +64,7 @@ class HomeBestDeals extends StatelessWidget {
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Config.navigatorKey.currentContext,
+                  Preload.navigatorKey.currentContext,
                   Routes.productList,
                   arguments: arguments,
                 );
