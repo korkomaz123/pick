@@ -41,7 +41,7 @@ class HomeRecent extends StatelessWidget {
                       children: [
                         ProductVCard(
                           cardWidth: 175.w,
-                          cardHeight: 300.h,
+                          cardHeight: 280.h,
                           product:
                               homeChangeNotifier.recentlyViewedProducts[index],
                           isShoppingCart: true,
@@ -52,7 +52,7 @@ class HomeRecent extends StatelessWidget {
                             homeChangeNotifier.recentlyViewedProducts.length -
                                 1) ...[
                           Container(
-                            height: 300.h,
+                            height: 280.h,
                             child: VerticalDivider(
                               width: 1.w,
                               thickness: 1.w,

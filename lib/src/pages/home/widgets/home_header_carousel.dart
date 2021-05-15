@@ -25,15 +25,15 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: designWidth.w,
-      height: designWidth.w * 579 / 1125,
-      child: Stack(
-        children: [
-          _buildImageSlider(),
-          _buildIndicator(),
-        ],
-      ),
+    if (widget?.homeChangeNotifier?.sliderImages == null ||
+        widget.homeChangeNotifier.sliderImages.isEmpty) {
+      return Container();
+    }
+    return Stack(
+      children: [
+        _buildImageSlider(),
+        _buildIndicator(),
+      ],
     );
   }
 

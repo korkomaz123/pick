@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -29,11 +31,13 @@ import '../../../../preload.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
+  final ProductEntity productDetails;
   final ProductChangeNotifier model;
 
   ProductSingleProduct({
-    this.product,
-    this.model,
+    @required this.product,
+    @required this.productDetails,
+    @required this.model,
   });
 
   @override
@@ -57,6 +61,39 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       widget.model.productDetails.stockQty != null &&
       widget.model.productDetails.stockQty > 0;
 
+  List<Image> get preCachedImages => _loadCacheImages();
+
+  List<Image> _loadCacheImages() {
+    final productEntity = widget.model.productDetails;
+    final List<Image> list = [];
+    if (productEntity.gallery.isNotEmpty) {
+      for (int i = 0; i < productEntity.gallery.length; i++) {
+        list.add(Image.network(
+          productEntity.gallery[i],
+          width: designWidth.w,
+          height: 400.h,
+          fit: BoxFit.fitHeight,
+          loadingBuilder: (_, child, chunk) {
+            if (chunk != null) {
+              return Center(
+                child: CupertinoActivityIndicator(
+                  radius: 30.sp,
+                ),
+              );
+            }
+            return child;
+          },
+        ));
+      }
+    }
+    if (list.isNotEmpty) {
+      for (var item in list) {
+        precacheImage(item.image, context);
+      }
+    }
+    return list;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +101,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     _initFavorite();
     _initAnimation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print('>>> update dependencies');
+    super.didChangeDependencies();
   }
 
   void _initFavorite() async {
@@ -119,7 +162,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                         )
                       : null,
                 )
-              ] else if (widget.model.productDetails.gallery.isNotEmpty) ...[
+              ] else if (preCachedImages.isNotEmpty) ...[
                 _buildImageCarousel()
               ],
               Padding(
@@ -192,6 +235,39 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
           Column(
             children: [
+              Padding(
+                padding: EdgeInsets.only(top: 10.h, right: 20.w, left: 20.w),
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.myCart),
+                  child: Center(
+                    child: Consumer<MyCartChangeNotifier>(
+                      builder: (_, model, __) {
+                        return Badge(
+                          badgeColor: badgeColor,
+                          badgeContent: Text(
+                            '${model.cartTotalCount}',
+                            style:
+                                TextStyle(fontSize: 8.sp, color: Colors.white),
+                          ),
+                          showBadge: model.cartItemCount > 0,
+                          toAnimate: false,
+                          animationDuration: Duration.zero,
+                          position: Preload.languageCode == 'ar'
+                              ? BadgePosition.topStart(
+                                  start: 0,
+                                  top: -2.h,
+                                )
+                              : BadgePosition.topEnd(
+                                  end: 0,
+                                  top: -2.h,
+                                ),
+                          child: SvgPicture.asset(addCart1Icon),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
               IconButton(
                 onPressed: () => _onShareProduct(),
                 icon: SvgPicture.asset(shareIcon),
@@ -350,14 +426,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               Routes.viewFullImage,
               arguments: widget.model.productDetails.gallery,
             ),
-            child: CachedNetworkImage(
-              imageUrl: widget.model.productDetails.gallery[index],
-              width: designWidth.w,
-              height: 400.h,
-              fit: BoxFit.fitHeight,
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
-            ),
+            child: preCachedImages[index],
           );
         },
       ),

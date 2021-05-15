@@ -113,10 +113,7 @@ class HomeGrooming extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: list.length,
         itemBuilder: (context, index) => Container(
-          padding: EdgeInsets.only(
-            left: (index.w > 0 ? 2 : 0),
-            bottom: 3.h,
-          ),
+          padding: EdgeInsets.only(bottom: 3.h),
           child: ProductCard(
             cardWidth: 120.w,
             cardHeight: 175.w,

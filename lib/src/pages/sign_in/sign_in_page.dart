@@ -7,6 +7,7 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -45,29 +46,39 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   FocusNode emailNode = FocusNode();
   FocusNode passNode = FocusNode();
+
   bool isShowPass = false;
+
   SignInBloc signInBloc;
+
   HomeChangeNotifier homeChangeNotifier;
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  final LocalStorageRepository localRepo = LocalStorageRepository();
-  final WishlistRepository wishlistRepo = WishlistRepository();
-  SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
+
+  ProgressService progressService;
+  FlushBarService flushBarService;
+
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final WishlistRepository wishlistRepo = WishlistRepository();
+  final SettingRepository settingRepo = SettingRepository();
+
   @override
   void initState() {
     super.initState();
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    homeChangeNotifier = context.read<HomeChangeNotifier>();
+
     signInBloc = context.read<SignInBloc>();
+
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -85,13 +96,7 @@ class _SignInPageState extends State<SignInPage> {
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
       addressChangeNotifier.initialize();
       await addressChangeNotifier.loadAddresses(user.token);
-      await settingRepo.updateFcmDeviceToken(
-        user.token,
-        Platform.isAndroid ? deviceToken : '',
-        Platform.isIOS ? deviceToken : '',
-        Platform.isAndroid ? lang : '',
-        Platform.isIOS ? lang : '',
-      );
+      NotificationSetup().updateFcmDeviceToken();
     } catch (e) {
       print(e.toString());
     }

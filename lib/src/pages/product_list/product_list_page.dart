@@ -109,51 +109,45 @@ class _ProductListPageState extends State<ProductListPage> {
           if (isFromBrand) ...[_buildBrandBar()],
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
-              if (!model.isLoading) {
-                if (model.subCategories == null) {
-                  return Container();
-                }
-                if (isFromBrand) {
-                  subCategories = [CategoryEntity(id: 'all')];
-                } else {
-                  subCategories = [category];
-                }
-                subCategories.addAll(model.subCategories);
-                if (subCategories.length > activeSubcategoryIndex) {
-                  return Consumer<ScrollChangeNotifier>(
-                    builder: (ctx, scrollNotifier, child) {
-                      double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
-                      double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
-                      return AnimatedPositioned(
-                        top: isFromBrand ? 120.h - extra : 45.h,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        duration: Duration(milliseconds: 500),
-                        child: ProductListView(
-                          subCategories: subCategories,
-                          activeIndex: activeSubcategoryIndex,
-                          scaffoldKey: scaffoldKey,
-                          isFromBrand: isFromBrand,
-                          isFilter: isFilter,
-                          brand: brand,
-                          onChangeTab: (index) => _onChangeTab(index),
-                          scrollController: scrollController,
-                          viewMode: viewMode,
-                          sortByItem: sortByItem,
-                          filterValues: filterValues,
-                          pos: pos,
-                        ),
-                      );
-                    },
-                  );
-                } else {
-                  return Container();
-                }
+              if (model.subCategories == null) {
+                return Container();
+              }
+              if (isFromBrand) {
+                subCategories = [CategoryEntity(id: 'all')];
               } else {
-                return Center(
-                  child: CircularProgressIndicator(),
+                subCategories = [category];
+              }
+              subCategories.addAll(model.subCategories);
+              if (subCategories.length > activeSubcategoryIndex) {
+                return Consumer<ScrollChangeNotifier>(
+                  builder: (ctx, scrollNotifier, child) {
+                    double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
+                    double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
+                    return AnimatedPositioned(
+                      top: isFromBrand ? 120.h - extra : 45.h,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      duration: Duration(milliseconds: 500),
+                      child: ProductListView(
+                        subCategories: subCategories,
+                        activeIndex: activeSubcategoryIndex,
+                        scaffoldKey: scaffoldKey,
+                        isFromBrand: isFromBrand,
+                        isFilter: isFilter,
+                        brand: brand,
+                        onChangeTab: (index) => _onChangeTab(index),
+                        scrollController: scrollController,
+                        viewMode: viewMode,
+                        sortByItem: sortByItem,
+                        filterValues: filterValues,
+                        pos: pos,
+                      ),
+                    );
+                  },
                 );
+              } else {
+                return Container();
               }
             },
           ),

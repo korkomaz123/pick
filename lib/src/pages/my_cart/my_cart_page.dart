@@ -97,81 +97,53 @@ class _MyCartPageState extends State<MyCartPage>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Consumer<MyCartChangeNotifier>(
-                  builder: (_, model, ___) {
-                    if (model.cartItemCount > 0) {
-                      return Column(
-                        children: [
-                          _buildTitleBar(),
-                          _buildTotalItems(),
-                          MyCartCouponCode(
-                            cartId: cartId,
-                            onSignIn: () => _onSignIn(false),
-                          ),
-                          _buildTotalPrice(),
-                          _buildCheckoutButton(),
-                        ],
-                      );
-                    } else {
-                      return Consumer<WishlistChangeNotifier>(
-                        builder: (_, model, ___) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical:
-                                  model.wishlistItemsCount > 0 ? 100.h : 250.h,
-                            ),
-                            child: Center(
-                              child: NoAvailableData(
-                                message: 'no_cart_items_available',
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-                if (user?.token != null) ...[
-                  MyCartSaveForLaterItems(
-                    progressService: progressService,
-                    flushBarService: flushBarService,
-                    myCartChangeNotifier: myCartChangeNotifier,
-                    wishlistChangeNotifier: wishlistChangeNotifier,
-                  )
-                ]
-              ],
-            ),
-          ),
-          Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              if (showSign) {
-                return AnimationLimiter(
-                  child: AnimationConfiguration.staggeredList(
-                    position: 1,
-                    duration: Duration(milliseconds: 300),
-                    child: SlideAnimation(
-                      verticalOffset: -50.0,
-                      child: FadeInAnimation(
-                        child: MyCartQuickAccessLoginDialog(
-                          cartId: cartId,
-                          onClose: _onClose,
-                          isCheckout: isCheckout,
-                        ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Consumer<MyCartChangeNotifier>(
+              builder: (_, model, ___) {
+                if (model.cartItemCount > 0) {
+                  return Column(
+                    children: [
+                      _buildTitleBar(),
+                      _buildTotalItems(),
+                      MyCartCouponCode(
+                        cartId: cartId,
+                        onSignIn: () => _onSignIn(false),
                       ),
-                    ),
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
-        ],
+                      _buildTotalPrice(),
+                      _buildCheckoutButton(),
+                    ],
+                  );
+                } else {
+                  return Consumer<WishlistChangeNotifier>(
+                    builder: (_, model, ___) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical:
+                              model.wishlistItemsCount > 0 ? 100.h : 250.h,
+                        ),
+                        child: Center(
+                          child: NoAvailableData(
+                            message: 'no_cart_items_available',
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+            if (user?.token != null) ...[
+              MyCartSaveForLaterItems(
+                progressService: progressService,
+                flushBarService: flushBarService,
+                myCartChangeNotifier: myCartChangeNotifier,
+                wishlistChangeNotifier: wishlistChangeNotifier,
+              )
+            ]
+          ],
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.home,
@@ -424,15 +396,15 @@ class _MyCartPageState extends State<MyCartPage>
     wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
-  void _onSignIn(bool checkout) {
+  void _onSignIn(bool checkout) async {
     isCheckout = checkout;
-    showSign = true;
-    markaaAppChangeNotifier.rebuild();
-  }
-
-  void _onClose() {
-    showSign = false;
-    markaaAppChangeNotifier.rebuild();
+    await showDialog(
+      context: context,
+      builder: (_) => MyCartQuickAccessLoginDialog(
+        cartId: cartId,
+        isCheckout: isCheckout,
+      ),
+    );
   }
 
   void _onCheckout() async {

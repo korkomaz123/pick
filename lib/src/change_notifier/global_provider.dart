@@ -44,25 +44,25 @@ class GlobalProvider extends ChangeNotifier {
 
       lang = Preload.language = _current == "ar" ? "en" : "ar";
     }
-    fetchCategories();
+    // fetchCategories();
 
-    // notifyListeners();
-    // Update Details page if i am in details page
-    // if (_context.read<ProductChangeNotifier>().productDetails != null) {
-    //   _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
-    //   _context.read<ProductChangeNotifier>().productDetails = null;
-    // }
+    // // notifyListeners();
+    // // Update Details page if i am in details page
+    // // if (_context.read<ProductChangeNotifier>().productDetails != null) {
+    // //   _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
+    // //   _context.read<ProductChangeNotifier>().productDetails = null;
+    // // }
 
-    // update cart items
-    final _cartProvider = _context.read<MyCartChangeNotifier>();
-    _cartProvider.getCartItems(lang);
+    // // update cart items
+    // final _cartProvider = _context.read<MyCartChangeNotifier>();
+    // _cartProvider.getCartItems(lang);
 
-    // update homde data
-    final _homeProvider = _context.read<HomeChangeNotifier>();
+    // // update homde data
+    // final _homeProvider = _context.read<HomeChangeNotifier>();
 
-    if (!fromSplash) _homeProvider.changeLanguage();
+    // if (!fromSplash) _homeProvider.changeLanguage();
 
-    NotificationSetup().updateFcmDeviceToken();
+    // NotificationSetup().updateFcmDeviceToken();
   }
 
   GlobalProvider() {

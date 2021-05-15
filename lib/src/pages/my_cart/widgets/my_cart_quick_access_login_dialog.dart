@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -16,6 +17,7 @@ import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
@@ -36,10 +38,9 @@ import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
-  final Function onClose;
   final bool isCheckout;
 
-  MyCartQuickAccessLoginDialog({this.cartId, this.onClose, this.isCheckout});
+  MyCartQuickAccessLoginDialog({this.cartId, this.isCheckout});
 
   @override
   _MyCartQuickAccessLoginDialogState createState() =>
@@ -102,54 +103,11 @@ class _MyCartQuickAccessLoginDialogState
     homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
-    widget.onClose();
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        _buildBloc(),
-        Container(
-          width: 375.w,
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          color: primarySwatchColor,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'login_with'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              _buildSocialSignInButtons(),
-              SizedBox(height: 20.h),
-              _buildAuthChoice(),
-              SizedBox(height: 20.h),
-              if (widget.isCheckout) ...[
-                _buildContinueAsGuest(),
-              ]
-            ],
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: SvgPicture.asset(closeIcon, color: Colors.white),
-            onPressed: widget.onClose,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBloc() {
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInSubmittedInProcess) {
@@ -163,10 +121,48 @@ class _MyCartQuickAccessLoginDialogState
           flushBarService.showErrorMessage(state.message);
         }
       },
-      child: Container(
-        width: 375.w,
-        height: 812.h,
+      child: Material(
         color: Colors.black38,
+        type: MaterialType.transparency,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 375.w,
+              padding: EdgeInsets.only(bottom: 20.h),
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Preload.languageCode == 'en'
+                        ? Alignment.topRight
+                        : Alignment.topLeft,
+                    child: IconButton(
+                      icon: SvgPicture.asset(closeIcon),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Text(
+                    'login_with'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  _buildSocialSignInButtons(),
+                  SizedBox(height: 20.h),
+                  _buildAuthChoice(),
+                  SizedBox(height: 20.h),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -174,28 +170,77 @@ class _MyCartQuickAccessLoginDialogState
   Widget _buildSocialSignInButtons() {
     return Container(
       width: 375.w,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          InkWell(
-            onTap: () => _onFacebookSign(),
-            child: SvgPicture.asset(facebookIcon),
+          Container(
+            width: 220.w,
+            height: 50.h,
+            child: MarkaaTextIconButton(
+              title: 'continue_with_google'.tr(),
+              titleSize: 12.sp,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: greyLightColor,
+              icon: SvgPicture.asset(googleIcon),
+              radius: 30.sp,
+              onPressed: _onGoogleSign,
+            ),
           ),
-          SizedBox(width: 20.w),
-          InkWell(
-            onTap: () => _onGoogleSign(),
-            child: SvgPicture.asset(googleIcon),
+          SizedBox(height: 10.h),
+          Container(
+            width: 220.w,
+            height: 50.h,
+            child: MarkaaTextIconButton(
+              title: 'continue_with_facebook'.tr(),
+              titleSize: 12.sp,
+              titleColor: Colors.white,
+              buttonColor: primaryColor,
+              borderColor: greyLightColor,
+              icon: SvgPicture.asset(facebookCircleIcon),
+              radius: 30.sp,
+              onPressed: _onFacebookSign,
+            ),
           ),
           if (Platform.isIOS) ...[
-            Row(
-              children: [
-                SizedBox(width: 20.w),
-                InkWell(
-                  onTap: () => _onAppleSign(),
-                  child: SvgPicture.asset(appleIcon),
-                ),
-              ],
-            )
+            SizedBox(height: 10.h),
+            Container(
+              width: 220.w,
+              height: 50.h,
+              child: MarkaaTextIconButton(
+                title: 'continue_with_apple'.tr(),
+                titleSize: 12.sp,
+                titleColor: Colors.white,
+                buttonColor: darkColor,
+                borderColor: darkColor,
+                icon: SvgPicture.asset(appleCircleIcon),
+                radius: 30.sp,
+                onPressed: _onAppleSign,
+              ),
+            ),
+          ],
+          if (widget.isCheckout) ...[
+            SizedBox(height: 10.h),
+            Container(
+              width: 220.w,
+              height: 50.h,
+              child: MarkaaTextButton(
+                title: 'continue_as_guest'.tr(),
+                titleSize: 12.sp,
+                titleColor: primaryColor,
+                buttonColor: Colors.white,
+                borderColor: primaryColor,
+                radius: 30.sp,
+                onPressed: () async {
+                  AdjustEvent adjustEvent =
+                      new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+                  Adjust.trackEvent(adjustEvent);
+
+                  await myCartChangeNotifier.getCartItems(
+                      lang, _onProcess, _onReloadItemSuccess, _onFailure);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
           ],
         ],
       ),
@@ -214,49 +259,24 @@ class _MyCartQuickAccessLoginDialogState
             child: Text(
               'login'.tr(),
               style: mediumTextStyle.copyWith(
-                color: Colors.white,
                 fontSize: 14.sp,
               ),
             ),
           ),
           Container(
             height: 20.h,
-            child: VerticalDivider(color: Colors.white, thickness: 0.5),
+            child: VerticalDivider(color: darkColor, thickness: 0.5),
           ),
           InkWell(
             onTap: () => _onRegister(),
             child: Text(
               'register'.tr(),
               style: mediumTextStyle.copyWith(
-                color: Colors.white,
                 fontSize: 14.sp,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildContinueAsGuest() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 60.w),
-      child: MarkaaTextButton(
-        title: 'continue_as_guest'.tr(),
-        titleColor: Colors.white70,
-        titleSize: 16.sp,
-        buttonColor: primarySwatchColor,
-        borderColor: Colors.white70,
-        radius: 10.sp,
-        onPressed: () async {
-          AdjustEvent adjustEvent =
-              new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
-          Adjust.trackEvent(adjustEvent);
-          await myCartChangeNotifier.getCartItems(
-              lang, _onProcess, _onReloadItemSuccess, _onFailure);
-          widget.onClose();
-        },
       ),
     );
   }
@@ -288,16 +308,14 @@ class _MyCartQuickAccessLoginDialogState
   void _onLogin() async {
     await Navigator.pushNamed(context, Routes.signIn, arguments: true);
     if (user?.token != null) {
-      markaaAppChangeNotifier.rebuild();
-      widget.onClose();
+      Navigator.pop(context);
     }
   }
 
   void _onRegister() async {
     await Navigator.pushNamed(context, Routes.signUp, arguments: true);
     if (user?.token != null) {
-      markaaAppChangeNotifier.rebuild();
-      widget.onClose();
+      Navigator.pop(context);
     }
   }
 

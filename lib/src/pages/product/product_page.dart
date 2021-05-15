@@ -9,7 +9,6 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_round_image_button.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -133,7 +132,6 @@ class _ProductPageState extends State<ProductPage>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
-      drawer: MarkaaSideMenu(),
       body: SafeArea(
         child: Consumer<ProductChangeNotifier>(
           builder: (context, productChangeNotifier, child) {
@@ -155,7 +153,11 @@ class _ProductPageState extends State<ProductPage>
                       child: Column(
                         children: [
                           ProductSingleProduct(
-                              product: product, model: productChangeNotifier),
+                            product: product,
+                            productDetails:
+                                productChangeNotifier.productDetails,
+                            model: productChangeNotifier,
+                          ),
                           if (productChangeNotifier.productDetails.typeId ==
                               'configurable') ...[
                             ProductConfigurableOptions(

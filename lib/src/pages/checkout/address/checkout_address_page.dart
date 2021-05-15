@@ -56,9 +56,12 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   final checkoutRepo = CheckoutRepository();
 
   _loadData() async {
-    addressChangeNotifier.initialize();
-    if (user?.token != null)
+    if (user?.token != null &&
+        (addressChangeNotifier.addressesMap == null ||
+            addressChangeNotifier.addressesMap.isEmpty)) {
+      addressChangeNotifier.initialize();
       await addressChangeNotifier.loadAddresses(user.token);
+    }
     if (shippingMethods.isEmpty)
       shippingMethods = await checkoutRepo.getShippingMethod();
     shippingMethodId = shippingMethods[0].id;

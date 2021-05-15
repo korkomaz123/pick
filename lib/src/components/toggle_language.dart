@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,10 @@ class ToggleLanguageWidget extends StatelessWidget {
           unSelectedBorderColor: Colors.transparent,
           isVertical: false,
           listStyle: true,
-          onTap: _globalProvider.changeLanguage,
+          onTap: (value) {
+            _globalProvider.changeLanguage(value);
+            Phoenix.rebirth(context);
+          },
         ),
       ),
     );

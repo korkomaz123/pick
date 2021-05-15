@@ -330,5 +330,7 @@
     "create_new_account": "Create New Account",
     "fill_card_details_error": "Please fill in your card details in the below",
     "card_authorized_success": "Your card authorized success!",
-    "payment_title": "Payment"
+    "payment_title": "Payment",
+    "continue_with_google": "Continue with Google",
+    "continue_with_facebook": "Continue with Facebook"
 }

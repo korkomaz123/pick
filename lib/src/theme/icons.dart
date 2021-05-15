@@ -75,3 +75,5 @@ const String boldCheckBoxCheckedIcon =
     '$iconsAssetPath/bold-checkbox-checked-icon.svg';
 const String boldCheckBoxUncheckedIcon =
     '$iconsAssetPath/bold-checkbox-unchecked-icon.svg';
+const String facebookCircleIcon = '$iconsAssetPath/facebook-circle.svg';
+const String appleCircleIcon = '$iconsAssetPath/apple.svg';

@@ -10,6 +10,7 @@ import 'package:markaa/src/routes/routes.dart';
 
 class HomeAdvertise extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeAdvertise({@required this.homeChangeNotifier});
 
   final ProductRepository productRepository = ProductRepository();
@@ -34,8 +35,11 @@ class HomeAdvertise extends StatelessWidget {
                     selectedSubCategoryIndex: 0,
                     isFromBrand: false,
                   );
-                  Navigator.pushNamed(context, Routes.productList,
-                      arguments: arguments);
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
                 } else if (homeChangeNotifier?.ads?.brand?.optionId != null) {
                   final arguments = ProductListArguments(
                     category: CategoryEntity(),
@@ -44,8 +48,11 @@ class HomeAdvertise extends StatelessWidget {
                     selectedSubCategoryIndex: 0,
                     isFromBrand: true,
                   );
-                  Navigator.pushNamed(context, Routes.productList,
-                      arguments: arguments);
+                  Navigator.pushNamed(
+                    context,
+                    Routes.productList,
+                    arguments: arguments,
+                  );
                 } else if (homeChangeNotifier?.ads?.productId != null) {
                   final product = await productRepository
                       .getProduct(homeChangeNotifier.ads.productId);
