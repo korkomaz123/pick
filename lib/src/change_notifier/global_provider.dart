@@ -2,16 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/preload.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
-
-import 'home_change_notifier.dart';
-import 'package:provider/provider.dart';
 
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};

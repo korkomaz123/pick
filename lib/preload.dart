@@ -53,8 +53,7 @@ class Preload {
   static final navigatorKey = GlobalKey<NavigatorState>();
 
   static final myCartChangeNotifier = MyCartChangeNotifier();
-  static final globalProvider =
-      navigatorKey.currentContext.read<GlobalProvider>();
+  static final globalProvider = GlobalProvider();
 
   static final checkoutRepo = CheckoutRepository();
   static final shippingAddressRepo = ShippingAddressRepository();

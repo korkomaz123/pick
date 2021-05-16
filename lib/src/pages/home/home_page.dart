@@ -89,24 +89,6 @@ class _HomePageState extends State<HomePage> {
         .getCartItems(Preload.language);
 
     _homeProvider.loadPopup(_onShowPopup);
-    _homeProvider.loadSliderImages();
-    _homeProvider.getFeaturedCategoriesList();
-    _homeProvider.loadMegaBanner();
-    _homeProvider.loadBestDeals();
-    _homeProvider.loadBestDealsBanner();
-    _homeProvider.loadNewArrivals();
-    _homeProvider.loadExculisiveBanner();
-    _homeProvider.loadOrientalProducts();
-    _homeProvider.loadNewArrivalsBanner();
-    _homeProvider.loadFragrancesBanner();
-    _homeProvider.loadPerfumes();
-    _homeProvider.loadBestWatches();
-    _homeProvider.loadGrooming();
-    _homeProvider.loadAds();
-    _homeProvider.loadSmartTech();
-    _homeProvider.getCategoriesList();
-    _homeProvider.getBrandsList('home');
-    _homeProvider.getViewedProducts();
   }
 
   void _onShowPopup(SliderImageEntity popupItem) async {
@@ -130,78 +112,178 @@ class _HomePageState extends State<HomePage> {
           notification.disallowGlow();
           return true;
         },
-        child: Consumer<HomeChangeNotifier>(
-          builder: (_, __, ___) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: designWidth.w * 579 / 1125,
-                    child:
-                        HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: HomeFeaturedCategories(
-                        homeChangeNotifier: _homeProvider),
-                  ),
-                  HomeMegaBanner(homeChangeNotifier: _homeProvider),
-                  Container(
-                    height: 380.h,
-                    padding: EdgeInsets.all(8.w),
-                    margin: EdgeInsets.only(bottom: 10.h),
-                    color: Colors.white,
-                    child: HomeBestDeals(homeChangeNotifier: _homeProvider),
-                  ),
-                  HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
-                  Container(
-                    height: 300.h,
-                    padding: EdgeInsets.all(8.w),
-                    margin: EdgeInsets.only(bottom: 10.h),
-                    color: Colors.white,
-                    child: HomeNewArrivals(homeChangeNotifier: _homeProvider),
-                  ),
-                  HomeExculisiveBanner(homeChangeNotifier: _homeProvider),
-                  Container(
-                    width: designWidth.w,
-                    height: 410.h,
-                    margin: EdgeInsets.symmetric(vertical: 10.h),
-                    padding: EdgeInsets.all(8.w),
-                    color: Colors.white,
-                    child: HomeOrientalFragrances(
-                        homeChangeNotifier: _homeProvider),
-                  ),
-                  HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
-                  HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
-                  Container(
-                    width: designWidth.w,
-                    padding: EdgeInsets.all(8.w),
-                    margin: EdgeInsets.only(bottom: 10.h),
-                    color: Colors.white,
-                    child: HomePerfumes(homeChangeNotifier: _homeProvider),
-                  ),
-                  HomeBestWatches(homeChangeNotifier: _homeProvider),
-                  HomeGrooming(homeChangeNotifier: _homeProvider),
-                  HomeAdvertise(homeChangeNotifier: _homeProvider),
-                  HomeSmartTech(homeChangeNotifier: _homeProvider),
-                  SizedBox(height: 10.h),
-                  HomeExploreCategories(homeChangeNotifier: _homeProvider),
-                  SizedBox(height: 10.h),
-                  Container(
-                    height: 395.h,
-                    color: Colors.white,
-                    padding: EdgeInsets.all(15.w),
-                    child:
-                        HomeDiscoverStores(homeChangeNotifier: _homeProvider),
-                  ),
-                  SizedBox(height: 10.h),
-                  HomeRecent(homeChangeNotifier: _homeProvider),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: designWidth.w * 579 / 1125,
+                child: FutureBuilder(
+                  future: _homeProvider.loadSliderImages(),
+                  builder: (_, snapShot) => snapShot.connectionState ==
+                          ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
+                ),
               ),
-            );
-          },
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: FutureBuilder(
+                  future: _homeProvider.getFeaturedCategoriesList(),
+                  builder: (_, snapShot) =>
+                      snapShot.connectionState == ConnectionState.waiting
+                          ? Center(child: CircularProgressIndicator())
+                          : HomeFeaturedCategories(
+                              homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadMegaBanner(),
+                builder: (_, snapShot) =>
+                    HomeMegaBanner(homeChangeNotifier: _homeProvider),
+              ),
+              Container(
+                height: 380.h,
+                padding: EdgeInsets.all(8.w),
+                margin: EdgeInsets.only(bottom: 10.h),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeProvider.loadBestDeals(),
+                  builder: (_, snapShot) =>
+                      snapShot.connectionState == ConnectionState.waiting
+                          ? Center(child: CircularProgressIndicator())
+                          : HomeBestDeals(homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadBestDealsBanner(),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
+              ),
+              Container(
+                height: 300.h,
+                padding: EdgeInsets.all(8.w),
+                margin: EdgeInsets.only(bottom: 10.h),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeProvider.loadNewArrivals(),
+                  builder: (_, snapShot) =>
+                      snapShot.connectionState == ConnectionState.waiting
+                          ? Center(child: CircularProgressIndicator())
+                          : HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadExculisiveBanner(),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeExculisiveBanner(homeChangeNotifier: _homeProvider),
+              ),
+              Container(
+                width: designWidth.w,
+                height: 410.h,
+                margin: EdgeInsets.symmetric(vertical: 10.h),
+                padding: EdgeInsets.all(8.w),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeProvider.loadOrientalProducts(),
+                  builder: (_, snapShot) =>
+                      snapShot.connectionState == ConnectionState.waiting
+                          ? Center(child: CircularProgressIndicator())
+                          : HomeOrientalFragrances(
+                              homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadNewArrivalsBanner(),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadFragrancesBanner(),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
+              ),
+              Container(
+                width: designWidth.w,
+                padding: EdgeInsets.all(8.w),
+                margin: EdgeInsets.only(bottom: 10.h),
+                color: Colors.white,
+                child: FutureBuilder(
+                  future: _homeProvider.loadPerfumes(),
+                  builder: (_, snapShot) =>
+                      snapShot.connectionState == ConnectionState.waiting
+                          ? Center(child: CircularProgressIndicator())
+                          : HomePerfumes(homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadBestWatches(),
+                builder: (_, snapShot) =>
+                    snapShot.connectionState == ConnectionState.waiting
+                        ? Center(child: CircularProgressIndicator())
+                        : HomeBestWatches(homeChangeNotifier: _homeProvider),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadGrooming(),
+                builder: (_, snapShot) =>
+                    snapShot.connectionState == ConnectionState.waiting
+                        ? Center(child: CircularProgressIndicator())
+                        : HomeGrooming(homeChangeNotifier: _homeProvider),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadAds(),
+                builder: (_, snapShot) =>
+                    snapShot.connectionState == ConnectionState.waiting
+                        ? Center(child: CircularProgressIndicator())
+                        : HomeAdvertise(homeChangeNotifier: _homeProvider),
+              ),
+              FutureBuilder(
+                future: _homeProvider.loadSmartTech(),
+                builder: (_, snapShot) =>
+                    snapShot.connectionState == ConnectionState.waiting
+                        ? Center(child: CircularProgressIndicator())
+                        : HomeSmartTech(homeChangeNotifier: _homeProvider),
+              ),
+              SizedBox(height: 10.h),
+              FutureBuilder(
+                future: _homeProvider.getCategoriesList(),
+                builder: (_, snapShot) => snapShot.connectionState ==
+                        ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeExploreCategories(homeChangeNotifier: _homeProvider),
+              ),
+              SizedBox(height: 10.h),
+              Container(
+                height: 395.h,
+                color: Colors.white,
+                padding: EdgeInsets.all(15.w),
+                child: FutureBuilder(
+                  future: _homeProvider.getBrandsList('home'),
+                  builder: (_, snapShot) => snapShot.connectionState ==
+                          ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeDiscoverStores(homeChangeNotifier: _homeProvider),
+                ),
+              ),
+              SizedBox(height: 10.h),
+              FutureBuilder(
+                future: _homeProvider.getViewedProducts(),
+                builder: (_, snapShot) =>
+                    snapShot.connectionState == ConnectionState.waiting
+                        ? Center(child: CircularProgressIndicator())
+                        : HomeRecent(homeChangeNotifier: _homeProvider),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),
