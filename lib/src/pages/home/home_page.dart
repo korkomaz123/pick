@@ -55,8 +55,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final HomeChangeNotifier _homeProvider =
-      Preload.navigatorKey.currentContext.read<HomeChangeNotifier>();
+  final HomeChangeNotifier _homeProvider = Preload.navigatorKey.currentContext.read<HomeChangeNotifier>();
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   @override
@@ -74,19 +73,13 @@ class _HomePageState extends State<HomePage> {
     dynamicLinkService.initialDynamicLink();
     dynamicLinkService.retrieveDynamicLink();
 
-    _onLoadHomePage();
+    // _onLoadHomePage();
   }
 
   void _onLoadHomePage() async {
-    Preload.navigatorKey.currentContext
-        .read<ProductChangeNotifier>()
-        .initialize();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartId();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartItems(Preload.language);
+    Preload.navigatorKey.currentContext.read<ProductChangeNotifier>().initialize();
+    await Preload.navigatorKey.currentContext.read<MyCartChangeNotifier>().getCartId();
+    await Preload.navigatorKey.currentContext.read<MyCartChangeNotifier>().getCartItems(Preload.language);
 
     _homeProvider.loadPopup(_onShowPopup);
   }
@@ -120,8 +113,7 @@ class _HomePageState extends State<HomePage> {
                 height: designWidth.w * 579 / 1125,
                 child: FutureBuilder(
                   future: _homeProvider.loadSliderImages(),
-                  builder: (_, snapShot) => snapShot.connectionState ==
-                          ConnectionState.waiting
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                       ? Center(child: CircularProgressIndicator())
                       : HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
                 ),
@@ -131,17 +123,14 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.symmetric(vertical: 10.h),
                 child: FutureBuilder(
                   future: _homeProvider.getFeaturedCategoriesList(),
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomeFeaturedCategories(
-                              homeChangeNotifier: _homeProvider),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
                 ),
               ),
               FutureBuilder(
                 future: _homeProvider.loadMegaBanner(),
-                builder: (_, snapShot) =>
-                    HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => HomeMegaBanner(homeChangeNotifier: _homeProvider),
               ),
               Container(
                 height: 380.h,
@@ -150,16 +139,14 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 child: FutureBuilder(
                   future: _homeProvider.loadBestDeals(),
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomeBestDeals(homeChangeNotifier: _homeProvider),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeBestDeals(homeChangeNotifier: _homeProvider),
                 ),
               ),
               FutureBuilder(
                 future: _homeProvider.loadBestDealsBanner(),
-                builder: (_, snapShot) => snapShot.connectionState ==
-                        ConnectionState.waiting
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                     ? Center(child: CircularProgressIndicator())
                     : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
               ),
@@ -170,16 +157,14 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 child: FutureBuilder(
                   future: _homeProvider.loadNewArrivals(),
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeNewArrivals(homeChangeNotifier: _homeProvider),
                 ),
               ),
               FutureBuilder(
                 future: _homeProvider.loadExculisiveBanner(),
-                builder: (_, snapShot) => snapShot.connectionState ==
-                        ConnectionState.waiting
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                     ? Center(child: CircularProgressIndicator())
                     : HomeExculisiveBanner(homeChangeNotifier: _homeProvider),
               ),
@@ -191,24 +176,20 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 child: FutureBuilder(
                   future: _homeProvider.loadOrientalProducts(),
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomeOrientalFragrances(
-                              homeChangeNotifier: _homeProvider),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
                 ),
               ),
               FutureBuilder(
                 future: _homeProvider.loadNewArrivalsBanner(),
-                builder: (_, snapShot) => snapShot.connectionState ==
-                        ConnectionState.waiting
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                     ? Center(child: CircularProgressIndicator())
                     : HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadFragrancesBanner(),
-                builder: (_, snapShot) => snapShot.connectionState ==
-                        ConnectionState.waiting
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                     ? Center(child: CircularProgressIndicator())
                     : HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
               ),
@@ -219,45 +200,39 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 child: FutureBuilder(
                   future: _homeProvider.loadPerfumes(),
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomePerfumes(homeChangeNotifier: _homeProvider),
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                      ? Center(child: CircularProgressIndicator())
+                      : HomePerfumes(homeChangeNotifier: _homeProvider),
                 ),
               ),
               FutureBuilder(
                 future: _homeProvider.loadBestWatches(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeBestWatches(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeBestWatches(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadGrooming(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeGrooming(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeGrooming(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadAds(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeAdvertise(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeAdvertise(homeChangeNotifier: _homeProvider),
               ),
               FutureBuilder(
                 future: _homeProvider.loadSmartTech(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeSmartTech(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeSmartTech(homeChangeNotifier: _homeProvider),
               ),
               SizedBox(height: 10.h),
               FutureBuilder(
                 future: _homeProvider.getCategoriesList(),
-                builder: (_, snapShot) => snapShot.connectionState ==
-                        ConnectionState.waiting
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                     ? Center(child: CircularProgressIndicator())
                     : HomeExploreCategories(homeChangeNotifier: _homeProvider),
               ),
@@ -268,8 +243,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(15.w),
                 child: FutureBuilder(
                   future: _homeProvider.getBrandsList('home'),
-                  builder: (_, snapShot) => snapShot.connectionState ==
-                          ConnectionState.waiting
+                  builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                       ? Center(child: CircularProgressIndicator())
                       : HomeDiscoverStores(homeChangeNotifier: _homeProvider),
                 ),
@@ -277,10 +251,9 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 10.h),
               FutureBuilder(
                 future: _homeProvider.getViewedProducts(),
-                builder: (_, snapShot) =>
-                    snapShot.connectionState == ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
-                        : HomeRecent(homeChangeNotifier: _homeProvider),
+                builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : HomeRecent(homeChangeNotifier: _homeProvider),
               ),
             ],
           ),
