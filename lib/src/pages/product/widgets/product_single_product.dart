@@ -58,15 +58,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
   bool get isStock =>
-      widget.model.productDetails.stockQty != null &&
-      widget.model.productDetails.stockQty > 0;
+      widget.model.productDetailsMap[widget.product.productId].stockQty !=
+          null &&
+      widget.model.productDetailsMap[widget.product.productId].stockQty > 0;
 
   List<Image> get preCachedImages => _loadCacheImages();
 
   List<Image> _loadCacheImages() {
-    final productEntity = widget.model.productDetails;
+    final productEntity =
+        widget.model.productDetailsMap[widget.product.productId];
     final List<Image> list = [];
-    if (productEntity.gallery.isNotEmpty) {
+    if (productEntity?.gallery != null && productEntity.gallery.isNotEmpty) {
       for (int i = 0; i < productEntity.gallery.length; i++) {
         list.add(Image.network(
           productEntity.gallery[i],
@@ -111,7 +113,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   void _initFavorite() async {
     if (user?.token != null) {
-      isWishlist = wishlistIds.contains(widget.model.productDetails.productId);
+      isWishlist = wishlistIds.contains(
+          widget.model.productDetailsMap[widget.product.productId].productId);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {});
       });
@@ -178,7 +181,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ],
           ),
         ),
-        if (widget.model.productDetails.discount > 0 ||
+        if (widget.model.productDetailsMap[widget.product.productId].discount >
+                0 ||
             (widget?.model?.selectedVariant?.discount != null &&
                 widget.model.selectedVariant.discount > 0)) ...[
           if (Preload.language == 'en') ...[
@@ -206,7 +210,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       decoration: BoxDecoration(color: Colors.redAccent),
       alignment: Alignment.center,
       child: Text(
-        '${widget.model.productDetails.discount > 0 ? widget.model.productDetails.discount : widget.model.selectedVariant.discount}%',
+        '${widget.model.productDetailsMap[widget.product.productId].discount > 0 ? widget.model.productDetailsMap[widget.product.productId].discount : widget.model.selectedVariant.discount}%',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: 16.sp,
@@ -274,9 +278,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
               Consumer<WishlistChangeNotifier>(
                 builder: (_, model, __) {
-                  isWishlist = model.wishlistItemsMap
-                      .containsKey(widget.model.productDetails.productId);
-                  if (widget.model.productDetails.typeId == 'configurable') {
+                  isWishlist = model.wishlistItemsMap.containsKey(widget.model
+                      .productDetailsMap[widget.product.productId].productId);
+                  if (widget.model.productDetailsMap[widget.product.productId]
+                          .typeId ==
+                      'configurable') {
                     isWishlist = widget?.model?.selectedVariant != null &&
                         model.wishlistItemsMap.containsKey(
                             widget.model.selectedVariant.productId);
@@ -321,7 +327,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: widget.model.productDetails.gallery.length,
+                count: widget.model.productDetailsMap[widget.product.productId]
+                    .gallery.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,
@@ -357,7 +364,10 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     ProductListArguments arguments = ProductListArguments(
                       category: CategoryEntity(),
                       subCategory: [],
-                      brand: widget.model.productDetails.brandEntity,
+                      brand: widget
+                          .model
+                          .productDetailsMap[widget.product.productId]
+                          .brandEntity,
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
@@ -367,9 +377,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       arguments: arguments,
                     );
                   },
-                  child: widget.model.productDetails?.brandEntity != null
+                  child: widget
+                              .model
+                              .productDetailsMap[widget.product.productId]
+                              ?.brandEntity !=
+                          null
                       ? Text(
-                          widget.model.productDetails?.brandEntity
+                          widget
+                                  .model
+                                  .productDetailsMap[widget.product.productId]
+                                  ?.brandEntity
                                   ?.brandLabel ??
                               '',
                           style: mediumTextStyle.copyWith(
@@ -381,7 +398,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 ),
               ),
               Text(
-                widget.model.productDetails?.brandEntity == null
+                widget.model.productDetailsMap[widget.product.productId]
+                            ?.brandEntity ==
+                        null
                     ? ''
                     : isStock
                         ? 'in_stock'.tr().toUpperCase()
@@ -394,7 +413,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ],
           ),
           Text(
-            widget.model.productDetails.name,
+            widget.model.productDetailsMap[widget.product.productId].name,
             style: mediumTextStyle.copyWith(
               fontSize: 20.sp,
             ),
@@ -409,7 +428,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       width: designWidth.w,
       height: 420.h,
       child: Swiper(
-        itemCount: widget.model.productDetails.gallery.length,
+        itemCount: widget
+            .model.productDetailsMap[widget.product.productId].gallery.length,
         autoplay: false,
         curve: Curves.easeIn,
         duration: 300,
@@ -424,7 +444,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             onTap: () => Navigator.pushNamed(
               context,
               Routes.viewFullImage,
-              arguments: widget.model.productDetails.gallery,
+              arguments: widget
+                  .model.productDetailsMap[widget.product.productId].gallery,
             ),
             child: preCachedImages[index],
           );
@@ -442,15 +463,20 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         children: [
           if (isMore) ...[
             Text(
-              widget.model.productDetails.shortDescription,
+              widget.model.productDetailsMap[widget.product.productId]
+                  .shortDescription,
               style: mediumTextStyle.copyWith(
                 fontSize: 14.sp,
               ),
             )
           ] else if (isLength(
-              widget.model.productDetails.shortDescription, 110)) ...[
+              widget.model.productDetailsMap[widget.product.productId]
+                  .shortDescription,
+              110)) ...[
             Text(
-              widget.model.productDetails.shortDescription.substring(0, 110) +
+              widget.model.productDetailsMap[widget.product.productId]
+                      .shortDescription
+                      .substring(0, 110) +
                   ' ...',
               style: mediumTextStyle.copyWith(
                 fontSize: 14.sp,
@@ -458,13 +484,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             )
           ] else ...[
             Text(
-              widget.model.productDetails.shortDescription,
+              widget.model.productDetailsMap[widget.product.productId]
+                  .shortDescription,
               style: mediumTextStyle.copyWith(
                 fontSize: 14.sp,
               ),
             )
           ],
-          if (isLength(widget.model.productDetails.shortDescription, 110)) ...[
+          if (isLength(
+              widget.model.productDetailsMap[widget.product.productId]
+                  .shortDescription,
+              110)) ...[
             InkWell(
               onTap: () {
                 isMore = !isMore;
@@ -493,7 +523,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'sku'.tr() + ': ' + widget.model.productDetails.sku,
+            'sku'.tr() +
+                ': ' +
+                widget.model.productDetailsMap[widget.product.productId].sku,
             style: mediumTextStyle.copyWith(
               fontSize: 12.sp,
               color: primaryColor,
@@ -501,12 +533,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
           Row(
             children: [
-              if (widget.model.productDetails.discount > 0 ||
+              if (widget.model.productDetailsMap[widget.product.productId]
+                          .discount >
+                      0 ||
                   (widget?.model?.selectedVariant?.discount != null &&
                       widget.model.selectedVariant.discount > 0)) ...[
                 SizedBox(width: 10.w),
                 Text(
-                  (widget.model.productDetails.beforePrice ??
+                  (widget.model.productDetailsMap[widget.product.productId]
+                              .beforePrice ??
                           widget.model.selectedVariant.beforePrice) +
                       ' ' +
                       'currency'.tr(),
@@ -524,8 +559,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    widget.model.productDetails.price != null
-                        ? widget.model.productDetails.price
+                    widget.model.productDetailsMap[widget.product.productId]
+                                .price !=
+                            null
+                        ? widget.model
+                            .productDetailsMap[widget.product.productId].price
                         : widget?.model?.selectedVariant?.price != null
                             ? widget.model.selectedVariant.price
                             : '',
@@ -536,7 +574,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     ),
                   ),
                   SizedBox(width: 1.w),
-                  if (widget.model.productDetails.price != null ||
+                  if (widget.model.productDetailsMap[widget.product.productId]
+                              .price !=
+                          null ||
                       widget?.model?.selectedVariant?.price != null) ...[
                     Text(
                       'currency'.tr(),
@@ -590,6 +630,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     Uri shareLink =
         await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(),
-        subject: widget.model.productDetails.name);
+        subject: widget.model.productDetailsMap[widget.product.productId].name);
   }
 }
