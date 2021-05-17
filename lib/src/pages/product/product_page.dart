@@ -137,10 +137,15 @@ class _ProductPageState extends State<ProductPage>
           builder: (context, productChangeNotifier, child) {
             if (productChangeNotifier.productDetailsMap
                 .containsKey(product.productId)) {
-              isStock = productChangeNotifier.productDetails.typeId ==
+              isStock = productChangeNotifier
+                          .productDetailsMap[product.productId].typeId ==
                       'configurable' ||
-                  (productChangeNotifier.productDetails.stockQty != null &&
-                      productChangeNotifier.productDetails.stockQty > 0);
+                  (productChangeNotifier
+                              .productDetailsMap[product.productId].stockQty !=
+                          null &&
+                      productChangeNotifier
+                              .productDetailsMap[product.productId].stockQty >
+                          0);
               return Stack(
                 children: [
                   SmartRefresher(
@@ -159,7 +164,9 @@ class _ProductPageState extends State<ProductPage>
                                 .productDetailsMap[product.productId],
                             model: productChangeNotifier,
                           ),
-                          if (productChangeNotifier.productDetails.typeId ==
+                          if (productChangeNotifier
+                                  .productDetailsMap[product.productId]
+                                  .typeId ==
                               'configurable') ...[
                             ProductConfigurableOptions(
                               productEntity: productChangeNotifier
@@ -265,13 +272,15 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _onAddToCart(ProductChangeNotifier model) async {
-    if (model.productDetails.typeId == 'configurable' &&
+    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
+            model.productDetailsMap[product.productId].configurable.keys
+                .toList()
+                .length) {
       flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
+    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage('out_of_stock_error'.tr());
@@ -289,13 +298,15 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _onBuyNow(ProductChangeNotifier model) {
-    if (model.productDetails.typeId == 'configurable' &&
+    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
+            model.productDetailsMap[product.productId].configurable.keys
+                .toList()
+                .length) {
       flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
+    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorMessage('out_of_stock_error'.tr());

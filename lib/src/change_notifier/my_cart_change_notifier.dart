@@ -16,7 +16,8 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class MyCartChangeNotifier extends ChangeNotifier {
   final MyCartRepository myCartRepository = MyCartRepository();
-  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
   final CheckoutRepository checkoutRepository = CheckoutRepository();
   final FirebaseRepository firebaseRepository = FirebaseRepository();
 
@@ -101,13 +102,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
       } else {
         processStatus = ProcessStatus.failed;
         if (onFailure != null) {
-          onFailure('$cartIssue$cartId');
+          onFailure('Something went wrong');
           reportCartIssue(result, data);
         }
       }
       notifyListeners();
     } catch (e) {
-      onFailure('$cartIssue$cartId\nMore details: $e');
+      onFailure('Something went wrong');
       reportCartIssue(e.toString(), data);
       notifyListeners();
     }
@@ -127,7 +128,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       double clearDiscount = discount;
       final result = await myCartRepository.clearCartItems(clearCartId);
       if (result['code'] != 'SUCCESS') {
-        onFailure('$cartIssue$cartId');
+        onFailure('Something went wrong');
 
         reportCartIssue(result, data);
       } else {
@@ -140,7 +141,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onSuccess();
       }
     } catch (e) {
-      onFailure('$cartIssue$cartId\nMore details: $e');
+      onFailure('Something went wrong');
       reportCartIssue(e.toString(), data);
     }
   }
@@ -159,7 +160,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await myCartRepository.deleteCartItem(cartId, key);
       if (result['code'] != 'SUCCESS') {
-        onFailure('$cartIssue$cartId');
+        onFailure('Something went wrong');
         cartTotalPrice += item.rowPrice;
         cartDiscountedTotalPrice +=
             item.product.beforePrice == item?.product?.price
@@ -175,7 +176,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('$cartIssue$cartId\nMore details: $e');
+      onFailure('Something went wrong');
       cartTotalPrice += item.rowPrice;
       cartDiscountedTotalPrice +=
           item.product.beforePrice == item?.product?.price
@@ -199,10 +200,16 @@ class MyCartChangeNotifier extends ChangeNotifier {
     String lang,
     Map<String, dynamic> options,
   ) async {
-    final data = {'action': 'addProductToCart', 'productId': product.productId, 'qty': qty, 'options': options};
+    final data = {
+      'action': 'addProductToCart',
+      'productId': product.productId,
+      'qty': qty,
+      'options': options
+    };
     final flushBarService = FlushBarService(context: context);
     try {
-      final result = await myCartRepository.addCartItem(cartId, product.productId, '$qty', lang, options);
+      final result = await myCartRepository.addCartItem(
+          cartId, product.productId, '$qty', lang, options);
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
         CartItemEntity oldItem = cartItemsMap[newItem.itemId];
@@ -233,7 +240,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
     } catch (e) {
       flushBarService.showErrorMessage(
-        '$cartIssue$cartId\nMore details: $e',
+        'Something went wrong',
       );
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
@@ -247,7 +254,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
     int qty,
     Function onFailure,
   ) async {
-    final data = {'action': 'updateCartItem', 'itemid': item.itemId, 'qty': qty};
+    final data = {
+      'action': 'updateCartItem',
+      'itemid': item.itemId,
+      'qty': qty
+    };
     int updatedQty = qty - item.itemCount;
     double updatedPrice = double.parse(item.product.price) * updatedQty;
     cartTotalCount += updatedQty;
@@ -259,9 +270,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
     notifyListeners();
     try {
-      final result = await myCartRepository.updateCartItem(cartId, item.itemId, qty.toString());
+      final result = await myCartRepository.updateCartItem(
+          cartId, item.itemId, qty.toString());
       if (result['code'] != 'SUCCESS') {
-        onFailure('$cartIssue$cartId');
+        onFailure('Something went wrong');
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
         cartDiscountedTotalPrice -=
@@ -269,7 +281,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
                 ? updatedPrice * (100 - discount) / 100
                 : updatedPrice;
         cartItemsMap[item.itemId].itemCount = item.itemCount;
-        cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * item.itemCount;
+        cartItemsMap[item.itemId].rowPrice =
+            double.parse(item.product.price) * item.itemCount;
         notifyListeners();
         if (processStatus != ProcessStatus.process) {
           await getCartItems(lang);
@@ -277,7 +290,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('$cartIssue$cartId\nMore details: $e');
+      onFailure('Something went wrong');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -=
@@ -285,7 +298,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
               ? updatedPrice * (100 - discount) / 100
               : updatedPrice;
       cartItemsMap[item.itemId].itemCount = item.itemCount;
-      cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * item.itemCount;
+      cartItemsMap[item.itemId].rowPrice =
+          double.parse(item.product.price) * item.itemCount;
       notifyListeners();
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
@@ -455,11 +469,14 @@ class MyCartChangeNotifier extends ChangeNotifier {
   ) async {
     try {
       final result = await checkoutRepository.refundPayment(data);
-      if (result['status'] == REFUND_PENDING || result['status'] == REFUND_REFUNDED) {
+      if (result['status'] == REFUND_PENDING ||
+          result['status'] == REFUND_REFUNDED) {
         onSuccess();
       } else if (result['status'] == REFUND_IN_PROGRESS) {
-        final result1 = await checkoutRepository.checkRefundStatus(result['id']);
-        if (result1['status'] == REFUND_PENDING || result1['status'] == REFUND_REFUNDED) {
+        final result1 =
+            await checkoutRepository.checkRefundStatus(result['id']);
+        if (result1['status'] == REFUND_PENDING ||
+            result1['status'] == REFUND_REFUNDED) {
           onSuccess();
         } else {
           onFailure(result1['response']['message']);
@@ -479,8 +496,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'result': result,
       'collectData': data,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -494,7 +515,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'result': result,
       'chargeId': chargeId,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
         'android': MarkaaVersion.androidVersion,
         'iOS': MarkaaVersion.iOSVersion,
@@ -502,7 +524,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path = FirebasePath.PAYMENT_RESULT_COLL_PATH.replaceFirst('date', date);
+    final path =
+        FirebasePath.PAYMENT_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.addToCollection(resultData, path);
   }
 }
