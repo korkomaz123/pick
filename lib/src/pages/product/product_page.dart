@@ -135,7 +135,8 @@ class _ProductPageState extends State<ProductPage>
       body: SafeArea(
         child: Consumer<ProductChangeNotifier>(
           builder: (context, productChangeNotifier, child) {
-            if (productChangeNotifier.productDetails != null) {
+            if (productChangeNotifier.productDetailsMap
+                .containsKey(product.productId)) {
               isStock = productChangeNotifier.productDetails.typeId ==
                       'configurable' ||
                   (productChangeNotifier.productDetails.stockQty != null &&
@@ -154,23 +155,25 @@ class _ProductPageState extends State<ProductPage>
                         children: [
                           ProductSingleProduct(
                             product: product,
-                            productDetails:
-                                productChangeNotifier.productDetails,
+                            productDetails: productChangeNotifier
+                                .productDetailsMap[product.productId],
                             model: productChangeNotifier,
                           ),
                           if (productChangeNotifier.productDetails.typeId ==
                               'configurable') ...[
                             ProductConfigurableOptions(
-                              productEntity:
-                                  productChangeNotifier.productDetails,
+                              productEntity: productChangeNotifier
+                                  .productDetailsMap[product.productId],
                             )
                           ],
                           ProductReviewTotal(
-                            product: productChangeNotifier.productDetails,
+                            product: productChangeNotifier
+                                .productDetailsMap[product.productId],
                             onFirstReview: () => _onFirstReview(
-                                productChangeNotifier.productDetails),
-                            onReviews: () => _onReviews(
-                                productChangeNotifier.productDetails),
+                                productChangeNotifier
+                                    .productDetailsMap[product.productId]),
+                            onReviews: () => _onReviews(productChangeNotifier
+                                .productDetailsMap[product.productId]),
                           ),
                           ProductRelatedItems(
                             product: product,
@@ -179,10 +182,12 @@ class _ProductPageState extends State<ProductPage>
                             product: product,
                           ),
                           ProductMoreAbout(
-                            productEntity: productChangeNotifier.productDetails,
+                            productEntity: productChangeNotifier
+                                .productDetailsMap[product.productId],
                           ),
                           ProductReview(
-                            product: productChangeNotifier.productDetails,
+                            product: productChangeNotifier
+                                .productDetailsMap[product.productId],
                           ),
                           SizedBox(height: 50.h),
                         ],

@@ -17,6 +17,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, List<ProductModel>> data = {};
   Map<String, int> pages = {};
   ProductEntity productDetails;
+  Map<String, ProductEntity> productDetailsMap = {};
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
 
@@ -31,12 +32,18 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   setInitalInfo(ProductModel product) {
-    productDetails = ProductEntity.fromProduct(product);
+    if (productDetailsMap.containsKey(product.productId)) {
+      productDetails = productDetailsMap[product.productId];
+    } else {
+      productDetails = ProductEntity.fromProduct(product);
+      productDetailsMap[product.productId] = productDetails;
+    }
   }
 
   Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
     selectedVariant = null;
+
     final result =
         await productRepository.getProductDetails(productId, Preload.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
