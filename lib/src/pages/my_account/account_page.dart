@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -126,19 +127,35 @@ class _AccountPageState extends State<AccountPage> {
             child: Stack(
               children: [
                 if (user != null) ...[
-                  Container(
-                    width: 107.w,
-                    height: 107.w,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: user.profileUrl.isEmpty
-                            ? AssetImage('lib/public/images/profile.png')
-                            : NetworkImage(user.profileUrl),
-                        fit: BoxFit.cover,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                  )
+                  CachedNetworkImage(
+                    imageUrl: user?.profileUrl ?? '',
+                    imageBuilder: (_, _imageProvider) {
+                      return Container(
+                        width: 107.w,
+                        height: 107.w,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    },
+                    errorWidget: (_, __, ___) {
+                      return Container(
+                        width: 107.w,
+                        height: 107.w,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('lib/public/images/profile.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    },
+                  ),
                 ] else ...[
                   Container(
                     width: 107.w,

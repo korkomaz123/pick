@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -23,7 +22,9 @@ class ToggleLanguageWidget extends StatelessWidget {
       child: Consumer<GlobalProvider>(
         builder: (context, _globalProvider, child) => MarkaaSelectOption(
           items: _globalProvider.languages,
-          value: _globalProvider.currentLanguage.toUpperCase(),
+          value: _globalProvider.currentLanguage == 'en'
+              ? _globalProvider.languages[0]
+              : _globalProvider.languages[1],
           itemWidth: 60.w,
           itemHeight: 25.h,
           itemSpace: 0,
@@ -38,8 +39,11 @@ class ToggleLanguageWidget extends StatelessWidget {
           isVertical: false,
           listStyle: true,
           onTap: (value) async {
-            _globalProvider.changeLanguage(value);
+            _globalProvider.changeLanguage(
+                _globalProvider.languages[0] == value ? 'en' : 'ar');
+
             await Preload.appOpen();
+
             Navigator.pushNamedAndRemoveUntil(
               context,
               Routes.home,

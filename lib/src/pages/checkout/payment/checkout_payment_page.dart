@@ -397,7 +397,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       width: 375.w,
       padding: EdgeInsets.symmetric(horizontal: 60.w),
       child: MarkaaTextButton(
-        title: 'checkout_back_review_button_title'.tr(),
+        title: 'checkout_back_address_button_title'.tr(),
         titleSize: 12.sp,
         titleColor: greyColor,
         buttonColor: Colors.white,

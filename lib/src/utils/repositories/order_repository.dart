@@ -13,14 +13,12 @@ class OrderRepository {
     Map<String, dynamic> orderDetails,
     String lang,
   ) async {
-    String url = EndPoints.submitOrder;
+    String url = EndPoints.placeOrder;
     final details = jsonEncode(orderDetails['orderDetails']);
     orderDetails['orderDetails'] = details;
     orderDetails['lang'] = lang;
-    // print(params);
-    // print(url);
     final result = await Api.postMethod(url, data: orderDetails);
-    print(result);
+
     return result;
   }
 

@@ -98,9 +98,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPageLoaded(String url) async {
-    final uri = Uri.dataFromString(url);
-    final params = uri.queryParameters;
-
     if (url == PaymentStatusUrls.failure) {
       if (user?.token != null) {
         order.status = OrderStatusEnum.canceled;
@@ -119,8 +116,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
         arguments: order.orderNo,
       );
     }
-    print(uri.data);
-    print(params);
   }
 
   Future<void> _onSuccessPayment() async {

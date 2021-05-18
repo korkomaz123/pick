@@ -10,7 +10,7 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
-  List<dynamic> languages = <dynamic>['EN', 'AR'];
+  List<dynamic> languages = <dynamic>['EN', 'عربى'];
 
   UserEntity currentUser;
 
@@ -39,7 +39,7 @@ class GlobalProvider extends ChangeNotifier {
 
       lang = Preload.language = _current == "ar" ? "en" : "ar";
     }
-    // fetchCategories();
+    fetchCategories();
 
     // // notifyListeners();
     // // Update Details page if i am in details page

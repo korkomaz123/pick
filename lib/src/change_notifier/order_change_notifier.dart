@@ -16,6 +16,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   Map<String, OrderEntity> ordersMap = {};
   List<String> keys = [];
+
   OrderChangeNotifier() {
     initializeOrders();
   }
@@ -69,7 +70,6 @@ class OrderChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);
-      print(result);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);

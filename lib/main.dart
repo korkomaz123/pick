@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'preload.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
@@ -58,7 +57,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: Phoenix(child: MarkaaApp(home: _page ?? Routes.start)),
+      child: MarkaaApp(home: _page ?? Routes.start),
     ),
   );
 }
