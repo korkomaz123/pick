@@ -27,9 +27,11 @@ class MyCartCouponCode extends StatefulWidget {
 }
 
 class _MyCartCouponCodeState extends State<MyCartCouponCode> {
+  final _couponFormKey = GlobalKey<FormState>();
+
   TextEditingController couponCodeController = TextEditingController();
   FocusNode couponNode = FocusNode();
-  final _couponFormKey = GlobalKey<FormState>();
+
   MyCartChangeNotifier myCartChangeNotifier;
   FlushBarService flushBarService;
 
@@ -43,10 +45,6 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
 
   @override
   Widget build(BuildContext context) {
-    if (myCartChangeNotifier.couponCode.isNotEmpty &&
-        couponCodeController.text.isEmpty) {
-      couponCodeController.text = myCartChangeNotifier.couponCode;
-    }
     return Form(
       key: _couponFormKey,
       child: Container(

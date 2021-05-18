@@ -32,26 +32,33 @@ class _SearchPageState extends State<SearchPage>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   TabController tabController;
-  List<dynamic> searchHistory = [];
+
   Future<List<dynamic>> futureGenders;
-  String filterData;
   Future<List<dynamic>> futureCategories;
   Future<List<dynamic>> futureBrands;
+
   ProgressService progressService;
   FlushBarService flushBarService;
+
   dynamic selectedCategory;
   dynamic selectedBrand;
   dynamic selectedBrandName;
+
   List<dynamic> selectedCategories = [];
   List<dynamic> selectedBrands = [];
   List<dynamic> selectedBrandNames = [];
+  List<dynamic> searchHistory = [];
+
+  String filterData;
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
+
   List<ProductModel> products = [];
   List<ProductModel> suggestions = [];
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
-  final SearchRepository searchRepository = SearchRepository();
+
+  LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  SearchRepository searchRepository = SearchRepository();
+
   SuggestionChangeNotifier suggestionChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
@@ -61,16 +68,23 @@ class _SearchPageState extends State<SearchPage>
     super.initState();
     suggestionChangeNotifier = context.read<SuggestionChangeNotifier>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+
     homeChangeNotifier.getBrandsList('brand');
+
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
     futureGenders = searchRepository.getGenderOptions(lang);
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     tabController = TabController(initialIndex: 0, length: 2, vsync: this);
-    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+
     searchController.addListener(_getSuggestion);
+
     _getSearchHistories();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       suggestionChangeNotifier.initializeSuggestion(false);
       searchNode.requestFocus();
@@ -155,7 +169,7 @@ class _SearchPageState extends State<SearchPage>
                           children: [
                             _buildTabbar(),
                             if (tabController.index == 0) ...[
-                              if (!searchNode.hasFocus) ...[_buildResult()]
+                              if (!searchNode.hasFocus) ...[_buildItemResult()]
                             ] else ...[
                               _buildBrandResult()
                             ],
@@ -510,7 +524,7 @@ class _SearchPageState extends State<SearchPage>
     );
   }
 
-  Widget _buildResult() {
+  Widget _buildItemResult() {
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -586,9 +600,7 @@ class _SearchPageState extends State<SearchPage>
                     children: [
                       if (rIndex > 1) ...[
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
                           child: Divider(color: greyColor),
                         )
                       ],
@@ -610,12 +622,8 @@ class _SearchPageState extends State<SearchPage>
                         child: Container(
                           width: 375.w,
                           height: 50.h,
-                          margin: EdgeInsets.only(
-                            top: 5.h,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                          ),
+                          margin: EdgeInsets.only(top: 5.h),
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
                           color: Colors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -663,9 +671,7 @@ class _SearchPageState extends State<SearchPage>
 
   Widget _buildFilterButton() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 30.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 30.w),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [

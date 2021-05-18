@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,9 +37,14 @@ class ToggleLanguageWidget extends StatelessWidget {
           unSelectedBorderColor: Colors.transparent,
           isVertical: false,
           listStyle: true,
-          onTap: (value) {
+          onTap: (value) async {
             _globalProvider.changeLanguage(value);
-            Phoenix.rebirth(context);
+            await Preload.appOpen();
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.home,
+              (route) => false,
+            );
           },
         ),
       ),

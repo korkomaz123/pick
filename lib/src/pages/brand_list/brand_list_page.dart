@@ -28,14 +28,24 @@ class _BrandListPageState extends State<BrandListPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController(initialRefresh: false);
 
-  void _onRefresh(HomeChangeNotifier _homeChangeNotifier) async {
-    await _homeChangeNotifier.getBrandsList('brand');
+  HomeChangeNotifier _homeChangeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeChangeNotifier = context.read<HomeChangeNotifier>();
+    Future.delayed(Duration.zero, () async {
+      await _homeChangeNotifier.getBrandsList('brand');
+    });
+  }
+
+  void _onRefresh(HomeChangeNotifier model) async {
+    await model.getBrandsList('brand');
     _refreshController.refreshCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
-    HomeChangeNotifier _homeChangeNotifier = context.read<HomeChangeNotifier>();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: backgroundColor,
@@ -44,34 +54,34 @@ class _BrandListPageState extends State<BrandListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          Expanded(
-            child: FutureBuilder(
-              future: _homeChangeNotifier.getBrandsList('brand'),
-              builder: (_, snapShot) => snapShot.connectionState ==
-                      ConnectionState.waiting
-                  ? Center(child: CircularProgressIndicator())
-                  : (_homeChangeNotifier.sortedBrandList.isEmpty
-                      ? Center(
-                          child: PulseLoadingSpinner(),
-                        )
-                      : SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: false,
-                          header: MaterialClassicHeader(color: primaryColor),
-                          controller: _refreshController,
-                          onRefresh: () => _onRefresh(_homeChangeNotifier),
-                          onLoading: () => null,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: List.generate(
-                                _homeChangeNotifier.sortedBrandList.length,
-                                (index) =>
-                                    _buildBrandCard(_homeChangeNotifier, index),
-                              ),
-                            ),
-                          ),
-                        )),
-            ),
+          Consumer<HomeChangeNotifier>(
+            builder: (_, model, __) {
+              if (model.sortedBrandList.isEmpty) {
+                return Expanded(
+                  child: Center(
+                    child: PulseLoadingSpinner(),
+                  ),
+                );
+              }
+              return Expanded(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  header: MaterialClassicHeader(color: primaryColor),
+                  controller: _refreshController,
+                  onRefresh: () => _onRefresh(model),
+                  onLoading: () => null,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(
+                        model.sortedBrandList.length,
+                        (index) => _buildBrandCard(model, index),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

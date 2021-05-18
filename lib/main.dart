@@ -58,7 +58,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: Phoenix(child: MarkaaApp(home: _page)),
+      child: Phoenix(child: MarkaaApp(home: _page ?? Routes.start)),
     ),
   );
 }

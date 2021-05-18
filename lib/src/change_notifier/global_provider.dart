@@ -19,7 +19,7 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeLanguage(String val, {fromSplash = false}) async {
+  changeLanguage(String val, {fromSplash = false}) {
     BuildContext _context = Preload.navigatorKey.currentContext;
     String _current = currentLanguage;
     if (_current != val) {
@@ -63,6 +63,7 @@ class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {
     fetchCategories();
   }
+
   fetchCategories() async {
     print("currentLanguage $currentLanguage");
     String _lang = currentLanguage;

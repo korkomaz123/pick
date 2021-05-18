@@ -290,10 +290,10 @@ class RouteGenerator {
           settings: RouteSettings(name: Routes.addNewBankAccount),
         );
       default:
-        return CupertinoPageRoute(
-          builder: (context) => SplashPage(),
-          settings: RouteSettings(name: Routes.start),
-        );
+      // return CupertinoPageRoute(
+      //   builder: (context) => SplashPage(),
+      //   settings: RouteSettings(name: Routes.start),
+      // );
     }
   }
 }

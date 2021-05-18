@@ -23,6 +23,8 @@ class ProductChangeNotifier extends ChangeNotifier {
 
   close() {
     productDetails = null;
+    selectedOptions = {};
+    selectedVariant = null;
   }
 
   void initialize() {
@@ -55,6 +57,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }
+    productDetailsMap[productId] = productDetails;
     notifyListeners();
   }
 

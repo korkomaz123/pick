@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -27,17 +28,16 @@ import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/profile_repository.dart';
 import 'package:markaa/src/utils/repositories/search_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
-import 'package:provider/provider.dart';
 
 import '../../../preload.dart';
 import 'no_network_access_page.dart';
@@ -80,26 +80,21 @@ class _MarkaaAppState extends State<MarkaaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMultiProvider();
-  }
-
-  Widget _buildMultiProvider() {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => GlobalProvider()),
-        ChangeNotifierProvider(create: (context) => MarkaaAppChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => PlaceChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => ScrollChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => SuggestionChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => ProductChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => CategoryChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => MyCartChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => WishlistChangeNotifier()),
-        ChangeNotifierProvider(
-            create: (context) => ProductReviewChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => HomeChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => OrderChangeNotifier()),
-        ChangeNotifierProvider(create: (context) => AddressChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => GlobalProvider()),
+        ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ScrollChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => SuggestionChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ProductChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => CategoryChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => MyCartChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => WishlistChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
       ],
       child: _buildMultiBlocProvider(context),
     );
@@ -148,15 +143,18 @@ class _MarkaaAppState extends State<MarkaaApp> {
           initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,
           builder: (context, child) {
-            return StreamBuilder<DataConnectionStatus>(
-              stream: DataConnectionChecker().onStatusChange,
-              builder: (context, networkSnapshot) {
-                if (networkSnapshot.data == DataConnectionStatus.connected ||
-                    !networkSnapshot.hasData) {
-                  return child;
-                } else {
-                  return NoNetworkAccessPage();
+            return StreamBuilder<ConnectivityResult>(
+              stream: Connectivity().onConnectivityChanged,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == ConnectivityResult.mobile ||
+                      snapshot.data == ConnectivityResult.wifi) {
+                    return child;
+                  } else {
+                    return NoNetworkAccessPage();
+                  }
                 }
+                return child;
               },
             );
           },

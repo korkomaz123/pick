@@ -237,7 +237,6 @@ class _MyCartQuickAccessLoginDialogState
 
                   await myCartChangeNotifier.getCartItems(
                       lang, _onProcess, _onReloadItemSuccess, _onFailure);
-                  Navigator.pop(context);
                 },
               ),
             ),
@@ -297,7 +296,7 @@ class _MyCartQuickAccessLoginDialogState
         return;
       }
     }
-    Navigator.pushNamed(context, Routes.checkoutGuestAddress);
+    Navigator.popAndPushNamed(context, Routes.checkoutGuestAddress);
   }
 
   void _onFailure(String message) {

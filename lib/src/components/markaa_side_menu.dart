@@ -1,5 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -18,12 +16,14 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -92,16 +92,18 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
               _buildMenuHeader(),
               Expanded(
                 child: Consumer<GlobalProvider>(
-                  builder: (context, _globalProvider, child) => _globalProvider
-                              .sideMenus[_globalProvider.currentLanguage]
-                              .length ==
-                          0
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : SingleChildScrollView(
-                          child: _buildMenuItems(_globalProvider),
-                        ),
+                  builder: (_, _globalProvider, __) {
+                    String lang = _globalProvider.currentLanguage;
+                    if (_globalProvider.sideMenus[lang].length == 0) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return SingleChildScrollView(
+                        child: _buildMenuItems(_globalProvider),
+                      );
+                    }
+                  },
                 ),
               )
             ],
@@ -133,33 +135,48 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           left: lang == 'en' ? 15.w : 0,
           right: lang == 'ar' ? 15.w : 0,
         ),
-        child: user != null
-            ? Row(
-                children: [
-                  Container(
+        child: Row(
+          children: [
+            if (user?.token != null) ...[
+              CachedNetworkImage(
+                imageUrl: user?.profileUrl ?? '',
+                imageBuilder: (_, _imageProvider) {
+                  return Container(
                     width: 60.w,
                     height: 60.w,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: user.profileUrl.isNotEmpty
-                            ? NetworkImage(user.profileUrl)
-                            : AssetImage('lib/public/images/profile.png'),
+                        image: _imageProvider,
                         fit: BoxFit.cover,
                       ),
                       shape: BoxShape.circle,
                     ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Hello, ' + (user?.firstName ?? user?.lastName ?? ''),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 18.sp,
-                      color: Colors.white,
+                  );
+                },
+                errorWidget: (_, __, ___) {
+                  return Container(
+                    width: 60.w,
+                    height: 60.w,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('lib/public/images/profile.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: BoxShape.circle,
                     ),
-                  ),
-                ],
-              )
-            : Padding(
+                  );
+                },
+              ),
+              SizedBox(width: 10.w),
+              Text(
+                'Hello, ' + (user?.firstName ?? user?.lastName ?? ''),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 18.sp,
+                  color: Colors.white,
+                ),
+              ),
+            ] else ...[
+              Padding(
                 padding: EdgeInsets.only(top: 5.h),
                 child: SvgPicture.asset(
                   hLogoIcon,
@@ -167,6 +184,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                   height: 35.h,
                 ),
               ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -213,14 +233,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   Widget _buildMenuItems(GlobalProvider _globalProvider) {
+    String lang = _globalProvider.currentLanguage;
     return Container(
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
-        children: _globalProvider.sideMenus[_globalProvider.currentLanguage]
-            .map((menu) {
-          int index = _globalProvider.sideMenus[_globalProvider.currentLanguage]
-              .indexOf(menu);
+        children: _globalProvider.sideMenus[lang].map((menu) {
+          int index = _globalProvider.sideMenus[lang].indexOf(menu);
           return Column(
             key: _globalProvider.activeIndex == index ? dataKey : null,
             children: [
@@ -229,9 +248,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              _globalProvider.activeMenu == menu.id
-                  ? _buildSubmenu(menu)
-                  : SizedBox.shrink(),
+              if (_globalProvider.activeMenu == menu.id) ...[
+                _buildSubmenu(menu)
+              ],
             ],
           );
         }).toList(),
@@ -261,8 +280,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     height: 25.w,
                     imageUrl: menu.iconUrl,
                     fit: BoxFit.cover,
-                    // progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) =>
                         Center(child: Icon(Icons.image, size: 20)),
                   ),

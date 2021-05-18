@@ -121,8 +121,6 @@ class Preload {
     shippingMethods = await checkoutRepo.getShippingMethod();
     paymentMethods = await checkoutRepo.getPaymentMethod();
     regions = await shippingAddressRepo.getRegions();
-    print("regions");
-    print(regions);
   }
 
   static Future<UserEntity> get currentUser => _getCurrentUser();

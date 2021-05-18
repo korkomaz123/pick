@@ -80,7 +80,7 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _loadDetails() async {
-    _productChangeNotifier.getProductDetails(product.productId);
+    await _productChangeNotifier.getProductDetails(product.productId);
   }
 
   void _initAnimation() {

@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
     await localRepo.setItem('usage', 'markaa');
     //Start Loading Assets
     await Preload.appOpen();
-    await Navigator.pushNamedAndRemoveUntil(
+    Navigator.pushNamedAndRemoveUntil(
       Preload.navigatorKey.currentContext,
       Routes.home,
       (route) => false,

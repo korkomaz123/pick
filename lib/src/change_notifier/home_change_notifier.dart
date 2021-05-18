@@ -474,7 +474,20 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<BrandEntity> brandList = [];
   List<BrandEntity> sortedBrandList = [];
   Future getBrandsList(String from) async {
+    String key = '$from\_brand_${Preload.language}';
+    bool isExist = await localStorageRepository.existItem(key);
+
+    if (isExist) {
+      final result = await localStorageRepository.getItem(key);
+      _getBrandListFromResult(from, result);
+    }
+
     final result = await brandRepository.getAllBrands(Preload.language, from);
+    await localStorageRepository.setItem(key, result);
+    _getBrandListFromResult(from, result);
+  }
+
+  _getBrandListFromResult(String from, dynamic result) {
     if (result['code'] == 'SUCCESS') {
       List<BrandEntity> brands = [];
       for (int i = 0; i < result['brand'].length; i++) {

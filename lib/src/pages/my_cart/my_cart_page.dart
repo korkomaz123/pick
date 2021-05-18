@@ -57,7 +57,6 @@ class _MyCartPageState extends State<MyCartPage>
   _loadData() async {
     if (myCartChangeNotifier.cartItemCount == 0)
       await myCartChangeNotifier.getCartItems(lang);
-    setState(() {});
   }
 
   @override

@@ -405,13 +405,14 @@ class MyCartChangeNotifier extends ChangeNotifier {
     FlushBarService flushBarService,
   ) async {
     isApplying = true;
+    notifyListeners();
     final result = await myCartRepository.couponCode(cartId, couponCode, '1');
     if (result['code'] == 'SUCCESS') {
       couponCode = '';
       discount = .0;
       type = '';
       isApplying = false;
-      cartDiscountedTotalPrice = 0;
+      cartDiscountedTotalPrice = cartTotalPrice;
     } else {
       errorMessage = result['errMessage'];
       flushBarService.showErrorMessage(errorMessage);
