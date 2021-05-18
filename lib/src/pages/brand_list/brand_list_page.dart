@@ -18,8 +18,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class BrandListPage extends StatefulWidget {
-  const BrandListPage();
-
   @override
   _BrandListPageState createState() => _BrandListPageState();
 }
@@ -29,14 +27,11 @@ class _BrandListPageState extends State<BrandListPage> {
   final _refreshController = RefreshController(initialRefresh: false);
 
   HomeChangeNotifier _homeChangeNotifier;
-
   @override
   void initState() {
     super.initState();
     _homeChangeNotifier = context.read<HomeChangeNotifier>();
-    Future.delayed(Duration.zero, () async {
-      await _homeChangeNotifier.getBrandsList('brand');
-    });
+    _loadingData = _homeChangeNotifier.getBrandsList('brand');
   }
 
   void _onRefresh(HomeChangeNotifier model) async {
@@ -44,6 +39,7 @@ class _BrandListPageState extends State<BrandListPage> {
     _refreshController.refreshCompleted();
   }
 
+  Future _loadingData;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,30 +50,27 @@ class _BrandListPageState extends State<BrandListPage> {
       body: Column(
         children: [
           _buildAppBar(),
-          Consumer<HomeChangeNotifier>(
-            builder: (_, model, __) {
-              if (model.sortedBrandList.isEmpty) {
+          FutureBuilder(
+            future: _loadingData,
+            builder: (_, model) {
+              if (model.connectionState == ConnectionState.waiting)
                 return Expanded(
                   child: Center(
                     child: PulseLoadingSpinner(),
                   ),
                 );
-              }
+
               return Expanded(
                 child: SmartRefresher(
                   enablePullDown: true,
                   enablePullUp: false,
                   header: MaterialClassicHeader(color: primaryColor),
                   controller: _refreshController,
-                  onRefresh: () => _onRefresh(model),
+                  onRefresh: () => _onRefresh(_homeChangeNotifier),
                   onLoading: () => null,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        model.sortedBrandList.length,
-                        (index) => _buildBrandCard(model, index),
-                      ),
-                    ),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => _buildBrandCard(_homeChangeNotifier, index),
+                    itemCount: _homeChangeNotifier.sortedBrandList.length,
                   ),
                 ),
               );
@@ -185,8 +178,7 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl:
-                  _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
