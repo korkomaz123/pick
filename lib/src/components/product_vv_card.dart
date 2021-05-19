@@ -159,17 +159,14 @@ class _ProductVVCardState extends State<ProductVVCard>
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
-          Container(
-            child: CachedNetworkImage(
-              imageUrl: widget.product.imageUrl,
-              width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.6,
-              fit: BoxFit.fitHeight,
-              // progressIndicatorBuilder: (context, url, downloadProgress) =>
-              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
-            ),
+          CachedNetworkImage(
+            imageUrl: widget.product.imageUrl,
+            width: widget.cardHeight * 0.65,
+            height: widget.cardHeight * 0.6,
+            fit: BoxFit.fitHeight,
+            errorWidget: (context, url, error) {
+              return Center(child: Icon(Icons.image, size: 20.sp));
+            },
           ),
           Expanded(
             child: Column(
@@ -273,7 +270,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                           titleSize: 14.sp,
                           borderColor: Colors.transparent,
                           buttonColor: primaryColor,
-                          onPressed: () => _onAddProductToCart(context),
+                          onPressed: () => _onAddProductToCart(),
                         ),
                       ),
                     )
@@ -291,7 +288,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                           leading: false,
                           borderColor: Colors.transparent,
                           buttonColor: Colors.white,
-                          onPressed: () => _onAddProductToCart(context),
+                          onPressed: () => _onAddProductToCart(),
                         ),
                       ),
                     ),
@@ -376,7 +373,7 @@ class _ProductVVCardState extends State<ProductVVCard>
     return SizedBox.shrink();
   }
 
-  void _onAddProductToCart(BuildContext context) async {
+  void _onAddProductToCart() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
@@ -385,17 +382,25 @@ class _ProductVVCardState extends State<ProductVVCard>
         _addToCartController.stop(canceled: true);
         timer.cancel();
       });
+
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier
-            .addProductToCart(context, widget.product, 1, lang, {});
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
+            onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage(
-          'out_of_stock_error'.tr(),
-        );
+        flushBarService.showErrorMessage('out_of_stock_error'.tr());
       }
     }
+  }
+
+  void _onAddSuccess() {
+    flushBarService.showAddCartMessage(widget.product);
+
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 
   void _onWishlist() async {

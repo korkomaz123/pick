@@ -21,6 +21,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:string_validator/string_validator.dart';
 
 import 'payment_card_form.dart';
 
@@ -417,40 +418,56 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   void _onPlaceOrder() async {
     orderDetails['paymentMethod'] = payment;
     if (payment == 'tap') {
+      /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
         flushBarService.showErrorMessage('fill_card_details_error'.tr());
         return;
       }
       orderDetails['tap_token'] = cardToken;
     }
-    await orderChangeNotifier.submitOrder(
-      orderDetails,
-      lang,
-      _onProcess,
-      _onOrderSubmittedSuccess,
-      _onFailure,
-    );
+
+    /// submit the order, after call this api, the status will be pending till payment be processed
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
   }
 
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
+    print('payment URL>>> $payUrl');
     progressService.hideProgress();
 
-    if (payment == 'cashondelivery') {
+    if (isURL(payUrl)) {
+      /// if the payurl is valid
+      if (payment == 'cashondelivery') {
+        /// payment method is equal to cod, go to success page directly
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.checkoutConfirmed,
+          (route) => route.settings.name == Routes.home,
+          arguments: order.orderNo,
+        );
+      } else {
+        /// payment method is knet or tap, go to payment webview page
+        await Navigator.pushNamed(
+          context,
+          Routes.checkoutPaymentCard,
+          arguments: {
+            'url': payUrl,
+            'order': order,
+            'reorder': widget.reorder,
+          },
+        );
+
+        /// activate current cart if payment canceled by user
+        await myCartChangeNotifier.activateCart();
+      }
+    } else {
+      /// if the payurl is invalid redirect to payment failed page
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Routes.checkoutConfirmed,
+        Routes.paymentFailed,
         (route) => route.settings.name == Routes.home,
-        arguments: order.orderNo,
-      );
-    } else {
-      Navigator.pushNamed(
-        context,
-        Routes.checkoutPaymentCard,
-        arguments: {
-          'url': payUrl,
-          'order': order,
-          'reorder': widget.reorder,
-        },
       );
     }
   }

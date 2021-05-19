@@ -194,19 +194,22 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> addProductToCart(
-    BuildContext context,
     ProductModel product,
     int qty,
     String lang,
-    Map<String, dynamic> options,
-  ) async {
+    Map<String, dynamic> options, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
     final data = {
       'action': 'addProductToCart',
       'productId': product.productId,
       'qty': qty,
       'options': options
     };
-    final flushBarService = FlushBarService(context: context);
+
     try {
       final result = await myCartRepository.addCartItem(
           cartId, product.productId, '$qty', lang, options);
@@ -229,23 +232,19 @@ class MyCartChangeNotifier extends ChangeNotifier {
                 ? newItem.rowPrice * (100 - discount) / 100
                 : newItem.rowPrice;
         cartItemsMap[newItem.itemId] = newItem;
+        if (onSuccess != null) onSuccess();
         notifyListeners();
-        flushBarService.showAddCartMessage(product);
       } else {
-        flushBarService.showErrorMessage('$cartIssue$cartId');
-        if (processStatus != ProcessStatus.process) {
-          await getCartItems(lang);
-        }
+        onFailure(result['errorMessage']);
         reportCartIssue(result, data);
+
+        if (processStatus != ProcessStatus.process) await getCartItems(lang);
       }
     } catch (e) {
-      flushBarService.showErrorMessage(
-        'Something went wrong',
-      );
-      if (processStatus != ProcessStatus.process) {
-        await getCartItems(lang);
-      }
+      onFailure('Something went wrong');
       reportCartIssue(e.toString(), data);
+
+      if (processStatus != ProcessStatus.process) await getCartItems(lang);
     }
   }
 
@@ -332,6 +331,20 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> activateCart() async {
+    try {
+      final result = await myCartRepository.activateCart(cartId);
+      print(result);
+      if (result['code'] == 'SUCCESS') {
+        print('activated your cart success');
+      } else {
+        print('activated failure: ${result['errorMessage']}');
+      }
+    } catch (e) {
+      print('activated catch failure:  $e');
+    }
+  }
+
   Future<void> getReorderCartItems(String lang) async {
     final result = await myCartRepository.getCartItems(reorderCartId, lang);
     if (result['code'] == 'SUCCESS') {
@@ -383,7 +396,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       isApplying = false;
       resetDiscountPrice();
     } else {
-      errorMessage = result['errMessage'];
+      errorMessage = result['errorMessage'];
       flushBarService.showErrorMessage(errorMessage);
       isApplying = false;
     }
@@ -414,7 +427,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       isApplying = false;
       cartDiscountedTotalPrice = cartTotalPrice;
     } else {
-      errorMessage = result['errMessage'];
+      errorMessage = result['errorMessage'];
       flushBarService.showErrorMessage(errorMessage);
       isApplying = false;
     }

@@ -148,15 +148,14 @@ class _ProductVCardState extends State<ProductVCard>
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
-          Container(
-            child: CachedNetworkImage(
-              imageUrl: widget.product.imageUrl,
-              width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.6,
-              fit: BoxFit.fitHeight,
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
-            ),
+          CachedNetworkImage(
+            imageUrl: widget.product.imageUrl,
+            width: widget.cardHeight * 0.65,
+            height: widget.cardHeight * 0.6,
+            fit: BoxFit.fitHeight,
+            errorWidget: (context, url, error) {
+              return Center(child: Icon(Icons.image, size: 20.sp));
+            },
           ),
           Expanded(
             child: Column(
@@ -364,17 +363,26 @@ class _ProductVCardState extends State<ProductVCard>
         _addToCartController.stop(canceled: true);
         timer.cancel();
       });
+
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await _myCartChangeNotifier
-            .addProductToCart(context, widget.product, 1, lang, {});
+        await _myCartChangeNotifier.addProductToCart(
+            widget.product, 1, lang, {},
+            onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        _flushBarService.showErrorMessage(
-          'out_of_stock_error'.tr(),
-        );
+        _flushBarService.showErrorMessage('out_of_stock_error'.tr());
       }
     }
+  }
+
+  void _onAddSuccess() {
+    _flushBarService.showAddCartMessage(widget.product);
+
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    _flushBarService.showErrorMessage(message);
   }
 
   void _onWishlist() async {

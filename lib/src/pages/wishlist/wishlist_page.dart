@@ -177,8 +177,18 @@ class _WishlistPageState extends State<WishlistPage>
 
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
-    myCartChangeNotifier.addProductToCart(context, product, 1, lang, {});
+    myCartChangeNotifier.addProductToCart(product, 1, lang, {},
+        onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
+  }
+
+  void _onAddSuccess(ProductModel product) {
+    flushBarService.showAddCartMessage(product);
+
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 }

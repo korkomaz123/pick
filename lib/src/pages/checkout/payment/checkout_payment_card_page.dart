@@ -98,24 +98,25 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPageLoaded(String url) async {
-    if (url == PaymentStatusUrls.failure) {
-      if (user?.token != null) {
-        order.status = OrderStatusEnum.canceled;
-        orderChangeNotifier.updateOrder(order);
-      }
-      Navigator.pushNamed(context, Routes.paymentFailed);
-    } else if (url == PaymentStatusUrls.success) {
-      await _onSuccessPayment();
-      if (user?.token != null) {
-        order.status = OrderStatusEnum.processing;
-        orderChangeNotifier.updateOrder(order);
-      }
-      Navigator.pushNamed(
-        context,
-        Routes.checkoutConfirmed,
-        arguments: order.orderNo,
-      );
-    }
+    print('redirect URL>>> $url');
+    // if (url == PaymentStatusUrls.failure) {
+    //   if (user?.token != null) {
+    //     order.status = OrderStatusEnum.canceled;
+    //     orderChangeNotifier.updateOrder(order);
+    //   }
+    //   Navigator.pushNamed(context, Routes.paymentFailed);
+    // } else if (url == PaymentStatusUrls.success) {
+    //   await _onSuccessPayment();
+    //   if (user?.token != null) {
+    //     order.status = OrderStatusEnum.processing;
+    //     orderChangeNotifier.updateOrder(order);
+    //   }
+    //   Navigator.pushNamed(
+    //     context,
+    //     Routes.checkoutConfirmed,
+    //     arguments: order.orderNo,
+    //   );
+    // }
   }
 
   Future<void> _onSuccessPayment() async {

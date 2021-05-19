@@ -409,9 +409,6 @@ class _MyCartPageState extends State<MyCartPage>
   void _onCheckout() async {
     await myCartChangeNotifier.getCartItems(
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
-    Adjust.trackEvent(adjustEvent);
   }
 
   void _onReloadItemSuccess() {
@@ -426,6 +423,11 @@ class _MyCartPageState extends State<MyCartPage>
         return;
       }
     }
+
+    AdjustEvent adjustEvent =
+        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+    Adjust.trackEvent(adjustEvent);
+
     Navigator.pushNamed(context, Routes.checkoutAddress);
   }
 

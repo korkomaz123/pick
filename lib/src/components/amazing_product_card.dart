@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,21 +33,29 @@ class AmazingProductCard extends StatelessWidget {
         height: cardSize,
         child: Stack(
           children: [
-            Container(
-              width: cardSize,
-              height: cardSize,
-              margin: EdgeInsets.only(
-                left: lang == 'en' ? 20.w : 0,
-                right: lang == 'ar' ? 20.w : 0,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                  image: NetworkImage(product.imageUrl),
-                  fit: BoxFit.fitHeight,
-                ),
-                borderRadius: BorderRadius.circular(20.sp),
-              ),
+            CachedNetworkImage(
+              imageUrl: product.imageUrl,
+              imageBuilder: (_, imageProvider) {
+                return Container(
+                  width: cardSize,
+                  height: cardSize,
+                  margin: EdgeInsets.only(
+                    left: lang == 'en' ? 20.w : 0,
+                    right: lang == 'ar' ? 20.w : 0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    borderRadius: BorderRadius.circular(20.sp),
+                  ),
+                );
+              },
+              errorWidget: (_, __, ___) {
+                return Center(child: Icon(Icons.image, size: 30.sp));
+              },
             ),
             Align(
               alignment:

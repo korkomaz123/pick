@@ -1,4 +1,9 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
@@ -33,9 +38,13 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
+  FlushBarService _flushBarService;
+
   @override
   void initState() {
     super.initState();
+
+    _flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -122,18 +131,33 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                   color: greyDarkColor,
                 ),
               ),
-              InkWell(
-                onTap: () => _onPutInCart(item),
-                child: SvgPicture.asset(
-                    lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, model, __) {
+                  return InkWell(
+                    onTap: () {
+                      if (model.activePutInCart) {
+                        model.changePutInCartStatus(false);
+                        _onPutInCart(item);
+                        Future.delayed(Duration(milliseconds: 500), () {
+                          model.changePutInCartStatus(true);
+                        });
+                      }
+                    },
+                    child: SvgPicture.asset(
+                        lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+                  );
+                },
               ),
             ],
           ),
-          Image.network(
-            item.imageUrl,
+          CachedNetworkImage(
+            imageUrl: item.imageUrl,
             width: 140.w,
             height: 160.h,
             fit: BoxFit.fitHeight,
+            errorWidget: (_, __, ___) {
+              return Center(child: Icon(Icons.image, size: 20.sp));
+            },
           ),
           Expanded(
             child: Container(
@@ -184,7 +208,19 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
 
   void _onPutInCart(ProductModel item) async {
     widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
-    widget.myCartChangeNotifier
-        .addProductToCart(context, item, item.qtySaveForLater, lang, {});
+    widget.myCartChangeNotifier.addProductToCart(
+        item, item.qtySaveForLater, lang, {},
+        onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
+  }
+
+  void _onAddSuccess(ProductModel item) {
+    _flushBarService.showAddCartMessage(item);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    _flushBarService.showErrorMessage(message);
   }
 }

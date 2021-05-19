@@ -1,9 +1,11 @@
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +18,18 @@ class PaymentFailedPage extends StatefulWidget {
 
 class _PaymentFailedPageState extends State<PaymentFailedPage> {
   TextEditingController noteController = TextEditingController();
+
+  MyCartChangeNotifier _cartProvider;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _cartProvider = context.read<MyCartChangeNotifier>();
+    Future.delayed(Duration.zero, () async {
+      await _cartProvider.activateCart();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +120,9 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: greyColor,
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+        onPressed: () => Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         ),
         radius: 0,
       ),
