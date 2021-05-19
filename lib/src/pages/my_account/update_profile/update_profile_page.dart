@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
@@ -72,8 +73,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       drawer: MarkaaSideMenu(),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess ||
-              state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -167,9 +167,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty
-                      ? NetworkImage(user.profileUrl)
-                      : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty ? CachedNetworkImageProvider(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,

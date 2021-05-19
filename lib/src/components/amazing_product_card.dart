@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,15 +43,14 @@ class AmazingProductCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 image: DecorationImage(
-                  image: NetworkImage(product.imageUrl),
+                  image: CachedNetworkImageProvider(product.imageUrl),
                   fit: BoxFit.fitHeight,
                 ),
                 borderRadius: BorderRadius.circular(20.sp),
               ),
             ),
             Align(
-              alignment:
-                  lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
+              alignment: lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
               child: Container(
                 width: contentSize,
                 height: contentSize,
@@ -73,8 +73,7 @@ class AmazingProductCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             if (product?.brandEntity?.optionId != null) {
-                              ProductListArguments arguments =
-                                  ProductListArguments(
+                              ProductListArguments arguments = ProductListArguments(
                                 category: CategoryEntity(),
                                 subCategory: [],
                                 brand: product.brandEntity,
@@ -113,9 +112,7 @@ class AmazingProductCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      product.price != null
-                          ? (product.price + ' ' + 'currency'.tr())
-                          : '',
+                      product.price != null ? (product.price + ' ' + 'currency'.tr()) : '',
                       style: mediumTextStyle.copyWith(
                         fontSize: 16.sp,
                         color: Colors.white,
