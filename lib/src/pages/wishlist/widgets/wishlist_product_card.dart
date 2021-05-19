@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -36,8 +37,8 @@ class WishlistProductCard extends StatelessWidget {
                   color: greyDarkColor,
                 ),
               ),
-              Image.network(
-                product.imageUrl,
+              CachedNetworkImage(
+                imageUrl: product.imageUrl,
                 width: 114.w,
                 height: 140.h,
                 fit: BoxFit.fitHeight,
@@ -92,9 +93,7 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        product.stockQty == null || product.stockQty == 0
-            ? _buildOutOfStock()
-            : SizedBox.shrink(),
+        product.stockQty == null || product.stockQty == 0 ? _buildOutOfStock() : SizedBox.shrink(),
       ],
     );
   }

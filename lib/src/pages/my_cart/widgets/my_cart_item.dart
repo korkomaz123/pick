@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -55,8 +56,8 @@ class MyCartItem extends StatelessWidget {
                   ),
                 ),
               ),
-              Image.network(
-                cartItem.product.imageUrl,
+              CachedNetworkImage(
+                imageUrl: cartItem.product.imageUrl,
                 width: 104.w,
                 height: 150.h,
                 fit: BoxFit.fitHeight,
@@ -114,10 +115,7 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          discount != 0 &&
-                                  type == 'percentage' &&
-                                  cartItem?.product?.beforePrice ==
-                                      cartItem?.product?.price
+                          discount != 0 && type == 'percentage' && cartItem?.product?.beforePrice == cartItem?.product?.price
                               ? discountPriceString + ' ' + 'currency'.tr()
                               : priceString + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
@@ -127,11 +125,8 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          cartItem?.product?.beforePrice !=
-                                  cartItem?.product?.price
-                              ? cartItem.product.beforePrice +
-                                  ' ' +
-                                  'currency'.tr()
+                          cartItem?.product?.beforePrice != cartItem?.product?.price
+                              ? cartItem.product.beforePrice + ' ' + 'currency'.tr()
                               : discount != 0 && type == 'percentage'
                                   ? priceString + ' ' + 'currency'.tr()
                                   : '',
@@ -150,9 +145,7 @@ class MyCartItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
-                          onTap: user?.token != null
-                              ? onSaveForLaterItem
-                              : onSignIn,
+                          onTap: user?.token != null ? onSaveForLaterItem : onSignIn,
                           child: Text(
                             'save_for_later'.tr(),
                             style: mediumTextStyle.copyWith(

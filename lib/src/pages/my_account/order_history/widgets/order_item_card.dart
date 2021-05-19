@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -19,8 +20,7 @@ class OrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isStock =
-        cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
+    bool isStock = cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
     return Stack(
       children: [
         Container(
@@ -31,20 +31,20 @@ class OrderItemCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Image.network(
-                cartItem.product.imageUrl,
+              CachedNetworkImage(
+                imageUrl: cartItem.product.imageUrl,
                 width: 90.w,
                 height: 120.h,
                 fit: BoxFit.fitHeight,
-                loadingBuilder: (_, child, chunkEvent) {
-                  return chunkEvent != null
-                      ? Image.asset(
-                          'lib/public/images/loading/image_loading.jpg',
-                          width: 90.w,
-                          height: 120.h,
-                        )
-                      : child;
-                },
+                // loadingBuilder: (_, child, chunkEvent) {
+                //   return chunkEvent != null
+                //       ? Image.asset(
+                //           'lib/public/images/loading/image_loading.jpg',
+                //           width: 90.w,
+                //           height: 120.h,
+                //         )
+                //       : child;
+                // },
               ),
               SizedBox(width: 5.w),
               Expanded(
@@ -72,9 +72,7 @@ class OrderItemCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'items'
-                              .tr()
-                              .replaceFirst('0', '${cartItem.itemCount}'),
+                          'items'.tr().replaceFirst('0', '${cartItem.itemCount}'),
                           style: mediumTextStyle.copyWith(
                             fontSize: 14.sp,
                             color: primaryColor,
@@ -95,13 +93,7 @@ class OrderItemCard extends StatelessWidget {
             ],
           ),
         ),
-        if (returned) ...[
-          _buildReturnedLabel()
-        ] else if (canceled) ...[
-          _buildCanceledLabel()
-        ] else if (isStock) ...[
-          _buildOutStockLabel()
-        ],
+        if (returned) ...[_buildReturnedLabel()] else if (canceled) ...[_buildCanceledLabel()] else if (isStock) ...[_buildOutStockLabel()],
       ],
     );
   }

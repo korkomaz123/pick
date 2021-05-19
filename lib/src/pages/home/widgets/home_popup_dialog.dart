@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,8 +20,7 @@ class HomePopupDialog extends StatefulWidget {
   _HomePopupDialogState createState() => _HomePopupDialogState();
 }
 
-class _HomePopupDialogState extends State<HomePopupDialog>
-    with WidgetsBindingObserver {
+class _HomePopupDialogState extends State<HomePopupDialog> with WidgetsBindingObserver {
   final ProductRepository productRepository = ProductRepository();
 
   @override
@@ -70,8 +70,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                         arguments: arguments,
                       );
                     } else if (widget.item?.productId != null) {
-                      final product = await productRepository
-                          .getProduct(widget.item.productId);
+                      final product = await productRepository.getProduct(widget.item.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,
@@ -80,7 +79,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                       );
                     }
                   },
-                  child: Image.network(widget.item.bannerImage),
+                  child: CachedNetworkImage(imageUrl: widget.item.bannerImage),
                 ),
               ),
               if (lang == 'en') ...[

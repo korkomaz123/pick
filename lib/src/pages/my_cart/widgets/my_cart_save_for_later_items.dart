@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -28,8 +29,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
   });
 
   @override
-  _MyCartSaveForLaterItemsState createState() =>
-      _MyCartSaveForLaterItemsState();
+  _MyCartSaveForLaterItemsState createState() => _MyCartSaveForLaterItemsState();
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
@@ -124,13 +124,12 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
               ),
               InkWell(
                 onTap: () => _onPutInCart(item),
-                child: SvgPicture.asset(
-                    lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+                child: SvgPicture.asset(lang == 'en' ? putInCartEnIcon : putInCartArIcon),
               ),
             ],
           ),
-          Image.network(
-            item.imageUrl,
+          CachedNetworkImage(
+            imageUrl: item.imageUrl,
             width: 140.w,
             height: 160.h,
             fit: BoxFit.fitHeight,
@@ -177,14 +176,12 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
       },
     );
     if (result != null) {
-      await widget.wishlistChangeNotifier
-          .removeItemFromWishlist(user.token, item);
+      await widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
     }
   }
 
   void _onPutInCart(ProductModel item) async {
     widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
-    widget.myCartChangeNotifier
-        .addProductToCart(context, item, item.qtySaveForLater, lang, {});
+    widget.myCartChangeNotifier.addProductToCart(context, item, item.qtySaveForLater, lang, {});
   }
 }

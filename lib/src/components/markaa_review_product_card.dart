@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -20,20 +21,20 @@ class MarkaaReviewProductCard extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
       child: Row(
         children: [
-          Image.network(
-            cartItem.product.imageUrl,
+          CachedNetworkImage(
+            imageUrl: cartItem.product.imageUrl,
             width: 90.h,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                      width: 90.h,
-                      height: 120.h,
-                    )
-                  : child;
-            },
+            // loading: (_, child, chunkEvent) {
+            //   return chunkEvent != null
+            //       ? Image.asset(
+            //           'lib/public/images/loading/image_loading.jpg',
+            //           width: 90.h,
+            //           height: 120.h,
+            //         )
+            //       : child;
+            // },
           ),
           SizedBox(width: 10.w),
           Expanded(
