@@ -5,6 +5,8 @@ class MarkaaAppChangeNotifier extends ChangeNotifier {
 
   bool activePutInCart = true;
 
+  bool buying = false;
+
   void rebuild() {
     notifyListeners();
   }
@@ -16,6 +18,11 @@ class MarkaaAppChangeNotifier extends ChangeNotifier {
 
   void changePutInCartStatus(bool value) {
     activePutInCart = value;
+    notifyListeners();
+  }
+
+  void changeBuyStatus(bool value) {
+    buying = value;
     notifyListeners();
   }
 }

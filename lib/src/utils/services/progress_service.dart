@@ -1,4 +1,3 @@
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_loading_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ class ProgressService {
 
   void showProgress([double opacity = 0.01]) async {
     await showDialog(
-      context: Preload.navigatorKey.currentContext,
+      context: context,
       barrierColor:
           opacity == 1 ? Colors.white : Colors.white.withOpacity(opacity),
       builder: (context) {
@@ -20,6 +19,6 @@ class ProgressService {
   }
 
   void hideProgress() {
-    Navigator.pop(Preload.navigatorKey.currentContext);
+    Navigator.pop(context);
   }
 }

@@ -24,6 +24,14 @@ class _HomePopupDialogState extends State<HomePopupDialog>
     with WidgetsBindingObserver {
   final ProductRepository productRepository = ProductRepository();
 
+  Future<Image> get cachedImage => _loadPrecachedImage();
+
+  Future<Image> _loadPrecachedImage() async {
+    Image image = Image.network(widget.item.bannerImage);
+    await precacheImage(image.image, context);
+    return image;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -35,75 +43,83 @@ class _HomePopupDialogState extends State<HomePopupDialog>
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(10.w),
-                child: InkWell(
-                  onTap: () async {
-                    if (widget.item.categoryId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(
-                          id: widget.item.categoryId,
-                          name: widget.item.categoryName,
+          child: FutureBuilder<Image>(
+            future: cachedImage,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.w),
+                      child: InkWell(
+                        onTap: () async {
+                          if (widget.item.categoryId != null) {
+                            final arguments = ProductListArguments(
+                              category: CategoryEntity(
+                                id: widget.item.categoryId,
+                                name: widget.item.categoryName,
+                              ),
+                              brand: BrandEntity(),
+                              subCategory: [],
+                              selectedSubCategoryIndex: 0,
+                              isFromBrand: false,
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              Routes.productList,
+                              arguments: arguments,
+                            );
+                          } else if (widget.item?.brand?.optionId != null) {
+                            final arguments = ProductListArguments(
+                              category: CategoryEntity(),
+                              brand: widget.item.brand,
+                              subCategory: [],
+                              selectedSubCategoryIndex: 0,
+                              isFromBrand: true,
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              Routes.productList,
+                              arguments: arguments,
+                            );
+                          } else if (widget.item?.productId != null) {
+                            final product = await productRepository
+                                .getProduct(widget.item.productId);
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.product,
+                              (route) => route.settings.name == Routes.home,
+                              arguments: product,
+                            );
+                          }
+                        },
+                        child: snapshot.data,
+                      ),
+                    ),
+                    if (lang == 'en') ...[
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: SvgPicture.asset('lib/public/icons/close.svg'),
                         ),
-                        brand: BrandEntity(),
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: false,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (widget.item?.brand?.optionId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(),
-                        brand: widget.item.brand,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (widget.item?.productId != null) {
-                      final product = await productRepository
-                          .getProduct(widget.item.productId);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.product,
-                        (route) => route.settings.name == Routes.home,
-                        arguments: product,
-                      );
-                    }
-                  },
-                  child: CachedNetworkImage(imageUrl: widget.item.bannerImage),
-                ),
-              ),
-              if (lang == 'en') ...[
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset('lib/public/icons/close.svg'),
-                  ),
-                ),
-              ] else ...[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset('lib/public/icons/close.svg'),
-                  ),
-                ),
-              ]
-            ],
+                      ),
+                    ] else ...[
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: SvgPicture.asset('lib/public/icons/close.svg'),
+                        ),
+                      ),
+                    ]
+                  ],
+                );
+              }
+              return Container();
+            },
           ),
         ),
       ),

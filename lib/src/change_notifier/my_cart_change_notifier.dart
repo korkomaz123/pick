@@ -345,8 +345,16 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> getReorderCartItems(String lang) async {
+  Future<void> getReorderCartItems(
+    String lang, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
     final result = await myCartRepository.getCartItems(reorderCartId, lang);
+
     if (result['code'] == 'SUCCESS') {
       reorderCartItemCount = result['items'].length;
       for (var item in result['items']) {
@@ -354,8 +362,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reorderCartTotalPrice += item.rowPrice;
         reorderCartTotalCount += item.itemCount;
       }
+
+      if (onSuccess != null) onSuccess();
     } else {
       processStatus = ProcessStatus.failed;
+
+      if (onFailure != null) onFailure();
     }
     notifyListeners();
   }
@@ -369,8 +381,22 @@ class MyCartChangeNotifier extends ChangeNotifier {
     await myCartRepository.deleteCartItem(reorderCartId, key);
   }
 
-  Future<void> getReorderCartId(String orderId, String lang) async {
-    reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
+  Future<void> getReorderCartId(
+    String orderId,
+    String lang, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
+    try {
+      if (onSuccess != null) onSuccess();
+
+      reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
+    } catch (e) {
+      if (onFailure != null) onFailure();
+    }
   }
 
   void initializeReorderCart() {

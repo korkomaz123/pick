@@ -332,5 +332,6 @@
     "card_authorized_success": "Your card authorized success!",
     "payment_title": "Payment",
     "continue_with_google": "Continue with Google",
-    "continue_with_facebook": "Continue with Facebook"
+    "continue_with_facebook": "Continue with Facebook",
+    "stock_count": "Only # Left"
 }

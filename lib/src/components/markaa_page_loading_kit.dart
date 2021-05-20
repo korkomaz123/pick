@@ -21,6 +21,10 @@ class _ChasingDotsLoadingSpinnerState extends State<ChasingDotsLoadingSpinner>
 }
 
 class CircleLoadingSpinner extends StatefulWidget {
+  final Color loadingColor;
+
+  CircleLoadingSpinner({this.loadingColor = primarySwatchColor});
+
   @override
   _CircleLoadingSpinnerState createState() => _CircleLoadingSpinnerState();
 }
@@ -34,7 +38,7 @@ class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
         vsync: this,
         duration: Duration(milliseconds: 1200),
       ),
-      color: primarySwatchColor,
+      color: widget.loadingColor,
       size: 30,
     );
   }

@@ -437,31 +437,28 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     print('payment URL>>> $payUrl');
     progressService.hideProgress();
 
-    if (isURL(payUrl)) {
-      /// if the payurl is valid
-      if (payment == 'cashondelivery') {
-        /// payment method is equal to cod, go to success page directly
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.checkoutConfirmed,
-          (route) => route.settings.name == Routes.home,
-          arguments: order.orderNo,
-        );
-      } else {
-        /// payment method is knet or tap, go to payment webview page
-        await Navigator.pushNamed(
-          context,
-          Routes.checkoutPaymentCard,
-          arguments: {
-            'url': payUrl,
-            'order': order,
-            'reorder': widget.reorder,
-          },
-        );
+    if (payment == 'cod') {
+      /// payment method is equal to cod, go to success page directly
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.checkoutConfirmed,
+        (route) => route.settings.name == Routes.home,
+        arguments: order.orderNo,
+      );
+    } else if (isURL(payUrl)) {
+      /// payment method is knet or tap, go to payment webview page
+      await Navigator.pushNamed(
+        context,
+        Routes.checkoutPaymentCard,
+        arguments: {
+          'url': payUrl,
+          'order': order,
+          'reorder': widget.reorder,
+        },
+      );
 
-        /// activate current cart if payment canceled by user
-        await myCartChangeNotifier.activateCart();
-      }
+      /// activate current cart if payment canceled by user
+      await myCartChangeNotifier.activateCart();
     } else {
       /// if the payurl is invalid redirect to payment failed page
       Navigator.pushNamedAndRemoveUntil(

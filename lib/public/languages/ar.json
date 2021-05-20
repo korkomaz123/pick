@@ -330,5 +330,6 @@
     "card_authorized_success": "بطاقتك أذن النجاح!",
     "payment_title": "دفع",
     "continue_with_google": "تواصل مع جوجل",
-    "continue_with_facebook": "تواصل مع الفيسبوك"
+    "continue_with_facebook": "تواصل مع الفيسبوك",
+    "stock_count": "باقي # متوفر"
 }

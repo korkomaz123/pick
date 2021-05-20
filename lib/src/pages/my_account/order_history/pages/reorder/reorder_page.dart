@@ -48,13 +48,38 @@ class _ReOrderPageState extends State<ReOrderPage> {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
+
+    if (!addressChangeNotifier.addressesMap
+        .containsKey(widget.order.address.addressId)) {
+      widget.order.address = addressChangeNotifier.defaultAddress;
+    }
+
     Future.delayed(Duration.zero, () async {
-      await myCartChangeNotifier.getReorderCartId(widget.order.orderId, lang);
-      await myCartChangeNotifier.getReorderCartItems(lang);
+      myCartChangeNotifier.initializeReorderCart();
+      await myCartChangeNotifier.getReorderCartId(
+        widget.order.orderId,
+        lang,
+        onProcess: _onLoading,
+      );
+      await myCartChangeNotifier.getReorderCartItems(
+        lang,
+        onSuccess: _onLoaded,
+        onFailure: _onLoaded,
+      );
     });
+
     _getOrderStatus();
+  }
+
+  void _onLoading() {
+    progressService.showProgress();
+  }
+
+  void _onLoaded() {
+    progressService.hideProgress();
   }
 
   @override
@@ -289,7 +314,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
                       ],
                     ],
                   ),
-                  if (index < (model.reorderCartItemCount - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
+                  if (index < (model.reorderCartItemCount - 1)) ...[
+                    Divider(color: greyColor, thickness: 0.5)
+                  ],
                 ],
               );
             },
@@ -351,7 +378,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
               ),
             ),
             Text(
-              'currency'.tr() + ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
+              'currency'.tr() +
+                  ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: 14.sp,
@@ -394,7 +422,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
-      double totalPrice = order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
+      double totalPrice =
+          order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -445,7 +474,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              order.address.title.isNotEmpty ? '${order.address.title}: ' : 'Unnamed title: ',
+              order.address.title.isNotEmpty
+                  ? '${order.address.title}: '
+                  : 'Unnamed title: ',
               style: boldTextStyle.copyWith(
                 fontSize: 14.sp,
                 color: primaryColor,
@@ -496,7 +527,10 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _onNext() {
     if (myCartChangeNotifier.reorderCartItemCount > 0) {
-      addressChangeNotifier.setDefaultAddress(widget.order.address);
+      if (addressChangeNotifier.addressesMap
+          .containsKey(widget.order.address.addressId)) {
+        addressChangeNotifier.setDefaultAddress(widget.order.address);
+      }
       Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
     } else {
       flushBarService.showErrorMessage('reorder_items_error'.tr());

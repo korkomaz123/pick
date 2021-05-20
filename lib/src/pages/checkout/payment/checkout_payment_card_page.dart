@@ -45,6 +45,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   OrderEntity order;
   OrderEntity reorder;
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -90,21 +92,28 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (controller) {
             webViewController = controller;
+            progressService.showProgress();
           },
           onPageStarted: _onPageLoaded,
+          onPageFinished: (_) {
+            if (isLoading) {
+              print('hide progress');
+              progressService.hideProgress();
+              isLoading = false;
+              setState(() {});
+            }
+          },
         ),
       ),
     );
   }
 
-  void _onPageLoaded(String url) async {
+  void _onPageLoaded(String loadingUrl) async {
     try {
-      Uri uri = Uri.parse(url);
+      Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
-      print('redirect URL>>> $url');
-      print('params>>> $params');
+
       if (params.containsKey('result')) {
-        print(params['result']);
         if (params['result'] == 'failed') {
           if (user?.token != null) {
             order.status = OrderStatusEnum.canceled;
