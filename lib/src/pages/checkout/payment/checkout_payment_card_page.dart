@@ -25,12 +25,10 @@ class CheckoutPaymentCardPage extends StatefulWidget {
   CheckoutPaymentCardPage({this.params});
 
   @override
-  _CheckoutPaymentCardPageState createState() =>
-      _CheckoutPaymentCardPageState();
+  _CheckoutPaymentCardPageState createState() => _CheckoutPaymentCardPageState();
 }
 
-class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
-    with WidgetsBindingObserver {
+class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with WidgetsBindingObserver {
   WebViewController webViewController;
 
   OrderChangeNotifier orderChangeNotifier;
@@ -98,6 +96,9 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onPageLoaded(String url) async {
+    print(url);
+    print("PaymentStatusUrls.failure ${PaymentStatusUrls.failure}");
+    print("PaymentStatusUrls.success ${PaymentStatusUrls.success}");
     if (url == PaymentStatusUrls.failure) {
       if (user?.token != null) {
         order.status = OrderStatusEnum.canceled;
@@ -131,8 +132,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent =
-        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
   }
