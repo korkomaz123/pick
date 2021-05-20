@@ -368,7 +368,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       'stock_count'.tr().replaceFirst('#', '$availableCount'),
                       style: mediumTextStyle.copyWith(
                         color: dangerColor,
-                        fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
+                        fontSize: Preload.language == 'en' ? 10.sp : 12.sp,
                       ),
                     ),
                   ]

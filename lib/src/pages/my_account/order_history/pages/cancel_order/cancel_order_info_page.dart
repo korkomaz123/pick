@@ -45,9 +45,12 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     super.initState();
     order = widget.params['order'];
     cancelledItemsMap = widget.params['items'];
+
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+
     flushBarService = FlushBarService(context: context);
     progressService = ProgressService(context: context);
+
     imageCustomPickerService = ImageCustomPickerService(
       context: context,
       backgroundColor: Colors.white,
@@ -56,18 +59,18 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     );
   }
 
-  void _onProcess() {
+  void _onCancelProcess() {
     progressService.showProgress();
   }
 
-  void _onSuccess() {
+  void _onCanceledSuccess() {
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.orderHistory,
     );
   }
 
-  void _onFailure(String error) {
+  void _onCanceledFailure(String error) {
     progressService.hideProgress();
     flushBarService.showErrorMessage(error);
   }
@@ -126,10 +129,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
   Widget _buildAdditionalInfo() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.sp,
-        vertical: 20.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.h),
       child: MarkaaInputField(
         width: double.infinity,
         controller: additionalInfoController,
@@ -153,10 +153,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     return Container(
       width: 375.w,
       height: 120.h,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       decoration: file != null
           ? BoxDecoration(
               borderRadius: BorderRadius.circular(10.sp),
@@ -195,9 +192,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
                 ),
                 Text(
                   'cancel_order_image_for_product_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
                 ),
               ],
             ),
@@ -247,16 +242,15 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         };
       }).toList();
       orderChangeNotifier.cancelOrder(
-        order.orderId,
-        items,
-        additionalInfoController.text,
-        additionalInfoController.text,
-        imageData,
-        name,
-        _onProcess,
-        _onSuccess,
-        _onFailure,
-      );
+          order.orderId,
+          items,
+          additionalInfoController.text,
+          additionalInfoController.text,
+          imageData,
+          name,
+          onProcess: _onCancelProcess,
+          onSuccess: _onCanceledSuccess,
+          onFailure: _onCanceledFailure);
     }
   }
 }

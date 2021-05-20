@@ -434,10 +434,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   }
 
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    print('payment URL>>> $payUrl');
     progressService.hideProgress();
 
-    if (payment == 'cod') {
+    if (payment == 'cashondelivery') {
       /// payment method is equal to cod, go to success page directly
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -447,7 +446,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       );
     } else if (isURL(payUrl)) {
       /// payment method is knet or tap, go to payment webview page
-      await Navigator.pushNamed(
+      Navigator.pushNamed(
         context,
         Routes.checkoutPaymentCard,
         arguments: {
@@ -456,15 +455,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
           'reorder': widget.reorder,
         },
       );
-
-      /// activate current cart if payment canceled by user
-      await myCartChangeNotifier.activateCart();
     } else {
       /// if the payurl is invalid redirect to payment failed page
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.paymentFailed,
-        (route) => route.settings.name == Routes.home,
+        (route) => route.settings.name == Routes.myCart,
       );
     }
   }

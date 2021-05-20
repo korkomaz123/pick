@@ -90,31 +90,66 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> cancelFullOrder(
+    OrderEntity order, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      final orderId = order.orderId;
+      final items = order.cartItems.map((item) {
+        return {
+          'productId': item.product.productId,
+          'cancelCount': item.itemCount,
+        };
+      }).toList();
+      final additionalInfo = 'Canceled by user';
+      final reason = 'Canceled by user';
+
+      final result = await orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, null, null);
+
+      if (result['code'] == 'SUCCESS') {
+        final canceledOrder = OrderEntity.fromJson(result['order']);
+        ordersMap[orderId] = canceledOrder;
+        notifyListeners();
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
+    }
+  }
+
   Future<void> cancelOrder(
     String orderId,
     List<Map<String, dynamic>> items,
     String additionalInfo,
     String reason,
     Uint8List product,
-    String imageName,
+    String imageName, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
-    onProcess();
+  }) async {
+    if (onProcess != null) onProcess();
     try {
       final result = await orderRepository.cancelOrder(
           orderId, items, additionalInfo, reason, product, imageName);
+
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
         notifyListeners();
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      if (onFailure != null) onFailure(e.toString());
     }
   }
 

@@ -19,16 +19,20 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'payment_abort_dialog.dart';
+
 class CheckoutPaymentCardPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
   CheckoutPaymentCardPage({this.params});
 
   @override
-  _CheckoutPaymentCardPageState createState() => _CheckoutPaymentCardPageState();
+  _CheckoutPaymentCardPageState createState() =>
+      _CheckoutPaymentCardPageState();
 }
 
-class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with WidgetsBindingObserver {
+class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
+    with WidgetsBindingObserver {
   WebViewController webViewController;
 
   OrderChangeNotifier orderChangeNotifier;
@@ -59,6 +63,41 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with 
     reorder = widget.params['reorder'];
   }
 
+  void _onBack() async {
+    final result = await showDialog(
+      context: context,
+      builder: (_) {
+        return PaymentAbortDialog();
+      },
+    );
+    if (result != null) {
+      /// activate the current shopping cart
+      await myCartChangeNotifier.activateCart();
+
+      /// cancel the order
+      await orderChangeNotifier.cancelFullOrder(order,
+          onProcess: _onCancelProcess,
+          onSuccess: _onCanceledSuccess,
+          onFailure: _onCanceledFailure);
+    }
+  }
+
+  void _onCancelProcess() {
+    progressService.showProgress();
+  }
+
+  void _onCanceledSuccess() {
+    progressService.hideProgress();
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.myCart,
+    );
+  }
+
+  void _onCanceledFailure() {
+    progressService.hideProgress();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -75,7 +114,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with 
               size: 25.sp,
               color: greyColor,
             ),
-            onPressed: () => Navigator.pop(context),
+            onPressed: _onBack,
           ),
           title: Text(
             'payment_title'.tr(),
@@ -154,7 +193,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with 
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent =
+        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
   }
