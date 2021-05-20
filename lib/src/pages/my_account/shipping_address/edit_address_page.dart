@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:string_validator/string_validator.dart';
 
 import 'widgets/select_region_dialog.dart';
 import 'widgets/select_block_list_dialog.dart';
@@ -161,17 +162,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
             children: [
               Column(
                 children: [
-                  // SizedBox(height: 10.h),
-                  // MarkaaCustomInput(
-                  //   controller: titleController,
-                  //   width: 375.w,
-                  //   padding: 10.h,
-                  //   fontSize: 14.sp,
-                  //   hint: 'address_title'.tr(),
-                  //   validator: (value) =>
-                  //       value.isEmpty ? 'required_field'.tr() : null,
-                  //   inputType: TextInputType.text,
-                  // ),
                   SizedBox(height: 10.h),
                   MarkaaCustomInput(
                     controller: fullNameController,
@@ -217,8 +207,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.h,
                     fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty
+                        ? 'required_field'.tr()
+                        : !isInt(value)
+                            ? 'invalid_field'.tr()
+                            : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: _onSelectBlock,

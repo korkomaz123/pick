@@ -55,7 +55,7 @@ class NotificationSetup {
       _onLaunchMessage(event.data);
     });
 
-    String topic = lang == 'en'
+    String topic = Preload.language == 'en'
         ? MarkaaNotificationChannels.enChannel
         : MarkaaNotificationChannels.arChannel;
     await firebaseMessaging.subscribeToTopic(topic);

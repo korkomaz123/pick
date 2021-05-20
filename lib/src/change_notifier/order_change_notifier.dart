@@ -62,11 +62,11 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
-    String lang,
+    String lang, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
+  }) async {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);

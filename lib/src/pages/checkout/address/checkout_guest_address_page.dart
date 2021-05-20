@@ -233,8 +233,11 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty
+                        ? 'required_field'.tr()
+                        : !isInt(value)
+                            ? 'invalid_field'.tr()
+                            : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: _onSelectBlock,

@@ -272,32 +272,30 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _onAddToCart(ProductChangeNotifier model) async {
-    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetailsMap[product.productId].configurable.keys
-                .toList()
-                .length) {
-      flushBarService.showErrorMessage('required_options'.tr());
-      return;
-    }
-    if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage('out_of_stock_error'.tr());
-      return;
-    }
+    _checkAvailability(model);
+
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
       _addToCartController.stop(canceled: true);
       timer.cancel();
     });
+
     await myCartChangeNotifier.addProductToCart(
-        context, product, 1, lang, model.selectedOptions);
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
-    Adjust.trackEvent(adjustEvent);
+        product, 1, lang, model.selectedOptions,
+        onSuccess: _onAddSuccess, onFailure: _onAddFailure);
   }
 
   void _onBuyNow(ProductChangeNotifier model) {
+    _checkAvailability(model);
+
+    myCartChangeNotifier.addProductToCart(
+        product, 1, lang, model.selectedOptions,
+        onProcess: _onBuyProcess,
+        onSuccess: _onBuySuccess,
+        onFailure: _onBuyFailure);
+  }
+
+  _checkAvailability(ProductChangeNotifier model) {
     if (model.productDetailsMap[product.productId].typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetailsMap[product.productId].configurable.keys
@@ -312,11 +310,36 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
-    myCartChangeNotifier.addProductToCart(
-        context, product, 1, lang, model.selectedOptions);
-    Navigator.pushNamed(context, Routes.myCart);
+  }
+
+  _onBuyProcess() {
+    progressService.showProgress();
+  }
+
+  _onBuySuccess() {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
+
+    progressService.hideProgress();
+    flushBarService.showAddCartMessage(product);
+
+    Navigator.pushNamed(context, Routes.myCart);
+  }
+
+  _onBuyFailure(String message) {
+    progressService.hideProgress();
+    flushBarService.showErrorMessage(message);
+  }
+
+  _onAddSuccess() {
+    flushBarService.showAddCartMessage(product);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 
   void _onFirstReview(ProductEntity product) async {

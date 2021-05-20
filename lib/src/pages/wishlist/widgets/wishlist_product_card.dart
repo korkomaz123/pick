@@ -42,6 +42,9 @@ class WishlistProductCard extends StatelessWidget {
                 width: 114.w,
                 height: 140.h,
                 fit: BoxFit.fitHeight,
+                errorWidget: (_, __, ___) {
+                  return Center(child: Icon(Icons.image, size: 20.sp));
+                },
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -83,7 +86,7 @@ class WishlistProductCard extends StatelessWidget {
                         titleColor: Colors.white,
                         buttonColor: primaryColor,
                         borderColor: Colors.transparent,
-                        onPressed: () => onAddToCart(),
+                        onPressed: onAddToCart,
                         radius: 10,
                       )
                     ],
@@ -93,48 +96,52 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        product.stockQty == null || product.stockQty == 0 ? _buildOutOfStock() : SizedBox.shrink(),
+        if (product.stockQty == null || product.stockQty == 0) ...[
+          _buildOutOfStock()
+        ]
       ],
     );
   }
 
   Widget _buildOutOfStock() {
-    return lang == 'en'
-        ? Positioned(
-            top: 50.h,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 15.w,
-                vertical: 5.h,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white70,
-                ),
-              ),
+    if (lang == 'en') {
+      return Positioned(
+        top: 50.h,
+        right: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15.w,
+            vertical: 5.h,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 14.sp,
+              color: Colors.white70,
             ),
-          )
-        : Positioned(
-            top: 50.h,
-            left: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 15.w,
-                vertical: 5.h,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white70,
-                ),
-              ),
+          ),
+        ),
+      );
+    } else {
+      return Positioned(
+        top: 50.h,
+        left: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15.w,
+            vertical: 5.h,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 14.sp,
+              color: Colors.white70,
             ),
-          );
+          ),
+        ),
+      );
+    }
   }
 }

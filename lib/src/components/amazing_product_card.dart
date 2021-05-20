@@ -50,7 +50,8 @@ class AmazingProductCard extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
+              alignment:
+                  lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
               child: Container(
                 width: contentSize,
                 height: contentSize,
@@ -73,7 +74,8 @@ class AmazingProductCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             if (product?.brandEntity?.optionId != null) {
-                              ProductListArguments arguments = ProductListArguments(
+                              ProductListArguments arguments =
+                                  ProductListArguments(
                                 category: CategoryEntity(),
                                 subCategory: [],
                                 brand: product.brandEntity,
@@ -112,7 +114,9 @@ class AmazingProductCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      product.price != null ? (product.price + ' ' + 'currency'.tr()) : '',
+                      product.price != null
+                          ? (product.price + ' ' + 'currency'.tr())
+                          : '',
                       style: mediumTextStyle.copyWith(
                         fontSize: 16.sp,
                         color: Colors.white,

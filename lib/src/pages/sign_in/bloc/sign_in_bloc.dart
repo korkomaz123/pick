@@ -81,12 +81,13 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignInSubmittedInProcess();
     try {
-      final result = await _signInRepository.socialLogin(email, firstName, lastName, loginType, lang, appleId);
+      final result = await _signInRepository.socialLogin(
+          email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
-        yield SignInSubmittedFailure(message: result['errMessage']);
+        yield SignInSubmittedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
@@ -101,7 +102,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async* {
     yield SignUpSubmittedInProcess();
     try {
-      final result = await _signInRepository.register(firstName, lastName, email, password);
+      final result = await _signInRepository.register(
+          firstName, lastName, email, password);
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
@@ -124,7 +126,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         yield NewPasswordRequestSubmittedSuccess();
       } else {
         yield NewPasswordRequestSubmittedFailure(
-          message: result['errMessage'],
+          message: result['errorMessage'],
         );
       }
     } catch (e) {

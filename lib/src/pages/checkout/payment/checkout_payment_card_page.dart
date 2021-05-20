@@ -96,26 +96,39 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with 
   }
 
   void _onPageLoaded(String url) async {
-    print(url);
-    print("PaymentStatusUrls.failure ${PaymentStatusUrls.failure}");
-    print("PaymentStatusUrls.success ${PaymentStatusUrls.success}");
-    if (url == PaymentStatusUrls.failure) {
-      if (user?.token != null) {
-        order.status = OrderStatusEnum.canceled;
-        orderChangeNotifier.updateOrder(order);
+    try {
+      Uri uri = Uri.parse(url);
+      Map<String, dynamic> params = uri.queryParameters;
+      print('redirect URL>>> $url');
+      print('params>>> $params');
+      if (params.containsKey('result')) {
+        print(params['result']);
+        if (params['result'] == 'failed') {
+          if (user?.token != null) {
+            order.status = OrderStatusEnum.canceled;
+            orderChangeNotifier.updateOrder(order);
+          }
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.paymentFailed,
+            (route) => route.settings.name == Routes.myCart,
+          );
+        } else if (params['result'] == 'success') {
+          await _onSuccessPayment();
+          if (user?.token != null) {
+            order.status = OrderStatusEnum.processing;
+            orderChangeNotifier.updateOrder(order);
+          }
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.checkoutConfirmed,
+            (route) => route.settings.name == Routes.home,
+            arguments: order.orderNo,
+          );
+        }
       }
-      Navigator.pushNamed(context, Routes.paymentFailed);
-    } else if (url == PaymentStatusUrls.success) {
-      await _onSuccessPayment();
-      if (user?.token != null) {
-        order.status = OrderStatusEnum.processing;
-        orderChangeNotifier.updateOrder(order);
-      }
-      Navigator.pushNamed(
-        context,
-        Routes.checkoutConfirmed,
-        arguments: order.orderNo,
-      );
+    } catch (e) {
+      print(e.toString());
     }
   }
 

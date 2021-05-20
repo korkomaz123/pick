@@ -30,12 +30,15 @@ class GlobalProvider extends ChangeNotifier {
           ? _context.setLocale(enLocale)
           : _context.setLocale(arLocale);
 
-      FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en'
-          ? MarkaaNotificationChannels.arChannel
-          : MarkaaNotificationChannels.enChannel);
-      FirebaseMessaging.instance.subscribeToTopic(_current == 'ar'
-          ? MarkaaNotificationChannels.arChannel
-          : MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance
+          .unsubscribeFromTopic(_current == 'en'
+              ? MarkaaNotificationChannels.arChannel
+              : MarkaaNotificationChannels.enChannel)
+          .whenComplete(() {
+        FirebaseMessaging.instance.subscribeToTopic(_current == 'ar'
+            ? MarkaaNotificationChannels.arChannel
+            : MarkaaNotificationChannels.enChannel);
+      });
 
       lang = Preload.language = _current == "ar" ? "en" : "ar";
     }

@@ -20,7 +20,8 @@ class HomePopupDialog extends StatefulWidget {
   _HomePopupDialogState createState() => _HomePopupDialogState();
 }
 
-class _HomePopupDialogState extends State<HomePopupDialog> with WidgetsBindingObserver {
+class _HomePopupDialogState extends State<HomePopupDialog>
+    with WidgetsBindingObserver {
   final ProductRepository productRepository = ProductRepository();
 
   @override
@@ -70,7 +71,8 @@ class _HomePopupDialogState extends State<HomePopupDialog> with WidgetsBindingOb
                         arguments: arguments,
                       );
                     } else if (widget.item?.productId != null) {
-                      final product = await productRepository.getProduct(widget.item.productId);
+                      final product = await productRepository
+                          .getProduct(widget.item.productId);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         Routes.product,

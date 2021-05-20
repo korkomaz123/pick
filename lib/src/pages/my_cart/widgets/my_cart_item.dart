@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -9,6 +10,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -61,6 +63,9 @@ class MyCartItem extends StatelessWidget {
                 width: 104.w,
                 height: 150.h,
                 fit: BoxFit.fitHeight,
+                errorWidget: (_, __, ___) {
+                  return Center(child: Icon(Icons.image, size: 20.sp));
+                },
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -115,7 +120,10 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          discount != 0 && type == 'percentage' && cartItem?.product?.beforePrice == cartItem?.product?.price
+                          discount != 0 &&
+                                  type == 'percentage' &&
+                                  cartItem?.product?.beforePrice ==
+                                      cartItem?.product?.price
                               ? discountPriceString + ' ' + 'currency'.tr()
                               : priceString + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
@@ -125,8 +133,11 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          cartItem?.product?.beforePrice != cartItem?.product?.price
-                              ? cartItem.product.beforePrice + ' ' + 'currency'.tr()
+                          cartItem?.product?.beforePrice !=
+                                  cartItem?.product?.price
+                              ? cartItem.product.beforePrice +
+                                  ' ' +
+                                  'currency'.tr()
                               : discount != 0 && type == 'percentage'
                                   ? priceString + ' ' + 'currency'.tr()
                                   : '',
@@ -144,16 +155,7 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(
-                          onTap: user?.token != null ? onSaveForLaterItem : onSignIn,
-                          child: Text(
-                            'save_for_later'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: 12.sp,
-                              color: primaryColor,
-                            ),
-                          ),
-                        ),
+                        _buildSaveForLaterTextButton(),
                         if (cartItem.availableCount > 0) ...[
                           MyCartShopCounter(
                             cartItem: cartItem,
@@ -170,6 +172,43 @@ class MyCartItem extends StatelessWidget {
         ),
         cartItem.availableCount == 0 ? _buildOutOfStock() : SizedBox.shrink(),
       ],
+    );
+  }
+
+  Widget _buildSaveForLaterTextButton() {
+    return Consumer<MarkaaAppChangeNotifier>(
+      builder: (_, model, ___) {
+        if (model.activeSaveForLater) {
+          return InkWell(
+            onTap: () {
+              if (user?.token != null) {
+                model.changeSaveForLaterStatus(false);
+                onSaveForLaterItem();
+                Future.delayed(Duration(milliseconds: 500), () {
+                  model.changeSaveForLaterStatus(true);
+                });
+              } else {
+                onSignIn();
+              }
+            },
+            child: Text(
+              'save_for_later'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: 12.sp,
+                color: primaryColor,
+              ),
+            ),
+          );
+        } else {
+          return Text(
+            'save_for_later'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 12.sp,
+              color: primaryColor,
+            ),
+          );
+        }
+      },
     );
   }
 

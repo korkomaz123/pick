@@ -47,8 +47,6 @@ class _ProductCardState extends State<ProductCard>
   bool isWishlist;
   int index;
   FlushBarService flushBarService;
-  // AnimationController _addToCartController;
-  // Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
   Animation<double> _addToWishlistScaleAnimation;
 
@@ -118,10 +116,9 @@ class _ProductCardState extends State<ProductCard>
               width: widget.cardWidth,
               height: widget.cardWidth,
               fit: BoxFit.fitHeight,
-              // progressIndicatorBuilder: (context, url, downloadProgress) =>
-              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (context, url, error) {
+                return Center(child: Icon(Icons.image, size: 20.sp));
+              },
             ),
           ),
           Expanded(

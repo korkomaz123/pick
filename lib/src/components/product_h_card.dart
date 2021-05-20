@@ -158,10 +158,9 @@ class _ProductHCardState extends State<ProductHCard>
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.8,
               fit: BoxFit.fitHeight,
-              // progressIndicatorBuilder: (context, url, downloadProgress) =>
-              //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (context, url, error) {
+                return Center(child: Icon(Icons.image, size: 20.sp));
+              },
             ),
           ),
           Expanded(
@@ -252,7 +251,7 @@ class _ProductHCardState extends State<ProductHCard>
                             widget.product.stockQty != null &&
                                 widget.product.stockQty > 0)) ...[
                       InkWell(
-                        onTap: () => _onAddProductToCart(context),
+                        onTap: () => _onAddProductToCart(),
                         child: ScaleTransition(
                           scale: _addToCartScaleAnimation,
                           child: Container(
@@ -344,7 +343,7 @@ class _ProductHCardState extends State<ProductHCard>
     return Container();
   }
 
-  void _onAddProductToCart(BuildContext context) async {
+  void _onAddProductToCart() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
@@ -353,17 +352,25 @@ class _ProductHCardState extends State<ProductHCard>
         _addToCartController.stop(canceled: true);
         timer.cancel();
       });
+
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier
-            .addProductToCart(context, widget.product, 1, lang, {});
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
+            onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage(
-          'out_of_stock_error'.tr(),
-        );
+        flushBarService.showErrorMessage('out_of_stock_error'.tr());
       }
     }
+  }
+
+  _onAddSuccess() {
+    flushBarService.showAddCartMessage(widget.product);
+
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
     Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 
   void _onWishlist() async {
