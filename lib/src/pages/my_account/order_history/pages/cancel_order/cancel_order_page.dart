@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -294,20 +295,20 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       ),
       child: Row(
         children: [
-          Image.network(
-            cartItem.product.imageUrl,
+          CachedNetworkImage(
+            imageUrl: cartItem.product.imageUrl,
             width: 90.w,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                      width: 90.w,
-                      height: 120.h,
-                    )
-                  : child;
-            },
+            // loadingBuilder: (_, child, chunkEvent) {
+            //   return chunkEvent != null
+            //       ? Image.asset(
+            //           'lib/public/images/loading/image_loading.jpg',
+            //           width: 90.w,
+            //           height: 120.h,
+            //         )
+            //       : child;
+            // },
           ),
           SizedBox(width: 5.w),
           Expanded(

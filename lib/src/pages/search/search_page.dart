@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
@@ -28,8 +29,7 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   TabController tabController;
 
@@ -107,8 +107,7 @@ class _SearchPageState extends State<SearchPage>
 
   void _getSearchHistories() async {
     bool isExist = await localStorageRepository.existItem('search_history');
-    searchHistory =
-        isExist ? await localStorageRepository.getItem('search_history') : [];
+    searchHistory = isExist ? await localStorageRepository.getItem('search_history') : [];
     markaaAppChangeNotifier.rebuild();
   }
 
@@ -173,10 +172,7 @@ class _SearchPageState extends State<SearchPage>
                             ] else ...[
                               _buildBrandResult()
                             ],
-                            if (!searchNode.hasFocus &&
-                                searchHistory.isNotEmpty) ...[
-                              _buildSearchHistory()
-                            ],
+                            if (!searchNode.hasFocus && searchHistory.isNotEmpty) ...[_buildSearchHistory()],
                           ],
                         ),
                       ],
@@ -185,9 +181,7 @@ class _SearchPageState extends State<SearchPage>
                 ),
                 Consumer<SuggestionChangeNotifier>(
                   builder: (_, __, ___) {
-                    if (tabController.index == 0 &&
-                        searchNode.hasFocus &&
-                        suggestionChangeNotifier.suggestions.isNotEmpty) {
+                    if (tabController.index == 0 && searchNode.hasFocus && suggestionChangeNotifier.suggestions.isNotEmpty) {
                       return _buildSuggestion();
                     }
                     return SizedBox.shrink();
@@ -254,8 +248,7 @@ class _SearchPageState extends State<SearchPage>
                   'search_items_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color:
-                        tabController.index == 0 ? primaryColor : greyDarkColor,
+                    color: tabController.index == 0 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -266,15 +259,11 @@ class _SearchPageState extends State<SearchPage>
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: tabController.index == 0
-                          ? primaryColor
-                          : greyDarkColor,
+                      color: tabController.index == 0 ? primaryColor : greyDarkColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      suggestionChangeNotifier?.searchedProducts?.length
-                              ?.toString() ??
-                          '0',
+                      suggestionChangeNotifier?.searchedProducts?.length?.toString() ?? '0',
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
                         color: Colors.white,
@@ -293,8 +282,7 @@ class _SearchPageState extends State<SearchPage>
                   'search_brands_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color:
-                        tabController.index == 1 ? primaryColor : greyDarkColor,
+                    color: tabController.index == 1 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -304,10 +292,8 @@ class _SearchPageState extends State<SearchPage>
                     for (var brand in homeChangeNotifier.sortedBrandList) {
                       bool isEmpty = searchController.text.isEmpty;
                       String searchText = searchController.text.toLowerCase();
-                      String brandLabel =
-                          brand.brandLabel.toString().toLowerCase();
-                      if ((!isEmpty && brandLabel.contains(searchText)) &&
-                          brand.productsCount > 0) {
+                      String brandLabel = brand.brandLabel.toString().toLowerCase();
+                      if ((!isEmpty && brandLabel.contains(searchText)) && brand.productsCount > 0) {
                         count += 1;
                       }
                     }
@@ -317,9 +303,7 @@ class _SearchPageState extends State<SearchPage>
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: tabController.index == 1
-                            ? primaryColor
-                            : greyDarkColor,
+                        color: tabController.index == 1 ? primaryColor : greyDarkColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -350,9 +334,7 @@ class _SearchPageState extends State<SearchPage>
         child: Container(
           padding: EdgeInsets.all(10.w),
           color: Colors.white,
-          child: tabController.index == 0
-              ? _buildProductsSuggestion()
-              : _buildBrandsSuggestion(),
+          child: tabController.index == 0 ? _buildProductsSuggestion() : _buildBrandsSuggestion(),
         ),
       ),
     );
@@ -361,8 +343,7 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildProductsSuggestion() {
     return Consumer<SuggestionChangeNotifier>(
       builder: (ctx, notifier, _) {
-        if (notifier.suggestions.isNotEmpty &&
-            searchController.text.isNotEmpty) {
+        if (notifier.suggestions.isNotEmpty && searchController.text.isNotEmpty) {
           return Column(
             children: List.generate(
               notifier.suggestions.length,
@@ -380,9 +361,7 @@ class _SearchPageState extends State<SearchPage>
                         product: notifier.suggestions[index],
                       ),
                     ),
-                    index < (notifier.suggestions.length - 1)
-                        ? Divider(color: greyColor, thickness: 0.5)
-                        : SizedBox.shrink(),
+                    index < (notifier.suggestions.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                   ],
                 );
               },
@@ -405,10 +384,8 @@ class _SearchPageState extends State<SearchPage>
             (index) {
               bool isEmpty = searchController.text.isEmpty;
               String searchText = searchController.text.toLowerCase();
-              String brandLabel =
-                  brands[index].brandLabel.toString().toLowerCase();
-              if ((!isEmpty && brandLabel.contains(searchText)) &&
-                  brands[index].productsCount > 0) {
+              String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+              if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount > 0) {
                 rIndex += 1;
                 return Column(
                   children: [
@@ -448,7 +425,7 @@ class _SearchPageState extends State<SearchPage>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Image.network(brands[index].brandThumbnail),
+                            CachedNetworkImage(imageUrl: brands[index].brandThumbnail),
                             Text(
                               brands[index].brandLabel,
                               style: mediumTextStyle.copyWith(
@@ -556,19 +533,13 @@ class _SearchPageState extends State<SearchPage>
                       onTap: () => Navigator.pushNamed(
                         context,
                         Routes.product,
-                        arguments:
-                            suggestionChangeNotifier.searchedProducts[index],
+                        arguments: suggestionChangeNotifier.searchedProducts[index],
                       ),
                       child: SearchProductCard(
-                        product:
-                            suggestionChangeNotifier.searchedProducts[index],
+                        product: suggestionChangeNotifier.searchedProducts[index],
                       ),
                     ),
-                    index <
-                            (suggestionChangeNotifier.searchedProducts.length -
-                                1)
-                        ? Divider(color: greyColor, thickness: 0.5)
-                        : SizedBox.shrink(),
+                    index < (suggestionChangeNotifier.searchedProducts.length - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
                   ],
                 );
               },
@@ -591,10 +562,8 @@ class _SearchPageState extends State<SearchPage>
               (index) {
                 bool isEmpty = searchController.text.isEmpty;
                 String searchText = searchController.text.toLowerCase();
-                String brandLabel =
-                    brands[index].brandLabel.toString().toLowerCase();
-                if ((!isEmpty && brandLabel.contains(searchText)) &&
-                    brands[index].productsCount > 0) {
+                String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+                if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount > 0) {
                   rIndex += 1;
                   return Column(
                     children: [
@@ -628,7 +597,7 @@ class _SearchPageState extends State<SearchPage>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.network(brands[index].brandThumbnail),
+                              CachedNetworkImage(imageUrl: brands[index].brandThumbnail),
                               Text(
                                 brands[index].brandLabel,
                                 style: mediumTextStyle.copyWith(

@@ -33,29 +33,21 @@ class AmazingProductCard extends StatelessWidget {
         height: cardSize,
         child: Stack(
           children: [
-            CachedNetworkImage(
-              imageUrl: product.imageUrl,
-              imageBuilder: (_, imageProvider) {
-                return Container(
-                  width: cardSize,
-                  height: cardSize,
-                  margin: EdgeInsets.only(
-                    left: lang == 'en' ? 20.w : 0,
-                    right: lang == 'ar' ? 20.w : 0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.fitHeight,
-                    ),
-                    borderRadius: BorderRadius.circular(20.sp),
-                  ),
-                );
-              },
-              errorWidget: (_, __, ___) {
-                return Center(child: Icon(Icons.image, size: 30.sp));
-              },
+            Container(
+              width: cardSize,
+              height: cardSize,
+              margin: EdgeInsets.only(
+                left: lang == 'en' ? 20.w : 0,
+                right: lang == 'ar' ? 20.w : 0,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(product.imageUrl),
+                  fit: BoxFit.fitHeight,
+                ),
+                borderRadius: BorderRadius.circular(20.sp),
+              ),
             ),
             Align(
               alignment:

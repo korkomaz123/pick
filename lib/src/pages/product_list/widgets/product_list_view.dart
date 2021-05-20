@@ -17,6 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'product_no_available.dart';
 
@@ -92,12 +93,12 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   void _onScroll() {
-    double maxScroll = scrollController.position.maxScrollExtent;
-    double currentScroll = scrollController.position.pixels;
-    scrollChangeNotifier.controlBrandBar(currentScroll);
-    if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
-      _onLoadMore();
-    }
+    // double maxScroll = scrollController.position.maxScrollExtent;
+    // double currentScroll = scrollController.position.pixels;
+    // scrollChangeNotifier.controlBrandBar(currentScroll);
+    // if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
+    //   _onLoadMore();
+    // }
   }
 
   void _initLoadProducts() async {
@@ -130,7 +131,12 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
     });
   }
 
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  bool isStillRefresh = false;
   Future<void> _onRefresh() async {
+    print('_onRefresh');
+    if (isStillRefresh == true) return;
+    isStillRefresh = true;
     print('///// refresh ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
@@ -158,9 +164,13 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     }
+    isStillRefresh = false;
+    _refreshController.refreshCompleted();
   }
 
   void _onLoadMore() async {
+    if (isStillRefresh == true) return;
+    isStillRefresh = true;
     print('///// load more ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       page = productChangeNotifier.pages[subCategories[tabController.index].id];
@@ -200,6 +210,8 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     }
+    isStillRefresh = false;
+    _refreshController.loadComplete();
   }
 
   void _onGotoTop() {
@@ -235,7 +247,8 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                         index = 'filter_' + (brand.optionId ?? '') + '_' + (cat.id ?? 'all');
                       }
                       if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
-                        return Center(child: PulseLoadingSpinner());
+                        return //Container();
+                            Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable();
                       } else {
@@ -311,63 +324,65 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   Widget _buildProductList(List<ProductModel> products) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      backgroundColor: Colors.white,
-      color: primaryColor,
-      child: ListView.builder(
-        controller: scrollController,
-        shrinkWrap: true,
-        itemCount: (products.length / 2).ceil() + 1,
-        itemBuilder: (ctx, index) {
-          if (index >= (products.length / 2).ceil()) {
-            if (productChangeNotifier.isReachedMax) {
-              return Container(
-                width: 375.w,
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  top: 10.h,
-                ),
-                child: Text(
-                  'no_more_products'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 14.sp,
+    return RefreshConfiguration(
+      footerTriggerDistance: 2500,
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        // footer: CustomFooter(
+        //   builder: (BuildContext context, LoadStatus mode) {
+        //     Widget body;
+        //     if (mode == LoadStatus.idle) {
+        //       body = Text("pull up load");
+        //     } else if (mode == LoadStatus.loading) {
+        //       body = CupertinoActivityIndicator();
+        //     } else if (mode == LoadStatus.failed) {
+        //       body = Text("Load Failed!Click retry!");
+        //     } else if (mode == LoadStatus.canLoading) {
+        //       body = Text("release to load more");
+        //     } else {
+        //       body = Text("No more Data");
+        //     }
+        //     return Container(
+        //       height: 55.0,
+        //       child: Center(child: body),
+        //     );
+        //   },
+        // ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: () {
+          print('onLoading');
+          _onLoadMore();
+        },
+        child: ListView.builder(
+          // controller: scrollController,
+          shrinkWrap: true,
+          itemCount: (products.length / 2).ceil() + 1,
+          itemBuilder: (ctx, index) {
+            if (index >= (products.length / 2).ceil()) {
+              if (productChangeNotifier.isReachedMax) {
+                return Container(
+                  width: 375.w,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(
+                    top: 10.h,
                   ),
-                ),
-              );
+                  child: Text(
+                    'no_more_products'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                );
+              } else {
+                return Container(); //RippleLoadingSpinner();
+              }
             } else {
-              return RippleLoadingSpinner();
-            }
-          } else {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: greyColor,
-                        width: 0.5.w,
-                      ),
-                    ),
-                  ),
-                  child: ProductVCard(
-                    product: products[2 * index],
-                    cardWidth: 187.25.w,
-                    cardHeight: 280.h,
-                    isShoppingCart: true,
-                    isWishlist: true,
-                    isShare: true,
-                  ),
-                ),
-                if (index * 2 <= products.length - 2) ...[
-                  Container(
-                    height: 280.h,
-                    child: VerticalDivider(
-                      color: greyColor,
-                      width: 0.5.w,
-                    ),
-                  ),
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Container(
                     decoration: BoxDecoration(
                       border: Border(
@@ -378,7 +393,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                       ),
                     ),
                     child: ProductVCard(
-                      product: products[2 * index + 1],
+                      product: products[2 * index],
                       cardWidth: 187.25.w,
                       cardHeight: 280.h,
                       isShoppingCart: true,
@@ -386,11 +401,38 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                       isShare: true,
                     ),
                   ),
-                ]
-              ],
-            );
-          }
-        },
+                  if (index * 2 <= products.length - 2) ...[
+                    Container(
+                      height: 280.h,
+                      child: VerticalDivider(
+                        color: greyColor,
+                        width: 0.5.w,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: greyColor,
+                            width: 0.5.w,
+                          ),
+                        ),
+                      ),
+                      child: ProductVCard(
+                        product: products[2 * index + 1],
+                        cardWidth: 187.25.w,
+                        cardHeight: 280.h,
+                        isShoppingCart: true,
+                        isWishlist: true,
+                        isShare: true,
+                      ),
+                    ),
+                  ]
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

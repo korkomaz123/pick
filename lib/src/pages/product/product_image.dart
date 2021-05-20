@@ -96,7 +96,7 @@ class _ProductImageState extends State<ProductImage> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             image: DecorationImage(
-                              image: NetworkImage(images[index]),
+                              image: CachedNetworkImageProvider(images[index]),
                             ),
                             border: Border.all(
                               color: activeIndex == index

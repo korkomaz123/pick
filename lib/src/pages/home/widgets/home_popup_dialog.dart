@@ -81,9 +81,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                       );
                     }
                   },
-                  child: CachedNetworkImage(
-                    imageUrl: widget.item.bannerImage,
-                  ),
+                  child: CachedNetworkImage(imageUrl: widget.item.bannerImage),
                 ),
               ),
               if (lang == 'en') ...[

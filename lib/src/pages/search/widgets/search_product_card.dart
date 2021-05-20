@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -17,8 +18,8 @@ class SearchProductCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.network(
-            product.imageUrl,
+          CachedNetworkImage(
+            imageUrl: product.imageUrl,
             width: 50.w,
             height: 50.h,
             fit: BoxFit.fitHeight,

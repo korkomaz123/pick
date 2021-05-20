@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -54,8 +55,7 @@ class HomeAdvertise extends StatelessWidget {
                     arguments: arguments,
                   );
                 } else if (homeChangeNotifier?.ads?.productId != null) {
-                  final product = await productRepository
-                      .getProduct(homeChangeNotifier.ads.productId);
+                  final product = await productRepository.getProduct(homeChangeNotifier.ads.productId);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.product,
@@ -64,7 +64,7 @@ class HomeAdvertise extends StatelessWidget {
                   );
                 }
               },
-              child: Image.network(homeChangeNotifier.ads.bannerImage),
+              child: CachedNetworkImage(imageUrl: homeChangeNotifier.ads.bannerImage),
             ),
             Container(
               height: 175.w,
