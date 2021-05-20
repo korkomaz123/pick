@@ -136,7 +136,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
         titleColor: Colors.white70,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.pushReplacementNamed(
+        onPressed: () => Navigator.popAndPushNamed(
           context,
           Routes.orderHistory,
         ),
@@ -155,10 +155,9 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: greyColor,
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+        onPressed: () => Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         ),
         radius: 0,
       ),
