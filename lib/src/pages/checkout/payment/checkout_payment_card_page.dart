@@ -25,12 +25,10 @@ class CheckoutPaymentCardPage extends StatefulWidget {
   CheckoutPaymentCardPage({this.params});
 
   @override
-  _CheckoutPaymentCardPageState createState() =>
-      _CheckoutPaymentCardPageState();
+  _CheckoutPaymentCardPageState createState() => _CheckoutPaymentCardPageState();
 }
 
-class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
-    with WidgetsBindingObserver {
+class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage> with WidgetsBindingObserver {
   WebViewController webViewController;
 
   OrderChangeNotifier orderChangeNotifier;
@@ -125,7 +123,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             (route) => route.settings.name == Routes.myCart,
           );
         } else if (params['result'] == 'success') {
-          await _onSuccessPayment();
+          _onSuccessPayment();
           if (user?.token != null) {
             order.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order);
@@ -156,8 +154,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent =
-        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchaseToken);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
   }
