@@ -117,10 +117,9 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
         titleColor: greyColor,
         buttonColor: Colors.white,
         borderColor: greyColor,
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+        onPressed: () => Navigator.popUntil(
           context,
-          Routes.home,
-          (route) => false,
+          (route) => route.settings.name == Routes.home,
         ),
         radius: 0,
       ),

@@ -32,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
     //Start Loading Assets
     await Preload.appOpen();
     Navigator.pushNamedAndRemoveUntil(
-      Preload.navigatorKey.currentContext,
+      context,
       Routes.home,
       (route) => false,
     );

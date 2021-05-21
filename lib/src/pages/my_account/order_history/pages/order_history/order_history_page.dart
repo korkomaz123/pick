@@ -66,7 +66,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         onLoading: null,
         child: Consumer<OrderChangeNotifier>(
           builder: (_, model, __) {
-            print('history1');
             if (model.ordersMap.isEmpty) {
               return Center(
                 child: NoAvailableData(
@@ -74,7 +73,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 ),
               );
             } else {
-              print('history2');
               return SingleChildScrollView(
                 child: Column(
                   children: [
@@ -100,9 +98,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ),
                       child: Column(
                         children: model.keys.map((key) {
-                          return OrderCard(
-                            order: model.ordersMap[key],
-                          );
+                          return OrderCard(order: model.ordersMap[key]);
                         }).toList(),
                       ),
                     ),

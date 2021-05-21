@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
@@ -437,6 +442,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     progressService.hideProgress();
 
     if (payment == 'cashondelivery') {
+      _onSuccessOrder();
+
       /// payment method is equal to cod, go to success page directly
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -457,11 +464,35 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Routes.paymentFailed,
-        (route) => route.settings.name == Routes.myCart,
-      );
+      await orderChangeNotifier.cancelFullOrder(order,
+          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
+  }
+
+  void _gotoFailedPage() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.paymentFailed,
+      (route) => route.settings.name == Routes.myCart,
+    );
+  }
+
+  Future<void> _onSuccessOrder() async {
+    if (widget.reorder != null) {
+      myCartChangeNotifier.initializeReorderCart();
+    } else {
+      myCartChangeNotifier.initialize();
+      if (user?.token == null) {
+        await localStorageRepo.removeItem('cartId');
+      }
+      await myCartChangeNotifier.getCartId();
+    }
+    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    double price = double.parse(priceDetails['totalPrice']);
+
+    AdjustEvent adjustEvent =
+        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    adjustEvent.setRevenue(price, 'KWD');
+    Adjust.trackEvent(adjustEvent);
   }
 }

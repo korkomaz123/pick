@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -49,6 +50,14 @@ class OrderChangeNotifier extends ChangeNotifier {
       if (onSuccess != null) {
         onSuccess();
       }
+    }
+  }
+
+  void removeOrder(OrderEntity order) {
+    if (ordersMap.containsKey(order.orderId)) {
+      ordersMap.remove(order.orderId);
+      setKeys();
+      notifyListeners();
     }
   }
 
@@ -99,21 +108,14 @@ class OrderChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
     try {
       final orderId = order.orderId;
-      final items = order.cartItems.map((item) {
-        return {
-          'productId': item.product.productId,
-          'cancelCount': item.itemCount,
-        };
-      }).toList();
-      final additionalInfo = 'Canceled by user';
-      final reason = 'Canceled by user';
 
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, null, null);
+      final result =
+          await orderRepository.cancelOrderById(orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
-        final canceledOrder = OrderEntity.fromJson(result['order']);
-        ordersMap[orderId] = canceledOrder;
+        if (ordersMap.containsKey(order.orderId)) {
+          ordersMap.remove(order.orderId);
+        }
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {

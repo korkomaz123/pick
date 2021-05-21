@@ -54,7 +54,8 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView>
+    with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey;
   List<CategoryEntity> subCategories;
   BrandEntity brand;
@@ -102,7 +103,6 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   void _initLoadProducts() async {
-    print('//// initial load ////');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.viewMode == ProductViewModeEnum.filter) {
         await productChangeNotifier.initialLoadFilteredProducts(
@@ -124,20 +124,21 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         );
       }
       filterBloc.add(FilterAttributesLoaded(
-        categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
+        categoryId: subCategories[widget.activeIndex].id == 'all'
+            ? null
+            : subCategories[widget.activeIndex].id,
         brandId: brand.optionId,
         lang: lang,
       ));
     });
   }
 
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   bool isStillRefresh = false;
   Future<void> _onRefresh() async {
-    print('_onRefresh');
     if (isStillRefresh == true) return;
     isStillRefresh = true;
-    print('///// refresh ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
         subCategories[tabController.index].id,
@@ -171,7 +172,6 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   void _onLoadMore() async {
     if (isStillRefresh == true) return;
     isStillRefresh = true;
-    print('///// load more ////');
     if (widget.viewMode == ProductViewModeEnum.category) {
       page = productChangeNotifier.pages[subCategories[tabController.index].id];
       page += 1;
@@ -181,7 +181,8 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      page = productChangeNotifier.pages[brand.optionId + '_' + subCategories[tabController.index].id];
+      page = productChangeNotifier
+          .pages[brand.optionId + '_' + subCategories[tabController.index].id];
       page += 1;
       await productChangeNotifier.loadMoreBrandProducts(
         page,
@@ -190,7 +191,11 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      page = productChangeNotifier.pages[widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages[widget.sortByItem +
+          '_' +
+          (brand.optionId ?? '') +
+          '_' +
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreSortedProducts(
         page,
@@ -200,7 +205,10 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      page = productChangeNotifier.pages['filter_' + (brand.optionId ?? '') + '_' + (subCategories[tabController.index].id ?? '')];
+      page = productChangeNotifier.pages['filter_' +
+          (brand.optionId ?? '') +
+          '_' +
+          (subCategories[tabController.index].id ?? '')];
       page += 1;
       await productChangeNotifier.loadMoreFilteredProducts(
         page,
@@ -229,7 +237,9 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
       children: [
         Column(
           children: [
-            subCategories.length > 1 ? _buildCategoryTabBar() : SizedBox.shrink(),
+            subCategories.length > 1
+                ? _buildCategoryTabBar()
+                : SizedBox.shrink(),
             Expanded(
               child: TabBarView(
                 controller: tabController,
@@ -242,17 +252,27 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                       } else if (widget.viewMode == ProductViewModeEnum.brand) {
                         index = brand.optionId + '_' + cat.id;
                       } else if (widget.viewMode == ProductViewModeEnum.sort) {
-                        index = widget.sortByItem + '_' + (brand.optionId ?? '') + '_' + (cat.id ?? '');
-                      } else if (widget.viewMode == ProductViewModeEnum.filter) {
-                        index = 'filter_' + (brand.optionId ?? '') + '_' + (cat.id ?? 'all');
+                        index = widget.sortByItem +
+                            '_' +
+                            (brand.optionId ?? '') +
+                            '_' +
+                            (cat.id ?? '');
+                      } else if (widget.viewMode ==
+                          ProductViewModeEnum.filter) {
+                        index = 'filter_' +
+                            (brand.optionId ?? '') +
+                            '_' +
+                            (cat.id ?? 'all');
                       }
-                      if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
+                      if (!productChangeNotifier.data.containsKey(index) ||
+                          productChangeNotifier.data[index] == null) {
                         return //Container();
                             Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable();
                       } else {
-                        return _buildProductList(productChangeNotifier.data[index]);
+                        return _buildProductList(
+                            productChangeNotifier.data[index]);
                       }
                     },
                   );

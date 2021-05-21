@@ -146,6 +146,7 @@ class _ProductPageState extends State<ProductPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration.zero, () async {
         await productChangeNotifier.getProductDetails(productId);
+        _refreshController.refreshCompleted();
       });
     });
   }

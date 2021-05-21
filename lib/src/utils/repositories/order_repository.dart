@@ -34,6 +34,16 @@ class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> cancelOrderById(String orderId, String lang) async {
+    String url = EndPoints.cancelOrderById;
+    final params = {'orderId': orderId, 'lang': lang};
+
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> cancelOrder(
     String orderId,
     List<Map<String, dynamic>> items,
@@ -52,6 +62,7 @@ class OrderRepository {
       'lang': lang,
       'imageForProduct': imageName != null ? base64Encode(product) : '',
     };
+    // print(params);
     return await Api.postMethod(url, data: params);
   }
 

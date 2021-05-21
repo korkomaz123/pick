@@ -102,13 +102,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
       } else {
         processStatus = ProcessStatus.failed;
         if (onFailure != null) {
-          onFailure('Something went wrong');
+          onFailure(result['errorMessage']);
           reportCartIssue(result, data);
         }
       }
       notifyListeners();
     } catch (e) {
-      onFailure('Something went wrong');
+      onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
       notifyListeners();
     }
@@ -128,7 +128,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       double clearDiscount = discount;
       final result = await myCartRepository.clearCartItems(clearCartId);
       if (result['code'] != 'SUCCESS') {
-        onFailure('Something went wrong');
+        onFailure(result['errorMessage']);
 
         reportCartIssue(result, data);
       } else {
@@ -141,7 +141,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onSuccess();
       }
     } catch (e) {
-      onFailure('Something went wrong');
+      onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
     }
   }
@@ -160,7 +160,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await myCartRepository.deleteCartItem(cartId, key);
       if (result['code'] != 'SUCCESS') {
-        onFailure('Something went wrong');
+        onFailure(result['errorMessage']);
         cartTotalPrice += item.rowPrice;
         cartDiscountedTotalPrice +=
             item.product.beforePrice == item?.product?.price
@@ -176,7 +176,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('Something went wrong');
+      onFailure('Network connection is bad');
       cartTotalPrice += item.rowPrice;
       cartDiscountedTotalPrice +=
           item.product.beforePrice == item?.product?.price
@@ -235,13 +235,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
         if (onSuccess != null) onSuccess();
         notifyListeners();
       } else {
-        onFailure(result['errorMessage']);
+        onFailure(result['errMessage']);
         reportCartIssue(result, data);
 
         if (processStatus != ProcessStatus.process) await getCartItems(lang);
       }
     } catch (e) {
-      onFailure('Something went wrong');
+      onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
 
       if (processStatus != ProcessStatus.process) await getCartItems(lang);
@@ -272,7 +272,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       final result = await myCartRepository.updateCartItem(
           cartId, item.itemId, qty.toString());
       if (result['code'] != 'SUCCESS') {
-        onFailure('Something went wrong');
+        onFailure(result['errorMessage']);
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
         cartDiscountedTotalPrice -=
@@ -289,7 +289,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('Something went wrong');
+      onFailure('Network connection is bad');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -=
@@ -334,7 +334,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> activateCart() async {
     try {
       final result = await myCartRepository.activateCart(cartId);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         print('activated your cart success');
       } else {

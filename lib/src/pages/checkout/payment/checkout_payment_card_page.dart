@@ -94,7 +94,8 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     );
   }
 
-  void _onCanceledFailure() {
+  void _onCanceledFailure(String message) {
+    print(message);
     progressService.hideProgress();
   }
 
@@ -153,8 +154,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user?.token != null) {
-            order.status = OrderStatusEnum.canceled;
-            orderChangeNotifier.updateOrder(order);
+            orderChangeNotifier.removeOrder(order);
           }
           Navigator.pushNamedAndRemoveUntil(
             context,
