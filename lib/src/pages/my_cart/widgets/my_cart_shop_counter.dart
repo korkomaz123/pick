@@ -133,11 +133,11 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
 
   void _onChangeQty(bool isIncreament, MarkaaAppChangeNotifier model) async {
     if (model.activeUpdateCart) {
-      model.changeUpdateCartStatus(false);
+      // model.changeUpdateCartStatus(false);
       int qty = widget.cartItem.itemCount + (isIncreament ? 1 : -1);
       await myCartChangeNotifier.updateCartItem(
           widget.cartItem, qty, _onFailure);
-      model.changeUpdateCartStatus(true);
+      // model.changeUpdateCartStatus(true);
     }
   }
 
