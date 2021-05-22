@@ -52,7 +52,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final _refreshController = RefreshController(initialRefresh: false);
+  final _refreshController = RefreshController();
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -143,11 +143,11 @@ class _ProductPageState extends State<ProductPage>
   }
 
   void _onRefresh() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration.zero, () async {
-        await productChangeNotifier.getProductDetails(productId);
-        _refreshController.refreshCompleted();
-      });
+    Future.delayed(Duration(milliseconds: 500), () {
+      _refreshController.refreshCompleted();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await productChangeNotifier.getProductDetails(productId);
     });
   }
 
@@ -349,23 +349,33 @@ class _ProductPageState extends State<ProductPage>
                 }
               },
             ),
-            MarkaaRoundImageButton(
-              width: 58.w,
-              height: 60.h,
-              color: primarySwatchColor,
-              child: ScaleTransition(
-                scale: _addToCartScaleAnimation,
-                child: Container(
-                  width: 25.w,
-                  height: 25.h,
-                  child: SvgPicture.asset(
-                    shoppingCartIcon,
-                    color: Colors.white,
+            Consumer<MarkaaAppChangeNotifier>(
+              builder: (_, appModel, __) {
+                return MarkaaRoundImageButton(
+                  width: 58.w,
+                  height: 60.h,
+                  color: primarySwatchColor,
+                  child: ScaleTransition(
+                    scale: _addToCartScaleAnimation,
+                    child: Container(
+                      width: 25.w,
+                      height: 25.h,
+                      child: SvgPicture.asset(
+                        shoppingCartIcon,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              onTap: () => _onAddToCart(model),
-              radius: 1,
+                  onTap: () {
+                    if (appModel.activeAddCart) {
+                      appModel.changeAddCartStatus(false);
+                      _onAddToCart(model);
+                      appModel.changeAddCartStatus(true);
+                    }
+                  },
+                  radius: 1,
+                );
+              },
             )
           ],
         ],

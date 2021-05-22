@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -275,22 +276,32 @@ class _ProductVVCardState extends State<ProductVVCard>
                       ),
                     )
                   ] else ...[
-                    ScaleTransition(
-                      scale: _addToCartScaleAnimation,
-                      child: Container(
-                        width: widget.cardWidth,
-                        height: 35.h,
-                        child: MarkaaTextIconButton(
-                          title: 'wishlist_add_cart_button_title'.tr(),
-                          titleColor: primaryColor,
-                          titleSize: 14.sp,
-                          icon: SvgPicture.asset(addCart1Icon, width: 24.w),
-                          leading: false,
-                          borderColor: Colors.transparent,
-                          buttonColor: Colors.white,
-                          onPressed: () => _onAddProductToCart(),
-                        ),
-                      ),
+                    Consumer<MarkaaAppChangeNotifier>(
+                      builder: (_, model, __) {
+                        return ScaleTransition(
+                          scale: _addToCartScaleAnimation,
+                          child: Container(
+                            width: widget.cardWidth,
+                            height: 35.h,
+                            child: MarkaaTextIconButton(
+                              title: 'wishlist_add_cart_button_title'.tr(),
+                              titleColor: primaryColor,
+                              titleSize: 14.sp,
+                              icon: SvgPicture.asset(addCart1Icon, width: 24.w),
+                              leading: false,
+                              borderColor: Colors.transparent,
+                              buttonColor: Colors.white,
+                              onPressed: () {
+                                if (model.activeAddCart) {
+                                  model.changeAddCartStatus(false);
+                                  _onAddProductToCart();
+                                  model.changeAddCartStatus(true);
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ]
                 ] else ...[

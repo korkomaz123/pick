@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -47,8 +48,6 @@ class ProductHCard extends StatefulWidget {
 
 class _ProductHCardState extends State<ProductHCard>
     with TickerProviderStateMixin {
-  bool isWishlist;
-  int index;
   FlushBarService flushBarService;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
@@ -56,6 +55,14 @@ class _ProductHCardState extends State<ProductHCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+
+  int index;
+  bool isWishlist;
+
+  bool get canAddToCart =>
+      widget.isShoppingCart &&
+      (widget.product.typeId != 'simple' ||
+          widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -246,20 +253,27 @@ class _ProductHCardState extends State<ProductHCard>
                         ],
                       ),
                     ),
-                    if (widget.isShoppingCart &&
-                        (widget.product.typeId != 'simple' ||
-                            widget.product.stockQty != null &&
-                                widget.product.stockQty > 0)) ...[
-                      InkWell(
-                        onTap: () => _onAddProductToCart(),
-                        child: ScaleTransition(
-                          scale: _addToCartScaleAnimation,
-                          child: Container(
-                            width: 32.h,
-                            height: 32.h,
-                            child: SvgPicture.asset(addCartIcon),
-                          ),
-                        ),
+                    if (canAddToCart) ...[
+                      Consumer<MarkaaAppChangeNotifier>(
+                        builder: (_, model, __) {
+                          return InkWell(
+                            onTap: () {
+                              if (model.activeAddCart) {
+                                model.changeAddCartStatus(false);
+                                _onAddProductToCart();
+                                model.changeAddCartStatus(true);
+                              }
+                            },
+                            child: ScaleTransition(
+                              scale: _addToCartScaleAnimation,
+                              child: Container(
+                                width: 32.h,
+                                height: 32.h,
+                                child: SvgPicture.asset(addCartIcon),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ],

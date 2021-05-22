@@ -157,6 +157,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartTotalCount -= cartItemsMap[key].itemCount;
     cartItemsMap.remove(key);
     notifyListeners();
+
     try {
       final result = await myCartRepository.deleteCartItem(cartId, key);
       if (result['code'] != 'SUCCESS') {
@@ -170,6 +171,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
         notifyListeners();
+
         if (processStatus != ProcessStatus.process) {
           await getCartItems(lang);
         }
@@ -186,6 +188,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
       notifyListeners();
+
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
       }
@@ -213,6 +216,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     try {
       final result = await myCartRepository.addCartItem(
           cartId, product.productId, '$qty', lang, options);
+
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
         CartItemEntity oldItem = cartItemsMap[newItem.itemId];
@@ -237,14 +241,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
       } else {
         onFailure(result['errMessage']);
         reportCartIssue(result, data);
-
-        if (processStatus != ProcessStatus.process) await getCartItems(lang);
       }
     } catch (e) {
       onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
 
-      if (processStatus != ProcessStatus.process) await getCartItems(lang);
+      // if (processStatus != ProcessStatus.process) await getCartItems(lang);
     }
   }
 
@@ -268,6 +270,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartItemsMap[item.itemId].itemCount = qty;
     cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
     notifyListeners();
+
     try {
       final result = await myCartRepository.updateCartItem(
           cartId, item.itemId, qty.toString());
@@ -283,6 +286,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartItemsMap[item.itemId].rowPrice =
             double.parse(item.product.price) * item.itemCount;
         notifyListeners();
+
         if (processStatus != ProcessStatus.process) {
           await getCartItems(lang);
         }

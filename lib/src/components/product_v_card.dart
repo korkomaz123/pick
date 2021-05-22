@@ -4,6 +4,7 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -60,6 +61,11 @@ class _ProductVCardState extends State<ProductVCard>
   MyCartChangeNotifier _myCartChangeNotifier;
 
   FlushBarService _flushBarService;
+
+  bool get canAddToCart =>
+      widget.isShoppingCart &&
+      (widget.product.typeId != 'simple' ||
+          widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -247,20 +253,27 @@ class _ProductVCardState extends State<ProductVCard>
                         ],
                       ),
                     ),
-                    if (widget.isShoppingCart &&
-                        (widget.product.typeId != 'simple' ||
-                            widget.product.stockQty != null &&
-                                widget.product.stockQty > 0)) ...[
-                      InkWell(
-                        onTap: () => _onAddProductToCart(),
-                        child: ScaleTransition(
-                          scale: _addToCartScaleAnimation,
-                          child: Container(
-                            width: widget.isMinor ? 26.w : 32.w,
-                            height: widget.isMinor ? 26.w : 32.w,
-                            child: SvgPicture.asset(addCartIcon),
-                          ),
-                        ),
+                    if (canAddToCart) ...[
+                      Consumer<MarkaaAppChangeNotifier>(
+                        builder: (_, model, __) {
+                          return InkWell(
+                            onTap: () {
+                              if (model.activeAddCart) {
+                                model.changeAddCartStatus(false);
+                                _onAddProductToCart();
+                                model.changeAddCartStatus(true);
+                              }
+                            },
+                            child: ScaleTransition(
+                              scale: _addToCartScaleAnimation,
+                              child: Container(
+                                width: widget.isMinor ? 26.w : 32.w,
+                                height: widget.isMinor ? 26.w : 32.w,
+                                child: SvgPicture.asset(addCartIcon),
+                              ),
+                            ),
+                          );
+                        },
                       )
                     ] else ...[
                       SizedBox.shrink()

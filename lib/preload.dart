@@ -99,7 +99,6 @@ class Preload {
     }
 
     await _getCurrentUser();
-    globalProvider.updateUser(user);
 
     if (user?.token != null) {
       //   isNotification = await settingRepo.getNotificationSetting(user.token);

@@ -138,9 +138,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                       if (model.activePutInCart) {
                         model.changePutInCartStatus(false);
                         _onPutInCart(item);
-                        Future.delayed(Duration(milliseconds: 500), () {
-                          model.changePutInCartStatus(true);
-                        });
+                        model.changePutInCartStatus(true);
                       }
                     },
                     child: SvgPicture.asset(

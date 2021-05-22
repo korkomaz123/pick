@@ -184,9 +184,7 @@ class MyCartItem extends StatelessWidget {
               if (user?.token != null) {
                 model.changeSaveForLaterStatus(false);
                 onSaveForLaterItem();
-                Future.delayed(Duration(milliseconds: 500), () {
-                  model.changeSaveForLaterStatus(true);
-                });
+                model.changeSaveForLaterStatus(true);
               } else {
                 onSignIn();
               }
