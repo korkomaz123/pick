@@ -413,7 +413,7 @@ class _ProductPageState extends State<ProductPage>
   }
 
   _onBuySuccess() {
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
 
     markaaAppChangeNotifier.changeBuyStatus(false);
@@ -430,7 +430,7 @@ class _ProductPageState extends State<ProductPage>
   _onAddSuccess() {
     flushBarService.showAddCartMessage(product);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 

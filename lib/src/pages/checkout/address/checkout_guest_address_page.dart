@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
@@ -8,6 +10,7 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -414,6 +417,11 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       };
       localStorageRepository.setItem('guest_address', address);
       orderDetails['orderAddress'] = jsonEncode(address);
+
+      AdjustEvent adjustEvent =
+          new AdjustEvent(AdjustSDKConfig.initiateCheckout);
+      Adjust.trackEvent(adjustEvent);
+
       Navigator.pushNamed(context, Routes.checkoutPayment);
     }
   }

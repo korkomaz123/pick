@@ -123,12 +123,29 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
     if (details?.gallery != null && details.gallery.isNotEmpty) {
       for (int i = 0; i < details.gallery.length; i++) {
-        list.add(CachedNetworkImage(
-          imageUrl: details.gallery[i],
-          width: designWidth.w,
-          height: 400.h,
-          fit: BoxFit.fitHeight,
-        ));
+        if (i == 0 && details.gallery[0] != details.imageUrl) {
+          list.add(CachedNetworkImage(
+            imageUrl: details.gallery[i],
+            width: designWidth.w,
+            height: 400.h,
+            fit: BoxFit.fitHeight,
+            progressIndicatorBuilder: (_, __, ___) {
+              return CachedNetworkImage(
+                imageUrl: details.imageUrl,
+                width: designWidth.w,
+                height: 400.h,
+                fit: BoxFit.fitHeight,
+              );
+            },
+          ));
+        } else {
+          list.add(CachedNetworkImage(
+            imageUrl: details.gallery[i],
+            width: designWidth.w,
+            height: 400.h,
+            fit: BoxFit.fitHeight,
+          ));
+        }
       }
     }
 
@@ -209,7 +226,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           if (Preload.language == 'en') ...[
             Positioned(
-              top: 320.h,
+              top: 300.h,
               right: 0,
               child: _buildDiscount(),
             ),
@@ -243,35 +260,38 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   }
 
   Widget _buildTitlebar() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        InkWell(
-          onTap: () => _onShareProduct(),
-          child: SvgPicture.asset(shareIcon),
-        ),
-        SizedBox(height: 10.h),
-        Consumer<WishlistChangeNotifier>(
-          builder: (_, model, __) {
-            return InkWell(
-              onTap: () => user != null
-                  ? _onFavorite(widget.model)
-                  : Navigator.pushNamed(context, Routes.signIn),
-              child: ScaleTransition(
-                scale: _favoriteScaleAnimation,
-                child: Container(
-                  width: 30.w,
-                  height: 30.h,
-                  child: SvgPicture.asset(
-                    isWishlist ? wishlistedIcon : favoriteIcon,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          InkWell(
+            onTap: () => _onShareProduct(),
+            child: SvgPicture.asset(shareIcon, width: 28.w, height: 28.h),
+          ),
+          SizedBox(height: 10.h),
+          Consumer<WishlistChangeNotifier>(
+            builder: (_, model, __) {
+              return InkWell(
+                onTap: () => user != null
+                    ? _onFavorite(widget.model)
+                    : Navigator.pushNamed(context, Routes.signIn),
+                child: ScaleTransition(
+                  scale: _favoriteScaleAnimation,
+                  child: Container(
+                    width: 28.w,
+                    height: 28.h,
+                    child: SvgPicture.asset(
+                      isWishlist ? wishlistedIcon : favoriteIcon,
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
-        SizedBox(height: 10.h),
-      ],
+              );
+            },
+          ),
+          SizedBox(height: 30.h),
+        ],
+      ),
     );
   }
 
@@ -363,7 +383,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       ),
                     ),
                   ],
-                  if (isStock) ...[
+                  if (isStock && availableCount == 1) ...[
                     Text(
                       'stock_count'.tr().replaceFirst('#', '$availableCount'),
                       style: mediumTextStyle.copyWith(

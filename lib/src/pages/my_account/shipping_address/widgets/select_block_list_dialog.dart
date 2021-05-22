@@ -32,7 +32,8 @@ class _SelectBlockListDialogState extends State<SelectBlockListDialog> {
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 6.h),
         child: Column(
-          children: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) {
+          children: List.generate(15, (index) {
+            int item = index + 1;
             bool isSelected = item.toString() == value;
             return Column(
               children: [

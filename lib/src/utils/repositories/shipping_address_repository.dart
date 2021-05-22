@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:markaa/src/data/mock/regions.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/apis/api.dart';
@@ -14,7 +15,7 @@ class ShippingAddressRepository {
   Future<dynamic> getAddresses(String token) async {
     String url = EndPoints.getMyShippingAddresses;
     final params = {'token': token};
-    print(params);
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -30,6 +31,7 @@ class ShippingAddressRepository {
       'token': token,
       'address': jsonEncode(newAddress.toJson()),
     };
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -39,6 +41,7 @@ class ShippingAddressRepository {
   Future<dynamic> deleteAddress(String token, String addressId) async {
     String url = EndPoints.deleteShippingAddress;
     final params = {'token': token, 'address_id': addressId};
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -54,6 +57,7 @@ class ShippingAddressRepository {
       'token': token,
       'address': jsonEncode(updateAddress.toJson()),
     };
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -63,17 +67,9 @@ class ShippingAddressRepository {
   Future<List<RegionEntity>> getRegions([
     String countryCode = 'KW',
   ]) async {
-    String url = EndPoints.getRegions;
-    final params = {'lang': Preload.language, 'country_code': countryCode};
-    final result = await Api.getMethod(url, data: params);
-    if (result['code'] == 'SUCCESS') {
-      List<dynamic> regionsList = result['regions'];
-      List<RegionEntity> regions = [];
-      regions =
-          regionsList.map((region) => RegionEntity.fromJson(region)).toList();
-      return regions;
-    } else {
-      return <RegionEntity>[];
-    }
+    List<Map<String, dynamic>> regionsList =
+        Preload.language == 'en' ? enRegionsList : arRegionsList;
+
+    return regionsList.map((region) => RegionEntity.fromJson(region)).toList();
   }
 }

@@ -53,7 +53,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       productDetails = null;
       _gallery.addAll(result['moreAbout']['gallery']);
       if (_gallery.length != result['moreAbout']['gallery'].length)
-        _gallery.removeAt(1);
+        _gallery.removeAt(0);
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }

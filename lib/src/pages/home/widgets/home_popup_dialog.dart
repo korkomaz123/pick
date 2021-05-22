@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:flutter_svg/flutter_svg.dart';

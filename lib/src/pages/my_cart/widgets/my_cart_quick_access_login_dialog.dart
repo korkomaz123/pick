@@ -232,7 +232,10 @@ class _MyCartQuickAccessLoginDialogState
                 radius: 30.sp,
                 onPressed: () async {
                   AdjustEvent adjustEvent =
-                      new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+                      new AdjustEvent(AdjustSDKConfig.initiateCheckout);
+                  Adjust.trackEvent(adjustEvent);
+
+                  adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
                   Adjust.trackEvent(adjustEvent);
 
                   await myCartChangeNotifier.getCartItems(

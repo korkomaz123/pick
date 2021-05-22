@@ -424,8 +424,10 @@ class _MyCartPageState extends State<MyCartPage>
       }
     }
 
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckout);
+    Adjust.trackEvent(adjustEvent);
+
+    adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
     Adjust.trackEvent(adjustEvent);
 
     Navigator.pushNamed(context, Routes.checkoutAddress);

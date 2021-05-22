@@ -377,7 +377,7 @@ class _ProductVCardState extends State<ProductVCard>
   void _onAddSuccess() {
     _flushBarService.showAddCartMessage(widget.product);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 

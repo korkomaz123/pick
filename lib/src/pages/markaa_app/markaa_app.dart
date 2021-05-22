@@ -149,7 +149,12 @@ class _MarkaaAppState extends State<MarkaaApp> {
                 if (snapshot.hasData) {
                   if (snapshot.data == ConnectivityResult.mobile ||
                       snapshot.data == ConnectivityResult.wifi) {
-                    return child;
+                    return FutureBuilder<void>(
+                      future: Preload.checkAppVersion(),
+                      builder: (context, snapshot) {
+                        return child;
+                      },
+                    );
                   } else {
                     return NoNetworkAccessPage();
                   }

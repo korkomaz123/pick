@@ -72,6 +72,14 @@ class FlushBarService {
       duration: Duration(seconds: 3),
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.white,
+      boxShadows: [
+        BoxShadow(
+          blurRadius: 3.h,
+          spreadRadius: 1.h,
+          offset: Offset(0, 1),
+          color: greyLightColor,
+        ),
+      ],
     )..show(context);
   }
 

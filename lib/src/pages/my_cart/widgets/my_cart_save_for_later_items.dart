@@ -216,7 +216,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   void _onAddSuccess(ProductModel item) {
     _flushBarService.showAddCartMessage(item);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 

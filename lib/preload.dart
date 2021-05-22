@@ -143,7 +143,7 @@ class Preload {
   }
 
   static appOpen() async {
-    await checkAppVersion();
+    // await checkAppVersion();
     bool isExist = await LocalStorageRepository().existItem('usage');
     if (isExist) {
       loadAssets();
@@ -152,7 +152,7 @@ class Preload {
 
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
-      AdjustSDKConfig.appToken,
+      AdjustSDKConfig.app,
       AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;

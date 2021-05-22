@@ -60,7 +60,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _saveToken(UserEntity loggedInUser) async {
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.registerToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.register);
     Adjust.trackEvent(adjustEvent);
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);

@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -352,6 +355,11 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         'save_in_address_book': '0',
         'prefix': addressChangeNotifier.defaultAddress.title,
       });
+
+      AdjustEvent adjustEvent =
+          new AdjustEvent(AdjustSDKConfig.continuePayment);
+      Adjust.trackEvent(adjustEvent);
+
       progressService.hideProgress();
       Navigator.pushNamed(
         context,

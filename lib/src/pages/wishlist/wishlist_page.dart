@@ -184,7 +184,7 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddSuccess(ProductModel product) {
     flushBarService.showAddCartMessage(product);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 

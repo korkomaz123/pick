@@ -8,8 +8,8 @@ class MarkaaReporter {
 }
 
 class MarkaaVersion {
-  static const int androidVersion = 156000;
-  static const int iOSVersion = 156000;
+  static const int androidVersion = 157000;
+  static const int iOSVersion = 157000;
 }
 
 class GoSellSdk {
@@ -46,12 +46,17 @@ class AlgoliaIndexes {
 }
 
 class AdjustSDKConfig {
-  static const String appToken = '6zku7sd3x7gg';
-  static const String addToCartToken = '4gustj';
-  static const String completePurchaseToken = 'mw1hfm';
-  static const String initiateCheckoutToken = 'a5budz';
-  static const String registerToken = 'rznvj2';
+  static const String app = '6zku7sd3x7gg';
+  static const String addToCart = '4gustj';
+  static const String completePurchase = 'mw1hfm';
+  static const String initiateCheckout = 'a5budz';
+  static const String register = 'rznvj2';
   static const String viewProduct = 'p3ode4';
+  static const String checkout = 'wwl5ro';
+  static const String continuePayment = 'bisvvh';
+  static const String placePayment = 'f97jdc';
+  static const String successPayment = 'e92lnv';
+  static const String failedPayment = 'kchj5x';
 }
 
 class MarkaaNotificationChannels {

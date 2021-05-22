@@ -1,4 +1,5 @@
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/mock/countries.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -106,44 +107,40 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                     .toString()
                     .toUpperCase()
                     .contains(searchController.text.toUpperCase());
-            return contain
-                ? Column(
-                    children: [
-                      InkWell(
-                        onTap: () => Navigator.pop(context, region),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 10.h,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                region.defaultName,
-                                style: mediumTextStyle.copyWith(
-                                  fontSize: 16.sp,
-                                  color:
-                                      isSelected ? primaryColor : greyDarkColor,
-                                ),
-                              ),
-                              isSelected
-                                  ? Icon(
-                                      Icons.check,
-                                      color: primaryColor,
-                                      size: 20.sp,
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
+            if (contain) {
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.pop(context, region),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 10.h,
                       ),
-                      index < countries.length - 1
-                          ? Divider(color: greyColor)
-                          : SizedBox.shrink(),
-                    ],
-                  )
-                : SizedBox.shrink();
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            region.defaultName,
+                            style: mediumTextStyle.copyWith(
+                              fontSize: 16.sp,
+                              color: isSelected ? primaryColor : greyDarkColor,
+                            ),
+                          ),
+                          if (isSelected) ...[
+                            Icon(Icons.check, color: primaryColor, size: 20.sp)
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (index < countries.length - 1) ...[
+                    Divider(color: greyColor)
+                  ],
+                ],
+              );
+            }
+            return Container();
           }).toList(),
         ),
       ),

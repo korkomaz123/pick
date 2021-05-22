@@ -10,7 +10,7 @@ import 'package:markaa/src/config/config.dart';
 class AdjustSetup {
   static void setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
-      AdjustSDKConfig.appToken,
+      AdjustSDKConfig.app,
       AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;

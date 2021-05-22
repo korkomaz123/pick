@@ -1,4 +1,4 @@
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/mock/countries.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -84,61 +84,62 @@ class _SelectCountryDialogState extends State<SelectCountryDialog> {
                     .toString()
                     .toUpperCase()
                     .contains(searchController.text.toUpperCase());
-            return contain
-                ? Column(
-                    children: [
-                      InkWell(
-                        onTap: () => Navigator.pop(context, country),
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 10.h,
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 30.w,
-                                height: 20.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      'lib/public/images/flags/${country['code'].toLowerCase()}.png',
-                                    ),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                              Expanded(
-                                child: Text(
-                                  country['name'] + ' (${country['code']})',
-                                  style: mediumTextStyle.copyWith(
-                                    fontSize: 14.sp,
-                                    color: isSelected
-                                        ? primarySwatchColor
-                                        : greyDarkColor,
-                                  ),
-                                ),
-                              ),
-                              isSelected
-                                  ? Icon(
-                                      Icons.check,
-                                      size: 18.sp,
-                                      color: primarySwatchColor,
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
+            if (contain) {
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.pop(context, country),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
                       ),
-                      index < countries.length - 1
-                          ? Divider(color: greyColor)
-                          : SizedBox.shrink(),
-                    ],
-                  )
-                : SizedBox.shrink();
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 30.w,
+                            height: 20.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'lib/public/images/flags/${country['code'].toLowerCase()}.png',
+                                ),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: Text(
+                              country['name'] + ' (${country['code']})',
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 14.sp,
+                                color: isSelected
+                                    ? primarySwatchColor
+                                    : greyDarkColor,
+                              ),
+                            ),
+                          ),
+                          if (isSelected) ...[
+                            Icon(
+                              Icons.check,
+                              size: 18.sp,
+                              color: primarySwatchColor,
+                            )
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (index < countries.length - 1) ...[
+                    Divider(color: greyColor)
+                  ],
+                ],
+              );
+            }
+            return Container();
           }).toList(),
         ),
       ),

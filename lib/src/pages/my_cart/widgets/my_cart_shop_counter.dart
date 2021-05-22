@@ -46,7 +46,11 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             padding: EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: greyColor),
+              border: Border.all(
+                color: widget.cartItem.itemCount == 1
+                    ? Colors.grey.shade400
+                    : greyColor,
+              ),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(lang == 'ar' ? 10 : 0),
                 bottomRight: Radius.circular(lang == 'ar' ? 10 : 0),
@@ -56,8 +60,11 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             ),
             alignment: Alignment.center,
             child: Icon(
-              widget.cartItem.itemCount == 1 ? Icons.block : Icons.remove,
+              Icons.remove,
               size: 18.sp,
+              color: widget.cartItem.itemCount == 1
+                  ? Colors.grey.shade400
+                  : primaryColor,
             ),
           ),
         ),
@@ -91,7 +98,12 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: greyColor),
+              border: Border.all(
+                color:
+                    widget.cartItem.itemCount == widget.cartItem.availableCount
+                        ? Colors.grey.shade400
+                        : greyColor,
+              ),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(lang == 'en' ? 10 : 0),
                 bottomRight: Radius.circular(lang == 'en' ? 10 : 0),
@@ -100,10 +112,11 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
               ),
             ),
             child: Icon(
-              widget.cartItem.itemCount == widget.cartItem.availableCount
-                  ? Icons.block
-                  : Icons.add,
+              Icons.add,
               size: 18.sp,
+              color: widget.cartItem.itemCount == widget.cartItem.availableCount
+                  ? Colors.grey.shade400
+                  : primaryColor,
             ),
           ),
         ),

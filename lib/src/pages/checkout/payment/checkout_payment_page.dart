@@ -172,7 +172,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   return _buildPlacePaymentButton();
                 },
               ),
-              _buildBackToReviewButton(),
             ],
           ),
         ),
@@ -398,22 +397,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     );
   }
 
-  Widget _buildBackToReviewButton() {
-    return Container(
-      width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 60.w),
-      child: MarkaaTextButton(
-        title: 'checkout_back_address_button_title'.tr(),
-        titleSize: 12.sp,
-        titleColor: greyColor,
-        buttonColor: Colors.white,
-        borderColor: Colors.transparent,
-        onPressed: () => Navigator.pop(context),
-        radius: 30,
-      ),
-    );
-  }
-
   void _onCardAuthorizedSuccess(String token) {
     cardToken = token;
     setState(() {});
@@ -430,6 +413,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       orderDetails['tap_token'] = cardToken;
     }
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+    Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
     await orderChangeNotifier.submitOrder(orderDetails, lang,
@@ -456,11 +442,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       Navigator.pushNamed(
         context,
         Routes.checkoutPaymentCard,
-        arguments: {
-          'url': payUrl,
-          'order': order,
-          'reorder': widget.reorder,
-        },
+        arguments: {'url': payUrl, 'order': order, 'reorder': widget.reorder},
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
@@ -490,8 +472,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent =
-        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
   }

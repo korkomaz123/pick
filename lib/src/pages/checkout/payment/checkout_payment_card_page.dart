@@ -156,13 +156,14 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
           if (user?.token != null) {
             orderChangeNotifier.removeOrder(order);
           }
+
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.paymentFailed,
             (route) => route.settings.name == Routes.myCart,
           );
         } else if (params['result'] == 'success') {
-          _onSuccessPayment();
+          await _onSuccessPayment();
           if (user?.token != null) {
             order.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order);
@@ -193,8 +194,10 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent =
-        AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
+    Adjust.trackEvent(adjustEvent);
+
+    adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
   }

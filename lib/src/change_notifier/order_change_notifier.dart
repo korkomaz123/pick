@@ -113,7 +113,7 @@ class OrderChangeNotifier extends ChangeNotifier {
           await orderRepository.cancelOrderById(orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
-        if (ordersMap.containsKey(order.orderId)) {
+        if (user?.token != null && ordersMap.containsKey(order.orderId)) {
           ordersMap.remove(order.orderId);
         }
         notifyListeners();

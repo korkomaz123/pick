@@ -365,7 +365,7 @@ class _ProductHCardState extends State<ProductHCard>
   _onAddSuccess() {
     flushBarService.showAddCartMessage(widget.product);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 

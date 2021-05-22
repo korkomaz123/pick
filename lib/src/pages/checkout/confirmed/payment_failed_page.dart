@@ -1,6 +1,9 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -26,9 +29,13 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
     super.initState();
 
     _cartProvider = context.read<MyCartChangeNotifier>();
+
     Future.delayed(Duration.zero, () async {
       await _cartProvider.activateCart();
     });
+
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.failedPayment);
+    Adjust.trackEvent(adjustEvent);
   }
 
   @override
