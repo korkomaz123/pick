@@ -55,7 +55,8 @@ class HomeAdvertise extends StatelessWidget {
                     arguments: arguments,
                   );
                 } else if (homeChangeNotifier?.ads?.productId != null) {
-                  final product = await productRepository.getProduct(homeChangeNotifier.ads.productId);
+                  final product = await productRepository
+                      .getProduct(homeChangeNotifier.ads.productId);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.product,
@@ -64,7 +65,8 @@ class HomeAdvertise extends StatelessWidget {
                   );
                 }
               },
-              child: CachedNetworkImage(imageUrl: homeChangeNotifier.ads.bannerImage),
+              child: CachedNetworkImage(
+                  imageUrl: homeChangeNotifier.ads.bannerImage),
             ),
             Container(
               height: 175.w,

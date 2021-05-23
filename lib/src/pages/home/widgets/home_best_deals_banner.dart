@@ -90,16 +90,17 @@ class HomeBestDealsBanner extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: homeChangeNotifier.bestDealsItems.length,
-                  itemBuilder: (context, index) {
-                    return ProductCard(
-                      cardWidth: 120.w,
-                      cardHeight: 175.w,
-                      product: homeChangeNotifier.bestDealsItems[index],
-                      isWishlist: true,
-                    );
-                  }),
+                scrollDirection: Axis.horizontal,
+                itemCount: homeChangeNotifier.bestDealsItems.length,
+                itemBuilder: (context, index) {
+                  return ProductCard(
+                    cardWidth: 120.w,
+                    cardHeight: 175.w,
+                    product: homeChangeNotifier.bestDealsItems[index],
+                    isWishlist: true,
+                  );
+                },
+              ),
             ),
           ],
         ),
