@@ -15,14 +15,14 @@ import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/pages/splash/update_available_dialog.dart';
+// import 'package:markaa/src/pages/splash/update_available_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
 import 'src/data/models/user_entity.dart';
@@ -73,20 +73,20 @@ class Preload {
         arguments: versionEntity.storeLink,
       );
     } else if (versionEntity.canUpdate) {
-      final result = await showDialog(
-        context: navigatorKey.currentContext,
-        builder: (context) {
-          return UpdateAvailableDialog(
-            title: versionEntity.dialogTitle,
-            content: versionEntity.dialogContent,
-          );
-        },
-      );
-      if (result != null) {
-        if (await canLaunch(versionEntity.storeLink)) {
-          await launch(versionEntity.storeLink);
-        }
-      }
+      // final result = await showDialog(
+      //   context: navigatorKey.currentContext,
+      //   builder: (context) {
+      //     return UpdateAvailableDialog(
+      //       title: versionEntity.dialogTitle,
+      //       content: versionEntity.dialogContent,
+      //     );
+      //   },
+      // );
+      // if (result != null) {
+      //   if (await canLaunch(versionEntity.storeLink)) {
+      //     await launch(versionEntity.storeLink);
+      //   }
+      // }
     }
   }
 
@@ -152,7 +152,7 @@ class Preload {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      AdjustEnvironment.sandbox,
+      AdjustEnvironment.production,
     );
     config.logLevel = AdjustLogLevel.verbose;
 
