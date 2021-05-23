@@ -163,7 +163,7 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             (route) => route.settings.name == Routes.myCart,
           );
         } else if (params['result'] == 'success') {
-          await _onSuccessPayment();
+          _onSuccessPayment();
           if (user?.token != null) {
             order.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order);

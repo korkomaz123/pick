@@ -77,10 +77,7 @@ class HomeBestDeals extends StatelessWidget {
   Widget _buildProductsList() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(
-        top: 10.h,
-        bottom: 10.h,
-      ),
+      padding: EdgeInsets.only(top: 10.h, bottom: 5.h),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: homeChangeNotifier.bestDealsProducts.length,

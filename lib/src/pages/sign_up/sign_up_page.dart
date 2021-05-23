@@ -438,7 +438,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _onPrivacyPolicy() async {
-    String url = 'https://cigaon.com/privacy-policy';
+    String url = 'https://markaa.com/privacy-policy';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

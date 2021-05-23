@@ -218,6 +218,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                   ),
                   SizedBox(height: 10.h),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MarkaaCustomInput(
@@ -310,7 +311,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
     );
     if (result != null) {
       final address = result as AddressEntity;
-      streetController.text = address.street;
+      print(address.street);
+      streetController.text = address.street ?? '';
     }
   }
 

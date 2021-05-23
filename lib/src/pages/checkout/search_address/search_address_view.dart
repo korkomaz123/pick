@@ -270,9 +270,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     double lng = newPosition.target.longitude;
     final response = await Api.getMethod(
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
-    print(response);
     List<dynamic> addressList = response['results'];
-    formattedAddresses = addressList.map((address) {
+    for (var address in addressList) {
       Map<String, dynamic> formattedJson = {};
       List<dynamic> componentAddresses = address['address_components'];
       for (int i = 0; i < componentAddresses.length; i++) {
@@ -302,8 +301,12 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         }
       }
       formattedJson['formatted_address'] = address['formatted_address'];
-      return FormattedAddressEntity.fromJson(formattedJson);
-    }).toList();
+      FormattedAddressEntity addressEntity =
+          FormattedAddressEntity.fromJson(formattedJson);
+      if (addressEntity.street != null) {
+        formattedAddresses.add(addressEntity);
+      }
+    }
     searchNode.unfocus();
     setState(() {});
   }

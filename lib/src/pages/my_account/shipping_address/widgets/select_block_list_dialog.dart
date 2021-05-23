@@ -67,7 +67,7 @@ class _SelectBlockListDialogState extends State<SelectBlockListDialog> {
                     ),
                   ),
                 ),
-                if (item < 10) ...[Divider(color: greyColor)],
+                if (item < 15) ...[Divider(color: greyColor)],
               ],
             );
           }).toList(),

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -49,9 +50,7 @@ class _ProductImageState extends State<ProductImage> {
                     imageProvider:
                         CachedNetworkImageProvider(images[activeIndex]),
                     loadingBuilder: (context, downloadProgress) => Center(
-                      child: CircularProgressIndicator(
-                          value: downloadProgress.cumulativeBytesLoaded /
-                              downloadProgress.expectedTotalBytes),
+                      child: CupertinoActivityIndicator(),
                     ),
                   );
                 },

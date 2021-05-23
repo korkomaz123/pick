@@ -156,8 +156,8 @@ class _ProductVCardState extends State<ProductVCard>
         children: [
           CachedNetworkImage(
             imageUrl: widget.product.imageUrl,
-            width: widget.cardHeight * 0.65,
-            height: widget.cardHeight * 0.6,
+            width: widget.cardWidth,
+            height: widget.cardHeight * 0.63,
             fit: BoxFit.fitHeight,
             errorWidget: (context, url, error) {
               return Center(child: Icon(Icons.image, size: 20.sp));
@@ -166,6 +166,7 @@ class _ProductVCardState extends State<ProductVCard>
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 InkWell(
                   onTap: () {
@@ -192,32 +193,44 @@ class _ProductVCardState extends State<ProductVCard>
                     ),
                   ),
                 ),
-                if (widget.isLine || widget.isMinor) ...[
-                  Expanded(
-                    child: Text(
-                      widget.product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: widget.isMinor ? 12.sp : 16.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  )
-                ] else ...[
-                  Text(
-                    widget.product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: mediumTextStyle.copyWith(
-                      color: greyDarkColor,
-                      fontSize: widget.isMinor ? 12.sp : 16.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )
+                Text(
+                  widget.product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: mediumTextStyle.copyWith(
+                    color: greyDarkColor,
+                    fontSize: widget.isMinor ? 12.sp : 16.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                // if (widget.isLine || widget.isMinor) ...[
+                //   Expanded(
+                //     child: Text(
+                //       widget.product.name,
+                //       maxLines: 2,
+                //       overflow: TextOverflow.ellipsis,
+                //       style: mediumTextStyle.copyWith(
+                //         color: greyDarkColor,
+                //         fontSize: widget.isMinor ? 12.sp : 16.sp,
+                //         fontWeight: FontWeight.w700,
+                //       ),
+                //     ),
+                //   )
+                // ] else ...[
+                //   Text(
+                //     widget.product.name,
+                //     maxLines: 2,
+                //     overflow: TextOverflow.ellipsis,
+                //     style: mediumTextStyle.copyWith(
+                //       color: greyDarkColor,
+                //       fontSize: widget.isMinor ? 12.sp : 16.sp,
+                //       fontWeight: FontWeight.w700,
+                //     ),
+                //   )
+                // ],
+                if (widget.isLine) ...[
+                  Divider(color: greyColor, thickness: 0.5.h, height: 10.h)
                 ],
-                if (widget.isLine) ...[Divider(color: greyColor)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,

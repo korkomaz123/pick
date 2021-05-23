@@ -247,6 +247,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                   ),
                   SizedBox(height: 10.w),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MarkaaCustomInput(
@@ -336,8 +337,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
     );
     if (result != null) {
       final address = result as AddressEntity;
-      streetController.text = address?.street;
-      setState(() {});
+      streetController.text = address?.street ?? '';
     }
   }
 

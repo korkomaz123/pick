@@ -65,6 +65,6 @@ class MarkaaNotificationChannels {
 }
 
 class PaymentStatusUrls {
-  static const String success = 'https://cigaon.com/checkout/onepage/success/';
-  static const String failure = 'https://cigaon.com/checkout/cart/';
+  static const String success = 'https://markaa.com/checkout/onepage/success/';
+  static const String failure = 'https://markaa.com/checkout/cart/';
 }
