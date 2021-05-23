@@ -3,9 +3,7 @@ import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
@@ -16,17 +14,15 @@ import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
@@ -42,20 +38,26 @@ class _MyCartPageState extends State<MyCartPage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
+
   bool isDeleting = false;
+  bool showSign = false;
+  bool isCheckout = false;
+
   String cartId = '';
   double totalPrice = 0;
-  PageStyle pageStyle;
+
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
-  LocalStorageRepository localRepo;
-  MyCartRepository cartRepo;
+
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  bool showSign = false;
-  bool isCheckout = false;
+
+  _loadData() async {
+    if (myCartChangeNotifier.cartItemCount == 0)
+      await myCartChangeNotifier.getCartItems(lang);
+  }
 
   @override
   void initState() {
@@ -66,11 +68,10 @@ class _MyCartPageState extends State<MyCartPage>
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    localRepo = context.read<LocalStorageRepository>();
-    cartRepo = context.read<MyCartRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    _loadData();
   }
 
   @override
@@ -80,98 +81,70 @@ class _MyCartPageState extends State<MyCartPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
-        scaffoldKey: scaffoldKey,
-        isCartPage: true,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 25.sp,
+            color: greyColor,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Consumer<MyCartChangeNotifier>(
-                  builder: (_, model, ___) {
-                    if (model.cartItemCount > 0) {
-                      return Column(
-                        children: [
-                          _buildTitleBar(),
-                          _buildTotalItems(),
-                          MyCartCouponCode(
-                            pageStyle: pageStyle,
-                            cartId: cartId,
-                            onSignIn: () => _onSignIn(false),
-                          ),
-                          _buildTotalPrice(),
-                          _buildCheckoutButton(),
-                        ],
-                      );
-                    } else {
-                      return Consumer<WishlistChangeNotifier>(
-                        builder: (_, model, ___) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: pageStyle.unitHeight *
-                                  (model.wishlistItemsCount > 0 ? 100 : 250),
-                            ),
-                            child: Center(
-                              child: NoAvailableData(
-                                pageStyle: pageStyle,
-                                message: 'no_cart_items_available',
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-                if (user?.token != null) ...[
-                  MyCartSaveForLaterItems(
-                    pageStyle: pageStyle,
-                    progressService: progressService,
-                    flushBarService: flushBarService,
-                    myCartChangeNotifier: myCartChangeNotifier,
-                    wishlistChangeNotifier: wishlistChangeNotifier,
-                  )
-                ]
-              ],
-            ),
-          ),
-          Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              if (showSign) {
-                return AnimationLimiter(
-                  child: AnimationConfiguration.staggeredList(
-                    position: 1,
-                    duration: Duration(milliseconds: 300),
-                    child: SlideAnimation(
-                      verticalOffset: -50.0,
-                      child: FadeInAnimation(
-                        child: MyCartQuickAccessLoginDialog(
-                          cartId: cartId,
-                          onClose: _onClose,
-                          isCheckout: isCheckout,
-                        ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Consumer<MyCartChangeNotifier>(
+              builder: (_, model, ___) {
+                if (model.cartItemCount > 0) {
+                  return Column(
+                    children: [
+                      _buildTitleBar(),
+                      _buildTotalItems(),
+                      MyCartCouponCode(
+                        cartId: cartId,
+                        onSignIn: () => _onSignIn(false),
                       ),
-                    ),
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
-        ],
+                      _buildTotalPrice(),
+                      _buildCheckoutButton(),
+                    ],
+                  );
+                } else {
+                  return Consumer<WishlistChangeNotifier>(
+                    builder: (_, model, ___) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical:
+                              model.wishlistItemsCount > 0 ? 100.h : 250.h,
+                        ),
+                        child: Center(
+                          child: NoAvailableData(
+                            message: 'no_cart_items_available',
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+            if (user?.token != null) ...[
+              MyCartSaveForLaterItems(
+                progressService: progressService,
+                flushBarService: flushBarService,
+                myCartChangeNotifier: myCartChangeNotifier,
+                wishlistChangeNotifier: wishlistChangeNotifier,
+              )
+            ]
+          ],
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.home,
       ),
     );
@@ -179,10 +152,10 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildTitleBar() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +164,7 @@ class _MyCartPageState extends State<MyCartPage>
             'my_cart_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: darkColor,
-              fontSize: pageStyle.unitFontSize * 23,
+              fontSize: 23.sp,
             ),
           ),
           Row(
@@ -200,7 +173,7 @@ class _MyCartPageState extends State<MyCartPage>
                 'total'.tr() + ' ',
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                 ),
               ),
               Text(
@@ -209,7 +182,7 @@ class _MyCartPageState extends State<MyCartPage>
                     .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
@@ -222,10 +195,10 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildTotalItems() {
     final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: AnimationLimiter(
         child: Column(
@@ -241,7 +214,6 @@ class _MyCartPageState extends State<MyCartPage>
                     child: Column(
                       children: [
                         MyCartItem(
-                          pageStyle: pageStyle,
                           cartItem:
                               myCartChangeNotifier.cartItemsMap[keys[index]],
                           discount: myCartChangeNotifier.discount,
@@ -270,20 +242,20 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildTotalPrice() {
     double subTotal = myCartChangeNotifier.cartTotalPrice;
-    print(myCartChangeNotifier.type);
     double discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : subTotal * myCartChangeNotifier.discount / 100;
+        : myCartChangeNotifier.cartTotalPrice -
+            myCartChangeNotifier.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 6,
+        horizontal: 10.w,
+        vertical: 6.h,
       ),
       decoration: BoxDecoration(
         color: greyLightColor,
@@ -299,7 +271,7 @@ class _MyCartPageState extends State<MyCartPage>
                 'products'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               ),
               Text(
@@ -308,13 +280,13 @@ class _MyCartPageState extends State<MyCartPage>
                     .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 13,
+                  fontSize: 13.sp,
                 ),
               )
             ],
           ),
           if (discount > 0) ...[
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -322,19 +294,19 @@ class _MyCartPageState extends State<MyCartPage>
                   'checkout_subtotal_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
-                    fontSize: pageStyle.unitFontSize * 17,
+                    fontSize: 17.sp,
                   ),
                 ),
                 Text(
                   '${subTotal.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 18,
+                    fontSize: 18.sp,
                   ),
                 )
               ],
             ),
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -342,7 +314,7 @@ class _MyCartPageState extends State<MyCartPage>
                   'discount'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 17,
+                    fontSize: 17.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -350,13 +322,13 @@ class _MyCartPageState extends State<MyCartPage>
                   '${discount.toStringAsFixed(3)} ' + 'currency'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 18,
+                    fontSize: 18.sp,
                   ),
                 )
               ],
             )
           ],
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -364,14 +336,14 @@ class _MyCartPageState extends State<MyCartPage>
                 'total'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 17,
+                  fontSize: 17.sp,
                 ),
               ),
               Text(
                 '${totalPrice.toStringAsFixed(3)} ' + 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 18,
+                  fontSize: 18.sp,
                 ),
               )
             ],
@@ -383,15 +355,15 @@ class _MyCartPageState extends State<MyCartPage>
 
   Widget _buildCheckoutButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 80,
+      width: 375.w,
+      height: 80.h,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       child: MarkaaTextButton(
         title: 'checkout_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 23,
+        titleSize: 23.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: primarySwatchColor,
@@ -406,7 +378,6 @@ class _MyCartPageState extends State<MyCartPage>
       context: context,
       builder: (context) {
         return MyCartRemoveDialog(
-          pageStyle: pageStyle,
           title: 'my_cart_remove_item_dialog_title'.tr(),
           text: 'my_cart_remove_item_dialog_text'.tr(),
         );
@@ -424,23 +395,20 @@ class _MyCartPageState extends State<MyCartPage>
     wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
   }
 
-  void _onSignIn(bool checkout) {
+  void _onSignIn(bool checkout) async {
     isCheckout = checkout;
-    showSign = true;
-    markaaAppChangeNotifier.rebuild();
-  }
-
-  void _onClose() {
-    showSign = false;
-    markaaAppChangeNotifier.rebuild();
+    await showDialog(
+      context: context,
+      builder: (_) => MyCartQuickAccessLoginDialog(
+        cartId: cartId,
+        isCheckout: isCheckout,
+      ),
+    );
   }
 
   void _onCheckout() async {
     await myCartChangeNotifier.getCartItems(
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.initiateCheckoutToken);
-    Adjust.trackEvent(adjustEvent);
   }
 
   void _onReloadItemSuccess() {
@@ -449,18 +417,24 @@ class _MyCartPageState extends State<MyCartPage>
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorMessage(
-          pageStyle,
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
         return;
       }
     }
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckout);
+    Adjust.trackEvent(adjustEvent);
+
+    adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
+    Adjust.trackEvent(adjustEvent);
+
     Navigator.pushNamed(context, Routes.checkoutAddress);
   }
 
   void _onRemoveFailure(String message) {
-    flushBarService.showErrorMessage(pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 
   void _onProcess() {
@@ -469,6 +443,6 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, message);
+    flushBarService.showErrorMessage(message);
   }
 }

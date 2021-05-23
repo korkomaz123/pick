@@ -66,14 +66,8 @@ class ProductEntity {
             : json['price'] != null
                 ? double.parse(json['price']).toStringAsFixed(3)
                 : null,
-        beforePrice = json['price'] != null
-            ? double.parse(json['price']).toStringAsFixed(3)
-            : null,
-        discount = _getDiscount(
-            json['special_price'] != null
-                ? json['special_price']
-                : json['price'],
-            json['price']),
+        beforePrice = json['price'] != null ? double.parse(json['price']).toStringAsFixed(3) : null,
+        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -101,11 +95,33 @@ class ProductEntity {
     return variants;
   }
 
+  ProductEntity.fromProduct(ProductModel product)
+      : entityId = product.entityId,
+        typeId = product.typeId,
+        sku = product.sku ?? "",
+        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
+        metaKeyword = product.metaKeyword ?? "",
+        description = product.description ?? '',
+        shortDescription = product.shortDescription ?? '',
+        name = product.name ?? "",
+        metaDescription = product.metaDescription ?? "",
+        price = product.price ?? "",
+        beforePrice = product.beforePrice ?? "",
+        discount = product.discount ?? "",
+        imageUrl = product.imageUrl ?? "",
+        hasOptions = product.hasOptions ?? "",
+        addCartUrl = product.addCartUrl ?? "",
+        productId = product.productId ?? "",
+        gallery = [product.imageUrl],
+        stockQty = product.stockQty ?? 0,
+        brandEntity = product.brandEntity,
+        reviews = null,
+        configurable = null,
+        variants = _getVariants(null);
+
   static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice =
-        afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice =
-        beforePriceString != null ? double.parse(beforePriceString) : 0;
+    double afterPrice = afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice = beforePriceString != null ? double.parse(beforePriceString) : 0;
     if (beforePrice == 0) {
       return 0;
     }

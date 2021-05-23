@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
@@ -28,6 +28,7 @@ import 'widgets/contact_us_item.dart';
 // import 'widgets/get_notification_messages_item.dart';
 import 'widgets/language_setting_item.dart';
 import 'widgets/logout_item.dart';
+// import 'widgets/my_wallet_item.dart';
 import 'widgets/order_history_item.dart';
 import 'widgets/rate_app_item.dart';
 import 'widgets/terms_item.dart';
@@ -42,7 +43,6 @@ class _AccountPageState extends State<AccountPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool getNotification = true;
 
-  PageStyle pageStyle;
   SnackBarService snackBarService;
   ProgressService progressService;
 
@@ -72,12 +72,10 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(),
       drawerEnableOpenDragGesture: false,
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
@@ -109,7 +107,6 @@ class _AccountPageState extends State<AccountPage> {
         },
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -117,36 +114,52 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildAccountPicture() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
+        horizontal: 20.w,
+        vertical: 20.h,
       ),
       child: Row(
         children: [
           Container(
-            width: pageStyle.unitWidth * 107,
-            height: pageStyle.unitWidth * 107,
+            width: 107.w,
+            height: 107.w,
             child: Stack(
               children: [
                 if (user != null) ...[
-                  Container(
-                    width: pageStyle.unitWidth * 107,
-                    height: pageStyle.unitWidth * 107,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: user.profileUrl.isEmpty
-                            ? AssetImage('lib/public/images/profile.png')
-                            : NetworkImage(user.profileUrl),
-                        fit: BoxFit.cover,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                  )
+                  CachedNetworkImage(
+                    imageUrl: user?.profileUrl ?? '',
+                    imageBuilder: (_, _imageProvider) {
+                      return Container(
+                        width: 107.w,
+                        height: 107.w,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    },
+                    errorWidget: (_, __, ___) {
+                      return Container(
+                        width: 107.w,
+                        height: 107.w,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('lib/public/images/profile.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    },
+                  ),
                 ] else ...[
                   Container(
-                    width: pageStyle.unitWidth * 107,
-                    height: pageStyle.unitWidth * 107,
+                    width: 107.w,
+                    height: 107.w,
                     decoration: BoxDecoration(
                       color: primaryColor,
                       shape: BoxShape.circle,
@@ -154,7 +167,7 @@ class _AccountPageState extends State<AccountPage> {
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       'lib/public/icons/icon2.svg',
-                      width: pageStyle.unitWidth * 67,
+                      width: 67.w,
                     ),
                   )
                 ],
@@ -165,8 +178,8 @@ class _AccountPageState extends State<AccountPage> {
                       onTap: () => _onChangeImage(),
                       child: Container(
                         margin: EdgeInsets.only(
-                          right: lang == 'en' ? pageStyle.unitHeight * 10 : 0,
-                          left: lang == 'ar' ? pageStyle.unitHeight * 10 : 0,
+                          right: lang == 'en' ? 10.h : 0,
+                          left: lang == 'ar' ? 10.h : 0,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -183,7 +196,7 @@ class _AccountPageState extends State<AccountPage> {
           if (user != null) ...[
             Expanded(
               child: Container(
-                padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
+                padding: EdgeInsets.only(left: 30.w),
                 child: BlocBuilder<ProfileBloc, ProfileState>(
                   builder: (context, state) {
                     return Column(
@@ -193,15 +206,15 @@ class _AccountPageState extends State<AccountPage> {
                           user.firstName,
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
-                            fontSize: pageStyle.unitFontSize * 23,
+                            fontSize: 23.sp,
                           ),
                         ),
-                        SizedBox(height: pageStyle.unitHeight * 6),
+                        SizedBox(height: 6.h),
                         Text(
                           user.lastName,
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
-                            fontSize: pageStyle.unitFontSize * 23,
+                            fontSize: 23.sp,
                           ),
                         ),
                       ],
@@ -213,7 +226,7 @@ class _AccountPageState extends State<AccountPage> {
           ] else ...[
             Expanded(
               child: Container(
-                padding: EdgeInsets.only(left: pageStyle.unitWidth * 30),
+                padding: EdgeInsets.only(left: 30.w),
                 child: BlocBuilder<ProfileBloc, ProfileState>(
                   builder: (context, state) {
                     return Column(
@@ -223,28 +236,28 @@ class _AccountPageState extends State<AccountPage> {
                           'welcome'.tr(),
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
-                            fontSize: pageStyle.unitFontSize * 26,
+                            fontSize: 26.sp,
                           ),
                         ),
-                        SizedBox(height: pageStyle.unitHeight * 6),
+                        SizedBox(height: 6.h),
                         InkWell(
                           onTap: () => _login(),
                           child: Container(
                             padding: EdgeInsets.only(
-                              bottom: pageStyle.unitHeight * 10,
+                              bottom: 10.h,
                             ),
                             width: double.infinity,
                             child: Row(
                               children: [
                                 SvgPicture.asset(
                                   logoutIcon,
-                                  height: pageStyle.unitHeight * 15,
+                                  height: 15.h,
                                 ),
-                                SizedBox(width: pageStyle.unitWidth * 4),
+                                SizedBox(width: 4.w),
                                 Text(
                                   'login'.tr(),
                                   style: mediumTextStyle.copyWith(
-                                    fontSize: pageStyle.unitFontSize * 16,
+                                    fontSize: 16.sp,
                                   ),
                                 ),
                               ],
@@ -265,28 +278,28 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildAccountProfile() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 20.w,
+        vertical: 10.h,
       ),
       child: Column(
         children: [
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+            padding: EdgeInsets.symmetric(vertical: 5.h),
             child: Row(
               children: [
                 Container(
-                  width: pageStyle.unitWidth * 22,
-                  height: pageStyle.unitHeight * 22,
+                  width: 22.w,
+                  height: 22.h,
                   child: SvgPicture.asset(emailIcon),
                 ),
-                SizedBox(width: pageStyle.unitWidth * 10),
+                SizedBox(width: 10.w),
                 Text(
                   user.email,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ],
@@ -296,29 +309,29 @@ class _AccountPageState extends State<AccountPage> {
             onTap: () => Navigator.pushNamed(context, Routes.updateProfile),
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              padding: EdgeInsets.symmetric(vertical: 5.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: pageStyle.unitWidth * 22,
-                        height: pageStyle.unitHeight * 22,
+                        width: 22.w,
+                        height: 22.h,
                         child: SvgPicture.asset(profileIcon),
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 10),
+                      SizedBox(width: 10.w),
                       Text(
                         'account_update_profile_title'.tr(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 16,
+                          fontSize: 16.sp,
                         ),
                       ),
                     ],
                   ),
                   Icon(
                     Icons.arrow_forward_ios,
-                    size: pageStyle.unitFontSize * 20,
+                    size: 20.sp,
                     color: greyDarkColor,
                   ),
                 ],
@@ -329,29 +342,29 @@ class _AccountPageState extends State<AccountPage> {
             onTap: () => Navigator.pushNamed(context, Routes.shippingAddress),
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+              padding: EdgeInsets.symmetric(vertical: 5.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: pageStyle.unitWidth * 22,
-                        height: pageStyle.unitHeight * 22,
+                        width: 22.w,
+                        height: 22.h,
                         child: SvgPicture.asset(shippingAddressIcon),
                       ),
-                      SizedBox(width: pageStyle.unitWidth * 10),
+                      SizedBox(width: 10.w),
                       Text(
                         'shipping_address_title'.tr(),
                         style: mediumTextStyle.copyWith(
-                          fontSize: pageStyle.unitFontSize * 16,
+                          fontSize: 16.sp,
                         ),
                       ),
                     ],
                   ),
                   Icon(
                     Icons.arrow_forward_ios,
-                    size: pageStyle.unitFontSize * 20,
+                    size: 20.sp,
                     color: greyDarkColor,
                   ),
                 ],
@@ -365,10 +378,10 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildAccountGeneralSetting() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 20.w,
+        vertical: 10.h,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,53 +393,52 @@ class _AccountPageState extends State<AccountPage> {
                 Text(
                   'account_general_setting_title'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 18,
+                    fontSize: 18.sp,
                   ),
                 ),
-                SizedBox(height: pageStyle.unitHeight * 10),
+                SizedBox(height: 10.h),
                 WishlistItem(
-                  pageStyle: pageStyle,
                   snackBarService: snackBarService,
                 ),
                 ChangeNotificationSettingItem(
-                  pageStyle: pageStyle,
                   snackBarService: snackBarService,
                 ),
-                // GetNotificationMessagesItem(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 5),
+                // GetNotificationMessagesItem(),
+                SizedBox(height: 5.h),
               ],
             )
           ],
-          LanguageSettingItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
-          RateAppItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
+          LanguageSettingItem(),
+          SizedBox(height: 5.h),
+          RateAppItem(),
+          SizedBox(height: 5.h),
           if (user != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                OrderHistoryItem(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 5),
+                // MyWalletItem(),
+                // SizedBox(height: 5.h),
+                OrderHistoryItem(),
+                SizedBox(height: 5.h),
               ],
             )
           ],
-          SizedBox(height: pageStyle.unitHeight * 5),
+          SizedBox(height: 5.h),
           if (user != null) ...[
             Column(
               children: [
-                ChangePasswordItem(pageStyle: pageStyle),
-                SizedBox(height: pageStyle.unitHeight * 5),
+                ChangePasswordItem(),
+                SizedBox(height: 5.h),
               ],
             )
           ],
-          AboutUsItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
-          TermsItem(pageStyle: pageStyle),
-          SizedBox(height: pageStyle.unitHeight * 5),
-          ContactUsItem(pageStyle: pageStyle),
+          AboutUsItem(),
+          SizedBox(height: 5.h),
+          TermsItem(),
+          SizedBox(height: 5.h),
+          ContactUsItem(),
           if (user != null) ...[
             LogoutItem(
-              pageStyle: pageStyle,
               snackBarService: snackBarService,
               progressService: progressService,
             )

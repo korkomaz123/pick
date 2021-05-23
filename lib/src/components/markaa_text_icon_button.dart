@@ -1,6 +1,6 @@
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaTextIconButton extends StatelessWidget {
   final String title;
@@ -13,7 +13,6 @@ class MarkaaTextIconButton extends StatelessWidget {
   final double radius;
   final double elevation;
   final double borderWidth;
-  final PageStyle pageStyle;
   final bool leading;
 
   MarkaaTextIconButton({
@@ -28,7 +27,6 @@ class MarkaaTextIconButton extends StatelessWidget {
     this.elevation = 0,
     this.radius = 10,
     this.borderWidth = 1,
-    this.pageStyle,
   });
 
   @override
@@ -46,7 +44,7 @@ class MarkaaTextIconButton extends StatelessWidget {
         children: [
           if (leading) ...[
             icon,
-            SizedBox(width: pageStyle.unitWidth * 6),
+            SizedBox(width: 6.w),
           ],
           Text(
             title,
@@ -57,7 +55,7 @@ class MarkaaTextIconButton extends StatelessWidget {
             ),
           ),
           if (!leading) ...[
-            SizedBox(width: pageStyle.unitWidth * 6),
+            SizedBox(width: 6.w),
             icon,
           ],
         ],

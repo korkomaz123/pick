@@ -5,24 +5,17 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderHistoryItem extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  OrderHistoryItem({this.pageStyle});
-
   @override
   _OrderHistoryItemState createState() => _OrderHistoryItemState();
 }
 
 class _OrderHistoryItemState extends State<OrderHistoryItem> {
-  PageStyle pageStyle;
-
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
   }
 
   @override
@@ -31,29 +24,29 @@ class _OrderHistoryItemState extends State<OrderHistoryItem> {
       onTap: () => Navigator.pushNamed(context, Routes.orderHistory),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+        padding: EdgeInsets.symmetric(vertical: 5.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
                 Container(
-                  width: pageStyle.unitWidth * 22,
-                  height: pageStyle.unitHeight * 22,
+                  width: 22.w,
+                  height: 22.h,
                   child: SvgPicture.asset(orderHistoryIcon),
                 ),
-                SizedBox(width: pageStyle.unitWidth * 10),
+                SizedBox(width: 10.w),
                 Text(
                   'account_order_history_title'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ],
             ),
             Icon(
               Icons.arrow_forward_ios,
-              size: pageStyle.unitFontSize * 20,
+              size: 20.sp,
               color: greyDarkColor,
             ),
           ],

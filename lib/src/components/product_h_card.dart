@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -19,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductHCard extends StatefulWidget {
   final double cardWidth;
@@ -29,7 +31,6 @@ class ProductHCard extends StatefulWidget {
   final bool isWishlist;
   final bool isShare;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductHCard({
     this.cardWidth,
@@ -39,7 +40,6 @@ class ProductHCard extends StatefulWidget {
     this.isWishlist = false,
     this.isShare = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
@@ -48,8 +48,6 @@ class ProductHCard extends StatefulWidget {
 
 class _ProductHCardState extends State<ProductHCard>
     with TickerProviderStateMixin {
-  bool isWishlist;
-  int index;
   FlushBarService flushBarService;
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
@@ -57,7 +55,14 @@ class _ProductHCardState extends State<ProductHCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
+
+  int index;
+  bool isWishlist;
+
+  bool get canAddToCart =>
+      widget.isShoppingCart &&
+      (widget.product.typeId != 'simple' ||
+          widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -146,22 +151,23 @@ class _ProductHCardState extends State<ProductHCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: EdgeInsets.only(
-              right: lang == 'en' ? widget.pageStyle.unitWidth * 5 : 0,
-              left: lang == 'ar' ? widget.pageStyle.unitWidth * 5 : 0,
+              right: lang == 'en' ? 5.w : 0,
+              left: lang == 'ar' ? 5.w : 0,
             ),
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.8,
               fit: BoxFit.fitHeight,
+              errorWidget: (context, url, error) {
+                return Center(child: Icon(Icons.image, size: 20.sp));
+              },
             ),
           ),
           Expanded(
@@ -190,14 +196,14 @@ class _ProductHCardState extends State<ProductHCard>
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    right: lang == 'en' ? widget.pageStyle.unitWidth * 20 : 0,
-                    left: lang == 'ar' ? widget.pageStyle.unitWidth * 20 : 0,
+                    right: lang == 'en' ? 20.w : 0,
+                    left: lang == 'ar' ? 20.w : 0,
                   ),
                   child: Text(
                     widget.product.name,
@@ -205,13 +211,12 @@ class _ProductHCardState extends State<ProductHCard>
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 12 : 16),
+                      fontSize: widget.isMinor ? 12.sp : 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                SizedBox(height: widget.pageStyle.unitHeight * 10),
+                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -223,15 +228,14 @@ class _ProductHCardState extends State<ProductHCard>
                                 ? (widget.product.price + ' ' + 'currency'.tr())
                                 : '',
                             style: mediumTextStyle.copyWith(
-                              fontSize: widget.pageStyle.unitFontSize * 14,
+                              fontSize: 14.sp,
                               color: greyColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (widget.product.discount > 0) ...[
                             SizedBox(
-                              width: widget.pageStyle.unitWidth *
-                                  (widget.isMinor ? 4 : 10),
+                              width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
                               widget.product.beforePrice +
@@ -241,8 +245,7 @@ class _ProductHCardState extends State<ProductHCard>
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: dangerColor,
-                                fontSize: widget.pageStyle.unitFontSize *
-                                    (widget.isMinor ? 12 : 14),
+                                fontSize: widget.isMinor ? 12.sp : 14.sp,
                                 color: greyColor,
                               ),
                             ),
@@ -250,20 +253,27 @@ class _ProductHCardState extends State<ProductHCard>
                         ],
                       ),
                     ),
-                    if (widget.isShoppingCart &&
-                        (widget.product.typeId != 'simple' ||
-                            widget.product.stockQty != null &&
-                                widget.product.stockQty > 0)) ...[
-                      InkWell(
-                        onTap: () => _onAddProductToCart(context),
-                        child: ScaleTransition(
-                          scale: _addToCartScaleAnimation,
-                          child: Container(
-                            width: widget.pageStyle.unitHeight * 32,
-                            height: widget.pageStyle.unitHeight * 32,
-                            child: SvgPicture.asset(addCartIcon),
-                          ),
-                        ),
+                    if (canAddToCart) ...[
+                      Consumer<MarkaaAppChangeNotifier>(
+                        builder: (_, model, __) {
+                          return InkWell(
+                            onTap: () {
+                              if (model.activeAddCart) {
+                                model.changeAddCartStatus(false);
+                                _onAddProductToCart();
+                                model.changeAddCartStatus(true);
+                              }
+                            },
+                            child: ScaleTransition(
+                              scale: _addToCartScaleAnimation,
+                              child: Container(
+                                width: 32.h,
+                                height: 32.h,
+                                child: SvgPicture.asset(addCartIcon),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ],
@@ -278,17 +288,14 @@ class _ProductHCardState extends State<ProductHCard>
 
   Widget _buildDiscount() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 4,
-        vertical: widget.pageStyle.unitHeight * 2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
         '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: widget.pageStyle.unitFontSize * (widget.isMinor ? 10 : 14),
+          fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
         ),
       ),
@@ -310,8 +317,8 @@ class _ProductHCardState extends State<ProductHCard>
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 22 : 25),
+                  width: isWishlist ? 22.sp : 25.sp,
+                  height: isWishlist ? 22.sp : 25.sp,
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
@@ -333,14 +340,14 @@ class _ProductHCardState extends State<ProductHCard>
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 15,
-            vertical: widget.pageStyle.unitHeight * 5,
+            horizontal: 15.w,
+            vertical: 5.h,
           ),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               color: Colors.white70,
             ),
           ),
@@ -350,7 +357,7 @@ class _ProductHCardState extends State<ProductHCard>
     return Container();
   }
 
-  void _onAddProductToCart(BuildContext context) async {
+  void _onAddProductToCart() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
@@ -359,18 +366,25 @@ class _ProductHCardState extends State<ProductHCard>
         _addToCartController.stop(canceled: true);
         timer.cancel();
       });
+
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await myCartChangeNotifier.addProductToCart(
-            context, widget.pageStyle, widget.product, 1, lang, {});
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
+            onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage(
-          widget.pageStyle,
-          'out_of_stock_error'.tr(),
-        );
+        flushBarService.showErrorMessage('out_of_stock_error'.tr());
       }
     }
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCartToken);
+  }
+
+  _onAddSuccess() {
+    flushBarService.showAddCartMessage(widget.product);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 
   void _onWishlist() async {

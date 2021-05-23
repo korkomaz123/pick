@@ -9,20 +9,20 @@ import 'address_entity.dart';
 import 'enum.dart';
 
 class OrderEntity {
-  final String orderId;
-  final String orderNo;
-  final String orderDate;
-  final OrderStatusEnum status;
-  final String totalQty;
-  final String totalPrice;
-  final String subtotalPrice;
-  final double discountAmount;
-  final String discountType;
-  final PaymentMethodEntity paymentMethod;
-  final ShippingMethodEntity shippingMethod;
-  final String cartId;
-  final List<CartItemEntity> cartItems;
-  final AddressEntity address;
+  String orderId;
+  String orderNo;
+  String orderDate;
+  OrderStatusEnum status;
+  String totalQty;
+  String totalPrice;
+  String subtotalPrice;
+  double discountAmount;
+  String discountType;
+  PaymentMethodEntity paymentMethod;
+  ShippingMethodEntity shippingMethod;
+  String cartId;
+  List<CartItemEntity> cartItems;
+  AddressEntity address;
 
   OrderEntity({
     this.orderId,

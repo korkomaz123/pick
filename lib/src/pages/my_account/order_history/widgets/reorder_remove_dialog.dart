@@ -3,13 +3,9 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReorderRemoveDialog extends StatelessWidget {
-  final PageStyle pageStyle;
-
-  ReorderRemoveDialog({this.pageStyle});
-
   @override
   Widget build(BuildContext context) {
     return CupertinoAlertDialog(
@@ -17,7 +13,7 @@ class ReorderRemoveDialog extends StatelessWidget {
         'remove_reorder_item_title'.tr(),
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 26,
+          fontSize: 26.sp,
           color: Colors.black,
         ),
       ),
@@ -25,27 +21,29 @@ class ReorderRemoveDialog extends StatelessWidget {
         'remove_reorder_item_subtitle'.tr(),
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
-          fontSize: pageStyle.unitFontSize * 15,
+          fontSize: 15.sp,
           color: Colors.black87,
         ),
       ),
       actions: [
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () => Navigator.pop(context, 'yes'),
           child: Text(
             'yes_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 18,
+              fontSize: 18.sp,
               color: primaryColor,
             ),
           ),
         ),
+        // ignore: deprecated_member_use
         FlatButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
             'no_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 18,
+              fontSize: 18.sp,
               color: primaryColor,
             ),
           ),

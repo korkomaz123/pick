@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
@@ -11,8 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class SearchAddressView extends StatefulWidget {
@@ -31,7 +29,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
   FlushBarService flushBarService;
-  PageStyle pageStyle;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -48,8 +45,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Container(
       color: Colors.white,
       child: Stack(
@@ -234,7 +229,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       flushBarService.showErrorMessage(
-        pageStyle,
         'Location services are disabled.',
       );
     }
@@ -242,7 +236,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
       flushBarService.showErrorMessage(
-        pageStyle,
         'Location permissions are permantly denied, we cannot request permissions.',
       );
     }
@@ -252,12 +245,11 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
         flushBarService.showErrorMessage(
-          pageStyle,
           'Location permissions are denied (actual value: $permission).',
         );
       }
     }
-    flushBarService.showInformMessage(pageStyle, 'Fetching the location');
+    flushBarService.showInformMessage('Fetching the location');
     Position position = await Geolocator.getCurrentPosition(
       forceAndroidLocationManager: true,
       desiredAccuracy: LocationAccuracy.high,
@@ -276,15 +268,10 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     controller.animateCamera(CameraUpdate.newCameraPosition(newPosition));
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
-    final result = await http.get(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey',
-    );
-    // print(
-    //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
-    final response = jsonDecode(result.body);
-    print(response);
+    final response = await Api.getMethod(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
     List<dynamic> addressList = response['results'];
-    formattedAddresses = addressList.map((address) {
+    for (var address in addressList) {
       Map<String, dynamic> formattedJson = {};
       List<dynamic> componentAddresses = address['address_components'];
       for (int i = 0; i < componentAddresses.length; i++) {
@@ -314,8 +301,12 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         }
       }
       formattedJson['formatted_address'] = address['formatted_address'];
-      return FormattedAddressEntity.fromJson(formattedJson);
-    }).toList();
+      FormattedAddressEntity addressEntity =
+          FormattedAddressEntity.fromJson(formattedJson);
+      if (addressEntity.street != null) {
+        formattedAddresses.add(addressEntity);
+      }
+    }
     searchNode.unfocus();
     setState(() {});
   }

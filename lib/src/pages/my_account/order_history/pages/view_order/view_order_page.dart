@@ -1,7 +1,6 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_item_card.dart';
@@ -13,7 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ViewOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -25,7 +24,6 @@ class ViewOrderPage extends StatefulWidget {
 }
 
 class _ViewOrderPageState extends State<ViewOrderPage> {
-  PageStyle pageStyle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   OrderEntity order;
   String icon = '';
@@ -80,17 +78,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -98,7 +93,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -107,17 +101,17 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'view_order_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -128,21 +122,21 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: pageStyle.unitWidth * 10,
-            vertical: pageStyle.unitHeight * 20,
+            horizontal: 10.w,
+            vertical: 20.h,
           ),
           child: Column(
             children: [
               _buildOrderNo(),
-              SizedBox(height: pageStyle.unitHeight * 10),
+              SizedBox(height: 10.h),
               _buildOrderDate(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildOrderStatus(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildOrderItems(),
-              SizedBox(height: pageStyle.unitHeight * 20),
+              SizedBox(height: 20.h),
               _buildOrderPaymentMethod(),
-              Divider(color: greyColor, thickness: pageStyle.unitHeight * 0.5),
+              Divider(color: greyColor, thickness: 0.5.h),
               _buildSubtotal(),
               _buildShippingCost(),
               if (widget.order.discountAmount != 0 &&
@@ -172,8 +166,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 15,
+        horizontal: 10.w,
+        vertical: 15.h,
       ),
       color: Colors.grey.shade200,
       child: Row(
@@ -183,7 +177,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'order_order_no'.tr() + ' #${order.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           SvgPicture.asset(icon),
@@ -196,7 +190,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,14 +199,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'order_order_date'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             order.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -224,7 +218,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -233,14 +227,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'order_status'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             status,
             style: mediumTextStyle.copyWith(
               color: color,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -256,7 +250,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           return Column(
             children: [
               OrderItemCard(
-                pageStyle: pageStyle,
                 cartItem: order.cartItems[index],
                 canceled: order.cartItems[index].itemCountCanceled > 0,
                 returned: order.cartItems[index].itemCountReturned > 0,
@@ -275,7 +268,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
+        horizontal: 10.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -284,7 +277,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'order_payment_method'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Row(
@@ -294,7 +287,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 order.paymentMethod.title,
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ],
@@ -312,8 +305,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,14 +315,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'checkout_subtotal_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' $subtotal',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -345,8 +338,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -355,14 +348,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'checkout_shipping_cost_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -382,8 +375,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 10.w,
+        vertical: 5.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -392,14 +385,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'discount'.tr(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -415,8 +408,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 10.w,
+        vertical: 10.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -425,7 +418,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'total'.tr().toUpperCase(),
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -433,7 +426,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             'currency'.tr() + ' $totalPrice',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -444,14 +437,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   Widget _buildAddressBar() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 30,
+        horizontal: 10.w,
+        vertical: 30.h,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 30,
+        horizontal: 10.w,
+        vertical: 30.h,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(2),
@@ -465,14 +458,14 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 ? '${order.address.title}: '
                 : 'Unnamed title: ',
             style: boldTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
               color: primaryColor,
             ),
           ),
           Text(
             '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -487,8 +480,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         Routes.reOrder,
         arguments: order,
       ),
-      minWidth: pageStyle.unitWidth * 150,
-      height: pageStyle.unitHeight * 45,
+      minWidth: 150.w,
+      height: 45.h,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -499,13 +492,13 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           Icon(
             FontAwesomeIcons.history,
             color: Colors.white54,
-            size: pageStyle.unitFontSize * 20,
+            size: 20.sp,
           ),
-          SizedBox(width: pageStyle.unitWidth * 4),
+          SizedBox(width: 4.w),
           Text(
             'reorder_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 17,
+              fontSize: 17.sp,
               color: Colors.white,
             ),
           ),
@@ -522,11 +515,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         arguments: order,
       ),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+        padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Text(
           'cancel_order_button_title'.tr(),
           style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 17,
+            fontSize: 17.sp,
             color: dangerColor,
           ),
         ),
@@ -542,16 +535,16 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         arguments: order,
       ),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+        padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(returnIcon),
-            SizedBox(width: pageStyle.unitWidth * 4),
+            SizedBox(width: 4.w),
             Text(
               'return_button_title'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 17,
+                fontSize: 17.sp,
                 color: greyDarkColor,
               ),
             ),

@@ -1,10 +1,15 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -15,14 +20,12 @@ import 'package:markaa/src/theme/icons.dart';
 import 'my_cart_remove_dialog.dart';
 
 class MyCartSaveForLaterItems extends StatefulWidget {
-  final PageStyle pageStyle;
   final ProgressService progressService;
   final FlushBarService flushBarService;
   final MyCartChangeNotifier myCartChangeNotifier;
   final WishlistChangeNotifier wishlistChangeNotifier;
 
   MyCartSaveForLaterItems({
-    this.pageStyle,
     this.progressService,
     this.flushBarService,
     this.myCartChangeNotifier,
@@ -35,9 +38,13 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
+  FlushBarService _flushBarService;
+
   @override
   void initState() {
     super.initState();
+
+    _flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -47,24 +54,24 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
         if (model.wishlistItemsCount > 0) {
           final keys = model.wishlistItemsMap.keys.toList();
           return Container(
-            width: widget.pageStyle.deviceWidth,
+            width: 375.w,
             color: backgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: widget.pageStyle.deviceWidth,
+                  width: 375.w,
                   color: Colors.white,
                   padding: EdgeInsets.only(
-                    left: widget.pageStyle.unitWidth * 10,
-                    right: widget.pageStyle.unitWidth * 10,
-                    top: widget.pageStyle.unitHeight * 20,
-                    bottom: widget.pageStyle.unitHeight * 10,
+                    left: 10.w,
+                    right: 10.w,
+                    top: 20.h,
+                    bottom: 10.h,
                   ),
                   child: Text(
                     'save_for_later'.tr(),
                     style: mediumTextStyle.copyWith(
-                      fontSize: widget.pageStyle.unitFontSize * 19,
+                      fontSize: 19.sp,
                       color: greyDarkColor,
                     ),
                   ),
@@ -72,7 +79,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(
-                    vertical: widget.pageStyle.unitHeight * 10,
+                    vertical: 10.h,
                   ),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -88,8 +95,8 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                   ),
                 ),
                 Container(
-                  width: widget.pageStyle.deviceWidth,
-                  height: widget.pageStyle.unitHeight * 60,
+                  width: 375.w,
+                  height: 60.h,
                   color: Colors.white,
                 ),
               ],
@@ -103,13 +110,13 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
 
   Widget _buildItem(ProductModel item) {
     return Container(
-      width: widget.pageStyle.unitWidth * 180,
-      height: widget.pageStyle.unitHeight * 300,
-      margin: EdgeInsets.only(left: widget.pageStyle.unitWidth * 10),
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 10),
+      width: 180.w,
+      height: 300.h,
+      margin: EdgeInsets.only(left: 10.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(widget.pageStyle.unitFontSize * 4),
+        borderRadius: BorderRadius.circular(4.sp),
       ),
       child: Column(
         children: [
@@ -120,33 +127,46 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                 onTap: () => _onRemoveItem(item),
                 child: Icon(
                   Icons.remove_circle_outline,
-                  size: widget.pageStyle.unitFontSize * 22,
+                  size: 22.sp,
                   color: greyDarkColor,
                 ),
               ),
-              InkWell(
-                onTap: () => _onPutInCart(item),
-                child: SvgPicture.asset(
-                    lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, model, __) {
+                  return InkWell(
+                    onTap: () {
+                      if (model.activePutInCart) {
+                        model.changePutInCartStatus(false);
+                        _onPutInCart(item);
+                        model.changePutInCartStatus(true);
+                      }
+                    },
+                    child: SvgPicture.asset(
+                        lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+                  );
+                },
               ),
             ],
           ),
-          Image.network(
-            item.imageUrl,
-            width: widget.pageStyle.unitWidth * 140,
-            height: widget.pageStyle.unitHeight * 160,
+          CachedNetworkImage(
+            imageUrl: item.imageUrl,
+            width: 140.w,
+            height: 160.h,
             fit: BoxFit.fitHeight,
+            errorWidget: (_, __, ___) {
+              return Center(child: Icon(Icons.image, size: 20.sp));
+            },
           ),
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.only(top: widget.pageStyle.unitHeight * 5),
+              padding: EdgeInsets.only(top: 5.h),
               child: Text(
                 item.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: mediumTextStyle.copyWith(
-                  fontSize: widget.pageStyle.unitFontSize * 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -159,7 +179,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
               item.price + 'currency'.tr(),
               style: mediumTextStyle.copyWith(
                 color: greyColor,
-                fontSize: widget.pageStyle.unitFontSize * 12,
+                fontSize: 12.sp,
               ),
             ),
           ),
@@ -173,7 +193,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
       context: context,
       builder: (context) {
         return MyCartRemoveDialog(
-          pageStyle: widget.pageStyle,
           title: 'my_cart_remove_item_dialog_title'.tr(),
           text: 'my_cart_save_later_remove_item_dialog_text'.tr(),
         );
@@ -188,6 +207,18 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   void _onPutInCart(ProductModel item) async {
     widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
     widget.myCartChangeNotifier.addProductToCart(
-        context, widget.pageStyle, item, item.qtySaveForLater, lang, {});
+        item, item.qtySaveForLater, lang, {},
+        onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
+  }
+
+  void _onAddSuccess(ProductModel item) {
+    _flushBarService.showAddCartMessage(item);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
+    Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    _flushBarService.showErrorMessage(message);
   }
 }

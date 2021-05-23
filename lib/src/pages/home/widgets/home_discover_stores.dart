@@ -1,4 +1,6 @@
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -7,15 +9,13 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  HomeDiscoverStores({this.pageStyle});
+  final HomeChangeNotifier homeChangeNotifier;
+  HomeDiscoverStores({@required this.homeChangeNotifier});
 
   @override
   _HomeDiscoverStoresState createState() => _HomeDiscoverStoresState();
@@ -23,44 +23,26 @@ class HomeDiscoverStores extends StatefulWidget {
 
 class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   int activeIndex = 0;
-  List<BrandEntity> brands = [];
-  BrandChangeNotifier brandChangeNotifier;
-
-  @override
-  void initState() {
-    super.initState();
-    brandChangeNotifier = context.read<BrandChangeNotifier>();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.pageStyle.deviceWidth,
-      height: widget.pageStyle.unitHeight * 395,
-      color: Colors.white,
-      padding: EdgeInsets.all(widget.pageStyle.unitWidth * 15),
-      child: Consumer<BrandChangeNotifier>(builder: (_, __, ___) {
-        brands = brandChangeNotifier.brandList;
-        if (brands.isNotEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              SizedBox(height: widget.pageStyle.unitHeight * 20),
-              _buildStoresSlider(),
-              Divider(
-                height: widget.pageStyle.unitHeight * 4,
-                thickness: widget.pageStyle.unitHeight * 1.5,
-                color: greyColor.withOpacity(0.4),
-              ),
-              _buildFooter(),
-            ],
-          );
-        } else {
-          return Container();
-        }
-      }),
-    );
+    if (widget.homeChangeNotifier.brandList.isNotEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitle(),
+          SizedBox(height: 20.h),
+          _buildStoresSlider(),
+          Divider(
+            height: 4.h,
+            thickness: 1.5.h,
+            color: greyColor.withOpacity(0.4),
+          ),
+          _buildFooter(),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildTitle() {
@@ -68,19 +50,21 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
       'brands_title'.tr(),
       style: mediumTextStyle.copyWith(
         color: greyDarkColor,
-        fontSize: widget.pageStyle.unitFontSize * 26,
+        fontSize: 26.sp,
       ),
     );
   }
 
   Widget _buildStoresSlider() {
-    int length = brands.length > 20 ? 20 : brands.length;
+    int length = widget.homeChangeNotifier.brandList.length > 20
+        ? 20
+        : widget.homeChangeNotifier.brandList.length;
     return Expanded(
       child: Stack(
         children: [
           Container(
-            width: widget.pageStyle.deviceWidth,
-            height: widget.pageStyle.unitHeight * 380,
+            width: designWidth.w,
+            height: 380.h,
             child: Swiper(
               itemCount: length,
               autoplay: true,
@@ -92,13 +76,13 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                BrandEntity brand = brands[index];
+                BrandEntity brand = widget.homeChangeNotifier.brandList[index];
                 return InkWell(
                   onTap: () {
                     ProductListArguments arguments = ProductListArguments(
                       category: CategoryEntity(),
                       subCategory: [],
-                      brand: brands[index],
+                      brand: widget.homeChangeNotifier.brandList[index],
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
@@ -109,16 +93,20 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     );
                   },
                   child: Container(
-                    width: widget.pageStyle.deviceWidth,
-                    height: widget.pageStyle.unitHeight * 380,
+                    width: designWidth.w,
+                    height: 380.h,
                     padding: EdgeInsets.only(
-                      left: widget.pageStyle.unitWidth * 30,
-                      right: widget.pageStyle.unitWidth * 30,
-                      bottom: widget.pageStyle.unitHeight * 50,
+                      left: 30.w,
+                      right: 30.w,
+                      bottom: 50.h,
                     ),
-                    child: Image.network(
-                      brand.brandThumbnail,
+                    child: CachedNetworkImage(
+                      imageUrl: brand.brandThumbnail,
                       fit: BoxFit.fill,
+                      // progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                      errorWidget: (context, url, error) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
                 );
@@ -129,7 +117,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: widget.pageStyle.unitHeight * 20,
+                bottom: 20.h,
               ),
               child: SmoothIndicator(
                 offset: (activeIndex / 2).floor().toDouble(),
@@ -138,8 +126,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                 effect: SlideEffect(
                   spacing: 8.0,
                   radius: 30,
-                  dotWidth: widget.pageStyle.unitHeight * 8,
-                  dotHeight: widget.pageStyle.unitHeight * 8,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,
                   dotColor: greyLightColor,
@@ -157,13 +145,13 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: widget.pageStyle.unitHeight * 4,
+        vertical: 4.h,
       ),
       child: InkWell(
         onTap: () => Navigator.pushNamed(
           context,
           Routes.brandList,
-          arguments: brands,
+          arguments: widget.homeChangeNotifier.brandList,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,14 +159,14 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             Text(
               'view_more_brands'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 15,
+                fontSize: 15.sp,
                 color: primaryColor,
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: primaryColor,
-              size: widget.pageStyle.unitFontSize * 15,
+              size: 15.sp,
             ),
           ],
         ),

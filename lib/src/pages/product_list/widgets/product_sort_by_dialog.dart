@@ -3,28 +3,24 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductSortByDialog extends StatelessWidget {
-  final PageStyle pageStyle;
-
-  ProductSortByDialog({this.pageStyle});
-
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: Container(
-        width: pageStyle.deviceWidth,
+        width: 375.w,
         color: Color(0xFFE9E9E9),
-        padding: EdgeInsets.only(top: pageStyle.unitHeight * 15),
+        padding: EdgeInsets.only(top: 15.h),
         child: Column(
           children: [
             Container(
-              width: pageStyle.deviceWidth,
+              width: 375.w,
               padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 10,
-                vertical: pageStyle.unitHeight * 4,
+                horizontal: 10.w,
+                vertical: 4.h,
               ),
               alignment: Alignment.center,
               child: Text(
@@ -32,7 +28,7 @@ class ProductSortByDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
-                  fontSize: pageStyle.unitFontSize * 26,
+                  fontSize: 26.sp,
                 ),
               ),
             ),
@@ -51,10 +47,10 @@ class ProductSortByDialog extends StatelessWidget {
                       InkWell(
                         onTap: () => Navigator.pop(context, sortByList[index]),
                         child: Container(
-                          width: pageStyle.deviceWidth,
+                          width: 375.w,
                           padding: EdgeInsets.symmetric(
-                            horizontal: pageStyle.unitWidth * 10,
-                            vertical: pageStyle.unitHeight * 4,
+                            horizontal: 10.w,
+                            vertical: 4.h,
                           ),
                           alignment: Alignment.center,
                           child: Text(
@@ -62,7 +58,7 @@ class ProductSortByDialog extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: mediumTextStyle.copyWith(
                               color: primaryColor,
-                              fontSize: pageStyle.unitFontSize * 16,
+                              fontSize: 16.sp,
                             ),
                           ),
                         ),
@@ -79,17 +75,17 @@ class ProductSortByDialog extends StatelessWidget {
             InkWell(
               onTap: () => Navigator.pop(context, 'default'),
               child: Container(
-                width: pageStyle.deviceWidth,
+                width: 375.w,
                 padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 10,
-                  vertical: pageStyle.unitHeight * 4,
+                  horizontal: 10.w,
+                  vertical: 4.h,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   'default'.tr(),
                   textAlign: TextAlign.center,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),

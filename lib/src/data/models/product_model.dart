@@ -47,12 +47,8 @@ class ProductModel {
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : parentId = json.containsKey('parent_id') && json['parent_id'] != null
-            ? json['parent_id']
-            : '',
-        wishlistItemId = json.containsKey('wishlist_item_id')
-            ? json['wishlist_item_id']
-            : null,
+      : parentId = json.containsKey('parent_id') && json['parent_id'] != null ? json['parent_id'] : '',
+        wishlistItemId = json.containsKey('wishlist_item_id') ? json['wishlist_item_id'] : null,
         entityId = json['entity_id'],
         typeId = json['type_id'],
         sku = json['sku'],
@@ -66,14 +62,8 @@ class ProductModel {
             : json['price'] != null
                 ? double.parse(json['price']).toStringAsFixed(3)
                 : null,
-        beforePrice = json['price'] != null
-            ? double.parse(json['price']).toStringAsFixed(3)
-            : null,
-        discount = _getDiscount(
-            json['special_price'] != null
-                ? json['special_price']
-                : json['price'],
-            json['price']),
+        beforePrice = json['price'] != null ? double.parse(json['price']).toStringAsFixed(3) : null,
+        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -86,11 +76,8 @@ class ProductModel {
               )
             : null,
         stockQty = json['stockQty'],
-        qtySaveForLater = json.containsKey('qty_saveforlater')
-            ? double.parse(json['qty_saveforlater']).ceil()
-            : 0,
-        options =
-            json.containsKey('options') ? _getOptions(json['options']) : null;
+        qtySaveForLater = json.containsKey('qty_saveforlater') ? double.parse(json['qty_saveforlater']).ceil() : 0,
+        options = json.containsKey('options') ? _getOptions(json['options']) : null;
 
   static Map<String, dynamic> _getOptions(List<dynamic> list) {
     Map<String, dynamic> options = {};
@@ -101,10 +88,8 @@ class ProductModel {
   }
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice =
-        afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice =
-        beforePriceString != null ? double.parse(beforePriceString) : 0;
+    double afterPrice = afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice = beforePriceString != null ? double.parse(beforePriceString) : 0;
     if (beforePrice == 0) {
       return 0;
     }

@@ -1,17 +1,15 @@
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FilterBasicSelect extends StatefulWidget {
-  final PageStyle pageStyle;
   final double width;
   final List<dynamic> options;
   final List<dynamic> values;
   final Function onSelectItem;
 
   FilterBasicSelect({
-    this.pageStyle,
     this.width,
     this.options,
     this.values,
@@ -36,14 +34,8 @@ class _FilterBasicSelectState extends State<FilterBasicSelect> {
             return InkWell(
               onTap: () => widget.onSelectItem(item),
               child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 4,
-                  vertical: widget.pageStyle.unitHeight * 5,
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: widget.pageStyle.unitWidth * 20,
-                  vertical: widget.pageStyle.unitHeight * 3,
-                ),
+                margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 5.h),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
@@ -56,7 +48,7 @@ class _FilterBasicSelectState extends State<FilterBasicSelect> {
                   item['display'].toString().toUpperCase(),
                   style: mediumTextStyle.copyWith(
                     color: isSelected ? Colors.white : primaryColor,
-                    fontSize: widget.pageStyle.unitFontSize * 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -11,14 +12,15 @@ import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 
 class OrderChangeNotifier extends ChangeNotifier {
-  final OrderRepository orderRepository;
-  final FirebaseRepository firebaseRepository;
-
-  OrderChangeNotifier({this.orderRepository, this.firebaseRepository});
+  final OrderRepository orderRepository = OrderRepository();
+  final FirebaseRepository firebaseRepository = FirebaseRepository();
 
   Map<String, OrderEntity> ordersMap = {};
   List<String> keys = [];
 
+  OrderChangeNotifier() {
+    initializeOrders();
+  }
   void initializeOrders() {
     ordersMap = {};
     keys = [];
@@ -51,23 +53,42 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  void removeOrder(OrderEntity order) {
+    if (ordersMap.containsKey(order.orderId)) {
+      ordersMap.remove(order.orderId);
+      setKeys();
+      notifyListeners();
+    }
+  }
+
+  void updateOrder(OrderEntity order) {
+    if (ordersMap.containsKey(order.orderId)) {
+      ordersMap[order.orderId] = order;
+      setKeys();
+      notifyListeners();
+    }
+  }
+
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
-    String lang,
+    String lang, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
+  }) async {
     onProcess();
     try {
       final result = await orderRepository.placeOrder(orderDetails, lang);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);
-        ordersMap[newOrder.orderId] = newOrder;
-        setKeys();
-        notifyListeners();
-        onSuccess(newOrder.orderNo);
+        if (orderDetails['token'] != null && orderDetails['token'] != '') {
+          ordersMap[newOrder.orderId] = newOrder;
+          setKeys();
+          notifyListeners();
+        }
+
+        onSuccess(result['payurl'], newOrder);
       } else {
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
@@ -78,31 +99,59 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> cancelFullOrder(
+    OrderEntity order, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      final orderId = order.orderId;
+
+      final result =
+          await orderRepository.cancelOrderById(orderId, Preload.language);
+
+      if (result['code'] == 'SUCCESS') {
+        if (user?.token != null && ordersMap.containsKey(order.orderId)) {
+          ordersMap.remove(order.orderId);
+        }
+        notifyListeners();
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
+    }
+  }
+
   Future<void> cancelOrder(
     String orderId,
     List<Map<String, dynamic>> items,
     String additionalInfo,
     String reason,
     Uint8List product,
-    String imageName,
+    String imageName, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
-    onProcess();
+  }) async {
+    if (onProcess != null) onProcess();
     try {
       final result = await orderRepository.cancelOrder(
           orderId, items, additionalInfo, reason, product, imageName);
+
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
         notifyListeners();
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      if (onFailure != null) onFailure(e.toString());
     }
   }
 

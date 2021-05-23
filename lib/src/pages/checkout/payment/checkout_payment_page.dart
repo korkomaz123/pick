@@ -1,21 +1,21 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,10 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:string_validator/string_validator.dart';
+
+import 'payment_card_form.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
   final OrderEntity reorder;
@@ -37,31 +40,48 @@ class CheckoutPaymentPage extends StatefulWidget {
 
 class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
+
   String payment;
-  PageStyle pageStyle;
+  String cardToken;
+
   ProgressService progressService;
   FlushBarService flushBarService;
-  LocalStorageRepository localStorageRepo;
+
+  LocalStorageRepository localStorageRepo = LocalStorageRepository();
+  CheckoutRepository checkoutRepo = CheckoutRepository();
+
   MyCartChangeNotifier myCartChangeNotifier;
-  AwesomeLoaderController loaderController = AwesomeLoaderController();
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+
+  _loadData() async {
+    if (paymentMethods.isEmpty)
+      paymentMethods = await checkoutRepo.getPaymentMethod();
+    if (widget.reorder != null) {
+      payment = widget.reorder.paymentMethod.id;
+    } else {
+      payment = paymentMethods[2].id;
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
-    } else {
-      payment = paymentMethods[2].id;
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+
+    _loadData();
   }
 
   void _onProcess() {
@@ -70,44 +90,87 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, error);
+    flushBarService.showErrorMessage(error);
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(pageStyle: pageStyle, currentIndex: 3),
+      appBar: MarkaaCheckoutAppBar(currentIndex: 3),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: pageStyle.unitWidth * 10,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
                 return Column(
                   children: List.generate(paymentMethods.length, (index) {
-                    return _buildPaymentCard(
-                      paymentMethods[paymentMethods.length - index - 1],
-                    );
+                    int idx = paymentMethods.length - index - 1;
+                    if (paymentMethods[idx].id == 'mpwalletsystem') {
+                      return Container();
+                    }
+                    return _buildPaymentCard(paymentMethods[idx]);
                   }),
                 );
               }),
-              SizedBox(height: pageStyle.unitHeight * 50),
+              SizedBox(height: 10.h),
+              if (payment == 'mpwalletsystem' &&
+                  double.parse(orderDetails['orderDetails']['subTotalPrice']) >
+                      user.balance) ...[
+                Container(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'not_enough_wallet'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: 14.sp,
+                          color: dangerColor,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () =>
+                            Navigator.pushNamed(context, Routes.myWallet),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'add_money_to_wallet'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 14.sp,
+                                color: primaryColor,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20.sp,
+                              color: primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              // SizedBox(height: 50.h),
               Divider(
                 color: greyLightColor,
-                height: pageStyle.unitHeight * 10,
-                thickness: pageStyle.unitHeight * 1,
+                height: 10.h,
+                thickness: 1.h,
               ),
               _buildDetails(),
-              SizedBox(height: pageStyle.unitHeight * 30),
-              _buildPlacePaymentButton(),
-              _buildBackToReviewButton(),
+              SizedBox(height: 30.h),
+              Consumer<MarkaaAppChangeNotifier>(
+                builder: (_, __, ___) {
+                  if (payment == 'tap') return Container();
+                  return _buildPlacePaymentButton();
+                },
+              ),
             ],
           ),
         ),
@@ -116,69 +179,84 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   }
 
   Widget _buildPaymentCard(PaymentMethodEntity method) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(
-        vertical: pageStyle.unitHeight * 10,
-      ),
-      padding: EdgeInsets.all(pageStyle.unitWidth * 10),
-      color: greyLightColor,
-      child: RadioListTile(
-        value: method.id,
-        groupValue: payment,
-        onChanged: (value) {
-          payment = value;
-          markaaAppChangeNotifier.rebuild();
-        },
-        activeColor: primaryColor,
-        title: Row(
-          children: [
-            if (method.title == 'Cash On Delivery' ||
-                method.title == 'الدفع عند التوصيل') ...[
-              SvgPicture.asset(
-                'lib/public/icons/cashondelivery.svg',
-                height: 19,
-                width: 39,
-              ),
-              Text(
-                "    " + method.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
-                ),
-              ),
-            ] else if (method.title == 'Knet' || method.title == 'كي نت') ...[
-              SvgPicture.asset(
-                'lib/public/icons/knet.svg',
-                height: 46,
-                width: 61,
-              ),
-            ] else ...[
-              Image.asset(
-                'lib/public/images/visa-card.png',
-                height: 35,
-                width: 95,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                'lib/public/icons/line.svg',
-                height: 41,
-                width: 10,
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              SvgPicture.asset(
-                'lib/public/icons/master-card.svg',
-                height: 42,
-                width: 54,
-              ),
-            ]
-          ],
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(vertical: 10.h),
+          padding: EdgeInsets.all(10.w),
+          color: greyLightColor,
+          child: RadioListTile(
+            value: method.id,
+            groupValue: payment,
+            onChanged: (value) {
+              payment = value;
+              markaaAppChangeNotifier.rebuild();
+            },
+            activeColor: primaryColor,
+            title: Row(
+              children: [
+                if (method.id == 'cashondelivery') ...[
+                  SvgPicture.asset(
+                    'lib/public/icons/cashondelivery.svg',
+                    height: 19,
+                    width: 39,
+                  ),
+                  Text(
+                    "    " + method.title,
+                    style: mediumTextStyle.copyWith(
+                      color: greyColor,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ] else if (method.id == 'knet') ...[
+                  SvgPicture.asset(
+                    'lib/public/icons/knet.svg',
+                    height: 46,
+                    width: 61,
+                  ),
+                ] else if (method.id == 'tap') ...[
+                  Image.asset(
+                    'lib/public/images/visa-card.png',
+                    height: 35,
+                    width: 95,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SvgPicture.asset(
+                    'lib/public/icons/line.svg',
+                    height: 41,
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SvgPicture.asset(
+                    'lib/public/icons/master-card.svg',
+                    height: 42,
+                    width: 54,
+                  ),
+                ] else ...[
+                  SvgPicture.asset(walletIcon),
+                  SizedBox(width: 10.w),
+                  SvgPicture.asset(walletTitle),
+                ],
+              ],
+            ),
+          ),
         ),
-      ),
+        if (method.id == 'tap' && payment == 'tap' && cardToken == null) ...[
+          SizedBox(height: 5.h),
+          Container(
+            width: double.infinity,
+            height: 280.h,
+            child: PaymentCardForm(
+              onAuthorizedSuccess: _onCardAuthorizedSuccess,
+            ),
+          ),
+        ]
+      ],
     );
   }
 
@@ -194,7 +272,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'checkout_subtotal_title'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -202,13 +280,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                     ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               )
             ],
           ),
           if (double.parse(orderDetails['orderDetails']['discount']) > 0) ...[
-            SizedBox(height: pageStyle.unitHeight * 10),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -216,7 +294,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                   'discount'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -225,14 +303,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                       ' ${orderDetails['orderDetails']['discount']}',
                   style: mediumTextStyle.copyWith(
                     color: darkColor,
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 )
               ],
             ),
           ],
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -240,7 +318,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'checkout_shipping_cost_title'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -250,12 +328,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                         ' ${orderDetails['orderDetails']['fees']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               )
             ],
           ),
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -263,7 +341,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 'total'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
               Text(
@@ -271,7 +349,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                     ' ${orderDetails['orderDetails']['totalPrice']}',
                 style: mediumTextStyle.copyWith(
                   color: greyColor,
-                  fontSize: pageStyle.unitFontSize * 17,
+                  fontSize: 17.sp,
                 ),
               )
             ],
@@ -284,26 +362,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   Widget _buildPlacePaymentButton() {
     return SizedBox(
       height: 45,
+      // ignore: deprecated_member_use
       child: RaisedButton(
         color: primaryColor,
         clipBehavior: Clip.hardEdge,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusDirectional.all(Radius.circular(30)),
         ),
-        onPressed: () async {
-          orderDetails['paymentMethod'] = payment;
-          if (payment == 'cashondelivery') {
-            await orderChangeNotifier.submitOrder(
-              orderDetails,
-              lang,
-              _onProcess,
-              _onOrderSubmittedSuccess,
-              _onFailure,
-            );
-          } else {
-            _onGeneratePaymentUrl();
-          }
-        },
+        onPressed: _onPlaceOrder,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -330,23 +396,69 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
     );
   }
 
-  Widget _buildBackToReviewButton() {
-    return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 60),
-      child: MarkaaTextButton(
-        title: 'checkout_back_review_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 12,
-        titleColor: greyColor,
-        buttonColor: Colors.white,
-        borderColor: Colors.transparent,
-        onPressed: () => Navigator.pop(context),
-        radius: 30,
-      ),
+  void _onCardAuthorizedSuccess(String token) {
+    cardToken = token;
+    setState(() {});
+    Future.delayed(Duration(milliseconds: 300), _onPlaceOrder);
+  }
+
+  void _onPlaceOrder() async {
+    orderDetails['paymentMethod'] = payment;
+    if (payment == 'tap') {
+      /// if the method is tap, check credit card already authorized
+      if (cardToken == null) {
+        flushBarService.showErrorMessage('fill_card_details_error'.tr());
+        return;
+      }
+      orderDetails['tap_token'] = cardToken;
+    }
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+    Adjust.trackEvent(adjustEvent);
+
+    /// submit the order, after call this api, the status will be pending till payment be processed
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
+  }
+
+  void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
+    progressService.hideProgress();
+
+    if (payment == 'cashondelivery') {
+      _onSuccessOrder();
+
+      /// payment method is equal to cod, go to success page directly
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.checkoutConfirmed,
+        (route) => route.settings.name == Routes.home,
+        arguments: order.orderNo,
+      );
+    } else if (isURL(payUrl)) {
+      /// payment method is knet or tap, go to payment webview page
+      Navigator.pushNamed(
+        context,
+        Routes.checkoutPaymentCard,
+        arguments: {'url': payUrl, 'order': order, 'reorder': widget.reorder},
+      );
+    } else {
+      /// if the payurl is invalid redirect to payment failed page
+      await orderChangeNotifier.cancelFullOrder(order,
+          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+    }
+  }
+
+  void _gotoFailedPage() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.paymentFailed,
+      (route) => route.settings.name == Routes.myCart,
     );
   }
 
-  void _onOrderSubmittedSuccess(String orderNo) async {
+  Future<void> _onSuccessOrder() async {
     if (widget.reorder != null) {
       myCartChangeNotifier.initializeReorderCart();
     } else {
@@ -356,81 +468,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
-    double price = double.parse(orderDetails['orderDetails']['totalPrice']);
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
+    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    double price = double.parse(priceDetails['totalPrice']);
+
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);
-    progressService.hideProgress();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.checkoutConfirmed,
-      (route) => route.settings.name == Routes.home,
-      arguments: orderNo,
-    );
-  }
-
-  void _onGeneratePaymentUrl() async {
-    final address = jsonDecode(orderDetails['orderAddress']);
-    String cartId = orderDetails['cartId'];
-    int version = Platform.isAndroid
-        ? MarkaaVersion.androidVersion
-        : MarkaaVersion.iOSVersion;
-    Map<String, dynamic> data = {
-      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
-      "currency": "KWD",
-      "threeDSecure": true,
-      "save_card": false,
-      "description": "purchase description",
-      "statement_descriptor": "",
-      "metadata": {"udf1": "m live"},
-      "reference": {
-        "acquirer": "acquirer",
-        "gateway": "gateway",
-        "payment": "payment",
-        "track": "track",
-        "transaction": "trans_$cartId\_$version",
-        "order": "order_$cartId\_$version",
-      },
-      "receipt": {"email": true, "sms": false},
-      "customer": {
-        "id": "",
-        "first_name": address['firstname'],
-        "middle_name": "",
-        "last_name": address['lastname'],
-        "email": address['email'],
-        "phone": {"country_code": "965", "number": address['phoneNumber']},
-      },
-      "merchant": {"id": "6008426"},
-      "source": {
-        "id":
-            orderDetails['paymentMethod'] == 'knet' ? "src_kw.knet" : "src_card"
-      },
-      "destinations": {"destination": []},
-      "post": {"url": "https://www.google.com"},
-      "redirect": {"url": "https://www.google.com"}
-    };
-    await myCartChangeNotifier.generatePaymentUrl(
-        data, lang, _onProcess, _onSuccessGenerated, _onFailure);
-  }
-
-  void _onSuccessGenerated(String url, String chargeId) async {
-    progressService.hideProgress();
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.checkoutPaymentCard,
-      arguments: {
-        'orderDetails': orderDetails,
-        'reorder': widget.reorder,
-        'url': url,
-        'chargeId': chargeId,
-      },
-    );
-    if (result != null) {
-      flushBarService.showErrorMessage(
-        pageStyle,
-        'payment_canceled'.tr(),
-      );
-    }
   }
 }

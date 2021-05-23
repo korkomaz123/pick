@@ -29,6 +29,9 @@ import 'package:markaa/src/pages/my_account/shipping_address/shipping_address_pa
 import 'package:markaa/src/pages/my_account/terms/terms_page.dart';
 import 'package:markaa/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:markaa/src/pages/my_cart/my_cart_page.dart';
+import 'package:markaa/src/pages/my_wallet/my_wallet_details/my_wallet_details_page.dart';
+import 'package:markaa/src/pages/my_wallet/banks/banks_list_page.dart';
+import 'package:markaa/src/pages/my_wallet/banks/bank_page.dart';
 import 'package:markaa/src/pages/product/product_image.dart';
 import 'package:markaa/src/pages/product/product_page.dart';
 import 'package:markaa/src/pages/product_list/product_list_page.dart';
@@ -38,6 +41,7 @@ import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
+// import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -50,9 +54,10 @@ class RouteGenerator {
     final params = settings.arguments;
     switch (settings.name) {
       case Routes.start:
-        return CupertinoPageRoute(
-          builder: (context) => SplashPage(),
+        return PageRouteBuilder(
           settings: RouteSettings(name: Routes.start),
+          transitionDuration: Duration.zero,
+          pageBuilder: (_, __, ___) => SplashPage(),
         );
       case Routes.update:
         return CupertinoPageRoute(
@@ -269,11 +274,26 @@ class RouteGenerator {
           builder: (context) => AddProductReviewPage(product: params),
           settings: RouteSettings(name: Routes.addProductReview),
         );
-      default:
+      case Routes.myWallet:
         return CupertinoPageRoute(
-          builder: (context) => SplashPage(),
-          settings: RouteSettings(name: Routes.start),
+          builder: (_) => MyWalletDetailsPage(),
+          settings: RouteSettings(name: Routes.myWallet),
         );
+      case Routes.bankList:
+        return CupertinoPageRoute(
+          builder: (_) => BankListPage(),
+          settings: RouteSettings(name: Routes.bankList),
+        );
+      case Routes.addNewBankAccount:
+        return CupertinoPageRoute(
+          builder: (_) => BankPage(),
+          settings: RouteSettings(name: Routes.addNewBankAccount),
+        );
+      default:
+      // return CupertinoPageRoute(
+      //   builder: (context) => SplashPage(),
+      //   settings: RouteSettings(name: Routes.start),
+      // );
     }
   }
 }

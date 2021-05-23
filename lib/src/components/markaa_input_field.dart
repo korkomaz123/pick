@@ -199,7 +199,7 @@ class MarkaaInputField extends StatelessWidget {
                   ),
                   readOnly: readOnly,
                   obscureText: obsecureText,
-                  autovalidate: false,
+                  autovalidateMode: AutovalidateMode.disabled,
                   validator: validator,
                 )
               : TextFormField(
@@ -278,7 +278,7 @@ class MarkaaInputField extends StatelessWidget {
                     filled: true,
                   ),
                   readOnly: readOnly,
-                  autovalidate: false,
+                  autovalidateMode: AutovalidateMode.disabled,
                   validator: validator,
                   maxLines: maxLines,
                 ),

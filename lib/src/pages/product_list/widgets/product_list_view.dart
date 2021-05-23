@@ -13,10 +13,11 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'product_no_available.dart';
 
@@ -24,7 +25,6 @@ class ProductListView extends StatefulWidget {
   final List<CategoryEntity> subCategories;
   final int activeIndex;
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final PageStyle pageStyle;
   final bool isFromBrand;
   final bool isFilter;
   final BrandEntity brand;
@@ -39,7 +39,6 @@ class ProductListView extends StatefulWidget {
     this.subCategories,
     this.activeIndex,
     this.scaffoldKey,
-    this.pageStyle,
     this.isFilter,
     this.isFromBrand,
     this.brand,
@@ -61,7 +60,6 @@ class _ProductListViewState extends State<ProductListView>
   List<CategoryEntity> subCategories;
   BrandEntity brand;
   bool isFromBrand;
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   TabController tabController;
@@ -76,7 +74,6 @@ class _ProductListViewState extends State<ProductListView>
     super.initState();
     subCategories = widget.subCategories;
     scaffoldKey = widget.scaffoldKey;
-    pageStyle = widget.pageStyle;
     isFromBrand = widget.isFromBrand;
     brand = widget.brand;
     progressService = ProgressService(context: context);
@@ -97,17 +94,15 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   void _onScroll() {
-    double maxScroll = scrollController.position.maxScrollExtent;
-    double currentScroll = scrollController.position.pixels;
-    scrollChangeNotifier.controlBrandBar(currentScroll);
-    if (!productChangeNotifier.isReachedMax &&
-        (maxScroll - currentScroll <= 200)) {
-      _onLoadMore();
-    }
+    // double maxScroll = scrollController.position.maxScrollExtent;
+    // double currentScroll = scrollController.position.pixels;
+    // scrollChangeNotifier.controlBrandBar(currentScroll);
+    // if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
+    //   _onLoadMore();
+    // }
   }
 
   void _initLoadProducts() async {
-    print('//// initial load ////');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.viewMode == ProductViewModeEnum.filter) {
         await productChangeNotifier.initialLoadFilteredProducts(
@@ -138,8 +133,12 @@ class _ProductListViewState extends State<ProductListView>
     });
   }
 
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  bool isStillRefresh = false;
   Future<void> _onRefresh() async {
-    print('///// refresh ////');
+    if (isStillRefresh == true) return;
+    isStillRefresh = true;
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
         subCategories[tabController.index].id,
@@ -166,10 +165,13 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     }
+    isStillRefresh = false;
+    _refreshController.refreshCompleted();
   }
 
   void _onLoadMore() async {
-    print('///// load more ////');
+    if (isStillRefresh == true) return;
+    isStillRefresh = true;
     if (widget.viewMode == ProductViewModeEnum.category) {
       page = productChangeNotifier.pages[subCategories[tabController.index].id];
       page += 1;
@@ -216,6 +218,8 @@ class _ProductListViewState extends State<ProductListView>
         lang,
       );
     }
+    isStillRefresh = false;
+    _refreshController.loadComplete();
   }
 
   void _onGotoTop() {
@@ -262,9 +266,10 @@ class _ProductListViewState extends State<ProductListView>
                       }
                       if (!productChangeNotifier.data.containsKey(index) ||
                           productChangeNotifier.data[index] == null) {
-                        return Center(child: PulseLoadingSpinner());
+                        return //Container();
+                            Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
-                        return ProductNoAvailable(pageStyle: pageStyle);
+                        return ProductNoAvailable();
                       } else {
                         return _buildProductList(
                             productChangeNotifier.data[index]);
@@ -283,14 +288,14 @@ class _ProductListViewState extends State<ProductListView>
 
   Widget _buildArrowButton() {
     return AnimatedPositioned(
-      right: pageStyle.unitWidth * 4,
-      bottom: pageStyle.unitHeight * 4 - widget.pos,
+      right: 4.w,
+      bottom: 4.h - widget.pos,
       duration: Duration(milliseconds: 500),
       child: InkWell(
         onTap: () => _onGotoTop(),
         child: Container(
-          width: pageStyle.unitHeight * 40,
-          height: pageStyle.unitHeight * 40,
+          width: 40.h,
+          height: 40.h,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: primarySwatchColor.withOpacity(0.8),
@@ -298,7 +303,7 @@ class _ProductListViewState extends State<ProductListView>
           ),
           child: Icon(
             Icons.keyboard_arrow_up,
-            size: pageStyle.unitFontSize * 30,
+            size: 30.sp,
             color: Colors.white70,
           ),
         ),
@@ -308,10 +313,10 @@ class _ProductListViewState extends State<ProductListView>
 
   Widget _buildCategoryTabBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 50,
+      width: 375.w,
+      height: 50.h,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: TabBar(
         controller: tabController,
         indicator: BoxDecoration(
@@ -328,7 +333,7 @@ class _ProductListViewState extends State<ProductListView>
               child: Text(
                 index == 0 ? 'all'.tr() : subCategories[index].name,
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
+                  fontSize: 14.sp,
                 ),
               ),
             );
@@ -339,88 +344,119 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList(List<ProductModel> products) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      backgroundColor: Colors.white,
-      color: primaryColor,
-      child: ListView.builder(
-        controller: scrollController,
-        shrinkWrap: true,
-        itemCount: (products.length / 2).ceil() + 1,
-        itemBuilder: (ctx, index) {
-          if (index >= (products.length / 2).ceil()) {
-            if (productChangeNotifier.isReachedMax) {
-              return Container(
-                width: pageStyle.deviceWidth,
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  top: pageStyle.unitHeight * 10,
-                ),
-                child: Text(
-                  'no_more_products'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
-                  ),
-                ),
-              );
+    return RefreshConfiguration(
+      footerTriggerDistance: 2500,
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              // body = Text("pull up load");
+              body = Container();
+            } else if (mode == LoadStatus.loading) {
+              body = CupertinoActivityIndicator();
+            } else if (mode == LoadStatus.failed) {
+              // body = Text("Load Failed!Click retry!");
+              body = Container();
+            } else if (mode == LoadStatus.canLoading) {
+              // body = Text("release to load more");
+              body = Container();
             } else {
-              return RippleLoadingSpinner();
+              // body = Text("No more Data");
+              body = Container();
             }
-          } else {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: greyColor,
-                        width: pageStyle.unitWidth * 0.5,
-                      ),
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: () {
+          print('onLoading');
+          _onLoadMore();
+        },
+        child: ListView.builder(
+          // controller: scrollController,
+          shrinkWrap: true,
+          itemCount: (products.length / 2).ceil() + 1,
+          itemBuilder: (ctx, index) {
+            if (index >= (products.length / 2).ceil()) {
+              if (productChangeNotifier.isReachedMax) {
+                return Container(
+                  width: 375.w,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(
+                    top: 10.h,
+                  ),
+                  child: Text(
+                    'no_more_products'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 14.sp,
                     ),
                   ),
-                  child: ProductVCard(
-                    pageStyle: pageStyle,
-                    product: products[2 * index],
-                    cardWidth: pageStyle.unitWidth * 187.25,
-                    cardHeight: pageStyle.unitHeight * 280,
-                    isShoppingCart: true,
-                    isWishlist: true,
-                    isShare: true,
-                  ),
-                ),
-                if (index * 2 <= products.length - 2) ...[
-                  Container(
-                    height: pageStyle.unitHeight * 280,
-                    child: VerticalDivider(
-                      color: greyColor,
-                      width: pageStyle.unitWidth * 0.5,
-                    ),
-                  ),
+                );
+              } else {
+                return Container(); //RippleLoadingSpinner();
+              }
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Container(
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
                           color: greyColor,
-                          width: pageStyle.unitWidth * 0.5,
+                          width: 0.5.w,
                         ),
                       ),
                     ),
                     child: ProductVCard(
-                      pageStyle: pageStyle,
-                      product: products[2 * index + 1],
-                      cardWidth: pageStyle.unitWidth * 187.25,
-                      cardHeight: pageStyle.unitHeight * 280,
+                      product: products[2 * index],
+                      cardWidth: 187.25.w,
+                      cardHeight: 280.h,
                       isShoppingCart: true,
                       isWishlist: true,
                       isShare: true,
                     ),
                   ),
-                ]
-              ],
-            );
-          }
-        },
+                  if (index * 2 <= products.length - 2) ...[
+                    Container(
+                      height: 280.h,
+                      child: VerticalDivider(
+                        color: greyColor,
+                        width: 0.5.w,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: greyColor,
+                            width: 0.5.w,
+                          ),
+                        ),
+                      ),
+                      child: ProductVCard(
+                        product: products[2 * index + 1],
+                        cardWidth: 187.25.w,
+                        cardHeight: 280.h,
+                        isShoppingCart: true,
+                        isWishlist: true,
+                        isShare: true,
+                      ),
+                    ),
+                  ]
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

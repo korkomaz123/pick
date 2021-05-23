@@ -3,13 +3,10 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class RestartMandatoryDialog extends StatelessWidget with WidgetsBindingObserver {
-  final PageStyle pageStyle;
-
-  RestartMandatoryDialog({this.pageStyle});
-
+class RestartMandatoryDialog extends StatelessWidget
+    with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -23,7 +20,7 @@ class RestartMandatoryDialog extends StatelessWidget with WidgetsBindingObserver
             'restart_app_title'.tr(),
             textAlign: TextAlign.center,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 26,
+              fontSize: 26.sp,
               color: Colors.black,
             ),
           ),
@@ -31,17 +28,18 @@ class RestartMandatoryDialog extends StatelessWidget with WidgetsBindingObserver
             'restart_app_text'.tr(),
             textAlign: TextAlign.center,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 15,
+              fontSize: 15.sp,
               color: Colors.black87,
             ),
           ),
           actions: [
+            // ignore: deprecated_member_use
             FlatButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'restart_now'.tr(),
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 18,
+                  fontSize: 18.sp,
                   color: primaryColor,
                 ),
               ),

@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
@@ -11,13 +10,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangeNotificationSettingItem extends StatefulWidget {
-  final PageStyle pageStyle;
   final SnackBarService snackBarService;
 
-  ChangeNotificationSettingItem({this.pageStyle, this.snackBarService});
+  ChangeNotificationSettingItem({this.snackBarService});
 
   @override
   _ChangeNotificationSettingItemState createState() =>
@@ -26,16 +24,13 @@ class ChangeNotificationSettingItem extends StatefulWidget {
 
 class _ChangeNotificationSettingItemState
     extends State<ChangeNotificationSettingItem> {
-  PageStyle pageStyle;
   SettingBloc settingBloc;
   SnackBarService snackBarService;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     settingBloc = context.read<SettingBloc>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
   }
@@ -50,15 +45,15 @@ class _ChangeNotificationSettingItemState
           Row(
             children: [
               Container(
-                width: pageStyle.unitWidth * 22,
-                height: pageStyle.unitHeight * 22,
+                width: 22.w,
+                height: 22.h,
                 child: SvgPicture.asset(notificationIcon),
               ),
-              SizedBox(width: pageStyle.unitWidth * 10),
+              SizedBox(width: 10.w),
               Text(
                 'account_get_notification_title'.tr(),
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ],

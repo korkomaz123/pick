@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -15,6 +18,8 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'payment_abort_dialog.dart';
 
 class CheckoutPaymentCardPage extends StatefulWidget {
   final Map<String, dynamic> params;
@@ -28,41 +33,74 @@ class CheckoutPaymentCardPage extends StatefulWidget {
 
 class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     with WidgetsBindingObserver {
-  PageStyle pageStyle;
   WebViewController webViewController;
-  Map<String, dynamic> data = {};
+
   OrderChangeNotifier orderChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
+
   ProgressService progressService;
   FlushBarService flushBarService;
-  MyCartChangeNotifier myCartChangeNotifier;
-  LocalStorageRepository localStorageRepo;
-  var orderDetails;
-  var reorder;
-  var url;
-  var chargeId;
+
+  LocalStorageRepository localStorageRepo = LocalStorageRepository();
+
+  String url;
+  OrderEntity order;
+  OrderEntity reorder;
+
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    localStorageRepo = context.read<LocalStorageRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    _initialData();
+
+    url = widget.params['url'];
+    order = widget.params['order'];
+    reorder = widget.params['reorder'];
   }
 
-  void _initialData() {
-    orderDetails = widget.params['orderDetails'];
-    reorder = widget.params['reorder'];
-    url = widget.params['url'];
-    chargeId = widget.params['chargeId'];
+  void _onBack() async {
+    final result = await showDialog(
+      context: context,
+      builder: (_) {
+        return PaymentAbortDialog();
+      },
+    );
+    if (result != null) {
+      /// activate the current shopping cart
+      await myCartChangeNotifier.activateCart();
+
+      /// cancel the order
+      await orderChangeNotifier.cancelFullOrder(order,
+          onProcess: _onCancelProcess,
+          onSuccess: _onCanceledSuccess,
+          onFailure: _onCanceledFailure);
+    }
+  }
+
+  void _onCancelProcess() {
+    progressService.showProgress();
+  }
+
+  void _onCanceledSuccess() {
+    progressService.hideProgress();
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.myCart,
+    );
+  }
+
+  void _onCanceledFailure(String message) {
+    print(message);
+    progressService.hideProgress();
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -70,82 +108,80 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       child: Scaffold(
         backgroundColor: backgroundColor,
         appBar: AppBar(
-          backgroundColor: backgroundColor,
-          leading: Container(
-            width: pageStyle.unitHeight * 40,
-            height: pageStyle.unitHeight * 40,
-            margin: EdgeInsets.all(pageStyle.unitHeight * 10),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'lib/public/launcher/ios-app-launcher-icon.png',
-                ),
-              ),
-              shape: BoxShape.circle,
-            ),
-          ),
-          title: Text(
-            'Markaa',
-            style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 16,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 25.sp,
               color: greyColor,
             ),
+            onPressed: _onBack,
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: pageStyle.unitWidth * 8),
-              child: Center(
-                child: InkWell(
-                  onTap: () => Navigator.pop(context, 'cancel'),
-                  child: Text(
-                    'cancel_button_title'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 12,
-                      color: greyColor,
-                    ),
-                  ),
-                ),
-              ),
+          title: Text(
+            'payment_title'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: 23.sp,
             ),
-          ],
-          elevation: 0,
+          ),
         ),
         body: WebView(
           initialUrl: url,
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (controller) {
             webViewController = controller;
+            progressService.showProgress();
           },
           onPageStarted: _onPageLoaded,
+          onPageFinished: (_) {
+            if (isLoading) {
+              print('hide progress');
+              progressService.hideProgress();
+              isLoading = false;
+              setState(() {});
+            }
+          },
         ),
       ),
     );
   }
 
-  void _onPageLoaded(String url) async {
-    final uri = Uri.dataFromString(url);
-    final params = uri.queryParameters;
-    if (params.containsKey('tap_id')) {
-      await myCartChangeNotifier.checkChargeStatus(
-          chargeId, _onProcess, _onPaymentSuccess, _onPaymentFailure);
+  void _onPageLoaded(String loadingUrl) async {
+    try {
+      Uri uri = Uri.parse(loadingUrl);
+      Map<String, dynamic> params = uri.queryParameters;
+
+      if (params.containsKey('result')) {
+        if (params['result'] == 'failed') {
+          if (user?.token != null) {
+            orderChangeNotifier.removeOrder(order);
+          }
+
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.paymentFailed,
+            (route) => route.settings.name == Routes.myCart,
+          );
+        } else if (params['result'] == 'success') {
+          _onSuccessPayment();
+          if (user?.token != null) {
+            order.status = OrderStatusEnum.processing;
+            orderChangeNotifier.updateOrder(order);
+          }
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.checkoutConfirmed,
+            (route) => route.settings.name == Routes.home,
+            arguments: order.orderNo,
+          );
+        }
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
-  void _onProcess() {
-    progressService.showProgress(1);
-  }
-
-  void _onPaymentSuccess() async {
-    await orderChangeNotifier.submitOrder(orderDetails, lang, _onProcess,
-        _onOrderSubmittedSuccess, _onOrderSubmittedFailure);
-  }
-
-  void _onPaymentFailure(String error) {
-    progressService.hideProgress();
-    Navigator.pushReplacementNamed(context, Routes.paymentFailed);
-  }
-
-  void _onOrderSubmittedSuccess(String orderNo) async {
+  Future<void> _onSuccessPayment() async {
     if (reorder != null) {
       myCartChangeNotifier.initializeReorderCart();
     } else {
@@ -155,42 +191,14 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       }
       await myCartChangeNotifier.getCartId();
     }
-    AdjustEvent adjustEvent =
-        new AdjustEvent(AdjustSDKConfig.completePurchaseToken);
-    adjustEvent.setRevenue(double.parse(orderDetails['totalPrice']), 'KWD');
+    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    double price = double.parse(priceDetails['totalPrice']);
+
+    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
     Adjust.trackEvent(adjustEvent);
-    progressService.hideProgress();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.checkoutConfirmed,
-      (route) => route.settings.name == Routes.home,
-      arguments: orderNo,
-    );
-  }
 
-  void _onOrderSubmittedFailure(String error) async {
-    final refundData = {
-      "charge_id": chargeId,
-      "amount": double.parse(orderDetails['orderDetails']['totalPrice']),
-      "currency": "KWD",
-      "description":
-          "We need to refund this amount to our customer because this order can not be processed",
-      "reason": "requested_by_customer",
-      "reference": {"merchant": "6008426"},
-      "metadata": {"udf1": "r live1", "udf2": "r live2"},
-      "post": {"url": "https://www.google.com"}
-    };
-    await myCartChangeNotifier.refundPayment(
-        refundData, _onRefundedSuccess, _onRefundedFailure);
-  }
-
-  void _onRefundedSuccess() {
-    progressService.hideProgress();
-    Navigator.pushReplacementNamed(context, Routes.paymentFailed);
-  }
-
-  void _onRefundedFailure(String error) {
-    progressService.hideProgress();
-    Navigator.pop(context, error);
+    adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
+    adjustEvent.setRevenue(price, 'KWD');
+    Adjust.trackEvent(adjustEvent);
   }
 }

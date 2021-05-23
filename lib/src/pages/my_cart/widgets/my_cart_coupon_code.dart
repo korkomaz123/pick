@@ -1,4 +1,5 @@
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -10,15 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCartCouponCode extends StatefulWidget {
-  final PageStyle pageStyle;
   final String cartId;
   final Function onSignIn;
 
   MyCartCouponCode({
-    this.pageStyle,
     this.cartId,
     this.onSignIn,
   });
@@ -28,9 +27,11 @@ class MyCartCouponCode extends StatefulWidget {
 }
 
 class _MyCartCouponCodeState extends State<MyCartCouponCode> {
+  final _couponFormKey = GlobalKey<FormState>();
+
   TextEditingController couponCodeController = TextEditingController();
   FocusNode couponNode = FocusNode();
-  final _couponFormKey = GlobalKey<FormState>();
+
   MyCartChangeNotifier myCartChangeNotifier;
   FlushBarService flushBarService;
 
@@ -44,17 +45,13 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
 
   @override
   Widget build(BuildContext context) {
-    if (myCartChangeNotifier.couponCode.isNotEmpty &&
-        couponCodeController.text.isEmpty) {
-      couponCodeController.text = myCartChangeNotifier.couponCode;
-    }
     return Form(
       key: _couponFormKey,
       child: Container(
-        width: widget.pageStyle.deviceWidth,
+        width: 375.w,
         padding: EdgeInsets.symmetric(
-          horizontal: widget.pageStyle.unitWidth * 10,
-          vertical: widget.pageStyle.unitHeight * 15,
+          horizontal: 10.w,
+          vertical: 15.h,
         ),
         child: Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
           return Row(
@@ -62,19 +59,19 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                width: widget.pageStyle.unitWidth * 218,
+                width: 218.w,
                 child: TextFormField(
                   controller: couponCodeController,
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
-                    fontSize: widget.pageStyle.unitFontSize * 15,
+                    fontSize: 15.sp,
                   ),
                   focusNode: couponNode,
                   decoration: InputDecoration(
                     prefixIcon: Container(
                       margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                      width: widget.pageStyle.unitWidth * 20,
-                      height: widget.pageStyle.unitHeight * 20,
+                      width: 20.w,
+                      height: 20.h,
                       child: SvgPicture.asset(couponIcon),
                     ),
                     hintText: 'my_cart_coupon_code_hint'.tr(),
@@ -86,23 +83,25 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
               ),
               if (model.isApplying) ...[
                 Container(
-                  width: widget.pageStyle.unitWidth * 120,
-                  height: widget.pageStyle.unitHeight * 40,
+                  width: 120.w,
+                  height: 40.h,
                   child: CircleLoadingSpinner(),
                 ),
               ] else ...[
                 Container(
-                  width: widget.pageStyle.unitWidth * 120,
-                  height: widget.pageStyle.unitHeight * 40,
-                  child: TextIconButton(
+                  width: 120.w,
+                  height: 40.h,
+                  child: MarkaaTextIconButton(
                     title: model.couponCode.isNotEmpty
                         ? 'cancel_button_title'.tr()
                         : 'apply_button_title'.tr(),
-                    iconData: Icons.check_circle_outline,
-                    titleSize: widget.pageStyle.unitFontSize * 15,
-                    iconSize: widget.pageStyle.unitFontSize * 20,
+                    icon: Icon(
+                      Icons.check_circle_outline,
+                      size: 20.sp,
+                      color: primaryColor,
+                    ),
+                    titleSize: 15.sp,
                     titleColor: primaryColor,
-                    iconColor: primaryColor,
                     buttonColor: greyLightColor,
                     borderColor: Colors.transparent,
                     onPressed: () {
@@ -111,15 +110,11 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                         if (user?.token != null) {
                           if (model.couponCode.isNotEmpty) {
                             couponCodeController.clear();
-                            model.cancelCouponCode(
-                              flushBarService,
-                              widget.pageStyle,
-                            );
+                            model.cancelCouponCode(flushBarService);
                           } else {
                             model.applyCouponCode(
                               couponCodeController.text,
                               flushBarService,
-                              widget.pageStyle,
                             );
                           }
                         } else {
@@ -127,7 +122,6 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                         }
                       }
                     },
-                    itemSpace: widget.pageStyle.unitWidth * 4,
                   ),
                 ),
               ],

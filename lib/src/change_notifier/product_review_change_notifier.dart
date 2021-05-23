@@ -3,9 +3,7 @@ import 'package:markaa/src/data/models/review_entity.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class ProductReviewChangeNotifier extends ChangeNotifier {
-  ProductReviewChangeNotifier({this.productRepository});
-
-  final ProductRepository productRepository;
+  final ProductRepository productRepository = ProductRepository();
 
   List<ReviewEntity> reviews = [];
 
@@ -31,8 +29,7 @@ class ProductReviewChangeNotifier extends ChangeNotifier {
     Function onFailure,
   ) async {
     onProcess();
-    final isSuccess = await productRepository.addReview(
-        productId, title, detail, rate, token, username);
+    final isSuccess = await productRepository.addReview(productId, title, detail, rate, token, username);
     if (isSuccess) {
       onSuccess();
       getProductReviews(productId);

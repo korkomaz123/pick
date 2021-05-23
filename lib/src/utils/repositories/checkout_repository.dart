@@ -3,13 +3,15 @@ import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 
+import '../../../preload.dart';
+
 class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<ShippingMethodEntity>> getShippingMethod(String lang) async {
+  Future<List<ShippingMethodEntity>> getShippingMethod() async {
     String url = EndPoints.getShippingMethod;
-    final data = {'lang': lang};
+    final data = {'lang': Preload.language};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> shippingMethodList = result['data'];
@@ -26,9 +28,9 @@ class CheckoutRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<PaymentMethodEntity>> getPaymentMethod(String lang) async {
+  Future<List<PaymentMethodEntity>> getPaymentMethod() async {
     String url = EndPoints.getPaymentMethod;
-    final data = {'lang': lang};
+    final data = {'lang': Preload.language};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
       List<String> keys =

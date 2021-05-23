@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FilterColorSelect extends StatelessWidget {
   final List<dynamic> items;
@@ -8,7 +8,6 @@ class FilterColorSelect extends StatelessWidget {
   final double itemWidth;
   final double itemHeight;
   final Function onTap;
-  final PageStyle pageStyle;
 
   FilterColorSelect({
     this.items,
@@ -17,7 +16,6 @@ class FilterColorSelect extends StatelessWidget {
     this.itemWidth,
     this.itemHeight,
     this.onTap,
-    this.pageStyle,
   });
 
   Color _getColorFromHex(String hexColor) {
@@ -34,8 +32,8 @@ class FilterColorSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: pageStyle.unitWidth * 10,
-      runSpacing: pageStyle.unitHeight * 4,
+      spacing: 10.w,
+      runSpacing: 4.h,
       children: items.map((item) {
         return InkWell(
           onTap: () => onTap(item),

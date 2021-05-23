@@ -1,7 +1,7 @@
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaCountryInput extends StatelessWidget {
   final TextEditingController controller;
@@ -14,7 +14,6 @@ class MarkaaCountryInput extends StatelessWidget {
   final Function validator;
   final bool readOnly;
   final Function onTap;
-  final PageStyle pageStyle;
 
   MarkaaCountryInput({
     @required this.controller,
@@ -25,7 +24,6 @@ class MarkaaCountryInput extends StatelessWidget {
     @required this.hint,
     @required this.inputType,
     @required this.validator,
-    @required this.pageStyle,
     this.readOnly = false,
     this.onTap,
   });
@@ -49,22 +47,16 @@ class MarkaaCountryInput extends StatelessWidget {
           hintText: hint,
           prefixIcon: countryCode != null
               ? Padding(
-                  padding: EdgeInsets.only(
-                    right: pageStyle.unitWidth * 10,
-                  ),
+                  padding: EdgeInsets.only(right: 10.w),
                   child: Image.asset(
                     'lib/public/images/flags/${countryCode.toLowerCase()}.png',
-                    width: pageStyle.unitWidth * 30,
+                    width: 30.w,
                   ),
                 )
               : Container(
-                  width: pageStyle.unitWidth * 30,
-                  height: pageStyle.unitHeight * 30,
-                  margin: EdgeInsets.only(
-                    top: pageStyle.unitHeight * 10,
-                    bottom: pageStyle.unitHeight * 10,
-                    right: pageStyle.unitWidth * 10,
-                  ),
+                  width: 30.w,
+                  height: 30.h,
+                  margin: EdgeInsets.only(top: 10.h, bottom: 10.h, right: 10.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     color: greyColor.withOpacity(0.8),
@@ -74,7 +66,7 @@ class MarkaaCountryInput extends StatelessWidget {
                     '?',
                     textAlign: TextAlign.center,
                     style: mediumTextStyle.copyWith(
-                      fontSize: pageStyle.unitFontSize * 16,
+                      fontSize: 16.sp,
                       color: Colors.white,
                     ),
                   ),

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
@@ -40,7 +40,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   String name;
   Uint8List image;
   ImageCustomPickerService imageCustomPickerService;
-  PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
   ProfileBloc profileBloc;
@@ -68,16 +67,13 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(pageStyle: pageStyle, scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
+      drawer: MarkaaSideMenu(),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess ||
-              state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -115,15 +111,15 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                         _buildProfilePicture(),
                         _buildEmail(),
                         _buildFirstName(),
-                        SizedBox(height: pageStyle.unitHeight * 10),
+                        SizedBox(height: 10.h),
                         _buildLastName(),
-                        SizedBox(height: pageStyle.unitHeight * 10),
+                        SizedBox(height: 10.h),
                         _buildPhoneNumber(),
-                        SizedBox(height: pageStyle.unitHeight * 10),
+                        SizedBox(height: 10.h),
                         _buildEmailAddress(),
-                        SizedBox(height: pageStyle.unitHeight * 10),
+                        SizedBox(height: 10.h),
                         _buildUpdateButton(),
-                        SizedBox(height: pageStyle.unitHeight * 30),
+                        SizedBox(height: 30.h),
                       ],
                     ),
                   ),
@@ -134,7 +130,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         },
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -143,17 +138,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'account_update_profile_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -162,19 +157,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildProfilePicture() {
     return Center(
       child: Container(
-        width: pageStyle.unitWidth * 140,
-        height: pageStyle.unitWidth * 140,
-        margin: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 30),
+        width: 140.w,
+        height: 140.w,
+        margin: EdgeInsets.symmetric(vertical: 30.h),
         child: Stack(
           children: [
             Container(
-              width: pageStyle.unitWidth * 140,
-              height: pageStyle.unitWidth * 140,
+              width: 140.w,
+              height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty
-                      ? NetworkImage(user.profileUrl)
-                      : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty ? CachedNetworkImageProvider(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,
@@ -186,8 +179,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                 onTap: () => _onChangeImage(),
                 child: Container(
                   margin: EdgeInsets.only(
-                    right: lang == 'en' ? pageStyle.unitHeight * 20 : 0,
-                    left: lang == 'ar' ? pageStyle.unitHeight * 20 : 0,
+                    right: lang == 'en' ? 20.h : 0,
+                    left: lang == 'ar' ? 20.h : 0,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -205,23 +198,23 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildEmail() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 20.w,
+        vertical: 10.h,
       ),
       child: Row(
         children: [
           Container(
-            width: pageStyle.unitWidth * 22,
-            height: pageStyle.unitHeight * 22,
+            width: 22.w,
+            height: 22.h,
             child: SvgPicture.asset(emailIcon),
           ),
-          SizedBox(width: pageStyle.unitWidth * 10),
+          SizedBox(width: 10.w),
           Text(
             user.email,
             style: mediumTextStyle.copyWith(
-              fontSize: pageStyle.unitFontSize * 16,
+              fontSize: 16.sp,
             ),
           ),
         ],
@@ -231,18 +224,18 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildFirstName() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
         controller: firstNameController,
-        space: pageStyle.unitHeight * 4,
+        space: 4.h,
         radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
+        fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'first_name'.tr(),
         labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
+        labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
         validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
@@ -252,18 +245,18 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildLastName() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
         controller: lastNameController,
-        space: pageStyle.unitHeight * 4,
+        space: 4.h,
         radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
+        fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'last_name'.tr(),
         labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
+        labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
         validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
@@ -273,18 +266,18 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildPhoneNumber() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
         controller: phoneNumberController,
-        space: pageStyle.unitHeight * 4,
+        space: 4.h,
         radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
+        fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'phone_number_hint'.tr(),
         labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
+        labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
         validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
@@ -294,18 +287,18 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildEmailAddress() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitFontSize * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
         controller: emailController,
-        space: pageStyle.unitHeight * 4,
+        space: 4.h,
         radius: 4,
-        fontSize: pageStyle.unitFontSize * 16,
+        fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'email_hint'.tr(),
         labelColor: greyColor,
-        labelSize: pageStyle.unitFontSize * 16,
+        labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
         validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
@@ -315,11 +308,11 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Widget _buildUpdateButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 20),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'update_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -356,7 +349,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     showDialog(
       context: context,
       builder: (context) {
-        return UpdateProfileSuccessDialog(pageStyle: pageStyle);
+        return UpdateProfileSuccessDialog();
       },
     );
   }

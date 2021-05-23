@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
@@ -12,7 +13,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
@@ -20,39 +21,37 @@ import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'logout_confirm_dialog.dart';
 
 class LogoutItem extends StatefulWidget {
-  final PageStyle pageStyle;
   final SnackBarService snackBarService;
   final ProgressService progressService;
 
-  LogoutItem({this.pageStyle, this.snackBarService, this.progressService});
+  LogoutItem({this.snackBarService, this.progressService});
 
   @override
   _LogoutItemState createState() => _LogoutItemState();
 }
 
 class _LogoutItemState extends State<LogoutItem> {
-  PageStyle pageStyle;
   SnackBarService snackBarService;
   ProgressService progressService;
+
   SignInBloc signInBloc;
-  LocalStorageRepository localRepo;
-  SettingRepository settingRepo;
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+  SettingRepository settingRepo = SettingRepository();
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  HomeChangeNotifier homeChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
     signInBloc = context.read<SignInBloc>();
-    localRepo = context.read<LocalStorageRepository>();
-    settingRepo = context.read<SettingRepository>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    homeChangeNotifier = context.read<HomeChangeNotifier>();
   }
 
   @override
@@ -75,29 +74,29 @@ class _LogoutItemState extends State<LogoutItem> {
           onTap: () => _logout(),
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 5),
+            padding: EdgeInsets.symmetric(vertical: 5.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
                     Container(
-                      width: pageStyle.unitWidth * 22,
-                      height: pageStyle.unitHeight * 22,
+                      width: 22.w,
+                      height: 22.h,
                       child: SvgPicture.asset(logoutIcon),
                     ),
-                    SizedBox(width: pageStyle.unitWidth * 10),
+                    SizedBox(width: 10.w),
                     Text(
                       'account_logout'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
+                        fontSize: 16.sp,
                       ),
                     ),
                   ],
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: pageStyle.unitFontSize * 20,
+                  size: 20.sp,
                   color: greyDarkColor,
                 ),
               ],
@@ -112,7 +111,7 @@ class _LogoutItemState extends State<LogoutItem> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return LogoutConfirmDialog(pageStyle: pageStyle);
+        return LogoutConfirmDialog();
       },
     );
     if (result != null) {
@@ -121,18 +120,25 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logoutUser() async {
+    await localRepo.setToken('');
     await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
     user = null;
-    await localRepo.setToken('');
+
+    orderChangeNotifier.initializeOrders();
+    wishlistChangeNotifier.initialize();
+
     myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
-    wishlistChangeNotifier.initialize();
-    orderChangeNotifier.initializeOrders();
+    await myCartChangeNotifier.getCartItems(lang);
+
+    homeChangeNotifier.loadRecentlyViewedGuest();
+
     progressService.hideProgress();
-    Navigator.pushNamedAndRemoveUntil(
+
+    Navigator.pop(context);
+    Navigator.popUntil(
       context,
-      Routes.home,
-      (route) => false,
+      (route) => route.settings.name == Routes.home,
     );
   }
 }

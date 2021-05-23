@@ -5,22 +5,27 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-class ProductChangeNotifier extends ChangeNotifier {
-  ProductChangeNotifier({
-    @required this.productRepository,
-    @required this.localStorageRepository,
-  });
+import '../../preload.dart';
 
-  final ProductRepository productRepository;
-  final LocalStorageRepository localStorageRepository;
+class ProductChangeNotifier extends ChangeNotifier {
+  final ProductRepository productRepository = ProductRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
   Map<String, List<ProductModel>> data = {};
   Map<String, int> pages = {};
   ProductEntity productDetails;
+  Map<String, ProductEntity> productDetailsMap = {};
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
+
+  close() {
+    productDetails = null;
+    selectedOptions = {};
+    selectedVariant = null;
+  }
 
   void initialize() {
     data = {};
@@ -28,14 +33,31 @@ class ProductChangeNotifier extends ChangeNotifier {
     isReachedMax = false;
   }
 
-  Future<void> getProductDetails(String productId, String lang) async {
+  setInitalInfo(ProductModel product) {
+    if (productDetailsMap.containsKey(product.productId)) {
+      productDetails = productDetailsMap[product.productId];
+    } else {
+      productDetails = ProductEntity.fromProduct(product);
+      productDetailsMap[product.productId] = productDetails;
+    }
+  }
+
+  Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
-    productDetails = null;
     selectedVariant = null;
-    final result = await productRepository.getProductDetails(productId, lang);
+
+    final result =
+        await productRepository.getProductDetails(productId, Preload.language);
+    List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
+      productDetails = null;
+      _gallery.addAll(result['moreAbout']['gallery']);
+      if (_gallery.length != result['moreAbout']['gallery'].length)
+        _gallery.removeAt(0);
+      result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }
+    productDetailsMap[productId] = productDetails;
     notifyListeners();
   }
 

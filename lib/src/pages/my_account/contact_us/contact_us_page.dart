@@ -2,7 +2,6 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
@@ -12,7 +11,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:string_validator/string_validator.dart';
@@ -33,7 +32,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController messageController = TextEditingController();
 
   SettingBloc settingBloc;
-  PageStyle pageStyle;
   ProgressService progressService;
   SnackBarService snackBarService;
 
@@ -53,13 +51,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is ContactUsSubmittedInProcess) {
@@ -84,7 +80,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
         },
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.account,
       ),
     );
@@ -93,17 +88,17 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'account_contact_us_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -132,16 +127,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildFirstName() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 20.w,
+        vertical: 5.h,
       ),
       child: TextFormField(
         controller: firstNameController,
         style: mediumTextStyle.copyWith(
           color: greyColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
@@ -160,16 +155,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildPhoneNumber() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 20.w,
+        vertical: 5.h,
       ),
       child: TextFormField(
         controller: phoneNumberController,
         style: mediumTextStyle.copyWith(
           color: greyColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
@@ -188,16 +183,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildEmail() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 20.w,
+        vertical: 5.h,
       ),
       child: TextFormField(
         controller: emailController,
         style: mediumTextStyle.copyWith(
           color: greyColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
@@ -220,14 +215,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 5,
+        horizontal: 20.w,
+        vertical: 5.h,
       ),
       child: Text(
         'message_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
       ),
     );
@@ -235,16 +230,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildMessage() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 20.w,
+        vertical: 10.h,
       ),
       child: TextFormField(
         controller: messageController,
         style: mediumTextStyle.copyWith(
           color: greyColor,
-          fontSize: pageStyle.unitFontSize * 14,
+          fontSize: 14.sp,
         ),
         decoration: InputDecoration(
           hintText: 'message_hint'.tr(),
@@ -275,15 +270,15 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildSendButton() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.only(
-        left: pageStyle.unitWidth * 80,
-        right: pageStyle.unitWidth * 80,
-        top: pageStyle.unitHeight * 20,
+        left: 80.w,
+        right: 80.w,
+        top: 20.h,
       ),
       child: MarkaaTextButton(
         title: 'send_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -295,14 +290,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   Widget _buildCallUs() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 80,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 80.w,
+        vertical: 10.h,
       ),
       child: MarkaaTextButton(
         title: 'call_us'.tr(),
-        titleSize: pageStyle.unitFontSize * 14,
+        titleSize: 14.sp,
         titleColor: Colors.white,
         buttonColor: Colors.orange,
         borderColor: Colors.transparent,

@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class AwesomeLoader extends StatefulWidget {
-  const AwesomeLoader(
-      {this.outerColor = const Color.fromARGB(255, 66, 62, 60),
-      this.innerColor = const Color.fromARGB(255, 66, 62, 60),
-      this.strokeWidth = 15,
-      this.duration = 4000,
-      this.controller});
+  const AwesomeLoader({
+    this.outerColor = const Color.fromARGB(255, 66, 62, 60),
+    this.innerColor = const Color.fromARGB(255, 66, 62, 60),
+    this.strokeWidth = 15,
+    this.duration = 4000,
+    this.controller,
+  });
   final Color outerColor;
   final Color innerColor;
   final double strokeWidth;
@@ -67,7 +68,6 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
       widget.controller._awesomeLoaderState = this;
     }
 
-    // TODO(khaled): clarify this equation and exctract a constant
     // controls the smoothness of the arc animation
     arcIncrement = 2 *
         2 *

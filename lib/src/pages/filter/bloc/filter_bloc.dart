@@ -4,23 +4,16 @@ import 'package:bloc/bloc.dart';
 import 'package:markaa/src/utils/repositories/filter_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 part 'filter_event.dart';
 part 'filter_state.dart';
 
 class FilterBloc extends Bloc<FilterEvent, FilterState> {
-  FilterBloc({
-    @required FilterRepository filterRepository,
-    @required LocalStorageRepository localStorageRepository,
-  })  : assert(filterRepository != null),
-        assert(localStorageRepository != null),
-        _filterRepository = filterRepository,
-        _localStorageRepository = localStorageRepository,
-        super(FilterInitial());
+  FilterBloc() : super(FilterInitial());
 
-  final FilterRepository _filterRepository;
-  final LocalStorageRepository _localStorageRepository;
+  final FilterRepository _filterRepository = FilterRepository();
+  final LocalStorageRepository _localStorageRepository =
+      LocalStorageRepository();
 
   @override
   Stream<FilterState> mapEventToState(
@@ -66,7 +59,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         }
       } else {
         if (!existItem) {
-          yield FilterAttributesLoadedFailure(message: result['errMessage']);
+          yield FilterAttributesLoadedFailure(message: result['errorMessage']);
         }
       }
     } catch (e) {

@@ -4,13 +4,12 @@ import 'package:markaa/src/data/models/review_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductReviewPage extends StatefulWidget {
   final ProductEntity product;
@@ -22,7 +21,6 @@ class ProductReviewPage extends StatefulWidget {
 }
 
 class _ProductReviewPageState extends State<ProductReviewPage> {
-  PageStyle pageStyle;
   List<ReviewEntity> reviews = [];
   ProductReviewChangeNotifier model;
 
@@ -35,22 +33,20 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
-            size: pageStyle.unitFontSize * 18,
+            size: 18.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'product_reviews'.tr(),
           style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
@@ -60,7 +56,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
             icon: Icon(
               Icons.add_circle_outline,
               color: Colors.white,
-              size: pageStyle.unitFontSize * 21,
+              size: 21.sp,
             ),
             onPressed: () => _onAddReview(),
           ),
@@ -68,8 +64,8 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(
-          vertical: pageStyle.unitHeight * 10,
-          horizontal: pageStyle.unitWidth * 20,
+          vertical: 10.h,
+          horizontal: 20.w,
         ),
         child: Consumer<ProductReviewChangeNotifier>(
           builder: (_, __, ___) {
@@ -87,7 +83,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
   Widget _buildProductReview(ReviewEntity review) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: pageStyle.unitHeight * 20),
+      padding: EdgeInsets.only(top: 20.h),
       child: Column(
         children: [
           Row(
@@ -96,7 +92,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
               Text(
                 review.nickname,
                 style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                   color: greyColor,
                 ),
@@ -107,7 +103,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
                 direction: Axis.horizontal,
                 allowHalfRating: true,
                 itemCount: 5,
-                itemSize: pageStyle.unitFontSize * 18,
+                itemSize: 18.sp,
                 ratingWidget: RatingWidget(
                   empty: Icon(Icons.star_border, color: Colors.grey.shade300),
                   full: Icon(Icons.star, color: Colors.amber),
@@ -120,14 +116,14 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
               ),
             ],
           ),
-          Divider(color: darkColor, height: pageStyle.unitHeight * 4),
+          Divider(color: darkColor, height: 4.h),
           Container(
             width: double.infinity,
             alignment: Alignment.centerRight,
             child: Text(
               review.createdAt,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 9,
+                fontSize: 9.sp,
                 color: primaryColor,
               ),
             ),
@@ -137,7 +133,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
             child: Text(
               review.detail,
               style: mediumTextStyle.copyWith(
-                fontSize: pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
                 color: greyColor,
                 fontWeight: FontWeight.w100,
               ),

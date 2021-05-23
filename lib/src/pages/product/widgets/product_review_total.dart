@@ -7,17 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
-  final PageStyle pageStyle;
   final Function onReviews;
   final Function onFirstReview;
 
   ProductReviewTotal({
     this.product,
-    this.pageStyle,
     this.onReviews,
     this.onFirstReview,
   });
@@ -40,11 +38,11 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.pageStyle.deviceWidth,
-      margin: EdgeInsets.only(top: widget.pageStyle.unitHeight * 10),
+      width: 375.w,
+      margin: EdgeInsets.only(top: 10.h),
       padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 20,
-        vertical: widget.pageStyle.unitHeight * 20,
+        horizontal: 20.w,
+        vertical: 20.h,
       ),
       color: Colors.white,
       child: Column(
@@ -53,7 +51,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           Text(
             'product_reviews'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 19,
+              fontSize: 19.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -86,7 +84,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
-            itemSize: widget.pageStyle.unitFontSize * 21,
+            itemSize: 21.sp,
             ratingWidget: RatingWidget(
               empty: Icon(Icons.star_border, color: Colors.grey.shade300),
               full: Icon(Icons.star, color: Colors.amber),
@@ -100,7 +98,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             child: Text(
               'first_review'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
                 color: primaryColor,
               ),
             ),
@@ -120,7 +118,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
-            itemSize: widget.pageStyle.unitFontSize * 21,
+            itemSize: 21.sp,
             ratingWidget: RatingWidget(
               empty: Icon(Icons.star_border, color: Colors.grey.shade300),
               full: Icon(Icons.star, color: Colors.amber),
@@ -136,7 +134,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                   .tr()
                   .replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 14,
+                fontSize: 14.sp,
                 color: primaryColor,
               ),
             ),

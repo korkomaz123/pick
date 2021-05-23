@@ -1,6 +1,6 @@
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/change_notifier/brand_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/place_change_notifier.dart';
@@ -12,204 +12,102 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
-import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
-import 'package:markaa/src/utils/repositories/filter_repository.dart';
 import 'package:markaa/src/utils/repositories/firebase_repository.dart';
-import 'package:markaa/src/utils/repositories/home_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:markaa/src/utils/repositories/app_repository.dart';
-import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/profile_repository.dart';
 import 'package:markaa/src/utils/repositories/search_repository.dart';
-import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
-import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
-import 'package:provider/provider.dart';
 
+import '../../../preload.dart';
 import 'no_network_access_page.dart';
 
-class MarkaaApp extends StatelessWidget {
-  MarkaaApp({Key key}) : super(key: key);
+class MarkaaApp extends StatefulWidget {
+  final String home;
+  MarkaaApp({Key key, @required this.home}) : super(key: key);
 
-  final appRepository = AppRepository();
-  final homeRepository = HomeRepository();
-  final signInRepository = SignInRepository();
+  @override
+  _MarkaaAppState createState() => _MarkaaAppState();
+}
+
+class _MarkaaAppState extends State<MarkaaApp> {
   final categoryRepository = CategoryRepository();
+
   final productRepository = ProductRepository();
+
   final brandRepository = BrandRepository();
+
   final localStorageRepository = LocalStorageRepository();
+
   final wishlistRepository = WishlistRepository();
-  final settingRepository = SettingRepository();
+
   final shippingAddressRepository = ShippingAddressRepository();
+
   final orderRepository = OrderRepository();
+
   final profileRepository = ProfileRepository();
-  final filterRepository = FilterRepository();
-  final myCartRepository = MyCartRepository();
+
   final searchRepository = SearchRepository();
+
   final checkoutRepository = CheckoutRepository();
+
   final firebaseRepository = FirebaseRepository();
 
   @override
-  Widget build(BuildContext context) {
-    lang = EasyLocalization.of(context).locale.languageCode;
-    return RepositoryProvider.value(
-      value: localStorageRepository,
-      child: RepositoryProvider.value(
-        value: appRepository,
-        child: RepositoryProvider.value(
-          value: homeRepository,
-          child: RepositoryProvider.value(
-            value: signInRepository,
-            child: RepositoryProvider.value(
-              value: categoryRepository,
-              child: RepositoryProvider.value(
-                value: productRepository,
-                child: RepositoryProvider.value(
-                  value: brandRepository,
-                  child: RepositoryProvider.value(
-                    value: wishlistRepository,
-                    child: RepositoryProvider.value(
-                      value: settingRepository,
-                      child: RepositoryProvider.value(
-                        value: shippingAddressRepository,
-                        child: RepositoryProvider.value(
-                          value: orderRepository,
-                          child: RepositoryProvider.value(
-                            value: profileRepository,
-                            child: RepositoryProvider.value(
-                              value: filterRepository,
-                              child: RepositoryProvider.value(
-                                value: myCartRepository,
-                                child: RepositoryProvider.value(
-                                  value: checkoutRepository,
-                                  child: RepositoryProvider.value(
-                                    value: searchRepository,
-                                    child: _buildMultiProvider(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
   }
 
-  Widget _buildMultiProvider() {
+  @override
+  Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => MarkaaAppChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => PlaceChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ScrollChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SuggestionChangeNotifier(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProductChangeNotifier(
-            productRepository: productRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => CategoryChangeNotifier(
-            categoryRepository: categoryRepository,
-            brandRepository: brandRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => BrandChangeNotifier(
-            brandRepository: brandRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => MyCartChangeNotifier(
-            myCartRepository: myCartRepository,
-            localStorageRepository: localStorageRepository,
-            checkoutRepository: checkoutRepository,
-            firebaseRepository: firebaseRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => WishlistChangeNotifier(
-            wishlistRepository: wishlistRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProductReviewChangeNotifier(
-            productRepository: productRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => HomeChangeNotifier(
-            homeRepository: homeRepository,
-            productRepository: productRepository,
-            localStorageRepository: localStorageRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => OrderChangeNotifier(
-            orderRepository: orderRepository,
-            firebaseRepository: firebaseRepository,
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AddressChangeNotifier(
-            addressRepository: shippingAddressRepository,
-          ),
-        ),
+        ChangeNotifierProvider(create: (_) => GlobalProvider()),
+        ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ScrollChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => SuggestionChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ProductChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => CategoryChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => MyCartChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => WishlistChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
       ],
-      child: _buildMultiBlocProvider(),
+      child: _buildMultiBlocProvider(context),
     );
   }
 
-  Widget _buildMultiBlocProvider() {
+  Widget _buildMultiBlocProvider(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SignInBloc(
-            signInRepository: signInRepository,
-          ),
+          create: (context) => SignInBloc(),
         ),
         BlocProvider(
-          create: (context) => SettingBloc(
-            settingRepository: settingRepository,
-          ),
+          create: (context) => SettingBloc(),
         ),
         BlocProvider(
           create: (context) => ProfileBloc(
@@ -217,69 +115,55 @@ class MarkaaApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) => FilterBloc(
-            filterRepository: filterRepository,
-            localStorageRepository: localStorageRepository,
-          ),
+          create: (context) => FilterBloc(),
         ),
       ],
-      child: MarkaaAppView(),
+      child: _buildAppView(context),
     );
   }
-}
 
-class MarkaaAppView extends StatelessWidget {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildAppView(BuildContext context) {
     return BackGestureWidthTheme(
       backGestureWidth: BackGestureWidth.fraction(1 / 2),
-      child: MaterialApp(
-        navigatorKey: _navigatorKey,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          EasyLocalization.of(context).delegate,
-          const FallbackCupertinoLocalisationsDelegate(),
-        ],
-        supportedLocales: EasyLocalization.of(context).supportedLocales,
-        locale: EasyLocalization.of(context).locale,
-        debugShowCheckedModeBanner: false,
-        theme: markaaAppTheme,
-        title: 'Markaa',
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          return RouteGenerator.generateRoute(settings);
-        },
-        builder: (context, child) {
-          return StreamBuilder<DataConnectionStatus>(
-            stream: DataConnectionChecker().onStatusChange,
-            builder: (context, networkSnapshot) {
-              if (!networkSnapshot.hasData) {
-                return Material(
-                  color: primarySwatchColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 250,
-                        height: 160,
-                        child: SvgPicture.asset(vLogoIcon),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                if (networkSnapshot.data == DataConnectionStatus.connected) {
-                  return child;
-                } else {
-                  return NoNetworkAccessPage();
+      child: ScreenUtilInit(
+        designSize: Size(designWidth, designHeight),
+        builder: () => MaterialApp(
+          navigatorKey: Preload.navigatorKey,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            EasyLocalization.of(context).delegate,
+            const FallbackCupertinoLocalisationsDelegate(),
+          ],
+          supportedLocales: EasyLocalization.of(context).supportedLocales,
+          locale: EasyLocalization.of(context).locale,
+          debugShowCheckedModeBanner: false,
+          theme: markaaAppTheme,
+          title: 'Markaa',
+          initialRoute: widget.home,
+          onGenerateRoute: RouteGenerator.generateRoute,
+          builder: (context, child) {
+            return StreamBuilder<ConnectivityResult>(
+              stream: Connectivity().onConnectivityChanged,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == ConnectivityResult.mobile ||
+                      snapshot.data == ConnectivityResult.wifi) {
+                    return FutureBuilder<void>(
+                      future: Preload.checkAppVersion(),
+                      builder: (context, snapshot) {
+                        return child;
+                      },
+                    );
+                  } else {
+                    return NoNetworkAccessPage();
+                  }
                 }
-              }
-            },
-          );
-        },
+                return child;
+              },
+            );
+          },
+        ),
       ),
     );
   }

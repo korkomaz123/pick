@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -8,15 +9,13 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductCard extends StatefulWidget {
   final double cardWidth;
@@ -27,7 +26,6 @@ class ProductCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final PageStyle pageStyle;
 
   ProductCard({
     this.cardWidth,
@@ -38,7 +36,6 @@ class ProductCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
-    this.pageStyle,
   });
 
   @override
@@ -50,20 +47,13 @@ class _ProductCardState extends State<ProductCard>
   bool isWishlist;
   int index;
   FlushBarService flushBarService;
-  // AnimationController _addToCartController;
-  // Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
   Animation<double> _addToWishlistScaleAnimation;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  Image cachedImage;
 
   @override
   void initState() {
     super.initState();
     isWishlist = false;
-    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     _initAnimation();
   }
@@ -74,32 +64,13 @@ class _ProductCardState extends State<ProductCard>
   }
 
   void _initAnimation() {
-    // _addToCartController = AnimationController(
-    //   duration: const Duration(milliseconds: 300),
-    //   reverseDuration: const Duration(milliseconds: 300),
-    //   vsync: this,
-    // );
-    // _addToCartScaleAnimation = Tween<double>(
-    //   begin: 1.0,
-    //   end: 3.0,
-    // ).animate(CurvedAnimation(
-    //   parent: _addToCartController,
-    //   curve: Curves.easeIn,
-    // ));
-
-    /// add to wishlist button animation
     _addToWishlistController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      reverseDuration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _addToWishlistScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 3.0,
-    ).animate(CurvedAnimation(
-      parent: _addToWishlistController,
-      curve: Curves.easeIn,
-    ));
+        duration: const Duration(milliseconds: 300),
+        reverseDuration: const Duration(milliseconds: 300),
+        vsync: this);
+    _addToWishlistScaleAnimation = Tween<double>(begin: 1.0, end: 3.0).animate(
+        CurvedAnimation(
+            parent: _addToWishlistController, curve: Curves.easeIn));
   }
 
   @override
@@ -136,17 +107,18 @@ class _ProductCardState extends State<ProductCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(
-        horizontal: widget.pageStyle.unitWidth * 8,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
           Container(
-            child: Image.network(
-              widget.product.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: widget.product.imageUrl,
               width: widget.cardWidth,
               height: widget.cardWidth,
               fit: BoxFit.fitHeight,
+              errorWidget: (context, url, error) {
+                return Center(child: Icon(Icons.image, size: 20.sp));
+              },
             ),
           ),
           Expanded(
@@ -176,7 +148,7 @@ class _ProductCardState extends State<ProductCard>
                     widget?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: widget.pageStyle.unitFontSize * 10,
+                      fontSize: 10.sp,
                     ),
                   ),
                 ),
@@ -185,29 +157,25 @@ class _ProductCardState extends State<ProductCard>
                       ? (widget.product.price + ' ' + 'currency'.tr())
                       : '',
                   style: mediumTextStyle.copyWith(
-                    fontSize: widget.pageStyle.unitFontSize *
-                        (widget.isMinor ? 10 : 10),
+                    fontSize: 10.sp,
                     color: greyColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (widget.product.discount > 0) ...[
-                  SizedBox(
-                      width: widget.pageStyle.unitWidth *
-                          (widget.isMinor ? 4 : 4)),
+                  SizedBox(width: 4.w),
                   Text(
                     widget.product.beforePrice + ' ' + 'currency'.tr(),
                     style: mediumTextStyle.copyWith(
                       decorationStyle: TextDecorationStyle.solid,
                       decoration: TextDecoration.lineThrough,
                       decorationColor: dangerColor,
-                      fontSize: widget.pageStyle.unitFontSize *
-                          (widget.isMinor ? 10 : 10),
+                      fontSize: 10.sp,
                       color: greyColor,
                     ),
                   ),
                 ],
-                SizedBox(height: widget.pageStyle.unitHeight * 5),
+                SizedBox(height: 5.h),
               ],
             ),
           ),
@@ -226,13 +194,13 @@ class _ProductCardState extends State<ProductCard>
             padding: EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () => user != null
-                  ? _onWishlist()
+                  ? _onWishlist(model)
                   : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
-                  width: widget.pageStyle.unitWidth * (isWishlist ? 18 : 22),
-                  height: widget.pageStyle.unitWidth * (isWishlist ? 18 : 22),
+                  width: isWishlist ? 18.w : 22.w,
+                  height: isWishlist ? 18.w : 22.w,
                   child: isWishlist
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
@@ -254,14 +222,14 @@ class _ProductCardState extends State<ProductCard>
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.pageStyle.unitWidth * 10,
-            vertical: widget.pageStyle.unitHeight * 3,
+            horizontal: 10.w,
+            vertical: 3.h,
           ),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: widget.pageStyle.unitFontSize * 10,
+              fontSize: 10.sp,
               color: Colors.white70,
             ),
           ),
@@ -271,7 +239,7 @@ class _ProductCardState extends State<ProductCard>
     return SizedBox.shrink();
   }
 
-  void _onWishlist() async {
+  void _onWishlist(WishlistChangeNotifier wishlistChangeNotifier) async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {

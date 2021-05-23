@@ -1,43 +1,36 @@
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class ProductRelatedItems extends StatefulWidget {
-  final PageStyle pageStyle;
   final ProductModel product;
 
-  ProductRelatedItems({this.pageStyle, this.product});
+  ProductRelatedItems({this.product});
 
   @override
   _ProductRelatedItemsState createState() => _ProductRelatedItemsState();
 }
 
 class _ProductRelatedItemsState extends State<ProductRelatedItems> {
-  PageStyle pageStyle;
   ProductModel product;
   List<ProductModel> relatedItems = [];
 
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
     product = widget.product;
     _getRelatedItems();
   }
 
   void _getRelatedItems() async {
-    relatedItems = await context
-        .read<ProductRepository>()
-        .getRelatedProducts(product.productId, lang);
+    relatedItems = await ProductRepository().getRelatedProducts(product.productId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 
@@ -45,10 +38,10 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   Widget build(BuildContext context) {
     if (relatedItems.isNotEmpty) {
       return Container(
-        width: pageStyle.deviceWidth,
+        width: 375.w,
         padding: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 10,
-          vertical: pageStyle.unitHeight * 6,
+          horizontal: 10.w,
+          vertical: 6.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,30 +50,29 @@ class _ProductRelatedItemsState extends State<ProductRelatedItems> {
               'product_related_items'.tr(),
               style: mediumTextStyle.copyWith(
                 color: greyColor,
-                fontSize: pageStyle.unitFontSize * 16,
+                fontSize: 16.sp,
               ),
             ),
-            SizedBox(height: pageStyle.unitHeight * 4),
+            SizedBox(height: 4.h),
             Container(
               width: double.infinity,
-              height: pageStyle.unitHeight * 320,
+              height: 320.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: relatedItems.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(
-                      right: pageStyle.unitWidth * 10,
+                      right: 10.w,
                     ),
                     child: ProductVCard(
-                      cardWidth: pageStyle.unitWidth * 180,
-                      cardHeight: pageStyle.unitHeight * 320,
+                      cardWidth: 180.w,
+                      cardHeight: 320.h,
                       product: relatedItems[index],
                       isShoppingCart: true,
                       isWishlist: true,
                       isShare: true,
                       isLine: true,
-                      pageStyle: pageStyle,
                     ),
                   );
                 },

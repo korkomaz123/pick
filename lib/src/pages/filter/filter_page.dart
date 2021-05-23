@@ -1,6 +1,5 @@
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -10,7 +9,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'bloc/filter_bloc.dart';
 import 'widgets/filter_basic_select.dart';
@@ -42,7 +41,6 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  PageStyle pageStyle;
   double minPrice;
   double maxPrice;
   Map<String, dynamic> filters = {};
@@ -82,8 +80,6 @@ class _FilterPageState extends State<FilterPage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: filterBackgroundColor,
@@ -94,7 +90,7 @@ class _FilterPageState extends State<FilterPage> {
           icon: Icon(
             Icons.arrow_back_ios,
             color: primaryColor,
-            size: pageStyle.unitFontSize * 22,
+            size: 22.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -102,22 +98,20 @@ class _FilterPageState extends State<FilterPage> {
           'filter_title'.tr(),
           style: mediumTextStyle.copyWith(
             color: primaryColor,
-            fontSize: pageStyle.unitFontSize * 25,
+            fontSize: 25.sp,
           ),
         ),
         actions: [
           Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 8,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: InkWell(
                 onTap: () => _onResetAll(),
                 child: Text(
                   'filter_reset_all'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),
@@ -137,7 +131,7 @@ class _FilterPageState extends State<FilterPage> {
             }
             if (state is FilterAttributesLoadedFailure) {
               // progressService.hideProgress();
-              flushBarService.showErrorMessage(pageStyle, state.message);
+              flushBarService.showErrorMessage(state.message);
             }
           },
           builder: (context, state) {
@@ -187,11 +181,8 @@ class _FilterPageState extends State<FilterPage> {
 
   Widget _buildCategories() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 20,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: FilterCategorySelect(
         items: [
           {
@@ -203,10 +194,9 @@ class _FilterPageState extends State<FilterPage> {
             'value': '${homeCategories[1].id}'
           },
         ],
-        itemWidth: pageStyle.unitWidth * 160,
-        itemHeight: pageStyle.unitHeight * 40,
+        itemWidth: 160.w,
+        itemHeight: 40.h,
         values: selectedCategories,
-        pageStyle: pageStyle,
         onTap: (value) {
           if (selectedCategories.contains(value['value'])) {
             selectedCategories.remove(value['value']);
@@ -221,11 +211,8 @@ class _FilterPageState extends State<FilterPage> {
 
   Widget _buildPriceRange() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 10,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -233,7 +220,7 @@ class _FilterPageState extends State<FilterPage> {
             'filter_price'.tr(),
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -248,7 +235,7 @@ class _FilterPageState extends State<FilterPage> {
                   'currency'.tr(),
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
-                fontSize: pageStyle.unitFontSize * 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -273,11 +260,8 @@ class _FilterPageState extends State<FilterPage> {
 
   Widget _buildGender() {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 30,
-        vertical: pageStyle.unitHeight * 10,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -285,13 +269,12 @@ class _FilterPageState extends State<FilterPage> {
             'filter_gender'.tr(),
             style: mediumTextStyle.copyWith(
               color: primaryColor,
-              fontSize: pageStyle.unitFontSize * 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: pageStyle.unitHeight * 10),
+          SizedBox(height: 10.h),
           FilterBasicSelect(
-            pageStyle: pageStyle,
             width: double.infinity,
             options: genderList,
             values: selectedGenders,
@@ -313,11 +296,8 @@ class _FilterPageState extends State<FilterPage> {
     return InkWell(
       onTap: () => _onSelectOption(title, filterOption),
       child: Container(
-        width: pageStyle.deviceWidth,
-        margin: EdgeInsets.symmetric(
-          horizontal: pageStyle.unitWidth * 30,
-          vertical: pageStyle.unitHeight * 10,
-        ),
+        width: 375.w,
+        margin: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: primaryColor, width: 0.5),
@@ -329,8 +309,8 @@ class _FilterPageState extends State<FilterPage> {
             Row(
               children: [
                 Container(
-                  width: pageStyle.unitWidth * 8,
-                  height: pageStyle.unitWidth * 8,
+                  width: 8.w,
+                  height: 8.h,
                   decoration: BoxDecoration(
                     color: !selectedValues
                                 .containsKey(filterOption['attribute_code']) ||
@@ -341,12 +321,12 @@ class _FilterPageState extends State<FilterPage> {
                     shape: BoxShape.circle,
                   ),
                 ),
-                SizedBox(width: pageStyle.unitWidth * 2),
+                SizedBox(width: 2.w),
                 Text(
                   title,
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
-                    fontSize: pageStyle.unitFontSize * 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -355,7 +335,7 @@ class _FilterPageState extends State<FilterPage> {
             Icon(
               Icons.arrow_forward_ios,
               color: primaryColor,
-              size: pageStyle.unitFontSize * 20,
+              size: 20.sp,
             ),
           ],
         ),
@@ -365,11 +345,11 @@ class _FilterPageState extends State<FilterPage> {
 
   Widget _buildApplyButton() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 60,
+      width: 375.w,
+      height: 60.h,
       child: MarkaaTextButton(
         title: 'apply_button_title'.tr(),
-        titleSize: pageStyle.unitFontSize * 24,
+        titleSize: 24.sp,
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
@@ -390,7 +370,6 @@ class _FilterPageState extends State<FilterPage> {
       context: context,
       builder: (context) {
         return FilterOptionSelectDialog(
-          pageStyle: pageStyle,
           title: title,
           code: option['attribute_code'],
           options: option['values'] ?? [],

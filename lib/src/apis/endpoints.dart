@@ -1,6 +1,7 @@
 class EndPoints {
   static const String baseUrl = 'https://markaa.com/customapi/api';
-  // static const String baseUrl = 'https://api.cigaon.com/customapi/api';
+  // static const String baseUrl = 'https://cigaon.com/customapi/api';
+  // static const String baseUrl = 'https://staging.markaa.com/customapi/api';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
@@ -34,6 +35,7 @@ class EndPoints {
   static const String deleteShippingAddress = '$baseUrl/deleteShippingAddress';
   static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
   static const String submitOrder = '$baseUrl/SubmitOrder';
+  static const String placeOrder = '$baseUrl/PlaceOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
   static const String getAboutus = '$baseUrl/getaboutus';
@@ -67,6 +69,7 @@ class EndPoints {
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';
   static const String cancelOrder = '$baseUrl/cancelOrder';
+  static const String cancelOrderById = '$baseUrl/cancelOrderById';
   static const String returnOrder = '$baseUrl/returnOrder';
   static const String getViewedProducts = '$baseUrl/getViewedProducts';
   static const String sendProductViewed = '$baseUrl/sendProductViewed';
@@ -90,4 +93,5 @@ class EndPoints {
   static const String getWatchesSection = '$baseUrl/getWatchesbanner';
   static const String getGroomingSection = '$baseUrl/getGroomingBanner';
   static const String getSmartTechSection = '$baseUrl/getSmarttechBanner';
+  static const String activateCart = '$baseUrl/ActiveCart';
 }

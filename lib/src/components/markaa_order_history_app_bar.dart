@@ -2,14 +2,10 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaOrderHistoryAppBar extends StatefulWidget
     implements PreferredSizeWidget {
-  final PageStyle pageStyle;
-
-  MarkaaOrderHistoryAppBar({this.pageStyle});
-
   @override
   _MarkaaOrderHistoryAppBarState createState() =>
       _MarkaaOrderHistoryAppBarState();
@@ -19,12 +15,9 @@ class MarkaaOrderHistoryAppBar extends StatefulWidget
 }
 
 class _MarkaaOrderHistoryAppBarState extends State<MarkaaOrderHistoryAppBar> {
-  PageStyle pageStyle;
-
   @override
   void initState() {
     super.initState();
-    pageStyle = widget.pageStyle;
   }
 
   @override
@@ -34,7 +27,7 @@ class _MarkaaOrderHistoryAppBarState extends State<MarkaaOrderHistoryAppBar> {
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,
-          size: pageStyle.unitFontSize * 25,
+          size: 25.sp,
           color: greyColor,
         ),
         onPressed: () => Navigator.pop(context),
@@ -43,7 +36,7 @@ class _MarkaaOrderHistoryAppBarState extends State<MarkaaOrderHistoryAppBar> {
         'my_orders'.tr(),
         style: mediumTextStyle.copyWith(
           color: greyDarkColor,
-          fontSize: pageStyle.unitFontSize * 23,
+          fontSize: 23.sp,
         ),
       ),
     );

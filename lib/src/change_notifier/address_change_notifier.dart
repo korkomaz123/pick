@@ -3,9 +3,8 @@ import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class AddressChangeNotifier extends ChangeNotifier {
-  AddressChangeNotifier({this.addressRepository});
-
-  final ShippingAddressRepository addressRepository;
+  final ShippingAddressRepository addressRepository =
+      ShippingAddressRepository();
 
   Map<String, AddressEntity> addressesMap;
   AddressEntity defaultAddress;

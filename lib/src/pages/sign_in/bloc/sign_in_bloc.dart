@@ -4,18 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:equatable/equatable.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
-import 'package:meta/meta.dart';
 
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  SignInBloc({@required SignInRepository signInRepository})
-      : assert(signInRepository != null),
-        _signInRepository = signInRepository,
-        super(SignInInitial());
+  SignInBloc() : super(SignInInitial());
 
-  final SignInRepository _signInRepository;
+  final SignInRepository _signInRepository = SignInRepository();
 
   @override
   Stream<SignInState> mapEventToState(
@@ -91,7 +87,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         result['user']['token'] = result['token'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
-        yield SignInSubmittedFailure(message: result['errMessage']);
+        yield SignInSubmittedFailure(message: result['errorMessage']);
       }
     } catch (e) {
       yield SignInSubmittedFailure(message: e.toString());
@@ -130,7 +126,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         yield NewPasswordRequestSubmittedSuccess();
       } else {
         yield NewPasswordRequestSubmittedFailure(
-          message: result['errMessage'],
+          message: result['errorMessage'],
         );
       }
     } catch (e) {

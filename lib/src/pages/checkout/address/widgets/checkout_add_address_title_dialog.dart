@@ -4,13 +4,9 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutAddAddressTitleDialog extends StatefulWidget {
-  final PageStyle pageStyle;
-
-  CheckoutAddAddressTitleDialog({this.pageStyle});
-
   @override
   _CheckoutAddAddressTitleDialogState createState() =>
       _CheckoutAddAddressTitleDialogState();
@@ -30,7 +26,7 @@ class _CheckoutAddAddressTitleDialogState
           'checkout_your_address_title'.tr(),
           textAlign: TextAlign.center,
           style: mediumTextStyle.copyWith(
-            fontSize: widget.pageStyle.unitFontSize * 26,
+            fontSize: 26.sp,
             color: Colors.black,
           ),
         ),
@@ -39,9 +35,9 @@ class _CheckoutAddAddressTitleDialogState
           child: MarkaaInputField(
             width: double.infinity,
             controller: titleController,
-            space: widget.pageStyle.unitHeight * 4,
-            radius: 4,
-            fontSize: widget.pageStyle.unitFontSize * 16,
+            space: 4.h,
+            radius: 4.sp,
+            fontSize: 16.sp,
             fontColor: greyDarkColor,
             label: '',
             labelColor: greyColor,
@@ -52,6 +48,7 @@ class _CheckoutAddAddressTitleDialogState
           ),
         ),
         actions: [
+          // ignore: deprecated_member_use
           FlatButton(
             onPressed: () {
               if (formKey.currentState.validate()) {
@@ -61,7 +58,7 @@ class _CheckoutAddAddressTitleDialogState
             child: Text(
               'save_button_title'.tr(),
               style: mediumTextStyle.copyWith(
-                fontSize: widget.pageStyle.unitFontSize * 18,
+                fontSize: 18.sp,
                 color: primaryColor,
               ),
             ),

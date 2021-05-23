@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -6,40 +7,36 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaReviewProductCard extends StatelessWidget {
-  final PageStyle pageStyle;
   final CartItemEntity cartItem;
 
-  MarkaaReviewProductCard({this.pageStyle, this.cartItem});
+  MarkaaReviewProductCard({this.cartItem});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: pageStyle.deviceWidth,
-      padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 10,
-        vertical: pageStyle.unitHeight * 20,
-      ),
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
       child: Row(
         children: [
-          Image.network(
-            cartItem.product.imageUrl,
-            width: pageStyle.unitHeight * 90,
-            height: pageStyle.unitHeight * 120,
+          CachedNetworkImage(
+            imageUrl: cartItem.product.imageUrl,
+            width: 90.h,
+            height: 120.h,
             fit: BoxFit.fitHeight,
-            loadingBuilder: (_, child, chunkEvent) {
-              return chunkEvent != null
-                  ? Image.asset(
-                      'lib/public/images/loading/image_loading.jpg',
-                      width: pageStyle.unitHeight * 90,
-                      height: pageStyle.unitHeight * 120,
-                    )
-                  : child;
-            },
+            // loading: (_, child, chunkEvent) {
+            //   return chunkEvent != null
+            //       ? Image.asset(
+            //           'lib/public/images/loading/image_loading.jpg',
+            //           width: 90.h,
+            //           height: 120.h,
+            //         )
+            //       : child;
+            // },
           ),
-          SizedBox(width: pageStyle.unitWidth * 10),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +62,7 @@ class MarkaaReviewProductCard extends StatelessWidget {
                     cartItem?.product?.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: pageStyle.unitFontSize * 12,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ),
@@ -74,7 +71,7 @@ class MarkaaReviewProductCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 Text(
@@ -82,24 +79,24 @@ class MarkaaReviewProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 12,
+                    fontSize: 12.sp,
                   ),
                 ),
-                SizedBox(height: pageStyle.unitHeight * 10),
+                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'items'.tr().replaceFirst('0', '${cartItem.itemCount}'),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                         color: primaryColor,
                       ),
                     ),
                     Text(
                       cartItem.product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
+                        fontSize: 16.sp,
                         color: primaryColor,
                       ),
                     ),

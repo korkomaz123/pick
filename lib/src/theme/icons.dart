@@ -11,6 +11,7 @@ const String storeIcon = '$iconsAssetPath/store-icon.svg';
 const String wishlistIcon = '$iconsAssetPath/wishlist-icon.svg';
 const String wishlistOpacityIcon = '$iconsAssetPath/wishlist-opacity-icon.svg';
 const String addCartIcon = '$iconsAssetPath/addtocart.svg';
+const String addCart1Icon = '$iconsAssetPath/add-cart-icon.svg';
 const String wishlistedIcon = '$iconsAssetPath/wishlisted-icon.svg';
 const String userIcon = '$iconsAssetPath/user-icon.svg';
 const String filterIcon = '$iconsAssetPath/filter-icon.svg';
@@ -67,3 +68,12 @@ const String favoriteIcon = '$iconsAssetPath/favorite-icon.svg';
 const String addressIcon = '$iconsAssetPath/address-icon.svg';
 const String errorIcon = '$iconsAssetPath/error-icon.svg';
 const String noNetworkIcon = '$iconsAssetPath/no-network-icon.svg';
+const String walletIcon = '$iconsAssetPath/wallet-icon.svg';
+const String walletSimpleIcon = '$iconsAssetPath/wallet-simple-icon.svg';
+const String walletTitle = '$iconsAssetPath/wallet-title.svg';
+const String boldCheckBoxCheckedIcon =
+    '$iconsAssetPath/bold-checkbox-checked-icon.svg';
+const String boldCheckBoxUncheckedIcon =
+    '$iconsAssetPath/bold-checkbox-unchecked-icon.svg';
+const String facebookCircleIcon = '$iconsAssetPath/facebook-circle.svg';
+const String appleCircleIcon = '$iconsAssetPath/apple.svg';

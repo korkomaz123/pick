@@ -13,18 +13,12 @@ class OrderRepository {
     Map<String, dynamic> orderDetails,
     String lang,
   ) async {
-    String url = EndPoints.submitOrder;
-    Map<String, dynamic> params = {};
-    params['orderAddress'] = orderDetails['orderAddress'];
-    params['token'] = orderDetails['token'];
-    params['shipping'] = orderDetails['shipping'];
-    params['paymentMethod'] = orderDetails['paymentMethod'];
-    params['lang'] = lang;
-    params['cartId'] = orderDetails['cartId'];
-    params['orderDetails'] = jsonEncode(orderDetails['orderDetails']);
-    // print(params);
-    // print(url);
-    final result = await Api.postMethod(url, data: params);
+    String url = EndPoints.placeOrder;
+    final details = jsonEncode(orderDetails['orderDetails']);
+    orderDetails['orderDetails'] = details;
+    orderDetails['lang'] = lang;
+    final result = await Api.postMethod(url, data: orderDetails);
+
     return result;
   }
 
@@ -34,6 +28,16 @@ class OrderRepository {
   Future<dynamic> getOrderHistory(String token, String lang) async {
     String url = EndPoints.getOrderHistory;
     final params = {'token': token, 'lang': lang};
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> cancelOrderById(String orderId, String lang) async {
+    String url = EndPoints.cancelOrderById;
+    final params = {'orderId': orderId, 'lang': lang};
+
     return await Api.postMethod(url, data: params);
   }
 
@@ -58,6 +62,7 @@ class OrderRepository {
       'lang': lang,
       'imageForProduct': imageName != null ? base64Encode(product) : '',
     };
+    // print(params);
     return await Api.postMethod(url, data: params);
   }
 

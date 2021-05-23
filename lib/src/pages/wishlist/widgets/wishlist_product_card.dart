@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -5,16 +6,14 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WishlistProductCard extends StatelessWidget {
-  final PageStyle pageStyle;
   final ProductModel product;
   final Function onRemoveWishlist;
   final Function onAddToCart;
 
   WishlistProductCard({
-    this.pageStyle,
     this.product,
     this.onRemoveWishlist,
     this.onAddToCart,
@@ -26,7 +25,7 @@ class WishlistProductCard extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: pageStyle.unitHeight * 10),
+          padding: EdgeInsets.symmetric(vertical: 10.h),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -34,17 +33,20 @@ class WishlistProductCard extends StatelessWidget {
                 onTap: onRemoveWishlist,
                 child: Icon(
                   Icons.remove_circle_outline,
-                  size: pageStyle.unitFontSize * 22,
+                  size: 22.sp,
                   color: greyDarkColor,
                 ),
               ),
-              Image.network(
-                product.imageUrl,
-                width: pageStyle.unitWidth * 114,
-                height: pageStyle.unitHeight * 140,
+              CachedNetworkImage(
+                imageUrl: product.imageUrl,
+                width: 114.w,
+                height: 140.h,
                 fit: BoxFit.fitHeight,
+                errorWidget: (_, __, ___) {
+                  return Center(child: Icon(Icons.image, size: 20.sp));
+                },
               ),
-              SizedBox(width: pageStyle.unitWidth * 10),
+              SizedBox(width: 10.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,35 +58,35 @@ class WishlistProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 14,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 4),
+                    SizedBox(height: 4.h),
                     Text(
                       product.shortDescription,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: pageStyle.unitFontSize * 12,
+                        fontSize: 12.sp,
                       ),
                     ),
                     Text(
                       product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 12,
+                        fontSize: 12.sp,
                         color: greyColor,
                       ),
                     ),
-                    SizedBox(height: pageStyle.unitHeight * 10),
+                    SizedBox(height: 10.h),
                     if (product.stockQty != null && product.stockQty > 0) ...[
                       MarkaaTextButton(
                         title: 'wishlist_add_cart_button_title'.tr(),
-                        titleSize: pageStyle.unitFontSize * 15,
+                        titleSize: 15.sp,
                         titleColor: Colors.white,
                         buttonColor: primaryColor,
                         borderColor: Colors.transparent,
-                        onPressed: () => onAddToCart(),
+                        onPressed: onAddToCart,
                         radius: 10,
                       )
                     ],
@@ -94,50 +96,52 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        product.stockQty == null || product.stockQty == 0
-            ? _buildOutOfStock()
-            : SizedBox.shrink(),
+        if (product.stockQty == null || product.stockQty == 0) ...[
+          _buildOutOfStock()
+        ]
       ],
     );
   }
 
   Widget _buildOutOfStock() {
-    return lang == 'en'
-        ? Positioned(
-            top: pageStyle.unitHeight * 50,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 15,
-                vertical: pageStyle.unitHeight * 5,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
-                  color: Colors.white70,
-                ),
-              ),
+    if (lang == 'en') {
+      return Positioned(
+        top: 50.h,
+        right: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15.w,
+            vertical: 5.h,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 14.sp,
+              color: Colors.white70,
             ),
-          )
-        : Positioned(
-            top: pageStyle.unitHeight * 50,
-            left: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: pageStyle.unitWidth * 15,
-                vertical: pageStyle.unitHeight * 5,
-              ),
-              color: primarySwatchColor.withOpacity(0.4),
-              child: Text(
-                'out_stock'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: pageStyle.unitFontSize * 14,
-                  color: Colors.white70,
-                ),
-              ),
+          ),
+        ),
+      );
+    } else {
+      return Positioned(
+        top: 50.h,
+        left: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15.w,
+            vertical: 5.h,
+          ),
+          color: primarySwatchColor.withOpacity(0.4),
+          child: Text(
+            'out_stock'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 14.sp,
+              color: Colors.white70,
             ),
-          );
+          ),
+        ),
+      );
+    }
   }
 }

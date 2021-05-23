@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductImage extends StatefulWidget {
   final List<dynamic> images;
@@ -17,7 +19,6 @@ class ProductImage extends StatefulWidget {
 class _ProductImageState extends State<ProductImage> {
   final dataKey = GlobalKey();
   int activeIndex = 0;
-  PageStyle pageStyle;
   List<dynamic> images;
 
   @override
@@ -28,56 +29,41 @@ class _ProductImageState extends State<ProductImage> {
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
             Container(
-              width: pageStyle.deviceWidth,
-              height: pageStyle.deviceHeight,
-              child: images.length < 2
-                  ? PhotoView(
-                      backgroundDecoration: BoxDecoration(color: Colors.white),
-                      imageProvider: NetworkImage(images[0]),
-                      loadingBuilder: (_, chunk) {
-                        return Image.asset(
-                          'lib/public/images/loading/image_loading.jpg',
-                        );
-                      },
-                    )
-                  : Swiper(
-                      itemCount: images.length,
-                      autoplay: false,
-                      curve: Curves.easeIn,
-                      duration: 300,
-                      autoplayDelay: 5000,
-                      onIndexChanged: (value) => _onUpdateIndex(value),
-                      itemBuilder: (context, index) {
-                        return PhotoView(
-                          backgroundDecoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          imageProvider: NetworkImage(images[activeIndex]),
-                          loadingBuilder: (_, chunk) {
-                            return Image.asset(
-                              'lib/public/images/loading/image_loading.jpg',
-                            );
-                          },
-                        );
-                      },
+              width: designWidth.w,
+              height: designHeight.h,
+              child: Swiper(
+                itemCount: images.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) => _onUpdateIndex(value),
+                itemBuilder: (context, index) {
+                  return PhotoView(
+                    backgroundDecoration: BoxDecoration(color: Colors.white),
+                    imageProvider:
+                        CachedNetworkImageProvider(images[activeIndex]),
+                    loadingBuilder: (context, downloadProgress) => Center(
+                      child: CupertinoActivityIndicator(),
                     ),
+                  );
+                },
+              ),
             ),
             InkWell(
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: EdgeInsets.only(
-                  top: pageStyle.unitHeight * 10,
-                  left: pageStyle.unitWidth * 10,
+                  top: 10.h,
+                  left: 10.w,
                 ),
-                padding: EdgeInsets.all(pageStyle.unitWidth * 8),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: greyDarkColor.withOpacity(0.3),
@@ -85,14 +71,14 @@ class _ProductImageState extends State<ProductImage> {
                 child: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
-                  size: pageStyle.unitFontSize * 25,
+                  size: 25.sp,
                 ),
               ),
             ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                width: pageStyle.deviceWidth,
+                width: 375.w,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -101,21 +87,21 @@ class _ProductImageState extends State<ProductImage> {
                         key: activeIndex == index ? dataKey : null,
                         onTap: () => _onUpdateIndex(index),
                         child: Container(
-                          width: pageStyle.unitWidth * 100,
-                          height: pageStyle.unitHeight * 100,
+                          width: 100.w,
+                          height: 100.h,
                           margin: EdgeInsets.only(
-                            right: pageStyle.unitWidth * 10,
+                            right: 10.w,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             image: DecorationImage(
-                              image: NetworkImage(images[index]),
+                              image: CachedNetworkImageProvider(images[index]),
                             ),
                             border: Border.all(
                               color: activeIndex == index
                                   ? primaryColor
                                   : greyColor,
-                              width: pageStyle.unitWidth * 0.8,
+                              width: 0.8.w,
                             ),
                           ),
                         ),

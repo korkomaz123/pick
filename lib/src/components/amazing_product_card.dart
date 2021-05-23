@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -9,13 +10,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 
 class AmazingProductCard extends StatelessWidget {
-  final PageStyle pageStyle;
   final double cardSize;
   final double contentSize;
   final ProductModel product;
 
   AmazingProductCard({
-    @required this.pageStyle,
     @required this.cardSize,
     @required this.contentSize,
     @required this.product,
@@ -30,7 +29,7 @@ class AmazingProductCard extends StatelessWidget {
         arguments: product,
       ),
       child: Container(
-        width: cardSize + pageStyle.unitWidth * 20,
+        width: cardSize + 20.w,
         height: cardSize,
         child: Stack(
           children: [
@@ -38,17 +37,16 @@ class AmazingProductCard extends StatelessWidget {
               width: cardSize,
               height: cardSize,
               margin: EdgeInsets.only(
-                left: lang == 'en' ? pageStyle.unitWidth * 20 : 0,
-                right: lang == 'ar' ? pageStyle.unitWidth * 20 : 0,
+                left: lang == 'en' ? 20.w : 0,
+                right: lang == 'ar' ? 20.w : 0,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 image: DecorationImage(
-                  image: NetworkImage(product.imageUrl),
+                  image: CachedNetworkImageProvider(product.imageUrl),
                   fit: BoxFit.fitHeight,
                 ),
-                borderRadius:
-                    BorderRadius.circular(pageStyle.unitFontSize * 20),
+                borderRadius: BorderRadius.circular(20.sp),
               ),
             ),
             Align(
@@ -57,15 +55,13 @@ class AmazingProductCard extends StatelessWidget {
               child: Container(
                 width: contentSize,
                 height: contentSize,
-                margin: EdgeInsets.only(bottom: pageStyle.unitHeight * 20),
+                margin: EdgeInsets.only(bottom: 20.h),
                 padding: EdgeInsets.symmetric(
-                  horizontal: pageStyle.unitWidth * 6,
-                  vertical: pageStyle.unitHeight * 10,
+                  horizontal: 6.w,
+                  vertical: 10.h,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    pageStyle.unitFontSize * 10,
-                  ),
+                  borderRadius: BorderRadius.circular(10.sp),
                   color: Color(0xFF009AFB),
                 ),
                 child: Column(
@@ -99,20 +95,20 @@ class AmazingProductCard extends StatelessWidget {
                             maxLines: 1,
                             style: mediumTextStyle.copyWith(
                               color: Colors.white,
-                              fontSize: pageStyle.unitFontSize * 12,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
-                        SizedBox(height: pageStyle.unitHeight * 2),
+                        SizedBox(height: 2.h),
                         Text(
                           product.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: mediumTextStyle.copyWith(
                             color: Colors.white70,
-                            fontSize: pageStyle.unitFontSize * 10,
-                            height: pageStyle.unitHeight * 1.5,
+                            fontSize: 10.sp,
+                            height: 1.5.h,
                           ),
                         ),
                       ],
@@ -122,7 +118,7 @@ class AmazingProductCard extends StatelessWidget {
                           ? (product.price + ' ' + 'currency'.tr())
                           : '',
                       style: mediumTextStyle.copyWith(
-                        fontSize: pageStyle.unitFontSize * 16,
+                        fontSize: 16.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),

@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -17,7 +16,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReturnOrderInfoPage extends StatefulWidget {
   final Map<String, dynamic> params;
@@ -35,7 +34,6 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   ImageCustomPickerService imageCustomPickerService;
   FlushBarService flushBarService;
   ProgressService progressService;
-  PageStyle pageStyle;
   OrderEntity order;
   Map<String, dynamic> returnedItemsMap = {};
   File file;
@@ -72,22 +70,19 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(pageStyle, error);
+    flushBarService.showErrorMessage(error);
   }
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
       appBar: MarkaaAppBar(
         scaffoldKey: scaffoldKey,
-        pageStyle: pageStyle,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
           _buildAppBar(),
@@ -113,17 +108,17 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: pageStyle.unitHeight * 50,
+      toolbarHeight: 50.h,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: pageStyle.unitFontSize * 22),
+        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'return_button_title'.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
-          fontSize: pageStyle.unitFontSize * 17,
+          fontSize: 17.sp,
         ),
       ),
     );
@@ -131,21 +126,21 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
 
   Widget _buildAdditionalInfo() {
     return Container(
-      width: pageStyle.deviceWidth,
+      width: 375.w,
       padding: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitFontSize * 20,
-        vertical: pageStyle.unitHeight * 20,
+        horizontal: 20.sp,
+        vertical: 20.h,
       ),
       child: MarkaaInputField(
         width: double.infinity,
         controller: additionalInfoController,
-        space: pageStyle.unitHeight * 4,
-        radius: pageStyle.unitFontSize * 10,
-        fontSize: pageStyle.unitFontSize * 16,
+        space: 4.h,
+        radius: 10.sp,
+        fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'cancel_order_additional_info_title'.tr(),
         labelColor: greyDarkColor,
-        labelSize: pageStyle.unitFontSize * 16,
+        labelSize: 16.sp,
         fillColor: Colors.white,
         bordered: true,
         borderColor: Colors.grey,
@@ -157,15 +152,15 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
 
   Widget _buildImageUploader() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 120,
+      width: 375.w,
+      height: 120.h,
       margin: EdgeInsets.symmetric(
-        horizontal: pageStyle.unitWidth * 20,
-        vertical: pageStyle.unitHeight * 10,
+        horizontal: 20.w,
+        vertical: 10.h,
       ),
       decoration: file != null
           ? BoxDecoration(
-              borderRadius: BorderRadius.circular(pageStyle.unitFontSize * 10),
+              borderRadius: BorderRadius.circular(10.sp),
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
                 image: FileImage(file),
@@ -173,7 +168,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
               ),
             )
           : BoxDecoration(
-              borderRadius: BorderRadius.circular(pageStyle.unitFontSize * 10),
+              borderRadius: BorderRadius.circular(10.sp),
               border: Border.all(color: Colors.grey),
             ),
       child: file != null
@@ -183,7 +178,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
                 icon: Icon(
                   Icons.edit,
                   color: primaryColor,
-                  size: pageStyle.unitFontSize * 30,
+                  size: 30.sp,
                 ),
                 onPressed: () => _onChangeImage(),
               ),
@@ -195,14 +190,14 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
                   icon: Icon(
                     Icons.add_circle,
                     color: primaryColor,
-                    size: pageStyle.unitFontSize * 30,
+                    size: 30.sp,
                   ),
                   onPressed: () => _onChangeImage(),
                 ),
                 Text(
                   'cancel_order_image_for_product_title'.tr(),
                   style: mediumTextStyle.copyWith(
-                    fontSize: pageStyle.unitFontSize * 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
@@ -212,11 +207,11 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
 
   Widget _buildSubmitButton() {
     return Container(
-      padding: EdgeInsets.only(top: pageStyle.unitHeight * 20),
+      padding: EdgeInsets.only(top: 20.h),
       child: MaterialButton(
         onPressed: () => _onSubmit(),
-        minWidth: pageStyle.unitWidth * 150,
-        height: pageStyle.unitHeight * 45,
+        minWidth: 150.w,
+        height: 45.h,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
@@ -224,7 +219,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
         child: Text(
           'submit_button_title'.tr(),
           style: mediumTextStyle.copyWith(
-            fontSize: pageStyle.unitFontSize * 17,
+            fontSize: 17.sp,
             color: Colors.white,
           ),
         ),

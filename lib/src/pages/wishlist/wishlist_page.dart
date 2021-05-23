@@ -1,3 +1,5 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -19,7 +21,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isco_custom_widgets/isco_custom_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/wishlist_remove_dialog.dart';
 
@@ -32,7 +34,6 @@ class _WishlistPageState extends State<WishlistPage>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  PageStyle pageStyle;
   ProgressService progressService;
   FlushBarService flushBarService;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -54,17 +55,14 @@ class _WishlistPageState extends State<WishlistPage>
 
   @override
   Widget build(BuildContext context) {
-    pageStyle = PageStyle(context, designWidth, designHeight);
-    pageStyle.initializePageStyles();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(
-        pageStyle: pageStyle,
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(pageStyle: pageStyle),
+      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           Column(
@@ -77,7 +75,6 @@ class _WishlistPageState extends State<WishlistPage>
                   } else {
                     return Expanded(
                       child: NoAvailableData(
-                        pageStyle: pageStyle,
                         message: 'wishlist_empty',
                       ),
                     );
@@ -89,7 +86,6 @@ class _WishlistPageState extends State<WishlistPage>
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        pageStyle: pageStyle,
         activeItem: BottomEnum.wishlist,
       ),
     );
@@ -97,13 +93,13 @@ class _WishlistPageState extends State<WishlistPage>
 
   Widget _buildAppBar() {
     return Container(
-      width: pageStyle.deviceWidth,
-      height: pageStyle.unitHeight * 40,
+      width: 375.w,
+      height: 40.h,
       color: primarySwatchColor,
       padding: EdgeInsets.only(
-        left: pageStyle.unitWidth * 10,
-        right: pageStyle.unitWidth * 10,
-        bottom: pageStyle.unitHeight * 10,
+        left: 10.w,
+        right: 10.w,
+        bottom: 10.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,7 +108,7 @@ class _WishlistPageState extends State<WishlistPage>
             child: Icon(
               Icons.arrow_back_ios,
               color: Colors.white,
-              size: pageStyle.unitFontSize * 20,
+              size: 20.sp,
             ),
             onTap: () => Navigator.pop(context),
           ),
@@ -120,7 +116,7 @@ class _WishlistPageState extends State<WishlistPage>
             'account_wishlist_title'.tr(),
             style: mediumTextStyle.copyWith(
               color: Colors.white,
-              fontSize: pageStyle.unitFontSize * 17,
+              fontSize: 17.sp,
             ),
           ),
           SizedBox.shrink(),
@@ -137,8 +133,8 @@ class _WishlistPageState extends State<WishlistPage>
         itemBuilder: (context, index) {
           final product = wishlistChangeNotifier.wishlistItemsMap[keys[index]];
           return Container(
-            width: pageStyle.deviceWidth,
-            padding: EdgeInsets.symmetric(horizontal: pageStyle.unitWidth * 10),
+            width: 375.w,
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Column(
               children: [
                 InkWell(
@@ -148,7 +144,6 @@ class _WishlistPageState extends State<WishlistPage>
                     arguments: product,
                   ),
                   child: WishlistProductCard(
-                    pageStyle: pageStyle,
                     product: product,
                     onRemoveWishlist: () => _onRemoveWishlist(product, true),
                     onAddToCart: () => _onAddToCart(product),
@@ -171,7 +166,7 @@ class _WishlistPageState extends State<WishlistPage>
       result = await showDialog(
         context: context,
         builder: (context) {
-          return WishlistRemoveDialog(pageStyle: pageStyle);
+          return WishlistRemoveDialog();
         },
       );
     }
@@ -182,7 +177,18 @@ class _WishlistPageState extends State<WishlistPage>
 
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
-    myCartChangeNotifier
-        .addProductToCart(context, pageStyle, product, 1, lang, {});
+    myCartChangeNotifier.addProductToCart(product, 1, lang, {},
+        onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
+  }
+
+  void _onAddSuccess(ProductModel product) {
+    flushBarService.showAddCartMessage(product);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
+    Adjust.trackEvent(adjustEvent);
+  }
+
+  _onAddFailure(String message) {
+    flushBarService.showErrorMessage(message);
   }
 }
