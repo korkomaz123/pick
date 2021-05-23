@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -64,8 +65,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                   arguments: arguments,
                 );
               } else if (widget.model?.ads?.productId != null) {
-                final product = await productRepository
-                    .getProduct(widget.model.ads.productId);
+                final product = await productRepository.getProduct(widget.model.ads.productId);
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.product,
@@ -74,7 +74,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                 );
               }
             },
-            child: Image.network(widget.model.ads.bannerImage),
+            child: CachedNetworkImage(imageUrl: widget.model.ads.bannerImage),
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
