@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -91,7 +92,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                 );
               }
             },
-            child: Image.network(banner.bannerImage),
+            child: CachedNetworkImage(imageUrl:banner.bannerImage),
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
