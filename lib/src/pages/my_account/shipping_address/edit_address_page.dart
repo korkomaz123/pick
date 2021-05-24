@@ -217,25 +217,19 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     onTap: _onSelectBlock,
                   ),
                   SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MarkaaCustomSuffixInput(
-                        controller: streetController,
-                        width: 375.w,
-                        padding: 10.w,
-                        fontSize: 14.sp,
-                        hint: 'checkout_street_name_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
-                        inputType: TextInputType.text,
-                        suffixIcon: IconButton(
-                          onPressed: _onSearchAddress,
-                          icon: SvgPicture.asset(searchAddrIcon),
-                        ),
-                      ),
-                    ],
+                  MarkaaCustomSuffixInput(
+                    controller: streetController,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
+                    hint: 'checkout_street_name_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                    suffixIcon: IconButton(
+                      onPressed: _onSearchAddress,
+                      icon: SvgPicture.asset(searchAddrIcon),
+                    ),
                   ),
                   SizedBox(height: 10.h),
                   MarkaaCustomInputMulti(
@@ -287,6 +281,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       context,
       Routes.searchAddress,
     );
+    FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
       streetController.text = address.street ?? '';

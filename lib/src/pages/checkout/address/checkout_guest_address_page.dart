@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_custom_suffix_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_custom_input.dart';
@@ -246,27 +247,19 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
                     onTap: _onSelectBlock,
                   ),
                   SizedBox(height: 10.w),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MarkaaCustomInput(
-                        controller: streetController,
-                        width: 310.w,
-                        padding: 10.w,
-                        fontSize: 14.sp,
-                        hint: 'checkout_street_name_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
-                        inputType: TextInputType.text,
-                      ),
-                      Row(
-                        children: [
-                          _buildSearchingAddressButton(),
-                          SizedBox(width: 10.w),
-                        ],
-                      ),
-                    ],
+                  MarkaaCustomSuffixInput(
+                    controller: streetController,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
+                    hint: 'checkout_street_name_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                    suffixIcon: IconButton(
+                      onPressed: _onSearchAddress,
+                      icon: SvgPicture.asset(searchAddrIcon),
+                    ),
                   ),
                   SizedBox(height: 10.w),
                   MarkaaCustomInputMulti(
@@ -286,23 +279,6 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSearchingAddressButton() {
-    return Container(
-      width: 55.w,
-      height: 55.h,
-      child: MarkaaTextIconButton(
-        title: "",
-        titleSize: 14.sp,
-        titleColor: greyColor,
-        buttonColor: greyLightColor,
-        borderColor: Colors.transparent,
-        icon: SvgPicture.asset(searchAddrIcon, width: 16.sp),
-        onPressed: () => _onSearchAddress(),
-        radius: 10.sp,
       ),
     );
   }
@@ -335,6 +311,7 @@ class _CheckoutGuestAddressPageState extends State<CheckoutGuestAddressPage> {
       context,
       Routes.searchAddress,
     );
+    FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
       streetController.text = address?.street ?? '';
