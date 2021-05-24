@@ -163,7 +163,7 @@ class _ProductHCardState extends State<ProductHCard>
             child: CachedNetworkImage(
               imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.8,
+              height: widget.cardHeight * 0.9,
               fit: BoxFit.fitHeight,
               errorWidget: (context, url, error) {
                 return Center(child: Icon(Icons.image, size: 20.sp));
@@ -174,7 +174,7 @@ class _ProductHCardState extends State<ProductHCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: widget.cardHeight * 0.1),
+                SizedBox(height: widget.cardHeight * 0.2),
                 InkWell(
                   onTap: () {
                     if (widget?.product?.brandEntity?.optionId != null) {

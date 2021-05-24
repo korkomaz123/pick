@@ -94,7 +94,6 @@ class AddressChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       final result = await addressRepository.updateAddress(token, address);
-      print(result);
       if (result['code'] == 'SUCCESS') {
         addressesMap[address.addressId] = address;
         if (address.defaultShippingAddress == 1) {

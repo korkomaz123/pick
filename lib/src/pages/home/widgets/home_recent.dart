@@ -15,7 +15,7 @@ class HomeRecent extends StatelessWidget {
     if (homeChangeNotifier.recentlyViewedProducts.isNotEmpty) {
       return Container(
         width: designWidth.w,
-        height: 370.h,
+        height: 340.h,
         padding: EdgeInsets.all(8.w),
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,

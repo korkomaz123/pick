@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
@@ -132,7 +133,17 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             webViewController = controller;
             progressService.showProgress();
           },
-          onPageStarted: _onPageLoaded,
+          navigationDelegate: (action) {
+            if (Platform.isIOS) {
+              _onPageLoaded(action.url);
+            }
+            return NavigationDecision.navigate;
+          },
+          onPageStarted: (url) {
+            if (Platform.isAndroid) {
+              _onPageLoaded(url);
+            }
+          },
           onPageFinished: (_) {
             if (isLoading) {
               print('hide progress');

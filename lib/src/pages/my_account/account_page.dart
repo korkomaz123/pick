@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -12,8 +13,9 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
@@ -94,15 +96,19 @@ class _AccountPageState extends State<AccountPage> {
           if (state is ProfileImageUpdatedSuccess) {
             user.profileUrl = state.url;
           }
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildAccountPicture(),
-                Divider(color: greyColor, thickness: 0.5),
-                user != null ? _buildAccountProfile() : SizedBox.shrink(),
-                _buildAccountGeneralSetting(),
-              ],
-            ),
+          return Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildAccountPicture(),
+                    Divider(color: greyColor, thickness: 0.5),
+                    if (user != null) ...[_buildAccountProfile()],
+                    _buildAccountGeneralSetting(),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
@@ -115,10 +121,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget _buildAccountPicture() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: Row(
         children: [
           Container(
@@ -279,10 +282,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget _buildAccountProfile() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
         children: [
           Container(
@@ -298,9 +298,7 @@ class _AccountPageState extends State<AccountPage> {
                 SizedBox(width: 10.w),
                 Text(
                   user.email,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 16.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
                 ),
               ],
             ),
@@ -356,9 +354,7 @@ class _AccountPageState extends State<AccountPage> {
                       SizedBox(width: 10.w),
                       Text(
                         'shipping_address_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 16.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 16.sp),
                       ),
                     ],
                   ),
@@ -379,10 +375,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget _buildAccountGeneralSetting() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

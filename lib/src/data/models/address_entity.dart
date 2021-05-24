@@ -47,6 +47,7 @@ class AddressEntity {
         country = json['country_name'],
         countryId = json['country_id'],
         region = json['region'] ?? '',
+        regionId = json['region_id'],
         city = json['city'] ?? '',
         street = json['street'],
         postCode = json['postcode'],
@@ -60,12 +61,17 @@ class AddressEntity {
         'addressId': addressId ?? '',
         'customer_address_id': addressId ?? '',
         'prefix': title ?? '',
-        'firstname': fullName != null && fullName.isNotEmpty ? fullName.split(' ')[0] : firstName,
-        'lastname': fullName != null && fullName.isNotEmpty ? fullName.split(' ')[1] : lastName,
+        'firstname': fullName != null && fullName.isNotEmpty
+            ? fullName.split(' ')[0]
+            : firstName,
+        'lastname': fullName != null && fullName.isNotEmpty
+            ? fullName.split(' ')[1]
+            : lastName,
         'fullName': fullName,
         'country_name': country,
         'country_id': countryId,
-        'region': regionId,
+        'region': region,
+        'region_id': regionId,
         'city': city,
         'street': street,
         'post_code': postCode,

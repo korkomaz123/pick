@@ -226,13 +226,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           if (Preload.language == 'en') ...[
             Positioned(
-              top: 300.h,
+              top: 280.h,
               right: 0,
               child: _buildDiscount(),
             ),
           ] else ...[
             Positioned(
-              top: 320.h,
+              top: 280.h,
               left: 0,
               child: _buildDiscount(),
             ),
@@ -289,7 +289,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               );
             },
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 45.h),
         ],
       ),
     );

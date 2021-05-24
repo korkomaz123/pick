@@ -1,5 +1,6 @@
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -53,6 +54,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -61,7 +63,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+
     signInBloc = context.read<SignInBloc>();
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -363,6 +368,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   void _login() async {
     await Navigator.pushNamed(context, Routes.signIn);
+    markaaAppChangeNotifier.rebuild();
     Navigator.pop(context);
   }
 
