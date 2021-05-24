@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
@@ -96,7 +95,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onCanceledFailure(String message) {
-    print(message);
     progressService.hideProgress();
   }
 
@@ -134,19 +132,11 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             progressService.showProgress();
           },
           navigationDelegate: (action) {
-            if (Platform.isIOS) {
-              _onPageLoaded(action.url);
-            }
+            _onPageLoaded(action.url);
             return NavigationDecision.navigate;
-          },
-          onPageStarted: (url) {
-            if (Platform.isAndroid) {
-              _onPageLoaded(url);
-            }
           },
           onPageFinished: (_) {
             if (isLoading) {
-              print('hide progress');
               progressService.hideProgress();
               isLoading = false;
               setState(() {});
