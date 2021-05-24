@@ -19,9 +19,24 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   final LocalStorageRepository localRepo = LocalStorageRepository();
 
+  bool isNew = false;
+
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(Duration.zero, () async {
+      isNew = !(await localRepo.existItem('usage'));
+      setState(() {});
+    });
+
+    Future.delayed(Duration(milliseconds: 1000), () {
+      if (!isNew)
+        Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
+          Routes.home,
+          (route) => false,
+        );
+    });
   }
 
   void _onLang(String val) async {
@@ -31,8 +46,7 @@ class _SplashPageState extends State<SplashPage> {
     await localRepo.setItem('usage', 'markaa');
     //Start Loading Assets
     await Preload.appOpen();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
+    Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
       Routes.home,
       (route) => false,
     );
@@ -56,45 +70,47 @@ class _SplashPageState extends State<SplashPage> {
                 child: SvgPicture.asset(vLogoIcon),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: EdgeInsets.only(bottom: 141.h),
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 145.w,
-                      height: 49.h,
-                      child: MarkaaTextButton(
-                        title: 'English',
-                        titleSize: 20.sp,
-                        titleColor: Colors.white,
-                        buttonColor: Color(0xFFF7941D),
-                        borderColor: Colors.transparent,
-                        onPressed: () => _onLang("en"),
-                        radius: 30,
+            if (isNew) ...[
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.only(bottom: 141.h),
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 145.w,
+                        height: 49.h,
+                        child: MarkaaTextButton(
+                          title: 'English',
+                          titleSize: 20.sp,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onLang("en"),
+                          radius: 30,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 13.w),
-                    Container(
-                      width: 145.w,
-                      height: 49.h,
-                      child: MarkaaTextButton(
-                        title: 'عربى',
-                        titleSize: 20.sp,
-                        titleColor: Colors.white,
-                        buttonColor: Color(0xFFF7941D),
-                        borderColor: Colors.transparent,
-                        onPressed: () => _onLang("ar"),
-                        radius: 30,
+                      SizedBox(width: 13.w),
+                      Container(
+                        width: 145.w,
+                        height: 49.h,
+                        child: MarkaaTextButton(
+                          title: 'عربى',
+                          titleSize: 20.sp,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFF7941D),
+                          borderColor: Colors.transparent,
+                          onPressed: () => _onLang("ar"),
+                          radius: 30,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            )
+            ],
           ],
         ),
       ),

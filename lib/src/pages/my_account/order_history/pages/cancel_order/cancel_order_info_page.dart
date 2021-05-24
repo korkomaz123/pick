@@ -64,6 +64,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
   }
 
   void _onCanceledSuccess() {
+    progressService.hideProgress();
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.orderHistory,

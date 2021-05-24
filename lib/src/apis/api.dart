@@ -30,14 +30,11 @@ class Api {
     Map<String, dynamic> data,
     Map<String, String> headers,
   }) async {
-    print(url);
-    print(data);
     final response = await _dio.post(
       url,
       options: Options(headers: headers ?? _getHeader()),
       data: headers != null ? jsonEncode(data) : data,
     );
-    print(response.data);
     return response.data;
 
     // final response = await http.post(

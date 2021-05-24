@@ -152,17 +152,30 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
 
+      print('LOADING URL>>> $loadingUrl');
+      print('PARAMS>>> $params');
+
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user?.token != null) {
             orderChangeNotifier.removeOrder(order);
           }
 
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.paymentFailed,
-            (route) => route.settings.name == Routes.myCart,
-          );
+          if (reorder != null) {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.paymentFailed,
+              (route) => route.settings.name == Routes.home,
+              arguments: true,
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.paymentFailed,
+              (route) => route.settings.name == Routes.myCart,
+              arguments: false,
+            );
+          }
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
           if (user?.token != null) {

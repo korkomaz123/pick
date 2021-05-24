@@ -159,7 +159,7 @@ class RouteGenerator {
         );
       case Routes.paymentFailed:
         return CupertinoPageRoute(
-          builder: (context) => PaymentFailedPage(),
+          builder: (context) => PaymentFailedPage(isReorder: params),
           settings: RouteSettings(name: Routes.paymentFailed),
         );
       case Routes.search:

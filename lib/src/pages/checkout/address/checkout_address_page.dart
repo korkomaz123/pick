@@ -311,6 +311,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   void _onContinue() async {
     if (addressChangeNotifier.defaultAddress != null) {
       progressService.showProgress();
+
       String cartId;
       if (widget.reorder != null) {
         cartId = myCartChangeNotifier.reorderCartId;
@@ -319,9 +320,11 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       }
       orderDetails['shipping'] = shippingMethodId;
       orderDetails['cartId'] = cartId;
+
       double totalPrice = .0;
       double subtotalPrice = .0;
       double discount = .0;
+
       if (widget.reorder != null) {
         subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
       } else {
@@ -332,6 +335,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
       totalPrice = subtotalPrice + serviceFees - discount;
+
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
       orderDetails['orderDetails']['totalPrice'] =
@@ -341,19 +345,19 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = jsonEncode({
-        'customer_address_id': addressChangeNotifier.defaultAddress.addressId,
-        'firstname': addressChangeNotifier.defaultAddress.firstName,
-        'lastname': addressChangeNotifier.defaultAddress.lastName,
-        'email': addressChangeNotifier.defaultAddress.email ?? user.email,
-        'region': addressChangeNotifier.defaultAddress.region,
-        'street': addressChangeNotifier.defaultAddress.street,
-        'country_id': addressChangeNotifier.defaultAddress.countryId,
-        'city': addressChangeNotifier.defaultAddress.city,
-        'company': addressChangeNotifier.defaultAddress.company,
-        'postcode': addressChangeNotifier.defaultAddress.postCode,
-        'telephone': addressChangeNotifier.defaultAddress.phoneNumber,
+        'customer_address_id': addressChangeNotifier.defaultAddress?.addressId,
+        'firstname': addressChangeNotifier.defaultAddress?.firstName,
+        'lastname': addressChangeNotifier.defaultAddress?.lastName,
+        'email': addressChangeNotifier.defaultAddress?.email ?? user.email,
+        'region': addressChangeNotifier.defaultAddress?.regionId,
+        'street': addressChangeNotifier.defaultAddress?.street,
+        'country_id': addressChangeNotifier.defaultAddress?.countryId,
+        'city': addressChangeNotifier.defaultAddress?.city,
+        'company': addressChangeNotifier.defaultAddress?.company,
+        'postcode': addressChangeNotifier.defaultAddress?.postCode,
+        'telephone': addressChangeNotifier.defaultAddress?.phoneNumber,
         'save_in_address_book': '0',
-        'prefix': addressChangeNotifier.defaultAddress.title,
+        'prefix': 'title',
       });
 
       AdjustEvent adjustEvent =
@@ -361,15 +365,14 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       Adjust.trackEvent(adjustEvent);
 
       progressService.hideProgress();
+
       Navigator.pushNamed(
         context,
         Routes.checkoutPayment,
         arguments: widget.reorder,
       );
     } else {
-      flushBarService.showErrorMessage(
-        'required_address_title'.tr(),
-      );
+      flushBarService.showErrorMessage('required_address_title'.tr());
     }
   }
 }

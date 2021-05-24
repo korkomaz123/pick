@@ -252,7 +252,7 @@ class _ProductPageState extends State<ProductPage>
           ),
           Expanded(
             child: SizedBox(
-              height: 40.h,
+              height: 30.h,
               child: TextFormField(
                 controller: TextEditingController(),
                 decoration: InputDecoration(

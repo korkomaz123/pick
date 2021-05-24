@@ -36,7 +36,7 @@ void main() async {
       persistenceEnabled: false,
     );
 
-  String _page = Routes.start;
+  // String _page = Routes.start;
   // await LocalStorageRepository().removeItem('usage');
 
   bool isExist = await LocalStorageRepository().existItem('usage');
@@ -45,7 +45,7 @@ void main() async {
   if (isExist) {
     //Start Loading Assets
     await Preload.appOpen();
-    _page = token != null && token.isNotEmpty ? Routes.home : Routes.home;
+    // _page = token != null && token.isNotEmpty ? Routes.home : Routes.home;
   }
   print("token ====> $token");
   runApp(
@@ -57,7 +57,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: MarkaaApp(home: _page ?? Routes.start),
+      child: MarkaaApp(home: Routes.start),
     ),
   );
 }

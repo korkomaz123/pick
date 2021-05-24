@@ -29,11 +29,13 @@ class _OrderCardState extends State<OrderCard> {
   }
 
   void _checkOrderItems() {
-    for (int i = 0; i < widget.order.cartItems.length; i++) {
-      if (widget.order.cartItems[i].product.stockQty != null &&
-          widget.order.cartItems[i].product.stockQty > 0) {
-        isStock = true;
-        break;
+    if (widget?.order?.cartItems != null) {
+      for (int i = 0; i < widget.order.cartItems.length; i++) {
+        if (widget.order.cartItems[i].product.stockQty != null &&
+            widget.order.cartItems[i].product.stockQty > 0) {
+          isStock = true;
+          break;
+        }
       }
     }
     setState(() {});

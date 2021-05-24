@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
     loadSliderImages = _homeProvider.loadSliderImages();
     getFeaturedCategoriesList = _homeProvider.getFeaturedCategoriesList();
     loadMegaBanner = _homeProvider.loadMegaBanner();
