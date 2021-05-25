@@ -10,65 +10,64 @@ import 'package:markaa/src/theme/theme.dart';
 
 class ProductConfigurableOptions extends StatelessWidget {
   final ProductEntity productEntity;
+  final ProductChangeNotifier model;
 
-  ProductConfigurableOptions({this.productEntity});
+  ProductConfigurableOptions({this.productEntity, this.model});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProductChangeNotifier>(
-      builder: (_, model, __) {
-        bool isAvailable =
-            model.selectedOptions.isEmpty || model.selectedVariant != null;
-        return Container(
-          width: 375.w,
-          margin: EdgeInsets.symmetric(vertical: 10.h),
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isAvailable) ...[
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5.h),
-                  child: Text(
-                    'not_available'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: dangerColor,
-                      fontSize: 14.sp,
-                    ),
-                  ),
+    bool isAvailable =
+        model.selectedOptions.isEmpty || model.selectedVariant != null;
+    return Container(
+      width: 375.w,
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isAvailable) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.h),
+              child: Text(
+                'not_available'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: dangerColor,
+                  fontSize: 14.sp,
                 ),
-              ],
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: productEntity.configurable.keys.toList().map((key) {
-                  List<dynamic> options =
-                      productEntity.configurable[key]['attribute_options'];
-                  String attributeId =
-                      productEntity.configurable[key]['attribute_id'];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        productEntity.configurable[key]['attribute_name'],
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 20.sp,
-                          color: primaryColor,
-                        ),
-                      ),
-                      if (key == 'color') ...[
-                        _buildColorOptions(options, attributeId, model),
-                      ] else ...[
-                        _buildOptions(options, attributeId, model),
-                      ]
-                    ],
-                  );
-                }).toList(),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+          if (productEntity?.configurable?.keys != null) ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: productEntity.configurable.keys.toList().map((key) {
+                List<dynamic> options =
+                    productEntity.configurable[key]['attribute_options'];
+                String attributeId =
+                    productEntity.configurable[key]['attribute_id'];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      productEntity.configurable[key]['attribute_name'],
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 20.sp,
+                        color: primaryColor,
+                      ),
+                    ),
+                    if (key == 'color') ...[
+                      _buildColorOptions(options, attributeId, model),
+                    ] else ...[
+                      _buildOptions(options, attributeId, model),
+                    ]
+                  ],
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -133,7 +132,9 @@ class ProductConfigurableOptions extends StatelessWidget {
         children: options.map((attr) {
           final isSelected = model.selectedOptions.containsKey(attributeId) &&
               model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = HexColor(attr['color_value']);
+          Color optionColor = attr['color_value'] == null
+              ? Colors.black
+              : HexColor(attr['color_value']);
           return InkWell(
             onTap: () => model.selectOption(
               attributeId,

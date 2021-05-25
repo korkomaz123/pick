@@ -193,6 +193,7 @@ class _ProductPageState extends State<ProductPage>
                               'configurable') ...[
                             ProductConfigurableOptions(
                               productEntity: model.productDetailsMap[productId],
+                              model: model,
                             )
                           ],
                           ProductReviewTotal(
