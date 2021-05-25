@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +15,7 @@ class ProductConfigurableOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAvailable =
-        model.selectedOptions.isEmpty || model.selectedVariant != null;
+    bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -42,10 +40,8 @@ class ProductConfigurableOptions extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: productEntity.configurable.keys.toList().map((key) {
-                List<dynamic> options =
-                    productEntity.configurable[key]['attribute_options'];
-                String attributeId =
-                    productEntity.configurable[key]['attribute_id'];
+                List<dynamic> options = productEntity.configurable[key]['attribute_options'];
+                String attributeId = productEntity.configurable[key]['attribute_id'];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -80,14 +76,26 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
+          bool isAvaliable = false;
+          if (model.selectedOptions.containsKey(productEntity.configurable['color']['attribute_id'])) {
+            List<ProductModel> _find =
+                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${model.currentColor}-${attr['option_label']}").toList();
+            isAvaliable = _find.length > 0;
+          } else {
+            isAvaliable = true;
+          }
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
-            onTap: () => model.selectOption(
-              attributeId,
-              attr['option_value'],
-              !isSelected,
-            ),
+            onTap: () {
+              if (isAvaliable) {
+                model.changeCurrentSize(isSelected ? "" : attr['option_label']);
+                model.selectOption(
+                  attributeId,
+                  attr['option_value'],
+                  !isSelected,
+                );
+              }
+            },
             child: Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 4.w,
@@ -100,9 +108,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : greyDarkColor.withOpacity(0.3),
+                  color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
                 ),
                 color: isSelected ? primaryColor : Colors.white,
               ),
@@ -110,9 +116,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               child: Text(
                 attr['option_label'],
                 style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: isSelected ? Colors.white : greyDarkColor,
-                ),
+                    fontSize: 14.sp, color: isSelected ? Colors.white : greyDarkColor, decoration: isAvaliable ? null : TextDecoration.lineThrough),
               ),
             ),
           );
@@ -130,34 +134,50 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = attr['color_value'] == null
-              ? Colors.black
-              : HexColor(attr['color_value']);
+          bool isAvaliable = false;
+          if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
+            List<ProductModel> _find =
+                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${attr['option_label']}-${model.currentSize}").toList();
+            isAvaliable = _find.length > 0;
+          } else {
+            isAvaliable = true;
+          }
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
+          Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
           return InkWell(
-            onTap: () => model.selectOption(
-              attributeId,
-              attr['option_value'],
-              !isSelected,
-            ),
+            onTap: () {
+              if (isAvaliable) {
+                model.changeCurrentColor(isSelected ? "" : attr['option_label']);
+                model.selectOption(
+                  attributeId,
+                  attr['option_value'],
+                  !isSelected,
+                );
+              }
+            },
             child: Card(
-              margin: EdgeInsets.symmetric(
-                horizontal: 4.w,
-                vertical: 5.h,
-              ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.sp),
+                borderRadius: BorderRadius.circular(30.w),
               ),
-              child: Container(
-                width: 25.w,
-                height: 25.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? optionColor : Colors.white,
-                  border: Border.all(color: optionColor, width: 4.w),
+              child: Center(
+                child: Container(
+                  width: 30.w,
+                  height: 30.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? optionColor : Colors.white,
+                    border: Border.all(color: optionColor, width: 4.w),
+                  ),
+                  alignment: Alignment.center,
+                  child: isAvaliable
+                      ? null
+                      : Center(
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.blue,
+                          ),
+                        ),
                 ),
-                alignment: Alignment.center,
               ),
             ),
           );
