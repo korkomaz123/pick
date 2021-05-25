@@ -334,5 +334,6 @@
     "continue_with_apple": "تواصل مع أبل",
     "stock_count": "باقي # متوفر",
     "payment_abort_dialog_title": "هل أنت واثق",
-    "payment_abort_dialog_text": "الخروج من عمليه الدفع"
+    "payment_abort_dialog_text": "الخروج من عمليه الدفع",
+    "not_available": "غير متوفر"
 }

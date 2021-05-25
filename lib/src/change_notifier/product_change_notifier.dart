@@ -48,6 +48,7 @@ class ProductChangeNotifier extends ChangeNotifier {
 
     final result =
         await productRepository.getProductDetails(productId, Preload.language);
+
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
       productDetails = null;
@@ -359,11 +360,17 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   /// select option in configurable product
-  void selectOption(String attributeId, String optionValue) {
-    selectedOptions[attributeId] = optionValue;
+  void selectOption(String attributeId, String optionValue, bool selected) {
+    if (selected) {
+      selectedOptions[attributeId] = optionValue;
+    } else {
+      selectedOptions.remove(attributeId);
+    }
     selectedVariant = null;
+
     for (var variant in productDetails.variants) {
-      if (mapEquals(selectedOptions, variant.options)) {
+      if (mapEquals(selectedOptions, variant.options) ||
+          selectedOptions.toString().contains(variant.options.toString())) {
         selectedVariant = variant;
         break;
       }
