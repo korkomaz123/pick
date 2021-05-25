@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +15,7 @@ class ProductConfigurableOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAvailable =
-        model.selectedOptions.isEmpty || model.selectedVariant != null;
+    bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -42,10 +40,8 @@ class ProductConfigurableOptions extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: productEntity.configurable.keys.toList().map((key) {
-                List<dynamic> options =
-                    productEntity.configurable[key]['attribute_options'];
-                String attributeId =
-                    productEntity.configurable[key]['attribute_id'];
+                List<dynamic> options = productEntity.configurable[key]['attribute_options'];
+                String attributeId = productEntity.configurable[key]['attribute_id'];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -80,14 +76,25 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
+          bool isAvaliable = false;
+          if (model.selectedOptions.containsKey("93")) {
+            List<ProductModel> _find =
+                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${model.currentColor}-${attr['option_label']}").toList();
+            isAvaliable = _find.length > 0;
+            if (!isAvaliable && model.selectedOptions[attributeId] == attr['option_value']) model.selectedOptions[attributeId] = null;
+          } else {
+            isAvaliable = true;
+          }
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
-            onTap: () => model.selectOption(
-              attributeId,
-              attr['option_value'],
-              !isSelected,
-            ),
+            onTap: () {
+              if (isAvaliable)
+                model.selectOption(
+                  attributeId,
+                  attr['option_value'],
+                  !isSelected,
+                );
+            },
             child: Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 4.w,
@@ -100,9 +107,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : greyDarkColor.withOpacity(0.3),
+                  color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
                 ),
                 color: isSelected ? primaryColor : Colors.white,
               ),
@@ -110,9 +115,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               child: Text(
                 attr['option_label'],
                 style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: isSelected ? Colors.white : greyDarkColor,
-                ),
+                    fontSize: 14.sp, color: isSelected ? Colors.white : greyDarkColor, decoration: isAvaliable ? null : TextDecoration.lineThrough),
               ),
             ),
           );
@@ -130,17 +133,17 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = attr['color_value'] == null
-              ? Colors.black
-              : HexColor(attr['color_value']);
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
+          Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
           return InkWell(
-            onTap: () => model.selectOption(
-              attributeId,
-              attr['option_value'],
-              !isSelected,
-            ),
+            onTap: () {
+              model.changeCurrentColor(attr['option_label']);
+              model.selectOption(
+                attributeId,
+                attr['option_value'],
+                !isSelected,
+              );
+            },
             child: Card(
               margin: EdgeInsets.symmetric(
                 horizontal: 4.w,
