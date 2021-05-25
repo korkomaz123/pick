@@ -354,9 +354,28 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
   }
 
+  _updateDetails() {
+    if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
+      List<ProductModel> _selectedItem =
+          productDetails.variants.where((element) => element.sku == "${productDetails.sku}-$currentColor-$currentSize").toList();
+      if (_selectedItem.length > 0) {
+        productDetails = productDetails.copyWith(imageUrl: _selectedItem.first.imageUrl, gallery: [_selectedItem.first.imageUrl]);
+        productDetailsMap[productDetails.productId] = productDetails;
+      }
+    }
+  }
+
   String currentColor = "";
   void changeCurrentColor(_color) {
     currentColor = _color;
+    _updateDetails();
+    notifyListeners();
+  }
+
+  String currentSize = "";
+  void changeCurrentSize(_size) {
+    currentSize = _size;
+    _updateDetails();
     notifyListeners();
   }
 

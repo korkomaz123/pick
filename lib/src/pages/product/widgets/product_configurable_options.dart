@@ -77,23 +77,24 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          if (model.selectedOptions.containsKey("93")) {
+          if (model.selectedOptions.containsKey(productEntity.configurable['color']['attribute_id'])) {
             List<ProductModel> _find =
                 productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${model.currentColor}-${attr['option_label']}").toList();
             isAvaliable = _find.length > 0;
-            if (!isAvaliable && model.selectedOptions[attributeId] == attr['option_value']) model.selectedOptions[attributeId] = null;
           } else {
             isAvaliable = true;
           }
           final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
             onTap: () {
-              if (isAvaliable)
+              if (isAvaliable) {
+                model.changeCurrentSize(isSelected ? "" : attr['option_label']);
                 model.selectOption(
                   attributeId,
                   attr['option_value'],
                   !isSelected,
                 );
+              }
             },
             child: Container(
               margin: EdgeInsets.symmetric(
@@ -133,34 +134,50 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
+          bool isAvaliable = false;
+          if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
+            List<ProductModel> _find =
+                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${attr['option_label']}-${model.currentSize}").toList();
+            isAvaliable = _find.length > 0;
+          } else {
+            isAvaliable = true;
+          }
           final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
           return InkWell(
             onTap: () {
-              model.changeCurrentColor(attr['option_label']);
-              model.selectOption(
-                attributeId,
-                attr['option_value'],
-                !isSelected,
-              );
+              if (isAvaliable) {
+                model.changeCurrentColor(isSelected ? "" : attr['option_label']);
+                model.selectOption(
+                  attributeId,
+                  attr['option_value'],
+                  !isSelected,
+                );
+              }
             },
             child: Card(
-              margin: EdgeInsets.symmetric(
-                horizontal: 4.w,
-                vertical: 5.h,
-              ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.sp),
+                borderRadius: BorderRadius.circular(30.w),
               ),
-              child: Container(
-                width: 25.w,
-                height: 25.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? optionColor : Colors.white,
-                  border: Border.all(color: optionColor, width: 4.w),
+              child: Center(
+                child: Container(
+                  width: 30.w,
+                  height: 30.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? optionColor : Colors.white,
+                    border: Border.all(color: optionColor, width: 4.w),
+                  ),
+                  alignment: Alignment.center,
+                  child: isAvaliable
+                      ? null
+                      : Center(
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.blue,
+                          ),
+                        ),
                 ),
-                alignment: Alignment.center,
               ),
             ),
           );
