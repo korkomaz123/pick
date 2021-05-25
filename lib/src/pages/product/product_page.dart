@@ -137,7 +137,7 @@ class _ProductPageState extends State<ProductPage>
     super.dispose();
   }
 
-  void _onRefresh() async {
+  _onRefresh() async {
     Future.delayed(Duration(milliseconds: 500), () {
       _refreshController.refreshCompleted();
     });
@@ -146,7 +146,7 @@ class _ProductPageState extends State<ProductPage>
     });
   }
 
-  void _sendViewedProduct() async {
+  _sendViewedProduct() async {
     if (user?.token != null) {
       await productRepository.setRecentlyViewedCustomerProduct(
           user.token, productId, lang);
@@ -379,7 +379,7 @@ class _ProductPageState extends State<ProductPage>
     );
   }
 
-  void _onAddToCart(ProductChangeNotifier model) async {
+  _onAddToCart(ProductChangeNotifier model) async {
     _checkAvailability(model);
 
     _addToCartController.repeat(reverse: true);
@@ -393,7 +393,7 @@ class _ProductPageState extends State<ProductPage>
         onSuccess: _onAddSuccess, onFailure: _onAddFailure);
   }
 
-  void _onBuyNow(ProductChangeNotifier model) {
+  _onBuyNow(ProductChangeNotifier model) {
     _checkAvailability(model);
 
     myCartChangeNotifier.addProductToCart(
@@ -444,7 +444,7 @@ class _ProductPageState extends State<ProductPage>
     flushBarService.showErrorMessage(message);
   }
 
-  void _onFirstReview(ProductEntity product) async {
+  _onFirstReview(ProductEntity product) async {
     await Navigator.pushNamed(
       context,
       Routes.addProductReview,
@@ -453,7 +453,7 @@ class _ProductPageState extends State<ProductPage>
     setState(() {});
   }
 
-  void _onReviews(ProductEntity product) async {
+  _onReviews(ProductEntity product) async {
     await Navigator.pushNamed(
       context,
       Routes.productReviews,
