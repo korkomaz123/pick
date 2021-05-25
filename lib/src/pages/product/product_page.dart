@@ -72,27 +72,22 @@ class _ProductPageState extends State<ProductPage>
 
   bool isBuyNow = false;
 
-  bool get isStock =>
-      productChangeNotifier.productDetailsMap[productId].typeId ==
-          'configurable' ||
-      (productChangeNotifier.productDetailsMap[productId].stockQty != null &&
-          productChangeNotifier.productDetailsMap[productId].stockQty > 0);
-
   bool get variantSelectRequired =>
       productChangeNotifier.productDetailsMap[productId].typeId ==
           'configurable' &&
-      productChangeNotifier.selectedOptions.keys.toList().length !=
-          productChangeNotifier.productDetailsMap[productId].configurable.keys
-              .toList()
-              .length;
+      productChangeNotifier.selectedVariant == null;
 
-  bool get variantOutOfStock =>
+  bool get isChildOutOfStock =>
       productChangeNotifier.productDetailsMap[productId].typeId ==
           'configurable' &&
-      productChangeNotifier.selectedOptions.keys.toList().length !=
-          productChangeNotifier.productDetailsMap[productId].configurable.keys
-              .toList()
-              .length;
+      (productChangeNotifier.selectedVariant?.stockQty == null ||
+          productChangeNotifier.selectedVariant.stockQty == 0);
+
+  bool get isParentOutOfStock =>
+      productChangeNotifier.productDetailsMap[productId].typeId ==
+          'configurable' &&
+      (productChangeNotifier.productDetailsMap[productId]?.stockQty == null ||
+          productChangeNotifier.productDetailsMap[productId].stockQty == 0);
 
   @override
   void initState() {
@@ -322,7 +317,7 @@ class _ProductPageState extends State<ProductPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (isStock) ...[
+          if (!isParentOutOfStock && isParentOutOfStock) ...[
             Consumer<MarkaaAppChangeNotifier>(
               builder: (_, appModel, __) {
                 if (appModel.buying) {
@@ -413,7 +408,7 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage('required_options'.tr());
       return;
     }
-    if (variantOutOfStock) {
+    if (isParentOutOfStock || isChildOutOfStock) {
       flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
