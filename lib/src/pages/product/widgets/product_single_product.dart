@@ -582,7 +582,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
-  void _onFavorite(ProductChangeNotifier model) async {
+  _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
@@ -603,7 +603,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     });
   }
 
-  void _updateWishlist(ProductChangeNotifier model) async {
+  _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
       await wishlistChangeNotifier.removeItemFromWishlist(
           user.token, widget.product, widget.model.selectedVariant);
@@ -613,7 +613,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     }
   }
 
-  void _onShareProduct() async {
+  _onShareProduct() async {
     Uri shareLink =
         await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: details.name);
