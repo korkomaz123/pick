@@ -374,7 +374,14 @@ class _ProductPageState extends State<ProductPage>
   }
 
   _onAddToCart(ProductChangeNotifier model) async {
-    _checkAvailability(model);
+    if (variantSelectRequired) {
+      flushBarService.showErrorMessage('required_options'.tr());
+      return;
+    }
+    if (isParentOutOfStock || isChildOutOfStock) {
+      flushBarService.showErrorMessage('out_of_stock_error'.tr());
+      return;
+    }
 
     _addToCartController.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -390,16 +397,6 @@ class _ProductPageState extends State<ProductPage>
   }
 
   _onBuyNow(ProductChangeNotifier model) {
-    _checkAvailability(model);
-
-    myCartChangeNotifier.addProductToCart(
-        product, 1, lang, model.selectedOptions,
-        onProcess: _onBuyProcess,
-        onSuccess: _onBuySuccess,
-        onFailure: _onBuyFailure);
-  }
-
-  _checkAvailability(ProductChangeNotifier model) {
     if (variantSelectRequired) {
       flushBarService.showErrorMessage('required_options'.tr());
       return;
@@ -408,6 +405,12 @@ class _ProductPageState extends State<ProductPage>
       flushBarService.showErrorMessage('out_of_stock_error'.tr());
       return;
     }
+
+    myCartChangeNotifier.addProductToCart(
+        product, 1, lang, model.selectedOptions,
+        onProcess: _onBuyProcess,
+        onSuccess: _onBuySuccess,
+        onFailure: _onBuyFailure);
   }
 
   _onBuyProcess() {

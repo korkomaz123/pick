@@ -339,5 +339,7 @@
     "payment_abort_dialog_text": "You wanna abort the payment",
     "not_available": "Not available",
     "continue_shopping_button_title": "CONTINUE SHOPPING",
-    "visit_cart_button_title": "VISIT CART"
+    "visit_cart_button_title": "VISIT CART",
+    "error": "Error",
+    "okay_button_title": "OK"
 }

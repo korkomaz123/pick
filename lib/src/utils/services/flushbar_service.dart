@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -84,20 +85,31 @@ class FlushBarService {
   }
 
   void showErrorMessage(String message) {
-    Flushbar(
-      messageText: Text(
-        message,
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 15.sp,
-        ),
-      ),
-      icon: Icon(Icons.error, color: Colors.white),
-      duration: Duration(seconds: 3),
-      leftBarIndicatorColor: dangerColor.withOpacity(0.6),
-      flushbarPosition: FlushbarPosition.BOTTOM,
-      backgroundColor: dangerColor,
-    )..show(context);
+    CoolAlert.show(
+      context: context,
+      type: CoolAlertType.error,
+      title: 'error'.tr(),
+      text: message,
+      confirmBtnText: 'close'.tr(),
+      confirmBtnColor: primaryColor,
+      borderRadius: 2.sp,
+    );
+    // Flushbar(
+    //   messageText: Text(
+    //     message,
+    //     style: mediumTextStyle.copyWith(
+    //       color: Colors.white,
+    //       fontSize: 15.sp,
+    //     ),
+    //   ),
+    //   icon: Icon(Icons.error, color: Colors.white),
+    //   animationDuration: Duration(milliseconds: 1000),
+    //   duration: Duration(seconds: 3),
+    //   leftBarIndicatorColor: dangerColor.withOpacity(0.6),
+    //   flushbarPosition: FlushbarPosition.BOTTOM,
+    //   backgroundColor: dangerColor,
+    //   forwardAnimationCurve: Curves.easeInOut,
+    // )..show(context);
   }
 
   void showSuccessMessage(String message) {

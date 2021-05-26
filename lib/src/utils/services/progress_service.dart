@@ -27,8 +27,11 @@ class ProgressService {
     await showDialog(
       context: context,
       builder: (context) {
-        return Center(
-          child: DualRingSpinner(),
+        return Material(
+          color: Colors.black.withOpacity(0.3),
+          child: Center(
+            child: DualRingSpinner(),
+          ),
         );
       },
     );

@@ -337,5 +337,7 @@
     "payment_abort_dialog_text": "الخروج من عمليه الدفع",
     "not_available": "غير متوفر",
     "continue_shopping_button_title": "مواصلة التسوق",
-    "visit_cart_button_title": "زيارة السلة"
+    "visit_cart_button_title": "زيارة السلة",
+    "error": "خطأ",
+    "okay_button_title": "حسنا"
 }
