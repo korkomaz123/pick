@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 import 'widgets/my_cart_coupon_code.dart';
 import 'widgets/my_cart_item.dart';
@@ -153,19 +154,13 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildTitleBar() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'my_cart_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: darkColor,
-              fontSize: 23.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 23.sp),
           ),
           Row(
             children: [
@@ -397,12 +392,27 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onSignIn(bool checkout) async {
     isCheckout = checkout;
-    await showDialog(
-      context: context,
-      builder: (_) => MyCartQuickAccessLoginDialog(
-        cartId: cartId,
-        isCheckout: isCheckout,
-      ),
+    await showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 0,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return MyCartQuickAccessLoginDialog(
+              cartId: cartId,
+              isCheckout: isCheckout,
+            );
+          },
+        );
+      },
     );
   }
 

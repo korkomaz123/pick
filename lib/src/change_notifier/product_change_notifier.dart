@@ -9,7 +9,8 @@ import '../../preload.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
   final ProductRepository productRepository = ProductRepository();
-  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -21,6 +22,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   ProductModel selectedVariant;
 
   close() {
+    productDetailsMap.remove(productDetails.productId);
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
@@ -45,13 +47,15 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedOptions = {};
     selectedVariant = null;
 
-    final result = await productRepository.getProductDetails(productId, Preload.language);
+    final result =
+        await productRepository.getProductDetails(productId, Preload.language);
 
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
       productDetails = null;
       _gallery.addAll(result['moreAbout']['gallery']);
-      if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
+      if (_gallery.length != result['moreAbout']['gallery'].length)
+        _gallery.removeAt(0);
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
     }
@@ -194,7 +198,8 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     }
-    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(
+        brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
@@ -264,7 +269,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(
+        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
@@ -356,10 +362,14 @@ class ProductChangeNotifier extends ChangeNotifier {
 
   _updateDetails() {
     if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
-      List<ProductModel> _selectedItem =
-          productDetails.variants.where((element) => element.sku == "${productDetails.sku}-$currentColor-$currentSize").toList();
+      List<ProductModel> _selectedItem = productDetails.variants
+          .where((element) =>
+              element.sku == "${productDetails.sku}-$currentColor-$currentSize")
+          .toList();
       if (_selectedItem.length > 0) {
-        productDetails = productDetails.copyWith(imageUrl: _selectedItem.first.imageUrl, gallery: [_selectedItem.first.imageUrl]);
+        productDetails = productDetails.copyWith(
+            imageUrl: _selectedItem.first.imageUrl,
+            gallery: [_selectedItem.first.imageUrl]);
         productDetailsMap[productDetails.productId] = productDetails;
       }
     }
@@ -389,7 +399,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedVariant = null;
 
     for (var variant in productDetails.variants) {
-      if (mapEquals(selectedOptions, variant.options) || selectedOptions.toString().contains(variant.options.toString())) {
+      if (mapEquals(selectedOptions, variant.options) ||
+          selectedOptions.toString().contains(variant.options.toString())) {
         selectedVariant = variant;
         break;
       }

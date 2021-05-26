@@ -9,7 +9,9 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_round_image_button.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
@@ -38,7 +40,6 @@ import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
 import 'widgets/product_review.dart';
 import 'widgets/product_review_total.dart';
-import 'widgets/product_configurable_options.dart';
 
 class ProductPage extends StatefulWidget {
   final Object arguments;
@@ -184,13 +185,6 @@ class _ProductPageState extends State<ProductPage>
                             productDetails: model.productDetailsMap[productId],
                             model: model,
                           ),
-                          if (model.productDetailsMap[productId].typeId ==
-                              'configurable') ...[
-                            ProductConfigurableOptions(
-                              productEntity: model.productDetailsMap[productId],
-                              model: model,
-                            )
-                          ],
                           ProductReviewTotal(
                             product: model.productDetailsMap[productId],
                             onFirstReview: () => _onFirstReview(
@@ -317,7 +311,7 @@ class _ProductPageState extends State<ProductPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!isParentOutOfStock && isParentOutOfStock) ...[
+          if (!isParentOutOfStock && !isParentOutOfStock) ...[
             Consumer<MarkaaAppChangeNotifier>(
               builder: (_, appModel, __) {
                 if (appModel.buying) {
@@ -390,7 +384,9 @@ class _ProductPageState extends State<ProductPage>
 
     await myCartChangeNotifier.addProductToCart(
         product, 1, lang, model.selectedOptions,
-        onSuccess: _onAddSuccess, onFailure: _onAddFailure);
+        onProcess: _onAdding,
+        onSuccess: _onAddSuccess,
+        onFailure: _onAddFailure);
   }
 
   _onBuyNow(ProductChangeNotifier model) {
@@ -423,7 +419,6 @@ class _ProductPageState extends State<ProductPage>
     Adjust.trackEvent(adjustEvent);
 
     markaaAppChangeNotifier.changeBuyStatus(false);
-    flushBarService.showAddCartMessage(product);
 
     Navigator.pushNamed(context, Routes.myCart);
   }
@@ -433,14 +428,38 @@ class _ProductPageState extends State<ProductPage>
     flushBarService.showErrorMessage(message);
   }
 
+  _onAdding() {
+    progressService.addingProductProgress();
+  }
+
   _onAddSuccess() {
-    flushBarService.showAddCartMessage(product);
+    progressService.hideProgress();
+    showSlidingTopSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 0,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return MarkaaCartAddedSuccessDialog(product: product);
+          },
+        );
+      },
+    );
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 
   _onAddFailure(String message) {
+    progressService.hideProgress();
     flushBarService.showErrorMessage(message);
   }
 

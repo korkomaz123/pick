@@ -1,6 +1,7 @@
 import 'package:markaa/src/components/markaa_loading_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 
 class ProgressService {
   final BuildContext context;
@@ -20,5 +21,16 @@ class ProgressService {
 
   void hideProgress() {
     Navigator.pop(context);
+  }
+
+  void addingProductProgress() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: DualRingSpinner(),
+        );
+      },
+    );
   }
 }

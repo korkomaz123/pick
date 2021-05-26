@@ -461,6 +461,12 @@ List<Map<String, dynamic>> enRegionsList = [
   {"value": "817", "title": "Surra", "country_id": "KW", "label": "Surra"},
   {"value": "818", "title": "Tayma", "country_id": "KW", "label": "Tayma"},
   {"value": "819", "title": "Wafra", "country_id": "KW", "label": "Wafra"},
+  {
+    "value": "837",
+    "title": "West abdulah mubraka",
+    "country_id": "KW",
+    "label": "West abdulah mubraka"
+  },
   {"value": "820", "title": "Yarmouk", "country_id": "KW", "label": "Yarmouk"},
   {"value": "821", "title": "Zahra", "country_id": "KW", "label": "Zahra"}
 ];
@@ -933,6 +939,12 @@ List<Map<String, dynamic>> arRegionsList = [
   {"value": "817", "title": "Surra", "country_id": "KW", "label": "السرة"},
   {"value": "818", "title": "Tayma", "country_id": "KW", "label": "تيماء"},
   {"value": "819", "title": "Wafra", "country_id": "KW", "label": "الوفرة"},
+  {
+    "value": "837",
+    "title": "West abdulah mubraka",
+    "country_id": "KW",
+    "label": "غرب عبدالله مبارك"
+  },
   {"value": "820", "title": "Yarmouk", "country_id": "KW", "label": "اليرموك"},
   {"value": "821", "title": "Zahra", "country_id": "KW", "label": "الزهراء"}
 ];

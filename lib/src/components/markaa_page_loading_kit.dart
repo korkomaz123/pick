@@ -141,3 +141,24 @@ class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
     );
   }
 }
+
+class DualRingSpinner extends StatefulWidget {
+  @override
+  _DualRingSpinnerState createState() => _DualRingSpinnerState();
+}
+
+class _DualRingSpinnerState extends State<DualRingSpinner>
+    with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitDualRing(
+      lineWidth: 2,
+      size: 30,
+      controller: AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 1000),
+      ),
+      color: primarySwatchColor,
+    );
+  }
+}

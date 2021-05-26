@@ -26,6 +26,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../../../../preload.dart';
+import 'product_configurable_options.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
@@ -235,7 +236,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 child: Column(
                   children: [
                     _buildTitle(),
-                    _buildDescription(),
+                    if (details.typeId == 'configurable') ...[
+                      ProductConfigurableOptions(
+                        productEntity: details,
+                        model: widget.model,
+                      )
+                    ] else ...[
+                      _buildDescription()
+                    ],
                     _buildPrice(),
                   ],
                 ),
@@ -389,31 +397,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (details?.brandEntity != null) ...[
-                    Text(
-                      isStock
-                          ? 'in_stock'.tr().toUpperCase()
-                          : 'out_stock'.tr().toUpperCase(),
-                      style: mediumTextStyle.copyWith(
-                        color: isStock ? succeedColor : dangerColor,
-                        fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
-                      ),
-                    ),
-                  ],
-                  if (isStock && availableCount == 1) ...[
-                    Text(
-                      'stock_count'.tr().replaceFirst('#', '$availableCount'),
-                      style: mediumTextStyle.copyWith(
-                        color: dangerColor,
-                        fontSize: Preload.language == 'en' ? 10.sp : 12.sp,
-                      ),
-                    ),
-                  ]
-                ],
-              ),
+              if (details.typeId == 'configurable') ...[
+                _buildProductPrice()
+              ] else ...[
+                _buildStock()
+              ],
             ],
           ),
           Text(
@@ -422,6 +410,34 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (details?.brandEntity != null) ...[
+          Text(
+            isStock
+                ? 'in_stock'.tr().toUpperCase()
+                : 'out_stock'.tr().toUpperCase(),
+            style: mediumTextStyle.copyWith(
+              color: isStock ? succeedColor : dangerColor,
+              fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
+            ),
+          ),
+        ],
+        if (isStock && availableCount == 1) ...[
+          Text(
+            'stock_count'.tr().replaceFirst('#', '$availableCount'),
+            style: mediumTextStyle.copyWith(
+              color: dangerColor,
+              fontSize: Preload.language == 'en' ? 10.sp : 12.sp,
+            ),
+          ),
+        ]
+      ],
     );
   }
 
@@ -519,66 +535,76 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Container(
       width: double.infinity,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'sku'.tr() + ': ' + details.sku,
-            style: mediumTextStyle.copyWith(
-              fontSize: 12.sp,
-              color: primaryColor,
+          Expanded(
+            child: Text(
+              'sku'.tr() + ': ' + details.sku,
+              style: mediumTextStyle.copyWith(
+                fontSize: 12.sp,
+                color: primaryColor,
+              ),
             ),
           ),
-          Row(
-            children: [
-              if (discounted) ...[
-                SizedBox(width: 10.w),
-                Text(
-                  (widget.model.selectedVariant?.beforePrice ??
-                          details.beforePrice) +
-                      ' ' +
-                      'currency'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    decorationStyle: TextDecorationStyle.solid,
-                    decoration: TextDecoration.lineThrough,
-                    decorationColor: dangerColor,
-                    fontSize: 14.sp,
-                    color: greyColor,
-                  ),
-                ),
-                SizedBox(width: 10.w),
-              ],
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    widget?.model?.selectedVariant?.price != null
-                        ? widget.model.selectedVariant.price
-                        : details.price != null
-                            ? details.price
-                            : '',
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 20.sp,
-                      color: greyColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(width: 1.w),
-                  if (details.price != null ||
-                      widget?.model?.selectedVariant?.price != null) ...[
-                    Text(
-                      'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 12.sp,
-                        color: greyColor,
-                      ),
-                    )
-                  ],
-                ],
-              ),
-            ],
-          ),
+          if (details.typeId == 'configurable') ...[
+            _buildStock()
+          ] else ...[
+            _buildProductPrice()
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildProductPrice() {
+    return Row(
+      children: [
+        if (discounted) ...[
+          SizedBox(width: 10.w),
+          Text(
+            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
+                ' ' +
+                'currency'.tr(),
+            style: mediumTextStyle.copyWith(
+              decorationStyle: TextDecorationStyle.solid,
+              decoration: TextDecoration.lineThrough,
+              decorationColor: dangerColor,
+              fontSize: 14.sp,
+              color: greyColor,
+            ),
+          ),
+          SizedBox(width: 10.w),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              widget?.model?.selectedVariant?.price != null
+                  ? widget.model.selectedVariant.price
+                  : details.price != null
+                      ? details.price
+                      : '',
+              style: mediumTextStyle.copyWith(
+                fontSize: 20.sp,
+                color: greyColor,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(width: 1.w),
+            if (details.price != null ||
+                widget?.model?.selectedVariant?.price != null) ...[
+              Text(
+                'currency'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 12.sp,
+                  color: greyColor,
+                ),
+              )
+            ],
+          ],
+        ),
+      ],
     );
   }
 
