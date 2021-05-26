@@ -78,9 +78,11 @@ class ProductConfigurableOptions extends StatelessWidget {
         children: options.map((attr) {
           bool isAvaliable = false;
           if (model.selectedOptions.containsKey(productEntity.configurable['color']['attribute_id'])) {
-            List<ProductModel> _find =
-                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${model.currentColor}-${attr['option_label']}").toList();
-            isAvaliable = _find.length > 0;
+            productEntity.variants.forEach((e) {
+              if (e.options[productEntity.configurable['color']['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable['color']['attribute_id']] &&
+                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
+            });
           } else {
             isAvaliable = true;
           }
@@ -136,9 +138,11 @@ class ProductConfigurableOptions extends StatelessWidget {
         children: options.map((attr) {
           bool isAvaliable = false;
           if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
-            List<ProductModel> _find =
-                productEntity.variants.where((e) => e.sku == "${productEntity.sku}-${attr['option_label']}-${model.currentSize}").toList();
-            isAvaliable = _find.length > 0;
+            productEntity.variants.forEach((e) {
+              if (e.options[productEntity.configurable['size']['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable['size']['attribute_id']] &&
+                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
+            });
           } else {
             isAvaliable = true;
           }
