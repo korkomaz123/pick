@@ -15,8 +15,7 @@ class ProductConfigurableOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAvailable =
-        model.selectedOptions.isEmpty || model.selectedVariant != null;
+    bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -41,10 +40,8 @@ class ProductConfigurableOptions extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: productEntity.configurable.keys.toList().map((key) {
-                List<dynamic> options =
-                    productEntity.configurable[key]['attribute_options'];
-                String attributeId =
-                    productEntity.configurable[key]['attribute_id'];
+                List<dynamic> options = productEntity.configurable[key]['attribute_options'];
+                String attributeId = productEntity.configurable[key]['attribute_id'];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -80,19 +77,16 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          if (model.selectedOptions.containsKey(
-              productEntity.configurable['color']['attribute_id'])) {
-            List<ProductModel> _find = productEntity.variants
-                .where((e) =>
-                    e.sku ==
-                    "${productEntity.sku}-${model.currentColor}-${attr['option_label']}")
-                .toList();
-            isAvaliable = _find.length > 0;
+          if (model.selectedOptions.containsKey(productEntity.configurable['color']['attribute_id'])) {
+            productEntity.variants.forEach((e) {
+              if (e.options[productEntity.configurable['color']['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable['color']['attribute_id']] &&
+                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
+            });
           } else {
             isAvaliable = true;
           }
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
             onTap: () {
               if (isAvaliable) {
@@ -116,9 +110,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : greyDarkColor.withOpacity(0.3),
+                  color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
                 ),
                 color: isSelected ? primaryColor : Colors.white,
               ),
@@ -150,27 +142,21 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          if (model.selectedOptions.containsKey(
-              productEntity.configurable['size']['attribute_id'])) {
-            List<ProductModel> _find = productEntity.variants
-                .where((e) =>
-                    e.sku ==
-                    "${productEntity.sku}-${attr['option_label']}-${model.currentSize}")
-                .toList();
-            isAvaliable = _find.length > 0;
+          if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
+            productEntity.variants.forEach((e) {
+              if (e.options[productEntity.configurable['size']['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable['size']['attribute_id']] &&
+                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
+            });
           } else {
             isAvaliable = true;
           }
-          final isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = attr['color_value'] == null
-              ? Colors.black
-              : HexColor(attr['color_value']);
+          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
+          Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
           return InkWell(
             onTap: () {
               if (isAvaliable) {
-                model
-                    .changeCurrentColor(isSelected ? "" : attr['option_label']);
+                model.changeCurrentColor(isSelected ? "" : attr['option_label']);
                 model.selectOption(
                   attributeId,
                   attr['option_value'],
