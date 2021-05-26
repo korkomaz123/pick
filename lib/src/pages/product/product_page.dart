@@ -4,6 +4,7 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
@@ -32,7 +33,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../../preload.dart';
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
@@ -206,7 +206,7 @@ class _ProductPageState extends State<ProductPage>
                           ProductReview(
                             product: model.productDetailsMap[productId],
                           ),
-                          SizedBox(height: 50.h),
+                          SizedBox(height: 5.h),
                         ],
                       ),
                     ),
@@ -248,7 +248,7 @@ class _ProductPageState extends State<ProductPage>
           ),
           Expanded(
             child: SizedBox(
-              height: 30.h,
+              height: 35.h,
               child: TextFormField(
                 controller: TextEditingController(),
                 decoration: InputDecoration(

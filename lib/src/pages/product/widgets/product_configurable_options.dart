@@ -118,7 +118,12 @@ class ProductConfigurableOptions extends StatelessWidget {
               child: Text(
                 attr['option_label'],
                 style: mediumTextStyle.copyWith(
-                    fontSize: 14.sp, color: isSelected ? Colors.white : greyDarkColor, decoration: isAvaliable ? null : TextDecoration.lineThrough),
+                  fontSize: 14.sp,
+                  color: isSelected ? Colors.white : greyDarkColor,
+                  decorationColor: dangerColor,
+                  decorationThickness: 2.w,
+                  decoration: isAvaliable ? null : TextDecoration.lineThrough,
+                ),
               ),
             ),
           );
@@ -178,7 +183,8 @@ class ProductConfigurableOptions extends StatelessWidget {
                       : Center(
                           child: Icon(
                             Icons.close,
-                            color: Colors.blue,
+                            color: dangerColor,
+                            size: 18.sp,
                           ),
                         ),
                 ),
