@@ -49,8 +49,7 @@ class ProductHCard extends StatefulWidget {
   _ProductHCardState createState() => _ProductHCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard>
-    with TickerProviderStateMixin {
+class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMixin {
   FlushBarService flushBarService;
   ProgressService progressService;
   AnimationController _addToCartController;
@@ -64,9 +63,7 @@ class _ProductHCardState extends State<ProductHCard>
   bool isWishlist;
 
   bool get canAddToCart =>
-      widget.isShoppingCart &&
-      (widget.product.typeId != 'simple' ||
-          widget.product.stockQty != null && widget.product.stockQty > 0);
+      widget.isShoppingCart && (widget.product.typeId != 'simple' || widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -231,9 +228,7 @@ class _ProductHCardState extends State<ProductHCard>
                       child: Row(
                         children: [
                           Text(
-                            widget.product.price != null
-                                ? (widget.product.price + ' ' + 'currency'.tr())
-                                : '',
+                            widget.product.price != null ? (widget.product.price + ' ' + 'currency'.tr()) : '',
                             style: mediumTextStyle.copyWith(
                               fontSize: 14.sp,
                               color: greyColor,
@@ -245,9 +240,7 @@ class _ProductHCardState extends State<ProductHCard>
                               width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
-                              widget.product.beforePrice +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.beforePrice + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -318,17 +311,13 @@ class _ProductHCardState extends State<ProductHCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
                   width: isWishlist ? 22.sp : 25.sp,
                   height: isWishlist ? 22.sp : 25.sp,
-                  child: isWishlist
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -341,8 +330,7 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.typeId == 'simple' && (widget.product.stockQty == null || widget.product.stockQty == 0)) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -376,11 +364,9 @@ class _ProductHCardState extends State<ProductHCard>
 
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage('out_of_stock_error'.tr());
+        flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
       }
     }
   }
@@ -417,7 +403,7 @@ class _ProductHCardState extends State<ProductHCard>
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
   }
 
   void _onWishlist() async {
@@ -430,11 +416,9 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }

@@ -19,7 +19,7 @@ class ProductConfigurableOptions extends StatelessWidget {
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,20 +42,20 @@ class ProductConfigurableOptions extends StatelessWidget {
               children: productEntity.configurable.keys.toList().map((key) {
                 List<dynamic> options = productEntity.configurable[key]['attribute_options'];
                 String attributeId = productEntity.configurable[key]['attribute_id'];
-                return Column(
+                return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      productEntity.configurable[key]['attribute_name'],
+                      productEntity.configurable[key]['attribute_name'] + " : ",
                       style: mediumTextStyle.copyWith(
                         fontSize: 20.sp,
                         color: primaryColor,
                       ),
                     ),
                     if (key == 'color') ...[
-                      _buildColorOptions(options, attributeId, model),
+                      Expanded(child: _buildColorOptions(options, attributeId, model)),
                     ] else ...[
-                      _buildOptions(options, attributeId, model),
+                      Expanded(child: _buildOptions(options, attributeId, model)),
                     ]
                   ],
                 );
@@ -104,8 +104,8 @@ class ProductConfigurableOptions extends StatelessWidget {
                 vertical: 5.h,
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-                vertical: 3.h,
+                horizontal: 5.w,
+                vertical: 3.w,
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
@@ -170,8 +170,8 @@ class ProductConfigurableOptions extends StatelessWidget {
               ),
               child: Center(
                 child: Container(
-                  width: 30.w,
-                  height: 30.w,
+                  width: 20.w,
+                  height: 20.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isSelected ? optionColor : Colors.white,

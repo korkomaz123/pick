@@ -43,8 +43,7 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct>
-    with TickerProviderStateMixin {
+class _ProductSingleProductState extends State<ProductSingleProduct> with TickerProviderStateMixin {
   bool isMore = false;
   bool isFavorite = true;
 
@@ -59,8 +58,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   WishlistChangeNotifier wishlistChangeNotifier;
 
-  ProductEntity get details =>
-      widget.model.productDetailsMap[widget.product.productId];
+  ProductEntity get details => widget.model.productDetailsMap[widget.product.productId];
 
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
@@ -90,8 +88,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool _checkDiscounted() {
     final variant = widget.model.selectedVariant;
 
-    return details.discount > 0 ||
-        variant?.discount != null && variant.discount > 0;
+    return details.discount > 0 || variant?.discount != null && variant.discount > 0;
   }
 
   bool get isValidUrl => _checkUrlValidation();
@@ -204,9 +201,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                           },
                         ),
                         Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
+                          alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
                           child: _buildTitlebar(),
                         ),
                       ],
@@ -219,9 +214,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     child: Stack(
                       children: [
                         Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
+                          alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
                           child: _buildTitlebar(),
                         ),
                       ],
@@ -316,9 +309,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft,
+            alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
             child: _buildTitlebar(),
           ),
         ],
@@ -340,9 +331,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Consumer<WishlistChangeNotifier>(
             builder: (_, model, __) {
               return InkWell(
-                onTap: () => user != null
-                    ? _onFavorite(widget.model)
-                    : Navigator.pushNamed(context, Routes.signIn),
+                onTap: () => user != null ? _onFavorite(widget.model) : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
@@ -397,11 +386,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              if (details.typeId == 'configurable') ...[
-                _buildProductPrice()
-              ] else ...[
-                _buildStock()
-              ],
+              if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
             ],
           ),
           Text(
@@ -419,9 +404,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       children: [
         if (details?.brandEntity != null) ...[
           Text(
-            isStock
-                ? 'in_stock'.tr().toUpperCase()
-                : 'out_stock'.tr().toUpperCase(),
+            isStock ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
             style: mediumTextStyle.copyWith(
               color: isStock ? succeedColor : dangerColor,
               fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
@@ -535,7 +518,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Container(
       width: double.infinity,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
@@ -547,11 +530,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
           ),
-          if (details.typeId == 'configurable') ...[
-            _buildStock()
-          ] else ...[
-            _buildProductPrice()
-          ],
+          if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
         ],
       ),
     );
@@ -563,9 +542,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           SizedBox(width: 10.w),
           Text(
-            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
-                ' ' +
-                'currency'.tr(),
+            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) + ' ' + 'currency'.tr(),
             style: mediumTextStyle.copyWith(
               decorationStyle: TextDecorationStyle.solid,
               decoration: TextDecoration.lineThrough,
@@ -586,14 +563,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       ? details.price
                       : '',
               style: mediumTextStyle.copyWith(
-                fontSize: 20.sp,
+                fontSize: 18.sp,
                 color: greyColor,
-                fontWeight: FontWeight.w700,
+                // fontWeight: FontWeight.w700,
               ),
             ),
             SizedBox(width: 1.w),
-            if (details.price != null ||
-                widget?.model?.selectedVariant?.price != null) ...[
+            if (details.price != null || widget?.model?.selectedVariant?.price != null) ...[
               Text(
                 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
@@ -610,15 +586,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorMessage('required_options'.tr());
+        model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showSimpleErrorMessageWithImage('required_options'.tr(), "no_qty.png");
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage('out_of_stock_error'.tr());
+    if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
+      flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
       return;
     }
     _updateWishlist(model);
@@ -631,17 +604,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product, widget.model.selectedVariant);
+      await wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product, widget.model.selectedVariant);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
-          1, model.selectedOptions, widget.model.selectedVariant);
+      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, model.selectedOptions, widget.model.selectedVariant);
     }
   }
 
   _onShareProduct() async {
-    Uri shareLink =
-        await dynamicLinkService.productSharableLink(widget.product);
+    Uri shareLink = await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: details.name);
   }
 }

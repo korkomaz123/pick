@@ -55,8 +55,7 @@ class ProductVVCard extends StatefulWidget {
   _ProductVVCardState createState() => _ProductVVCardState();
 }
 
-class _ProductVVCardState extends State<ProductVVCard>
-    with TickerProviderStateMixin {
+class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateMixin {
   bool isWishlist;
   int index;
 
@@ -239,9 +238,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                   child: Row(
                     children: [
                       Text(
-                        widget.product.price != null
-                            ? (widget.product.price + ' ' + 'currency'.tr())
-                            : '',
+                        widget.product.price != null ? (widget.product.price + ' ' + 'currency'.tr()) : '',
                         style: mediumTextStyle.copyWith(
                           fontSize: widget.isMinor ? 12.sp : 14.sp,
                           color: greyColor,
@@ -266,9 +263,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                 ),
                 if (widget.isLine) ...[Divider(color: primaryColor)],
                 if (widget.isShoppingCart &&
-                    (widget.product.typeId != 'simple' ||
-                        widget.product.stockQty != null &&
-                            widget.product.stockQty > 0)) ...[
+                    (widget.product.typeId != 'simple' || widget.product.stockQty != null && widget.product.stockQty > 0)) ...[
                   if (widget.isPrimary) ...[
                     ScaleTransition(
                       scale: _addToCartScaleAnimation,
@@ -351,17 +346,13 @@ class _ProductVVCardState extends State<ProductVVCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation,
                 child: Container(
                   width: isWishlist ? 22.w : 25.w,
                   height: isWishlist ? 22.w : 25.w,
-                  child: isWishlist
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -374,8 +365,7 @@ class _ProductVVCardState extends State<ProductVVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.typeId == 'simple' && (widget.product.stockQty == null || widget.product.stockQty == 0)) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -406,11 +396,9 @@ class _ProductVVCardState extends State<ProductVVCard>
 
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage('out_of_stock_error'.tr());
+        flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
       }
     }
   }
@@ -447,7 +435,7 @@ class _ProductVVCardState extends State<ProductVVCard>
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
   }
 
   void _onWishlist() async {
@@ -460,11 +448,9 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }
