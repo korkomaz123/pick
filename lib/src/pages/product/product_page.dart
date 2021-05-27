@@ -390,7 +390,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
       flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
       return;
     }
-
     myCartChangeNotifier.addProductToCart(product, 1, lang, model.selectedOptions,
         onProcess: _onBuyProcess, onSuccess: _onBuySuccess, onFailure: _onBuyFailure);
   }
@@ -410,8 +409,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onBuyFailure(String message) {
     markaaAppChangeNotifier.changeBuyStatus(false);
-
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
+    flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
   }
 
   _onAdding() {
@@ -446,7 +444,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
   }
 
   _onFirstReview(ProductEntity product) async {
