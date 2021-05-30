@@ -26,19 +26,10 @@ class GlobalProvider extends ChangeNotifier {
       final enLocale = EasyLocalization.of(_context).supportedLocales.first;
       final arLocale = EasyLocalization.of(_context).supportedLocales.last;
 
-      _current == 'ar'
-          ? _context.setLocale(enLocale)
-          : _context.setLocale(arLocale);
+      _current == 'ar' ? _context.setLocale(enLocale) : _context.setLocale(arLocale);
 
-      FirebaseMessaging.instance
-          .unsubscribeFromTopic(_current == 'en'
-              ? MarkaaNotificationChannels.arChannel
-              : MarkaaNotificationChannels.enChannel)
-          .whenComplete(() {
-        FirebaseMessaging.instance.subscribeToTopic(_current == 'ar'
-            ? MarkaaNotificationChannels.arChannel
-            : MarkaaNotificationChannels.enChannel);
-      });
+      FirebaseMessaging.instance.unsubscribeFromTopic(_current == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
+      FirebaseMessaging.instance.subscribeToTopic(_current == 'ar' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
 
       lang = Preload.language = _current == "ar" ? "en" : "ar";
     }
@@ -70,8 +61,7 @@ class GlobalProvider extends ChangeNotifier {
   fetchCategories() async {
     print("currentLanguage $currentLanguage");
     String _lang = currentLanguage;
-    if (sideMenus[_lang].length == 0)
-      sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
+    if (sideMenus[_lang].length == 0) sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
     notifyListeners();
   }
 
@@ -87,9 +77,5 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get currentLanguage =>
-      EasyLocalization.of(Preload.navigatorKey.currentContext)
-          .locale
-          .languageCode
-          .toLowerCase();
+  String get currentLanguage => EasyLocalization.of(Preload.navigatorKey.currentContext).locale.languageCode.toLowerCase();
 }
