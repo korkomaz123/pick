@@ -25,6 +25,7 @@ class Routes {
 
   /// products list from home categories, categories, stores, brands
   static const String productList = '/product-list';
+  static const String summerCollection = '/summer-collection';
 
   /// single product
   static const String product = '/product-single';
