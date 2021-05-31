@@ -85,48 +85,33 @@ class FlushBarService {
 
   showSimpleErrorMessageWithImage(String message, String image) {
     showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-              content: Column(
-                children: [
-                  Container(
-                    width: 320.w,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Image.asset("lib/public/images/$image"), SizedBox(width: 10.w), Expanded(child: Text(message))],
-                      ),
-                    ),
-                  ),
-                  Divider(),
-                  Center(
-                      child: GestureDetector(
-                          onTap: Navigator.of(context).pop,
-                          child: Text(
-                            "close".tr(),
-                            style: TextStyle(color: Colors.blue),
-                          )))
-                ],
-              ),
-            )
-        /*(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [Image.asset("lib/public/images/$image"), SizedBox(width: 10.w), Text(message)],
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Column(
+          children: [
+            Image.asset("lib/public/images/$image"),
+            SizedBox(width: 10.w),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(message),
               ),
             ),
-          ),
-          Center(child: RaisedButton(color: Colors.white, onPressed: Navigator.of(context).pop, child: Text("close".tr())))
-        ],
-      ),*/
-        );
+            Divider(),
+            Center(
+              child: GestureDetector(
+                onTap: Navigator.of(context).pop,
+                child: Text(
+                  "close".tr(),
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void showErrorMessage(String message) {
