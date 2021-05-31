@@ -260,7 +260,7 @@
     "cancel_order_image_required": "Please take an image for product",
     "success": "Success",
     "failed": "Failed",
-    "out_of_stock_error": "This product is out of stock",
+    "out_of_stock_error": "This product qty not available",
     "required_options": "Please choose the options",
     "reorder_items_error": "This reorder can not be processed without any available items",
     "rating_required": "Please rate to review",
