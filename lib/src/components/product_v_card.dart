@@ -160,7 +160,7 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
             imageUrl: widget.product.imageUrl,
             width: widget.cardWidth,
             height: widget.cardHeight * 0.63,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Center(child: Icon(Icons.image, size: 20.sp));
             },
@@ -168,7 +168,7 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 InkWell(
                   onTap: () {
@@ -230,6 +230,7 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
                 //     ),
                 //   )
                 // ],
+                Spacer(),
                 if (widget.isLine) ...[Divider(color: greyColor, thickness: 0.5.h, height: 10.h)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
