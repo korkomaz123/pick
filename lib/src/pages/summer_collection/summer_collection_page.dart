@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/summer_collection_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -69,10 +70,9 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
       );
     } else if (item.productId != null) {
       final product = await ProductRepository().getProduct(item.productId);
-      Navigator.pushNamedAndRemoveUntil(
+      Navigator.pushNamed(
         Preload.navigatorKey.currentContext,
         Routes.product,
-        (route) => route.settings.name == Routes.home,
         arguments: product,
       );
     }
@@ -100,9 +100,7 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
               print("_summerCollectionNotifier.categories.length");
               print(_summerCollectionNotifier.categories.length);
               return _summerCollectionNotifier.categories.isEmpty
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? Center(child: PulseLoadingSpinner())
                   : GridView.count(
                       crossAxisCount: 2,
                       children: _summerCollectionNotifier.categories
