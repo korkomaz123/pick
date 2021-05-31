@@ -15,7 +15,7 @@ class ProductConfigurableOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
+    // bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -24,18 +24,18 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isAvailable) ...[
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.h),
-              child: Text(
-                'not_available'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: dangerColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-          ],
+          // if (!isAvailable) ...[
+          //   Padding(
+          //     padding: EdgeInsets.symmetric(vertical: 5.h),
+          //     child: Text(
+          //       'not_available'.tr(),
+          //       style: mediumTextStyle.copyWith(
+          //         color: dangerColor,
+          //         fontSize: 14.sp,
+          //       ),
+          //     ),
+          //   ),
+          // ],
           if (productEntity?.configurable?.keys != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +184,7 @@ class ProductConfigurableOptions extends StatelessWidget {
                           child: Icon(
                             Icons.close,
                             color: dangerColor,
-                            size: 18.sp,
+                            size: 10.sp,
                           ),
                         ),
                 ),
