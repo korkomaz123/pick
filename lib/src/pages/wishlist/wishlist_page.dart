@@ -32,8 +32,7 @@ class WishlistPage extends StatefulWidget {
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage>
-    with TickerProviderStateMixin {
+class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   ProgressService progressService;
@@ -151,9 +150,7 @@ class _WishlistPageState extends State<WishlistPage>
                     onAddToCart: () => _onAddToCart(product),
                   ),
                 ),
-                index < (wishlistChangeNotifier.wishlistItemsCount - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
+                index < (wishlistChangeNotifier.wishlistItemsCount - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
               ],
             ),
           );
@@ -180,9 +177,7 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
     myCartChangeNotifier.addProductToCart(product, 1, lang, {},
-        onProcess: _onAdding,
-        onSuccess: () => _onAddSuccess(product),
-        onFailure: _onAddFailure);
+        onProcess: _onAdding, onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
   }
 
   _onAdding() {
@@ -217,6 +212,6 @@ class _WishlistPageState extends State<WishlistPage>
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
+    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
   }
 }

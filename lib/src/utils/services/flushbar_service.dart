@@ -89,7 +89,7 @@ class FlushBarService {
       builder: (context) => CupertinoAlertDialog(
         content: Column(
           children: [
-            Image.asset("lib/public/images/$image"),
+            SvgPicture.asset("lib/public/images/$image"),
             SizedBox(width: 10.w),
             Container(
               width: double.infinity,

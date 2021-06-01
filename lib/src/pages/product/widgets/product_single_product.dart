@@ -589,11 +589,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
   _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showSimpleErrorMessageWithImage('required_options'.tr(), "no_qty.png");
+      flushBarService.showSimpleErrorMessageWithImage('required_options'.tr(), "no_qty.svg");
       return;
     }
     if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
-      flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
+      flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     _updateWishlist(model);
