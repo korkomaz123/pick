@@ -10,6 +10,7 @@ import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/summer_collection_notifier.dart';
+import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -97,6 +98,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
         ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
         ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
+        ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
       ],
       child: _buildMultiBlocProvider(context),
     );
@@ -149,7 +151,8 @@ class _MarkaaAppState extends State<MarkaaApp> {
               stream: Connectivity().onConnectivityChanged,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi) {
+                  if (snapshot.data == ConnectivityResult.mobile ||
+                      snapshot.data == ConnectivityResult.wifi) {
                     return FutureBuilder<void>(
                       future: Preload.checkAppVersion(),
                       builder: (context, snapshot) {
@@ -170,14 +173,16 @@ class _MarkaaAppState extends State<MarkaaApp> {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;

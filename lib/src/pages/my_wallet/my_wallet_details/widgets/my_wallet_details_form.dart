@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,14 +23,25 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   final _amountController = TextEditingController();
 
   MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  WalletChangeNotifier _walletChangeNotifier;
+
+  ProgressService _progressService;
+  FlushBarService _flushBarService;
 
   bool isValidAmount;
 
   @override
   void initState() {
     super.initState();
+
     isValidAmount = false;
+
+    _walletChangeNotifier = context.read<WalletChangeNotifier>();
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+
+    _progressService = ProgressService(context: context);
+    _flushBarService = FlushBarService(context: context);
+
     _amountController.addListener(_onChangeAmount);
   }
 
@@ -107,7 +122,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                       width: 168.w,
                       height: 28.h,
                       child: MarkaaTextButton(
-                        onPressed: () => null,
+                        onPressed: _onAddMoney,
                         title: 'add_money'.tr(),
                         titleColor: Colors.white,
                         titleSize: 13.sp,
@@ -119,24 +134,24 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                         isBold: true,
                       ),
                     ),
-                    SizedBox(height: 23.h),
-                    Container(
-                      width: 203.w,
-                      height: 28.h,
-                      child: MarkaaTextButton(
-                        onPressed: () => isValidAmount
-                            ? Navigator.pushNamed(context, Routes.bankList)
-                            : null,
-                        title: 'transfer_amount_to_bank'.tr(),
-                        titleColor: isValidAmount ? primaryColor : Colors.white,
-                        titleSize: 13.sp,
-                        buttonColor: greyLightColor,
-                        borderColor:
-                            isValidAmount ? primaryColor : Colors.white,
-                        radius: 8.sp,
-                        isBold: true,
-                      ),
-                    ),
+                    // SizedBox(height: 23.h),
+                    // Container(
+                    //   width: 203.w,
+                    //   height: 28.h,
+                    //   child: MarkaaTextButton(
+                    //     onPressed: () => isValidAmount
+                    //         ? Navigator.pushNamed(context, Routes.bankList)
+                    //         : null,
+                    //     title: 'transfer_amount_to_bank'.tr(),
+                    //     titleColor: isValidAmount ? primaryColor : Colors.white,
+                    //     titleSize: 13.sp,
+                    //     buttonColor: greyLightColor,
+                    //     borderColor:
+                    //         isValidAmount ? primaryColor : Colors.white,
+                    //     radius: 8.sp,
+                    //     isBold: true,
+                    //   ),
+                    // ),
                   ],
                 );
               },
@@ -145,5 +160,41 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
         ),
       ),
     );
+  }
+
+  void _onAddMoney() {
+    _walletChangeNotifier.createWllatCart(
+      onProcess: _onCreatingWalletCart,
+      onSuccess: _onCreatedWalletCartSuccess,
+      onFailure: _onCreatedWalletCartFailure,
+    );
+  }
+
+  void _onCreatingWalletCart() {
+    _progressService.showProgress();
+  }
+
+  void _onCreatedWalletCartFailure() {
+    _progressService.hideProgress();
+    _flushBarService.showErrorMessage('Something went wrong');
+  }
+
+  void _onCreatedWalletCartSuccess() {
+    _walletChangeNotifier.addMoneyToWallet(
+      amount: _amountController.text,
+      lang: Preload.language,
+      onSuccess: _onAddedMoneySuccess,
+      onFailure: _onAddedMoneyFailure,
+    );
+  }
+
+  void _onAddedMoneySuccess() {
+    _progressService.hideProgress();
+    Navigator.pushNamed(context, Routes.myWalletCheckout);
+  }
+
+  void _onAddedMoneyFailure() {
+    _progressService.hideProgress();
+    _flushBarService.showErrorMessage('Something went wrong');
   }
 }

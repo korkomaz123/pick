@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -8,7 +10,23 @@ import 'package:markaa/src/data/models/transaction_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
-class MyWalletDetailsTransactions extends StatelessWidget {
+class MyWalletDetailsTransactions extends StatefulWidget {
+  @override
+  _MyWalletDetailsTransactionsState createState() =>
+      _MyWalletDetailsTransactionsState();
+}
+
+class _MyWalletDetailsTransactionsState
+    extends State<MyWalletDetailsTransactions> {
+  WalletChangeNotifier _walletChangeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _walletChangeNotifier = context.read<WalletChangeNotifier>();
+    _walletChangeNotifier.getTransactionHistory(token: user.token);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,10 +42,14 @@ class MyWalletDetailsTransactions extends StatelessWidget {
               fontSize: 23.sp,
             ),
           ),
-          Column(
-            children: transactions.map((item) {
-              return _buildTransactionItemCard(item);
-            }).toList(),
+          Consumer<WalletChangeNotifier>(
+            builder: (_, model, __) {
+              return Column(
+                children: model.transactionsList.map((item) {
+                  return _buildTransactionItemCard(item);
+                }).toList(),
+              );
+            },
           ),
         ],
       ),

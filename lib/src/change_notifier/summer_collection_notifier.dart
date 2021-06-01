@@ -9,7 +9,8 @@ class SummerCollectionNotifier extends ChangeNotifier {
 
   List<SummerCollectionEntity> categories = [];
   Future getSummerCollection() async {
-    final result = await categoryRepository.getSummerCollection(Preload.language);
+    final result =
+        await categoryRepository.getSummerCollection(Preload.language);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoryList = result['data'];
       categories = [];

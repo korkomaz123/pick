@@ -61,7 +61,8 @@ class Routes {
   static const String account = '/my-account';
   static const String updateProfile = '/update-profile';
   static const String notificationMessages = '/notification-messages';
-  static const String notificationMessageDetails = '/notification-message-details';
+  static const String notificationMessageDetails =
+      '/notification-message-details';
   static const String orderHistory = '/order-history';
   static const String terms = '/terms';
   static const String aboutUs = '/about-us';
@@ -81,4 +82,6 @@ class Routes {
   static const String myWallet = '/my-wallet';
   static const String bankList = '/bank-list';
   static const String addNewBankAccount = '/add-new-bank-account';
+  static const String myWalletCheckout = '/my-wallet-checkout';
+  static const String myWalletPayment = '/my-wallet-payment';
 }

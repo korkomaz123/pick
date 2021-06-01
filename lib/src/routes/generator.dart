@@ -29,6 +29,8 @@ import 'package:markaa/src/pages/my_account/shipping_address/shipping_address_pa
 import 'package:markaa/src/pages/my_account/terms/terms_page.dart';
 import 'package:markaa/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:markaa/src/pages/my_cart/my_cart_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_page.dart';
 import 'package:markaa/src/pages/my_wallet/my_wallet_details/my_wallet_details_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/banks_list_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/bank_page.dart';
@@ -294,6 +296,16 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (_) => BankPage(),
           settings: RouteSettings(name: Routes.addNewBankAccount),
+        );
+      case Routes.myWalletCheckout:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletCheckoutPage(reorder: params),
+          settings: settings,
+        );
+      case Routes.myWalletPayment:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentPage(),
+          settings: settings,
         );
       default:
       // return CupertinoPageRoute(
