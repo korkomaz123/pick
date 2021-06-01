@@ -39,15 +39,6 @@ void main() async {
   // String _page = Routes.start;
   // await LocalStorageRepository().removeItem('usage');
 
-  bool isExist = await LocalStorageRepository().existItem('usage');
-  String token = await Preload.localRepo.getToken();
-
-  if (isExist) {
-    //Start Loading Assets
-    await Preload.appOpen();
-    // _page = token != null && token.isNotEmpty ? Routes.home : Routes.home;
-  }
-  print("token ====> $token");
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
