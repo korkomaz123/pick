@@ -195,6 +195,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       children: [
                         CachedNetworkImage(
                           imageUrl: widget?.model?.selectedVariant?.imageUrl,
+                          width: designWidth.w,
+                          height: 400.h,
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) {
                             return Center(child: Icon(Icons.image, size: 20));
@@ -209,7 +211,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                   )
                 ] else ...[
                   Container(
-                    width: double.infinity,
+                    width: designWidth.w,
                     height: 460.h,
                     child: Stack(
                       children: [
