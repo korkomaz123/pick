@@ -6,10 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'preload.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/routes/routes.dart';
-import 'src/utils/repositories/local_storage_repository.dart';
 
 const bool USE_FIRESTORE_EMULATOR = false;
 
