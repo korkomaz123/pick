@@ -20,7 +20,7 @@ class HomeMegaBanner extends StatelessWidget {
     return InkWell(
       onTap: () async {
         if (homeChangeNotifier.megaBanner.categoryId != null) {
-          if (homeChangeNotifier.megaBanner.categoryId == "41") {
+          if (homeChangeNotifier.megaBanner.categoryId == "1447") {
             Navigator.pushNamed(
               Preload.navigatorKey.currentContext,
               Routes.summerCollection,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -74,9 +76,20 @@ class _MarkaaAppState extends State<MarkaaApp> {
   final checkoutRepository = CheckoutRepository();
 
   final firebaseRepository = FirebaseRepository();
+  _loadData() async {
+    Timer(Duration(seconds: 1), () async {
+      bool isExist = await LocalStorageRepository().existItem('usage');
+      String token = await Preload.localRepo.getToken();
+      if (isExist) {
+        await Preload.appOpen();
+      }
+      print("token ====> $token");
+    });
+  }
 
   @override
   void initState() {
+    _loadData();
     super.initState();
   }
 

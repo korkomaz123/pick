@@ -97,8 +97,6 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
             left: 0.w,
             right: 0.w,
             child: Consumer<SummerCollectionNotifier>(builder: (_, model, __) {
-              print("_summerCollectionNotifier.categories.length");
-              print(_summerCollectionNotifier.categories.length);
               return _summerCollectionNotifier.categories.isEmpty
                   ? Center(child: PulseLoadingSpinner())
                   : GridView.count(
@@ -139,14 +137,14 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // InkWell(
-                  //   child: Icon(
-                  //     Icons.arrow_back_ios,
-                  //     color: Colors.white,
-                  //     size: 20.sp,
-                  //   ),
-                  //   onTap: () => Navigator.pop(context),
-                  // ),
+                  InkWell(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                    onTap: () => Navigator.pop(context),
+                  ),
                 ],
               ),
             ),

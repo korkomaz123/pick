@@ -398,7 +398,7 @@ class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateM
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.png");
+        flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
@@ -435,7 +435,7 @@ class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateM
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
+    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
   }
 
   void _onWishlist() async {

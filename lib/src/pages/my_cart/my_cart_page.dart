@@ -439,6 +439,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
   }
 }

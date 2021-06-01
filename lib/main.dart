@@ -6,10 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'preload.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/routes/routes.dart';
-import 'src/utils/repositories/local_storage_repository.dart';
 
 const bool USE_FIRESTORE_EMULATOR = false;
 
@@ -39,15 +37,6 @@ void main() async {
   // String _page = Routes.start;
   // await LocalStorageRepository().removeItem('usage');
 
-  bool isExist = await LocalStorageRepository().existItem('usage');
-  String token = await Preload.localRepo.getToken();
-
-  if (isExist) {
-    //Start Loading Assets
-    await Preload.appOpen();
-    // _page = token != null && token.isNotEmpty ? Routes.home : Routes.home;
-  }
-  print("token ====> $token");
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
