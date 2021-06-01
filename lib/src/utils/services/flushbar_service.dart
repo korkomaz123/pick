@@ -51,8 +51,7 @@ class FlushBarService {
                       ),
                     ),
                     Text(
-                      'currency'.tr() +
-                          ' ${model.cartTotalPrice.toStringAsFixed(3)}',
+                      'currency'.tr() + ' ${model.cartTotalPrice.toStringAsFixed(3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 13.sp,
@@ -82,6 +81,37 @@ class FlushBarService {
         ),
       ],
     )..show(context);
+  }
+
+  showSimpleErrorMessageWithImage(String message, String image) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Column(
+          children: [
+            Image.asset("lib/public/images/$image"),
+            SizedBox(width: 10.w),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(message),
+              ),
+            ),
+            Divider(),
+            Center(
+              child: GestureDetector(
+                onTap: Navigator.of(context).pop,
+                child: Text(
+                  "close".tr(),
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void showErrorMessage(String message) {

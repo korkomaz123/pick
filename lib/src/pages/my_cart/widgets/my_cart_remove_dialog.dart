@@ -3,7 +3,6 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCartRemoveDialog extends StatelessWidget {
   final String title;
@@ -17,18 +16,18 @@ class MyCartRemoveDialog extends StatelessWidget {
       title: Text(
         title,
         textAlign: TextAlign.center,
-        style: mediumTextStyle.copyWith(
-          fontSize: 26.sp,
-          color: Colors.black,
-        ),
+        // style: mediumTextStyle.copyWith(
+        //   fontSize: 26.sp,
+        //   color: Colors.black,
+        // ),
       ),
       content: Text(
         text,
         textAlign: TextAlign.center,
-        style: mediumTextStyle.copyWith(
-          fontSize: 15.sp,
-          color: Colors.black87,
-        ),
+        // style: mediumTextStyle.copyWith(
+        //   fontSize: 15.sp,
+        //   color: Colors.black87,
+        // ),
       ),
       actions: [
         // ignore: deprecated_member_use
@@ -37,7 +36,7 @@ class MyCartRemoveDialog extends StatelessWidget {
           child: Text(
             'yes_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: 18.sp,
+              // fontSize: 18.sp,
               color: primaryColor,
             ),
           ),
@@ -48,7 +47,7 @@ class MyCartRemoveDialog extends StatelessWidget {
           child: Text(
             'no_button_title'.tr(),
             style: mediumTextStyle.copyWith(
-              fontSize: 18.sp,
+              // fontSize: 18.sp,
               color: primaryColor,
             ),
           ),

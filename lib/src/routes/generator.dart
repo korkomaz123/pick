@@ -43,6 +43,7 @@ import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
 // import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
+import 'package:markaa/src/pages/summer_collection/summer_collection_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +92,11 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (context) => ProductListPage(arguments: params),
           settings: RouteSettings(name: Routes.productList),
+        );
+      case Routes.summerCollection:
+        return CupertinoPageRoute(
+          builder: (context) => SummerCollectionPage(arguments: params),
+          settings: RouteSettings(name: Routes.summerCollection),
         );
       case Routes.categoryList:
         return PageRouteBuilder(

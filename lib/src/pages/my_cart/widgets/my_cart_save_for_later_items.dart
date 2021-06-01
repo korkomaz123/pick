@@ -33,8 +33,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
   });
 
   @override
-  _MyCartSaveForLaterItemsState createState() =>
-      _MyCartSaveForLaterItemsState();
+  _MyCartSaveForLaterItemsState createState() => _MyCartSaveForLaterItemsState();
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
@@ -141,8 +140,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                         model.changePutInCartStatus(true);
                       }
                     },
-                    child: SvgPicture.asset(
-                        lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+                    child: SvgPicture.asset(lang == 'en' ? putInCartEnIcon : putInCartArIcon),
                   );
                 },
               ),
@@ -199,16 +197,14 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
       },
     );
     if (result != null) {
-      await widget.wishlistChangeNotifier
-          .removeItemFromWishlist(user.token, item);
+      await widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
     }
   }
 
   void _onPutInCart(ProductModel item) async {
     widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
-    widget.myCartChangeNotifier.addProductToCart(
-        item, item.qtySaveForLater, lang, {},
-        onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
+    widget.myCartChangeNotifier
+        .addProductToCart(item, item.qtySaveForLater, lang, {}, onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
   }
 
   void _onAddSuccess(ProductModel item) {
@@ -217,6 +213,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   _onAddFailure(String message) {
-    _flushBarService.showErrorMessage(message);
+    _flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.png");
   }
 }
