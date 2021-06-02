@@ -14,6 +14,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   adjust_sdk: ^4.28.0
+  app_tracking_transparency: ^2.0.1
   algolia: ^1.0.1
   badges: ^1.2.0
   bloc: ^7.0.0

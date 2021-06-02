@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
