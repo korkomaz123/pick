@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
@@ -28,15 +31,19 @@ void main() async {
   /// Firebase initialize
   await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR)
-    FirebaseFirestore.instance.settings = const Settings(
-      host: 'localhost:8080',
-      sslEnabled: false,
-      persistenceEnabled: false,
-    );
+    FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
+  if (Platform.isIOS)
+    try {
+      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
+      if (status == TrackingStatus.notDetermined) {
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      }
+      final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+      print("uuid ==> $uuid");
+    } on PlatformException {}
 
-  // String _page = Routes.start;
-  // await LocalStorageRepository().removeItem('usage');
-
+  final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+  print("UUID: $uuid");
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
