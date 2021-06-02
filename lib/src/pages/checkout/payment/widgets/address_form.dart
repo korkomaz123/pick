@@ -1,7 +1,5 @@
-import 'package:markaa/src/components/markaa_app_bar.dart';
-import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_custom_suffix_input.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
@@ -9,6 +7,8 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/region_entity.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_block_list_dialog.dart';
+import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_region_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -24,21 +24,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:string_validator/string_validator.dart';
 
-import 'widgets/select_region_dialog.dart';
-import 'widgets/select_block_list_dialog.dart';
-
-class EditAddressPage extends StatefulWidget {
+class AddressForm extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  EditAddressPage({this.params});
+  AddressForm({this.params});
 
   @override
-  _EditAddressPageState createState() => _EditAddressPageState();
+  _AddressFormState createState() => _AddressFormState();
 }
 
-class _EditAddressPageState extends State<EditAddressPage> {
+class _AddressFormState extends State<AddressForm> {
   bool isNew;
-  bool isCheckout;
 
   String countryId;
   String regionId;
@@ -70,28 +66,34 @@ class _EditAddressPageState extends State<EditAddressPage> {
   @override
   void initState() {
     super.initState();
-    model = context.read<AddressChangeNotifier>();
-    isCheckout = false;
+
+    isNew = true;
+
     if (widget.params != null) {
       if (widget.params.containsKey('address')) {
         addressParam = widget.params['address'];
       }
-      if (widget.params.containsKey('isCheckout')) {
-        isCheckout = widget.params['isCheckout'];
-      }
     }
-    isNew = true;
-    firstNameController.text = user?.firstName;
-    lastNameController.text = user?.lastName;
-    fullNameController.text =
-        firstNameController.text + " " + lastNameController.text;
-    emailController.text = user?.email;
+    model = context.read<AddressChangeNotifier>();
+    progressService = ProgressService(context: context);
+    flushBarService = FlushBarService(context: context);
+    _initForm();
+  }
+
+  _initForm() {
+    if (user?.token != null) {
+      firstNameController.text = user?.firstName;
+      lastNameController.text = user?.lastName;
+      fullNameController.text = user.firstName + " " + user.lastName;
+      emailController.text = user?.email;
+    }
+
     if (addressParam != null) {
       isNew = false;
       firstNameController.text = addressParam?.firstName;
       lastNameController.text = addressParam?.lastName;
       fullNameController.text =
-          firstNameController.text + " " + lastNameController.text;
+          addressParam.firstName + " " + addressParam.firstName;
       emailController.text = addressParam?.email;
       titleController.text = addressParam?.title ?? 'title';
       countryController.text = addressParam?.country;
@@ -107,8 +109,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
       countryId = 'KW';
       countryController.text = 'Kuwait';
     }
-    progressService = ProgressService(context: context);
-    flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -119,135 +119,123 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          AppBar(
-            elevation: 0,
-            toolbarHeight: 50.h,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-            ),
-            centerTitle: true,
-            title: Text(
-              'shipping_address_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: 17.sp,
+    return Material(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Align(
+              alignment: Preload.language == 'en'
+                  ? Alignment.topRight
+                  : Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-          ),
-          _buildEditFormView(),
-        ],
-      ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
-    );
-  }
-
-  Widget _buildEditFormView() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              Column(
+            Center(
+              child: Text(
+                'shipping_address_title'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 22.sp,
+                ),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Form(
+              key: formKey,
+              child: Column(
                 children: [
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: fullNameController,
-                    width: designWidth.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'full_name'.tr(),
-                    validator: (String value) => value.isEmpty
-                        ? 'required_field'.tr()
-                        : (value.trim().indexOf(' ') == -1
-                            ? 'full_name_issue'.tr()
-                            : null),
-                    inputType: TextInputType.text,
+                  Column(
+                    children: [
+                      SizedBox(height: 10.h),
+                      MarkaaCustomInput(
+                        controller: fullNameController,
+                        width: designWidth.w,
+                        padding: 10.w,
+                        fontSize: 14.sp,
+                        hint: 'full_name'.tr(),
+                        validator: (String value) => value.isEmpty
+                            ? 'required_field'.tr()
+                            : (value.trim().indexOf(' ') == -1
+                                ? 'full_name_issue'.tr()
+                                : null),
+                        inputType: TextInputType.text,
+                      ),
+                      SizedBox(height: 10.h),
+                      MarkaaCustomInput(
+                        controller: phoneNumberController,
+                        width: 375.w,
+                        padding: 10.h,
+                        fontSize: 14.sp,
+                        hint: 'phone_number_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.phone,
+                      ),
+                      SizedBox(height: 10.h),
+                      MarkaaCustomInput(
+                        controller: stateController,
+                        width: 375.w,
+                        padding: 10.h,
+                        fontSize: 14.sp,
+                        hint: 'checkout_state_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.text,
+                        readOnly: true,
+                        onTap: _onSelectState,
+                      ),
+                      SizedBox(height: 10.h),
+                      MarkaaCustomInput(
+                        controller: companyController,
+                        width: 375.w,
+                        padding: 10.h,
+                        fontSize: 14.sp,
+                        hint: 'checkout_company_hint'.tr(),
+                        validator: (value) => value.isEmpty
+                            ? 'required_field'.tr()
+                            : !isInt(value)
+                                ? 'invalid_field'.tr()
+                                : null,
+                        inputType: TextInputType.text,
+                        readOnly: true,
+                        onTap: _onSelectBlock,
+                      ),
+                      SizedBox(height: 10.h),
+                      MarkaaCustomSuffixInput(
+                        controller: streetController,
+                        width: 375.w,
+                        padding: 10.w,
+                        fontSize: 14.sp,
+                        hint: 'checkout_street_name_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.text,
+                        suffixIcon: IconButton(
+                          onPressed: _onSearchAddress,
+                          icon: SvgPicture.asset(searchAddrIcon),
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      MarkaaCustomInputMulti(
+                        controller: cityController,
+                        width: 375.w,
+                        padding: 10.h,
+                        fontSize: 14.sp,
+                        hint: 'checkout_city_hint'.tr(),
+                        validator: (value) =>
+                            value.isEmpty ? 'required_field'.tr() : null,
+                        inputType: TextInputType.text,
+                        maxLine: 3,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: phoneNumberController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'phone_number_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.phone,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: stateController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: _onSelectState,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: companyController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_company_hint'.tr(),
-                    validator: (value) => value.isEmpty
-                        ? 'required_field'.tr()
-                        : !isInt(value)
-                            ? 'invalid_field'.tr()
-                            : null,
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: _onSelectBlock,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomSuffixInput(
-                    controller: streetController,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    suffixIcon: IconButton(
-                      onPressed: _onSearchAddress,
-                      icon: SvgPicture.asset(searchAddrIcon),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInputMulti(
-                    controller: cityController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    maxLine: 3,
-                  ),
+                  _buildSaveButton(),
                 ],
               ),
-              _buildSaveButton(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -341,14 +329,10 @@ class _EditAddressPageState extends State<EditAddressPage> {
         email: emailController.text,
         defaultBillingAddress: addressParam?.defaultBillingAddress != null
             ? addressParam?.defaultBillingAddress
-            : isCheckout
-                ? 1
-                : 0,
+            : 1,
         defaultShippingAddress: addressParam?.defaultShippingAddress != null
             ? addressParam?.defaultShippingAddress
-            : isCheckout
-                ? 1
-                : 0,
+            : 1,
         addressId: addressParam?.addressId ?? '',
       );
       if (user?.token != null) {
@@ -376,17 +360,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
   void _onSuccess() {
     progressService.hideProgress();
 
-    if (isCheckout) {
-      Navigator.popUntil(
-        context,
-        (route) => route.settings.name == Routes.checkout,
-      );
-    } else {
-      Navigator.popUntil(
-        context,
-        (route) => route.settings.name == Routes.shippingAddress,
-      );
-    }
+    Navigator.pop(context);
   }
 
   void _onFailure(String error) {

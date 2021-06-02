@@ -12,7 +12,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
-import 'package:markaa/src/pages/checkout/payment/payment_card_form.dart';
+import 'package:markaa/src/pages/checkout/payment/widgets/payment_card_form.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -92,7 +92,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(error);
+    flushBarService.showSimpleErrorMessageWithImage(error);
   }
 
   @override
@@ -285,7 +285,8 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
-        flushBarService.showErrorMessage('fill_card_details_error'.tr());
+        flushBarService
+            .showSimpleErrorMessageWithImage('fill_card_details_error'.tr());
         return;
       }
       data['tap_token'] = cardToken;

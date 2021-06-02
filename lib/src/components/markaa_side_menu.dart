@@ -8,7 +8,6 @@ import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -88,7 +87,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           }
           if (state is SignOutSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(state.message);
+            flushBarService.showSimpleErrorMessageWithImage(state.message);
           }
         },
         builder: (context, state) {
@@ -373,12 +372,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   void _logout() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return LogoutConfirmDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }

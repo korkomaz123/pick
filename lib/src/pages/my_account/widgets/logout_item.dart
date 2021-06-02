@@ -15,10 +15,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
-
-import 'logout_confirm_dialog.dart';
 
 class LogoutItem extends StatefulWidget {
   final SnackBarService snackBarService;
@@ -33,10 +32,13 @@ class LogoutItem extends StatefulWidget {
 class _LogoutItemState extends State<LogoutItem> {
   SnackBarService snackBarService;
   ProgressService progressService;
+  FlushBarService flushBarService;
 
   SignInBloc signInBloc;
-  final LocalStorageRepository localRepo = LocalStorageRepository();
+
+  LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
+
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -47,7 +49,10 @@ class _LogoutItemState extends State<LogoutItem> {
     super.initState();
     snackBarService = widget.snackBarService;
     progressService = widget.progressService;
+    flushBarService = FlushBarService(context: context);
+
     signInBloc = context.read<SignInBloc>();
+
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -108,12 +113,8 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logout() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return LogoutConfirmDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }

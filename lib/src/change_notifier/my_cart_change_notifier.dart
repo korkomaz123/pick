@@ -108,6 +108,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
+      print(e.toString());
       onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
       notifyListeners();
@@ -426,7 +427,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       resetDiscountPrice();
     } else {
       errorMessage = result['errorMessage'];
-      flushBarService.showErrorMessage(errorMessage);
+      flushBarService.showSimpleErrorMessageWithImage(errorMessage);
       isApplying = false;
     }
     notifyListeners();
@@ -457,7 +458,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartDiscountedTotalPrice = cartTotalPrice;
     } else {
       errorMessage = result['errorMessage'];
-      flushBarService.showErrorMessage(errorMessage);
+      flushBarService.showSimpleErrorMessageWithImage(errorMessage);
       isApplying = false;
     }
     notifyListeners();

@@ -20,8 +20,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../widgets/reorder_remove_dialog.dart';
-
 class ReOrderPage extends StatefulWidget {
   final OrderEntity order;
 
@@ -514,12 +512,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _onDeleteOrderItem(String key) async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return ReorderRemoveDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'remove_reorder_item_subtitle');
     if (result != null) {
       await myCartChangeNotifier.removeReorderCartItem(key);
     }
@@ -531,9 +525,10 @@ class _ReOrderPageState extends State<ReOrderPage> {
           .containsKey(widget.order.address.addressId)) {
         addressChangeNotifier.setDefaultAddress(widget.order.address);
       }
-      Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
+      Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
-      flushBarService.showErrorMessage('reorder_items_error'.tr());
+      flushBarService
+          .showSimpleErrorMessageWithImage('reorder_items_error'.tr());
     }
   }
 }

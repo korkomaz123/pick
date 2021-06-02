@@ -73,7 +73,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
 
   void _onCanceledFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(error);
+    flushBarService.showSimpleErrorMessageWithImage(error);
   }
 
   @override

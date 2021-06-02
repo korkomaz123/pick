@@ -228,14 +228,14 @@ class _SearchAddressViewState extends State<SearchAddressView> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      flushBarService.showErrorMessage(
+      flushBarService.showSimpleErrorMessageWithImage(
         'Location services are disabled.',
       );
     }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      flushBarService.showErrorMessage(
+      flushBarService.showSimpleErrorMessageWithImage(
         'Location permissions are permantly denied, we cannot request permissions.',
       );
     }
@@ -244,7 +244,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        flushBarService.showErrorMessage(
+        flushBarService.showSimpleErrorMessageWithImage(
           'Location permissions are denied (actual value: $permission).',
         );
       }

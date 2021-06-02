@@ -51,7 +51,8 @@ class FlushBarService {
                       ),
                     ),
                     Text(
-                      'currency'.tr() + ' ${model.cartTotalPrice.toStringAsFixed(3)}',
+                      'currency'.tr() +
+                          ' ${model.cartTotalPrice.toStringAsFixed(3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 13.sp,
@@ -83,14 +84,69 @@ class FlushBarService {
     )..show(context);
   }
 
-  showSimpleErrorMessageWithImage(String message, String image) {
+  Future showConfirmDialog({
+    String title = 'are_you_sure',
+    String message,
+    String yesButtonText = 'yes_button_title',
+    String noButtonText = 'no_button_title',
+  }) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(
+            title.tr(),
+            textAlign: TextAlign.center,
+            style: mediumTextStyle.copyWith(
+              fontSize: 26.sp,
+              color: Colors.black,
+            ),
+          ),
+          content: Text(
+            message.tr(),
+            textAlign: TextAlign.center,
+            style: mediumTextStyle.copyWith(
+              fontSize: 15.sp,
+              color: Colors.black87,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'yes'),
+              child: Text(
+                yesButtonText.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 18.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                noButtonText.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 18.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  showSimpleErrorMessageWithImage(String message, [String image]) {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
         content: Column(
           children: [
-            SvgPicture.asset("lib/public/images/$image"),
-            SizedBox(width: 10.w),
+            if (image != null) ...[
+              SvgPicture.asset("lib/public/images/$image"),
+              SizedBox(width: 10.w),
+            ],
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(8.0),

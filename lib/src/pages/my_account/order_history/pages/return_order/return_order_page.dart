@@ -257,8 +257,10 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       children: List.generate(
         order.cartItems.length,
         (index) {
-          if (order.cartItems[index].availableCount == null || order.cartItems[index].availableCount == 0) {
-            order.cartItems[index].availableCount = order.cartItems[index].itemCount;
+          if (order.cartItems[index].availableCount == null ||
+              order.cartItems[index].availableCount == 0) {
+            order.cartItems[index].availableCount =
+                order.cartItems[index].itemCount;
           }
           String key = order.cartItems[index].itemId.toString();
           bool isSelected = returnItemsMap.containsKey(key);
@@ -271,7 +273,9 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
                     _buildCheckButton(isSelected, key, index),
                   ],
                 ),
-                if (index < (order.cartItems.length - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
+                if (index < (order.cartItems.length - 1)) ...[
+                  Divider(color: greyColor, thickness: 0.5)
+                ],
               ],
             );
           } else {
@@ -283,7 +287,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   }
 
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
-    bool isDefaultValue = returnItemsMap.containsKey(cartItem.itemId.toString());
+    bool isDefaultValue =
+        returnItemsMap.containsKey(cartItem.itemId.toString());
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -369,7 +374,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             count = order.cartItems[index].itemCount;
             returnItemsMap[key] = order.cartItems[index].itemCount;
           }
-          returnPrice += double.parse(order.cartItems[index].product.price) * count;
+          returnPrice +=
+              double.parse(order.cartItems[index].product.price) * count;
           markaaAppChangeNotifier.rebuild();
         },
       ),
@@ -456,7 +462,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(3)}',
+            'currency'.tr() +
+                ' ${(double.parse(order.subtotalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -515,7 +522,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(3)}',
+            'currency'.tr() +
+                ' ${(double.parse(order.totalPrice) - returnPrice).toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: 16.sp,
@@ -567,7 +575,8 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       }
       order.cartItems[index].itemCount = count;
       returnItemsMap[key] = count;
-      returnPrice = double.parse(order.cartItems[index].product.price) * updatedCount;
+      returnPrice =
+          double.parse(order.cartItems[index].product.price) * updatedCount;
       markaaAppChangeNotifier.rebuild();
     }
   }
@@ -579,7 +588,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       Navigator.pushNamed(context, Routes.returnOrderInfo, arguments: params);
     } else {
       String message = 'return_order_no_selected_item'.tr();
-      flushBarService.showErrorMessage(message);
+      flushBarService.showSimpleErrorMessageWithImage(message);
     }
   }
 }

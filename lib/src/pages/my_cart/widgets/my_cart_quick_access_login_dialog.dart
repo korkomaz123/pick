@@ -39,8 +39,13 @@ import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
   final bool isCheckout;
+  final Function prepareDetails;
 
-  MyCartQuickAccessLoginDialog({this.cartId, this.isCheckout});
+  MyCartQuickAccessLoginDialog({
+    this.cartId,
+    this.isCheckout,
+    this.prepareDetails,
+  });
 
   @override
   _MyCartQuickAccessLoginDialogState createState() =>
@@ -68,9 +73,12 @@ class _MyCartQuickAccessLoginDialogState
   @override
   void initState() {
     super.initState();
+
     signInBloc = context.read<SignInBloc>();
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
@@ -118,7 +126,7 @@ class _MyCartQuickAccessLoginDialogState
         }
         if (state is SignInSubmittedFailure) {
           progressService.hideProgress();
-          flushBarService.showErrorMessage(state.message);
+          flushBarService.showSimpleErrorMessageWithImage(state.message);
         }
       },
       child: Material(
@@ -292,19 +300,20 @@ class _MyCartQuickAccessLoginDialogState
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showErrorMessage(
+        flushBarService.showSimpleErrorMessageWithImage(
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
         return;
       }
     }
-    Navigator.popAndPushNamed(context, Routes.checkoutGuestAddress);
+    widget.prepareDetails();
+    Navigator.popAndPushNamed(context, Routes.checkout);
   }
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage(message);
   }
 
   void _onLogin() async {
@@ -329,12 +338,12 @@ class _MyCartQuickAccessLoginDialogState
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        flushBarService.showErrorMessage('Canceled by User');
+        flushBarService.showSimpleErrorMessageWithImage('Canceled by User');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');
         print(result.errorMessage);
-        flushBarService.showErrorMessage(result.errorMessage);
+        flushBarService.showSimpleErrorMessageWithImage(result.errorMessage);
         break;
     }
   }

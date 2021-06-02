@@ -93,7 +93,7 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   }
 
   void _onFailure(String message) {
-    flushBarService.showErrorMessage(message);
+    flushBarService.showSimpleErrorMessageWithImage(message);
   }
 }
 

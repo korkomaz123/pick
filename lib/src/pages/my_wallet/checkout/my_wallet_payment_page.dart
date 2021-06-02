@@ -9,7 +9,6 @@ import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/checkout/payment/payment_abort_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -59,12 +58,8 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onBack() async {
-    final result = await showDialog(
-      context: context,
-      builder: (_) {
-        return PaymentAbortDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'payment_abort_dialog_text');
     if (result != null) {
       /// cancel the order
       await orderChangeNotifier.cancelFullOrder(order,

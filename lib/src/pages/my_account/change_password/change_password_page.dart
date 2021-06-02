@@ -57,7 +57,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           }
           if (state is PasswordUpdatedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(state.message);
+            flushBarService.showSimpleErrorMessageWithImage(state.message);
           }
         },
         builder: (context, state) {

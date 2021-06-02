@@ -4,8 +4,8 @@ import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
 import 'package:markaa/src/pages/checkout/address/checkout_guest_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/payment_failed_page.dart';
+import 'package:markaa/src/pages/checkout/payment/checkout_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_page.dart';
-import 'package:markaa/src/pages/checkout/payment/checkout_payment_card_page.dart';
 import 'package:markaa/src/pages/checkout/search_address/search_address_screen.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
@@ -152,15 +152,15 @@ class RouteGenerator {
           builder: (context) => CheckoutGuestAddressPage(),
           settings: RouteSettings(name: Routes.checkoutGuestAddress),
         );
+      case Routes.checkout:
+        return CupertinoPageRoute(
+          builder: (context) => CheckoutPage(reorder: params),
+          settings: RouteSettings(name: Routes.checkout),
+        );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutPaymentPage(reorder: params),
+          builder: (context) => CheckoutPaymentPage(params: params),
           settings: RouteSettings(name: Routes.checkoutPayment),
-        );
-      case Routes.checkoutPaymentCard:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutPaymentCardPage(params: params),
-          settings: RouteSettings(name: Routes.checkoutPaymentCard),
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(

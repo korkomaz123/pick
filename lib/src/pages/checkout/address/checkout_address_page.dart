@@ -37,18 +37,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   FlushBarService flushBarService;
   ProgressService progressService;
 
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController countryController = TextEditingController();
-  TextEditingController stateController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
-  TextEditingController streetController = TextEditingController();
-  TextEditingController zipCodeController = TextEditingController();
-  TextEditingController companyController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
-
   String shippingMethodId;
   double serviceFees;
 
@@ -259,26 +247,6 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
               fontSize: 17.sp,
             ),
           ),
-          Container(
-            width: double.infinity,
-            child: TextFormField(
-              controller: noteController,
-              style: mediumTextStyle.copyWith(
-                color: greyColor,
-                fontSize: 14.sp,
-              ),
-              decoration: InputDecoration(
-                hintText: 'checkout_note_hint'.tr(),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: greyColor),
-                ),
-              ),
-              validator: (value) => null,
-              keyboardType: TextInputType.text,
-              maxLines: 3,
-            ),
-          ),
         ],
       ),
     );
@@ -373,7 +341,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         arguments: widget.reorder,
       );
     } else {
-      flushBarService.showErrorMessage('required_address_title'.tr());
+      flushBarService
+          .showSimpleErrorMessageWithImage('required_address_title'.tr());
     }
   }
 }

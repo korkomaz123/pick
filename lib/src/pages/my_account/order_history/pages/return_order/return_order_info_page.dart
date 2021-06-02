@@ -70,7 +70,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(error);
+    flushBarService.showSimpleErrorMessageWithImage(error);
   }
 
   @override

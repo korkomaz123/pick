@@ -615,7 +615,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       final key = order.cartItems[index].product.productId;
       final count = result as int;
       order.cartItems[index].itemCount = count;
-      
+
       int updatedCount = 0;
       if (!cancelItemsMap.containsKey(key)) {
         updatedCount = count;
@@ -636,7 +636,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       Navigator.pushNamed(context, Routes.cancelOrderInfo, arguments: params);
     } else {
       String message = 'cancel_order_no_selected_item'.tr();
-      flushBarService.showErrorMessage(message);
+      flushBarService.showSimpleErrorMessageWithImage(message);
     }
   }
 }
