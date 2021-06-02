@@ -391,6 +391,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(error);
+    flushBarService.showErrorDialog(error);
   }
 }

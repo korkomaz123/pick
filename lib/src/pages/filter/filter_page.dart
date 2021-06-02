@@ -131,7 +131,7 @@ class _FilterPageState extends State<FilterPage> {
             }
             if (state is FilterAttributesLoadedFailure) {
               // progressService.hideProgress();
-              flushBarService.showSimpleErrorMessageWithImage(state.message);
+              flushBarService.showErrorDialog(state.message);
             }
           },
           builder: (context, state) {

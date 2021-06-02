@@ -92,7 +92,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(error);
+    flushBarService.showErrorDialog(error);
   }
 
   @override
@@ -285,8 +285,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
-        flushBarService
-            .showSimpleErrorMessageWithImage('fill_card_details_error'.tr());
+        flushBarService.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
       data['tap_token'] = cardToken;

@@ -29,10 +29,21 @@ class AddressChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateGuestAddress(Map<String, dynamic> data) async {
-    await localStorageRepository.setItem('guest_address', data);
-    guestAddress = AddressEntity.fromJson(data);
-    notifyListeners();
+  Future<void> updateGuestAddress(
+    Map<String, dynamic> data, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      await localStorageRepository.setItem('guest_address', data);
+      guestAddress = AddressEntity.fromJson(data);
+      notifyListeners();
+      if (onSuccess != null) onSuccess();
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
+    }
   }
 
   void setDefaultAddress(AddressEntity address) {

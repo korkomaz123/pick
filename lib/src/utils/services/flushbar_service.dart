@@ -137,7 +137,7 @@ class FlushBarService {
     );
   }
 
-  showSimpleErrorMessageWithImage(String message, [String image]) {
+  showErrorDialog(String message, [String image]) {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(

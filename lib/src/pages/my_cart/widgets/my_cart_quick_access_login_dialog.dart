@@ -126,7 +126,7 @@ class _MyCartQuickAccessLoginDialogState
         }
         if (state is SignInSubmittedFailure) {
           progressService.hideProgress();
-          flushBarService.showSimpleErrorMessageWithImage(state.message);
+          flushBarService.showErrorDialog(state.message);
         }
       },
       child: Material(
@@ -300,7 +300,7 @@ class _MyCartQuickAccessLoginDialogState
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showSimpleErrorMessageWithImage(
+        flushBarService.showErrorDialog(
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
@@ -313,7 +313,7 @@ class _MyCartQuickAccessLoginDialogState
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message);
+    flushBarService.showErrorDialog(message);
   }
 
   void _onLogin() async {
@@ -338,12 +338,12 @@ class _MyCartQuickAccessLoginDialogState
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        flushBarService.showSimpleErrorMessageWithImage('Canceled by User');
+        flushBarService.showErrorDialog('Canceled by User');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');
         print(result.errorMessage);
-        flushBarService.showSimpleErrorMessageWithImage(result.errorMessage);
+        flushBarService.showErrorDialog(result.errorMessage);
         break;
     }
   }

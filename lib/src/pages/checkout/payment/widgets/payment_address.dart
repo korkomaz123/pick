@@ -82,20 +82,23 @@ class _PaymentAddressState extends State<PaymentAddress> {
                           fontSize: 16.sp,
                         ),
                       ),
-                      Container(
-                        width: 130.w,
-                        height: 32.h,
-                        child: MarkaaTextButton(
-                          title: 'add_new_address_button_title'.tr(),
-                          titleSize: 12.sp,
-                          titleColor: Colors.white,
-                          buttonColor: primaryColor,
-                          borderColor: Colors.transparent,
-                          onPressed: _onAddNewAddress,
-                          isBold: true,
-                          radius: 30.sp,
+                      if (user?.token != null ||
+                          model.guestAddress == null) ...[
+                        Container(
+                          width: 130.w,
+                          height: 32.h,
+                          child: MarkaaTextButton(
+                            title: 'add_new_address_button_title'.tr(),
+                            titleSize: 12.sp,
+                            titleColor: Colors.white,
+                            buttonColor: primaryColor,
+                            borderColor: Colors.transparent,
+                            onPressed: _onAddNewAddress,
+                            isBold: true,
+                            radius: 30.sp,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -396,6 +399,6 @@ class _PaymentAddressState extends State<PaymentAddress> {
 
   _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message);
+    flushBarService.showErrorDialog(message);
   }
 }

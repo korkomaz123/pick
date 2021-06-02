@@ -142,6 +142,6 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
   }
 
   void _onFailure(String message) {
-    flushBarService.showSimpleErrorMessageWithImage(message);
+    flushBarService.showErrorDialog(message);
   }
 }

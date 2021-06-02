@@ -527,8 +527,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       }
       Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
-      flushBarService
-          .showSimpleErrorMessageWithImage('reorder_items_error'.tr());
+      flushBarService.showErrorDialog('reorder_items_error'.tr());
     }
   }
 }

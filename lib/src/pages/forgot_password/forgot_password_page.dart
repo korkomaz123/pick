@@ -50,7 +50,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           }
           if (state is NewPasswordRequestSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showSimpleErrorMessageWithImage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
           if (state is NewPasswordRequestSubmittedSuccess) {
             progressService.hideProgress();

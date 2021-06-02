@@ -341,8 +341,7 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         arguments: widget.reorder,
       );
     } else {
-      flushBarService
-          .showSimpleErrorMessageWithImage('required_address_title'.tr());
+      flushBarService.showErrorDialog('required_address_title'.tr());
     }
   }
 }

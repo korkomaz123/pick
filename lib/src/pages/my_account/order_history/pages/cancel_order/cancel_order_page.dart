@@ -636,7 +636,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       Navigator.pushNamed(context, Routes.cancelOrderInfo, arguments: params);
     } else {
       String message = 'cancel_order_no_selected_item'.tr();
-      flushBarService.showSimpleErrorMessageWithImage(message);
+      flushBarService.showErrorDialog(message);
     }
   }
 }

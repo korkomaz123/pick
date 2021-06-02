@@ -177,7 +177,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
 
   void _onCreatedWalletCartFailure() {
     _progressService.hideProgress();
-    _flushBarService.showSimpleErrorMessageWithImage('Something went wrong');
+    _flushBarService.showErrorDialog('Something went wrong');
   }
 
   void _onCreatedWalletCartSuccess() {
@@ -215,6 +215,6 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
 
   void _onAddedMoneyFailure() {
     _progressService.hideProgress();
-    _flushBarService.showSimpleErrorMessageWithImage('Something went wrong');
+    _flushBarService.showErrorDialog('Something went wrong');
   }
 }

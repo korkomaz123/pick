@@ -87,7 +87,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           }
           if (state is SignOutSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showSimpleErrorMessageWithImage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {

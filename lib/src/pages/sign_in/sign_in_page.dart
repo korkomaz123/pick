@@ -124,7 +124,7 @@ class _SignInPageState extends State<SignInPage> {
           }
           if (state is SignInSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showSimpleErrorMessageWithImage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {

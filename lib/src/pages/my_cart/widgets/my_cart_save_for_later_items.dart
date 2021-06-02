@@ -209,6 +209,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   _onAddFailure(String message) {
-    _flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
+    _flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

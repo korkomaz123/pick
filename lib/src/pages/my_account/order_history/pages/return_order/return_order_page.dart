@@ -588,7 +588,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
       Navigator.pushNamed(context, Routes.returnOrderInfo, arguments: params);
     } else {
       String message = 'return_order_no_selected_item'.tr();
-      flushBarService.showSimpleErrorMessageWithImage(message);
+      flushBarService.showErrorDialog(message);
     }
   }
 }

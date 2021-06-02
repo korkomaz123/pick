@@ -211,6 +211,6 @@ class _WishlistPageState extends State<WishlistPage>
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

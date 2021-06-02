@@ -435,7 +435,7 @@ class _MyCartPageState extends State<MyCartPage>
 
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showSimpleErrorMessageWithImage(
+        flushBarService.showErrorDialog(
           '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
               'out_stock_items_error'.tr(),
         );
@@ -478,7 +478,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onRemoveFailure(String message) {
-    flushBarService.showSimpleErrorMessageWithImage(message);
+    flushBarService.showErrorDialog(message);
   }
 
   void _onProcess() {
@@ -487,6 +487,6 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

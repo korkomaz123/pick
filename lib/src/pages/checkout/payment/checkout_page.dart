@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
@@ -54,10 +55,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
   MyCartChangeNotifier myCartChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   bool get outOfBalance =>
       double.parse(orderDetails['orderDetails']['subTotalPrice']) >
       user.balance;
+
+  bool get requireAddress =>
+      user?.token != null && addressChangeNotifier.defaultAddress == null ||
+      user?.token == null && addressChangeNotifier.guestAddress == null;
 
   _loadData() async {
     if (paymentMethods.isEmpty)
@@ -80,6 +86,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     _loadData();
   }
@@ -90,7 +97,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(error);
+    flushBarService.showErrorDialog(error);
   }
 
   @override
@@ -183,10 +190,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
         flushBarService
-            .showSimpleErrorMessageWithImage('fill_card_details_error'.tr());
+            .showErrorDialog('fill_card_details_error'.tr());
         return;
       }
       orderDetails['tap_token'] = cardToken;
+    }
+    if (requireAddress) {
+      flushBarService
+          .showErrorDialog('checkout_address_error'.tr());
     }
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);

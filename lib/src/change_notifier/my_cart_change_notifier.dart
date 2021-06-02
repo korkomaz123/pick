@@ -427,7 +427,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       resetDiscountPrice();
     } else {
       errorMessage = result['errorMessage'];
-      flushBarService.showSimpleErrorMessageWithImage(errorMessage);
+      flushBarService.showErrorDialog(errorMessage);
       isApplying = false;
     }
     notifyListeners();
@@ -458,7 +458,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartDiscountedTotalPrice = cartTotalPrice;
     } else {
       errorMessage = result['errorMessage'];
-      flushBarService.showSimpleErrorMessageWithImage(errorMessage);
+      flushBarService.showErrorDialog(errorMessage);
       isApplying = false;
     }
     notifyListeners();

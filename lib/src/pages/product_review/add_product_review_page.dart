@@ -213,7 +213,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           _onFailure,
         );
       } else {
-        flushBarService.showSimpleErrorMessageWithImage('rating_required'.tr());
+        flushBarService.showErrorDialog('rating_required'.tr());
       }
     }
   }
@@ -229,6 +229,6 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
 
   void _onFailure() {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage('failed'.tr());
+    flushBarService.showErrorDialog('failed'.tr());
   }
 }

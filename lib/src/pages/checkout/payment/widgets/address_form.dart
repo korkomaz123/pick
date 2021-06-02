@@ -93,7 +93,7 @@ class _AddressFormState extends State<AddressForm> {
       firstNameController.text = addressParam?.firstName;
       lastNameController.text = addressParam?.lastName;
       fullNameController.text =
-          addressParam.firstName + " " + addressParam.firstName;
+          addressParam.firstName + " " + addressParam.lastName;
       emailController.text = addressParam?.email;
       titleController.text = addressParam?.title ?? 'title';
       countryController.text = addressParam?.country;
@@ -348,7 +348,10 @@ class _AddressFormState extends State<AddressForm> {
               onFailure: _onFailure);
         }
       } else {
-        await model.updateGuestAddress(address.toJson());
+        await model.updateGuestAddress(address.toJson(),
+            onProcess: _onProcess,
+            onSuccess: _onSuccess,
+            onFailure: _onFailure);
       }
     }
   }
@@ -359,12 +362,11 @@ class _AddressFormState extends State<AddressForm> {
 
   void _onSuccess() {
     progressService.hideProgress();
-
     Navigator.pop(context);
   }
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(error);
+    flushBarService.showErrorDialog(error);
   }
 }

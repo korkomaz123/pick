@@ -89,7 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
           }
           if (state is SignUpSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showSimpleErrorMessageWithImage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {
@@ -442,8 +442,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService
-          .showSimpleErrorMessageWithImage('can_not_launch_url'.tr());
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 }
