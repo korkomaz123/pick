@@ -77,3 +77,5 @@ const String boldCheckBoxUncheckedIcon =
     '$iconsAssetPath/bold-checkbox-unchecked-icon.svg';
 const String facebookCircleIcon = '$iconsAssetPath/facebook-circle.svg';
 const String appleCircleIcon = '$iconsAssetPath/apple.svg';
+const String walletSuccessIcon = '$iconsAssetPath/wallet-success-icon.svg';
+const String walletFailedIcon = '$iconsAssetPath/wallet-failed-icon.svg';

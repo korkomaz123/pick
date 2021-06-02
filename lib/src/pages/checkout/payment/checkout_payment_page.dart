@@ -57,6 +57,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
 
+  bool get outOfBalance =>
+      double.parse(orderDetails['orderDetails']['subTotalPrice']) >
+      user.balance;
+
   _loadData() async {
     if (paymentMethods.isEmpty)
       paymentMethods = await checkoutRepo.getPaymentMethod();
@@ -100,79 +104,76 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
       backgroundColor: Colors.white,
       appBar: MarkaaCheckoutAppBar(currentIndex: 3),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
-                return Column(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Consumer<MarkaaAppChangeNotifier>(
+          builder: (_, __, ___) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
                   children: List.generate(paymentMethods.length, (index) {
                     int idx = paymentMethods.length - index - 1;
-                    if (paymentMethods[idx].id == 'mpwalletsystem') {
-                      return Container();
-                    }
                     return _buildPaymentCard(paymentMethods[idx]);
                   }),
-                );
-              }),
-              SizedBox(height: 10.h),
-              if (payment == 'mpwalletsystem' &&
-                  double.parse(orderDetails['orderDetails']['subTotalPrice']) >
-                      user.balance) ...[
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'not_enough_wallet'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 14.sp,
-                          color: dangerColor,
+                ),
+                SizedBox(height: 10.h),
+                if (payment == 'mpwalletsystem' && outOfBalance) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(bottom: 10.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'not_enough_wallet'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 14.sp,
+                            color: dangerColor,
+                          ),
                         ),
-                      ),
-                      InkWell(
-                        onTap: () =>
-                            Navigator.pushNamed(context, Routes.myWallet),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'add_money_to_wallet'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 14.sp,
+                        InkWell(
+                          onTap: () async {
+                            await Navigator.pushNamed(context, Routes.myWallet);
+                            setState(() {});
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'add_money_to_wallet'.tr(),
+                                style: mediumTextStyle.copyWith(
+                                  fontSize: 14.sp,
+                                  color: primaryColor,
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20.sp,
                                 color: primaryColor,
                               ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 20.sp,
-                              color: primaryColor,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                ],
+                Divider(
+                  color: greyLightColor,
+                  height: 10.h,
+                  thickness: 1.h,
                 ),
+                _buildDetails(),
+                SizedBox(height: 30.h),
+                if (payment == 'tap' ||
+                    payment == 'mpwalletsystem' && outOfBalance) ...[
+                  Container()
+                ] else ...[
+                  _buildPlacePaymentButton()
+                ],
               ],
-              // SizedBox(height: 50.h),
-              Divider(
-                color: greyLightColor,
-                height: 10.h,
-                thickness: 1.h,
-              ),
-              _buildDetails(),
-              SizedBox(height: 30.h),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, __, ___) {
-                  if (payment == 'tap') return Container();
-                  return _buildPlacePaymentButton();
-                },
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -426,8 +427,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
     progressService.hideProgress();
 
-    if (payment == 'cashondelivery') {
+    if (payment == 'cashondelivery' || payment == 'mpwalletsystem') {
       _onSuccessOrder();
+      if (payment == 'mpwalletsystem') {
+        user.balance -= double.parse(orderDetails['totalPrice']);
+      }
 
       /// payment method is equal to cod, go to success page directly
       Navigator.pushNamedAndRemoveUntil(

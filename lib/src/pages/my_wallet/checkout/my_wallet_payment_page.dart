@@ -5,7 +5,6 @@ import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -34,7 +33,6 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   WebViewController webViewController;
 
   OrderChangeNotifier orderChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -54,7 +52,6 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
     flushBarService = FlushBarService(context: context);
 
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
 
     url = widget.params['url'];
     order = widget.params['order'];
@@ -69,9 +66,6 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
       },
     );
     if (result != null) {
-      /// activate the current shopping cart
-      await myCartChangeNotifier.activateCart();
-
       /// cancel the order
       await orderChangeNotifier.cancelFullOrder(order,
           onProcess: _onCancelProcess,
@@ -88,7 +82,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
     progressService.hideProgress();
     Navigator.popUntil(
       context,
-      (route) => route.settings.name == Routes.myCart,
+      (route) => route.settings.name == Routes.myWallet,
     );
   }
 
@@ -159,31 +153,20 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
             orderChangeNotifier.removeOrder(order);
           }
 
-          if (reorder != null) {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.paymentFailed,
-              (route) => route.settings.name == Routes.home,
-              arguments: true,
-            );
-          } else {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.paymentFailed,
-              (route) => route.settings.name == Routes.myCart,
-              arguments: false,
-            );
-          }
+          Navigator.pushNamed(
+            context,
+            Routes.myWalletFailed,
+            arguments: false,
+          );
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
           if (user?.token != null) {
             order.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order);
           }
-          Navigator.pushNamedAndRemoveUntil(
+          Navigator.pushNamed(
             context,
-            Routes.checkoutConfirmed,
-            (route) => route.settings.name == Routes.home,
+            Routes.myWalletSuccess,
             arguments: order.orderNo,
           );
         }
@@ -194,15 +177,6 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   Future<void> _onSuccessPayment() async {
-    if (reorder != null) {
-      myCartChangeNotifier.initializeReorderCart();
-    } else {
-      myCartChangeNotifier.initialize();
-      if (user?.token == null) {
-        await localStorageRepo.removeItem('cartId');
-      }
-      await myCartChangeNotifier.getCartId();
-    }
     final priceDetails = jsonDecode(orderDetails['orderDetails']);
     double price = double.parse(priceDetails['totalPrice']);
 

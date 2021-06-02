@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
-import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -36,8 +39,6 @@ class MyWalletCheckoutPage extends StatefulWidget {
 }
 
 class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
 
@@ -54,6 +55,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   MyCartChangeNotifier myCartChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
+  AddressChangeNotifier addressChangeNotifier;
 
   _loadData() async {
     if (paymentMethods.isEmpty)
@@ -79,6 +81,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     walletChangeNotifier = context.read<WalletChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     _loadData();
   }
@@ -94,44 +97,67 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(currentIndex: 3),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
-                return Column(
-                  children: List.generate(paymentMethods.length, (index) {
-                    int idx = paymentMethods.length - index - 1;
-                    if (paymentMethods[idx].id == 'tap' ||
-                        paymentMethods[idx].id == 'knet') {
-                      return _buildPaymentCard(paymentMethods[idx]);
-                    }
-                    return Container();
-                  }),
-                );
-              }),
-              SizedBox(height: 10.h),
-              Divider(
-                color: greyLightColor,
-                height: 10.h,
-                thickness: 1.h,
+    return Material(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Preload.language == 'en'
+                  ? Alignment.topRight
+                  : Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
+                onPressed: () => Navigator.pop(context),
               ),
-              _buildDetails(),
-              SizedBox(height: 30.h),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, __, ___) {
-                  if (payment == 'tap') return Container();
-                  return _buildPlacePaymentButton();
-                },
+            ),
+            Center(
+              child: Text(
+                'add_amount'.tr(),
+                textAlign: TextAlign.center,
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ],
-          ),
+            ),
+            Center(
+              child: Text(
+                'choose_payment_method'.tr(),
+                textAlign: TextAlign.center,
+                style: mediumTextStyle.copyWith(
+                  color: greyDarkColor,
+                  fontSize: 16.sp,
+                ),
+              ),
+            ),
+            Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
+              return Column(
+                children: List.generate(paymentMethods.length, (index) {
+                  int idx = paymentMethods.length - index - 1;
+                  if (paymentMethods[idx].id == 'tap' ||
+                      paymentMethods[idx].id == 'knet') {
+                    return _buildPaymentCard(paymentMethods[idx]);
+                  }
+                  return Container();
+                }),
+              );
+            }),
+            SizedBox(height: 10.h),
+            Divider(
+              color: greyLightColor,
+              height: 10.h,
+              thickness: 1.h,
+            ),
+            Consumer<MarkaaAppChangeNotifier>(
+              builder: (_, __, ___) {
+                if (payment == 'tap') return Container();
+                return _buildPlacePaymentButton();
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -158,30 +184,30 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
                 if (method.id == 'knet') ...[
                   SvgPicture.asset(
                     'lib/public/icons/knet.svg',
-                    height: 46,
-                    width: 61,
+                    height: 46.h,
+                    width: 61.w,
                   ),
                 ] else if (method.id == 'tap') ...[
                   Image.asset(
                     'lib/public/images/visa-card.png',
-                    height: 35,
-                    width: 95,
+                    height: 35.h,
+                    width: 95.w,
                   ),
                   SizedBox(
-                    width: 10,
+                    width: 10.w,
                   ),
                   SvgPicture.asset(
                     'lib/public/icons/line.svg',
-                    height: 41,
-                    width: 10,
+                    height: 41.h,
+                    width: 10.w,
                   ),
                   SizedBox(
-                    width: 15,
+                    width: 15.w,
                   ),
                   SvgPicture.asset(
                     'lib/public/icons/master-card.svg',
-                    height: 42,
-                    width: 54,
+                    height: 42.h,
+                    width: 54.w,
                   ),
                 ],
               ],
@@ -199,35 +225,6 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
           ),
         ]
       ],
-    );
-  }
-
-  Widget _buildDetails() {
-    return Container(
-      width: double.infinity,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'total'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-              Text(
-                'currency'.tr() + ' ${walletChangeNotifier.amount}',
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 17.sp,
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -275,24 +272,34 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   }
 
   void _onPlaceOrder() async {
-    orderDetails['paymentMethod'] = payment;
+    Map<String, dynamic> data = {};
+    data['token'] = user.token;
+    data['lang'] = Preload.language;
+    data['shipping'] = shippingMethods[0].id;
+    data['paymentMethod'] = payment;
+    data['cartId'] = walletChangeNotifier.walletCartId;
+    data['orderDetails'] = {};
+    data['orderDetails']['totalPrice'] = walletChangeNotifier.amount;
+    data['orderAddress'] =
+        jsonEncode(addressChangeNotifier.defaultAddress.toJson());
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
         flushBarService.showErrorMessage('fill_card_details_error'.tr());
         return;
       }
-      orderDetails['tap_token'] = cardToken;
+      data['tap_token'] = cardToken;
     }
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang,
+    await orderChangeNotifier.submitOrder(data, lang,
         onProcess: _onProcess,
         onSuccess: _onOrderSubmittedSuccess,
-        onFailure: _onFailure);
+        onFailure: _onFailure,
+        isWallet: true);
   }
 
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -316,7 +323,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.paymentFailed,
-      (route) => route.settings.name == Routes.myCart,
+      (route) => route.settings.name == Routes.myWallet,
     );
   }
 }

@@ -13,7 +13,7 @@ class OrderRepository {
     Map<String, dynamic> orderDetails,
     String lang,
   ) async {
-    String url = EndPoints.placeOrder;
+    String url = EndPoints.submitOrder;
     final details = jsonEncode(orderDetails['orderDetails']);
     orderDetails['orderDetails'] = details;
     orderDetails['lang'] = lang;

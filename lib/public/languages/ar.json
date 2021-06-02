@@ -339,6 +339,10 @@
     "continue_shopping_button_title": "مواصلة التسوق",
     "visit_cart_button_title": "زيارة السلة",
     "error": "خطأ",
-    "okay_button_title": "حسنا"
-    ,"summer_collection":"عروض الصيف"
+    "okay_button_title": "حسنا",
+    "summer_collection": "عروض الصيف",
+    "wallet_added_success_message": "تمت إضافته إلى محفظتك بنجاح.",
+    "wallet_added_failure_message": "وفشل نقل، يرجى المحاولة مرة أخرى.",
+    "add_amount": "أضف المبلغ",
+    "choose_payment_method": "الرجاء اختيار طريقة الدفع"
 }

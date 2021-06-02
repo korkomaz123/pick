@@ -30,7 +30,9 @@ import 'package:markaa/src/pages/my_account/terms/terms_page.dart';
 import 'package:markaa/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:markaa/src/pages/my_cart/my_cart_page.dart';
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_failed_page.dart';
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_success_page.dart';
 import 'package:markaa/src/pages/my_wallet/my_wallet_details/my_wallet_details_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/banks_list_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/bank_page.dart';
@@ -304,7 +306,17 @@ class RouteGenerator {
         );
       case Routes.myWalletPayment:
         return CupertinoPageRoute(
-          builder: (_) => MyWalletPaymentPage(),
+          builder: (_) => MyWalletPaymentPage(params: params),
+          settings: settings,
+        );
+      case Routes.myWalletSuccess:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentSuccessPage(),
+          settings: settings,
+        );
+      case Routes.myWalletFailed:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentFailedPage(),
           settings: settings,
         );
       default:

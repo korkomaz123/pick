@@ -15,19 +15,28 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   List<TransactionEntity> transactionsList;
 
-  void createWllatCart({
+  void init() {
+    walletCartId = null;
+    amount = null;
+  }
+
+  void createWalletCart({
     Function onProcess,
     Function onSuccess,
     Function onFailure,
   }) async {
     if (onProcess != null) onProcess();
 
-    walletCartId = await walletRepository.createWalletCart();
-
-    if (walletCartId == null || walletCartId.isEmpty) {
-      if (onFailure != null) onFailure();
-    } else {
+    if (walletCartId != null && walletCartId.isNotEmpty) {
       if (onSuccess != null) onSuccess();
+    } else {
+      walletCartId = await walletRepository.createWalletCart();
+
+      if (walletCartId == null || walletCartId.isEmpty) {
+        if (onFailure != null) onFailure();
+      } else {
+        if (onSuccess != null) onSuccess();
+      }
     }
   }
 
@@ -40,14 +49,18 @@ class WalletChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
 
-    final result =
-        await walletRepository.addMoneyToWallet(walletCartId, amount, lang);
-
-    if (result) {
-      this.amount = amount;
+    if (this.amount == amount) {
       if (onSuccess != null) onSuccess();
     } else {
-      if (onFailure != null) onFailure();
+      final result =
+          await walletRepository.addMoneyToWallet(walletCartId, amount, lang);
+
+      if (result) {
+        this.amount = amount;
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure();
+      }
     }
   }
 

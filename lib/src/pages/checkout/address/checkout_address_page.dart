@@ -59,11 +59,14 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
   final checkoutRepo = CheckoutRepository();
 
   _loadData() async {
-    if (user?.token != null && (addressChangeNotifier.addressesMap == null || addressChangeNotifier.addressesMap.isEmpty)) {
+    if (user?.token != null &&
+        (addressChangeNotifier.addressesMap == null ||
+            addressChangeNotifier.addressesMap.isEmpty)) {
       addressChangeNotifier.initialize();
       await addressChangeNotifier.loadAddresses(user.token);
     }
-    if (shippingMethods.isEmpty) shippingMethods = await checkoutRepo.getShippingMethod();
+    if (shippingMethods.isEmpty)
+      shippingMethods = await checkoutRepo.getShippingMethod();
     shippingMethodId = shippingMethods[0].id;
     serviceFees = shippingMethods[0].serviceFees;
     setState(() {});
@@ -96,7 +99,9 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
                 if (model.keys.isEmpty) ...[
                   _buildNoAddress(),
                 ],
-                if (model.defaultAddress == null && model.keys.isNotEmpty) ...[SizedBox(height: 50.h)],
+                if (model.defaultAddress == null && model.keys.isNotEmpty) ...[
+                  SizedBox(height: 50.h)
+                ],
                 if (model.defaultAddress != null) ...[
                   _buildChangeAddressButton(),
                 ] else if (model.keys.isNotEmpty) ...[
@@ -325,15 +330,18 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
       } else {
         discount = myCartChangeNotifier.type == 'fixed'
             ? myCartChangeNotifier.discount
-            : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
+            : myCartChangeNotifier.cartTotalPrice -
+                myCartChangeNotifier.cartDiscountedTotalPrice;
         subtotalPrice = myCartChangeNotifier.cartTotalPrice;
       }
       totalPrice = subtotalPrice + serviceFees - discount;
 
       orderDetails['orderDetails'] = {};
       orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-      orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
-      orderDetails['orderDetails']['subTotalPrice'] = subtotalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['totalPrice'] =
+          totalPrice.toStringAsFixed(3);
+      orderDetails['orderDetails']['subTotalPrice'] =
+          subtotalPrice.toStringAsFixed(3);
       orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
       orderDetails['token'] = user.token;
       orderDetails['orderAddress'] = jsonEncode({
@@ -353,7 +361,8 @@ class _CheckoutAddressPageState extends State<CheckoutAddressPage> {
         'prefix': 'title',
       });
 
-      AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.continuePayment);
+      AdjustEvent adjustEvent =
+          new AdjustEvent(AdjustSDKConfig.continuePayment);
       Adjust.trackEvent(adjustEvent);
 
       progressService.hideProgress();

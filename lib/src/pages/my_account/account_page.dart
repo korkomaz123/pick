@@ -30,7 +30,7 @@ import 'widgets/contact_us_item.dart';
 // import 'widgets/get_notification_messages_item.dart';
 import 'widgets/language_setting_item.dart';
 import 'widgets/logout_item.dart';
-// import 'widgets/my_wallet_item.dart';
+import 'widgets/my_wallet_item.dart';
 import 'widgets/order_history_item.dart';
 import 'widgets/rate_app_item.dart';
 import 'widgets/terms_item.dart';
@@ -404,8 +404,8 @@ class _AccountPageState extends State<AccountPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // MyWalletItem(),
-                // SizedBox(height: 5.h),
+                MyWalletItem(),
+                SizedBox(height: 5.h),
                 OrderHistoryItem(),
                 SizedBox(height: 5.h),
               ],

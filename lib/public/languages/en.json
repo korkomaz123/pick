@@ -341,6 +341,10 @@
     "continue_shopping_button_title": "CONTINUE SHOPPING",
     "visit_cart_button_title": "VISIT CART",
     "error": "Error",
-    "okay_button_title": "OK"
-    ,"summer_collection":"Summer Collection"
+    "okay_button_title": "OK",
+    "summer_collection": "Summer Collection",
+    "wallet_added_success_message": "Has been added to your wallet successfully.",
+    "wallet_added_failure_message": "Transfer is failed, Please Try Again.",
+    "add_amount": "Add Amount",
+    "choose_payment_method": "Please choose payment method"
 }

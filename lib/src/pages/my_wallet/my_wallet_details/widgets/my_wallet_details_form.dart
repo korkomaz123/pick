@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -12,6 +13,7 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
 class MyWalletDetailsForm extends StatefulWidget {
@@ -71,7 +73,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
             SizedBox(height: 15.h),
             Container(
               width: 200.w,
-              height: 33.h,
+              height: 43.h,
               child: TextFormField(
                 controller: _amountController,
                 textAlign: TextAlign.center,
@@ -120,7 +122,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     SizedBox(height: 25.h),
                     Container(
                       width: 168.w,
-                      height: 28.h,
+                      height: 38.h,
                       child: MarkaaTextButton(
                         onPressed: _onAddMoney,
                         title: 'add_money'.tr(),
@@ -163,7 +165,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   }
 
   void _onAddMoney() {
-    _walletChangeNotifier.createWllatCart(
+    _walletChangeNotifier.createWalletCart(
       onProcess: _onCreatingWalletCart,
       onSuccess: _onCreatedWalletCartSuccess,
       onFailure: _onCreatedWalletCartFailure,
@@ -190,7 +192,26 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
 
   void _onAddedMoneySuccess() {
     _progressService.hideProgress();
-    Navigator.pushNamed(context, Routes.myWalletCheckout);
+    showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 10.sp,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          minHeight: designHeight.h - 100.h,
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return MyWalletCheckoutPage();
+          },
+        );
+      },
+    );
   }
 
   void _onAddedMoneyFailure() {
