@@ -116,6 +116,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 Column(
                   children: List.generate(paymentMethods.length, (index) {
                     int idx = paymentMethods.length - index - 1;
+                    if (user?.token == null &&
+                        paymentMethods[idx].id == 'wallet') {
+                      return Container();
+                    }
                     return PaymentMethodCard(
                       method: paymentMethods[idx],
                       onChange: _onChangeMethod,
@@ -136,7 +140,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ),
       bottomSheet: Consumer<MarkaaAppChangeNotifier>(
         builder: (_, __, ___) {
-          if (payment == 'tap' || payment == 'mpwalletsystem' && outOfBalance) {
+          if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
             return Container(height: 0);
           }
           return _buildPlacePaymentButton();
@@ -162,7 +166,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _onChangeMethod(String value) async {
-    if (value == 'mpwalletsystem' && outOfBalance) {
+    if (value == 'wallet' && outOfBalance) {
       final result = await flushBarService.showConfirmDialog(
         title: 'sorry',
         message: 'not_enough_balance',
@@ -189,16 +193,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
-        flushBarService
-            .showErrorDialog('fill_card_details_error'.tr());
+        flushBarService.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
       orderDetails['tap_token'] = cardToken;
     }
     if (requireAddress) {
-      flushBarService
-          .showErrorDialog('checkout_address_error'.tr());
+      flushBarService.showErrorDialog('checkout_address_error'.tr());
+      return;
     }
+
+    var address;
+    if (user?.token != null)
+      address = addressChangeNotifier.defaultAddress.toJson();
+    else
+      address = addressChangeNotifier.guestAddress.toJson();
+    address['postcode'] = address['post_code'];
+    address['save_in_address_book'] = '0';
+    address['region'] = address['region_id'];
+    orderDetails['orderAddress'] = jsonEncode(address);
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
     Adjust.trackEvent(adjustEvent);
@@ -213,9 +226,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
     progressService.hideProgress();
 
-    if (payment == 'cashondelivery' || payment == 'mpwalletsystem') {
+    if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder();
-      if (payment == 'mpwalletsystem') {
+      if (payment == 'wallet') {
         user.balance -= double.parse(orderDetails['totalPrice']);
       }
 

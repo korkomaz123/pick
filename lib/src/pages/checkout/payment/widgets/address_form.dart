@@ -155,13 +155,35 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.w,
                         fontSize: 14.sp,
                         hint: 'full_name'.tr(),
-                        validator: (String value) => value.isEmpty
-                            ? 'required_field'.tr()
-                            : (value.trim().indexOf(' ') == -1
-                                ? 'full_name_issue'.tr()
-                                : null),
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return 'required_field'.tr();
+                          } else if (value.trim().indexOf(' ') == -1) {
+                            return 'full_name_issue'.tr();
+                          }
+                          return null;
+                        },
                         inputType: TextInputType.text,
                       ),
+                      if (user?.token == null) ...[
+                        SizedBox(height: 10.h),
+                        MarkaaCustomInput(
+                          controller: emailController,
+                          width: 375.w,
+                          padding: 10.h,
+                          fontSize: 14.sp,
+                          hint: 'email_hint'.tr(),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'required_field'.tr();
+                            } else if (!isEmail(value)) {
+                              return 'invalid_email'.tr();
+                            }
+                            return null;
+                          },
+                          inputType: TextInputType.emailAddress,
+                        ),
+                      ],
                       SizedBox(height: 10.h),
                       MarkaaCustomInput(
                         controller: phoneNumberController,

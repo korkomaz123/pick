@@ -7,6 +7,7 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -172,7 +173,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: loadSliderImages,
                     builder: (_, snapShot) => snapShot.connectionState ==
                             ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
+                        ? Center(child: PulseLoadingSpinner())
                         : HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
                   ),
                 ),
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: getFeaturedCategoriesList,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
-                            ? Center(child: CircularProgressIndicator())
+                            ? Center(child: PulseLoadingSpinner())
                             : HomeFeaturedCategories(
                                 homeChangeNotifier: _homeProvider),
                   ),
@@ -202,7 +203,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: loadBestDeals,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
-                            ? Center(child: CircularProgressIndicator())
+                            ? Center(child: PulseLoadingSpinner())
                             : HomeBestDeals(homeChangeNotifier: _homeProvider),
                   ),
                 ),
@@ -210,7 +211,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: loadBestDealsBanner,
                   builder: (_, snapShot) => snapShot.connectionState ==
                           ConnectionState.waiting
-                      ? Center(child: CircularProgressIndicator())
+                      ? Center(child: PulseLoadingSpinner())
                       : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
                 ),
                 Container(
@@ -222,7 +223,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: loadNewArrivals,
                     builder: (_, snapShot) => snapShot.connectionState ==
                             ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
+                        ? Center(child: PulseLoadingSpinner())
                         : HomeNewArrivals(homeChangeNotifier: _homeProvider),
                   ),
                 ),
@@ -230,7 +231,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: loadExculisiveBanner,
                   builder: (_, snapShot) => snapShot.connectionState ==
                           ConnectionState.waiting
-                      ? Center(child: CircularProgressIndicator())
+                      ? Center(child: PulseLoadingSpinner())
                       : HomeExculisiveBanner(homeChangeNotifier: _homeProvider),
                 ),
                 Container(
@@ -243,7 +244,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: loadOrientalProducts,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
-                            ? Center(child: CircularProgressIndicator())
+                            ? Center(child: PulseLoadingSpinner())
                             : HomeOrientalFragrances(
                                 homeChangeNotifier: _homeProvider),
                   ),
@@ -252,7 +253,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: loadNewArrivalsBanner,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeNewArrivalsBanner(
                               homeChangeNotifier: _homeProvider),
                 ),
@@ -260,7 +261,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: loadFragrancesBanner,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeFragrancesBanners(
                               homeChangeNotifier: _homeProvider),
                 ),
@@ -273,7 +274,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: loadPerfumes,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
-                            ? Center(child: CircularProgressIndicator())
+                            ? Center(child: PulseLoadingSpinner())
                             : HomePerfumes(homeChangeNotifier: _homeProvider),
                   ),
                 ),
@@ -281,28 +282,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: loadBestWatches,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeBestWatches(homeChangeNotifier: _homeProvider),
                 ),
                 FutureBuilder(
                   future: loadGrooming,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeGrooming(homeChangeNotifier: _homeProvider),
                 ),
                 FutureBuilder(
                   future: loadAds,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeAdvertise(homeChangeNotifier: _homeProvider),
                 ),
                 FutureBuilder(
                   future: loadSmartTech,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeSmartTech(homeChangeNotifier: _homeProvider),
                 ),
                 SizedBox(height: 10.h),
@@ -310,7 +311,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: getCategoriesList,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeExploreCategories(
                               homeChangeNotifier: _homeProvider),
                 ),
@@ -323,7 +324,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: getBrandsList,
                     builder: (_, snapShot) => snapShot.connectionState ==
                             ConnectionState.waiting
-                        ? Center(child: CircularProgressIndicator())
+                        ? Center(child: PulseLoadingSpinner())
                         : HomeDiscoverStores(homeChangeNotifier: _homeProvider),
                   ),
                 ),
@@ -332,7 +333,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   future: getViewedProducts,
                   builder: (_, snapShot) =>
                       snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: PulseLoadingSpinner())
                           : HomeRecent(homeChangeNotifier: _homeProvider),
                 ),
               ],

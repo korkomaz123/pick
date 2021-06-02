@@ -422,8 +422,6 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onCheckout() async {
-    if (user?.token != null) orderDetails['token'] = user.token;
-
     await myCartChangeNotifier.getCartItems(
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
@@ -454,8 +452,12 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   _prepareDetails() {
+    orderDetails = {};
     orderDetails['shipping'] = shippingMethodId;
-    orderDetails['cartId'] = cartId;
+    orderDetails['cartId'] = myCartChangeNotifier.cartId;
+    if (user?.token != null) {
+      orderDetails['token'] = user.token;
+    }
 
     double totalPrice = .0;
     double subtotalPrice = .0;

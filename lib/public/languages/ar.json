@@ -342,5 +342,6 @@
     "shipment_address_title": "عنوان الشحنة",
     "order_summary": "ملخص الطلب",
     "add_button_title": "يضيف",
-    "not_enough_balance": "المبلغ الخاص بك في المحفظة لا يكفي"
+    "not_enough_balance": "المبلغ الخاص بك في المحفظة لا يكفي",
+    "checkout_address_error": "يرجى استكمال عنوان الشحن الخاص بك"
 }

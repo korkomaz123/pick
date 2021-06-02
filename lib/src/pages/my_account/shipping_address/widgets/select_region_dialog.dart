@@ -1,3 +1,4 @@
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/mock/countries.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -73,25 +74,25 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
               ),
             ),
           ),
-          regions.isNotEmpty ? _buildRegionList() : _buildNoRegions(),
+          regions.isNotEmpty ? _buildRegionList() : PulseLoadingSpinner(),
         ],
       ),
     );
   }
 
-  Widget _buildNoRegions() {
-    return Container(
-      width: 355.w,
-      padding: EdgeInsets.symmetric(vertical: 20.h),
-      child: Text(
-        'no_available_regions'.tr(),
-        textAlign: TextAlign.center,
-        style: mediumTextStyle.copyWith(
-          fontSize: 18.sp,
-        ),
-      ),
-    );
-  }
+  // Widget _buildNoRegions() {
+  //   return Container(
+  //     width: 355.w,
+  //     padding: EdgeInsets.symmetric(vertical: 20.h),
+  //     child: Text(
+  //       'no_available_regions'.tr(),
+  //       textAlign: TextAlign.center,
+  //       style: mediumTextStyle.copyWith(
+  //         fontSize: 18.sp,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildRegionList() {
     return Expanded(

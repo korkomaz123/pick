@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -65,7 +64,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
         addressChangeNotifier = model;
         return Container(
           width: designWidth.w,
-          padding: EdgeInsets.symmetric(vertical: 15.h),
+          padding: EdgeInsets.symmetric(vertical: 20.h),
           child: Column(
             children: [
               if (model.keys.isNotEmpty || model.guestAddress != null) ...[
@@ -172,7 +171,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
     return InkWell(
       onTap: () => _onUpdateAddress(key),
       child: Container(
-        key: address.addressId == defaultAddress.addressId ? dataKey : null,
+        key: address.addressId == defaultAddress?.addressId ? dataKey : null,
         width: 300.w,
         margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
         decoration: BoxDecoration(
@@ -191,6 +190,8 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   children: [
                     Text(
                       address.street,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 18.sp,
@@ -203,6 +204,8 @@ class _PaymentAddressState extends State<PaymentAddress> {
                           address.city +
                           ', ' +
                           address.country,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: 14.sp,

@@ -12,7 +12,7 @@ class PaymentCardForm extends StatefulWidget {
 
 class _PaymentCardFormState extends State<PaymentCardForm> {
   WebViewController webViewController;
-  final url = 'https://cigaon.com/gatewayform.php';
+  final url = 'https://staging.markaa.com/gatewayform.php';
 
   @override
   void dispose() {

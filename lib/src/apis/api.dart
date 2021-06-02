@@ -35,7 +35,6 @@ class Api {
       options: Options(headers: headers ?? _getHeader()),
       data: headers != null ? jsonEncode(data) : data,
     );
-    // print(response.data);
     return response.data;
 
     // final response = await http.post(

@@ -132,7 +132,7 @@ class AddressChangeNotifier extends ChangeNotifier {
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errMessage']);
       }
     } catch (e) {
       if (onFailure != null) onFailure(e.toString());

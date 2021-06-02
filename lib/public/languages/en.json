@@ -344,5 +344,6 @@
     "shipment_address_title": "Shipment Address",
     "order_summary": "Order Summary",
     "add_button_title": "Add",
-    "not_enough_balance": "Your amount in wallet is not enough"
+    "not_enough_balance": "Your amount in wallet is not enough",
+    "checkout_address_error": "Please complete your shipping address"
 }

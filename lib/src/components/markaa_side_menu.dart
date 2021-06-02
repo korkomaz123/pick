@@ -2,6 +2,7 @@ import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -100,7 +101,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     String lang = _globalProvider.currentLanguage;
                     if (_globalProvider.sideMenus[lang].length == 0) {
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: PulseLoadingSpinner(),
                       );
                     } else {
                       return SingleChildScrollView(

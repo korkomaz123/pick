@@ -1,7 +1,7 @@
 class EndPoints {
-  // static const String baseUrl = 'https://markaa.com/customapi/api';
+  static const String baseUrl = 'https://markaa.com/customapi/api';
   // static const String baseUrl = 'https://cigaon.com/customapi/api';
-  static const String baseUrl = 'https://staging.markaa.com/customapi/api';
+  // static const String baseUrl = 'https://staging.markaa.com/customapi/api';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';

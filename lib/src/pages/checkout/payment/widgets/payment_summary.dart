@@ -43,7 +43,7 @@ class PaymentSummary extends StatelessWidget {
                     ),
                     Text(
                       'currency'.tr() +
-                          ' ${double.parse(orderDetails['orderDetails']['subTotalPrice']).toStringAsFixed(3)}',
+                          ' ${orderDetails['orderDetails']['subTotalPrice']}',
                       style: mediumTextStyle.copyWith(
                         color: greyColor,
                         fontSize: 14.sp,
