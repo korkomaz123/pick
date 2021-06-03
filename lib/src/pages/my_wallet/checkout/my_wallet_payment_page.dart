@@ -172,14 +172,14 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   Future<void> _onSuccessPayment() async {
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
-    double price = double.parse(priceDetails['totalPrice']);
+    // final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    // double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
-    Adjust.trackEvent(adjustEvent);
+    // AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
+    // Adjust.trackEvent(adjustEvent);
 
-    adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
-    adjustEvent.setRevenue(price, 'KWD');
-    Adjust.trackEvent(adjustEvent);
+    // adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
+    // adjustEvent.setRevenue(price, 'KWD');
+    // Adjust.trackEvent(adjustEvent);
   }
 }

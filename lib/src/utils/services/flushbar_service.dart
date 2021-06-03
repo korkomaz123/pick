@@ -154,18 +154,19 @@ class FlushBarService {
                 child: Text(message),
               ),
             ),
-            Divider(),
-            Center(
-              child: GestureDetector(
-                onTap: Navigator.of(context).pop,
-                child: Text(
-                  "close".tr(),
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
-            ),
           ],
         ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "close".tr(),
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

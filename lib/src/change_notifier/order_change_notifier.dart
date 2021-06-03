@@ -79,7 +79,9 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     onProcess();
     try {
-      final result = await orderRepository.placeOrder(orderDetails, lang);
+      String isVirtual = isWallet ? '1' : '0';
+      final result =
+          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);

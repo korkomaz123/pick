@@ -14,9 +14,9 @@ class TransactionEntity {
   });
 
   TransactionEntity.fromJson(Map<String, dynamic> json)
-      : number = json['number'],
-        amount = json['amount'],
-        date = json['date'],
+      : number = json['order_id'],
+        amount = double.parse(json['amount']),
+        date = json['created_at'],
         type = json['type'];
 
   Map<String, dynamic> toJson() => {

@@ -64,7 +64,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
         addressChangeNotifier = model;
         return Container(
           width: designWidth.w,
-          padding: EdgeInsets.symmetric(vertical: 20.h),
+          padding: EdgeInsets.symmetric(vertical: 5.h),
           child: Column(
             children: [
               if (model.keys.isNotEmpty || model.guestAddress != null) ...[
@@ -173,7 +173,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
       child: Container(
         key: address.addressId == defaultAddress?.addressId ? dataKey : null,
         width: 300.w,
-        margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+        margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
           borderRadius: BorderRadius.circular(10),
@@ -184,7 +184,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
               alignment: Alignment.topCenter,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 15.h),
+                padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 10.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -252,7 +252,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
     final address = addressChangeNotifier.guestAddress;
     return Container(
       width: 355.w,
-      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(10),
@@ -263,7 +263,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
             alignment: Alignment.topCenter,
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 15.h),
+              padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 10.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

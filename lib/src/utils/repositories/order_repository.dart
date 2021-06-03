@@ -12,12 +12,15 @@ class OrderRepository {
   Future<dynamic> placeOrder(
     Map<String, dynamic> orderDetails,
     String lang,
+    String isVirtual,
   ) async {
-    String url = EndPoints.submitOrder;
+    String url = EndPoints.placeOrder;
     final details = jsonEncode(orderDetails['orderDetails']);
     orderDetails['orderDetails'] = details;
     orderDetails['lang'] = lang;
+    orderDetails['is_virtual'] = isVirtual;
     final result = await Api.postMethod(url, data: orderDetails);
+    print(result);
 
     return result;
   }

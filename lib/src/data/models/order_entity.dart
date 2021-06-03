@@ -68,7 +68,9 @@ class OrderEntity {
         ),
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
-        address = AddressEntity.fromJson(json['shippingAddress']);
+        address = json.containsKey('shipppingAddress')
+            ? AddressEntity.fromJson(json['shippingAddress'])
+            : AddressEntity();
 
   static String _covertLocalTime(int timestamp) {
     int milliseconds = timestamp * 1000;

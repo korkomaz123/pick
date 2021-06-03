@@ -38,7 +38,7 @@ class AddressEntity {
   });
 
   AddressEntity.fromJson(Map<String, dynamic> json)
-      : title = json['prefix'] ?? '',
+      : title = json.containsKey('prefix') ? json['prefix'] : '',
         firstName = json['firstname'],
         lastName = json['lastname'],
         fullName = json['firstname'] + " " + json['lastname'],

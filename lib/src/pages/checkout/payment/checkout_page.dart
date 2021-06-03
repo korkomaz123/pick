@@ -45,6 +45,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   String payment = 'knet';
   String cardToken;
+  var details;
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -58,8 +59,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   bool get outOfBalance =>
-      double.parse(orderDetails['orderDetails']['subTotalPrice']) >
-      user.balance;
+      double.parse(details['subTotalPrice']) > user.balance;
 
   bool get requireAddress =>
       user?.token != null && addressChangeNotifier.defaultAddress == null ||
@@ -87,6 +87,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
+
+    details = orderDetails['orderDetails'];
 
     _loadData();
   }
@@ -129,9 +131,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     );
                   }),
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
                 PaymentAddress(),
-                PaymentSummary(),
+                PaymentSummary(details: details),
                 SizedBox(height: 100.h),
               ],
             );
@@ -243,7 +245,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       /// payment method is knet or tap, go to payment webview page
       Navigator.pushNamed(
         context,
-        Routes.checkoutPaymentCard,
+        Routes.checkoutPayment,
         arguments: {'url': payUrl, 'order': order, 'reorder': widget.reorder},
       );
     } else {

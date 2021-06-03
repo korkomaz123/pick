@@ -1,7 +1,5 @@
 import 'package:markaa/src/pages/brand_list/brand_list_page.dart';
 import 'package:markaa/src/pages/category_list/category_list_page.dart';
-import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
-import 'package:markaa/src/pages/checkout/address/checkout_guest_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/payment_failed_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_page.dart';
@@ -142,16 +140,7 @@ class RouteGenerator {
           builder: (context) => SearchAddressScreen(),
           settings: RouteSettings(name: Routes.searchAddress),
         );
-      case Routes.checkoutAddress:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutAddressPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutAddress),
-        );
-      case Routes.checkoutGuestAddress:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutGuestAddressPage(),
-          settings: RouteSettings(name: Routes.checkoutGuestAddress),
-        );
+
       case Routes.checkout:
         return CupertinoPageRoute(
           builder: (context) => CheckoutPage(reorder: params),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,6 +45,11 @@ class _MyWalletDetailsTransactionsState
           ),
           Consumer<WalletChangeNotifier>(
             builder: (_, model, __) {
+              if (model.transactionsList == null) {
+                return Center(
+                  child: PulseLoadingSpinner(),
+                );
+              }
               return Column(
                 children: model.transactionsList.map((item) {
                   return _buildTransactionItemCard(item);

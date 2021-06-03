@@ -30,7 +30,7 @@ class PaymentMethodCard extends StatelessWidget {
         Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(vertical: 5.h),
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           decoration: BoxDecoration(
             color: greyLightColor,
             borderRadius: BorderRadius.circular(10.sp),
@@ -45,8 +45,8 @@ class PaymentMethodCard extends StatelessWidget {
                 if (method.id == 'cashondelivery') ...[
                   SvgPicture.asset(
                     'lib/public/icons/cashondelivery.svg',
-                    height: 19.h,
-                    width: 39.w,
+                    height: 20.h,
+                    width: 30.w,
                   ),
                   Text(
                     "    " + method.title,
@@ -58,21 +58,21 @@ class PaymentMethodCard extends StatelessWidget {
                 ] else if (method.id == 'knet') ...[
                   SvgPicture.asset(
                     'lib/public/icons/knet.svg',
-                    height: 40.h,
-                    width: 50.w,
+                    height: 30.h,
+                    width: 45.w,
                   ),
                 ] else if (method.id == 'tap') ...[
                   Image.asset(
                     'lib/public/images/visa-card.png',
-                    height: 30.h,
-                    width: 85.w,
+                    height: 25.h,
+                    width: 75.w,
                   ),
                   SizedBox(
                     width: 6.w,
                   ),
                   SvgPicture.asset(
                     'lib/public/icons/line.svg',
-                    height: 30.h,
+                    height: 25.h,
                     width: 10.w,
                   ),
                   SizedBox(
@@ -80,13 +80,13 @@ class PaymentMethodCard extends StatelessWidget {
                   ),
                   SvgPicture.asset(
                     'lib/public/icons/master-card.svg',
-                    height: 36.h,
+                    height: 25.h,
                     width: 45.w,
                   ),
                 ] else ...[
-                  SvgPicture.asset(walletIcon),
+                  SvgPicture.asset(walletIcon, width: 40.w, height: 30.h),
                   SizedBox(width: 10.w),
-                  SvgPicture.asset(walletTitle),
+                  SvgPicture.asset(walletTitle, height: 25.h, width: 50.w),
                 ],
               ],
             ),

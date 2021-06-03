@@ -20,7 +20,7 @@ class WalletRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<bool> addMoneyToWallet(
+  Future<dynamic> addMoneyToWallet(
     String cartId,
     String price,
     String lang,
@@ -28,15 +28,14 @@ class WalletRepository {
     String url = EndPoints.addMoney;
     final params = {'cartId': cartId, 'price': price, 'lang': lang};
     final result = await Api.postMethod(url, data: params);
-    print(result);
 
-    return result['code'] == 'SUCCESS';
+    return result;
   }
 
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<bool> transferMoneyToBank(
+  Future<dynamic> transferMoneyToBank(
     String token,
     String amount,
     Map<String, dynamic> bankDetails,
@@ -51,7 +50,30 @@ class WalletRepository {
     };
     final result = await Api.postMethod(url, data: params);
 
-    return result['code'] == 'SUCCESS';
+    return result;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> transferMoney(
+    String token,
+    String amount,
+    String lang,
+    String description,
+    String email,
+  ) async {
+    String url = EndPoints.transferMoney;
+    final params = {
+      'token': token,
+      'amount': amount,
+      'lang': lang,
+      'description': description,
+      'email': email,
+    };
+    final result = await Api.postMethod(url, data: params);
+
+    return result;
   }
 
   //////////////////////////////////////////////////////////////////////////////

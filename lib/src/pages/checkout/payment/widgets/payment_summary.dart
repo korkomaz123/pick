@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
 class PaymentSummary extends StatelessWidget {
+  final dynamic details;
+
+  PaymentSummary({@required this.details});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -42,8 +45,7 @@ class PaymentSummary extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'currency'.tr() +
-                          ' ${orderDetails['orderDetails']['subTotalPrice']}',
+                      'currency'.tr() + ' ${details['subTotalPrice']}',
                       style: mediumTextStyle.copyWith(
                         color: greyColor,
                         fontSize: 14.sp,
@@ -51,8 +53,7 @@ class PaymentSummary extends StatelessWidget {
                     )
                   ],
                 ),
-                if (double.parse(orderDetails['orderDetails']['discount']) >
-                    0) ...[
+                if (double.parse(details['discount']) > 0) ...[
                   SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,8 +67,7 @@ class PaymentSummary extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'currency'.tr() +
-                            ' ${orderDetails['orderDetails']['discount']}',
+                        'currency'.tr() + ' ${details['discount']}',
                         style: mediumTextStyle.copyWith(
                           color: darkColor,
                           fontSize: 14.sp,
@@ -89,10 +89,9 @@ class PaymentSummary extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      double.parse(orderDetails['orderDetails']['fees']) == .0
+                      double.parse(details['fees']) == .0
                           ? 'free'.tr()
-                          : 'currency'.tr() +
-                              ' ${orderDetails['orderDetails']['fees']}',
+                          : 'currency'.tr() + ' ${details['fees']}',
                       style: mediumTextStyle.copyWith(
                         color: greyColor,
                         fontSize: 14.sp,
@@ -101,7 +100,7 @@ class PaymentSummary extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 10.h),
-                Divider(color: greyColor),
+                Divider(color: greyColor, height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -114,8 +113,7 @@ class PaymentSummary extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'currency'.tr() +
-                          ' ${orderDetails['orderDetails']['totalPrice']}',
+                      'currency'.tr() + ' ${details['totalPrice']}',
                       style: mediumTextStyle.copyWith(
                         color: greyColor,
                         fontSize: 18.sp,

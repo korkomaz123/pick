@@ -20,12 +20,17 @@ class MyWalletPaymentSuccessPage extends StatefulWidget {
 class _MyWalletPaymentSuccessPageState
     extends State<MyWalletPaymentSuccessPage> {
   WalletChangeNotifier _walletChangeNotifier;
+  String amount;
 
   @override
   void initState() {
     super.initState();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
+
     user.balance += double.parse(_walletChangeNotifier.amount);
+    amount = _walletChangeNotifier.amount;
+    setState(() {});
+
     _walletChangeNotifier.init();
   }
 
@@ -66,25 +71,26 @@ class _MyWalletPaymentSuccessPageState
                 color: primaryColor,
               ),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  _walletChangeNotifier.amount,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 52.sp,
-                    fontWeight: FontWeight.w700,
-                    color: primaryColor,
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: amount ?? '',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 55.sp,
+                      fontWeight: FontWeight.w700,
+                      color: primaryColor,
+                    ),
                   ),
-                ),
-                Text(
-                  'kwd'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 26.sp,
-                    color: primaryColor,
+                  TextSpan(
+                    text: 'kwd'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 22.sp,
+                      color: primaryColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 10.h),
             Text(
