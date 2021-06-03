@@ -217,6 +217,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     data['cartId'] = walletChangeNotifier.walletCartId;
     data['orderDetails'] = {};
     data['orderDetails']['totalPrice'] = walletChangeNotifier.amount;
+    data['price'] = walletChangeNotifier.amount;
     data['orderAddress'] = jsonEncode(emptyAddress);
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized

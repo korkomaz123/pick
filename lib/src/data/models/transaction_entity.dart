@@ -17,7 +17,9 @@ class TransactionEntity {
       : number = json['order_id'],
         amount = double.parse(json['amount']),
         date = json['created_at'],
-        type = json['type'];
+        type = json['is_walletrecharge'] == "1"
+            ? TransactionType.debit
+            : TransactionType.order;
 
   Map<String, dynamic> toJson() => {
         'number': number,

@@ -7,6 +7,7 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/images.dart';
@@ -197,7 +198,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               _buildSubtotal(),
               _buildShippingCost(),
               _buildTotal(),
-              _buildAddressBar(),
+              OrderAddressBar(address: order.address),
               _buildNextButton(),
             ],
           ),
@@ -451,45 +452,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
         ),
       );
     });
-  }
-
-  Widget _buildAddressBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 30.h,
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 30.h,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(2),
-          color: Colors.grey.shade300,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              order.address.title.isNotEmpty
-                  ? '${order.address.title}: '
-                  : 'Unnamed title: ',
-              style: boldTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: primaryColor,
-              ),
-            ),
-            Text(
-              '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildNextButton() {

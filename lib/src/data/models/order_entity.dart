@@ -68,7 +68,7 @@ class OrderEntity {
         ),
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
-        address = json.containsKey('shipppingAddress')
+        address = json.containsKey('shippingAddress')
             ? AddressEntity.fromJson(json['shippingAddress'])
             : AddressEntity();
 

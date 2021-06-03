@@ -3,6 +3,7 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_item_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -144,7 +145,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 _buildDiscount(),
               ],
               _buildTotal(),
-              _buildAddressBar(),
+              OrderAddressBar(address: order.address),
               if (isStock && order.status != OrderStatusEnum.canceled) ...[
                 _buildReorderButton()
               ],
@@ -428,44 +429,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               color: primaryColor,
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddressBar() {
-    return Container(
-      width: 375.w,
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 30.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 30.h,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(2),
-        color: Colors.grey.shade300,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            order.address.title.isNotEmpty
-                ? '${order.address.title}: '
-                : 'Unnamed title: ',
-            style: boldTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: primaryColor,
-            ),
-          ),
-          Text(
-            '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
             ),
           ),
         ],

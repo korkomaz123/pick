@@ -229,9 +229,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     progressService.hideProgress();
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
-      _onSuccessOrder();
+      _onSuccessOrder(order);
       if (payment == 'wallet') {
-        user.balance -= double.parse(orderDetails['totalPrice']);
+        user.balance -= double.parse(order.totalPrice);
       }
 
       /// payment method is equal to cod, go to success page directly
@@ -263,7 +263,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Future _onSuccessOrder() async {
+  Future _onSuccessOrder(OrderEntity order) async {
     if (widget.reorder != null) {
       myCartChangeNotifier.initializeReorderCart();
     } else {
@@ -273,8 +273,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
       await myCartChangeNotifier.getCartId();
     }
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
-    double price = double.parse(priceDetails['totalPrice']);
+    double price = double.parse(order.totalPrice);
 
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
     adjustEvent.setRevenue(price, 'KWD');

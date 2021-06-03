@@ -80,11 +80,13 @@ class _MyWalletDetailsTransactionsState
               Row(
                 children: [
                   Text(
-                    _getAmountString(item.amount),
+                    _getAmountString(item.amount, item.type),
                     style: mediumTextStyle.copyWith(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
-                      color: item.amount > 0 ? succeedColor : dangerColor,
+                      color: item.type == TransactionType.debit
+                          ? succeedColor
+                          : dangerColor,
                     ),
                   ),
                   Text(
@@ -92,7 +94,9 @@ class _MyWalletDetailsTransactionsState
                     style: mediumTextStyle.copyWith(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,
-                      color: item.amount > 0 ? succeedColor : dangerColor,
+                      color: item.type == TransactionType.debit
+                          ? succeedColor
+                          : dangerColor,
                     ),
                   ),
                 ],
@@ -137,7 +141,19 @@ class _MyWalletDetailsTransactionsState
     }
   }
 
-  String _getAmountString(double amount) {
-    return amount > 0 ? '+ $amount' : '- ${-amount}';
+  String _getAmountString(double amount, TransactionType type) {
+    switch (type) {
+      case TransactionType.order:
+        return '- $amount';
+        break;
+      case TransactionType.bank:
+        return '- $amount';
+        break;
+      case TransactionType.debit:
+        return '+ $amount';
+        break;
+      default:
+        return '- $amount';
+    }
   }
 }
