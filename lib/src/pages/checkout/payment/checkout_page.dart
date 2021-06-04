@@ -6,6 +6,7 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -66,8 +67,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
   _loadData() async {
-    if (paymentMethods.isEmpty)
+    if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
+    }
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
     }
@@ -77,9 +79,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.reorder != null) {
-      payment = widget.reorder.paymentMethod.id;
-    }
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
@@ -119,7 +119,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   children: List.generate(paymentMethods.length, (index) {
                     int idx = paymentMethods.length - index - 1;
                     if (user?.token == null &&
-                        paymentMethods[idx].id == 'wallet') {
+                            paymentMethods[idx].id == 'wallet' ||
+                        user?.token != null && outOfBalance) {
                       return Container();
                     }
                     return PaymentMethodCard(
@@ -134,6 +135,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 SizedBox(height: 5.h),
                 PaymentAddress(),
                 PaymentSummary(details: details),
+                _buildNote(),
                 SizedBox(height: 100.h),
               ],
             );
@@ -147,6 +149,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
           }
           return _buildPlacePaymentButton();
         },
+      ),
+    );
+  }
+
+  Widget _buildNote() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h),
+      child: MarkaaTextInputMulti(
+        controller: noteController,
+        width: double.infinity,
+        padding: 10.w,
+        fontSize: 12.sp,
+        hint: 'checkout_note_hint'.tr(),
+        inputType: TextInputType.multiline,
+        validator: null,
+        maxLine: 5,
       ),
     );
   }

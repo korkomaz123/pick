@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/repositories/wallet_repository.dart';
@@ -119,7 +120,8 @@ class WalletChangeNotifier extends ChangeNotifier {
   }
 
   void getTransactionHistory({String token}) async {
-    final result = await walletRepository.getTransactionHistory(token);
+    final result =
+        await walletRepository.getTransactionHistory(token, Preload.language);
 
     if (result['code'] == 'SUCCESS') {
       transactionsList = [];

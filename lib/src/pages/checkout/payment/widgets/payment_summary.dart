@@ -24,7 +24,7 @@ class PaymentSummary extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 5.h),
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -54,7 +54,7 @@ class PaymentSummary extends StatelessWidget {
                   ],
                 ),
                 if (double.parse(details['discount']) > 0) ...[
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 5.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

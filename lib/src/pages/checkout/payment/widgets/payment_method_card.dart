@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -29,7 +31,7 @@ class PaymentMethodCard extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          margin: EdgeInsets.symmetric(vertical: 5.h),
+          margin: EdgeInsets.only(bottom: 5.h),
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           decoration: BoxDecoration(
             color: greyLightColor,
@@ -41,19 +43,24 @@ class PaymentMethodCard extends StatelessWidget {
             onChanged: onChange,
             activeColor: primaryColor,
             title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (method.id == 'cashondelivery') ...[
-                  SvgPicture.asset(
-                    'lib/public/icons/cashondelivery.svg',
-                    height: 20.h,
-                    width: 30.w,
-                  ),
-                  Text(
-                    "    " + method.title,
-                    style: mediumTextStyle.copyWith(
-                      color: greyColor,
-                      fontSize: 14.sp,
-                    ),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'lib/public/icons/cashondelivery.svg',
+                        height: 20.h,
+                        width: 30.w,
+                      ),
+                      Text(
+                        "    " + method.title,
+                        style: mediumTextStyle.copyWith(
+                          color: greyColor,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
                   ),
                 ] else if (method.id == 'knet') ...[
                   SvgPicture.asset(
@@ -62,31 +69,58 @@ class PaymentMethodCard extends StatelessWidget {
                     width: 45.w,
                   ),
                 ] else if (method.id == 'tap') ...[
-                  Image.asset(
-                    'lib/public/images/visa-card.png',
-                    height: 25.h,
-                    width: 75.w,
-                  ),
-                  SizedBox(
-                    width: 6.w,
-                  ),
-                  SvgPicture.asset(
-                    'lib/public/icons/line.svg',
-                    height: 25.h,
-                    width: 10.w,
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  SvgPicture.asset(
-                    'lib/public/icons/master-card.svg',
-                    height: 25.h,
-                    width: 45.w,
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/public/images/visa-card.png',
+                        height: 25.h,
+                        width: 75.w,
+                      ),
+                      SizedBox(
+                        width: 6.w,
+                      ),
+                      SvgPicture.asset(
+                        'lib/public/icons/line.svg',
+                        height: 25.h,
+                        width: 10.w,
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      SvgPicture.asset(
+                        'lib/public/icons/master-card.svg',
+                        height: 25.h,
+                        width: 45.w,
+                      ),
+                    ],
                   ),
                 ] else ...[
-                  SvgPicture.asset(walletIcon, width: 40.w, height: 30.h),
-                  SizedBox(width: 10.w),
-                  SvgPicture.asset(walletTitle, height: 25.h, width: 50.w),
+                  Row(
+                    children: [
+                      SvgPicture.asset(walletIcon, width: 40.w, height: 30.h),
+                      SizedBox(width: 10.w),
+                      SvgPicture.asset(walletTitle, height: 25.h, width: 50.w),
+                    ],
+                  ),
+                  if (user?.token != null) ...[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'your_amount'.tr(),
+                          style: mediumTextStyle.copyWith(
+                              fontSize: 10.sp, color: primaryColor),
+                        ),
+                        Text(
+                          '${user.balance} ${'currency'.tr()}',
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ],
             ),

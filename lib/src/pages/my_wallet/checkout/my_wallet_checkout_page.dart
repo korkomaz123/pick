@@ -40,7 +40,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
 
-  String payment;
+  String payment = 'knet';
   String cardToken;
 
   ProgressService progressService;

@@ -345,5 +345,11 @@
     "order_summary": "Order Summary",
     "add_button_title": "Add",
     "not_enough_balance": "Your amount in wallet is not enough",
-    "checkout_address_error": "Please complete your shipping address"
+    "checkout_address_error": "Please complete your shipping address",
+    "your_amount": "Your amount",
+    "order_number": "Order Number",
+    "date": "Date",
+    "user_debit": "User Debit",
+    "debit": "Debit",
+    "transaction_id": "Transaction ID"
 }

@@ -79,9 +79,9 @@ class WalletRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getTransactionHistory(String token) async {
+  Future<dynamic> getTransactionHistory(String token, String lang) async {
     String url = EndPoints.getRecord;
-    final params = {'token': token};
+    final params = {'token': token, 'lang': lang};
     final result = await Api.postMethod(url, data: params);
 
     return result;

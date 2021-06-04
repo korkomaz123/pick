@@ -14,13 +14,15 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyWalletDetailsHeader(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            MyWalletDetailsForm(),
-            MyWalletDetailsTransactions(),
-          ],
-        ),
+      body: Column(
+        children: [
+          MyWalletDetailsForm(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: MyWalletDetailsTransactions(),
+            ),
+          ),
+        ],
       ),
     );
   }

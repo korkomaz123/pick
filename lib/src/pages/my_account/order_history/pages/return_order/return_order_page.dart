@@ -302,15 +302,6 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
             width: 90.w,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            // loadingBuilder: (_, child, chunkEvent) {
-            //   return chunkEvent != null
-            //       ? Image.asset(
-            //           'lib/public/images/loading/image_loading.jpg',
-            //           width: 90.w,
-            //           height: 120.h,
-            //         )
-            //       : child;
-            // },
           ),
           SizedBox(width: 5.w),
           Expanded(

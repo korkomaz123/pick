@@ -487,9 +487,34 @@ class _ReOrderPageState extends State<ReOrderPage> {
           .containsKey(widget.order.address.addressId)) {
         addressChangeNotifier.setDefaultAddress(widget.order.address);
       }
+
+      _prepareDetails();
+
       Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
       flushBarService.showErrorDialog('reorder_items_error'.tr());
     }
+  }
+
+  _prepareDetails() {
+    orderDetails = {};
+    orderDetails['shipping'] = widget.order.paymentMethod.id;
+    orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
+    orderDetails['token'] = user.token;
+
+    double totalPrice = .0;
+    double subtotalPrice = .0;
+    double discount = .0;
+
+    subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
+    totalPrice = subtotalPrice + widget.order.shippingMethod.serviceFees;
+
+    orderDetails['orderDetails'] = {};
+    orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
+    orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['subTotalPrice'] =
+        subtotalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['fees'] =
+        widget.order.shippingMethod.serviceFees.toStringAsFixed(3);
   }
 }

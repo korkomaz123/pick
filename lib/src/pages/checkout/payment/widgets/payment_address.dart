@@ -84,11 +84,11 @@ class _PaymentAddressState extends State<PaymentAddress> {
                       if (user?.token != null ||
                           model.guestAddress == null) ...[
                         Container(
-                          width: 130.w,
-                          height: 32.h,
+                          width: 126.w,
+                          height: 28.h,
                           child: MarkaaTextButton(
                             title: 'add_new_address_button_title'.tr(),
-                            titleSize: 12.sp,
+                            titleSize: 10.sp,
                             titleColor: Colors.white,
                             buttonColor: primaryColor,
                             borderColor: Colors.transparent,
@@ -140,11 +140,11 @@ class _PaymentAddressState extends State<PaymentAddress> {
                         ),
                         SizedBox(height: 20.h),
                         Container(
-                          width: 130.w,
-                          height: 32.h,
+                          width: 126.w,
+                          height: 28.h,
                           child: MarkaaTextButton(
                             title: 'add_new_address_button_title'.tr(),
-                            titleSize: 12.sp,
+                            titleSize: 10.sp,
                             titleColor: Colors.white,
                             buttonColor: primaryColor,
                             borderColor: Colors.transparent,
@@ -194,7 +194,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
-                        fontSize: 18.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -208,7 +208,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                     SizedBox(height: 6.h),
@@ -216,7 +216,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                       'phone_number_hint'.tr() + ': ' + address.phoneNumber,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -271,7 +271,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     address.street,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
-                      fontSize: 18.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -283,7 +283,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                         address.country,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                     ),
                   ),
                   SizedBox(height: 6.h),
@@ -291,7 +291,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     'phone_number_hint'.tr() + ': ' + address.phoneNumber,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ],
