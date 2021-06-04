@@ -89,11 +89,15 @@ class _SignInPageState extends State<SignInPage> {
     try {
       user = loggedInUser;
       await localRepo.setToken(user.token);
+
       await orderChangeNotifier.loadOrderHistories(user.token, lang);
+
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
+
       await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+
       addressChangeNotifier.initialize();
       await addressChangeNotifier.loadAddresses(user.token);
       NotificationSetup().updateFcmDeviceToken();
@@ -102,8 +106,8 @@ class _SignInPageState extends State<SignInPage> {
     }
     homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
-    if (Navigator.of(Preload.navigatorKey.currentContext).canPop())
-      Navigator.of(Preload.navigatorKey.currentContext).pop(context);
+    if (Navigator.of(context).canPop())
+      Navigator.pop(context);
     else
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }

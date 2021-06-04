@@ -5,6 +5,7 @@ import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_item_card.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_payment_method.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -281,17 +282,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               fontSize: 14.sp,
             ),
           ),
-          Row(
-            children: [
-              paymentWidget,
-              Text(
-                order.paymentMethod.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ],
+          OrderPaymentMethod(
+            paymentMethod: order.paymentMethod.id,
           ),
         ],
       ),
@@ -353,7 +345,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
+            fees == 0
+                ? 'free'.tr()
+                : 'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

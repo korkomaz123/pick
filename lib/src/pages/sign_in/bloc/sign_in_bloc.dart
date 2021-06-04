@@ -52,6 +52,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
+        result['user']['amount_wallet'] = result['user']['wallet'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
         yield SignInSubmittedFailure(message: result['errorMessage']);
@@ -85,6 +86,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
           email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
+        result['user']['amount_wallet'] = result['user']['wallet'];
         yield SignInSubmittedSuccess(user: UserEntity.fromJson(result['user']));
       } else {
         yield SignInSubmittedFailure(message: result['errorMessage']);

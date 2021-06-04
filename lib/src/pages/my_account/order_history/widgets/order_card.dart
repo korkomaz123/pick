@@ -10,6 +10,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'order_payment_method.dart';
+
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
 
@@ -170,12 +172,8 @@ class _OrderCardState extends State<OrderCard> {
                     fontSize: 14.sp,
                   ),
                 ),
-                Text(
-                  widget.order.paymentMethod.title,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                OrderPaymentMethod(
+                  paymentMethod: widget.order.paymentMethod.id,
                 ),
               ],
             ),

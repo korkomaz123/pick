@@ -117,7 +117,7 @@ class _MyCartPageState extends State<MyCartPage>
                   return Column(
                     children: [
                       _buildTitleBar(),
-                      _buildTotalItems(),
+                      _buildCartItems(),
                       MyCartCouponCode(
                         cartId: cartId,
                         onSignIn: () => _onSignIn(false),
@@ -198,7 +198,7 @@ class _MyCartPageState extends State<MyCartPage>
     );
   }
 
-  Widget _buildTotalItems() {
+  Widget _buildCartItems() {
     final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     return Container(
       width: 375.w,
@@ -441,17 +441,17 @@ class _MyCartPageState extends State<MyCartPage>
       }
     }
 
+    _prepareDetails();
+    Navigator.pushNamed(context, Routes.checkout);
+  }
+
+  _prepareDetails() {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckout);
     Adjust.trackEvent(adjustEvent);
 
     adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
     Adjust.trackEvent(adjustEvent);
 
-    _prepareDetails();
-    Navigator.pushNamed(context, Routes.checkout);
-  }
-
-  _prepareDetails() {
     orderDetails = {};
     orderDetails['shipping'] = shippingMethodId;
     orderDetails['cartId'] = myCartChangeNotifier.cartId;

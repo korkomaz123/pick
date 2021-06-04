@@ -8,6 +8,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_payment_method.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/images.dart';
@@ -341,17 +342,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
               fontSize: 14.sp,
             ),
           ),
-          Row(
-            children: [
-              paymentWidget,
-              Text(
-                order.paymentMethod.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ],
+          OrderPaymentMethod(
+            paymentMethod: order.paymentMethod.id,
           ),
         ],
       ),
@@ -408,7 +400,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
+            order.shippingMethod.serviceFees == 0
+                ? 'free'.tr()
+                : 'currency'.tr() +
+                    ' ' +
+                    order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -498,7 +494,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   _prepareDetails() {
     orderDetails = {};
-    orderDetails['shipping'] = widget.order.paymentMethod.id;
+    orderDetails['shipping'] = widget.order.shippingMethod.id;
     orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
     orderDetails['token'] = user.token;
 

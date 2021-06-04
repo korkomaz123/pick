@@ -67,6 +67,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
   _loadData() async {
+    print(paymentMethods.length);
     if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
     }
@@ -79,6 +80,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
+
+    print('init state');
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -118,9 +121,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 Column(
                   children: List.generate(paymentMethods.length, (index) {
                     int idx = paymentMethods.length - index - 1;
-                    if (user?.token == null &&
-                            paymentMethods[idx].id == 'wallet' ||
-                        user?.token != null && outOfBalance) {
+                    if ((user?.token == null ||
+                            user?.token != null && outOfBalance) &&
+                        paymentMethods[idx].id == 'wallet') {
                       return Container();
                     }
                     return PaymentMethodCard(
@@ -165,6 +168,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         inputType: TextInputType.multiline,
         validator: null,
         maxLine: 5,
+        borderColor: Colors.grey,
       ),
     );
   }

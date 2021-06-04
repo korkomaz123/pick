@@ -6,6 +6,7 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_payment_method.dart';
 import 'package:markaa/src/pages/my_cart/widgets/my_cart_qty_horizontal_picker.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -387,17 +388,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               fontSize: 14.sp,
             ),
           ),
-          Row(
-            children: [
-              paymentWidget,
-              Text(
-                order.paymentMethod.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ],
+          OrderPaymentMethod(
+            paymentMethod: order.paymentMethod.id,
           ),
         ],
       ),
@@ -487,8 +479,10 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() +
-                ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
+            fees == 0
+                ? 'free'.tr()
+                : 'currency'.tr() +
+                    ' ${changedPrice == fees ? 0.00 : fees.toStringAsFixed(3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

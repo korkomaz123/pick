@@ -60,8 +60,6 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
       paymentMethods = await checkoutRepo.getPaymentMethod();
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
-    } else {
-      payment = paymentMethods[2].id;
     }
     setState(() {});
   }
@@ -131,6 +129,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
                 ),
               ),
             ),
+            SizedBox(height: 20.h),
             Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
               return Column(
                 children: List.generate(paymentMethods.length, (index) {

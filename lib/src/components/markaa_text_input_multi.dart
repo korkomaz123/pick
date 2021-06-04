@@ -14,6 +14,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
   final bool readOnly;
   final Function onTap;
   final int maxLine;
+  final Color borderColor;
+  final double borderRadius;
 
   MarkaaTextInputMulti({
     @required this.controller,
@@ -26,6 +28,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.maxLine,
+    this.borderColor = greyDarkColor,
+    this.borderRadius = 10,
   });
 
   @override
@@ -46,13 +50,16 @@ class MarkaaTextInputMulti extends StatelessWidget {
           ),
           hintText: hint,
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: greyDarkColor),
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: greyDarkColor),
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: greyDarkColor),
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
         ),
         validator: (value) => validator(value),

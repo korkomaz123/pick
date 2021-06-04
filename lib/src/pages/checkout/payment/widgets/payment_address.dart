@@ -42,9 +42,9 @@ class _PaymentAddressState extends State<PaymentAddress> {
       addressChangeNotifier.initialize();
       await addressChangeNotifier.loadAddresses(user.token);
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Scrollable.ensureVisible(dataKey.currentContext);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Scrollable.ensureVisible(dataKey.currentContext);
+    // });
   }
 
   @override
