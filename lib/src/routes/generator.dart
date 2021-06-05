@@ -275,7 +275,7 @@ class RouteGenerator {
         );
       case Routes.myWallet:
         return CupertinoPageRoute(
-          builder: (_) => MyWalletDetailsPage(),
+          builder: (_) => MyWalletDetailsPage(amount: params),
           settings: RouteSettings(name: Routes.myWallet),
         );
       case Routes.bankList:

@@ -20,7 +20,6 @@ class OrderRepository {
     orderDetails['lang'] = lang;
     orderDetails['is_virtual'] = isVirtual;
     final result = await Api.postMethod(url, data: orderDetails);
-    print(result);
 
     return result;
   }

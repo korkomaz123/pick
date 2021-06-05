@@ -16,6 +16,10 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
 class MyWalletDetailsForm extends StatefulWidget {
+  final double amount;
+
+  MyWalletDetailsForm({this.amount});
+
   @override
   _MyWalletDetailsFormState createState() => _MyWalletDetailsFormState();
 }
@@ -44,11 +48,17 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     _flushBarService = FlushBarService(context: context);
 
     _amountController.addListener(_onChangeAmount);
+    if (widget.amount != null) {
+      _amountController.text = widget.amount.toString();
+    }
   }
 
   void _onChangeAmount() {
     String value = _amountController.text;
-    if (value.isNotEmpty && (isInt(value) || isFloat(value))) {
+    if (value.isNotEmpty &&
+        (isInt(value) || isFloat(value)) &&
+        (widget.amount == null ||
+            (widget.amount != null && double.parse(value) >= widget.amount))) {
       isValidAmount = true;
     } else {
       isValidAmount = false;
@@ -112,6 +122,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     ),
                   ),
                 ),
+                validator: (value) {},
               ),
             ),
             Consumer<MarkaaAppChangeNotifier>(

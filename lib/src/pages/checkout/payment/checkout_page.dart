@@ -122,7 +122,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   children: List.generate(paymentMethods.length, (index) {
                     int idx = paymentMethods.length - index - 1;
                     if ((user?.token == null ||
-                            user?.token != null && outOfBalance) &&
+                            user?.token != null && user.balance <= 0) &&
                         paymentMethods[idx].id == 'wallet') {
                       return Container();
                     }
@@ -198,7 +198,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
         noButtonText: 'cancel_button_title',
       );
       if (result != null) {
-        await Navigator.pushNamed(context, Routes.myWallet);
+        double amount = double.parse(details['subTotalPrice']) - user.balance;
+        await Navigator.pushNamed(context, Routes.myWallet, arguments: amount);
+        setState(() {});
       }
     } else {
       payment = value;
