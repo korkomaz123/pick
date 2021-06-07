@@ -70,7 +70,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="markaa.page.link"
+                    android:host="marka.page.link"
                 />
             </intent-filter>
 
