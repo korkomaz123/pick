@@ -1,3 +1,4 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -36,8 +37,7 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu>
-    with WidgetsBindingObserver {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int activeIndex;
   double menuWidth;
@@ -253,9 +253,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              if (_globalProvider.activeMenu == menu.id) ...[
-                _buildSubmenu(menu)
-              ],
+              if (_globalProvider.activeMenu == menu.id) ...[_buildSubmenu(menu)],
             ],
           );
         }).toList(),
@@ -264,12 +262,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   Widget _buildParentMenu(GlobalProvider _globalProvider, int index) {
-    CategoryMenuEntity menu =
-        _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
+    CategoryMenuEntity menu = _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
     return InkWell(
-      onTap: () => menu.subMenu.isNotEmpty
-          ? _globalProvider.displaySubmenu(menu, index)
-          : _viewCategory(menu, 0),
+      onTap: () => menu.subMenu.isNotEmpty ? _globalProvider.displaySubmenu(menu, index) : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: 15.h),
@@ -285,8 +280,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     height: 25.w,
                     imageUrl: menu.iconUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.image, size: 20)),
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],
                 SizedBox(width: 10.w),
@@ -301,9 +295,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             ),
             if (menu.subMenu.isNotEmpty) ...[
               Icon(
-                _globalProvider.activeMenu == menu.id
-                    ? Icons.arrow_drop_down
-                    : Icons.arrow_right,
+                _globalProvider.activeMenu == menu.id ? Icons.arrow_drop_down : Icons.arrow_right,
                 size: 25.sp,
                 color: greyDarkColor,
               )
@@ -400,9 +392,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
     progressService.hideProgress();
 
-    Navigator.pop(context);
+    Navigator.pop(Preload.navigatorKey.currentContext);
     Navigator.popUntil(
-      context,
+      Preload.navigatorKey.currentContext,
       (route) => route.settings.name == Routes.home,
     );
   }

@@ -18,6 +18,7 @@ import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 
+import '../../../../preload.dart';
 import 'logout_confirm_dialog.dart';
 
 class LogoutItem extends StatefulWidget {
@@ -135,7 +136,7 @@ class _LogoutItemState extends State<LogoutItem> {
 
     progressService.hideProgress();
 
-    Navigator.pop(context);
+    Navigator.pop(Preload.navigatorKey.currentContext);
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,
