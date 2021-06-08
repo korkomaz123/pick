@@ -83,11 +83,11 @@ class HomeBestDeals extends StatelessWidget {
         itemCount: homeChangeNotifier.bestDealsProducts.length,
         itemBuilder: (context, index) {
           return Container(
-            margin: EdgeInsets.only(left: 5.w),
+            // margin: EdgeInsets.only(left: 5.w),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.grey.shade300,
-                width: 1.w,
+                width: 0.5.w,
               ),
             ),
             child: ProductVCard(
