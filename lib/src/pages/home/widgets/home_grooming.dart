@@ -27,21 +27,15 @@ class HomeGrooming extends StatelessWidget {
       color: Colors.white,
       child: Column(
         children: [
-          if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[
-            _buildTitle(homeChangeNotifier.groomingTitle)
-          ],
-          if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[
-            _buildCategories(homeChangeNotifier.groomingCategories)
-          ],
-          if (homeChangeNotifier.groomingItems.isNotEmpty) ...[
-            _buildProducts(homeChangeNotifier.groomingItems)
-          ],
+          if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[_buildTitle(homeChangeNotifier.groomingTitle)],
+          if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[_buildCategories(homeChangeNotifier.groomingCategories)],
           if (homeChangeNotifier.groomingCategory != null) ...[
             _buildFooter(
               homeChangeNotifier.groomingCategory,
               homeChangeNotifier.groomingTitle,
             )
           ],
+          if (homeChangeNotifier.groomingItems.isNotEmpty) ...[_buildProducts(homeChangeNotifier.groomingItems)],
         ],
       ),
     );
@@ -94,8 +88,7 @@ class HomeGrooming extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: categories[index].imageUrl,
               fit: BoxFit.fill,
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
         ),
@@ -129,6 +122,31 @@ class HomeGrooming extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
+      child: InkWell(
+        onTap: () {
+          ProductListArguments arguments = ProductListArguments(
+            category: category,
+            subCategory: [],
+            brand: BrandEntity(),
+            selectedSubCategoryIndex: 0,
+            isFromBrand: false,
+          );
+          Navigator.pushNamed(
+            Preload.navigatorKey.currentContext,
+            Routes.productList,
+            arguments: arguments,
+          );
+        },
+        child: Text(
+          'view_all'.tr(),
+          textAlign: TextAlign.end,
+          style: TextStyle(decoration: TextDecoration.underline),
+        ),
+      ),
+    );
+    /* return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
       child: MarkaaTextIconButton(
         onPressed: () {
           ProductListArguments arguments = ProductListArguments(
@@ -152,6 +170,6 @@ class HomeGrooming extends StatelessWidget {
         buttonColor: primaryColor,
         leading: false,
       ),
-    );
+    ); */
   }
 }
