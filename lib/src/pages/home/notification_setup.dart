@@ -55,10 +55,9 @@ class NotificationSetup {
       _onLaunchMessage(event.data);
     });
 
-    String topic = Preload.language == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel;
     await firebaseMessaging
         .unsubscribeFromTopic(Preload.language == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
-    await firebaseMessaging.subscribeToTopic(topic);
+    await firebaseMessaging.subscribeToTopic(Preload.language == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
     updateFcmDeviceToken();
   }
 
