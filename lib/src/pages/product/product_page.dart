@@ -300,7 +300,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (model.productDetailsMap[productId].stockQty != null && model.productDetailsMap[productId].stockQty > 0)
-            if (!isParentOutOfStock && !isParentOutOfStock) ...[
+            if (!isParentOutOfStock && !isChildOutOfStock) ...[
               Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, appModel, __) {
                   if (appModel.buying) {
