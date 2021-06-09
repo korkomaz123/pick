@@ -63,8 +63,3 @@ class MarkaaNotificationChannels {
   static const String enChannel = 'markaa-all-en';
   static const String arChannel = 'markaa-all-ar';
 }
-
-class PaymentStatusUrls {
-  static const String success = 'https://markaa.com/checkout/onepage/success/';
-  static const String failure = 'https://markaa.com/checkout/cart/';
-}
