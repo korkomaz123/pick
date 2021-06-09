@@ -81,3 +81,21 @@ List<BankAccountEntity> bankAccounts = [
     iBan: '2232222',
   ),
 ];
+
+Map<String, dynamic> emptyAddress = {
+  'customer_address_id': '',
+  'prefix': '',
+  'firstname': '',
+  'lastname': '',
+  'fullName': '',
+  'country_name': '',
+  'country_id': '',
+  'region': '',
+  'region_id': '',
+  'city': '',
+  'street': '',
+  'postcode': '',
+  'telephone': '',
+  'company': '',
+  'email': '',
+};

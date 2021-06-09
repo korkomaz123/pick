@@ -63,7 +63,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                               selectedSubCategoryIndex: 0,
                               isFromBrand: false,
                             );
-                            Navigator.pushNamed(
+                            Navigator.popAndPushNamed(
                               context,
                               Routes.productList,
                               arguments: arguments,
@@ -76,7 +76,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                               selectedSubCategoryIndex: 0,
                               isFromBrand: true,
                             );
-                            Navigator.pushNamed(
+                            Navigator.popAndPushNamed(
                               context,
                               Routes.productList,
                               arguments: arguments,
@@ -84,10 +84,9 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                           } else if (widget.item?.productId != null) {
                             final product = await productRepository
                                 .getProduct(widget.item.productId);
-                            Navigator.pushNamedAndRemoveUntil(
+                            Navigator.popAndPushNamed(
                               context,
                               Routes.product,
-                              (route) => route.settings.name == Routes.home,
                               arguments: product,
                             );
                           }

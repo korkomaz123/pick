@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -15,6 +17,15 @@ class MyWalletPaymentFailedPage extends StatefulWidget {
 }
 
 class _MyWalletPaymentFailedPageState extends State<MyWalletPaymentFailedPage> {
+  WalletChangeNotifier _walletChangeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _walletChangeNotifier = context.read<WalletChangeNotifier>();
+    _walletChangeNotifier.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

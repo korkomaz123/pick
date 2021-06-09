@@ -25,14 +25,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'widgets/wishlist_remove_dialog.dart';
-
 class WishlistPage extends StatefulWidget {
   @override
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
+class _WishlistPageState extends State<WishlistPage>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   ProgressService progressService;
@@ -150,7 +149,9 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
                     onAddToCart: () => _onAddToCart(product),
                   ),
                 ),
-                index < (wishlistChangeNotifier.wishlistItemsCount - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                index < (wishlistChangeNotifier.wishlistItemsCount - 1)
+                    ? Divider(color: greyColor, thickness: 0.5)
+                    : SizedBox.shrink(),
               ],
             ),
           );
@@ -162,12 +163,8 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
   void _onRemoveWishlist(ProductModel product, bool ask) async {
     var result;
     if (ask) {
-      result = await showDialog(
-        context: context,
-        builder: (context) {
-          return WishlistRemoveDialog();
-        },
-      );
+      result = await flushBarService.showConfirmDialog(
+          message: 'wishlist_remove_item_dialog_text');
     }
     if (result != null || !ask) {
       await wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
@@ -177,7 +174,9 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
     myCartChangeNotifier.addProductToCart(product, 1, lang, {},
-        onProcess: _onAdding, onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
+        onProcess: _onAdding,
+        onSuccess: () => _onAddSuccess(product),
+        onFailure: _onAddFailure);
   }
 
   _onAdding() {
@@ -212,6 +211,6 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

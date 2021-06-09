@@ -1,15 +1,14 @@
-import 'dart:convert';
+// import 'dart:convert';
 
-import 'package:adjust_sdk/adjust.dart';
-import 'package:adjust_sdk/adjust_event.dart';
+// import 'package:adjust_sdk/adjust.dart';
+// import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
-import 'package:markaa/src/config/config.dart';
+// import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/checkout/payment/payment_abort_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -59,12 +58,8 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onBack() async {
-    final result = await showDialog(
-      context: context,
-      builder: (_) {
-        return PaymentAbortDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'payment_abort_dialog_text');
     if (result != null) {
       /// cancel the order
       await orderChangeNotifier.cancelFullOrder(order,
@@ -177,14 +172,14 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   Future<void> _onSuccessPayment() async {
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
-    double price = double.parse(priceDetails['totalPrice']);
+    // final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    // double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
-    Adjust.trackEvent(adjustEvent);
+    // AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
+    // Adjust.trackEvent(adjustEvent);
 
-    adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
-    adjustEvent.setRevenue(price, 'KWD');
-    Adjust.trackEvent(adjustEvent);
+    // adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
+    // adjustEvent.setRevenue(price, 'KWD');
+    // Adjust.trackEvent(adjustEvent);
   }
 }

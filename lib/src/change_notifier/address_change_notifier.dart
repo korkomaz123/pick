@@ -1,19 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class AddressChangeNotifier extends ChangeNotifier {
-  final ShippingAddressRepository addressRepository =
-      ShippingAddressRepository();
+  ShippingAddressRepository addressRepository = ShippingAddressRepository();
+  LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
   Map<String, AddressEntity> addressesMap;
   AddressEntity defaultAddress;
   List<String> keys;
 
+  AddressEntity guestAddress;
+
   void initialize() {
     addressesMap = {};
     keys = [];
     defaultAddress = null;
+    guestAddress = null;
+  }
+
+  Future<void> loadGuestAddress() async {
+    final exist = await localStorageRepository.existItem('guest_address');
+    if (exist) {
+      final address = await localStorageRepository.getItem('guest_address');
+      guestAddress = AddressEntity.fromJson(address);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateGuestAddress(
+    Map<String, dynamic> data, {
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      await localStorageRepository.setItem('guest_address', data);
+      guestAddress = AddressEntity.fromJson(data);
+      notifyListeners();
+      if (onSuccess != null) onSuccess();
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
+    }
   }
 
   void setDefaultAddress(AddressEntity address) {
@@ -58,12 +88,12 @@ class AddressChangeNotifier extends ChangeNotifier {
 
   Future<void> addAddress(
     String token,
-    AddressEntity newAddress,
+    AddressEntity newAddress, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
-    onProcess();
+  }) async {
+    if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.addAddress(token, newAddress);
       if (result['code'] == 'SUCCESS') {
@@ -75,23 +105,23 @@ class AddressChangeNotifier extends ChangeNotifier {
         keys = addressesMap.keys.toList();
         keys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      if (onFailure != null) onFailure(e.toString());
     }
   }
 
   Future<void> updateAddress(
     String token,
-    AddressEntity address,
+    AddressEntity address, {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
-  ) async {
-    onProcess();
+  }) async {
+    if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.updateAddress(token, address);
       if (result['code'] == 'SUCCESS') {
@@ -100,12 +130,12 @@ class AddressChangeNotifier extends ChangeNotifier {
           defaultAddress = address;
         }
         notifyListeners();
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      if (onFailure != null) onFailure(e.toString());
     }
   }
 

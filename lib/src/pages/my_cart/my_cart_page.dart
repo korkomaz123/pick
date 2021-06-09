@@ -11,12 +11,12 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/my_cart/widgets/my_cart_remove_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
@@ -36,7 +36,8 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
 
@@ -47,6 +48,9 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   String cartId = '';
   double totalPrice = 0;
 
+  String shippingMethodId;
+  double serviceFees;
+
   ProgressService progressService;
   SnackBarService snackBarService;
   FlushBarService flushBarService;
@@ -55,8 +59,16 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
 
+  CheckoutRepository checkoutRepo = CheckoutRepository();
+
   _loadData() async {
-    if (myCartChangeNotifier.cartItemCount == 0) await myCartChangeNotifier.getCartItems(lang);
+    if (shippingMethods.isEmpty)
+      shippingMethods = await checkoutRepo.getShippingMethod();
+    shippingMethodId = shippingMethods[0].id;
+    serviceFees = shippingMethods[0].serviceFees;
+
+    if (myCartChangeNotifier.cartItemCount == 0)
+      await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override
@@ -105,7 +117,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                   return Column(
                     children: [
                       _buildTitleBar(),
-                      _buildTotalItems(),
+                      _buildCartItems(),
                       MyCartCouponCode(
                         cartId: cartId,
                         onSignIn: () => _onSignIn(false),
@@ -119,7 +131,8 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                     builder: (_, model, ___) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
-                          vertical: model.wishlistItemsCount > 0 ? 100.h : 250.h,
+                          vertical:
+                              model.wishlistItemsCount > 0 ? 100.h : 250.h,
                         ),
                         child: Center(
                           child: NoAvailableData(
@@ -170,7 +183,9 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                 ),
               ),
               Text(
-                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'
+                    .tr()
+                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: 13.sp,
@@ -183,7 +198,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildTotalItems() {
+  Widget _buildCartItems() {
     final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
     return Container(
       width: 375.w,
@@ -205,15 +220,20 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                     child: Column(
                       children: [
                         MyCartItem(
-                          cartItem: myCartChangeNotifier.cartItemsMap[keys[index]],
+                          cartItem:
+                              myCartChangeNotifier.cartItemsMap[keys[index]],
                           discount: myCartChangeNotifier.discount,
                           type: myCartChangeNotifier.type,
                           cartId: cartId,
-                          onRemoveCartItem: () => _onRemoveCartItem(keys[index]),
-                          onSaveForLaterItem: () => _onSaveForLaterItem(keys[index]),
+                          onRemoveCartItem: () =>
+                              _onRemoveCartItem(keys[index]),
+                          onSaveForLaterItem: () =>
+                              _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
                         ),
-                        index < (myCartChangeNotifier.cartItemCount - 1) ? Divider(color: greyColor, thickness: 0.5) : SizedBox.shrink(),
+                        index < (myCartChangeNotifier.cartItemCount - 1)
+                            ? Divider(color: greyColor, thickness: 0.5)
+                            : SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -230,7 +250,8 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     double subTotal = myCartChangeNotifier.cartTotalPrice;
     double discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
+        : myCartChangeNotifier.cartTotalPrice -
+            myCartChangeNotifier.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,
@@ -260,7 +281,9 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                 ),
               ),
               Text(
-                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'
+                    .tr()
+                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: 13.sp,
@@ -357,15 +380,8 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   }
 
   void _onRemoveCartItem(String key) async {
-    final result = await showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return MyCartRemoveDialog(
-          title: 'my_cart_remove_item_dialog_title'.tr(),
-          text: 'my_cart_remove_item_dialog_text'.tr(),
-        );
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'my_cart_remove_item_dialog_text');
     if (result != null) {
       await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     }
@@ -397,6 +413,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
             return MyCartQuickAccessLoginDialog(
               cartId: cartId,
               isCheckout: isCheckout,
+              prepareDetails: _prepareDetails,
             );
           },
         );
@@ -405,32 +422,65 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    await myCartChangeNotifier.getCartItems(
+        lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
 
   void _onReloadItemSuccess() {
     progressService.hideProgress();
+
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showErrorMessage(
-          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' + 'out_stock_items_error'.tr(),
+        flushBarService.showErrorDialog(
+          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+              'out_stock_items_error'.tr(),
         );
         return;
       }
     }
 
+    _prepareDetails();
+    Navigator.pushNamed(context, Routes.checkout);
+  }
+
+  _prepareDetails() {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckout);
     Adjust.trackEvent(adjustEvent);
 
     adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
     Adjust.trackEvent(adjustEvent);
 
-    Navigator.pushNamed(context, Routes.checkoutAddress);
+    orderDetails = {};
+    orderDetails['shipping'] = shippingMethodId;
+    orderDetails['cartId'] = myCartChangeNotifier.cartId;
+    if (user?.token != null) {
+      orderDetails['token'] = user.token;
+    }
+
+    double totalPrice = .0;
+    double subtotalPrice = .0;
+    double discount = .0;
+
+    discount = myCartChangeNotifier.type == 'fixed'
+        ? myCartChangeNotifier.discount
+        : myCartChangeNotifier.cartTotalPrice -
+            myCartChangeNotifier.cartDiscountedTotalPrice;
+    subtotalPrice = myCartChangeNotifier.cartTotalPrice;
+
+    totalPrice = subtotalPrice + serviceFees - discount;
+
+    orderDetails['orderDetails'] = {};
+    orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
+    orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['subTotalPrice'] =
+        subtotalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
   }
 
   void _onRemoveFailure(String message) {
-    flushBarService.showErrorMessage(message);
+    flushBarService.showErrorDialog(message);
   }
 
   void _onProcess() {
@@ -439,6 +489,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
 
   void _onFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage(message, "no_qty.svg");
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

@@ -33,6 +33,7 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
+      elevation: 0,
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,

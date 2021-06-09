@@ -45,13 +45,11 @@ class Routes {
 
   /// checkout
   static const String searchAddress = '/search-address';
-  static const String checkoutAddress = '/checkout-address';
-  static const String checkoutGuestAddress = '/checkout-guest-address';
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
+  static const String checkout = '/checkout';
   static const String checkoutPayment = '/checkout-payment';
   static const String checkoutConfirmed = '/checkout-confirmed';
-  static const String checkoutPaymentCard = '/checkout-payment-card';
   static const String paymentFailed = '/payment-failed';
 
   /// wishlist

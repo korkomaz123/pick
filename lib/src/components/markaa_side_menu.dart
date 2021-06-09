@@ -3,13 +3,13 @@ import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -88,7 +88,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
           }
           if (state is SignOutSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {
@@ -101,7 +101,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     String lang = _globalProvider.currentLanguage;
                     if (_globalProvider.sideMenus[lang].length == 0) {
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: PulseLoadingSpinner(),
                       );
                     } else {
                       return SingleChildScrollView(
@@ -365,12 +365,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
   }
 
   void _logout() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return LogoutConfirmDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }

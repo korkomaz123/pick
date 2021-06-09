@@ -363,11 +363,11 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onAddToCart(ProductChangeNotifier model) async {
     if (variantSelectRequired) {
-      flushBarService.showSimpleErrorMessageWithImage('required_options'.tr(), "select_option.svg");
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {
-      flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
+      flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
 
@@ -383,11 +383,11 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onBuyNow(ProductChangeNotifier model) {
     if (variantSelectRequired) {
-      flushBarService.showSimpleErrorMessageWithImage('required_options'.tr(), "select_option.svg");
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {
-      flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
+      flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     myCartChangeNotifier.addProductToCart(product, 1, lang, model.selectedOptions,
@@ -409,7 +409,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onBuyFailure(String message) {
     markaaAppChangeNotifier.changeBuyStatus(false);
-    flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
+    flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
   }
 
   _onAdding() {
@@ -444,7 +444,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
 
   _onAddFailure(String message) {
     progressService.hideProgress();
-    flushBarService.showSimpleErrorMessageWithImage('out_of_stock_error'.tr(), "no_qty.svg");
+    flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
   }
 
   _onFirstReview(ProductEntity product) async {

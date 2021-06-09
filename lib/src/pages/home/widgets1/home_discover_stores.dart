@@ -102,8 +102,6 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     child: CachedNetworkImage(
                       imageUrl: brand.brandThumbnail,
                       fit: BoxFit.fill,
-                      // progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      //     Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                       errorWidget: (context, url, error) =>
                           Center(child: Icon(Icons.image, size: 20)),
                     ),
