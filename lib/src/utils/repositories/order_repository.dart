@@ -14,7 +14,7 @@ class OrderRepository {
     String lang,
     String isVirtual,
   ) async {
-    String url = EndPoints.placeOrder;
+    String url = EndPoints.submitOrder;
     final details = jsonEncode(orderDetails['orderDetails']);
     orderDetails['orderDetails'] = details;
     orderDetails['lang'] = lang;
