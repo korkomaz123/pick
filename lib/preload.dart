@@ -92,10 +92,16 @@ class Preload {
 
   static loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
+      print(MarkaaReporter.email);
+      print(MarkaaReporter.password);
+      try {
       await signInRepo.loginFirebase(
         email: MarkaaReporter.email,
         password: MarkaaReporter.password,
       );
+      } catch (e) {
+        print(e.toString());
+      }
     }
 
     await _getCurrentUser();

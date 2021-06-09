@@ -3,7 +3,7 @@ const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
 class MarkaaReporter {
-  static const String email = 'reporter@markaa.com';
+  static const String email = 'user@markaa.com';
   static const String password = 'markaa2021';
 }
 
