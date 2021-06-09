@@ -17,6 +17,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -369,8 +370,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               ),
             ),
             Text(
-              'currency'.tr() +
-                  ' ${model.reorderCartTotalPrice.toStringAsFixed(3)}',
+              '${'currency'.tr()} ${NumericService.roundString(model.reorderCartTotalPrice, 3)}',
               style: mediumTextStyle.copyWith(
                 color: greyDarkColor,
                 fontSize: 14.sp,
@@ -437,7 +437,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               ),
             ),
             Text(
-              'currency'.tr() + ' ${totalPrice.toStringAsFixed(3)}',
+              '${'currency'.tr()} ${NumericService.roundString(totalPrice, 3)}',
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: 16.sp,
@@ -506,11 +506,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
     totalPrice = subtotalPrice + widget.order.shippingMethod.serviceFees;
 
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-    orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['discount'] =
+        NumericService.roundString(discount, 3);
+    orderDetails['orderDetails']['totalPrice'] =
+        NumericService.roundString(totalPrice, 3);
     orderDetails['orderDetails']['subTotalPrice'] =
-        subtotalPrice.toStringAsFixed(3);
+        NumericService.roundString(subtotalPrice, 3);
     orderDetails['orderDetails']['fees'] =
-        widget.order.shippingMethod.serviceFees.toStringAsFixed(3);
+        NumericService.roundString(widget.order.shippingMethod.serviceFees, 3);
   }
 }

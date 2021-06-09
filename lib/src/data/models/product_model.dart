@@ -1,3 +1,5 @@
+import 'package:markaa/src/utils/services/string_service.dart';
+
 import 'brand_entity.dart';
 
 class ProductModel {
@@ -62,12 +64,12 @@ class ProductModel {
         name = json['name'],
         metaDescription = json['meta_description'],
         price = json['special_price'] != null
-            ? double.parse(json['special_price']).toStringAsFixed(3)
+            ? StringService.roundString(json['special_price'], 3)
             : json['price'] != null
-                ? double.parse(json['price']).toStringAsFixed(3)
+                ? StringService.roundString(json['price'], 3)
                 : null,
         beforePrice = json['price'] != null
-            ? double.parse(json['price']).toStringAsFixed(3)
+            ? StringService.roundString(json['price'], 3)
             : null,
         discount = _getDiscount(
             json['special_price'] != null

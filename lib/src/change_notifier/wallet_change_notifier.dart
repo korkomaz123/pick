@@ -24,6 +24,7 @@ class WalletChangeNotifier extends ChangeNotifier {
   }
 
   void createWalletCart({
+    String amount,
     Function onProcess,
     Function onSuccess,
     Function onFailure,
@@ -32,16 +33,18 @@ class WalletChangeNotifier extends ChangeNotifier {
 
     try {
       if (walletCartId != null && walletCartId.isNotEmpty) {
-        final result = await cartRepository.clearCartItems(walletCartId);
-
-        if (result['code'] == 'SUCCESS') {
+        if (this.amount == amount) {
           if (onSuccess != null) onSuccess();
         } else {
-          if (onFailure != null) onFailure();
+          final result = await cartRepository.clearCartItems(walletCartId);
+          if (result['code'] == 'SUCCESS') {
+            if (onSuccess != null) onSuccess();
+          } else {
+            if (onFailure != null) onFailure();
+          }
         }
       } else {
         walletCartId = await walletRepository.createWalletCart();
-
         if (walletCartId == null || walletCartId.isEmpty) {
           if (onFailure != null) onFailure('Error');
         } else {
@@ -67,6 +70,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     } else {
       final result =
           await walletRepository.addMoneyToWallet(walletCartId, amount, lang);
+      print(result);
 
       if (result['code'] == 'SUCCESS') {
         this.amount = amount;

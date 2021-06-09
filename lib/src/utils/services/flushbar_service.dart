@@ -7,6 +7,7 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -51,8 +52,7 @@ class FlushBarService {
                       ),
                     ),
                     Text(
-                      'currency'.tr() +
-                          ' ${model.cartTotalPrice.toStringAsFixed(3)}',
+                      '${'currency'.tr()} ${NumericService.roundString(model.cartTotalPrice, 3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 13.sp,

@@ -19,6 +19,7 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -199,7 +200,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
       if (result != null) {
         double amount = double.parse(details['subTotalPrice']) - user.balance;
-        await Navigator.pushNamed(context, Routes.myWallet, arguments: amount);
+        double value = NumericService.roundDouble(amount, 3);
+        await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
         setState(() {});
       }
     } else {

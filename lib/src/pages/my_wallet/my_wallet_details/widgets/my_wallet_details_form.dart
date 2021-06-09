@@ -122,7 +122,6 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     ),
                   ),
                 ),
-                validator: (value) {},
               ),
             ),
             Consumer<MarkaaAppChangeNotifier>(
@@ -176,6 +175,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
 
   void _onAddMoney() {
     _walletChangeNotifier.createWalletCart(
+      amount: _amountController.text,
       onProcess: _onCreatingWalletCart,
       onSuccess: _onCreatedWalletCartSuccess,
       onFailure: _onCreatedWalletCartFailure,

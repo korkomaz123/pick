@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -76,8 +77,7 @@ class _MarkaaCartAddedSuccessDialogState
                           ),
                         ),
                         Text(
-                          'currency'.tr() +
-                              ' ${model.cartTotalPrice.toStringAsFixed(3)}',
+                          '${'currency'.tr()} ${NumericService.roundString(model.cartTotalPrice, 3)}',
                           style: mediumTextStyle.copyWith(
                             color: darkColor,
                             fontSize: 13.sp,

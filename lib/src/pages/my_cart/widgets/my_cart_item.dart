@@ -10,6 +10,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,7 +39,7 @@ class MyCartItem extends StatelessWidget {
     String priceString = cartItem.product.price;
     double price = double.parse(priceString);
     double discountPrice = price * (100 - discount) / 100;
-    String discountPriceString = discountPrice.toStringAsFixed(3);
+    String discountPriceString = NumericService.roundString(discountPrice, 3);
     return Stack(
       children: [
         Container(

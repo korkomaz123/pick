@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 
 class MyWalletDetailsHeader extends StatelessWidget
     implements PreferredSizeWidget {
@@ -26,7 +27,7 @@ class MyWalletDetailsHeader extends StatelessWidget
         child: Column(
           children: [
             Text(
-              '${user.balance.toStringAsFixed(3)} ' + '(${'kwd'.tr()})',
+              '${NumericService.roundString(user.balance, 3)} (${'kwd'.tr()})',
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: 23.sp,

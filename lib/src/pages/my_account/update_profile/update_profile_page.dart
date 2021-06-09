@@ -73,7 +73,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       drawer: MarkaaSideMenu(),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess ||
+              state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -117,7 +118,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                         _buildPhoneNumber(),
                         SizedBox(height: 10.h),
                         _buildEmailAddress(),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 30.h),
                         _buildUpdateButton(),
                         SizedBox(height: 30.h),
                       ],
@@ -167,7 +168,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty ? CachedNetworkImageProvider(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty
+                      ? CachedNetworkImageProvider(user.profileUrl)
+                      : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,
@@ -230,7 +233,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: firstNameController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'first_name'.tr(),
@@ -251,7 +254,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: lastNameController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'last_name'.tr(),
@@ -272,7 +275,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: phoneNumberController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'phone_number_hint'.tr(),
@@ -293,7 +296,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: emailController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'email_hint'.tr(),
@@ -309,6 +312,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildUpdateButton() {
     return Container(
       width: 375.w,
+      height: 50.h,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'update_button_title'.tr(),
@@ -317,7 +321,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         onPressed: () => _onSave(),
-        radius: 0,
+        radius: 30,
+        isBold: true,
       ),
     );
   }

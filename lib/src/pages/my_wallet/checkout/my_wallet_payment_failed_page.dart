@@ -16,7 +16,8 @@ class MyWalletPaymentFailedPage extends StatefulWidget {
       _MyWalletPaymentFailedPageState();
 }
 
-class _MyWalletPaymentFailedPageState extends State<MyWalletPaymentFailedPage> {
+class _MyWalletPaymentFailedPageState extends State<MyWalletPaymentFailedPage>
+    with WidgetsBindingObserver {
   WalletChangeNotifier _walletChangeNotifier;
 
   @override
@@ -28,50 +29,60 @@ class _MyWalletPaymentFailedPageState extends State<MyWalletPaymentFailedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == Routes.myWallet,
+        );
+        Navigator.pop(context);
+        return true;
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 25.sp,
-            color: greyColor,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 25.sp,
+              color: greyColor,
+            ),
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                (route) => route.settings.name == Routes.myWallet,
+              );
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == Routes.myWallet,
-            );
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: Container(
-        width: designWidth.w,
-        child: Column(
-          children: [
-            SizedBox(height: 100.h),
-            SvgPicture.asset(walletFailedIcon),
-            Text(
-              'sorry'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 52.sp,
-                fontWeight: FontWeight.w700,
-                color: primaryColor,
+        body: Container(
+          width: designWidth.w,
+          child: Column(
+            children: [
+              SizedBox(height: 100.h),
+              SvgPicture.asset(walletFailedIcon),
+              Text(
+                'sorry'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 52.sp,
+                  fontWeight: FontWeight.w700,
+                  color: primaryColor,
+                ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 80.w),
-              child: Text(
-                'wallet_added_failure_message'.tr(),
-                textAlign: TextAlign.center,
-                style: mediumTextStyle.copyWith(fontSize: 23.sp),
+              SizedBox(height: 10.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 80.w),
+                child: Text(
+                  'wallet_added_failure_message'.tr(),
+                  textAlign: TextAlign.center,
+                  style: mediumTextStyle.copyWith(fontSize: 23.sp),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

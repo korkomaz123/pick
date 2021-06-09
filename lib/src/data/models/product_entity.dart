@@ -1,6 +1,7 @@
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 
 class ProductEntity {
   final String entityId;
@@ -111,12 +112,18 @@ class ProductEntity {
         name = json['name'],
         metaDescription = json['meta_description'],
         price = json['special_price'] != null
-            ? double.parse(json['special_price']).toStringAsFixed(3)
+            ? StringService.roundString(json['special_price'], 3)
             : json['price'] != null
-                ? double.parse(json['price']).toStringAsFixed(3)
+                ? StringService.roundString(json['price'], 3)
                 : null,
-        beforePrice = json['price'] != null ? double.parse(json['price']).toStringAsFixed(3) : null,
-        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
+        beforePrice = json['price'] != null
+            ? StringService.roundString(json['price'], 3)
+            : null,
+        discount = _getDiscount(
+            json['special_price'] != null
+                ? json['special_price']
+                : json['price'],
+            json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -148,7 +155,8 @@ class ProductEntity {
       : entityId = product.entityId,
         typeId = product.typeId,
         sku = product.sku ?? "",
-        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
+        inStock =
+            product.stockQty != null && product.stockQty > 0 ? true : false,
         metaKeyword = product.metaKeyword ?? "",
         description = product.description ?? '',
         shortDescription = product.shortDescription ?? '',
@@ -169,8 +177,10 @@ class ProductEntity {
         variants = _getVariants(null);
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice = afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice = beforePriceString != null ? double.parse(beforePriceString) : 0;
+    double afterPrice =
+        afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice =
+        beforePriceString != null ? double.parse(beforePriceString) : 0;
     if (beforePrice == 0) {
       return 0;
     }

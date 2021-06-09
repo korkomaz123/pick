@@ -18,6 +18,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
@@ -304,7 +305,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${subTotal.toStringAsFixed(3)} ' + 'currency'.tr(),
+                  '${NumericService.roundString(subTotal, 3)} ${'currency'.tr()}',
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: 18.sp,
@@ -325,7 +326,7 @@ class _MyCartPageState extends State<MyCartPage>
                   ),
                 ),
                 Text(
-                  '${discount.toStringAsFixed(3)} ' + 'currency'.tr(),
+                  '${NumericService.roundString(discount, 3)} ${'currency'.tr()}',
                   style: mediumTextStyle.copyWith(
                     color: primaryColor,
                     fontSize: 18.sp,
@@ -346,7 +347,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                '${totalPrice.toStringAsFixed(3)} ' + 'currency'.tr(),
+                '${NumericService.roundString(totalPrice, 3)} ${'currency'.tr()}',
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: 18.sp,
@@ -472,11 +473,14 @@ class _MyCartPageState extends State<MyCartPage>
     totalPrice = subtotalPrice + serviceFees - discount;
 
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
-    orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['discount'] =
+        NumericService.roundString(discount, 3);
+    orderDetails['orderDetails']['totalPrice'] =
+        NumericService.roundString(totalPrice, 3);
     orderDetails['orderDetails']['subTotalPrice'] =
-        subtotalPrice.toStringAsFixed(3);
-    orderDetails['orderDetails']['fees'] = serviceFees.toStringAsFixed(3);
+        NumericService.roundString(subtotalPrice, 3);
+    orderDetails['orderDetails']['fees'] =
+        NumericService.roundString(serviceFees, 3);
   }
 
   void _onRemoveFailure(String message) {
