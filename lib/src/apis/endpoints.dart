@@ -33,8 +33,8 @@ class EndPoints {
   static const String addShippingAddress = '$baseUrl/addShippingAddress';
   static const String deleteShippingAddress = '$baseUrl/deleteShippingAddress';
   static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
-  static const String submitOrder = '$baseUrl/SubmitOrder';
-  static const String placeOrder = '$baseUrl/PlaceOrder';
+  // static const String submitOrder = '$baseUrl/SubmitOrder';
+  static const String submitOrder = '$baseUrl/PlaceOrder';
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
   static const String getAboutus = '$baseUrl/getaboutus';
