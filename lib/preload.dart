@@ -34,19 +34,13 @@ class Preload {
   static String imagesUrl = "";
   static String languageCode;
 
-  static String get language => EasyLocalization.of(navigatorKey.currentContext)
-      .locale
-      .languageCode
-      .toLowerCase();
+  static String get language => EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
   static set language(String val) => setLanguage(val: val);
 
   static setLanguage({String val}) {
     val != null && val.isNotEmpty
         ? languageCode = val
-        : languageCode = EasyLocalization.of(navigatorKey.currentContext)
-            .locale
-            .languageCode
-            .toLowerCase();
+        : languageCode = EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
     lang = languageCode;
   }
 
@@ -95,10 +89,10 @@ class Preload {
       print(MarkaaReporter.email);
       print(MarkaaReporter.password);
       try {
-      await signInRepo.loginFirebase(
-        email: MarkaaReporter.email,
-        password: MarkaaReporter.password,
-      );
+        await signInRepo.loginFirebase(
+          email: MarkaaReporter.email,
+          password: MarkaaReporter.password,
+        );
       } catch (e) {
         print(e.toString());
       }
@@ -108,16 +102,10 @@ class Preload {
 
     if (user?.token != null) {
       //   isNotification = await settingRepo.getNotificationSetting(user.token);
-      navigatorKey.currentContext
-          .read<WishlistChangeNotifier>()
-          .getWishlistItems(user.token, lang);
-      navigatorKey.currentContext
-          .read<OrderChangeNotifier>()
-          .loadOrderHistories(user.token, lang);
+      navigatorKey.currentContext.read<WishlistChangeNotifier>().getWishlistItems(user.token, lang);
+      navigatorKey.currentContext.read<OrderChangeNotifier>().loadOrderHistories(user.token, lang);
       navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
-      navigatorKey.currentContext
-          .read<AddressChangeNotifier>()
-          .loadAddresses(user.token);
+      navigatorKey.currentContext.read<AddressChangeNotifier>().loadAddresses(user.token);
     }
     await _loadExtraData();
   }
@@ -159,7 +147,7 @@ class Preload {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      AdjustEnvironment.sandbox,
+      AdjustEnvironment.production,
     );
     config.logLevel = AdjustLogLevel.verbose;
 
@@ -167,8 +155,7 @@ class Preload {
       print('[Adjust]: Attribution changed!');
 
       if (attributionChangedData.trackerToken != null) {
-        print(
-            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
+        print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
       }
       if (attributionChangedData.trackerName != null) {
         print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
@@ -223,8 +210,7 @@ class Preload {
         print('[Adjust]: Adid: ' + sessionFailureData.adid);
       }
       if (sessionFailureData.willRetry != null) {
-        print(
-            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+        print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
       }
       if (sessionFailureData.jsonResponse != null) {
         print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
