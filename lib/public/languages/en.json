@@ -351,5 +351,7 @@
     "date": "Date",
     "user_debit": "User Debit",
     "debit": "Debit",
-    "transaction_id": "Transaction ID"
+    "transaction_id": "Transaction ID",
+    "added_money_wallet_failed": "Something went wrong. Please try again later!",
+    "invalid_length_phone_number": "The length should be between 8 and 9"
 }

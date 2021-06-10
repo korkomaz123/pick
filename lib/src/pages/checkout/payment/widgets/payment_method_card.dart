@@ -7,6 +7,7 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 
 import 'payment_card_form.dart';
 
@@ -112,7 +113,7 @@ class PaymentMethodCard extends StatelessWidget {
                               fontSize: 10.sp, color: primaryColor),
                         ),
                         Text(
-                          '${user.balance} ${'currency'.tr()}',
+                          '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
                           style: mediumTextStyle.copyWith(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,

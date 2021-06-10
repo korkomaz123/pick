@@ -224,8 +224,8 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     );
   }
 
-  void _onAddedMoneyFailure(String message) {
+  void _onAddedMoneyFailure() {
     _progressService.hideProgress();
-    _flushBarService.showErrorDialog(message);
+    _flushBarService.showErrorDialog('added_money_wallet_failed'.tr());
   }
 }

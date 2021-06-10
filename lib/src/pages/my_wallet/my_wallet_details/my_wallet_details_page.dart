@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/preload.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 
 import 'widgets/my_wallet_details_header.dart';
 import 'widgets/my_wallet_details_form.dart';
@@ -14,6 +16,15 @@ class MyWalletDetailsPage extends StatefulWidget {
 }
 
 class _MyWalletDetailsPageState extends State<MyWalletDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      user = await Preload.currentUser;
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

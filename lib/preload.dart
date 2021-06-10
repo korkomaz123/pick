@@ -56,6 +56,7 @@ class Preload {
   static final appRepo = AppRepository();
 
   static Future<void> checkAppVersion() async {
+    print('checking app version///');
     final versionEntity = await appRepo.checkAppVersion(
       Platform.isAndroid,
       languageCode,

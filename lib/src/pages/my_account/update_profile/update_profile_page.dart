@@ -20,6 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
+import 'package:string_validator/string_validator.dart';
 
 import 'bloc/profile_bloc.dart';
 import 'widgets/update_profile_success_dialog.dart';
@@ -283,7 +284,14 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (!isLength(value, 8, 9)) {
+            return 'invalid_length_phone_number'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
