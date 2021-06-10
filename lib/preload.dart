@@ -62,6 +62,7 @@ class Preload {
   static final appRepo = AppRepository();
 
   static Future<void> checkAppVersion() async {
+    print('checking app version///');
     final versionEntity = await appRepo.checkAppVersion(
       Platform.isAndroid,
       languageCode,
@@ -95,10 +96,10 @@ class Preload {
       print(MarkaaReporter.email);
       print(MarkaaReporter.password);
       try {
-      await signInRepo.loginFirebase(
-        email: MarkaaReporter.email,
-        password: MarkaaReporter.password,
-      );
+        await signInRepo.loginFirebase(
+          email: MarkaaReporter.email,
+          password: MarkaaReporter.password,
+        );
       } catch (e) {
         print(e.toString());
       }

@@ -351,5 +351,5 @@
     "debit": "مدين",
     "transaction_id": "معرف المعاملة",
     "added_money_wallet_failed": "هناك خطأ ما. الرجاء معاودة المحاولة في وقت لاحق!",
-    "invalid_length_phone_number": "يجب أن يكون الطول أكبر من 8"
+    "invalid_length_phone_number": "يجب أن يكون الطول بين 8 و 9"
 }

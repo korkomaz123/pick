@@ -186,7 +186,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'required_field'.tr();
-                      } else if (!isLength(value, 8)) {
+                      } else if (!isLength(value, 8, 9)) {
                         return 'invalid_length_phone_number'.tr();
                       }
                       return null;
