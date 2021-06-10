@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/preload.dart';
@@ -80,15 +81,18 @@ class OrderChangeNotifier extends ChangeNotifier {
     onProcess();
     try {
       String isVirtual = isWallet ? '1' : '0';
-      final result =
-          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
+      final result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);
-        if (orderDetails['token'] != null &&
-            orderDetails['token'] != '' &&
-            !isWallet) {
+        if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
+
+          await Preload.navigatorKey.currentContext.read<OrderChangeNotifier>().loadOrderHistories(
+                user.token,
+                lang,
+                () {},
+              );
           setKeys();
           notifyListeners();
         }
@@ -114,8 +118,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     try {
       final orderId = order.orderId;
 
-      final result =
-          await orderRepository.cancelOrderById(orderId, Preload.language);
+      final result = await orderRepository.cancelOrderById(orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
@@ -144,8 +147,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
 
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
@@ -174,8 +176,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.returnOrder(
-          token, orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         onSuccess();
       } else {
@@ -192,12 +193,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -211,12 +208,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
