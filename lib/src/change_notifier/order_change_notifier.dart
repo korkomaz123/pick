@@ -75,14 +75,19 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function onProcess,
     Function onSuccess,
     Function onFailure,
+    bool isWallet = false,
   }) async {
     onProcess();
     try {
-      final result = await orderRepository.placeOrder(orderDetails, lang);
+      String isVirtual = isWallet ? '1' : '0';
+      final result =
+          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);
-        if (orderDetails['token'] != null && orderDetails['token'] != '') {
+        if (orderDetails['token'] != null &&
+            orderDetails['token'] != '' &&
+            !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
           setKeys();
           notifyListeners();

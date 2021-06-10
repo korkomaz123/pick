@@ -15,8 +15,8 @@ class MarkaaLoadingDialog extends StatelessWidget {
         child: Center(
           child: SvgPicture.asset(
             'lib/public/icons/loading.svg',
-            width: 120,
-            height: 50,
+            width: 100,
+            height: 40,
           ),
         ),
       ),

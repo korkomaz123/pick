@@ -1,13 +1,15 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/my_account/widgets/logout_confirm_dialog.dart';
 import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -35,8 +37,7 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu>
-    with WidgetsBindingObserver {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int activeIndex;
   double menuWidth;
@@ -53,6 +54,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -61,7 +63,10 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+
     signInBloc = context.read<SignInBloc>();
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -83,7 +88,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
           }
           if (state is SignOutSubmittedFailure) {
             progressService.hideProgress();
-            flushBarService.showErrorMessage(state.message);
+            flushBarService.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {
@@ -96,7 +101,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     String lang = _globalProvider.currentLanguage;
                     if (_globalProvider.sideMenus[lang].length == 0) {
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: PulseLoadingSpinner(),
                       );
                     } else {
                       return SingleChildScrollView(
@@ -248,9 +253,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              if (_globalProvider.activeMenu == menu.id) ...[
-                _buildSubmenu(menu)
-              ],
+              if (_globalProvider.activeMenu == menu.id) ...[_buildSubmenu(menu)],
             ],
           );
         }).toList(),
@@ -259,12 +262,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   Widget _buildParentMenu(GlobalProvider _globalProvider, int index) {
-    CategoryMenuEntity menu =
-        _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
+    CategoryMenuEntity menu = _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
     return InkWell(
-      onTap: () => menu.subMenu.isNotEmpty
-          ? _globalProvider.displaySubmenu(menu, index)
-          : _viewCategory(menu, 0),
+      onTap: () => menu.subMenu.isNotEmpty ? _globalProvider.displaySubmenu(menu, index) : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: 15.h),
@@ -280,8 +280,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     height: 25.w,
                     imageUrl: menu.iconUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.image, size: 20)),
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],
                 SizedBox(width: 10.w),
@@ -296,9 +295,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             ),
             if (menu.subMenu.isNotEmpty) ...[
               Icon(
-                _globalProvider.activeMenu == menu.id
-                    ? Icons.arrow_drop_down
-                    : Icons.arrow_right,
+                _globalProvider.activeMenu == menu.id ? Icons.arrow_drop_down : Icons.arrow_right,
                 size: 25.sp,
                 color: greyDarkColor,
               )
@@ -363,16 +360,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   void _login() async {
     await Navigator.pushNamed(context, Routes.signIn);
+    markaaAppChangeNotifier.rebuild();
     Navigator.pop(context);
   }
 
   void _logout() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return LogoutConfirmDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }
@@ -394,9 +388,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
     progressService.hideProgress();
 
-    Navigator.pop(context);
+    Navigator.pop(Preload.navigatorKey.currentContext);
     Navigator.popUntil(
-      context,
+      Preload.navigatorKey.currentContext,
       (route) => route.settings.name == Routes.home,
     );
   }

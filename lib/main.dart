@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
@@ -6,10 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'preload.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/routes/routes.dart';
-import 'src/utils/repositories/local_storage_repository.dart';
 
 const bool USE_FIRESTORE_EMULATOR = false;
 
@@ -30,24 +31,19 @@ void main() async {
   /// Firebase initialize
   await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR)
-    FirebaseFirestore.instance.settings = const Settings(
-      host: 'localhost:8080',
-      sslEnabled: false,
-      persistenceEnabled: false,
-    );
+    FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
+  if (Platform.isIOS)
+    try {
+      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
+      if (status == TrackingStatus.notDetermined) {
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      }
+      final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+      print("uuid ==> $uuid");
+    } on PlatformException {}
 
-  String _page = Routes.start;
-  // await LocalStorageRepository().removeItem('usage');
-
-  bool isExist = await LocalStorageRepository().existItem('usage');
-  String token = await Preload.localRepo.getToken();
-
-  if (isExist) {
-    //Start Loading Assets
-    await Preload.appOpen();
-    _page = token != null && token.isNotEmpty ? Routes.home : Routes.home;
-  }
-  print("token ====> $token");
+  final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+  print("UUID: $uuid");
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',
@@ -57,7 +53,7 @@ void main() async {
         Locale('ar', 'AR'),
       ],
       saveLocale: true,
-      child: MarkaaApp(home: _page ?? Routes.start),
+      child: MarkaaApp(home: Routes.start),
     ),
   );
 }

@@ -17,7 +17,6 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/theme/icons.dart';
-import 'my_cart_remove_dialog.dart';
 
 class MyCartSaveForLaterItems extends StatefulWidget {
   final ProgressService progressService;
@@ -189,15 +188,8 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   void _onRemoveItem(ProductModel item) async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return MyCartRemoveDialog(
-          title: 'my_cart_remove_item_dialog_title'.tr(),
-          text: 'my_cart_save_later_remove_item_dialog_text'.tr(),
-        );
-      },
-    );
+    final result = await widget.flushBarService.showConfirmDialog(
+        message: 'my_cart_save_later_remove_item_dialog_text');
     if (result != null) {
       await widget.wishlistChangeNotifier
           .removeItemFromWishlist(user.token, item);
@@ -212,13 +204,11 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   void _onAddSuccess(ProductModel item) {
-    _flushBarService.showAddCartMessage(item);
-
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 
   _onAddFailure(String message) {
-    _flushBarService.showErrorMessage(message);
+    _flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

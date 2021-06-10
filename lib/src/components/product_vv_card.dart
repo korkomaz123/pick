@@ -4,6 +4,8 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/components/custom/sliding_sheet.dart';
+import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -19,6 +21,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,7 +59,10 @@ class _ProductVVCardState extends State<ProductVVCard>
     with TickerProviderStateMixin {
   bool isWishlist;
   int index;
+
   FlushBarService flushBarService;
+  ProgressService progressService;
+
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
@@ -68,9 +74,13 @@ class _ProductVVCardState extends State<ProductVVCard>
   void initState() {
     super.initState();
     isWishlist = false;
+
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+
     flushBarService = FlushBarService(context: context);
+    progressService = ProgressService(context: context);
+
     _initAnimation();
   }
 
@@ -396,22 +406,49 @@ class _ProductVVCardState extends State<ProductVVCard>
 
       if (widget.product.stockQty != null && widget.product.stockQty > 0) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
-            onSuccess: _onAddSuccess, onFailure: _onAddFailure);
+            onProcess: _onAdding,
+            onSuccess: _onAddSuccess,
+            onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorMessage('out_of_stock_error'.tr());
+        flushBarService.showErrorDialog(
+            'out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
 
+  _onAdding() {
+    progressService.addingProductProgress();
+  }
+
   void _onAddSuccess() {
-    flushBarService.showAddCartMessage(widget.product);
+    progressService.hideProgress();
+    showSlidingTopSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 0,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return MarkaaCartAddedSuccessDialog(product: widget.product);
+          },
+        );
+      },
+    );
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 
   _onAddFailure(String message) {
-    flushBarService.showErrorMessage(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 
   void _onWishlist() async {

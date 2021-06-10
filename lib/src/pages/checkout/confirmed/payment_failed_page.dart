@@ -15,6 +15,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/routes/routes.dart';
 
 class PaymentFailedPage extends StatefulWidget {
+  final bool isReorder;
+
+  PaymentFailedPage({@required this.isReorder});
+
   @override
   _PaymentFailedPageState createState() => _PaymentFailedPageState();
 }
@@ -108,10 +112,19 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         titleColor: Colors.white,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.popUntil(
-          context,
-          (route) => route.settings.name == Routes.myCart,
-        ),
+        onPressed: () {
+          if (widget.isReorder) {
+            Navigator.popAndPushNamed(
+              context,
+              Routes.myCart,
+            );
+          } else {
+            Navigator.popUntil(
+              context,
+              (route) => route.settings.name == Routes.myCart,
+            );
+          }
+        },
         radius: 30,
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_custom_suffix_input.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
@@ -97,7 +97,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       countryController.text = addressParam?.country;
       countryId = addressParam?.countryId;
       stateController.text = addressParam?.region;
-      regionId = addressParam?.region;
+      regionId = addressParam?.regionId;
       cityController.text = addressParam?.city;
       companyController.text = addressParam?.company;
       streetController.text = addressParam?.street;
@@ -217,27 +217,19 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     onTap: _onSelectBlock,
                   ),
                   SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MarkaaCustomInput(
-                        controller: streetController,
-                        width: 310.w,
-                        padding: 10.w,
-                        fontSize: 14.sp,
-                        hint: 'checkout_street_name_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
-                        inputType: TextInputType.text,
-                      ),
-                      Row(
-                        children: [
-                          _buildSearchingAddressButton(),
-                          SizedBox(width: 10.w),
-                        ],
-                      ),
-                    ],
+                  MarkaaCustomSuffixInput(
+                    controller: streetController,
+                    width: 375.w,
+                    padding: 10.w,
+                    fontSize: 14.sp,
+                    hint: 'checkout_street_name_hint'.tr(),
+                    validator: (value) =>
+                        value.isEmpty ? 'required_field'.tr() : null,
+                    inputType: TextInputType.text,
+                    suffixIcon: IconButton(
+                      onPressed: _onSearchAddress,
+                      icon: SvgPicture.asset(searchAddrIcon),
+                    ),
                   ),
                   SizedBox(height: 10.h),
                   MarkaaCustomInputMulti(
@@ -261,31 +253,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
     );
   }
 
-  Widget _buildSearchingAddressButton() {
-    return Container(
-      width: 55.w,
-      height: 55.h,
-      child: MarkaaTextIconButton(
-        title: "",
-        titleSize: 14.sp,
-        titleColor: greyColor,
-        buttonColor: greyLightColor,
-        borderColor: Colors.transparent,
-        icon: SvgPicture.asset(searchAddrIcon, width: 16.sp),
-        onPressed: () => _onSearchAddress(),
-        radius: 10.sp,
-      ),
-    );
-  }
-
   Widget _buildSaveButton() {
     return Container(
       width: 375.w,
       height: 50.h,
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.h,
-        vertical: 30.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 10.h, vertical: 30.h),
       child: MaterialButton(
         onPressed: () => _onSave(),
         color: primaryColor,
@@ -309,9 +281,9 @@ class _EditAddressPageState extends State<EditAddressPage> {
       context,
       Routes.searchAddress,
     );
+    FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
-      print(address.street);
       streetController.text = address.street ?? '';
     }
   }
@@ -379,12 +351,20 @@ class _EditAddressPageState extends State<EditAddressPage> {
                 : 0,
         addressId: addressParam?.addressId ?? '',
       );
-      if (isNew) {
-        await model.addAddress(
-            user.token, address, _onProcess, _onSuccess, _onFailure);
+      if (user?.token != null) {
+        if (isNew) {
+          await model.addAddress(user.token, address,
+              onProcess: _onProcess,
+              onSuccess: _onSuccess,
+              onFailure: _onFailure);
+        } else {
+          await model.updateAddress(user.token, address,
+              onProcess: _onProcess,
+              onSuccess: _onSuccess,
+              onFailure: _onFailure);
+        }
       } else {
-        await model.updateAddress(
-            user.token, address, _onProcess, _onSuccess, _onFailure);
+        await model.updateGuestAddress(address.toJson());
       }
     }
   }
@@ -395,10 +375,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onSuccess() {
     progressService.hideProgress();
+
     if (isCheckout) {
       Navigator.popUntil(
         context,
-        (route) => route.settings.name == Routes.checkoutAddress,
+        (route) => route.settings.name == Routes.checkout,
       );
     } else {
       Navigator.popUntil(
@@ -410,6 +391,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(error);
+    flushBarService.showErrorDialog(error);
   }
 }

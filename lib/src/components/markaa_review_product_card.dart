@@ -26,15 +26,6 @@ class MarkaaReviewProductCard extends StatelessWidget {
             width: 90.h,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            // loading: (_, child, chunkEvent) {
-            //   return chunkEvent != null
-            //       ? Image.asset(
-            //           'lib/public/images/loading/image_loading.jpg',
-            //           width: 90.h,
-            //           height: 120.h,
-            //         )
-            //       : child;
-            // },
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -93,12 +84,32 @@ class MarkaaReviewProductCard extends StatelessWidget {
                         color: primaryColor,
                       ),
                     ),
-                    Text(
-                      cartItem.product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 16.sp,
-                        color: primaryColor,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          cartItem.product.price + ' ' + 'currency'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 16.sp,
+                            color: primaryColor,
+                          ),
+                        ),
+                        if (cartItem.product.price !=
+                            cartItem.product.beforePrice) ...[
+                          SizedBox(width: 5.w),
+                          Text(
+                            cartItem.product.beforePrice +
+                                ' ' +
+                                'currency'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              decorationStyle: TextDecorationStyle.solid,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: dangerColor,
+                              fontSize: 12.sp,
+                              color: greyColor,
+                            ),
+                          ),
+                        ]
+                      ],
                     ),
                   ],
                 ),

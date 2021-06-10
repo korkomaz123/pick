@@ -1,11 +1,9 @@
 import 'package:markaa/src/pages/brand_list/brand_list_page.dart';
 import 'package:markaa/src/pages/category_list/category_list_page.dart';
-import 'package:markaa/src/pages/checkout/address/checkout_address_page.dart';
-import 'package:markaa/src/pages/checkout/address/checkout_guest_address_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/payment_failed_page.dart';
+import 'package:markaa/src/pages/checkout/payment/checkout_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_payment_page.dart';
-import 'package:markaa/src/pages/checkout/payment/checkout_payment_card_page.dart';
 import 'package:markaa/src/pages/checkout/search_address/search_address_screen.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
@@ -29,6 +27,10 @@ import 'package:markaa/src/pages/my_account/shipping_address/shipping_address_pa
 import 'package:markaa/src/pages/my_account/terms/terms_page.dart';
 import 'package:markaa/src/pages/my_account/update_profile/update_profile_page.dart';
 import 'package:markaa/src/pages/my_cart/my_cart_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_failed_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_page.dart';
+import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_success_page.dart';
 import 'package:markaa/src/pages/my_wallet/my_wallet_details/my_wallet_details_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/banks_list_page.dart';
 import 'package:markaa/src/pages/my_wallet/banks/bank_page.dart';
@@ -43,6 +45,7 @@ import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
 // import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
+import 'package:markaa/src/pages/summer_collection/summer_collection_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +95,11 @@ class RouteGenerator {
           builder: (context) => ProductListPage(arguments: params),
           settings: RouteSettings(name: Routes.productList),
         );
+      case Routes.summerCollection:
+        return CupertinoPageRoute(
+          builder: (context) => SummerCollectionPage(arguments: params),
+          settings: RouteSettings(name: Routes.summerCollection),
+        );
       case Routes.categoryList:
         return PageRouteBuilder(
           settings: RouteSettings(name: Routes.categoryList),
@@ -132,25 +140,16 @@ class RouteGenerator {
           builder: (context) => SearchAddressScreen(),
           settings: RouteSettings(name: Routes.searchAddress),
         );
-      case Routes.checkoutAddress:
+
+      case Routes.checkout:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutAddressPage(reorder: params),
-          settings: RouteSettings(name: Routes.checkoutAddress),
-        );
-      case Routes.checkoutGuestAddress:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutGuestAddressPage(),
-          settings: RouteSettings(name: Routes.checkoutGuestAddress),
+          builder: (context) => CheckoutPage(reorder: params),
+          settings: RouteSettings(name: Routes.checkout),
         );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutPaymentPage(reorder: params),
+          builder: (context) => CheckoutPaymentPage(params: params),
           settings: RouteSettings(name: Routes.checkoutPayment),
-        );
-      case Routes.checkoutPaymentCard:
-        return CupertinoPageRoute(
-          builder: (context) => CheckoutPaymentCardPage(params: params),
-          settings: RouteSettings(name: Routes.checkoutPaymentCard),
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(
@@ -159,7 +158,7 @@ class RouteGenerator {
         );
       case Routes.paymentFailed:
         return CupertinoPageRoute(
-          builder: (context) => PaymentFailedPage(),
+          builder: (context) => PaymentFailedPage(isReorder: params),
           settings: RouteSettings(name: Routes.paymentFailed),
         );
       case Routes.search:
@@ -276,7 +275,7 @@ class RouteGenerator {
         );
       case Routes.myWallet:
         return CupertinoPageRoute(
-          builder: (_) => MyWalletDetailsPage(),
+          builder: (_) => MyWalletDetailsPage(amount: params),
           settings: RouteSettings(name: Routes.myWallet),
         );
       case Routes.bankList:
@@ -288,6 +287,26 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (_) => BankPage(),
           settings: RouteSettings(name: Routes.addNewBankAccount),
+        );
+      case Routes.myWalletCheckout:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletCheckoutPage(reorder: params),
+          settings: settings,
+        );
+      case Routes.myWalletPayment:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentPage(params: params),
+          settings: settings,
+        );
+      case Routes.myWalletSuccess:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentSuccessPage(),
+          settings: settings,
+        );
+      case Routes.myWalletFailed:
+        return CupertinoPageRoute(
+          builder: (_) => MyWalletPaymentFailedPage(),
+          settings: settings,
         );
       default:
       // return CupertinoPageRoute(

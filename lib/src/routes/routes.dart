@@ -25,6 +25,7 @@ class Routes {
 
   /// products list from home categories, categories, stores, brands
   static const String productList = '/product-list';
+  static const String summerCollection = '/summer-collection';
 
   /// single product
   static const String product = '/product-single';
@@ -44,13 +45,11 @@ class Routes {
 
   /// checkout
   static const String searchAddress = '/search-address';
-  static const String checkoutAddress = '/checkout-address';
-  static const String checkoutGuestAddress = '/checkout-guest-address';
   static const String checkoutShipping = '/checkout-shipping';
   static const String checkoutReview = '/checkout-review';
+  static const String checkout = '/checkout';
   static const String checkoutPayment = '/checkout-payment';
   static const String checkoutConfirmed = '/checkout-confirmed';
-  static const String checkoutPaymentCard = '/checkout-payment-card';
   static const String paymentFailed = '/payment-failed';
 
   /// wishlist
@@ -60,7 +59,8 @@ class Routes {
   static const String account = '/my-account';
   static const String updateProfile = '/update-profile';
   static const String notificationMessages = '/notification-messages';
-  static const String notificationMessageDetails = '/notification-message-details';
+  static const String notificationMessageDetails =
+      '/notification-message-details';
   static const String orderHistory = '/order-history';
   static const String terms = '/terms';
   static const String aboutUs = '/about-us';
@@ -80,4 +80,8 @@ class Routes {
   static const String myWallet = '/my-wallet';
   static const String bankList = '/bank-list';
   static const String addNewBankAccount = '/add-new-bank-account';
+  static const String myWalletCheckout = '/my-wallet-checkout';
+  static const String myWalletPayment = '/my-wallet-payment';
+  static const String myWalletSuccess = '/my-wallet-success';
+  static const String myWalletFailed = '/my-wallet-failed';
 }

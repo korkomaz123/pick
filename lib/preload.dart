@@ -120,6 +120,7 @@ class Preload {
     shippingMethods = await checkoutRepo.getShippingMethod();
     paymentMethods = await checkoutRepo.getPaymentMethod();
     regions = await shippingAddressRepo.getRegions();
+    print("regions ====>");
   }
 
   static Future<UserEntity> get currentUser => _getCurrentUser();
@@ -152,7 +153,7 @@ class Preload {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      AdjustEnvironment.production,
+      AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;
 

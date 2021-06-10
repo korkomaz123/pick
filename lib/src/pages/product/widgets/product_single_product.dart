@@ -26,6 +26,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../../../../preload.dart';
+import 'product_configurable_options.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
@@ -193,18 +194,40 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   Container(
                     width: double.infinity,
                     height: 460.h,
-                    child: CachedNetworkImage(
-                      imageUrl: widget?.model?.selectedVariant?.imageUrl,
-                      errorWidget: (context, url, error) {
-                        return Center(child: Icon(Icons.image, size: 20));
-                      },
+                    child: Stack(
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: widget?.model?.selectedVariant?.imageUrl,
+                          width: designWidth.w,
+                          height: 400.h,
+                          fit: BoxFit.fitHeight,
+                          errorWidget: (context, url, error) {
+                            return Center(child: Icon(Icons.image, size: 20));
+                          },
+                        ),
+                        Align(
+                          alignment: Preload.language == 'en'
+                              ? Alignment.bottomRight
+                              : Alignment.bottomLeft,
+                          child: _buildTitlebar(),
+                        ),
+                      ],
                     ),
                   )
                 ] else ...[
                   Container(
-                    width: double.infinity,
+                    width: designWidth.w,
                     height: 460.h,
-                    child: SizedBox.shrink(),
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Preload.language == 'en'
+                              ? Alignment.bottomRight
+                              : Alignment.bottomLeft,
+                          child: _buildTitlebar(),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ] else if (preCachedImages.isNotEmpty) ...[
@@ -215,7 +238,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 child: Column(
                   children: [
                     _buildTitle(),
-                    _buildDescription(),
+                    if (details.typeId == 'configurable') ...[
+                      ProductConfigurableOptions(
+                        productEntity: details,
+                        model: widget.model,
+                      )
+                    ] else ...[
+                      _buildDescription()
+                    ],
                     _buildPrice(),
                   ],
                 ),
@@ -226,13 +256,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           if (Preload.language == 'en') ...[
             Positioned(
-              top: 300.h,
+              top: 280.h,
               right: 0,
               child: _buildDiscount(),
             ),
           ] else ...[
             Positioned(
-              top: 320.h,
+              top: 280.h,
               left: 0,
               child: _buildDiscount(),
             ),
@@ -255,42 +285,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           fontSize: 16.sp,
           color: Colors.white,
         ),
-      ),
-    );
-  }
-
-  Widget _buildTitlebar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          InkWell(
-            onTap: () => _onShareProduct(),
-            child: SvgPicture.asset(shareIcon, width: 28.w, height: 28.h),
-          ),
-          SizedBox(height: 10.h),
-          Consumer<WishlistChangeNotifier>(
-            builder: (_, model, __) {
-              return InkWell(
-                onTap: () => user != null
-                    ? _onFavorite(widget.model)
-                    : Navigator.pushNamed(context, Routes.signIn),
-                child: ScaleTransition(
-                  scale: _favoriteScaleAnimation,
-                  child: Container(
-                    width: 28.w,
-                    height: 28.h,
-                    child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : favoriteIcon,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: 30.h),
-        ],
       ),
     );
   }
@@ -334,6 +328,42 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
+  Widget _buildTitlebar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          InkWell(
+            onTap: () => _onShareProduct(),
+            child: SvgPicture.asset(shareIcon, width: 28.w, height: 28.h),
+          ),
+          SizedBox(height: 10.h),
+          Consumer<WishlistChangeNotifier>(
+            builder: (_, model, __) {
+              return InkWell(
+                onTap: () => user != null
+                    ? _onFavorite(widget.model)
+                    : Navigator.pushNamed(context, Routes.signIn),
+                child: ScaleTransition(
+                  scale: _favoriteScaleAnimation,
+                  child: Container(
+                    width: 28.w,
+                    height: 28.h,
+                    child: SvgPicture.asset(
+                      isWishlist ? wishlistedIcon : favoriteIcon,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 45.h),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTitle() {
     return Container(
       width: double.infinity,
@@ -369,31 +399,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (details?.brandEntity != null) ...[
-                    Text(
-                      isStock
-                          ? 'in_stock'.tr().toUpperCase()
-                          : 'out_stock'.tr().toUpperCase(),
-                      style: mediumTextStyle.copyWith(
-                        color: isStock ? succeedColor : dangerColor,
-                        fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
-                      ),
-                    ),
-                  ],
-                  if (isStock && availableCount == 1) ...[
-                    Text(
-                      'stock_count'.tr().replaceFirst('#', '$availableCount'),
-                      style: mediumTextStyle.copyWith(
-                        color: dangerColor,
-                        fontSize: Preload.language == 'en' ? 10.sp : 12.sp,
-                      ),
-                    ),
-                  ]
-                ],
-              ),
+              if (details.typeId == 'configurable') ...[
+                _buildProductPrice()
+              ] else ...[
+                _buildStock()
+              ],
             ],
           ),
           Text(
@@ -402,6 +412,34 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (details?.brandEntity != null) ...[
+          Text(
+            isStock
+                ? 'in_stock'.tr().toUpperCase()
+                : 'out_stock'.tr().toUpperCase(),
+            style: mediumTextStyle.copyWith(
+              color: isStock ? succeedColor : dangerColor,
+              fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
+            ),
+          ),
+        ],
+        if (isStock && availableCount == 1) ...[
+          Text(
+            'stock_count'.tr().replaceFirst('#', '$availableCount'),
+            style: mediumTextStyle.copyWith(
+              color: dangerColor,
+              fontSize: Preload.language == 'en' ? 10.sp : 12.sp,
+            ),
+          ),
+        ]
+      ],
     );
   }
 
@@ -499,80 +537,92 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Container(
       width: double.infinity,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'sku'.tr() + ': ' + details.sku,
-            style: mediumTextStyle.copyWith(
-              fontSize: 12.sp,
-              color: primaryColor,
+          Expanded(
+            child: Text(
+              'sku'.tr() + ': ' + details.sku,
+              style: mediumTextStyle.copyWith(
+                fontSize: 12.sp,
+                color: primaryColor,
+              ),
             ),
           ),
-          Row(
-            children: [
-              if (discounted) ...[
-                SizedBox(width: 10.w),
-                Text(
-                  (details.beforePrice ??
-                          widget.model.selectedVariant.beforePrice) +
-                      ' ' +
-                      'currency'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    decorationStyle: TextDecorationStyle.solid,
-                    decoration: TextDecoration.lineThrough,
-                    decorationColor: dangerColor,
-                    fontSize: 14.sp,
-                    color: greyColor,
-                  ),
-                ),
-                SizedBox(width: 10.w),
-              ],
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    details.price != null
-                        ? details.price
-                        : widget?.model?.selectedVariant?.price != null
-                            ? widget.model.selectedVariant.price
-                            : '',
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 20.sp,
-                      color: greyColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(width: 1.w),
-                  if (details.price != null ||
-                      widget?.model?.selectedVariant?.price != null) ...[
-                    Text(
-                      'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 12.sp,
-                        color: greyColor,
-                      ),
-                    )
-                  ],
-                ],
-              ),
-            ],
-          ),
+          if (details.typeId == 'configurable') ...[
+            _buildStock()
+          ] else ...[
+            _buildProductPrice()
+          ],
         ],
       ),
     );
   }
 
-  void _onFavorite(ProductChangeNotifier model) async {
+  Widget _buildProductPrice() {
+    return Row(
+      children: [
+        if (discounted) ...[
+          SizedBox(width: 10.w),
+          Text(
+            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
+                ' ' +
+                'currency'.tr(),
+            style: mediumTextStyle.copyWith(
+              decorationStyle: TextDecorationStyle.solid,
+              decoration: TextDecoration.lineThrough,
+              decorationColor: dangerColor,
+              fontSize: 14.sp,
+              color: greyColor,
+            ),
+          ),
+          SizedBox(width: 10.w),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              widget?.model?.selectedVariant?.price != null
+                  ? widget.model.selectedVariant.price
+                  : details.price != null
+                      ? details.price
+                      : '',
+              style: mediumTextStyle.copyWith(
+                fontSize: 18.sp,
+                color: greyColor,
+                // fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(width: 1.w),
+            if (details.price != null ||
+                widget?.model?.selectedVariant?.price != null) ...[
+              Text(
+                'currency'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 12.sp,
+                  color: greyColor,
+                ),
+              )
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+
+  _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorMessage('required_options'.tr());
+      flushBarService.showErrorDialog(
+          'required_options'.tr(), "no_qty.svg");
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorMessage('out_of_stock_error'.tr());
+      flushBarService.showErrorDialog(
+          'out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     _updateWishlist(model);
@@ -583,7 +633,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     });
   }
 
-  void _updateWishlist(ProductChangeNotifier model) async {
+  _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
       await wishlistChangeNotifier.removeItemFromWishlist(
           user.token, widget.product, widget.model.selectedVariant);
@@ -593,7 +643,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     }
   }
 
-  void _onShareProduct() async {
+  _onShareProduct() async {
     Uri shareLink =
         await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: details.name);

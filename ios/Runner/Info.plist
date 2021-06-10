@@ -25,15 +25,12 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt</string>
-			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb361840648405712</string>
+				<string>com.googleusercontent.apps.29156493421-l74luoqj813t8g7a8043ii722rtguv16</string>
+				<string>fb215227360272455</string>
 			</array>
 		</dict>
 		<dict>
@@ -50,14 +47,25 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
-	<string>361840648405712</string>
+	<string>215227360272455</string>
 	<key>FacebookDisplayName</key>
-	<string>Markaa</string>
+	<string>Markaa App</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
+		<string>fbapi20160328</string>
+		<string>fbauth</string>
 		<string>fb-messenger-share-api</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
@@ -74,6 +82,8 @@
 	<string>upload video</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need to access to your gallery  to pick the picture of profile</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

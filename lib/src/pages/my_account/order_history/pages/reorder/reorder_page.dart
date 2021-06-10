@@ -7,6 +7,8 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
+import 'package:markaa/src/pages/my_account/order_history/widgets/order_payment_method.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/images.dart';
@@ -19,8 +21,6 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../widgets/reorder_remove_dialog.dart';
 
 class ReOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -199,7 +199,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               _buildSubtotal(),
               _buildShippingCost(),
               _buildTotal(),
-              _buildAddressBar(),
+              OrderAddressBar(address: order.address),
               _buildNextButton(),
             ],
           ),
@@ -342,17 +342,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
               fontSize: 14.sp,
             ),
           ),
-          Row(
-            children: [
-              paymentWidget,
-              Text(
-                order.paymentMethod.title,
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ],
+          OrderPaymentMethod(
+            paymentMethod: order.paymentMethod.id,
           ),
         ],
       ),
@@ -409,7 +400,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ' + order.shippingMethod.serviceFees.toString(),
+            order.shippingMethod.serviceFees == 0
+                ? 'free'.tr()
+                : 'currency'.tr() +
+                    ' ' +
+                    order.shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -455,45 +450,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
     });
   }
 
-  Widget _buildAddressBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 30.h,
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 30.h,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(2),
-          color: Colors.grey.shade300,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              order.address.title.isNotEmpty
-                  ? '${order.address.title}: '
-                  : 'Unnamed title: ',
-              style: boldTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: primaryColor,
-              ),
-            ),
-            Text(
-              '${order.address.street}, ${order.address.city}, ${order.address.countryId}',
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildNextButton() {
     return MaterialButton(
       onPressed: () => _onNext(),
@@ -514,12 +470,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _onDeleteOrderItem(String key) async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return ReorderRemoveDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'remove_reorder_item_subtitle');
     if (result != null) {
       await myCartChangeNotifier.removeReorderCartItem(key);
     }
@@ -531,9 +483,34 @@ class _ReOrderPageState extends State<ReOrderPage> {
           .containsKey(widget.order.address.addressId)) {
         addressChangeNotifier.setDefaultAddress(widget.order.address);
       }
-      Navigator.pushNamed(context, Routes.checkoutAddress, arguments: order);
+
+      _prepareDetails();
+
+      Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
-      flushBarService.showErrorMessage('reorder_items_error'.tr());
+      flushBarService.showErrorDialog('reorder_items_error'.tr());
     }
+  }
+
+  _prepareDetails() {
+    orderDetails = {};
+    orderDetails['shipping'] = widget.order.shippingMethod.id;
+    orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
+    orderDetails['token'] = user.token;
+
+    double totalPrice = .0;
+    double subtotalPrice = .0;
+    double discount = .0;
+
+    subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
+    totalPrice = subtotalPrice + widget.order.shippingMethod.serviceFees;
+
+    orderDetails['orderDetails'] = {};
+    orderDetails['orderDetails']['discount'] = discount.toStringAsFixed(3);
+    orderDetails['orderDetails']['totalPrice'] = totalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['subTotalPrice'] =
+        subtotalPrice.toStringAsFixed(3);
+    orderDetails['orderDetails']['fees'] =
+        widget.order.shippingMethod.serviceFees.toStringAsFixed(3);
   }
 }

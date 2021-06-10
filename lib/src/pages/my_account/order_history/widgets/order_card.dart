@@ -10,6 +10,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'order_payment_method.dart';
+
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
 
@@ -29,11 +31,13 @@ class _OrderCardState extends State<OrderCard> {
   }
 
   void _checkOrderItems() {
-    for (int i = 0; i < widget.order.cartItems.length; i++) {
-      if (widget.order.cartItems[i].product.stockQty != null &&
-          widget.order.cartItems[i].product.stockQty > 0) {
-        isStock = true;
-        break;
+    if (widget?.order?.cartItems != null) {
+      for (int i = 0; i < widget.order.cartItems.length; i++) {
+        if (widget.order.cartItems[i].product.stockQty != null &&
+            widget.order.cartItems[i].product.stockQty > 0) {
+          isStock = true;
+          break;
+        }
       }
     }
     setState(() {});
@@ -168,12 +172,8 @@ class _OrderCardState extends State<OrderCard> {
                     fontSize: 14.sp,
                   ),
                 ),
-                Text(
-                  widget.order.paymentMethod.title,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                OrderPaymentMethod(
+                  paymentMethod: widget.order.paymentMethod.id,
                 ),
               ],
             ),

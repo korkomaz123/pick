@@ -55,10 +55,9 @@ class NotificationSetup {
       _onLaunchMessage(event.data);
     });
 
-    String topic = Preload.language == 'en'
-        ? MarkaaNotificationChannels.enChannel
-        : MarkaaNotificationChannels.arChannel;
-    await firebaseMessaging.subscribeToTopic(topic);
+    await firebaseMessaging
+        .unsubscribeFromTopic(Preload.language == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+    await firebaseMessaging.subscribeToTopic(Preload.language == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
     updateFcmDeviceToken();
   }
 
@@ -78,8 +77,7 @@ class NotificationSetup {
   }
 
   void _initializeLocalNotification() async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
@@ -92,8 +90,7 @@ class NotificationSetup {
       onSelectNotification: onSelectNotification,
     );
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 

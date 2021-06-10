@@ -158,9 +158,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(
-                  top: 2.h,
-                ),
+                padding: EdgeInsets.only(top: 2.h),
                 child: VerticalDivider(
                   width: 1.w,
                   thickness: 1.w,

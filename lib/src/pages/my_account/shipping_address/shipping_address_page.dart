@@ -19,8 +19,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'widgets/shipping_address_remove_dialog.dart';
-
 class ShippingAddressPage extends StatefulWidget {
   final bool isCheckout;
 
@@ -33,21 +31,26 @@ class ShippingAddressPage extends StatefulWidget {
 class _ShippingAddressPageState extends State<ShippingAddressPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final dataKey = GlobalKey();
+
   final _refreshController = RefreshController(initialRefresh: false);
+
   ProgressService progressService;
   FlushBarService flushBarService;
+
   List<AddressEntity> shippingAddresses;
   int selectedIndex;
   bool isCheckout = false;
-  int length;
+
   AddressChangeNotifier model;
 
   @override
   void initState() {
     super.initState();
     isCheckout = widget?.isCheckout != null ? widget.isCheckout : false;
+
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+
     model = context.read<AddressChangeNotifier>();
   }
 
@@ -269,12 +272,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRemove(String key) async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) {
-        return ShippingAddressRemoveDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'remove_shipping_address_subtitle');
     if (result != null) {
       await model.deleteAddress(
           user.token, key, _onProcess, _onSuccess, _onFailure);
@@ -285,8 +284,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final address = model.addressesMap[key];
     address.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await model.updateAddress(
-        user.token, address, _onProcess, _onUpdateSuccess, _onFailure);
+    await model.updateAddress(user.token, address,
+        onProcess: _onProcess,
+        onSuccess: _onUpdateSuccess,
+        onFailure: _onFailure);
   }
 
   void _onProcess() {
@@ -306,6 +307,6 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   void _onFailure(String error) {
     progressService.hideProgress();
-    flushBarService.showErrorMessage(error);
+    flushBarService.showErrorDialog(error);
   }
 }

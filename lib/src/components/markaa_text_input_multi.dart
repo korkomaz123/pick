@@ -1,6 +1,7 @@
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaTextInputMulti extends StatelessWidget {
   final TextEditingController controller;
@@ -13,6 +14,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
   final bool readOnly;
   final Function onTap;
   final int maxLine;
+  final Color borderColor;
+  final double borderRadius;
 
   MarkaaTextInputMulti({
     @required this.controller,
@@ -25,6 +28,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.maxLine,
+    this.borderColor = greyDarkColor,
+    this.borderRadius = 10,
   });
 
   @override
@@ -32,46 +37,37 @@ class MarkaaTextInputMulti extends StatelessWidget {
     return Container(
       width: width,
       padding: EdgeInsets.symmetric(horizontal: padding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: padding),
-          Text(
-            hint,
-            style: mediumTextStyle.copyWith(
-              color: greyColor,
-              fontSize: fontSize,
-            ),
+      child: TextFormField(
+        controller: controller,
+        style: mediumTextStyle.copyWith(
+          color: greyDarkColor,
+          fontSize: fontSize,
+        ),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: padding,
+            vertical: 5.h,
           ),
-          TextFormField(
-            controller: controller,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: fontSize,
-            ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: padding,
-                vertical: 5,
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: greyDarkColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: greyDarkColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: greyDarkColor),
-              ),
-            ),
-            validator: (value) => validator(value),
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
-            readOnly: readOnly,
-            onTap: onTap,
-            maxLines: maxLine,
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
-        ],
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: borderColor),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        ),
+        validator: (value) => validator(value),
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.newline,
+        readOnly: readOnly,
+        onTap: onTap,
+        maxLines: maxLine,
       ),
     );
   }

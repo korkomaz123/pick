@@ -1,8 +1,10 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
+import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
@@ -22,8 +24,6 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'widgets/wishlist_remove_dialog.dart';
 
 class WishlistPage extends StatefulWidget {
   @override
@@ -163,12 +163,8 @@ class _WishlistPageState extends State<WishlistPage>
   void _onRemoveWishlist(ProductModel product, bool ask) async {
     var result;
     if (ask) {
-      result = await showDialog(
-        context: context,
-        builder: (context) {
-          return WishlistRemoveDialog();
-        },
-      );
+      result = await flushBarService.showConfirmDialog(
+          message: 'wishlist_remove_item_dialog_text');
     }
     if (result != null || !ask) {
       await wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
@@ -178,17 +174,43 @@ class _WishlistPageState extends State<WishlistPage>
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
     myCartChangeNotifier.addProductToCart(product, 1, lang, {},
-        onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
+        onProcess: _onAdding,
+        onSuccess: () => _onAddSuccess(product),
+        onFailure: _onAddFailure);
+  }
+
+  _onAdding() {
+    progressService.addingProductProgress();
   }
 
   void _onAddSuccess(ProductModel product) {
-    flushBarService.showAddCartMessage(product);
+    progressService.hideProgress();
+    showSlidingTopSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 0,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return MarkaaCartAddedSuccessDialog(product: product);
+          },
+        );
+      },
+    );
 
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
   }
 
   _onAddFailure(String message) {
-    flushBarService.showErrorMessage(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 }

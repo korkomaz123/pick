@@ -68,7 +68,9 @@ class OrderEntity {
         ),
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
-        address = AddressEntity.fromJson(json['shippingAddress']);
+        address = json.containsKey('shippingAddress')
+            ? AddressEntity.fromJson(json['shippingAddress'])
+            : AddressEntity();
 
   static String _covertLocalTime(int timestamp) {
     int milliseconds = timestamp * 1000;
@@ -84,17 +86,21 @@ class OrderEntity {
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {
-    return items.map((item) {
-      Map<String, dynamic> itemJson = item;
-      itemJson['product'] = ProductModel.fromJson(item['product']);
-      itemJson['itemCount'] = item['item_count'];
-      itemJson['itemCountCanceled'] = item['item_count_canceled'] ?? '0';
-      itemJson['itemCountReturned'] = item['itemCountReturned'] ?? '0';
-      itemJson['returnStatus'] = item['returnStatus'];
-      itemJson['itemId'] = item['itemId'];
-      itemJson['availableCount'] = 0;
-      itemJson['rowPrice'] = 0;
-      return CartItemEntity.fromJson(itemJson);
-    }).toList();
+    List<CartItemEntity> list = [];
+    if (items != null) {
+      for (var item in items) {
+        Map<String, dynamic> itemJson = item;
+        itemJson['product'] = ProductModel.fromJson(item['product']);
+        itemJson['itemCount'] = item['item_count'];
+        itemJson['itemCountCanceled'] = item['item_count_canceled'] ?? '0';
+        itemJson['itemCountReturned'] = item['itemCountReturned'] ?? '0';
+        itemJson['returnStatus'] = item['returnStatus'];
+        itemJson['itemId'] = item['itemId'];
+        itemJson['availableCount'] = 0;
+        itemJson['rowPrice'] = 0;
+        list.add(CartItemEntity.fromJson(itemJson));
+      }
+    }
+    return list;
   }
 }

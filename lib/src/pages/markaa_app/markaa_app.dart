@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -9,6 +11,8 @@ import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/suggestion_change_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
+import 'package:markaa/src/change_notifier/summer_collection_notifier.dart';
+import 'package:markaa/src/change_notifier/wallet_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -72,9 +76,20 @@ class _MarkaaAppState extends State<MarkaaApp> {
   final checkoutRepository = CheckoutRepository();
 
   final firebaseRepository = FirebaseRepository();
+  _loadData() async {
+    Timer(Duration(seconds: 1), () async {
+      bool isExist = await LocalStorageRepository().existItem('usage');
+      String token = await Preload.localRepo.getToken();
+      if (isExist) {
+        await Preload.appOpen();
+      }
+      print("token ====> $token");
+    });
+  }
 
   @override
   void initState() {
+    _loadData();
     super.initState();
   }
 
@@ -95,6 +110,8 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
         ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
         ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
+        ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
       ],
       child: _buildMultiBlocProvider(context),
     );

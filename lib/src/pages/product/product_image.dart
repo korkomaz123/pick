@@ -19,7 +19,7 @@ class ProductImage extends StatefulWidget {
 class _ProductImageState extends State<ProductImage> {
   final dataKey = GlobalKey();
   int activeIndex = 0;
-  List<dynamic> images;
+  List<dynamic> images = [];
 
   @override
   void initState() {

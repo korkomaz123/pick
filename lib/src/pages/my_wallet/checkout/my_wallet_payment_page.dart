@@ -1,13 +1,12 @@
-import 'dart:convert';
+// import 'dart:convert';
 
-import 'package:adjust_sdk/adjust.dart';
-import 'package:adjust_sdk/adjust_event.dart';
+// import 'package:adjust_sdk/adjust.dart';
+// import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
-import 'package:markaa/src/config/config.dart';
+// import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -19,24 +18,20 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import 'payment_abort_dialog.dart';
-
-class CheckoutPaymentCardPage extends StatefulWidget {
+class MyWalletPaymentPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  CheckoutPaymentCardPage({this.params});
+  MyWalletPaymentPage({this.params});
 
   @override
-  _CheckoutPaymentCardPageState createState() =>
-      _CheckoutPaymentCardPageState();
+  _MyWalletPaymentPageState createState() => _MyWalletPaymentPageState();
 }
 
-class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
+class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
     with WidgetsBindingObserver {
   WebViewController webViewController;
 
   OrderChangeNotifier orderChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -56,7 +51,6 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     flushBarService = FlushBarService(context: context);
 
     orderChangeNotifier = context.read<OrderChangeNotifier>();
-    myCartChangeNotifier = context.read<MyCartChangeNotifier>();
 
     url = widget.params['url'];
     order = widget.params['order'];
@@ -64,16 +58,9 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   void _onBack() async {
-    final result = await showDialog(
-      context: context,
-      builder: (_) {
-        return PaymentAbortDialog();
-      },
-    );
+    final result = await flushBarService.showConfirmDialog(
+        message: 'payment_abort_dialog_text');
     if (result != null) {
-      /// activate the current shopping cart
-      await myCartChangeNotifier.activateCart();
-
       /// cancel the order
       await orderChangeNotifier.cancelFullOrder(order,
           onProcess: _onCancelProcess,
@@ -90,12 +77,11 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
     progressService.hideProgress();
     Navigator.popUntil(
       context,
-      (route) => route.settings.name == Routes.myCart,
+      (route) => route.settings.name == Routes.myWallet,
     );
   }
 
   void _onCanceledFailure(String message) {
-    print(message);
     progressService.hideProgress();
   }
 
@@ -132,10 +118,12 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             webViewController = controller;
             progressService.showProgress();
           },
-          onPageStarted: _onPageLoaded,
+          navigationDelegate: (action) {
+            _onPageLoaded(action.url);
+            return NavigationDecision.navigate;
+          },
           onPageFinished: (_) {
             if (isLoading) {
-              print('hide progress');
               progressService.hideProgress();
               isLoading = false;
               setState(() {});
@@ -151,16 +139,19 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
       Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
 
+      print('LOADING URL>>> $loadingUrl');
+      print('PARAMS>>> $params');
+
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user?.token != null) {
             orderChangeNotifier.removeOrder(order);
           }
 
-          Navigator.pushNamedAndRemoveUntil(
+          Navigator.pushNamed(
             context,
-            Routes.paymentFailed,
-            (route) => route.settings.name == Routes.myCart,
+            Routes.myWalletFailed,
+            arguments: false,
           );
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
@@ -168,10 +159,9 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
             order.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order);
           }
-          Navigator.pushNamedAndRemoveUntil(
+          Navigator.pushNamed(
             context,
-            Routes.checkoutConfirmed,
-            (route) => route.settings.name == Routes.home,
+            Routes.myWalletSuccess,
             arguments: order.orderNo,
           );
         }
@@ -182,23 +172,14 @@ class _CheckoutPaymentCardPageState extends State<CheckoutPaymentCardPage>
   }
 
   Future<void> _onSuccessPayment() async {
-    if (reorder != null) {
-      myCartChangeNotifier.initializeReorderCart();
-    } else {
-      myCartChangeNotifier.initialize();
-      if (user?.token == null) {
-        await localStorageRepo.removeItem('cartId');
-      }
-      await myCartChangeNotifier.getCartId();
-    }
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
-    double price = double.parse(priceDetails['totalPrice']);
+    // final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    // double price = double.parse(priceDetails['totalPrice']);
 
-    AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
-    Adjust.trackEvent(adjustEvent);
+    // AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
+    // Adjust.trackEvent(adjustEvent);
 
-    adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
-    adjustEvent.setRevenue(price, 'KWD');
-    Adjust.trackEvent(adjustEvent);
+    // adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
+    // adjustEvent.setRevenue(price, 'KWD');
+    // Adjust.trackEvent(adjustEvent);
   }
 }

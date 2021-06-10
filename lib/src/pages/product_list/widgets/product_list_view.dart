@@ -95,8 +95,8 @@ class _ProductListViewState extends State<ProductListView>
 
   void _onScroll() {
     // double maxScroll = scrollController.position.maxScrollExtent;
-    // double currentScroll = scrollController.position.pixels;
-    // scrollChangeNotifier.controlBrandBar(currentScroll);
+    double currentScroll = scrollController.position.pixels;
+    scrollChangeNotifier.controlBrandBar(currentScroll);
     // if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
     //   _onLoadMore();
     // }
@@ -346,30 +346,35 @@ class _ProductListViewState extends State<ProductListView>
   Widget _buildProductList(List<ProductModel> products) {
     return RefreshConfiguration(
       footerTriggerDistance: 2500,
+      shouldFooterFollowWhenNotFull: (LoadStatus mode) {
+        return mode == LoadStatus.noMore;
+      },
       child: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
         header: WaterDropHeader(),
         footer: CustomFooter(
           builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              // body = Text("pull up load");
-              body = Container();
-            } else if (mode == LoadStatus.loading) {
+            Widget body = Container();
+            if (mode == LoadStatus.loading) {
               body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              // body = Text("Load Failed!Click retry!");
-              body = Container();
-            } else if (mode == LoadStatus.canLoading) {
-              // body = Text("release to load more");
-              body = Container();
-            } else {
+            } else if (mode == LoadStatus.noMore ||
+                productChangeNotifier.isReachedMax) {
               // body = Text("No more Data");
-              body = Container();
+              body = Container(
+                width: 375.w,
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: 10.h),
+                child: Text(
+                  'no_more_products'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 14.sp,
+                  ),
+                ),
+              );
             }
             return Container(
-              height: 55.0,
+              height: 40.h,
               child: Center(child: body),
             );
           },
@@ -381,32 +386,40 @@ class _ProductListViewState extends State<ProductListView>
           _onLoadMore();
         },
         child: ListView.builder(
-          // controller: scrollController,
+          controller: scrollController,
           shrinkWrap: true,
-          itemCount: (products.length / 2).ceil() + 1,
+          itemCount: (products.length / 2).ceil(),
           itemBuilder: (ctx, index) {
-            if (index >= (products.length / 2).ceil()) {
-              if (productChangeNotifier.isReachedMax) {
-                return Container(
-                  width: 375.w,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(
-                    top: 10.h,
-                  ),
-                  child: Text(
-                    'no_more_products'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 14.sp,
+            int pIndex = 2 * index;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: greyColor,
+                        width: 0.5.w,
+                      ),
                     ),
                   ),
-                );
-              } else {
-                return Container(); //RippleLoadingSpinner();
-              }
-            } else {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                  child: ProductVCard(
+                    product: products[pIndex],
+                    cardWidth: 187.25.w,
+                    cardHeight: 280.h,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                  ),
+                ),
+                Container(
+                  height: 280.h,
+                  child: VerticalDivider(
+                    color: greyColor,
+                    width: 0.5.w,
+                  ),
+                ),
+                if (pIndex + 1 < products.length) ...[
                   Container(
                     decoration: BoxDecoration(
                       border: Border(
@@ -417,7 +430,7 @@ class _ProductListViewState extends State<ProductListView>
                       ),
                     ),
                     child: ProductVCard(
-                      product: products[2 * index],
+                      product: products[2 * index + 1],
                       cardWidth: 187.25.w,
                       cardHeight: 280.h,
                       isShoppingCart: true,
@@ -425,36 +438,11 @@ class _ProductListViewState extends State<ProductListView>
                       isShare: true,
                     ),
                   ),
-                  if (index * 2 <= products.length - 2) ...[
-                    Container(
-                      height: 280.h,
-                      child: VerticalDivider(
-                        color: greyColor,
-                        width: 0.5.w,
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: greyColor,
-                            width: 0.5.w,
-                          ),
-                        ),
-                      ),
-                      child: ProductVCard(
-                        product: products[2 * index + 1],
-                        cardWidth: 187.25.w,
-                        cardHeight: 280.h,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                    ),
-                  ]
+                ] else ...[
+                  Container(width: 187.25.w, height: 280.h),
                 ],
-              );
-            }
+              ],
+            );
           },
         ),
       ),
