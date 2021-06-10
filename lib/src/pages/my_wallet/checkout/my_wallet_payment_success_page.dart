@@ -29,9 +29,10 @@ class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
 
     user.balance += double.parse(_walletChangeNotifier.amount);
     amount = _walletChangeNotifier.amount;
-    setState(() {});
 
     _walletChangeNotifier.init();
+
+    setState(() {});
   }
 
   @override

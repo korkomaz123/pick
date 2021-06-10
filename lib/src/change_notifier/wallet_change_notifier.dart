@@ -19,8 +19,10 @@ class WalletChangeNotifier extends ChangeNotifier {
   List<TransactionEntity> transactionsList;
 
   void init() {
+    print('clear wallet cart');
     walletCartId = null;
     amount = null;
+    notifyListeners();
   }
 
   void createWalletCart({
@@ -29,6 +31,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     Function onSuccess,
     Function onFailure,
   }) async {
+    print('create wallet cart: $walletCartId');
     if (onProcess != null) onProcess();
 
     try {
@@ -54,6 +57,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     } catch (e) {
       if (onFailure != null) onFailure(e.toString());
     }
+    notifyListeners();
   }
 
   void addMoneyToWallet({
@@ -76,9 +80,10 @@ class WalletChangeNotifier extends ChangeNotifier {
         this.amount = amount;
         if (onSuccess != null) onSuccess();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure();
       }
     }
+    notifyListeners();
   }
 
   void transferMoneyToBank({
