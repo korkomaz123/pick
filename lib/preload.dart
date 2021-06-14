@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
@@ -10,6 +11,7 @@ import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:kommunicate_flutter/kommunicate_flutter.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -292,5 +294,30 @@ class Preload {
 
     // Start SDK.
     Adjust.start(config);
+  }
+
+  static bool chatInitiated = false;
+  static startSupportChat() async {
+    dynamic kmUser,
+        conversationObject = {
+          'appId': ChatSupport.appKey,
+        };
+    await _getCurrentUser();
+    // if (await KommunicateFlutterPlugin.isLoggedIn()) await KommunicateFlutterPlugin.logout();
+    if (user != null) {
+      kmUser = {
+        'userId': user.customerId,
+        'displayName': user.firstName + " " + user.lastName,
+        'contactNumber': user.phoneNumber,
+        'email': user.email,
+      };
+      conversationObject['kmUser'] = jsonEncode(kmUser);
+    }
+    KommunicateFlutterPlugin.buildConversation(conversationObject).then((clientConversationId) async {
+      print("Conversation builder success : " + clientConversationId.toString());
+      chatInitiated = true;
+    }).catchError((error) {
+      print("Conversation builder error : " + error.toString());
+    });
   }
 }

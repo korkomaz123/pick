@@ -225,6 +225,16 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
+  - Applozic (7.11.1):
+    - SDWebImage (~> 5.9.2)
+  - ApplozicSwift (5.14.0):
+    - ApplozicSwift/Complete (= 5.14.0)
+  - ApplozicSwift/Complete (5.14.0):
+    - Applozic (~> 7.11.0)
+    - ApplozicSwift/RichMessageKit
+    - Kingfisher (~> 5.14.0)
+    - MGSwipeTableCell (~> 1.6.11)
+  - ApplozicSwift/RichMessageKit (5.14.0)
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
     - BoringSSL-GRPC/Interface (= 0.0.7)
@@ -465,6 +475,14 @@ PODS:
     - Flutter
   - in_app_review (0.2.0):
     - Flutter
+  - Kingfisher (5.14.1):
+    - Kingfisher/Core (= 5.14.1)
+  - Kingfisher/Core (5.14.1)
+  - Kommunicate (5.13.0):
+    - ApplozicSwift (~> 5.14.0)
+  - kommunicate_flutter (0.0.1):
+    - Flutter
+    - Kommunicate (~> 5.13.0)
   - leveldb-library (1.22.1)
   - libphonenumber (0.0.1):
     - Flutter
@@ -474,6 +492,7 @@ PODS:
     - Flutter
     - libphonenumber
     - libPhoneNumber-iOS
+  - MGSwipeTableCell (1.6.11)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -483,6 +502,9 @@ PODS:
     - Flutter
   - PromisesObjC (1.2.12)
   - Reachability (3.2)
+  - SDWebImage (5.9.5):
+    - SDWebImage/Core (= 5.9.5)
+  - SDWebImage/Core (5.9.5)
   - share (0.0.1):
     - Flutter
   - shared_preferences (0.0.1):
@@ -524,6 +546,7 @@ DEPENDENCIES:
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
+  - kommunicate_flutter (from `.symlinks/plugins/kommunicate_flutter/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -541,6 +564,8 @@ SPEC REPOS:
     - abseil
     - Adjust
     - AppAuth
+    - Applozic
+    - ApplozicSwift
     - BoringSSL-GRPC
     - FBSDKCoreKit
     - FBSDKLoginKit
@@ -564,11 +589,15 @@ SPEC REPOS:
     - gRPC-Core
     - GTMAppAuth
     - GTMSessionFetcher
+    - Kingfisher
+    - Kommunicate
     - leveldb-library
     - libPhoneNumber-iOS
+    - MGSwipeTableCell
     - nanopb
     - PromisesObjC
     - Reachability
+    - SDWebImage
     - TOCropViewController
 
 EXTERNAL SOURCES:
@@ -614,6 +643,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker/ios"
   in_app_review:
     :path: ".symlinks/plugins/in_app_review/ios"
+  kommunicate_flutter:
+    :path: ".symlinks/plugins/kommunicate_flutter/ios"
   libphonenumber:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
@@ -643,6 +674,8 @@ SPEC CHECKSUMS:
   adjust_sdk: 0f2eca502e94cf4b78d15e895533c294c2953d77
   app_tracking_transparency: 5b1745ef9ade815f7455cb6a0848349589afb7c5
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  Applozic: 673eba55f167f1b06004ec8f959b356d3a59af66
+  ApplozicSwift: b3512b839f2c6b3a046592263377938de780b3da
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   cloud_firestore: 677849586720293046982ccfa20013a6266d7928
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
@@ -685,14 +718,19 @@ SPEC CHECKSUMS:
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   in_app_review: 4a97249f7a2f539a0f294c2d9196b7fe35e49541
+  Kingfisher: 8050bc6f7f68cbf3908bd04df7ccbac188f6d6d6
+  Kommunicate: 68208b56455416c456a92f9b13286768da769eab
+  kommunicate_flutter: 24a919d4fdfcf8f273dab10db7e3ee9d2392db76
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   libphonenumber_plugin: 7cf755ad1656145935d6c208173a476bd3f12898
+  MGSwipeTableCell: b804e4e450dee439c42250be90bd50458bf67fce
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sign_in_with_apple: 34f3f5456a45fd7ac5fb42905e2ad31dae061b4a
