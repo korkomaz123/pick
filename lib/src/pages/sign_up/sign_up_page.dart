@@ -1,5 +1,6 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -104,9 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       top: 30.h,
                       bottom: 30.h,
                     ),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -187,8 +186,7 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_first_name'.tr(),
+        validator: (value) => value.isNotEmpty ? null : 'required_first_name'.tr(),
       ),
     );
   }
@@ -234,8 +232,7 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_last_name'.tr(),
+        validator: (value) => value.isNotEmpty ? null : 'required_last_name'.tr(),
       ),
     );
   }
@@ -438,7 +435,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _onPrivacyPolicy() async {
-    String url = 'https://markaa.com/privacy-policy';
+    String url = EndPoints.privacyAndPolicy;
     if (await canLaunch(url)) {
       await launch(url);
     } else {

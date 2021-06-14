@@ -1,10 +1,8 @@
 class EndPoints {
-  static const String baseUrl = 'https://markaa.com/customapi/api';
-  // static const String baseUrl = 'https://cigaon.com/customapi/api';
-  // static const String baseUrl = 'https://staging.markaa.com/customapi/api';
-  static const String gatewayform = 'https://markaa.com/gatewayform.php';
-  // static const String gatewayform = 'https://staging.markaa.com/gatewayform.php';
-
+  static const String mainDomain = 'https://markaa.com'; //https://cigaon.com,https://staging.markaa.com
+  static const String baseUrl = '$mainDomain/customapi/api';
+  static const String gatewayform = '$mainDomain/gatewayform.php';
+  static const String privacyAndPolicy = '$mainDomain/privacy-policy';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
