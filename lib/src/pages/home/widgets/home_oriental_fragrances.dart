@@ -2,7 +2,6 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
-import 'package:markaa/src/components/product_vv_card.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -26,8 +25,7 @@ class HomeOrientalFragrances extends StatelessWidget {
           _buildHeadline(),
           FutureBuilder(
             future: homeChangeNotifier.loadExculisiveBanner(),
-            builder: (_, snapShot) => snapShot.connectionState ==
-                    ConnectionState.waiting
+            builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
                 ? Center(child: PulseLoadingSpinner())
                 : HomeExculisiveBanner(homeChangeNotifier: homeChangeNotifier),
           ),
@@ -67,8 +65,7 @@ class HomeOrientalFragrances extends StatelessWidget {
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeChangeNotifier.orientalCategory,
-                  subCategory:
-                      homeChangeNotifier.orientalCategory.subCategories,
+                  subCategory: homeChangeNotifier.orientalCategory.subCategories,
                   brand: BrandEntity(),
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,

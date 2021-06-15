@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentCardForm extends StatefulWidget {
@@ -12,8 +13,7 @@ class PaymentCardForm extends StatefulWidget {
 
 class _PaymentCardFormState extends State<PaymentCardForm> {
   WebViewController webViewController;
-  // final url = 'https://markaa.com/gatewayform.php';
-  final url = 'https://staging.markaa.com/gatewayform.php';
+  final url = EndPoints.gatewayform;
 
   @override
   void dispose() {

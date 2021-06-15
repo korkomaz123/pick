@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -31,6 +32,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../preload.dart';
 
@@ -112,6 +114,16 @@ class _SignInPageState extends State<SignInPage> {
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
+  void _onPrivacyPolicy() async {
+    String url = EndPoints.privacyAndPolicy;
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Preload.setLanguage();
@@ -172,6 +184,18 @@ class _SignInPageState extends State<SignInPage> {
                   _buildExternalSignInButtons(),
                   SizedBox(height: 40),
                   if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
+                  Center(
+                    child: InkWell(
+                      onTap: _onPrivacyPolicy,
+                      child: Text(
+                        'suffix_agree_terms'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          color: Colors.white54,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

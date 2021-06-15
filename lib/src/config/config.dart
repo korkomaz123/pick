@@ -2,6 +2,10 @@ const double designWidth = 375;
 const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
+class ChatSupport {
+  static const String appKey = '9be222f98ce7dc12af142e27097a8a8c';//'3c8027a1ab0d1cbe9adcbf0d215bd2b02';
+}
+
 class MarkaaReporter {
   static const String email = 'user@markaa.com';
   static const String password = 'markaa2021';
@@ -26,23 +30,15 @@ class AlgoliaConfig {
 
 class AlgoliaIndexes {
   static const String enProducts = 'magento2_default_products';
-  static const String enPriceDescProducts =
-      'magento2_default_products_price_default_desc';
-  static const String enPriceAscProducts =
-      'magento2_default_products_price_default_asc';
-  static const String enCreatedAtDescProducts =
-      'magento2_default_products_created_at_desc';
-  static const String enCreatedAtAscProducts =
-      'magento2_default_products_created_at_asc';
+  static const String enPriceDescProducts = 'magento2_default_products_price_default_desc';
+  static const String enPriceAscProducts = 'magento2_default_products_price_default_asc';
+  static const String enCreatedAtDescProducts = 'magento2_default_products_created_at_desc';
+  static const String enCreatedAtAscProducts = 'magento2_default_products_created_at_asc';
   static const String arProducts = 'magento2_arabic_products';
-  static const String arPriceDescProducts =
-      'magento2_arabic_products_price_default_desc';
-  static const String arPriceAscProducts =
-      'magento2_arabic_products_price_default_asc';
-  static const String arCreatedAtDescProducts =
-      'magento2_arabic_products_created_at_desc';
-  static const String arCreatedAtAscProducts =
-      'magento2_arabic_products_created_at_asc';
+  static const String arPriceDescProducts = 'magento2_arabic_products_price_default_desc';
+  static const String arPriceAscProducts = 'magento2_arabic_products_price_default_asc';
+  static const String arCreatedAtDescProducts = 'magento2_arabic_products_created_at_desc';
+  static const String arCreatedAtAscProducts = 'magento2_arabic_products_created_at_asc';
 }
 
 class AdjustSDKConfig {
