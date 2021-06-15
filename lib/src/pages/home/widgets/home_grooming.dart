@@ -27,15 +27,15 @@ class HomeGrooming extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.h),
       child: Column(
         children: [
-          if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[_buildHeadline()],
-          if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[_buildCategories(homeChangeNotifier.groomingCategories)],
-          // if (homeChangeNotifier.groomingCategory != null) ...[
-          //   _buildFooter(
-          //     homeChangeNotifier.groomingCategory,
-          //     homeChangeNotifier.groomingTitle,
-          //   )
-          // ],
-          if (homeChangeNotifier.groomingItems.isNotEmpty) ...[_buildProducts(homeChangeNotifier.groomingItems)],
+          if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[
+            _buildHeadline()
+          ],
+          if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[
+            _buildCategories(homeChangeNotifier.groomingCategories)
+          ],
+          if (homeChangeNotifier.groomingItems.isNotEmpty) ...[
+            _buildProducts(homeChangeNotifier.groomingItems)
+          ],
         ],
       ),
     );
@@ -85,20 +85,6 @@ class HomeGrooming extends StatelessWidget {
     );
   }
 
-  // Widget _buildTitle(String title) {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding: EdgeInsets.symmetric(
-  //       horizontal: 10.w,
-  //       vertical: 10.h,
-  //     ),
-  //     child: Text(
-  //       title,
-  //       style: mediumTextStyle.copyWith(fontSize: 26.sp),
-  //     ),
-  //   );
-  // }
-
   Widget _buildCategories(List<CategoryEntity> categories) {
     return Container(
       width: double.infinity,
@@ -132,7 +118,8 @@ class HomeGrooming extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: categories[index].imageUrl,
               fit: BoxFit.fill,
-              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
         ),
@@ -143,8 +130,6 @@ class HomeGrooming extends StatelessWidget {
   Widget _buildProducts(List<ProductModel> list) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 5.h),
-      color: backgroundColor,
       height: 175.w,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -161,59 +146,4 @@ class HomeGrooming extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildFooter(CategoryEntity category, String title) {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
-  //     child: InkWell(
-  //       onTap: () {
-  //         ProductListArguments arguments = ProductListArguments(
-  //           category: category,
-  //           subCategory: [],
-  //           brand: BrandEntity(),
-  //           selectedSubCategoryIndex: 0,
-  //           isFromBrand: false,
-  //         );
-  //         Navigator.pushNamed(
-  //           Preload.navigatorKey.currentContext,
-  //           Routes.productList,
-  //           arguments: arguments,
-  //         );
-  //       },
-  //       child: Text(
-  //         'view_all'.tr(),
-  //         textAlign: TextAlign.end,
-  //         style: TextStyle(decoration: TextDecoration.underline),
-  //       ),
-  //     ),
-  //   );
-  //   /* return Container(
-  //     width: double.infinity,
-  //     padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
-  //     child: MarkaaTextIconButton(
-  //       onPressed: () {
-  //         ProductListArguments arguments = ProductListArguments(
-  //           category: category,
-  //           subCategory: [],
-  //           brand: BrandEntity(),
-  //           selectedSubCategoryIndex: 0,
-  //           isFromBrand: false,
-  //         );
-  //         Navigator.pushNamed(
-  //           Preload.navigatorKey.currentContext,
-  //           Routes.productList,
-  //           arguments: arguments,
-  //         );
-  //       },
-  //       title: 'view_all_grooming'.tr(),
-  //       titleColor: Colors.white,
-  //       titleSize: 18.sp,
-  //       icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 24.sp),
-  //       borderColor: primaryColor,
-  //       buttonColor: primaryColor,
-  //       leading: false,
-  //     ),
-  //   ); */
-  // }
 }

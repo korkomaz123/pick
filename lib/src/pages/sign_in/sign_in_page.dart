@@ -140,7 +140,9 @@ class _SignInPageState extends State<SignInPage> {
                   Container(
                     width: 375.w,
                     padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -306,18 +308,16 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignInButton() {
     return Container(
       width: 375.w,
-      height: 50.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      height: 45.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'sign_in'.tr(),
-        titleSize: 19.sp,
+        titleSize: 18.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
         onPressed: () => _signIn(),
-        radius: 20,
+        radius: 30,
       ),
     );
   }
@@ -352,11 +352,14 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
-          Text(
-            'or_divider'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 17.sp,
-              color: Colors.white,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Text(
+              'or_divider'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: 17.sp,
+                color: Colors.white,
+              ),
             ),
           ),
           Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
@@ -455,7 +458,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final profile = await Api.getMethod('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = await Api.getMethod(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];

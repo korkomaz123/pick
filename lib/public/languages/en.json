@@ -353,5 +353,19 @@
     "debit": "Debit",
     "transaction_id": "Transaction ID",
     "added_money_wallet_failed": "Something went wrong. Please try again later!",
-    "invalid_length_phone_number": "The length should be between 8 and 9"
+    "invalid_length_phone_number": "The length should be between 8 and 9",
+    "send_gift_title": "SEND A GIFT",
+    "enter_email_phone_number_hint": "Please enter account email or phone number",
+    "enter_amount_hint": "Please enter the amount",
+    "transfer_amount_confirm_message": "You want to send this amount\n# KWD\nTo: @",
+    "to": "To",
+    "user_not_exist": "User is not exist",
+    "continue_button_title": "Continue",
+    "wallet_sent_success_message": "Has been sent",
+    "no_transaction_record": "No transaction yet.\nTop up your credit and start ordering",
+    "gift": "Gift",
+    "wallet_transfer": "Wallet Transfer",
+    "top_up_failed_title": "Top up failed",
+    "top_up_failed_message": "The maximum top up per transaction is ### KWD",
+    "ask_agree_privacy_policy": "You must agree with our Privacy and Policy"
 }

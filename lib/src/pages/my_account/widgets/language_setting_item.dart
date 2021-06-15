@@ -25,7 +25,7 @@ class _LanguageSettingItemState extends State<LanguageSettingItem> {
               Container(
                 width: 22.w,
                 height: 22.h,
-                child: SvgPicture.asset(languageIcon),
+                child: SvgPicture.asset(globalCustomIcon),
               ),
               SizedBox(width: 10.w),
               Text(

@@ -34,6 +34,10 @@ class MyCartItem extends StatelessWidget {
     this.onSignIn,
   });
 
+  bool get discountable => discount != 0 && type == 'percentage';
+  bool get normalProduct =>
+      cartItem?.product?.beforePrice == cartItem?.product?.price;
+
   @override
   Widget build(BuildContext context) {
     String priceString = cartItem.product.price;
@@ -121,12 +125,10 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          discount != 0 &&
-                                  type == 'percentage' &&
-                                  cartItem?.product?.beforePrice ==
-                                      cartItem?.product?.price
-                              ? discountPriceString + ' ' + 'currency'.tr()
-                              : priceString + ' ' + 'currency'.tr(),
+                          // discountable && normalProduct
+                          discountable
+                              ? '$discountPriceString ${'currency'.tr()}'
+                              : '$priceString ${'currency'.tr()}',
                           style: mediumTextStyle.copyWith(
                             fontSize: 12.sp,
                             color: greyColor,
@@ -134,14 +136,12 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          cartItem?.product?.beforePrice !=
-                                  cartItem?.product?.price
-                              ? cartItem.product.beforePrice +
-                                  ' ' +
-                                  'currency'.tr()
-                              : discount != 0 && type == 'percentage'
-                                  ? priceString + ' ' + 'currency'.tr()
-                                  : '',
+                          // !normalProduct
+                          //     ? '${cartItem.product.beforePrice} ${'currency'.tr()}'
+                          //     : discountable
+                          //         ? '$priceString ${'currency'.tr()}'
+                          //         : '',
+                          discountable ? '$priceString ${'currency'.tr()}' : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,

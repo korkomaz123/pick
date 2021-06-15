@@ -160,6 +160,7 @@ class Preload {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
+      // AdjustEnvironment.production,
       AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;

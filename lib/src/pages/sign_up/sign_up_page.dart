@@ -33,21 +33,27 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
+
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  FocusNode firstnameNode = FocusNode();
-  FocusNode lastnameNode = FocusNode();
+
+  FocusNode fullnameNode = FocusNode();
+  FocusNode phoneNode = FocusNode();
   FocusNode emailNode = FocusNode();
   FocusNode passNode = FocusNode();
+
   bool agreeTerms = false;
+
   SignInBloc signInBloc;
   HomeChangeNotifier homeChangeNotifier;
+  MyCartChangeNotifier myCartChangeNotifier;
+
+  final LocalStorageRepository localRepo = LocalStorageRepository();
+
   ProgressService progressService;
   FlushBarService flushBarService;
-  final LocalStorageRepository localRepo = LocalStorageRepository();
-  MyCartChangeNotifier myCartChangeNotifier;
 
   @override
   void initState() {
@@ -153,16 +159,16 @@ class _SignUpPageState extends State<SignUpPage> {
         horizontal: 20.w,
       ),
       child: TextFormField(
-        controller: firstNameController,
+        controller: fullNameController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: 15.sp,
         ),
-        focusNode: firstnameNode,
+        focusNode: fullnameNode,
         textInputAction: TextInputAction.next,
-        onEditingComplete: () => lastnameNode.requestFocus(),
+        onEditingComplete: () => phoneNode.requestFocus(),
         decoration: InputDecoration(
-          hintText: 'first_name'.tr(),
+          hintText: 'full_name'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: 15.sp,
@@ -187,8 +193,14 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 1),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_first_name'.tr(),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (value.trim().indexOf(' ') == -1) {
+            return 'full_name_issue'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
@@ -200,16 +212,17 @@ class _SignUpPageState extends State<SignUpPage> {
         horizontal: 20.w,
       ),
       child: TextFormField(
-        controller: lastNameController,
+        controller: phoneNumberController,
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: 15.sp,
         ),
-        focusNode: lastnameNode,
+        focusNode: phoneNode,
+        keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.next,
         onEditingComplete: () => emailNode.requestFocus(),
         decoration: InputDecoration(
-          hintText: 'last_name'.tr(),
+          hintText: 'phone_number_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
             color: Colors.white,
             fontSize: 15.sp,
@@ -234,8 +247,14 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
           ),
         ),
-        validator: (value) =>
-            value.isNotEmpty ? null : 'required_last_name'.tr(),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (!isLength(value, 8, 9)) {
+            return 'invalid_length_phone_number'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
@@ -356,35 +375,47 @@ class _SignUpPageState extends State<SignUpPage> {
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: CheckboxListTile(
-        value: agreeTerms,
-        onChanged: (value) {
-          agreeTerms = value;
-          setState(() {});
-        },
-        controlAffinity: ListTileControlAffinity.leading,
-        checkColor: Colors.white,
-        title: Row(
-          children: [
-            Text(
-              'prefix_agree_terms'.tr() + ' ',
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: 16.sp,
-              ),
+      child: Row(
+        children: [
+          if (agreeTerms) ...[
+            IconButton(
+              onPressed: () {
+                agreeTerms = false;
+                setState(() {});
+              },
+              icon: Icon(Icons.check, color: Colors.orange),
             ),
-            InkWell(
-              onTap: () => _onPrivacyPolicy(),
-              child: Text(
-                'suffix_agree_terms'.tr(),
+          ] else ...[
+            IconButton(
+              onPressed: () {
+                agreeTerms = true;
+                setState(() {});
+              },
+              icon: Icon(Icons.check_box_outline_blank, color: Colors.orange),
+            ),
+          ],
+          Row(
+            children: [
+              Text(
+                'prefix_agree_terms'.tr() + ' ',
                 style: mediumTextStyle.copyWith(
-                  color: Colors.white54,
+                  color: Colors.white,
                   fontSize: 16.sp,
                 ),
               ),
-            )
-          ],
-        ),
+              InkWell(
+                onTap: () => _onPrivacyPolicy(),
+                child: Text(
+                  'suffix_agree_terms'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white54,
+                    fontSize: 16.sp,
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
@@ -392,18 +423,16 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildSignUpButton() {
     return Container(
       width: 375.w,
-      height: 50.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      height: 45.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'create_account'.tr(),
-        titleSize: 19.sp,
+        titleSize: 18.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
         onPressed: () => _onSignUp(),
-        radius: 10,
+        radius: 30.sp,
       ),
     );
   }
@@ -428,12 +457,20 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void _onSignUp() {
     if (_formKey.currentState.validate()) {
-      signInBloc.add(SignUpSubmitted(
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-      ));
+      if (agreeTerms) {
+        String fullName = fullNameController.text;
+        String firstName = fullName.split(' ')[0];
+        String lastName = fullName.split(' ')[1];
+        signInBloc.add(SignUpSubmitted(
+          firstName: firstName,
+          lastName: lastName,
+          phoneNumber: phoneNumberController.text,
+          email: emailController.text,
+          password: passwordController.text,
+        ));
+      } else {
+        flushBarService.showErrorDialog('ask_agree_privacy_policy'.tr());
+      }
     }
   }
 

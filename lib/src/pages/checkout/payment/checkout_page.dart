@@ -7,6 +7,7 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -111,51 +112,62 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Consumer<MarkaaAppChangeNotifier>(
+    return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: MarkaaCheckoutAppBar(),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (paymentMethods.isEmpty) ...[
+                    Center(
+                      child: PulseLoadingSpinner(),
+                    ),
+                  ] else ...[
+                    Column(
+                      children: List.generate(paymentMethods.length, (index) {
+                        int idx = paymentMethods.length - index - 1;
+                        if ((user?.token == null ||
+                                user?.token != null && user.balance <= 0) &&
+                            paymentMethods[idx].id == 'wallet') {
+                          return Container();
+                        }
+                        return PaymentMethodCard(
+                          method: paymentMethods[idx],
+                          onChange: _onChangeMethod,
+                          value: payment,
+                          cardToken: cardToken,
+                          onAuthorizedSuccess: _onCardAuthorizedSuccess,
+                        );
+                      }),
+                    )
+                  ],
+                  SizedBox(height: 5.h),
+                  PaymentAddress(),
+                  PaymentSummary(details: details),
+                  _buildNote(),
+                  SizedBox(height: 100.h),
+                ],
+              );
+            },
+          ),
+        ),
+        bottomSheet: Consumer<MarkaaAppChangeNotifier>(
           builder: (_, __, ___) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: List.generate(paymentMethods.length, (index) {
-                    int idx = paymentMethods.length - index - 1;
-                    if ((user?.token == null ||
-                            user?.token != null && user.balance <= 0) &&
-                        paymentMethods[idx].id == 'wallet') {
-                      return Container();
-                    }
-                    return PaymentMethodCard(
-                      method: paymentMethods[idx],
-                      onChange: _onChangeMethod,
-                      value: payment,
-                      cardToken: cardToken,
-                      onAuthorizedSuccess: _onCardAuthorizedSuccess,
-                    );
-                  }),
-                ),
-                SizedBox(height: 5.h),
-                PaymentAddress(),
-                PaymentSummary(details: details),
-                _buildNote(),
-                SizedBox(height: 100.h),
-              ],
-            );
+            if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
+              return Container(height: 0);
+            }
+            return _buildPlacePaymentButton();
           },
         ),
-      ),
-      bottomSheet: Consumer<MarkaaAppChangeNotifier>(
-        builder: (_, __, ___) {
-          if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
-            return Container(height: 0);
-          }
-          return _buildPlacePaymentButton();
-        },
       ),
     );
   }

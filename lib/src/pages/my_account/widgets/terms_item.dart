@@ -28,7 +28,7 @@ class _TermsItemState extends State<TermsItem> {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(termsIcon),
+                  child: SvgPicture.asset(termsCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

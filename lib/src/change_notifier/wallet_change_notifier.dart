@@ -121,10 +121,11 @@ class WalletChangeNotifier extends ChangeNotifier {
 
     final result = await walletRepository.transferMoney(
         token, amount, lang, description, email);
+    print(result);
     if (result['code'] == 'SUCCESS') {
       if (onSuccess != null) onSuccess();
     } else {
-      if (onFailure != null) onFailure(result['errorMessage']);
+      if (onFailure != null) onFailure(result['errMessage']);
     }
   }
 

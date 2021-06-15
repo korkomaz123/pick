@@ -78,10 +78,9 @@ class Routes {
 
   /// wallet
   static const String myWallet = '/my-wallet';
-  static const String bankList = '/bank-list';
-  static const String addNewBankAccount = '/add-new-bank-account';
   static const String myWalletCheckout = '/my-wallet-checkout';
   static const String myWalletPayment = '/my-wallet-payment';
   static const String myWalletSuccess = '/my-wallet-success';
   static const String myWalletFailed = '/my-wallet-failed';
+  static const String sentGiftSuccess = '/sent-gift-success';
 }

@@ -50,7 +50,7 @@ void main() async {
 
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
-  
+
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',

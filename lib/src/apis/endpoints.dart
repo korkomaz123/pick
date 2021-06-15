@@ -29,7 +29,8 @@ class EndPoints {
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';
-  static const String getMyShippingAddresses = '$baseUrl/getMyShippingAddresses';
+  static const String getMyShippingAddresses =
+      '$baseUrl/getMyShippingAddresses';
   static const String addShippingAddress = '$baseUrl/addShippingAddress';
   static const String deleteShippingAddress = '$baseUrl/deleteShippingAddress';
   static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
@@ -38,8 +39,10 @@ class EndPoints {
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
   static const String getAboutus = '$baseUrl/getaboutus';
-  static const String getNotificationSetting = '$baseUrl/getNotificationSetting';
-  static const String changeNotificationSetting = '$baseUrl/changeNotificationSetting';
+  static const String getNotificationSetting =
+      '$baseUrl/getNotificationSetting';
+  static const String changeNotificationSetting =
+      '$baseUrl/changeNotificationSetting';
   static const String getTerms = '$baseUrl/getterms';
   static const String submitContactUs = '$baseUrl/submitContactus';
   static const String getOrderHistory = '$baseUrl/getOrderHistories';
@@ -60,7 +63,8 @@ class EndPoints {
   static const String applyCouponCode = '$baseUrl/applyCouponCode';
   static const String getSearchSuggestion = '$baseUrl/getSearchSuggetion';
   static const String getReorderCartId = '$baseUrl/getReorderCartId';
-  static const String getProductAvailableCount = '$baseUrl/getAvailableProductsCount';
+  static const String getProductAvailableCount =
+      '$baseUrl/getAvailableProductsCount';
   static const String getRegions = '$baseUrl/getRegions';
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';

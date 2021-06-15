@@ -90,7 +90,7 @@ class _LogoutItemState extends State<LogoutItem> {
                     Container(
                       width: 22.w,
                       height: 22.h,
-                      child: SvgPicture.asset(logoutIcon),
+                      child: SvgPicture.asset(logoutCustomIcon),
                     ),
                     SizedBox(width: 10.w),
                     Text(
@@ -115,7 +115,8 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logout() async {
-    final result = await flushBarService.showConfirmDialog(message: 'logout_confirm_dialog_text');
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }

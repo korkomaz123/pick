@@ -1,5 +1,6 @@
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -27,7 +28,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   Widget build(BuildContext context) {
     return Container(
       width: designWidth.w,
-      height: 340.h,
       color: Colors.white,
       child: Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
         if (widget.homeChangeNotifier.categories.isNotEmpty) {
@@ -36,7 +36,6 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             children: [
               _buildTitle(),
               _buildCategorySliders(),
-              _buildFooter(),
             ],
           );
         } else {
@@ -47,65 +46,50 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   }
 
   Widget _buildTitle() {
-    return Container(
-      width: designWidth.w,
-      height: 50.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.w,
-      ),
-      child: Text(
-        'home_categories'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: greyDarkColor,
-          fontSize: 26.sp,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      width: designWidth.w,
-      height: 40.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.w,
-      ),
-      alignment: Alignment.centerLeft,
-      child: InkWell(
-        onTap: () => Navigator.pushNamed(
-          context,
-          Routes.categoryList,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'view_more_categories'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 15.sp,
-                color: primaryColor,
-              ),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'home_categories'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: 26.sp,
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: 15.sp,
+          ),
+          Container(
+            width: 80.w,
+            height: 30.h,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: 12.sp,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: primaryColor,
+              radius: 0,
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.categoryList,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCategorySliders() {
-    return Expanded(
+    return Container(
+      width: designWidth.w,
+      height: 250.h,
       child: Stack(
         children: [
           Container(
             width: designWidth.w,
             height: 250.h,
-            color: Colors.white,
             child: Swiper(
               itemCount: widget.homeChangeNotifier.categories.length > 10
                   ? 10
@@ -128,9 +112,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
                 count: widget.homeChangeNotifier.categories.length > 10
@@ -140,7 +122,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
                 effect: SlideEffect(
                   spacing: 8.0,
                   radius: 0,
-                  dotWidth: 24.0,
+                  dotWidth: 20.w,
                   dotHeight: 2.h,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 0,

@@ -1,4 +1,5 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -20,17 +21,11 @@ class HomeNewArrivals extends StatelessWidget {
     if (homeChangeNotifier.newArrivalsProducts.isNotEmpty) {
       return Column(
         children: [
-          _buildHeadline(),
+          _buildHeadline(context),
           HomeProductsCarousel(
             products: homeChangeNotifier.newArrivalsProducts,
             isVerticalCard: false,
           ),
-          Divider(
-            height: 4.h,
-            thickness: 1.5.h,
-            color: greyColor.withOpacity(0.4),
-          ),
-          _buildFooter(context),
         ],
       );
     } else {
@@ -38,7 +33,7 @@ class HomeNewArrivals extends StatelessWidget {
     }
   }
 
-  Widget _buildHeadline() {
+  Widget _buildHeadline(BuildContext context) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -51,47 +46,33 @@ class HomeNewArrivals extends StatelessWidget {
               color: greyDarkColor,
             ),
           ),
+          Container(
+            width: 80.w,
+            height: 30.h,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: 12.sp,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: primaryColor,
+              radius: 0,
+              onPressed: () async {
+                ProductListArguments arguments = ProductListArguments(
+                  category: homeCategories[1],
+                  subCategory: homeCategories[1].subCategories,
+                  brand: BrandEntity(),
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              },
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFooter(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: InkWell(
-        onTap: () {
-          ProductListArguments arguments = ProductListArguments(
-            category: homeCategories[1],
-            subCategory: homeCategories[1].subCategories,
-            brand: BrandEntity(),
-            selectedSubCategoryIndex: 0,
-            isFromBrand: false,
-          );
-          Navigator.pushNamed(
-            context,
-            Routes.productList,
-            arguments: arguments,
-          );
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'view_all'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 15.sp,
-                color: primaryColor,
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: 15.sp,
-            ),
-          ],
-        ),
       ),
     );
   }

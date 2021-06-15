@@ -208,31 +208,6 @@ class _ProductVCardState extends State<ProductVCard>
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                // if (widget.isLine || widget.isMinor) ...[
-                //   Expanded(
-                //     child: Text(
-                //       widget.product.name,
-                //       maxLines: 2,
-                //       overflow: TextOverflow.ellipsis,
-                //       style: mediumTextStyle.copyWith(
-                //         color: greyDarkColor,
-                //         fontSize: widget.isMinor ? 12.sp : 16.sp,
-                //         fontWeight: FontWeight.w700,
-                //       ),
-                //     ),
-                //   )
-                // ] else ...[
-                //   Text(
-                //     widget.product.name,
-                //     maxLines: 2,
-                //     overflow: TextOverflow.ellipsis,
-                //     style: mediumTextStyle.copyWith(
-                //       color: greyDarkColor,
-                //       fontSize: widget.isMinor ? 12.sp : 16.sp,
-                //       fontWeight: FontWeight.w700,
-                //     ),
-                //   )
-                // ],
                 Spacer(),
                 if (widget.isLine) ...[
                   Divider(color: greyColor, thickness: 0.5.h, height: 10.h)
