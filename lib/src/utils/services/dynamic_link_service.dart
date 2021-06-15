@@ -13,8 +13,8 @@ class DynamicLinkService {
     final name = product.name;
     final shortDescription = product.shortDescription;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: 'https://marka.page.link',
-      link: Uri.parse('https://marka.page.link.com/product?id=$productId'),
+      uriPrefix: 'https://markaa.page.link',
+      link: Uri.parse('https://markaa.page.link.com/product?id=$productId'),
       androidParameters: AndroidParameters(
         packageName: 'com.app.markaa',
         minimumVersion: 1,
