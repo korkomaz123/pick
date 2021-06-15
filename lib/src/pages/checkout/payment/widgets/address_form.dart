@@ -86,6 +86,7 @@ class _AddressFormState extends State<AddressForm> {
       lastNameController.text = user?.lastName;
       fullNameController.text = user.firstName + " " + user.lastName;
       emailController.text = user?.email;
+      phoneNumberController.text = user?.phoneNumber;
     }
 
     if (addressParam != null) {

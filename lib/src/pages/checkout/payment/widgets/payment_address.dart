@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
@@ -83,18 +84,24 @@ class _PaymentAddressState extends State<PaymentAddress> {
                       ),
                       if (user?.token != null ||
                           model.guestAddress == null) ...[
-                        Container(
-                          width: 126.w,
-                          height: 28.h,
-                          child: MarkaaTextButton(
-                            title: 'add_new_address_button_title'.tr(),
-                            titleSize: 10.sp,
-                            titleColor: Colors.white,
-                            buttonColor: primaryColor,
-                            borderColor: Colors.transparent,
-                            onPressed: _onAddNewAddress,
-                            isBold: true,
-                            radius: 30.sp,
+                        InkWell(
+                          onTap: _onAddNewAddress,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.add_circle_outline,
+                                size: 18.sp,
+                                color: primaryColor,
+                              ),
+                              SizedBox(width: 5.w),
+                              Text(
+                                'add_new_address_button_title'.tr(),
+                                style: mediumTextStyle.copyWith(
+                                  fontSize: 12.sp,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -173,7 +180,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
       child: Container(
         key: address.addressId == defaultAddress?.addressId ? dataKey : null,
         width: 300.w,
-        margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+        margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
           borderRadius: BorderRadius.circular(10),

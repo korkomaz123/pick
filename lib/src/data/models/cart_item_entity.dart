@@ -1,4 +1,6 @@
 import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 
 class CartItemEntity {
   final ProductModel product;
@@ -29,7 +31,8 @@ class CartItemEntity {
         returnedStatus = _getIntValueFromString(json['returnStatus']),
         availableCount = json['availableCount'],
         itemId = json['itemId'],
-        rowPrice = json['rowPrice'] + .0;
+        rowPrice = _getRowPrice(
+            _getIntValueFromString(json['itemCount']), json['product']);
 
   static int _getIntValueFromString(dynamic qty) {
     if (qty != null) {
@@ -39,5 +42,10 @@ class CartItemEntity {
     } else {
       return 0;
     }
+  }
+
+  static double _getRowPrice(int itemCount, ProductModel product) {
+    double rowPrice = itemCount * StringService.roundDouble(product.price, 3);
+    return NumericService.roundDouble(rowPrice, 3);
   }
 }

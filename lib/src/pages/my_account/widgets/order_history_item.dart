@@ -33,7 +33,7 @@ class _OrderHistoryItemState extends State<OrderHistoryItem> {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(orderHistoryIcon),
+                  child: SvgPicture.asset(orderHistoryCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

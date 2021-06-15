@@ -27,7 +27,6 @@ import 'widgets/about_us_item.dart';
 import 'widgets/change_notification_setting_item.dart';
 import 'widgets/change_password_item.dart';
 import 'widgets/contact_us_item.dart';
-// import 'widgets/get_notification_messages_item.dart';
 import 'widgets/language_setting_item.dart';
 import 'widgets/logout_item.dart';
 import 'widgets/my_wallet_item.dart';
@@ -103,7 +102,7 @@ class _AccountPageState extends State<AccountPage> {
                   children: [
                     _buildAccountPicture(),
                     Divider(color: greyColor, thickness: 0.5),
-                    if (user != null) ...[_buildAccountProfile()],
+                    _buildAccountProfile(),
                     _buildAccountGeneralSetting(),
                   ],
                 ),
@@ -280,88 +279,24 @@ class _AccountPageState extends State<AccountPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 5.h),
-            child: Row(
-              children: [
-                Container(
-                  width: 22.w,
-                  height: 22.h,
-                  child: SvgPicture.asset(emailIcon),
-                ),
-                SizedBox(width: 10.w),
-                Text(
-                  user.email,
-                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
-                ),
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.updateProfile),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 5.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 22.w,
-                        height: 22.h,
-                        child: SvgPicture.asset(profileIcon),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        'account_update_profile_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 20.sp,
-                    color: greyDarkColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.shippingAddress),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 5.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 22.w,
-                        height: 22.h,
-                        child: SvgPicture.asset(shippingAddressIcon),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        'shipping_address_title'.tr(),
-                        style: mediumTextStyle.copyWith(fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 20.sp,
-                    color: greyDarkColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          if (user != null) ...[
+            WishlistItem(snackBarService: snackBarService),
+            SizedBox(height: 5.h),
+            OrderHistoryItem(),
+            SizedBox(height: 5.h),
+          ],
+          AboutUsItem(),
+          SizedBox(height: 5.h),
+          TermsItem(),
+          SizedBox(height: 5.h),
+          RateAppItem(),
+          SizedBox(height: 5.h),
+          ContactUsItem(),
+          SizedBox(height: 5.h),
+          if (user != null) ...[
+            MyWalletItem(),
+            SizedBox(height: 5.h),
+          ],
         ],
       ),
     );
@@ -374,64 +309,103 @@ class _AccountPageState extends State<AccountPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'account_general_setting_title'.tr(),
+            style: mediumTextStyle.copyWith(fontSize: 18.sp),
+          ),
+          SizedBox(height: 10.h),
           if (user != null) ...[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'account_general_setting_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 18.sp,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                WishlistItem(
-                  snackBarService: snackBarService,
-                ),
-                ChangeNotificationSettingItem(
-                  snackBarService: snackBarService,
-                ),
-                // GetNotificationMessagesItem(),
-                SizedBox(height: 5.h),
-              ],
-            )
+            _buildUpdateProfile(),
+            SizedBox(height: 5.h),
+            ChangePasswordItem(),
+            SizedBox(height: 5.h),
+            _buildShippingAddress(),
+            SizedBox(height: 5.h),
+            ChangeNotificationSettingItem(
+              snackBarService: snackBarService,
+            ),
+            SizedBox(height: 5.h),
           ],
           LanguageSettingItem(),
           SizedBox(height: 5.h),
-          RateAppItem(),
-          SizedBox(height: 5.h),
-          if (user != null) ...[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyWalletItem(),
-                SizedBox(height: 5.h),
-                OrderHistoryItem(),
-                SizedBox(height: 5.h),
-              ],
-            )
-          ],
-          SizedBox(height: 5.h),
-          if (user != null) ...[
-            Column(
-              children: [
-                ChangePasswordItem(),
-                SizedBox(height: 5.h),
-              ],
-            )
-          ],
-          AboutUsItem(),
-          SizedBox(height: 5.h),
-          TermsItem(),
-          SizedBox(height: 5.h),
-          ContactUsItem(),
           if (user != null) ...[
             LogoutItem(
               snackBarService: snackBarService,
               progressService: progressService,
-            )
+            ),
+            SizedBox(height: 5.h),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildUpdateProfile() {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, Routes.updateProfile),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 5.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 22.w,
+                  height: 22.h,
+                  child: SvgPicture.asset(contactCustomIcon),
+                ),
+                SizedBox(width: 10.w),
+                Text(
+                  'account_update_profile_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20.sp,
+              color: greyDarkColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShippingAddress() {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, Routes.shippingAddress),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 5.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 22.w,
+                  height: 22.h,
+                  child: SvgPicture.asset(shippingCustomIcon),
+                ),
+                SizedBox(width: 10.w),
+                Text(
+                  'shipping_address_title'.tr(),
+                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
+                ),
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20.sp,
+              color: greyDarkColor,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -34,33 +34,6 @@ String deviceToken = '';
 String lang = 'en';
 bool isNotification = true;
 
-List<TransactionEntity> transactions = [
-  TransactionEntity(
-    number: '292833',
-    amount: 1200,
-    date: '21/3/2021',
-    type: TransactionType.order,
-  ),
-  TransactionEntity(
-    number: '123456',
-    amount: -223,
-    date: '21/3/2021',
-    type: TransactionType.order,
-  ),
-  TransactionEntity(
-    number: '221123',
-    amount: 288,
-    date: '21/3/2021',
-    type: TransactionType.bank,
-  ),
-  TransactionEntity(
-    number: '2928384',
-    amount: 102,
-    date: '21/3/2021',
-    type: TransactionType.debit,
-  ),
-];
-
 List<BankAccountEntity> bankAccounts = [
   BankAccountEntity(
     title: 'My account',

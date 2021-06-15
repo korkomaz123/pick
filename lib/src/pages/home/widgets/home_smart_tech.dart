@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/components/amazing_product_card.dart';
-import 'package:markaa/src/components/markaa_text_icon_button.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -25,49 +26,29 @@ class HomeSmartTech extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          if (homeChangeNotifier.smartTechTitle.isNotEmpty) ...[
-            _buildTitle(homeChangeNotifier.smartTechTitle)
-          ],
-          if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
-            _buildBanners(homeChangeNotifier.smartTechBanners)
-          ],
-          if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
-            _buildProducts(homeChangeNotifier.smartTechItems)
-          ],
-          if (homeChangeNotifier.smartTechCategory != null) ...[
-            _buildFooter(homeChangeNotifier.smartTechCategory,
-                homeChangeNotifier.smartTechTitle)
-          ],
+    return Column(
+      children: [
+        if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
+          _buildBanners(homeChangeNotifier.smartTechBanners)
         ],
-      ),
-    );
-  }
-
-  Widget _buildTitle(String title) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 10.h,
-      ),
-      child: Text(
-        title,
-        style: mediumTextStyle.copyWith(
-          fontSize: 26.sp,
-        ),
-      ),
+        SizedBox(height: 10.h),
+        if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+          _buildProducts(
+            homeChangeNotifier.smartTechTitle,
+            homeChangeNotifier.smartTechCategory,
+            homeChangeNotifier.smartTechItems,
+          )
+        ],
+      ],
     );
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
     return Column(
       children: banners.map((banner) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 5.h),
+        return Container(
+          margin: EdgeInsets.only(bottom: 5.h),
+          color: Colors.white,
           child: InkWell(
             onTap: () async {
               if (banner.categoryId != null) {
@@ -122,53 +103,73 @@ class HomeSmartTech extends StatelessWidget {
     );
   }
 
-  Widget _buildProducts(List<ProductModel> list) {
+  Widget _buildProducts(
+    String title,
+    CategoryEntity category,
+    List<ProductModel> list,
+  ) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h),
-      color: backgroundColor,
-      height: 302.w,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: list.length,
-        itemBuilder: (context, index) => Padding(
-          padding: EdgeInsets.only(left: 8.w),
-          child: AmazingProductCard(
-            cardSize: 302.w,
-            contentSize: 100.w,
-            product: list[index],
+      padding: EdgeInsets.only(bottom: 20.h),
+      color: Colors.white,
+      width: designWidth.w,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 26.sp,
+                  ),
+                ),
+                Container(
+                  width: 80.w,
+                  height: 30.h,
+                  child: MarkaaTextButton(
+                    title: 'view_all'.tr(),
+                    titleSize: 12.sp,
+                    titleColor: primaryColor,
+                    buttonColor: Colors.white,
+                    borderColor: primaryColor,
+                    radius: 0,
+                    onPressed: () {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: category,
+                        subCategory: [],
+                        brand: BrandEntity(),
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: false,
+                      );
+                      Navigator.pushNamed(
+                        Preload.navigatorKey.currentContext,
+                        Routes.productList,
+                        arguments: arguments,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFooter(CategoryEntity category, String title) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
-      color: backgroundColor,
-      child: MarkaaTextIconButton(
-        onPressed: () {
-          ProductListArguments arguments = ProductListArguments(
-            category: category,
-            subCategory: [],
-            brand: BrandEntity(),
-            selectedSubCategoryIndex: 0,
-            isFromBrand: false,
-          );
-          Navigator.pushNamed(
-            Preload.navigatorKey.currentContext,
-            Routes.productList,
-            arguments: arguments,
-          );
-        },
-        title: 'view_all_smart_tech'.tr(),
-        titleColor: Colors.white,
-        titleSize: 18.sp,
-        icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 24.sp),
-        borderColor: primaryColor,
-        buttonColor: primaryColor,
-        leading: false,
+          Container(
+            height: 302.w,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: list.length,
+              itemBuilder: (context, index) => Padding(
+                padding: EdgeInsets.only(left: 5.w),
+                child: AmazingProductCard(
+                  cardSize: 302.w,
+                  contentSize: 100.w,
+                  product: list[index],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

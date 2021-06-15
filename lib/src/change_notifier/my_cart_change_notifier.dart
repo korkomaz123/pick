@@ -89,10 +89,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartItemsMap[item.itemId] = item;
           cartTotalPrice += item.rowPrice;
           cartTotalCount += item.itemCount;
-          cartDiscountedTotalPrice +=
-              item.product.beforePrice == item?.product?.price
-                  ? item.rowPrice * (100 - discount) / 100
-                  : item.rowPrice;
+          cartDiscountedTotalPrice += item.rowPrice * (100 - discount) / 100;
+          // cartDiscountedTotalPrice +=
+          //     item.product.beforePrice == item?.product?.price
+          //         ? item.rowPrice * (100 - discount) / 100
+          //         : item.rowPrice;
         }
 
         processStatus = ProcessStatus.done;
@@ -151,9 +152,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final data = {'action': 'removeCartItem', 'productId': key};
     final item = cartItemsMap[key];
     cartTotalPrice -= cartItemsMap[key].rowPrice;
-    cartDiscountedTotalPrice -= item.product.beforePrice == item?.product?.price
-        ? item.rowPrice * (100 - discount) / 100
-        : item.rowPrice;
+    // cartDiscountedTotalPrice -= item.product.beforePrice == item?.product?.price
+    //     ? item.rowPrice * (100 - discount) / 100
+    //     : item.rowPrice;
+    cartDiscountedTotalPrice -= item.rowPrice * (100 - discount) / 100;
     cartItemCount -= 1;
     cartTotalCount -= cartItemsMap[key].itemCount;
     cartItemsMap.remove(key);
@@ -164,10 +166,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (result['code'] != 'SUCCESS') {
         onFailure(result['errorMessage']);
         cartTotalPrice += item.rowPrice;
-        cartDiscountedTotalPrice +=
-            item.product.beforePrice == item?.product?.price
-                ? item.rowPrice * (100 - discount) / 100
-                : item.rowPrice;
+        // cartDiscountedTotalPrice +=
+        //     item.product.beforePrice == item?.product?.price
+        //         ? item.rowPrice * (100 - discount) / 100
+        //         : item.rowPrice;
+        cartDiscountedTotalPrice += item.rowPrice * (100 - discount) / 100;
         cartItemCount += 1;
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
@@ -181,10 +184,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
     } catch (e) {
       onFailure('Network connection is bad');
       cartTotalPrice += item.rowPrice;
-      cartDiscountedTotalPrice +=
-          item.product.beforePrice == item?.product?.price
-              ? item.rowPrice * (100 - discount) / 100
-              : item.rowPrice;
+      // cartDiscountedTotalPrice +=
+      //     item.product.beforePrice == item?.product?.price
+      //         ? item.rowPrice * (100 - discount) / 100
+      //         : item.rowPrice;
+      cartDiscountedTotalPrice += item.rowPrice * (100 - discount) / 100;
       cartItemCount += 1;
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
@@ -223,19 +227,21 @@ class MyCartChangeNotifier extends ChangeNotifier {
         CartItemEntity oldItem = cartItemsMap[newItem.itemId];
         if (cartItemsMap.containsKey(newItem.itemId)) {
           cartTotalPrice -= oldItem.rowPrice;
-          cartDiscountedTotalPrice -=
-              oldItem.product.beforePrice == oldItem?.product?.price
-                  ? oldItem.rowPrice * (100 - discount) / 100
-                  : oldItem.rowPrice;
+          // cartDiscountedTotalPrice -=
+          //     oldItem.product.beforePrice == oldItem?.product?.price
+          //         ? oldItem.rowPrice * (100 - discount) / 100
+          //         : oldItem.rowPrice;
+          cartDiscountedTotalPrice -= oldItem.rowPrice * (100 - discount) / 100;
         } else {
           cartItemCount += 1;
         }
         cartTotalCount += qty;
         cartTotalPrice += newItem.rowPrice;
-        cartDiscountedTotalPrice +=
-            newItem.product.beforePrice == newItem?.product?.price
-                ? newItem.rowPrice * (100 - discount) / 100
-                : newItem.rowPrice;
+        // cartDiscountedTotalPrice +=
+        //     newItem.product.beforePrice == newItem?.product?.price
+        //         ? newItem.rowPrice * (100 - discount) / 100
+        //         : newItem.rowPrice;
+        cartDiscountedTotalPrice += newItem.rowPrice * (100 - discount) / 100;
         cartItemsMap[newItem.itemId] = newItem;
         if (onSuccess != null) onSuccess();
         notifyListeners();
@@ -265,9 +271,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
     double updatedPrice = double.parse(item.product.price) * updatedQty;
     cartTotalCount += updatedQty;
     cartTotalPrice += updatedPrice;
-    cartDiscountedTotalPrice += item.product.beforePrice == item?.product?.price
-        ? updatedPrice * (100 - discount) / 100
-        : updatedPrice;
+    // cartDiscountedTotalPrice += item.product.beforePrice == item?.product?.price
+    //     ? updatedPrice * (100 - discount) / 100
+    //     : updatedPrice;
+    cartDiscountedTotalPrice += updatedPrice * (100 - discount) / 100;
     cartItemsMap[item.itemId].itemCount = qty;
     cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
     notifyListeners();
@@ -279,10 +286,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['errorMessage']);
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
-        cartDiscountedTotalPrice -=
-            item.product.beforePrice == item?.product?.price
-                ? updatedPrice * (100 - discount) / 100
-                : updatedPrice;
+        // cartDiscountedTotalPrice -=
+        //     item.product.beforePrice == item?.product?.price
+        //         ? updatedPrice * (100 - discount) / 100
+        //         : updatedPrice;
+        cartDiscountedTotalPrice -= updatedPrice * (100 - discount) / 100;
         cartItemsMap[item.itemId].itemCount = item.itemCount;
         cartItemsMap[item.itemId].rowPrice =
             double.parse(item.product.price) * item.itemCount;
@@ -297,10 +305,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
       onFailure('Network connection is bad');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
-      cartDiscountedTotalPrice -=
-          item.product.beforePrice == item?.product?.price
-              ? updatedPrice * (100 - discount) / 100
-              : updatedPrice;
+      // cartDiscountedTotalPrice -=
+      //     item.product.beforePrice == item?.product?.price
+      //         ? updatedPrice * (100 - discount) / 100
+      //         : updatedPrice;
+      cartDiscountedTotalPrice -= updatedPrice * (100 - discount) / 100;
       cartItemsMap[item.itemId].itemCount = item.itemCount;
       cartItemsMap[item.itemId].rowPrice =
           double.parse(item.product.price) * item.itemCount;
@@ -437,10 +446,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartDiscountedTotalPrice = 0;
     for (var key in cartItemsMap.keys.toList()) {
       final item = cartItemsMap[key];
-      cartDiscountedTotalPrice +=
-          item.product.beforePrice != item?.product?.price
-              ? item.rowPrice
-              : item.rowPrice * (100 - discount) / 100;
+      // cartDiscountedTotalPrice +=
+      //     item.product.beforePrice != item?.product?.price
+      //         ? item.rowPrice
+      //         : item.rowPrice * (100 - discount) / 100;
+      cartDiscountedTotalPrice += item.rowPrice * (100 - discount) / 100;
     }
   }
 

@@ -23,7 +23,7 @@ class ContactUsItem extends StatelessWidget {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(emailIcon),
+                  child: SvgPicture.asset(emailCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

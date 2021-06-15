@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -8,12 +9,16 @@ import 'package:markaa/src/components/product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeBestDealsBanner extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestDealsBanner({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsBanners.isNotEmpty) {
@@ -32,61 +37,76 @@ class HomeBestDealsBanner extends StatelessWidget {
                 horizontal: 10.w,
                 vertical: 10.h,
               ),
-              child: Text(
-                homeChangeNotifier.bestDealsBannerTitle,
-                style: mediumTextStyle.copyWith(
-                  fontSize: 26.sp,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    homeChangeNotifier.bestDealsBannerTitle,
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 26.sp,
+                    ),
+                  ),
+                  Container(
+                    width: 80.w,
+                    height: 30.h,
+                    child: MarkaaTextButton(
+                      title: 'view_all'.tr(),
+                      titleSize: 12.sp,
+                      titleColor: primaryColor,
+                      buttonColor: Colors.white,
+                      borderColor: primaryColor,
+                      radius: 0,
+                      onPressed: () async {
+                        if (banner.categoryId != null) {
+                          final arguments = ProductListArguments(
+                            category: CategoryEntity(
+                              id: banner.categoryId,
+                              name: banner.categoryName,
+                            ),
+                            brand: BrandEntity(),
+                            subCategory: [],
+                            selectedSubCategoryIndex: 0,
+                            isFromBrand: false,
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productList,
+                            arguments: arguments,
+                          );
+                        } else if (banner?.brand?.optionId != null) {
+                          final arguments = ProductListArguments(
+                            category: CategoryEntity(),
+                            brand: banner.brand,
+                            subCategory: [],
+                            selectedSubCategoryIndex: 0,
+                            isFromBrand: true,
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productList,
+                            arguments: arguments,
+                          );
+                        } else if (banner?.productId != null) {
+                          final product = await ProductRepository()
+                              .getProduct(banner.productId);
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            Routes.product,
+                            (route) => route.settings.name == Routes.home,
+                            arguments: product,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-            InkWell(
-              onTap: () async {
-                if (banner.categoryId != null) {
-                  final arguments = ProductListArguments(
-                    category: CategoryEntity(
-                      id: banner.categoryId,
-                      name: banner.categoryName,
-                    ),
-                    brand: BrandEntity(),
-                    subCategory: [],
-                    selectedSubCategoryIndex: 0,
-                    isFromBrand: false,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
-                } else if (banner?.brand?.optionId != null) {
-                  final arguments = ProductListArguments(
-                    category: CategoryEntity(),
-                    brand: banner.brand,
-                    subCategory: [],
-                    selectedSubCategoryIndex: 0,
-                    isFromBrand: true,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
-                } else if (banner?.productId != null) {
-                  final product =
-                      await ProductRepository().getProduct(banner.productId);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    Routes.product,
-                    (route) => route.settings.name == Routes.home,
-                    arguments: product,
-                  );
-                }
-              },
-              child: CachedNetworkImage(
-                imageUrl: banner.bannerImage,
-                fit: BoxFit.fitHeight,
-                errorWidget: (context, url, error) =>
-                    Center(child: Icon(Icons.image, size: 20)),
-              ),
+            CachedNetworkImage(
+              imageUrl: banner.bannerImage,
+              fit: BoxFit.fitHeight,
+              errorWidget: (context, url, error) =>
+                  Center(child: Icon(Icons.image, size: 20)),
             ),
             Expanded(
               child: ListView.builder(

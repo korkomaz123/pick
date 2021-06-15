@@ -86,6 +86,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     fullNameController.text =
         firstNameController.text + " " + lastNameController.text;
     emailController.text = user?.email;
+    phoneNumberController.text = user?.phoneNumber;
     if (addressParam != null) {
       isNew = false;
       firstNameController.text = addressParam?.firstName;

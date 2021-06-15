@@ -55,6 +55,17 @@ class _MyWalletDetailsTransactionsState
                 return Center(
                   child: PulseLoadingSpinner(),
                 );
+              } else if (model.transactionsList.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40.h),
+                    child: Text(
+                      'no_transaction_record'.tr(),
+                      textAlign: TextAlign.center,
+                      style: mediumTextStyle.copyWith(fontSize: 12.sp),
+                    ),
+                  ),
+                );
               }
               return Column(
                 children: model.transactionsList.map((item) {
@@ -62,6 +73,8 @@ class _MyWalletDetailsTransactionsState
                     return _buildAdminDebitCard(item);
                   } else if (item.type == TransactionType.debit) {
                     return _buildUserDebitCard(item);
+                  } else if (item.type == TransactionType.transfer) {
+                    return _buildWalletTransferCard(item);
                   }
                   return _buildOrderCard(item);
                 }).toList(),
@@ -94,7 +107,7 @@ class _MyWalletDetailsTransactionsState
               Row(
                 children: [
                   Text(
-                    _getAmountString(item.amount, item.type),
+                    _getAmountString(item.amount, item),
                     style: mediumTextStyle.copyWith(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -162,7 +175,7 @@ class _MyWalletDetailsTransactionsState
               Row(
                 children: [
                   Text(
-                    _getAmountString(item.amount, item.type),
+                    _getAmountString(item.amount, item),
                     style: mediumTextStyle.copyWith(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -250,6 +263,68 @@ class _MyWalletDetailsTransactionsState
     );
   }
 
+  Widget _buildWalletTransferCard(TransactionEntity item) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      color: greyLightColor,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'gift'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 11.sp,
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    _getAmountString(item.amount, item),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                      color: item.isIncome ? succeedColor : dangerColor,
+                    ),
+                  ),
+                  Text(
+                    ' (${'kwd'.tr()})',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: item.isIncome ? succeedColor : dangerColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'wallet_transfer'.tr(),
+                style: mediumTextStyle.copyWith(fontSize: 16.sp),
+              ),
+              Text(
+                'date'.tr() + ': ${item.date}',
+                style: mediumTextStyle.copyWith(
+                  fontSize: 14.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildOrderCard(TransactionEntity item) {
     return Container(
       width: double.infinity,
@@ -268,7 +343,7 @@ class _MyWalletDetailsTransactionsState
               Row(
                 children: [
                   Text(
-                    _getAmountString(item.amount, item.type),
+                    _getAmountString(item.amount, item),
                     style: mediumTextStyle.copyWith(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -316,13 +391,17 @@ class _MyWalletDetailsTransactionsState
     );
   }
 
-  String _getAmountString(double amount, TransactionType type) {
-    switch (type) {
+  String _getAmountString(double amount, TransactionEntity item) {
+    switch (item.type) {
       case TransactionType.order:
         return '- $amount';
         break;
-      case TransactionType.bank:
-        return '- $amount';
+      case TransactionType.transfer:
+        if (item.isIncome) {
+          return '+ $amount';
+        } else {
+          return '- $amount';
+        }
         break;
       case TransactionType.debit:
         return '+ $amount';

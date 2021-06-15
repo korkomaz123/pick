@@ -44,6 +44,7 @@ class SignInRepository {
   Future<dynamic> register(
     String firstName,
     String lastName,
+    String phoneNumber,
     String email,
     String password,
   ) async {
@@ -51,6 +52,7 @@ class SignInRepository {
     final params = {
       'firstName': firstName,
       'lastName': lastName,
+      'phoneNumber': phoneNumber,
       'email': email,
       'password': password,
       'agreeTerms': 'true',

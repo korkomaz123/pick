@@ -8,6 +8,7 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
+import 'package:markaa/src/theme/theme.dart';
 
 class AmazingProductCard extends StatelessWidget {
   final double cardSize;
@@ -33,20 +34,34 @@ class AmazingProductCard extends StatelessWidget {
         height: cardSize,
         child: Stack(
           children: [
-            Container(
-              width: cardSize,
-              height: cardSize,
-              margin: EdgeInsets.only(
-                left: lang == 'en' ? 20.w : 0,
-                right: lang == 'ar' ? 20.w : 0,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(product.imageUrl),
-                  fit: BoxFit.fitHeight,
+            Align(
+              alignment:
+                  lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+              child: Card(
+                margin: lang == 'en'
+                    ? EdgeInsets.only(left: 20.w)
+                    : EdgeInsets.only(right: 20.w),
+                shadowColor: greyLightColor,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.sp),
                 ),
-                borderRadius: BorderRadius.circular(20.sp),
+                child: Container(
+                  width: cardSize,
+                  height: cardSize - 20.w,
+                  margin: EdgeInsets.only(
+                    left: lang == 'en' ? 20.w : 0,
+                    right: lang == 'ar' ? 20.w : 0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(product.imageUrl),
+                      fit: BoxFit.fitHeight,
+                    ),
+                    borderRadius: BorderRadius.circular(20.sp),
+                  ),
+                ),
               ),
             ),
             Align(
@@ -55,7 +70,7 @@ class AmazingProductCard extends StatelessWidget {
               child: Container(
                 width: contentSize,
                 height: contentSize,
-                margin: EdgeInsets.only(bottom: 20.h),
+                margin: EdgeInsets.only(bottom: 40.h),
                 padding: EdgeInsets.symmetric(
                   horizontal: 6.w,
                   vertical: 10.h,

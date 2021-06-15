@@ -137,6 +137,56 @@ class FlushBarService {
     );
   }
 
+  showErrorCustomDialog(
+    String title,
+    String message,
+  ) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  title,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  message,
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "close".tr(),
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   showErrorDialog(String message, [String image]) {
     showCupertinoDialog(
       context: context,
@@ -151,7 +201,10 @@ class FlushBarService {
               width: double.infinity,
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text(message),
+                child: Text(
+                  message,
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                ),
               ),
             ),
           ],

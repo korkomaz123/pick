@@ -12,8 +12,8 @@ class ToggleLanguageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120.w,
-      height: 25.h,
+      width: 100.w,
+      height: 30.h,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.w),
@@ -25,10 +25,10 @@ class ToggleLanguageWidget extends StatelessWidget {
           value: _globalProvider.currentLanguage == 'en'
               ? _globalProvider.languages[0]
               : _globalProvider.languages[1],
-          itemWidth: 60.w,
-          itemHeight: 25.h,
+          itemWidth: 50.w,
+          itemHeight: 30.h,
           itemSpace: 0,
-          titleSize: 12.sp,
+          titleSize: 14.sp,
           radius: 8,
           selectedColor: primaryColor,
           selectedTitleColor: Colors.white,
