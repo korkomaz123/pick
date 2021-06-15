@@ -1,4 +1,5 @@
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -29,6 +30,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'toggle_language.dart';
 
@@ -71,6 +73,15 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
     flushBarService = FlushBarService(context: context);
   }
 
+  void _onPrivacyPolicy() async {
+    String url = EndPoints.privacyAndPolicy;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     menuWidth = 300.w;
@@ -110,7 +121,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     }
                   },
                 ),
-              )
+              ),
+              ListTile(
+                leading: Icon(Icons.privacy_tip),
+                onTap: _onPrivacyPolicy,
+                title: Text(
+                  'suffix_agree_terms'.tr(),
+                ),
+              ),
             ],
           );
         },
@@ -365,8 +383,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
   }
 
   void _logout() async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'logout_confirm_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }

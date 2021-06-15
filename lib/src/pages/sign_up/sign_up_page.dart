@@ -1,5 +1,6 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -475,7 +476,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _onPrivacyPolicy() async {
-    String url = 'https://markaa.com/privacy-policy';
+    String url = EndPoints.privacyAndPolicy;
     if (await canLaunch(url)) {
       await launch(url);
     } else {
