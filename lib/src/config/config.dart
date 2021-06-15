@@ -3,7 +3,7 @@ const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
 class ChatSupport {
-  static const String appKey = '9be222f98ce7dc12af142e27097a8a8c';//'3c8027a1ab0d1cbe9adcbf0d215bd2b02';
+  static const String appKey = '3c8027a1ab0d1cbe9adcbf0d215bd2b02'; //'9be222f98ce7dc12af142e27097a8a8c';//
 }
 
 class MarkaaReporter {
