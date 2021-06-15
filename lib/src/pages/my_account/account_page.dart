@@ -8,6 +8,7 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/pages/my_account/widgets/live_chat.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -292,6 +293,8 @@ class _AccountPageState extends State<AccountPage> {
           RateAppItem(),
           SizedBox(height: 5.h),
           ContactUsItem(),
+          SizedBox(height: 5.h),
+          LiveChatItem(),
           SizedBox(height: 5.h),
           if (user != null) ...[
             MyWalletItem(),

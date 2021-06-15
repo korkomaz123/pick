@@ -303,7 +303,7 @@ class Preload {
         conversationObject = {
           'appId': ChatSupport.appKey,
         };
-    await _getCurrentUser();
+    // await _getCurrentUser();
     // if (await KommunicateFlutterPlugin.isLoggedIn()) await KommunicateFlutterPlugin.logout();
     if (user != null) {
       kmUser = {
