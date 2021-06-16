@@ -141,7 +141,12 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          String _attrSizeKeyName = productEntity.configurable['dress_size'] != null ? 'dress_size' : 'size';
+          String _attrSizeKeyName = 'size';
+          productEntity.configurable.forEach((key, value) {
+            if (key != 'color') {
+              _attrSizeKeyName = key;
+            }
+          });
           if (model.selectedOptions.containsKey(productEntity.configurable[_attrSizeKeyName]['attribute_id'])) {
             productEntity.variants.forEach((e) {
               if (e.options[productEntity.configurable[_attrSizeKeyName]['attribute_id']] ==
