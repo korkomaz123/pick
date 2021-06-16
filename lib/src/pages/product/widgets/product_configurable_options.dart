@@ -141,10 +141,11 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
+          String _attrSizeKeyName = productEntity.configurable['dress_size'] != null ? 'dress_size' : 'size';
+          if (model.selectedOptions.containsKey(productEntity.configurable[_attrSizeKeyName]['attribute_id'])) {
             productEntity.variants.forEach((e) {
-              if (e.options[productEntity.configurable['size']['attribute_id']] ==
-                      model.selectedOptions[productEntity.configurable['size']['attribute_id']] &&
+              if (e.options[productEntity.configurable[_attrSizeKeyName]['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable[_attrSizeKeyName]['attribute_id']] &&
                   e.options[attributeId] == attr['option_value']) isAvaliable = true;
             });
           } else {
