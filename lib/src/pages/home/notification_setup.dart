@@ -38,6 +38,8 @@ class NotificationSetup {
   }
 
   void _configureMessaging() async {
+    RemoteMessage message = await FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) _onLaunchMessage(message.data);
     NotificationSettings settings = await firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
