@@ -192,7 +192,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.h,
                         fontSize: 14.sp,
                         hint: 'phone_number_hint'.tr(),
-                        maxLength: 12,
+                        maxLength: 9,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'required_field'.tr();

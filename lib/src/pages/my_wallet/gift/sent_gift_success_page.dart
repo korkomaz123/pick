@@ -81,7 +81,7 @@ class _SentGiftSuccessPageState extends State<SentGiftSuccessPage> {
             ),
             SizedBox(height: 10.h),
             Text(
-              'wallet_added_success_message'.tr(),
+              'wallet_sent_success_message'.tr(),
               textAlign: TextAlign.center,
               style: mediumTextStyle.copyWith(fontSize: 23.sp),
             ),

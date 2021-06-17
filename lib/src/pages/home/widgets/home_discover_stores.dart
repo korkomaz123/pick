@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -27,13 +28,18 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.brandList.isNotEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(),
-          SizedBox(height: 20.h),
-          _buildStoresSlider(),
-        ],
+      return Container(
+        height: 380.h,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(),
+            SizedBox(height: 20.h),
+            _buildStoresSlider(),
+          ],
+        ),
       );
     } else {
       return Container();
@@ -58,10 +64,11 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 12.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 Navigator.pushNamed(

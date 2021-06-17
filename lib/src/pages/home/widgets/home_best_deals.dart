@@ -19,11 +19,17 @@ class HomeBestDeals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
-      return Column(
-        children: [
-          _buildHeadline(),
-          Expanded(child: _buildProductsList()),
-        ],
+      return Container(
+        height: 360.h,
+        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.only(bottom: 10.h),
+        color: Colors.white,
+        child: Column(
+          children: [
+            _buildHeadline(),
+            Expanded(child: _buildProductsList()),
+          ],
+        ),
       );
     } else {
       return Container();
@@ -48,10 +54,11 @@ class HomeBestDeals extends StatelessWidget {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 15.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(

@@ -167,7 +167,7 @@ class _SendGiftPageState extends State<SendGiftPage> {
         controller: _amountController,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
-        maxLength: 6,
+        maxLength: 3,
         buildCounter: (
           BuildContext context, {
           int currentLength,

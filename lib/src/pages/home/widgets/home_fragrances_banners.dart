@@ -28,20 +28,25 @@ class HomeFragrancesBanners extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeChangeNotifier>(
       builder: (_, model, __) {
-        return Container(
-          width: designWidth.w,
-          child: Column(
-            children: [
-              if (model.fragrancesBanners.isNotEmpty) ...[
-                _buildBanners(model.fragrancesBanners)
+        if (model.fragrancesBanners.isNotEmpty ||
+            model.fragrancesBannersTitle.isNotEmpty) {
+          return Container(
+            width: designWidth.w,
+            margin: EdgeInsets.only(bottom: 10.h),
+            child: Column(
+              children: [
+                if (model.fragrancesBanners.isNotEmpty) ...[
+                  _buildBanners(model.fragrancesBanners)
+                ],
+                if (model.fragrancesBannersTitle.isNotEmpty) ...[
+                  SizedBox(height: 10.h),
+                  _buildTitle(model.fragrancesBannersTitle, context)
+                ],
               ],
-              if (model.fragrancesBannersTitle.isNotEmpty) ...[
-                SizedBox(height: 10.h),
-                _buildTitle(model.fragrancesBannersTitle, context)
-              ],
-            ],
-          ),
-        );
+            ),
+          );
+        }
+        return Container();
       },
     );
   }
@@ -72,10 +77,11 @@ class HomeFragrancesBanners extends StatelessWidget {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 12.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () async {
                 ProductListArguments arguments = ProductListArguments(

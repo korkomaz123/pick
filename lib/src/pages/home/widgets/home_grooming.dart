@@ -21,24 +21,29 @@ class HomeGrooming extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 10.h),
-      child: Column(
-        children: [
-          if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[
-            _buildHeadline()
+    if (homeChangeNotifier.groomingTitle.isNotEmpty ||
+        homeChangeNotifier.groomingCategories.isNotEmpty ||
+        homeChangeNotifier.groomingItems.isNotEmpty) {
+      return Container(
+        width: double.infinity,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[
+              _buildHeadline()
+            ],
+            if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[
+              _buildCategories(homeChangeNotifier.groomingCategories)
+            ],
+            if (homeChangeNotifier.groomingItems.isNotEmpty) ...[
+              _buildProducts(homeChangeNotifier.groomingItems)
+            ],
           ],
-          if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[
-            _buildCategories(homeChangeNotifier.groomingCategories)
-          ],
-          if (homeChangeNotifier.groomingItems.isNotEmpty) ...[
-            _buildProducts(homeChangeNotifier.groomingItems)
-          ],
-        ],
-      ),
-    );
+        ),
+      );
+    }
+    return Container();
   }
 
   Widget _buildHeadline() {
@@ -60,10 +65,11 @@ class HomeGrooming extends StatelessWidget {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 15.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(

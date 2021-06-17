@@ -170,7 +170,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           contentPadding: EdgeInsets.all(0),
           hintText: 'phone_number_hint'.tr(),
         ),
-        maxLength: 12,
+        maxLength: 9,
         buildCounter: (
           BuildContext context, {
           int currentLength,

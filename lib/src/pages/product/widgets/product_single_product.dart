@@ -189,6 +189,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           color: Colors.white,
           child: Column(
             children: [
+              SizedBox(height: 20.h),
               if (widget?.model?.selectedVariant?.productId != null) ...[
                 if (isValidUrl) ...[
                   Container(
@@ -614,15 +615,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "no_qty.svg");
+      flushBarService.showErrorDialog('required_options'.tr(), "no_qty.svg");
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
         (model?.selectedVariant?.stockQty == null ||
             model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorDialog(
-          'out_of_stock_error'.tr(), "no_qty.svg");
+      flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     _updateWishlist(model);

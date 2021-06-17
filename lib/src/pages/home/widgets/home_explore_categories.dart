@@ -1,3 +1,4 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
@@ -26,22 +27,25 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: designWidth.w,
-      color: Colors.white,
-      child: Consumer<CategoryChangeNotifier>(builder: (_, __, ___) {
+    return Consumer<CategoryChangeNotifier>(
+      builder: (_, __, ___) {
         if (widget.homeChangeNotifier.categories.isNotEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              _buildCategorySliders(),
-            ],
+          return Container(
+            width: designWidth.w,
+            color: Colors.white,
+            margin: EdgeInsets.only(bottom: 10.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitle(),
+                _buildCategorySliders(),
+              ],
+            ),
           );
         } else {
           return Container();
         }
-      }),
+      },
     );
   }
 
@@ -63,10 +67,11 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 12.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 Navigator.pushNamed(

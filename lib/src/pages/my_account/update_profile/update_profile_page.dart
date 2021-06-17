@@ -267,7 +267,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        maxLength: 12,
+        maxLength: 9,
         validator: (value) {
           if (value.isEmpty) {
             return 'required_field'.tr();

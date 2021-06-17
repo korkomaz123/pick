@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
@@ -25,6 +26,7 @@ class HomeAdvertise extends StatelessWidget {
     if (homeChangeNotifier.ads != null) {
       return Container(
         color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
             Padding(
@@ -47,10 +49,11 @@ class HomeAdvertise extends StatelessWidget {
                     height: 30.h,
                     child: MarkaaTextButton(
                       title: 'view_all'.tr(),
-                      titleSize: 12.sp,
+                      titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
                       titleColor: primaryColor,
                       buttonColor: Colors.white,
                       borderColor: primaryColor,
+                      borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
                       onPressed: () async {
                         if (homeChangeNotifier.ads.categoryId != null) {

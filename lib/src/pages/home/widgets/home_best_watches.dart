@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
@@ -28,20 +29,25 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
   final ProductRepository productRepository = ProductRepository();
 
   Widget build(BuildContext context) {
-    return Container(
-      width: designWidth.w,
-      color: Colors.white,
-      child: Column(
-        children: [
-          if (widget.homeChangeNotifier.bestWatchesBanner != null) ...[
-            _buildBanner(widget.homeChangeNotifier.bestWatchesBanner)
+    if (widget.homeChangeNotifier.bestWatchesBanner != null ||
+        widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) {
+      return Container(
+        width: designWidth.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            if (widget.homeChangeNotifier.bestWatchesBanner != null) ...[
+              _buildBanner(widget.homeChangeNotifier.bestWatchesBanner)
+            ],
+            if (widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) ...[
+              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
+            ]
           ],
-          if (widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) ...[
-            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-          ]
-        ],
-      ),
-    );
+        ),
+      );
+    }
+    return Container();
   }
 
   Widget _buildBanner(SliderImageEntity banner) {
@@ -67,10 +73,11 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                 height: 30.h,
                 child: MarkaaTextButton(
                   title: 'view_all'.tr(),
-                  titleSize: 12.sp,
+                  titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
                   titleColor: primaryColor,
                   buttonColor: Colors.white,
                   borderColor: primaryColor,
+                  borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
                   onPressed: () async {
                     if (banner.categoryId != null) {

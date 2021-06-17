@@ -222,7 +222,7 @@ class _SignUpPageState extends State<SignUpPage> {
         keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.next,
         onEditingComplete: () => emailNode.requestFocus(),
-        maxLength: 12,
+        maxLength: 9,
         buildCounter: (
           BuildContext context, {
           int currentLength,

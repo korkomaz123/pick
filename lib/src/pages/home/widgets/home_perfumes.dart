@@ -24,6 +24,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
       return Container(
         width: designWidth.w,
         color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
             _buildProductView(),

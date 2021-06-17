@@ -503,6 +503,7 @@ class _SignInPageState extends State<SignInPage> {
   void _onGoogleSign() async {
     GoogleSignIn _googleSignIn = GoogleSignIn();
     try {
+      await _googleSignIn.signOut();
       final googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
         String email = googleAccount.email;

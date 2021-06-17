@@ -26,21 +26,29 @@ class HomeSmartTech extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
-          _buildBanners(homeChangeNotifier.smartTechBanners)
-        ],
-        SizedBox(height: 10.h),
-        if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
-          _buildProducts(
-            homeChangeNotifier.smartTechTitle,
-            homeChangeNotifier.smartTechCategory,
-            homeChangeNotifier.smartTechItems,
-          )
-        ],
-      ],
-    );
+    if (homeChangeNotifier.smartTechBanners.isNotEmpty ||
+        homeChangeNotifier.smartTechItems.isNotEmpty) {
+      return Container(
+        width: designWidth.w,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
+              _buildBanners(homeChangeNotifier.smartTechBanners)
+            ],
+            SizedBox(height: 10.h),
+            if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+              _buildProducts(
+                homeChangeNotifier.smartTechTitle,
+                homeChangeNotifier.smartTechCategory,
+                homeChangeNotifier.smartTechItems,
+              )
+            ],
+          ],
+        ),
+      );
+    }
+    return Container();
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
@@ -130,10 +138,11 @@ class HomeSmartTech extends StatelessWidget {
                   height: 30.h,
                   child: MarkaaTextButton(
                     title: 'view_all'.tr(),
-                    titleSize: 12.sp,
+                    titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
                     titleColor: primaryColor,
                     buttonColor: Colors.white,
                     borderColor: primaryColor,
+                    borderWidth: Preload.language == 'en' ? 1 : 0.5,
                     radius: 0,
                     onPressed: () {
                       ProductListArguments arguments = ProductListArguments(

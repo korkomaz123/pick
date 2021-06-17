@@ -1,3 +1,4 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -19,14 +20,20 @@ class HomeNewArrivals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.newArrivalsProducts.isNotEmpty) {
-      return Column(
-        children: [
-          _buildHeadline(context),
-          HomeProductsCarousel(
-            products: homeChangeNotifier.newArrivalsProducts,
-            isVerticalCard: false,
-          ),
-        ],
+      return Container(
+        height: 300.h,
+        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.only(bottom: 10.h),
+        color: Colors.white,
+        child: Column(
+          children: [
+            _buildHeadline(context),
+            HomeProductsCarousel(
+              products: homeChangeNotifier.newArrivalsProducts,
+              isVerticalCard: false,
+            ),
+          ],
+        ),
       );
     } else {
       return Container();
@@ -51,10 +58,11 @@ class HomeNewArrivals extends StatelessWidget {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 12.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () async {
                 ProductListArguments arguments = ProductListArguments(
