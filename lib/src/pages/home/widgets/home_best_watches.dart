@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -58,18 +59,21 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                banner?.categoryId != null
-                    ? banner.categoryName
-                    : banner?.brand != null
-                        ? banner.brand.brandLabel
-                        : '',
-                style: mediumTextStyle.copyWith(
-                  fontSize: 26.sp,
+              Expanded(
+                child: AutoSizeText(
+                  banner?.categoryId != null
+                      ? banner.categoryName
+                      : banner?.brand != null
+                          ? banner.brand.brandLabel
+                          : '',
+                  maxLines: 1,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 26.sp,
+                  ),
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                padding: EdgeInsets.symmetric(horizontal: 2.w),
                 height: 30.h,
                 child: MarkaaTextButton(
                   title: 'view_all'.tr(),

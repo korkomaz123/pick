@@ -7,6 +7,7 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -34,18 +35,21 @@ class HomeAdvertise extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    homeChangeNotifier?.ads?.categoryId != null
-                        ? homeChangeNotifier.ads.categoryName
-                        : homeChangeNotifier?.ads?.brand != null
-                            ? homeChangeNotifier.ads.brand.brandLabel
-                            : '',
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 26.sp,
+                  Expanded(
+                    child: AutoSizeText(
+                      homeChangeNotifier?.ads?.categoryId != null
+                          ? homeChangeNotifier.ads.categoryName
+                          : homeChangeNotifier?.ads?.brand != null
+                              ? homeChangeNotifier.ads.brand.brandLabel
+                              : '',
+                      maxLines: 1,
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 26.sp,
+                      ),
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    padding: EdgeInsets.symmetric(horizontal: 2.w),
                     height: 30.h,
                     child: MarkaaTextButton(
                       title: 'view_all'.tr(),

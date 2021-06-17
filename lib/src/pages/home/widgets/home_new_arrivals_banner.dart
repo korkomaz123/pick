@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -39,16 +40,14 @@ class HomeNewArrivalsBanner extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       homeChangeNotifier.newArrivalsBannerTitle,
-                      overflow: TextOverflow.ellipsis,
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 26.sp,
-                      ),
+                      maxLines: 1,
+                      style: mediumTextStyle,
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    padding: EdgeInsets.symmetric(horizontal: 2.w),
                     height: 30.h,
                     child: MarkaaTextButton(
                       title: 'view_all'.tr(),

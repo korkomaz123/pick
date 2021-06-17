@@ -367,6 +367,6 @@
     "gift": "Gift",
     "wallet_transfer": "Wallet Transfer",
     "top_up_failed_title": "Top up failed",
-    "top_up_failed_message": "The maximum top up per transaction is ### KWD",
+    "top_up_failed_message": "The maximum top up per transaction is # KWD",
     "ask_agree_privacy_policy": "You must agree with our Privacy and Policy"
 }

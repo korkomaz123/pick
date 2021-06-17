@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
@@ -42,15 +43,18 @@ class HomeBestDeals extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            homeChangeNotifier.bestDealsTitle ?? '',
-            style: mediumTextStyle.copyWith(
-              fontSize: 26.sp,
-              color: greyDarkColor,
+          Expanded(
+            child: AutoSizeText(
+              homeChangeNotifier.bestDealsTitle ?? '',
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                fontSize: 26.sp,
+                color: greyDarkColor,
+              ),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

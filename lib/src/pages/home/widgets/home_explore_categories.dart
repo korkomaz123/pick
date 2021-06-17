@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -55,15 +56,18 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'home_categories'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 26.sp,
+          Expanded(
+            child: AutoSizeText(
+              'home_categories'.tr(),
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                color: greyDarkColor,
+                fontSize: 26.sp,
+              ),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

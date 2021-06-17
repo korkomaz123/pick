@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,15 +54,18 @@ class HomeGrooming extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            homeChangeNotifier.groomingTitle ?? '',
-            style: mediumTextStyle.copyWith(
-              fontSize: 26.sp,
-              color: greyDarkColor,
+          Expanded(
+            child: AutoSizeText(
+              homeChangeNotifier.groomingTitle ?? '',
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                fontSize: 26.sp,
+                color: greyDarkColor,
+              ),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

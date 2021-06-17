@@ -29,11 +29,16 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         widget.homeChangeNotifier.sliderImages.isEmpty) {
       return Container();
     }
-    return Stack(
-      children: [
-        _buildImageSlider(),
-        _buildIndicator(),
-      ],
+    return Container(
+      width: double.infinity,
+      height: designWidth.w * 579 / 1125,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          _buildImageSlider(),
+          _buildIndicator(),
+        ],
+      ),
     );
   }
 
