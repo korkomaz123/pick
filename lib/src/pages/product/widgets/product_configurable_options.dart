@@ -98,6 +98,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               }
             },
             child: Container(
+              width: 70.w,
               margin: EdgeInsets.symmetric(
                 horizontal: 4.w,
                 vertical: 5.h,
@@ -141,10 +142,16 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = false;
-          if (model.selectedOptions.containsKey(productEntity.configurable['size']['attribute_id'])) {
+          String _attrSizeKeyName = 'size';
+          productEntity.configurable.forEach((key, value) {
+            if (key != 'color') {
+              _attrSizeKeyName = key;
+            }
+          });
+          if (model.selectedOptions.containsKey(productEntity.configurable[_attrSizeKeyName]['attribute_id'])) {
             productEntity.variants.forEach((e) {
-              if (e.options[productEntity.configurable['size']['attribute_id']] ==
-                      model.selectedOptions[productEntity.configurable['size']['attribute_id']] &&
+              if (e.options[productEntity.configurable[_attrSizeKeyName]['attribute_id']] ==
+                      model.selectedOptions[productEntity.configurable[_attrSizeKeyName]['attribute_id']] &&
                   e.options[attributeId] == attr['option_value']) isAvaliable = true;
             });
           } else {
