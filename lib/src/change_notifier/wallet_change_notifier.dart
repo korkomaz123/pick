@@ -125,7 +125,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     if (result['code'] == 'SUCCESS') {
       if (onSuccess != null) onSuccess();
     } else {
-      if (onFailure != null) onFailure(result['errMessage']);
+      if (onFailure != null) onFailure(result['errorMessage']);
     }
   }
 

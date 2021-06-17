@@ -57,14 +57,18 @@ class HomeFragrancesBanners extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: mediumTextStyle.copyWith(
-              fontSize: 26.sp,
+          Expanded(
+            child: Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                fontSize: 24.sp,
+              ),
             ),
           ),
           Container(
-            width: 80.w,
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

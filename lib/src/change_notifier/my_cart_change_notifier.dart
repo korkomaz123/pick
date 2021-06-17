@@ -246,7 +246,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         if (onSuccess != null) onSuccess();
         notifyListeners();
       } else {
-        onFailure(result['errMessage']);
+        onFailure(result['errorMessage']);
         reportCartIssue(result, data);
       }
     } catch (e) {

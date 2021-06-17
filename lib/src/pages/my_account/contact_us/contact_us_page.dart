@@ -170,6 +170,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
           contentPadding: EdgeInsets.all(0),
           hintText: 'phone_number_hint'.tr(),
         ),
+        maxLength: 12,
+        buildCounter: (
+          BuildContext context, {
+          int currentLength,
+          int maxLength,
+          bool isFocused,
+        }) =>
+            null,
         validator: (value) {
           if (value.isEmpty) {
             return 'required_field'.tr();

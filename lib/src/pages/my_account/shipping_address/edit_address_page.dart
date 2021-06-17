@@ -184,6 +184,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.h,
                     fontSize: 14.sp,
                     hint: 'phone_number_hint'.tr(),
+                    maxLength: 12,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'required_field'.tr();

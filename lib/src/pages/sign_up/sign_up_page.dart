@@ -131,9 +131,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       height: 45.h,
                     ),
                   ),
-                  _buildFirstName(),
+                  _buildFullName(),
                   SizedBox(height: 10),
-                  _buildLastName(),
+                  _buildPhoneNumber(),
                   SizedBox(height: 10),
                   _buildEmail(),
                   SizedBox(height: 10),
@@ -153,7 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildFirstName() {
+  Widget _buildFullName() {
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -206,7 +206,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildLastName() {
+  Widget _buildPhoneNumber() {
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -222,6 +222,14 @@ class _SignUpPageState extends State<SignUpPage> {
         keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.next,
         onEditingComplete: () => emailNode.requestFocus(),
+        maxLength: 12,
+        buildCounter: (
+          BuildContext context, {
+          int currentLength,
+          int maxLength,
+          bool isFocused,
+        }) =>
+            null,
         decoration: InputDecoration(
           hintText: 'phone_number_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -355,7 +363,7 @@ class _SignUpPageState extends State<SignUpPage> {
             borderSide: BorderSide(color: Color(0xFF00F5FF), width: 0.5),
           ),
           suffix: InkWell(
-            onTap: () => null,
+            onTap: () => passwordController.clear(),
             child: Text('reset'.tr()),
           ),
         ),

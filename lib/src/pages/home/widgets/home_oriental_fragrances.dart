@@ -52,7 +52,7 @@ class HomeOrientalFragrances extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: 5.w,
+              horizontal: 5.w
             ),
             height: 30.h,
             child: MarkaaTextButton(

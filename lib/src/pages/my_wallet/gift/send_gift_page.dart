@@ -51,10 +51,9 @@ class _SendGiftPageState extends State<SendGiftPage> {
   }
 
   _onChange() {
-    bool validEmail = isEmail(_emailController.text);
-    bool validAmount = (isInt(_amountController.text) ||
-            isFloat(_amountController.text)) &&
-        StringService.roundDouble(_amountController.text, 3) <= user.balance;
+    bool validEmail = true;
+    bool validAmount = _amountController.text.isNotEmpty &&
+        (isInt(_amountController.text) || isFloat(_amountController.text));
     isValid = validEmail && validAmount;
     setState(() {});
   }
@@ -168,6 +167,14 @@ class _SendGiftPageState extends State<SendGiftPage> {
         controller: _amountController,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
+        maxLength: 6,
+        buildCounter: (
+          BuildContext context, {
+          int currentLength,
+          int maxLength,
+          bool isFocused,
+        }) =>
+            null,
         decoration: InputDecoration(
           hintText: 'enter_amount_hint'.tr(),
           hintStyle: mediumTextStyle.copyWith(
@@ -202,9 +209,19 @@ class _SendGiftPageState extends State<SendGiftPage> {
             width: 40.w,
             margin: EdgeInsets.symmetric(vertical: 5.h),
             decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 0.5.w, color: primaryColor),
-              ),
+              border: Preload.language == 'en'
+                  ? Border(
+                      left: BorderSide(
+                        width: 0.5.w,
+                        color: primaryColor,
+                      ),
+                    )
+                  : Border(
+                      right: BorderSide(
+                        width: 0.5.w,
+                        color: primaryColor,
+                      ),
+                    ),
             ),
             alignment: Alignment.center,
             child: Text(
@@ -222,21 +239,28 @@ class _SendGiftPageState extends State<SendGiftPage> {
   }
 
   _onTransferMoney() async {
-    String message = 'transfer_amount_confirm_message'
-        .tr()
-        .replaceFirst('#', StringService.roundString(_amountController.text, 3))
-        .replaceFirst('@', _emailController.text);
-    final result = await _flushBarService.showConfirmDialog(message: message);
-    if (result != null) {
-      _walletChangeNotifier.transferMoney(
-        token: user.token,
-        amount: _amountController.text,
-        lang: Preload.language,
-        description: 'gift',
-        email: _emailController.text,
-        onProcess: _onProcess,
-        onSuccess: _onSuccess,
-        onFailure: _onFailure,
+    if (StringService.roundDouble(_amountController.text, 3) <= user.balance) {
+      String message = 'transfer_amount_confirm_message'
+          .tr()
+          .replaceFirst(
+              '#', StringService.roundString(_amountController.text, 3))
+          .replaceFirst('@', _emailController.text);
+      final result = await _flushBarService.showConfirmDialog(message: message);
+      if (result != null) {
+        _walletChangeNotifier.transferMoney(
+          token: user.token,
+          amount: _amountController.text,
+          lang: Preload.language,
+          description: 'gift',
+          email: _emailController.text,
+          onProcess: _onProcess,
+          onSuccess: _onSuccess,
+          onFailure: _onFailure,
+        );
+      }
+    } else {
+      _flushBarService.showErrorDialog(
+        'not_enough_wallet'.tr(),
       );
     }
   }

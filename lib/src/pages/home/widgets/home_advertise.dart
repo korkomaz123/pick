@@ -28,7 +28,7 @@ class HomeAdvertise extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.w),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -43,7 +43,7 @@ class HomeAdvertise extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 80.w,
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     height: 30.h,
                     child: MarkaaTextButton(
                       title: 'view_all'.tr(),

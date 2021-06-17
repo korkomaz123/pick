@@ -41,36 +41,39 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'brands_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: greyDarkColor,
-            fontSize: 26.sp,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'brands_title'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: 26.sp,
+            ),
           ),
-        ),
-        Container(
-          width: 80.w,
-          height: 30.h,
-          child: MarkaaTextButton(
-            title: 'view_all'.tr(),
-            titleSize: 12.sp,
-            titleColor: primaryColor,
-            buttonColor: Colors.white,
-            borderColor: primaryColor,
-            radius: 0,
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                Routes.brandList,
-                arguments: widget.homeChangeNotifier.brandList,
-              );
-            },
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            height: 30.h,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: 12.sp,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: primaryColor,
+              radius: 0,
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.brandList,
+                  arguments: widget.homeChangeNotifier.brandList,
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -133,7 +136,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: (activeIndex / 2).floor().toDouble(),
                 count: (length / 2).ceil(),

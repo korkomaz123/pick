@@ -47,7 +47,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
 
   Widget _buildTitle() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -59,7 +59,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             ),
           ),
           Container(
-            width: 80.w,
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),

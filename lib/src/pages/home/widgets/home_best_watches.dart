@@ -48,7 +48,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.w),
+          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -63,7 +63,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                 ),
               ),
               Container(
-                width: 80.w,
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
                 height: 30.h,
                 child: MarkaaTextButton(
                   title: 'view_all'.tr(),

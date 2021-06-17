@@ -61,10 +61,13 @@ class _ChangeNotificationSettingItemState
           ),
           Consumer<MarkaaAppChangeNotifier>(
             builder: (_, model, ___) {
-              return CupertinoSwitch(
-                value: isNotification,
-                onChanged: (value) => _onChangeNotification(value, model),
-                activeColor: primaryColor,
+              return Transform.scale(
+                scale: 0.8,
+                child: CupertinoSwitch(
+                  value: isNotification,
+                  onChanged: (value) => _onChangeNotification(value, model),
+                  activeColor: primaryColor,
+                ),
               );
             },
           ),

@@ -39,35 +39,35 @@ class _MyWalletDetailsTransactionsState
     return Container(
       width: designWidth.w,
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 40.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'last_transactions'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: 23.sp,
-            ),
-          ),
-          Consumer<WalletChangeNotifier>(
-            builder: (_, model, __) {
-              if (model.transactionsList == null) {
-                return Center(
-                  child: PulseLoadingSpinner(),
-                );
-              } else if (model.transactionsList.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: Text(
-                      'no_transaction_record'.tr(),
-                      textAlign: TextAlign.center,
-                      style: mediumTextStyle.copyWith(fontSize: 12.sp),
-                    ),
-                  ),
-                );
-              }
-              return Column(
+      child: Consumer<WalletChangeNotifier>(
+        builder: (_, model, __) {
+          if (model.transactionsList == null) {
+            return Center(
+              child: PulseLoadingSpinner(),
+            );
+          } else if (model.transactionsList.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 40.h),
+                child: Text(
+                  'no_transaction_record'.tr(),
+                  textAlign: TextAlign.center,
+                  style: mediumTextStyle.copyWith(fontSize: 12.sp),
+                ),
+              ),
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'last_transactions'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 23.sp,
+                ),
+              ),
+              Column(
                 children: model.transactionsList.map((item) {
                   if (item.type == TransactionType.admin) {
                     return _buildAdminDebitCard(item);
@@ -78,10 +78,10 @@ class _MyWalletDetailsTransactionsState
                   }
                   return _buildOrderCard(item);
                 }).toList(),
-              );
-            },
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }

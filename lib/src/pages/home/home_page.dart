@@ -66,6 +66,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
+    _loadHomePage();
+
+    Preload.setupAdjustSDK();
+    Preload.currentUser.then((data) {
+      user = data;
+      NotificationSetup().init();
+      _onLoadHomePage();
+    });
+
+    dynamicLinkService.initialDynamicLink();
+    dynamicLinkService.retrieveDynamicLink();
+  }
+
+  void _loadHomePage() {
     loadSliderImages = _homeProvider.loadSliderImages();
     getFeaturedCategoriesList = _homeProvider.getFeaturedCategoriesList();
     loadMegaBanner = _homeProvider.loadMegaBanner();
@@ -84,19 +98,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getCategoriesList = _homeProvider.getCategoriesList();
     getBrandsList = _homeProvider.getBrandsList('home');
     getViewedProducts = _homeProvider.getViewedProducts();
+  }
 
-    Preload.setupAdjustSDK();
-
-    Preload.currentUser.then((data) {
-      user = data;
-      NotificationSetup().init();
-      _onLoadHomePage();
-    });
-
-    dynamicLinkService.initialDynamicLink();
-    dynamicLinkService.retrieveDynamicLink();
-
-    // _onLoadHomePage();
+  void _initHomePageData() {
+    loadSliderImages = null;
+    getFeaturedCategoriesList = null;
+    loadMegaBanner = null;
+    loadBestDeals = null;
+    loadBestDealsBanner = null;
+    loadNewArrivals = null;
+    loadExculisiveBanner = null;
+    loadOrientalProducts = null;
+    loadNewArrivalsBanner = null;
+    loadFragrancesBanner = null;
+    loadPerfumes = null;
+    loadBestWatches = null;
+    loadGrooming = null;
+    loadAds = null;
+    loadSmartTech = null;
+    getCategoriesList = null;
+    getBrandsList = null;
+    getViewedProducts = null;
   }
 
   void _onLoadHomePage() async {
@@ -109,12 +131,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     await Preload.navigatorKey.currentContext
         .read<MyCartChangeNotifier>()
         .getCartItems(Preload.language);
-
-    // if (user?.token != null) {
-    //   await Preload.navigatorKey.currentContext
-    //       .read<WishlistChangeNotifier>()
-    //       .getWishlistItems(user.token, Preload.language);
-    // }
 
     _homeProvider.loadPopup(_onShowPopup);
   }
@@ -164,171 +180,187 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             notification.disallowGlow();
             return true;
           },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: designWidth.w * 579 / 1125,
-                  child: FutureBuilder(
-                    future: loadSliderImages,
-                    builder: (_, snapShot) => snapShot.connectionState ==
-                            ConnectionState.waiting
-                        ? Center(child: PulseLoadingSpinner())
-                        : HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              _initHomePageData();
+              setState(() {});
+              Future.delayed(Duration(milliseconds: 500), () {
+                _loadHomePage();
+                setState(() {});
+              });
+            },
+            color: primaryColor,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: designWidth.w * 579 / 1125,
+                    color: Colors.white,
+                    child: FutureBuilder(
+                      future: loadSliderImages,
+                      builder: (_, snapShot) {
+                        if (snapShot.connectionState == ConnectionState.waiting)
+                          return Center(child: PulseLoadingSpinner());
+                        else
+                          return HomeHeaderCarousel(
+                              homeChangeNotifier: _homeProvider);
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  child: FutureBuilder(
-                    future: getFeaturedCategoriesList,
+                  Container(
+                    width: double.infinity,
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: FutureBuilder(
+                      future: getFeaturedCategoriesList,
+                      builder: (_, snapShot) =>
+                          snapShot.connectionState == ConnectionState.waiting
+                              ? Center(child: PulseLoadingSpinner())
+                              : HomeFeaturedCategories(
+                                  homeChangeNotifier: _homeProvider),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: loadMegaBanner,
+                    builder: (_, snapShot) =>
+                        HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                  ),
+                  Container(
+                    height: 360.h,
+                    padding: EdgeInsets.all(8.w),
+                    margin: EdgeInsets.only(bottom: 10.h),
+                    color: Colors.white,
+                    child: FutureBuilder(
+                      future: loadBestDeals,
+                      builder: (_, snapShot) => snapShot.connectionState ==
+                              ConnectionState.waiting
+                          ? Center(child: PulseLoadingSpinner())
+                          : HomeBestDeals(homeChangeNotifier: _homeProvider),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: loadGrooming,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: CircularProgressIndicator())
+                            : HomeGrooming(homeChangeNotifier: _homeProvider),
+                  ),
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: loadBestDealsBanner,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
                             ? Center(child: PulseLoadingSpinner())
-                            : HomeFeaturedCategories(
+                            : HomeBestDealsBanner(
                                 homeChangeNotifier: _homeProvider),
                   ),
-                ),
-                FutureBuilder(
-                  future: loadMegaBanner,
-                  builder: (_, snapShot) =>
-                      HomeMegaBanner(homeChangeNotifier: _homeProvider),
-                ),
-                Container(
-                  height: 360.h,
-                  padding: EdgeInsets.all(8.w),
-                  margin: EdgeInsets.only(bottom: 10.h),
-                  color: Colors.white,
-                  child: FutureBuilder(
-                    future: loadBestDeals,
+                  Container(
+                    height: 300.h,
+                    padding: EdgeInsets.all(8.w),
+                    margin: EdgeInsets.only(bottom: 10.h),
+                    color: Colors.white,
+                    child: FutureBuilder(
+                      future: loadNewArrivals,
+                      builder: (_, snapShot) => snapShot.connectionState ==
+                              ConnectionState.waiting
+                          ? Center(child: PulseLoadingSpinner())
+                          : HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                    ),
+                  ),
+                  Container(
+                    width: designWidth.w,
+                    margin: EdgeInsets.only(bottom: 10.h),
+                    padding: EdgeInsets.all(8.w),
+                    color: Colors.white,
+                    child: FutureBuilder(
+                      future: loadOrientalProducts,
+                      builder: (_, snapShot) =>
+                          snapShot.connectionState == ConnectionState.waiting
+                              ? Center(child: PulseLoadingSpinner())
+                              : HomeOrientalFragrances(
+                                  homeChangeNotifier: _homeProvider),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: loadNewArrivalsBanner,
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
                             ? Center(child: PulseLoadingSpinner())
-                            : HomeBestDeals(homeChangeNotifier: _homeProvider),
-                  ),
-                ),
-                FutureBuilder(
-                  future: loadGrooming,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: CircularProgressIndicator())
-                          : HomeGrooming(homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: loadBestDealsBanner,
-                  builder: (_, snapShot) => snapShot.connectionState ==
-                          ConnectionState.waiting
-                      ? Center(child: PulseLoadingSpinner())
-                      : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
-                ),
-                Container(
-                  height: 300.h,
-                  padding: EdgeInsets.all(8.w),
-                  margin: EdgeInsets.only(bottom: 10.h),
-                  color: Colors.white,
-                  child: FutureBuilder(
-                    future: loadNewArrivals,
-                    builder: (_, snapShot) => snapShot.connectionState ==
-                            ConnectionState.waiting
-                        ? Center(child: PulseLoadingSpinner())
-                        : HomeNewArrivals(homeChangeNotifier: _homeProvider),
-                  ),
-                ),
-                Container(
-                  width: designWidth.w,
-                  margin: EdgeInsets.only(bottom: 10.h),
-                  padding: EdgeInsets.all(8.w),
-                  color: Colors.white,
-                  child: FutureBuilder(
-                    future: loadOrientalProducts,
-                    builder: (_, snapShot) =>
-                        snapShot.connectionState == ConnectionState.waiting
-                            ? Center(child: PulseLoadingSpinner())
-                            : HomeOrientalFragrances(
+                            : HomeNewArrivalsBanner(
                                 homeChangeNotifier: _homeProvider),
                   ),
-                ),
-                FutureBuilder(
-                  future: loadNewArrivalsBanner,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeNewArrivalsBanner(
-                              homeChangeNotifier: _homeProvider),
-                ),
-                FutureBuilder(
-                  future: loadFragrancesBanner,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeFragrancesBanners(
-                              homeChangeNotifier: _homeProvider),
-                ),
-                FutureBuilder(
-                  future: loadPerfumes,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomePerfumes(homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: loadBestWatches,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeBestWatches(homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: loadAds,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeAdvertise(homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: getCategoriesList,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeExploreCategories(
-                              homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                Container(
-                  height: 380.h,
-                  color: Colors.white,
-                  padding: EdgeInsets.all(15.w),
-                  child: FutureBuilder(
-                    future: getBrandsList,
+                  FutureBuilder(
+                    future: loadFragrancesBanner,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomeFragrancesBanners(
+                                homeChangeNotifier: _homeProvider),
+                  ),
+                  FutureBuilder(
+                    future: loadPerfumes,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomePerfumes(homeChangeNotifier: _homeProvider),
+                  ),
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: loadBestWatches,
                     builder: (_, snapShot) => snapShot.connectionState ==
                             ConnectionState.waiting
                         ? Center(child: PulseLoadingSpinner())
-                        : HomeDiscoverStores(homeChangeNotifier: _homeProvider),
+                        : HomeBestWatches(homeChangeNotifier: _homeProvider),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: loadSmartTech,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeSmartTech(homeChangeNotifier: _homeProvider),
-                ),
-                SizedBox(height: 10.h),
-                FutureBuilder(
-                  future: getViewedProducts,
-                  builder: (_, snapShot) =>
-                      snapShot.connectionState == ConnectionState.waiting
-                          ? Center(child: PulseLoadingSpinner())
-                          : HomeRecent(homeChangeNotifier: _homeProvider),
-                ),
-              ],
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: loadAds,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomeAdvertise(homeChangeNotifier: _homeProvider),
+                  ),
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: getCategoriesList,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomeExploreCategories(
+                                homeChangeNotifier: _homeProvider),
+                  ),
+                  SizedBox(height: 10.h),
+                  Container(
+                    height: 380.h,
+                    color: Colors.white,
+                    child: FutureBuilder(
+                      future: getBrandsList,
+                      builder: (_, snapShot) =>
+                          snapShot.connectionState == ConnectionState.waiting
+                              ? Center(child: PulseLoadingSpinner())
+                              : HomeDiscoverStores(
+                                  homeChangeNotifier: _homeProvider),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: loadSmartTech,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomeSmartTech(homeChangeNotifier: _homeProvider),
+                  ),
+                  SizedBox(height: 10.h),
+                  FutureBuilder(
+                    future: getViewedProducts,
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            ? Center(child: PulseLoadingSpinner())
+                            : HomeRecent(homeChangeNotifier: _homeProvider),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

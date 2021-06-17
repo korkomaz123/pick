@@ -85,6 +85,14 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                 controller: _amountController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
+                maxLength: 6,
+                buildCounter: (
+                  BuildContext context, {
+                  int currentLength,
+                  int maxLength,
+                  bool isFocused,
+                }) =>
+                    null,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   border: OutlineInputBorder(
@@ -105,9 +113,19 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     width: 40.w,
                     margin: EdgeInsets.symmetric(vertical: 5.h),
                     decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(width: 0.5.w, color: primaryColor),
-                      ),
+                      border: Preload.language == 'en'
+                          ? Border(
+                              left: BorderSide(
+                                width: 0.5.w,
+                                color: primaryColor,
+                              ),
+                            )
+                          : Border(
+                              right: BorderSide(
+                                width: 0.5.w,
+                                color: primaryColor,
+                              ),
+                            ),
                     ),
                     alignment: Alignment.center,
                     child: Text(

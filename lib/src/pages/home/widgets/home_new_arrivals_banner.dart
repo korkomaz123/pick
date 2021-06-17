@@ -44,7 +44,7 @@ class HomeNewArrivalsBanner extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 80.w,
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     height: 30.h,
                     child: MarkaaTextButton(
                       title: 'view_all'.tr(),
