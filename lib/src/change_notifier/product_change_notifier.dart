@@ -360,34 +360,34 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
   }
 
-  _updateDetails() {
-    if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
-      List<ProductModel> _selectedItem = productDetails.variants
-          .where((element) =>
-              element.sku == "${productDetails.sku}-$currentColor-$currentSize")
-          .toList();
-      if (_selectedItem.length > 0) {
-        productDetails = productDetails.copyWith(
-            imageUrl: _selectedItem.first.imageUrl,
-            gallery: [_selectedItem.first.imageUrl]);
-        productDetailsMap[productDetails.productId] = productDetails;
-      }
-    }
-  }
+  // _updateDetails() {
+  //   if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
+  //     List<ProductModel> _selectedItem = productDetails.variants
+  //         .where((element) =>
+  //             element.sku == "${productDetails.sku}-$currentColor-$currentSize")
+  //         .toList();
+  //     if (_selectedItem.length > 0) {
+  //       productDetails = productDetails.copyWith(
+  //           imageUrl: _selectedItem.first.imageUrl,
+  //           gallery: [_selectedItem.first.imageUrl]);
+  //       productDetailsMap[productDetails.productId] = productDetails;
+  //     }
+  //   }
+  // }
 
-  String currentColor = "";
-  void changeCurrentColor(_color) {
-    currentColor = _color;
-    _updateDetails();
-    notifyListeners();
-  }
+  // String currentColor = "";
+  // void changeCurrentColor(_color) {
+  //   currentColor = _color;
+  //   _updateDetails();
+  //   notifyListeners();
+  // }
 
-  String currentSize = "";
-  void changeCurrentSize(_size) {
-    currentSize = _size;
-    _updateDetails();
-    notifyListeners();
-  }
+  // String currentSize = "";
+  // void changeCurrentSize(_size) {
+  //   currentSize = _size;
+  //   _updateDetails();
+  //   notifyListeners();
+  // }
 
   /// select option in configurable product
   void selectOption(String attributeId, String optionValue, bool selected) {
@@ -399,12 +399,38 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedVariant = null;
 
     for (var variant in productDetails.variants) {
-      if (mapEquals(selectedOptions, variant.options) ||
-          selectedOptions.toString().contains(variant.options.toString())) {
+      if (mapEquals(selectedOptions, variant.options)) {
         selectedVariant = variant;
         break;
       }
     }
     notifyListeners();
+  }
+
+  bool checkAttributeOptionAvailability(String attrId, String optVal) {
+    Map<String, dynamic> options = {};
+    for (var key in selectedOptions.keys.toList()) {
+      options[key] = selectedOptions[key];
+    }
+    options[attrId] = optVal;
+
+    bool isAvailable = false;
+
+    for (var variant in productDetails.variants) {
+      bool selectable = true;
+      for (var attributeId in options.keys.toList()) {
+        if (!variant.options.containsKey(attributeId) ||
+            variant.options[attributeId] != options[attributeId]) {
+          selectable = false;
+          break;
+        }
+      }
+      if (selectable) {
+        isAvailable = true;
+        break;
+      }
+    }
+
+    return isAvailable;
   }
 }

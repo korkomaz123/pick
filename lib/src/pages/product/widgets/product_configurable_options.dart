@@ -14,7 +14,6 @@ class ProductConfigurableOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool isAvailable = model.selectedOptions.isEmpty || model.selectedVariant != null;
     return Container(
       width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -23,24 +22,14 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // if (!isAvailable) ...[
-          //   Padding(
-          //     padding: EdgeInsets.symmetric(vertical: 5.h),
-          //     child: Text(
-          //       'not_available'.tr(),
-          //       style: mediumTextStyle.copyWith(
-          //         color: dangerColor,
-          //         fontSize: 14.sp,
-          //       ),
-          //     ),
-          //   ),
-          // ],
           if (productEntity?.configurable?.keys != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: productEntity.configurable.keys.toList().map((key) {
-                List<dynamic> options = productEntity.configurable[key]['attribute_options'];
-                String attributeId = productEntity.configurable[key]['attribute_id'];
+                List<dynamic> options =
+                    productEntity.configurable[key]['attribute_options'];
+                String attributeId =
+                    productEntity.configurable[key]['attribute_id'];
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -51,10 +40,14 @@ class ProductConfigurableOptions extends StatelessWidget {
                         color: primaryColor,
                       ),
                     ),
-                    if (key == 'color') ...[
-                      Expanded(child: _buildColorOptions(options, attributeId, model)),
+                    if (key.contains('color')) ...[
+                      Expanded(
+                        child: _buildColorOptions(options, attributeId, model),
+                      ),
                     ] else ...[
-                      Expanded(child: _buildOptions(options, attributeId, model)),
+                      Expanded(
+                        child: _buildOptions(options, attributeId, model),
+                      ),
                     ]
                   ],
                 );
@@ -75,21 +68,13 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          bool isAvaliable = false;
-          if (model.selectedOptions.containsKey(productEntity.configurable['color']['attribute_id'])) {
-            productEntity.variants.forEach((e) {
-              if (e.options[productEntity.configurable['color']['attribute_id']] ==
-                      model.selectedOptions[productEntity.configurable['color']['attribute_id']] &&
-                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
-            });
-          } else {
-            isAvaliable = true;
-          }
-          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
+          bool isAvaliable = model.checkAttributeOptionAvailability(
+              attributeId, attr['option_value']);
+          bool isSelected = model.selectedOptions.containsKey(attributeId) &&
+              model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
             onTap: () {
               if (isAvaliable) {
-                model.changeCurrentSize(isSelected ? "" : attr['option_label']);
                 model.selectOption(
                   attributeId,
                   attr['option_value'],
@@ -110,7 +95,9 @@ class ProductConfigurableOptions extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
+                  color: isSelected
+                      ? Colors.transparent
+                      : greyDarkColor.withOpacity(0.3),
                 ),
                 color: isSelected ? primaryColor : Colors.white,
               ),
@@ -141,28 +128,16 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          bool isAvaliable = false;
-          String _attrSizeKeyName = 'size';
-          productEntity.configurable.forEach((key, value) {
-            if (key != 'color') {
-              _attrSizeKeyName = key;
-            }
-          });
-          if (model.selectedOptions.containsKey(productEntity.configurable[_attrSizeKeyName]['attribute_id'])) {
-            productEntity.variants.forEach((e) {
-              if (e.options[productEntity.configurable[_attrSizeKeyName]['attribute_id']] ==
-                      model.selectedOptions[productEntity.configurable[_attrSizeKeyName]['attribute_id']] &&
-                  e.options[attributeId] == attr['option_value']) isAvaliable = true;
-            });
-          } else {
-            isAvaliable = true;
-          }
-          final isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
+          bool isAvaliable = model.checkAttributeOptionAvailability(
+              attributeId, attr['option_value']);
+          bool isSelected = model.selectedOptions.containsKey(attributeId) &&
+              model.selectedOptions[attributeId] == attr['option_value'];
+          Color optionColor = attr['color_value'] == null
+              ? Colors.black
+              : HexColor(attr['color_value']);
           return InkWell(
             onTap: () {
               if (isAvaliable) {
-                model.changeCurrentColor(isSelected ? "" : attr['option_label']);
                 model.selectOption(
                   attributeId,
                   attr['option_value'],

@@ -59,54 +59,18 @@ class HomeAdvertise extends StatelessWidget {
                       borderColor: primaryColor,
                       borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
-                      onPressed: () async {
-                        if (homeChangeNotifier.ads.categoryId != null) {
-                          final arguments = ProductListArguments(
-                            category: CategoryEntity(
-                              id: homeChangeNotifier.ads.categoryId,
-                              name: homeChangeNotifier.ads.categoryName,
-                            ),
-                            brand: BrandEntity(),
-                            subCategory: [],
-                            selectedSubCategoryIndex: 0,
-                            isFromBrand: false,
-                          );
-                          Navigator.pushNamed(
-                            context,
-                            Routes.productList,
-                            arguments: arguments,
-                          );
-                        } else if (homeChangeNotifier?.ads?.brand?.optionId !=
-                            null) {
-                          final arguments = ProductListArguments(
-                            category: CategoryEntity(),
-                            brand: homeChangeNotifier.ads.brand,
-                            subCategory: [],
-                            selectedSubCategoryIndex: 0,
-                            isFromBrand: true,
-                          );
-                          Navigator.pushNamed(
-                            context,
-                            Routes.productList,
-                            arguments: arguments,
-                          );
-                        } else if (homeChangeNotifier?.ads?.productId != null) {
-                          final product = await productRepository
-                              .getProduct(homeChangeNotifier.ads.productId);
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            Routes.product,
-                            (route) => route.settings.name == Routes.home,
-                            arguments: product,
-                          );
-                        }
-                      },
+                      onPressed: () => _onLink(context),
                     ),
                   ),
                 ],
               ),
             ),
-            CachedNetworkImage(imageUrl: homeChangeNotifier.ads.bannerImage),
+            InkWell(
+              onTap: () => _onLink(context),
+              child: CachedNetworkImage(
+                imageUrl: homeChangeNotifier.ads.bannerImage,
+              ),
+            ),
             Container(
               height: 175.w,
               child: ListView.builder(
@@ -125,5 +89,47 @@ class HomeAdvertise extends StatelessWidget {
       );
     }
     return Container();
+  }
+
+  _onLink(BuildContext context) async {
+    if (homeChangeNotifier.ads.categoryId != null) {
+      final arguments = ProductListArguments(
+        category: CategoryEntity(
+          id: homeChangeNotifier.ads.categoryId,
+          name: homeChangeNotifier.ads.categoryName,
+        ),
+        brand: BrandEntity(),
+        subCategory: [],
+        selectedSubCategoryIndex: 0,
+        isFromBrand: false,
+      );
+      Navigator.pushNamed(
+        context,
+        Routes.productList,
+        arguments: arguments,
+      );
+    } else if (homeChangeNotifier?.ads?.brand?.optionId != null) {
+      final arguments = ProductListArguments(
+        category: CategoryEntity(),
+        brand: homeChangeNotifier.ads.brand,
+        subCategory: [],
+        selectedSubCategoryIndex: 0,
+        isFromBrand: true,
+      );
+      Navigator.pushNamed(
+        context,
+        Routes.productList,
+        arguments: arguments,
+      );
+    } else if (homeChangeNotifier?.ads?.productId != null) {
+      final product =
+          await productRepository.getProduct(homeChangeNotifier.ads.productId);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.product,
+        (route) => route.settings.name == Routes.home,
+        arguments: product,
+      );
+    }
   }
 }

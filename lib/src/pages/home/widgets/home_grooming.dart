@@ -50,7 +50,7 @@ class HomeGrooming extends StatelessWidget {
   Widget _buildHeadline() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

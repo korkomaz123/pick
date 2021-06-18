@@ -315,7 +315,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             ? Container(
                                 height: 360.h,
                                 padding: EdgeInsets.all(8.w),
-                                margin: EdgeInsets.only(bottom: 10.h),
                                 color: Colors.white,
                                 child: Center(child: PulseLoadingSpinner()),
                               )

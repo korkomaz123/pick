@@ -33,7 +33,6 @@ class HomeFragrancesBanners extends StatelessWidget {
             model.fragrancesBannersTitle.isNotEmpty) {
           return Container(
             width: designWidth.w,
-            margin: EdgeInsets.only(bottom: 10.h),
             child: Column(
               children: [
                 if (model.fragrancesBanners.isNotEmpty) ...[

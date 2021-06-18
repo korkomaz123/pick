@@ -615,7 +615,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     if (model.productDetails.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
             model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorDialog('required_options'.tr(), "no_qty.svg");
+      flushBarService.showErrorDialog(
+          'required_options'.tr(), "select_option.svg");
       return;
     }
     if (model.productDetails.typeId == 'configurable' &&
