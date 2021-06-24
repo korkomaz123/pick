@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 
 class LiveChatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Preload.startSupportChat();
+      onTap: () async {
+        ProgressService(context: context).showProgress();
+        await Preload.startSupportChat();
+        ProgressService(context: context).hideProgress();
       },
       child: Container(
         width: double.infinity,

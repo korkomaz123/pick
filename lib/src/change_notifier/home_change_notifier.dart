@@ -370,6 +370,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future getViewedProducts() async {
     print("user ==> 111");
+    await Preload.currentUser;
     print(user);
     if (user?.token != null) {
       await loadRecentlyViewedCustomer();
