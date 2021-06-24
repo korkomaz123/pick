@@ -30,7 +30,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
   final ProductRepository productRepository = ProductRepository();
 
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.bestWatchesBanner != null ||
+    if ((widget.homeChangeNotifier.bestWatchesBanners != null &&
+            widget.homeChangeNotifier.bestWatchesBanners.isNotEmpty) ||
         widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) {
       return Container(
         width: designWidth.w,
@@ -38,12 +39,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
-            if (widget.homeChangeNotifier.bestWatchesBanner != null) ...[
-              _buildBanner(widget.homeChangeNotifier.bestWatchesBanner)
-            ],
-            if (widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) ...[
-              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-            ]
+            _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
+            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
           ],
         ),
       );
@@ -51,7 +48,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
     return Container();
   }
 
-  Widget _buildBanner(SliderImageEntity banner) {
+  Widget _buildBanners(List<SliderImageEntity> banners) {
     return Column(
       children: [
         Padding(
@@ -61,10 +58,10 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  banner?.categoryId != null
-                      ? banner.categoryName
-                      : banner?.brand != null
-                          ? banner.brand.brandLabel
+                  banners[0]?.categoryId != null
+                      ? banners[0].categoryName
+                      : banners[0]?.brand != null
+                          ? banners[0].brand.brandLabel
                           : '',
                   maxLines: 1,
                   style: mediumTextStyle.copyWith(
@@ -83,19 +80,23 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderColor: primaryColor,
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
-                  onPressed: () => _onLink(banner),
+                  onPressed: () => _onLink(banners[0]),
                 ),
               ),
             ],
           ),
         ),
-        InkWell(
-          onTap: () => _onLink(banner),
-          child: CachedNetworkImage(
-            imageUrl: banner.bannerImage,
-            errorWidget: (context, url, error) =>
-                Center(child: Icon(Icons.image, size: 20)),
-          ),
+        Column(
+          children: banners.map((item) {
+            return InkWell(
+              onTap: () => _onLink(item),
+              child: CachedNetworkImage(
+                imageUrl: item.bannerImage,
+                errorWidget: (context, url, error) =>
+                    Center(child: Icon(Icons.image, size: 20)),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

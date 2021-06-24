@@ -68,14 +68,18 @@ class HomeBestDealsBanner extends StatelessWidget {
                 ],
               ),
             ),
-            InkWell(
-              onTap: () => _onLink(context, banner),
-              child: CachedNetworkImage(
-                imageUrl: banner.bannerImage,
-                fit: BoxFit.fitHeight,
-                errorWidget: (context, url, error) =>
-                    Center(child: Icon(Icons.image, size: 20)),
-              ),
+            Column(
+              children: homeChangeNotifier.bestDealsBanners.map((item) {
+                return InkWell(
+                  onTap: () => _onLink(context, item),
+                  child: CachedNetworkImage(
+                    imageUrl: item.bannerImage,
+                    fit: BoxFit.fitHeight,
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.image, size: 20)),
+                  ),
+                );
+              }).toList(),
             ),
             Expanded(
               child: ListView.builder(

@@ -65,13 +65,17 @@ class HomeNewArrivalsBanner extends StatelessWidget {
                 ],
               ),
             ),
-            InkWell(
-              onTap: () => _onLink(context, banner),
-              child: CachedNetworkImage(
-                imageUrl: banner.bannerImage,
-                errorWidget: (context, url, error) =>
-                    Center(child: Icon(Icons.image, size: 20)),
-              ),
+            Column(
+              children: homeChangeNotifier.newArrivalsBanners.map((item) {
+                return InkWell(
+                  onTap: () => _onLink(context, item),
+                  child: CachedNetworkImage(
+                    imageUrl: item.bannerImage,
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.image, size: 20)),
+                  ),
+                );
+              }).toList(),
             ),
             Container(
               height: 175.w,

@@ -16,61 +16,65 @@ class HomeExculisiveBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.exculisiveBanner != null) {
-      return InkWell(
-        onTap: () async {
-          if (homeChangeNotifier.exculisiveBanner.categoryId != null) {
-            final arguments = ProductListArguments(
-              category: CategoryEntity(
-                id: homeChangeNotifier.exculisiveBanner.categoryId,
-                name: homeChangeNotifier.exculisiveBanner.categoryName,
+    if (homeChangeNotifier.exculisiveBanners != null &&
+        homeChangeNotifier.exculisiveBanners.isNotEmpty) {
+      return Column(
+        children: homeChangeNotifier.exculisiveBanners.map((banner) {
+          return InkWell(
+            onTap: () async {
+              if (banner.categoryId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(
+                    id: banner.categoryId,
+                    name: banner.categoryName,
+                  ),
+                  brand: BrandEntity(),
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.brand?.optionId != null) {
+                final arguments = ProductListArguments(
+                  category: CategoryEntity(),
+                  brand: banner.brand,
+                  subCategory: [],
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: true,
+                );
+                Navigator.pushNamed(
+                  context,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              } else if (banner?.productId != null) {
+                final product =
+                    await productRepository.getProduct(banner.productId);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Routes.product,
+                  (route) => route.settings.name == Routes.home,
+                  arguments: product,
+                );
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 10.w,
+                vertical: 15.h,
               ),
-              brand: BrandEntity(),
-              subCategory: [],
-              selectedSubCategoryIndex: 0,
-              isFromBrand: false,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.productList,
-              arguments: arguments,
-            );
-          } else if (homeChangeNotifier.exculisiveBanner?.brand?.optionId !=
-              null) {
-            final arguments = ProductListArguments(
-              category: CategoryEntity(),
-              brand: homeChangeNotifier.exculisiveBanner.brand,
-              subCategory: [],
-              selectedSubCategoryIndex: 0,
-              isFromBrand: true,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.productList,
-              arguments: arguments,
-            );
-          } else if (homeChangeNotifier.exculisiveBanner?.productId != null) {
-            final product = await productRepository
-                .getProduct(homeChangeNotifier.exculisiveBanner.productId);
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.product,
-              (route) => route.settings.name == Routes.home,
-              arguments: product,
-            );
-          }
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 15.h,
-          ),
-          child: CachedNetworkImage(
-            imageUrl: homeChangeNotifier.exculisiveBanner.bannerImage,
-            errorWidget: (context, url, error) =>
-                Center(child: Icon(Icons.image, size: 20)),
-          ),
-        ),
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage,
+                errorWidget: (context, url, error) =>
+                    Center(child: Icon(Icons.image, size: 20)),
+              ),
+            ),
+          );
+        }).toList(),
       );
     } else {
       return Container();

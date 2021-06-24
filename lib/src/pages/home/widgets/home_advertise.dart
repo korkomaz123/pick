@@ -24,7 +24,8 @@ class HomeAdvertise extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.ads != null) {
+    if (homeChangeNotifier.ads != null && homeChangeNotifier.ads.isNotEmpty) {
+      SliderImageEntity banner = homeChangeNotifier.ads[0];
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -37,10 +38,10 @@ class HomeAdvertise extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      homeChangeNotifier?.ads?.categoryId != null
-                          ? homeChangeNotifier.ads.categoryName
-                          : homeChangeNotifier?.ads?.brand != null
-                              ? homeChangeNotifier.ads.brand.brandLabel
+                      banner?.categoryId != null
+                          ? banner.categoryName
+                          : banner?.brand != null
+                              ? banner.brand.brandLabel
                               : '',
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -59,17 +60,21 @@ class HomeAdvertise extends StatelessWidget {
                       borderColor: primaryColor,
                       borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
-                      onPressed: () => _onLink(context),
+                      onPressed: () => _onLink(context, banner),
                     ),
                   ),
                 ],
               ),
             ),
-            InkWell(
-              onTap: () => _onLink(context),
-              child: CachedNetworkImage(
-                imageUrl: homeChangeNotifier.ads.bannerImage,
-              ),
+            Column(
+              children: homeChangeNotifier.ads.map((item) {
+                return InkWell(
+                  onTap: () => _onLink(context, item),
+                  child: CachedNetworkImage(
+                    imageUrl: item.bannerImage,
+                  ),
+                );
+              }).toList(),
             ),
             Container(
               height: 175.w,
@@ -91,12 +96,12 @@ class HomeAdvertise extends StatelessWidget {
     return Container();
   }
 
-  _onLink(BuildContext context) async {
-    if (homeChangeNotifier.ads.categoryId != null) {
+  _onLink(BuildContext context, SliderImageEntity banner) async {
+    if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: homeChangeNotifier.ads.categoryId,
-          name: homeChangeNotifier.ads.categoryName,
+          id: banner.categoryId,
+          name: banner.categoryName,
         ),
         brand: BrandEntity(),
         subCategory: [],
@@ -108,10 +113,10 @@ class HomeAdvertise extends StatelessWidget {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (homeChangeNotifier?.ads?.brand?.optionId != null) {
+    } else if (banner?.brand?.optionId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(),
-        brand: homeChangeNotifier.ads.brand,
+        brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: true,
@@ -121,9 +126,8 @@ class HomeAdvertise extends StatelessWidget {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (homeChangeNotifier?.ads?.productId != null) {
-      final product =
-          await productRepository.getProduct(homeChangeNotifier.ads.productId);
+    } else if (banner?.productId != null) {
+      final product = await productRepository.getProduct(banner.productId);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,
