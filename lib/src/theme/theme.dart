@@ -52,3 +52,4 @@ const Color greyLightColor = Color(0xFFEAEAEA);
 const Color orangeColor = Color(0xFFFF800A);
 const Color inputFillColor = Color(0xFFF7F7F7);
 const Color scaffoldBackgroundColor = Color(0xFFE3E3E3);
+const Color pinkColor = Colors.pinkAccent;

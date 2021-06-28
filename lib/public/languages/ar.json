@@ -366,5 +366,6 @@
     "wallet_transfer": "تحويل المحفظة",
     "top_up_failed_title": "لم يتم الشحن",
     "top_up_failed_message": "الحد الأقصى للشحن في العملية الواحدة هو # د.ك",
-    "ask_agree_privacy_policy": "يجب أن توافق على الخصوصية والسياسة الخاصة بنا"
+    "ask_agree_privacy_policy": "يجب أن توافق على الخصوصية والسياسة الخاصة بنا",
+    "deal_label": "أفضل قيمة"
 }

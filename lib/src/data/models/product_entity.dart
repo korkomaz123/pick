@@ -26,6 +26,7 @@ class ProductEntity {
   final int stockQty;
   final Map<String, dynamic> configurable;
   final List<ProductModel> variants;
+  final bool isDeal;
 
   ProductEntity({
     this.entityId,
@@ -50,6 +51,7 @@ class ProductEntity {
     this.stockQty,
     this.configurable,
     this.variants,
+    this.isDeal,
   });
 
   ProductEntity copyWith({
@@ -75,6 +77,7 @@ class ProductEntity {
     stockQty,
     configurable,
     variants,
+    isDeal,
   }) =>
       ProductEntity(
         entityId: entityId ?? this.entityId,
@@ -99,6 +102,7 @@ class ProductEntity {
         stockQty: stockQty ?? this.stockQty,
         configurable: configurable ?? this.configurable,
         variants: variants ?? this.variants,
+        isDeal: isDeal ?? this.isDeal,
       );
 
   ProductEntity.fromJson(Map<String, dynamic> json)
@@ -139,7 +143,8 @@ class ProductEntity {
             : null,
         stockQty = json['stockQty'],
         configurable = json['configurable'],
-        variants = _getVariants(json['child_products']);
+        variants = _getVariants(json['child_products']),
+        isDeal = json['sale'] == '1';
 
   static List<ProductModel> _getVariants(List<dynamic> list) {
     List<ProductModel> variants = [];
@@ -174,7 +179,8 @@ class ProductEntity {
         brandEntity = product.brandEntity,
         reviews = null,
         configurable = null,
-        variants = _getVariants(null);
+        variants = _getVariants(null),
+        isDeal = product.isDeal;
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
     double afterPrice =

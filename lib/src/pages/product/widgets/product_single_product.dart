@@ -190,50 +190,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           child: Column(
             children: [
               SizedBox(height: 20.h),
-              if (widget?.model?.selectedVariant?.productId != null) ...[
-                if (isValidUrl) ...[
-                  Container(
-                    width: double.infinity,
-                    height: 460.h,
-                    child: Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: widget?.model?.selectedVariant?.imageUrl,
-                          width: designWidth.w,
-                          height: 400.h,
-                          fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) {
-                            return Center(child: Icon(Icons.image, size: 20));
-                          },
-                        ),
-                        Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
-                          child: _buildTitlebar(),
-                        ),
-                      ],
-                    ),
-                  )
-                ] else ...[
-                  Container(
-                    width: designWidth.w,
-                    height: 460.h,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
-                          child: _buildTitlebar(),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ] else if (preCachedImages.isNotEmpty) ...[
-                _buildImageCarousel()
-              ],
+              Consumer<ProductChangeNotifier>(
+                builder: (_, __, ___) {
+                  if (widget?.model?.selectedVariant?.productId != null) {
+                    return _buildVariantCarousel();
+                  } else if (preCachedImages.isNotEmpty) {
+                    return _buildImageCarousel();
+                  }
+                  return Container(width: designWidth.w, height: 420.h);
+                },
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Column(
@@ -290,13 +256,48 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
+  SwiperController _swiperController = SwiperController();
   Widget _buildImageCarousel() {
     return Container(
       width: double.infinity,
       height: 460.h,
       child: Stack(
         children: [
-          _buildProduct(),
+          if (preCachedImages.length == 1) ...[
+            Container(
+              width: designWidth.w,
+              height: 420.h,
+              child: preCachedImages[0],
+            )
+          ] else ...[
+            Container(
+              width: designWidth.w,
+              height: 420.h,
+              child: Swiper(
+                itemCount: preCachedImages.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                controller: _swiperController,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) {
+                  setState(() {
+                    activeIndex = value;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.viewFullImage,
+                      arguments: details.gallery,
+                    ),
+                    child: preCachedImages[index],
+                  );
+                },
+              ),
+            )
+          ],
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -304,6 +305,83 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
                 count: details.gallery.length,
+                axisDirection: Axis.horizontal,
+                effect: SlideEffect(
+                  spacing: 8.0,
+                  radius: 30,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
+                  paintStyle: PaintingStyle.fill,
+                  strokeWidth: 0,
+                  dotColor: greyLightColor,
+                  activeDotColor: primarySwatchColor,
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Preload.language == 'en'
+                ? Alignment.bottomRight
+                : Alignment.bottomLeft,
+            child: _buildTitlebar(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVariantCarousel() {
+    return Container(
+      width: double.infinity,
+      height: 460.h,
+      child: Stack(
+        children: [
+          if (widget.model.selectedVariant.gallery.length == 1) ...[
+            CachedNetworkImage(
+              width: designWidth.w,
+              height: 420.h,
+              imageUrl: widget.model.selectedVariant.gallery[0],
+            )
+          ] else ...[
+            Container(
+              width: designWidth.w,
+              height: 420.h,
+              child: Swiper(
+                itemCount: widget.model.selectedVariant.gallery.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                controller: _swiperController,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) {
+                  setState(() {
+                    activeIndex = value;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.viewFullImage,
+                      arguments: widget.model.selectedVariant.gallery,
+                    ),
+                    child: CachedNetworkImage(
+                      width: designWidth.w,
+                      height: 420.h,
+                      imageUrl: widget.model.selectedVariant.gallery[index],
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 10.h),
+              child: SmoothIndicator(
+                offset: activeIndex.toDouble(),
+                count: widget.model.selectedVariant.gallery.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,
@@ -442,45 +520,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         ]
       ],
     );
-  }
-
-  SwiperController _swiperController = SwiperController();
-  Widget _buildProduct() {
-    if (preCachedImages.length == 1) {
-      return Container(
-        width: designWidth.w,
-        height: 420.h,
-        child: preCachedImages[0],
-      );
-    } else {
-      return Container(
-        width: designWidth.w,
-        height: 420.h,
-        child: Swiper(
-          itemCount: preCachedImages.length,
-          autoplay: false,
-          curve: Curves.easeIn,
-          controller: _swiperController,
-          duration: 300,
-          autoplayDelay: 5000,
-          onIndexChanged: (value) {
-            setState(() {
-              activeIndex = value;
-            });
-          },
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () => Navigator.pushNamed(
-                context,
-                Routes.viewFullImage,
-                arguments: details.gallery,
-              ),
-              child: preCachedImages[index],
-            );
-          },
-        ),
-      );
-    }
   }
 
   Widget _buildDescription() {

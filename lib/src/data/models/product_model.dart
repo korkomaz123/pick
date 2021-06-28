@@ -24,6 +24,8 @@ class ProductModel {
   int stockQty;
   int qtySaveForLater;
   Map<String, dynamic> options;
+  bool isDeal;
+  List<dynamic> gallery;
 
   ProductModel({
     this.parentId,
@@ -46,6 +48,8 @@ class ProductModel {
     this.stockQty,
     this.qtySaveForLater,
     this.options,
+    this.isDeal,
+    this.gallery,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -92,7 +96,9 @@ class ProductModel {
             ? double.parse(json['qty_saveforlater']).ceil()
             : 0,
         options =
-            json.containsKey('options') ? _getOptions(json['options']) : null;
+            json.containsKey('options') ? _getOptions(json['options']) : null,
+        isDeal = json['sale'] == '1',
+        gallery = json.containsKey('gallery') ? json['gallery'] : [];
 
   static Map<String, dynamic> _getOptions(List<dynamic> list) {
     Map<String, dynamic> options = {};

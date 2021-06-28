@@ -338,7 +338,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     try {
       var result = await homeRepository.getHomeAds(Preload.language);
       if (result['code'] == 'SUCCESS') {
-        final adsData = result['data'];
+        final adsData = result['data'][0];
         var response;
         if (adsData['category_id'] != null) {
           response = await productRepository.getProducts(
