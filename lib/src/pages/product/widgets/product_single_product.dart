@@ -23,10 +23,8 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:string_validator/string_validator.dart';
 
 import '../../../../preload.dart';
-import 'product_configurable_options.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
@@ -43,8 +41,7 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct>
-    with TickerProviderStateMixin {
+class _ProductSingleProductState extends State<ProductSingleProduct> with TickerProviderStateMixin {
   bool isMore = false;
   bool isFavorite = true;
 
@@ -59,8 +56,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   WishlistChangeNotifier wishlistChangeNotifier;
 
-  ProductEntity get details =>
-      widget.model.productDetailsMap[widget.product.productId];
+  ProductEntity get details => widget.model.productDetailsMap[widget.product.productId];
 
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
@@ -90,8 +86,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool _checkDiscounted() {
     final variant = widget.model.selectedVariant;
 
-    return details.discount > 0 ||
-        variant?.discount != null && variant.discount > 0;
+    return details.discount > 0 || variant?.discount != null && variant.discount > 0;
   }
 
   bool get isValidUrl => _checkUrlValidation();
@@ -205,14 +200,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 child: Column(
                   children: [
                     _buildTitle(),
-                    if (details.typeId == 'configurable') ...[
-                      ProductConfigurableOptions(
-                        productEntity: details,
-                        model: widget.model,
-                      )
-                    ] else ...[
-                      _buildDescription()
-                    ],
+                    // if (details.typeId == 'configurable') ...[
+                    //   ProductConfigurableOptions(
+                    //     productEntity: details,
+                    //     model: widget.model,
+                    //   )
+                    // ] else ...[
+                    //   // _buildDescription()
+                    // ],
                     _buildPrice(),
                   ],
                 ),
@@ -320,9 +315,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft,
+            alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
             child: _buildTitlebar(),
           ),
         ],
@@ -397,9 +390,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft,
+            alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
             child: _buildTitlebar(),
           ),
         ],
@@ -421,9 +412,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Consumer<WishlistChangeNotifier>(
             builder: (_, model, __) {
               return InkWell(
-                onTap: () => user != null
-                    ? _onFavorite(widget.model)
-                    : Navigator.pushNamed(context, Routes.signIn),
+                onTap: () => user != null ? _onFavorite(widget.model) : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
@@ -478,11 +467,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              if (details.typeId == 'configurable') ...[
-                _buildProductPrice()
-              ] else ...[
-                _buildStock()
-              ],
+              // if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
+              if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
             ],
           ),
           Text(
@@ -500,9 +486,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       children: [
         if (details?.brandEntity != null) ...[
           Text(
-            isStock
-                ? 'in_stock'.tr().toUpperCase()
-                : 'out_stock'.tr().toUpperCase(),
+            isStock ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
             style: mediumTextStyle.copyWith(
               color: isStock ? succeedColor : dangerColor,
               fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
@@ -522,60 +506,61 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
-  Widget _buildDescription() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isMore) ...[
-            Text(
-              details.shortDescription,
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ] else if (isLength(details.shortDescription, 110)) ...[
-            Text(
-              details.shortDescription.substring(0, 110) + ' ...',
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ] else ...[
-            Text(
-              details.shortDescription,
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ],
-          if (isLength(details.shortDescription, 110)) ...[
-            InkWell(
-              onTap: () {
-                isMore = !isMore;
-                setState(() {});
-              },
-              child: Text(
-                isMore ? 'product_less'.tr() : 'product_more'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            )
-          ] else ...[
-            SizedBox.shrink()
-          ],
-        ],
-      ),
-    );
-  }
+  // Widget _buildDescription() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.symmetric(vertical: 10.h),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         if (isMore) ...[
+  //           Text(
+  //             details.shortDescription,
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ] else if (isLength(details.shortDescription, 110)) ...[
+  //           Text(
+  //             details.shortDescription.substring(0, 110) + ' ...',
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ] else ...[
+  //           Text(
+  //             details.shortDescription,
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ],
+  //         if (isLength(details.shortDescription, 110)) ...[
+  //           InkWell(
+  //             onTap: () {
+  //               isMore = !isMore;
+  //               setState(() {});
+  //             },
+  //             child: Text(
+  //               isMore ? 'product_less'.tr() : 'product_more'.tr(),
+  //               style: mediumTextStyle.copyWith(
+  //                 color: primaryColor,
+  //                 fontSize: 14.sp,
+  //               ),
+  //             ),
+  //           )
+  //         ] else ...[
+  //           SizedBox.shrink()
+  //         ],
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPrice() {
     return Container(
       width: double.infinity,
+      margin: EdgeInsets.only(top: 10.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -589,11 +574,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
           ),
-          if (details.typeId == 'configurable') ...[
-            _buildStock()
-          ] else ...[
-            _buildProductPrice()
-          ],
+          if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
+          // if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
         ],
       ),
     );
@@ -605,9 +587,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           SizedBox(width: 10.w),
           Text(
-            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
-                ' ' +
-                'currency'.tr(),
+            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) + ' ' + 'currency'.tr(),
             style: mediumTextStyle.copyWith(
               decorationStyle: TextDecorationStyle.solid,
               decoration: TextDecoration.lineThrough,
@@ -634,8 +614,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
             SizedBox(width: 1.w),
-            if (details.price != null ||
-                widget?.model?.selectedVariant?.price != null) ...[
+            if (details.price != null || widget?.model?.selectedVariant?.price != null) ...[
               Text(
                 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
@@ -652,15 +631,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "select_option.svg");
+        model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
+    if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
       flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
@@ -674,17 +649,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product, widget.model.selectedVariant);
+      await wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product, widget.model.selectedVariant);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
-          1, model.selectedOptions, widget.model.selectedVariant);
+      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, model.selectedOptions, widget.model.selectedVariant);
     }
   }
 
   _onShareProduct() async {
-    Uri shareLink =
-        await dynamicLinkService.productSharableLink(widget.product);
+    Uri shareLink = await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: details.name);
   }
 }

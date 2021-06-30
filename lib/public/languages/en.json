@@ -370,4 +370,8 @@
     "top_up_failed_message": "The maximum top up per transaction is # KWD",
     "ask_agree_privacy_policy": "You must agree with our Privacy and Policy",
     "deal_label": "Best Value"
+    ,"price_alarm":"Price Alarm"
+    ,"add_your_review":"Add your review"
+    ,"more_details":"More Details"
+    ,"specifications":"Specifications"
 }

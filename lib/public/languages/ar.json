@@ -368,4 +368,8 @@
     "top_up_failed_message": "الحد الأقصى للشحن في العملية الواحدة هو # د.ك",
     "ask_agree_privacy_policy": "يجب أن توافق على الخصوصية والسياسة الخاصة بنا",
     "deal_label": "أفضل قيمة"
+    ,"price_alarm":"متابعة السعر"
+    ,"add_your_review":"أضف تقييمك"
+    ,"more_details":"التفاصيل"
+    ,"specifications":"التخصيصات"
 }

@@ -15,9 +15,8 @@ class ProductConfigurableOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 375.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,10 +25,8 @@ class ProductConfigurableOptions extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: productEntity.configurable.keys.toList().map((key) {
-                List<dynamic> options =
-                    productEntity.configurable[key]['attribute_options'];
-                String attributeId =
-                    productEntity.configurable[key]['attribute_id'];
+                List<dynamic> options = productEntity.configurable[key]['attribute_options'];
+                String attributeId = productEntity.configurable[key]['attribute_id'];
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,10 +65,8 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          bool isAvaliable = model.checkAttributeOptionAvailability(
-              attributeId, attr['option_value']);
-          bool isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
+          bool isAvaliable = model.checkAttributeOptionAvailability(attributeId, attr['option_value']);
+          bool isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
             onTap: () {
               if (isAvaliable) {
@@ -95,9 +90,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : greyDarkColor.withOpacity(0.3),
+                  color: isSelected ? Colors.transparent : greyDarkColor.withOpacity(0.3),
                 ),
                 color: isSelected ? primaryColor : Colors.white,
               ),
@@ -128,13 +121,9 @@ class ProductConfigurableOptions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: options.map((attr) {
-          bool isAvaliable = model.checkAttributeOptionAvailability(
-              attributeId, attr['option_value']);
-          bool isSelected = model.selectedOptions.containsKey(attributeId) &&
-              model.selectedOptions[attributeId] == attr['option_value'];
-          Color optionColor = attr['color_value'] == null
-              ? Colors.black
-              : HexColor(attr['color_value']);
+          bool isAvaliable = model.checkAttributeOptionAvailability(attributeId, attr['option_value']);
+          bool isSelected = model.selectedOptions.containsKey(attributeId) && model.selectedOptions[attributeId] == attr['option_value'];
+          Color optionColor = attr['color_value'] == null ? Colors.black : HexColor(attr['color_value']);
           return InkWell(
             onTap: () {
               if (isAvaliable) {

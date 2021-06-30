@@ -20,7 +20,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/product/widgets/product_more_about.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -35,10 +34,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'widgets/product_details_tabs.dart';
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
-import 'widgets/product_review.dart';
 import 'widgets/product_review_total.dart';
 
 class ProductPage extends StatefulWidget {
@@ -50,8 +49,7 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage>
-    with TickerProviderStateMixin {
+class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController();
 
@@ -74,21 +72,16 @@ class _ProductPageState extends State<ProductPage>
   bool isBuyNow = false;
 
   bool get variantSelectRequired =>
-      productChangeNotifier.productDetailsMap[productId].typeId ==
-          'configurable' &&
-      productChangeNotifier.selectedVariant == null;
+      productChangeNotifier.productDetailsMap[productId].typeId == 'configurable' && productChangeNotifier.selectedVariant == null;
 
   bool get isChildOutOfStock =>
-      productChangeNotifier.productDetailsMap[productId].typeId ==
-          'configurable' &&
-      (productChangeNotifier.selectedVariant?.stockQty == null ||
-          productChangeNotifier.selectedVariant.stockQty == 0);
+      productChangeNotifier.productDetailsMap[productId].typeId == 'configurable' &&
+      (productChangeNotifier.selectedVariant?.stockQty == null || productChangeNotifier.selectedVariant.stockQty == 0);
 
   bool get isParentOutOfStock =>
-      productChangeNotifier.productDetailsMap[productId].typeId !=
-          'configurable' &&
-      (productChangeNotifier.productDetailsMap[productId]?.stockQty == null ||
-          productChangeNotifier.productDetailsMap[productId].stockQty == 0);
+      productChangeNotifier.productDetailsMap[productId].typeId != 'configurable' &&
+      (productChangeNotifier.productDetailsMap[productId]?.stockQty == null || productChangeNotifier.productDetailsMap[productId].stockQty == 0);
+  TabController _tabController;
 
   @override
   void initState() {
@@ -124,8 +117,7 @@ class _ProductPageState extends State<ProductPage>
       reverseDuration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _addToCartScaleAnimation =
-        Tween<double>(begin: 1.0, end: 3.0).animate(CurvedAnimation(
+    _addToCartScaleAnimation = Tween<double>(begin: 1.0, end: 3.0).animate(CurvedAnimation(
       parent: _addToCartController,
       curve: Curves.easeIn,
     ));
@@ -136,6 +128,7 @@ class _ProductPageState extends State<ProductPage>
     isBuyNow = false;
     _addToCartController.dispose();
     productChangeNotifier.close();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -150,14 +143,11 @@ class _ProductPageState extends State<ProductPage>
 
   _sendViewedProduct() async {
     if (user?.token != null) {
-      await productRepository.setRecentlyViewedCustomerProduct(
-          user.token, productId, lang);
+      await productRepository.setRecentlyViewedCustomerProduct(user.token, productId, lang);
     } else {
       await localStorageRepository.addRecentlyViewedItem(productId);
     }
-    Preload.navigatorKey.currentContext
-        .read<HomeChangeNotifier>()
-        .getViewedProducts();
+    Preload.navigatorKey.currentContext.read<HomeChangeNotifier>().getViewedProducts();
   }
 
   @override
@@ -171,6 +161,10 @@ class _ProductPageState extends State<ProductPage>
           child: Consumer<ProductChangeNotifier>(
             builder: (context, model, child) {
               if (model.productDetailsMap.containsKey(productId)) {
+                _tabController = TabController(
+                    length: model.productDetailsMap[productId].typeId == 'configurable' ? 3 : 2,
+                    vsync: this,
+                    initialIndex: _tabController?.index ?? 0);
                 return Stack(
                   children: [
                     SmartRefresher(
@@ -185,42 +179,28 @@ class _ProductPageState extends State<ProductPage>
                           children: [
                             ProductSingleProduct(
                               product: product,
-                              productDetails:
-                                  model.productDetailsMap[productId],
+                              productDetails: model.productDetailsMap[productId],
                               model: model,
                             ),
                             ProductReviewTotal(
                               product: model.productDetailsMap[productId],
-                              onFirstReview: () => _onFirstReview(
-                                  model.productDetailsMap[productId]),
-                              onReviews: () => _onReviews(
-                                  model.productDetailsMap[productId]),
+                              onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
+                              onReviews: () => _onReviews(model.productDetailsMap[productId]),
                             ),
-                            ProductRelatedItems(product: product),
-                            ProductSameBrandProducts(product: product),
-                            ProductMoreAbout(
+                            ProductDetailsTabs(
+                              tabController: _tabController,
+                              model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            ProductReview(
-                              product: model.productDetailsMap[productId],
-                            ),
+                            ProductSameBrandProducts(product: product),
+                            ProductRelatedItems(product: product),
                             SizedBox(height: 60.h),
                           ],
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildToolbar(model),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      child: _buildStickyHeader(),
-                    ),
+                    Positioned(left: 0, right: 0, bottom: 0, child: _buildToolbar(model)),
+                    Positioned(left: 0, right: 0, top: 0, child: _buildStickyHeader()),
                   ],
                 );
               } else {
@@ -295,9 +275,7 @@ class _ProductPageState extends State<ProductPage>
                     showBadge: model.cartItemCount > 0,
                     toAnimate: false,
                     animationDuration: Duration.zero,
-                    position: Preload.languageCode == 'ar'
-                        ? BadgePosition.topStart(start: 0, top: -2.h)
-                        : BadgePosition.topEnd(end: 0, top: -2.h),
+                    position: Preload.languageCode == 'ar' ? BadgePosition.topStart(start: 0, top: -2.h) : BadgePosition.topEnd(end: 0, top: -2.h),
                     child: SvgPicture.asset(addCart1Icon),
                   );
                 },
@@ -312,8 +290,7 @@ class _ProductPageState extends State<ProductPage>
   Widget _buildToolbar(ProductChangeNotifier model) {
     return Consumer<MarkaaAppChangeNotifier>(
       builder: (_, appModel, __) {
-        if (model.productDetailsMap[productId].typeId == 'configurable' ||
-            (!isParentOutOfStock && !isChildOutOfStock)) {
+        if (model.productDetailsMap[productId].typeId == 'configurable' || (!isParentOutOfStock && !isChildOutOfStock)) {
           return Container(
             width: 375.w,
             height: 60.h,
@@ -379,8 +356,7 @@ class _ProductPageState extends State<ProductPage>
 
   _onAddToCart(ProductChangeNotifier model) async {
     if (variantSelectRequired) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "select_option.svg");
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {
@@ -394,28 +370,21 @@ class _ProductPageState extends State<ProductPage>
       timer.cancel();
     });
 
-    await myCartChangeNotifier.addProductToCart(
-        product, 1, lang, model.selectedOptions,
-        onProcess: _onAdding,
-        onSuccess: _onAddSuccess,
-        onFailure: _onAddFailure);
+    await myCartChangeNotifier.addProductToCart(product, 1, lang, model.selectedOptions,
+        onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
   }
 
   _onBuyNow(ProductChangeNotifier model) {
     if (variantSelectRequired) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "select_option.svg");
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {
       flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
-    myCartChangeNotifier.addProductToCart(
-        product, 1, lang, model.selectedOptions,
-        onProcess: _onBuyProcess,
-        onSuccess: _onBuySuccess,
-        onFailure: _onBuyFailure);
+    myCartChangeNotifier.addProductToCart(product, 1, lang, model.selectedOptions,
+        onProcess: _onBuyProcess, onSuccess: _onBuySuccess, onFailure: _onBuyFailure);
   }
 
   _onBuyProcess() {
