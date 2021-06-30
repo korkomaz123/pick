@@ -1,3 +1,5 @@
+import 'package:flutter_svg/svg.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -13,11 +15,12 @@ class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
   final Function onReviews;
   final Function onFirstReview;
-
+  final ProductChangeNotifier model;
   ProductReviewTotal({
     this.product,
     this.onReviews,
     this.onFirstReview,
+    this.model,
   });
 
   @override
@@ -87,11 +90,20 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10.w),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                if (isStock) {}
+              },
               child: Row(
                 children: [
-                  Icon(Icons.notifications_outlined, color: primaryColor),
-                  Text("price_alarm".tr(), style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: SvgPicture.asset(
+                      'lib/public/icons/price_alarm.svg',
+                      color: isStock ? primaryColor : greyColor,
+                      width: 18.sp,
+                    ),
+                  ),
+                  Text("price_alarm".tr(), style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -132,6 +144,16 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
   //   );
   // }
 
+  bool get isStock => _checkStockAvailability();
+  bool _checkStockAvailability() {
+    final variant = widget.model.selectedVariant;
+
+    if (variant != null) {
+      return variant.stockQty != null && variant.stockQty > 0;
+    }
+    return widget.product.stockQty != null && widget.product.stockQty > 0;
+  }
+
   Widget _buildTotalReview(ProductReviewChangeNotifier model) {
     return Container(
       width: double.infinity,
@@ -142,7 +164,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
-            itemSize: 18.sp,
+            itemSize: 16.sp,
             ratingWidget: RatingWidget(
               empty: Icon(Icons.star_border, color: Colors.grey.shade300),
               full: Icon(Icons.star, color: Colors.amber),
@@ -156,7 +178,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             child: Text(
               'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 color: primaryColor,
               ),
             ),

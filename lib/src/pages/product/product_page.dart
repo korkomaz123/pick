@@ -177,6 +177,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               model: model,
                             ),
                             ProductReviewTotal(
+                              model: model,
                               product: model.productDetailsMap[productId],
                               onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
                               onReviews: () => _onReviews(model.productDetailsMap[productId]),
