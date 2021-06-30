@@ -16,7 +16,7 @@ class ProductConfigurableOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

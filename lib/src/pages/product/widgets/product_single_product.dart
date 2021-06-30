@@ -25,6 +25,7 @@ import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../preload.dart';
+import 'product_configurable_options.dart';
 
 class ProductSingleProduct extends StatefulWidget {
   final ProductModel product;
@@ -200,14 +201,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 child: Column(
                   children: [
                     _buildTitle(),
-                    // if (details.typeId == 'configurable') ...[
-                    //   ProductConfigurableOptions(
-                    //     productEntity: details,
-                    //     model: widget.model,
-                    //   )
-                    // ] else ...[
-                    //   // _buildDescription()
-                    // ],
+                    if (details.typeId == 'configurable') ...[
+                      ProductConfigurableOptions(
+                        productEntity: details,
+                        model: widget.model,
+                      )
+                    ] else ...[
+                      // _buildDescription()
+                    ],
                     _buildPrice(),
                   ],
                 ),
