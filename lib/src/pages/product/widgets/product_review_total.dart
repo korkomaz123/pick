@@ -50,16 +50,19 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
               padding: EdgeInsets.symmetric(vertical: 10.w),
               child: Consumer<ProductReviewChangeNotifier>(
                 builder: (_, __, ___) {
-                  if (model.reviews.isEmpty) {
-                    return _buildFirstReview();
-                  } else {
-                    double total = 0;
-                    for (int i = 0; i < model.reviews.length; i++) {
-                      total += model.reviews[i].ratingValue;
-                    }
-                    average = total / model.reviews.length;
-                    return _buildTotalReview(model);
+                  // if (model.reviews.isEmpty) {
+                  //   return _buildFirstReview();
+                  // } else {
+                  double total = 0;
+                  for (int i = 0; i < model.reviews.length; i++) {
+                    total += model.reviews[i].ratingValue;
                   }
+                  if (total > 0)
+                    average = total / model.reviews.length;
+                  else
+                    average = 0;
+                  return _buildTotalReview(model);
+                  // }
                 },
               ),
             ),
@@ -98,29 +101,36 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
     );
   }
 
-  Widget _buildFirstReview() {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        children: [
-          RatingBar(
-            initialRating: 0,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemCount: 5,
-            itemSize: 21.sp,
-            ratingWidget: RatingWidget(
-              empty: Icon(Icons.star_border, color: Colors.grey.shade300),
-              full: Icon(Icons.star, color: Colors.amber),
-              half: Icon(Icons.star_half, color: Colors.amber),
-            ),
-            ignoreGestures: true,
-            onRatingUpdate: (rating) {},
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildFirstReview() {
+  //   return Container(
+  //     width: double.infinity,
+  //     child: Row(
+  //       children: [
+  //         RatingBar(
+  //           initialRating: 0,
+  //           direction: Axis.horizontal,
+  //           allowHalfRating: true,
+  //           itemCount: 5,
+  //           itemSize: 18.sp,
+  //           ratingWidget: RatingWidget(
+  //             empty: Icon(Icons.star_border, color: Colors.grey.shade300),
+  //             full: Icon(Icons.star, color: Colors.amber),
+  //             half: Icon(Icons.star_half, color: Colors.amber),
+  //           ),
+  //           ignoreGestures: true,
+  //           onRatingUpdate: (rating) {},
+  //         ),
+  //         Text(
+  //           'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
+  //           style: mediumTextStyle.copyWith(
+  //             fontSize: 12.sp,
+  //             color: primaryColor,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildTotalReview(ProductReviewChangeNotifier model) {
     return Container(
@@ -142,7 +152,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             onRatingUpdate: (value) => null,
           ),
           InkWell(
-            onTap: widget.onReviews,
+            onTap: model.reviews.length > 0 ? widget.onReviews : widget.onFirstReview,
             child: Text(
               'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
