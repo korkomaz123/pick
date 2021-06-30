@@ -99,11 +99,11 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: SvgPicture.asset(
                       'lib/public/icons/price_alarm.svg',
-                      color: isStock ? primaryColor : greyColor,
+                      color: isStock ? null : greyColor,
                       width: 18.sp,
                     ),
                   ),
-                  Text("price_alarm".tr(), style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold)),
+                  Text("price_alarm".tr(), style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: isStock ? null : greyColor)),
                 ],
               ),
             ),

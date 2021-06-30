@@ -469,7 +469,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 ),
               ),
               // if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
-              if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
+              _buildProductPrice(),
             ],
           ),
           Text(
@@ -575,7 +575,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               ),
             ),
           ),
-          if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
+          _buildStock(),
           // if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
         ],
       ),
