@@ -81,7 +81,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   bool get isParentOutOfStock =>
       productChangeNotifier.productDetailsMap[productId].typeId != 'configurable' &&
       (productChangeNotifier.productDetailsMap[productId]?.stockQty == null || productChangeNotifier.productDetailsMap[productId].stockQty == 0);
-  TabController _tabController;
 
   @override
   void initState() {
@@ -128,7 +127,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     isBuyNow = false;
     _addToCartController.dispose();
     productChangeNotifier.close();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -161,10 +159,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
           child: Consumer<ProductChangeNotifier>(
             builder: (context, model, child) {
               if (model.productDetailsMap.containsKey(productId)) {
-                _tabController = TabController(
-                    length: model.productDetailsMap[productId].typeId == 'configurable' ? 3 : 2,
-                    vsync: this,
-                    initialIndex: _tabController?.index ?? 0);
                 return Stack(
                   children: [
                     SmartRefresher(
@@ -187,12 +181,11 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
                               onReviews: () => _onReviews(model.productDetailsMap[productId]),
                             ),
+                            ProductSameBrandProducts(product: product),
                             ProductDetailsTabs(
-                              tabController: _tabController,
                               model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            ProductSameBrandProducts(product: product),
                             ProductRelatedItems(product: product),
                             SizedBox(height: 60.h),
                           ],

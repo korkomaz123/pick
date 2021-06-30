@@ -9,11 +9,31 @@ import 'product_configurable_options.dart';
 import 'product_more_about.dart';
 import 'product_review.dart';
 
-class ProductDetailsTabs extends StatelessWidget {
+class ProductDetailsTabs extends StatefulWidget {
   final ProductEntity productEntity;
   final ProductChangeNotifier model;
-  final TabController tabController;
-  ProductDetailsTabs({this.productEntity, this.model, this.tabController});
+  ProductDetailsTabs({this.productEntity, this.model});
+
+  @override
+  _ProductDetailsTabsState createState() => _ProductDetailsTabsState();
+}
+
+class _ProductDetailsTabsState extends State<ProductDetailsTabs> with TickerProviderStateMixin {
+  TabController _tabController;
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _tabController = TabController(
+        length: 3, //model.productDetailsMap[productId].typeId == 'configurable' ? 3 : 2,
+        vsync: this,
+        initialIndex: _tabController?.index ?? 0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +51,26 @@ class ProductDetailsTabs extends StatelessWidget {
             indicatorColor: primaryColor,
             tabs: [
               Tab(text: "more_details".tr()),
-              if (productEntity.typeId == 'configurable') Tab(text: "specifications".tr()),
+              // if (productEntity.typeId == 'configurable')
+              Tab(text: "specifications".tr()),
               Tab(text: "product_reviews".tr()),
             ],
-            controller: tabController,
+            controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
           ),
           Container(
             height: MediaQuery.of(context).size.height / 2.8,
             child: TabBarView(
               children: [
-                ProductMoreAbout(productEntity: productEntity),
-                if (productEntity.typeId == 'configurable')
-                  ProductConfigurableOptions(
-                    productEntity: productEntity,
-                    model: model,
-                  ),
-                ProductReview(product: productEntity),
+                ProductMoreAbout(productEntity: widget.productEntity),
+                // if (productEntity.typeId == 'configurable')
+                ProductConfigurableOptions(
+                  productEntity: widget.productEntity,
+                  model: widget.model,
+                ),
+                ProductReview(product: widget.productEntity),
               ],
-              controller: tabController,
+              controller: _tabController,
             ),
           ),
         ],
