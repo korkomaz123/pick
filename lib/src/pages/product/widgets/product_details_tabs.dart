@@ -4,8 +4,8 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 
-import 'product_configurable_options.dart';
 import 'product_more_about.dart';
 import 'product_review.dart';
 
@@ -28,10 +28,10 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs> with TickerProv
 
   @override
   void initState() {
-    _tabController = TabController(
-        length: 3, //model.productDetailsMap[productId].typeId == 'configurable' ? 3 : 2,
-        vsync: this,
-        initialIndex: _tabController?.index ?? 0);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: _tabController?.index ?? 0);
+    _tabController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -51,27 +51,49 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs> with TickerProv
             indicatorColor: primaryColor,
             tabs: [
               Tab(text: "more_details".tr()),
-              // if (productEntity.typeId == 'configurable')
               Tab(text: "specifications".tr()),
               Tab(text: "product_reviews".tr()),
             ],
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 2.8,
-            child: TabBarView(
-              children: [
-                ProductMoreAbout(productEntity: widget.productEntity),
-                // if (productEntity.typeId == 'configurable')
-                ProductConfigurableOptions(
-                  productEntity: widget.productEntity,
-                  model: widget.model,
-                ),
-                ProductReview(product: widget.productEntity),
+          Column(
+            children: [
+              if (_tabController.index == 1) ...[
+                if (widget.productEntity?.specification == null)
+                  Container()
+                else
+                  Column(
+                    children: widget.productEntity.specification
+                        .map((e) => Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.all(5.w),
+                                    margin: EdgeInsets.only(left: 10.w, right: 1.w, top: 1.w, bottom: 1.w),
+                                    color: greyColor.withOpacity(0.1),
+                                    child: Text(
+                                      e.label,
+                                      style: TextStyle(color: primaryColor),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.all(5.w),
+                                    margin: EdgeInsets.only(right: 10.w, left: 1.w, top: 1.w, bottom: 1.w),
+                                    color: greyColor.withOpacity(0.1),
+                                    child: Text(e.code == "price" ? StringService.roundString(e.value, 3) + " " + 'currency'.tr() : e.value),
+                                  ),
+                                ),
+                              ],
+                            ))
+                        .toList(),
+                  ),
               ],
-              controller: _tabController,
-            ),
+              if (_tabController.index == 2) ProductReview(product: widget.productEntity),
+              ProductMoreAbout(productEntity: widget.productEntity),
+            ],
           ),
         ],
       ),

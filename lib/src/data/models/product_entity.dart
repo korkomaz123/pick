@@ -3,6 +3,8 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
 import 'package:markaa/src/utils/services/string_service.dart';
 
+import 'product_specification.dart';
+
 class ProductEntity {
   final String entityId;
   final String typeId;
@@ -26,10 +28,12 @@ class ProductEntity {
   final int stockQty;
   final Map<String, dynamic> configurable;
   final List<ProductModel> variants;
+  final List<Specification> specification;
   final bool isDeal;
 
   ProductEntity({
     this.entityId,
+    this.specification,
     this.typeId,
     this.sku,
     this.inStock,
@@ -63,6 +67,7 @@ class ProductEntity {
     description,
     shortDescription,
     name,
+    specification,
     metaDescription,
     price,
     beforePrice,
@@ -96,6 +101,7 @@ class ProductEntity {
         hasOptions: hasOptions ?? this.hasOptions,
         addCartUrl: addCartUrl ?? this.addCartUrl,
         productId: productId ?? this.productId,
+        specification: specification ?? this.specification,
         gallery: gallery ?? this.gallery,
         reviews: reviews ?? this.reviews,
         brandEntity: brandEntity ?? this.brandEntity,
@@ -120,20 +126,15 @@ class ProductEntity {
             : json['price'] != null
                 ? StringService.roundString(json['price'], 3)
                 : null,
-        beforePrice = json['price'] != null
-            ? StringService.roundString(json['price'], 3)
-            : null,
-        discount = _getDiscount(
-            json['special_price'] != null
-                ? json['special_price']
-                : json['price'],
-            json['price']),
+        beforePrice = json['price'] != null ? StringService.roundString(json['price'], 3) : null,
+        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
         productId = json['product_id'],
         gallery = json['gallery'],
         reviews = json['reviews'],
+        specification = _getSpecifications(json['attributes']),
         brandEntity = json['brand_id'] != null
             ? BrandEntity(
                 optionId: json['brand_id'],
@@ -145,6 +146,15 @@ class ProductEntity {
         configurable = json['configurable'],
         variants = _getVariants(json['child_products']),
         isDeal = json['sale'] == '1';
+  static List<Specification> _getSpecifications(Map<String, dynamic> _specification) {
+    List<Specification> _list = [];
+    if (_specification != null && _specification.length > 0) {
+      _specification.forEach((key, element) {
+        _list.add(Specification.fromJson(element));
+      });
+    }
+    return _list;
+  }
 
   static List<ProductModel> _getVariants(List<dynamic> list) {
     List<ProductModel> variants = [];
@@ -160,8 +170,7 @@ class ProductEntity {
       : entityId = product.entityId,
         typeId = product.typeId,
         sku = product.sku ?? "",
-        inStock =
-            product.stockQty != null && product.stockQty > 0 ? true : false,
+        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
         metaKeyword = product.metaKeyword ?? "",
         description = product.description ?? '',
         shortDescription = product.shortDescription ?? '',
@@ -178,15 +187,14 @@ class ProductEntity {
         stockQty = product.stockQty ?? 0,
         brandEntity = product.brandEntity,
         reviews = null,
+        specification = null,
         configurable = null,
         variants = _getVariants(null),
         isDeal = product.isDeal;
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice =
-        afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice =
-        beforePriceString != null ? double.parse(beforePriceString) : 0;
+    double afterPrice = afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice = beforePriceString != null ? double.parse(beforePriceString) : 0;
     if (beforePrice == 0) {
       return 0;
     }
