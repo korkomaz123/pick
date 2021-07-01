@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
@@ -5,6 +6,7 @@ import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -91,7 +93,10 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             padding: EdgeInsets.symmetric(vertical: 10.w),
             child: InkWell(
               onTap: () {
-                if (isStock) {}
+                if (isStock) {
+                  FirebaseMessaging.instance.subscribeToTopic("alarm_${widget.product.productId}");
+                  FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                }
               },
               child: Row(
                 children: [
