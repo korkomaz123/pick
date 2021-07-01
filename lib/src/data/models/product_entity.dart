@@ -12,6 +12,7 @@ class ProductEntity {
   final bool inStock;
   final String metaKeyword;
   final String description;
+  final String fullDescription;
   final String shortDescription;
   final String name;
   final String metaDescription;
@@ -39,6 +40,7 @@ class ProductEntity {
     this.inStock,
     this.metaKeyword,
     this.description,
+    this.fullDescription,
     this.shortDescription,
     this.name,
     this.metaDescription,
@@ -65,6 +67,7 @@ class ProductEntity {
     inStock,
     metaKeyword,
     description,
+    fullDescription,
     shortDescription,
     name,
     specification,
@@ -91,6 +94,7 @@ class ProductEntity {
         inStock: inStock ?? this.inStock,
         metaKeyword: metaKeyword ?? this.metaKeyword,
         description: description ?? this.description,
+        fullDescription: fullDescription ?? this.fullDescription,
         shortDescription: shortDescription ?? this.shortDescription,
         name: name ?? this.name,
         metaDescription: metaDescription ?? this.metaDescription,
@@ -118,6 +122,7 @@ class ProductEntity {
         inStock = json['in_stock'],
         metaKeyword = json['meta_keyword'],
         description = json['description'] ?? '',
+        fullDescription = json['full_description'] ?? '',
         shortDescription = json['short_description'] ?? '',
         name = json['name'],
         metaDescription = json['meta_description'],
@@ -173,6 +178,7 @@ class ProductEntity {
         inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
         metaKeyword = product.metaKeyword ?? "",
         description = product.description ?? '',
+        fullDescription = product.description ?? '',
         shortDescription = product.shortDescription ?? '',
         name = product.name ?? "",
         metaDescription = product.metaDescription ?? "",
