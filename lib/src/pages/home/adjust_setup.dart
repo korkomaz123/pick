@@ -11,7 +11,8 @@ class AdjustSetup {
   static void setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      AdjustEnvironment.sandbox,
+      AdjustEnvironment.production,
+      // AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;
 

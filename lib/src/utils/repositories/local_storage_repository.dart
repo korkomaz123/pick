@@ -56,6 +56,9 @@ class LocalStorageRepository {
 
   Future<void> addRecentlyViewedItem(String id) async {
     List<String> recentlyViews = await getRecentlyViewedIds();
+    if (recentlyViews.contains(id)) {
+      recentlyViews.remove(id);
+    }
     recentlyViews.add(id);
     await (await prefs).setStringList('recently-viewed', recentlyViews);
   }

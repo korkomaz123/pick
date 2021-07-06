@@ -1,9 +1,12 @@
+import 'package:markaa/src/utils/services/string_service.dart';
+
 class ShippingMethodEntity {
   final String id;
   final String title;
   final String description;
   final String type;
   final double serviceFees;
+  final double minOrderAmount;
 
   ShippingMethodEntity({
     this.id,
@@ -11,21 +14,16 @@ class ShippingMethodEntity {
     this.description,
     this.type,
     this.serviceFees,
+    this.minOrderAmount,
   });
-
-  static double _getFeesFromStringValue(String value) {
-    if (value != null) {
-      double doubleValue = double.parse(value);
-      return doubleValue;
-    } else {
-      return .0;
-    }
-  }
 
   ShippingMethodEntity.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         title = json['title'],
         description = json['description'] ?? '',
         type = json['type'] ?? '',
-        serviceFees = _getFeesFromStringValue(json['serviceFees']);
+        serviceFees = StringService.roundDouble(json['serviceFees'], 3),
+        minOrderAmount = json.containsKey('min_order_amount')
+            ? StringService.roundDouble(json['min_order_amount'], 3)
+            : 0;
 }

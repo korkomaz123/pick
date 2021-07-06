@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSContactsUsageDescription</key>
+	<string>We may need to access to your contact to support call.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -29,7 +31,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.29156493421-l74luoqj813t8g7a8043ii722rtguv16</string>
+				<string>com.googleusercontent.apps.5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt</string>
 				<string>fb215227360272455</string>
 			</array>
 		</dict>

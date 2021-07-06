@@ -374,8 +374,7 @@ class _ProductVVCardState extends State<ProductVVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(

@@ -30,7 +30,7 @@ class _RateAppItemState extends State<RateAppItem> {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(rateIcon),
+                  child: SvgPicture.asset(starCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -88,6 +89,13 @@ class _ProductCardState extends State<ProductCard>
           child: Stack(
             children: [
               _buildProductCard(),
+              if (widget.product.discount > 0) ...[
+                if (Preload.language == 'en') ...[
+                  Positioned(top: 0, left: 0, child: _buildDiscount()),
+                ] else ...[
+                  Positioned(top: 0, right: 0, child: _buildDiscount()),
+                ],
+              ],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -100,6 +108,22 @@ class _ProductCardState extends State<ProductCard>
         height: widget.cardHeight,
       );
     }
+  }
+
+  Widget _buildDiscount() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+      color: Colors.redAccent,
+      alignment: Alignment.center,
+      child: Text(
+        '${widget.product.discount}%',
+        textAlign: TextAlign.center,
+        style: mediumTextStyle.copyWith(
+          fontSize: widget.isMinor ? 10.sp : 14.sp,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   Widget _buildProductCard() {
@@ -216,8 +240,7 @@ class _ProductCardState extends State<ProductCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(

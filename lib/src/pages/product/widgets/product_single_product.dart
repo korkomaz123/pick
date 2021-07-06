@@ -17,13 +17,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:progressive_image/progressive_image.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:string_validator/string_validator.dart';
 
 import '../../../../preload.dart';
 import 'product_configurable_options.dart';
@@ -43,8 +43,7 @@ class ProductSingleProduct extends StatefulWidget {
   _ProductSingleProductState createState() => _ProductSingleProductState();
 }
 
-class _ProductSingleProductState extends State<ProductSingleProduct>
-    with TickerProviderStateMixin {
+class _ProductSingleProductState extends State<ProductSingleProduct> with TickerProviderStateMixin {
   bool isMore = false;
   bool isFavorite = true;
 
@@ -59,8 +58,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   WishlistChangeNotifier wishlistChangeNotifier;
 
-  ProductEntity get details =>
-      widget.model.productDetailsMap[widget.product.productId];
+  ProductEntity get details => widget.model.productDetailsMap[widget.product.productId];
 
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
@@ -90,8 +88,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool _checkDiscounted() {
     final variant = widget.model.selectedVariant;
 
-    return details.discount > 0 ||
-        variant?.discount != null && variant.discount > 0;
+    return details.discount > 0 || variant?.discount != null && variant.discount > 0;
   }
 
   bool get isValidUrl => _checkUrlValidation();
@@ -118,41 +115,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return details.stockQty ?? 0;
   }
 
-  List<CachedNetworkImage> get preCachedImages => _loadCacheImages();
-  List<CachedNetworkImage> _loadCacheImages() {
-    List<CachedNetworkImage> list = [];
-
-    if (details?.gallery != null && details.gallery.isNotEmpty) {
-      for (int i = 0; i < details.gallery.length; i++) {
-        if (i == 0 && details.gallery[0] != details.imageUrl) {
-          list.add(CachedNetworkImage(
-            imageUrl: details.gallery[i],
-            width: designWidth.w,
-            height: 400.h,
-            fit: BoxFit.fitHeight,
-            progressIndicatorBuilder: (_, __, ___) {
-              return CachedNetworkImage(
-                imageUrl: details.imageUrl,
-                width: designWidth.w,
-                height: 400.h,
-                fit: BoxFit.fitHeight,
-              );
-            },
-          ));
-        } else {
-          list.add(CachedNetworkImage(
-            imageUrl: details.gallery[i],
-            width: designWidth.w,
-            height: 400.h,
-            fit: BoxFit.fitHeight,
-          ));
-        }
-      }
-    }
-
-    return list;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -172,6 +134,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       parent: _favoriteController,
       curve: Curves.easeIn,
     ));
+
+    widget.model.addListener(() {
+      if (widget.model.selectedVariant != null) {
+        if (activeIndex >= widget.model.selectedVariant.gallery.length) {
+          activeIndex = 0;
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
@@ -189,50 +160,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           color: Colors.white,
           child: Column(
             children: [
-              if (widget?.model?.selectedVariant?.productId != null) ...[
-                if (isValidUrl) ...[
-                  Container(
-                    width: double.infinity,
-                    height: 460.h,
-                    child: Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: widget?.model?.selectedVariant?.imageUrl,
-                          width: designWidth.w,
-                          height: 400.h,
-                          fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) {
-                            return Center(child: Icon(Icons.image, size: 20));
-                          },
-                        ),
-                        Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
-                          child: _buildTitlebar(),
-                        ),
-                      ],
-                    ),
-                  )
-                ] else ...[
-                  Container(
-                    width: designWidth.w,
-                    height: 460.h,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Preload.language == 'en'
-                              ? Alignment.bottomRight
-                              : Alignment.bottomLeft,
-                          child: _buildTitlebar(),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ] else if (preCachedImages.isNotEmpty) ...[
-                _buildImageCarousel()
-              ],
+              SizedBox(height: 20.h),
+              Consumer<ProductChangeNotifier>(
+                builder: (_, model, ___) {
+                  if (model?.selectedVariant?.productId != null) {
+                    return _buildVariantCarousel();
+                  } else {
+                    return _buildImageCarousel();
+                  }
+                },
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Column(
@@ -244,7 +181,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                         model: widget.model,
                       )
                     ] else ...[
-                      _buildDescription()
+                      // _buildDescription()
                     ],
                     _buildPrice(),
                   ],
@@ -289,13 +226,66 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
+  SwiperController _swiperController = SwiperController();
   Widget _buildImageCarousel() {
     return Container(
       width: double.infinity,
       height: 460.h,
       child: Stack(
         children: [
-          _buildProduct(),
+          if (details.gallery.length == 1) ...[
+            CachedNetworkImage(
+              imageUrl: details.gallery[0],
+              width: designWidth.w,
+              height: 420.h,
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
+                  width: designWidth.w,
+                  height: 420.h,
+                );
+              },
+            )
+          ] else ...[
+            Container(
+              width: designWidth.w,
+              height: 420.h,
+              child: Swiper(
+                itemCount: details.gallery.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                controller: _swiperController,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) {
+                  setState(() {
+                    activeIndex = value;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.viewFullImage,
+                      arguments: details.gallery,
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: details.gallery[index],
+                      width: designWidth.w,
+                      height: 420.h,
+                      progressIndicatorBuilder: (_, __, ___) {
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -318,9 +308,96 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             ),
           ),
           Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft,
+            alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
+            child: _buildTitlebar(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVariantCarousel() {
+    return Container(
+      width: double.infinity,
+      height: 460.h,
+      child: Stack(
+        children: [
+          if (widget.model.selectedVariant.gallery.length == 1) ...[
+            CachedNetworkImage(
+              imageUrl: widget.model.selectedVariant.gallery[0],
+              width: designWidth.w,
+              height: 420.h,
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
+                  width: designWidth.w,
+                  height: 420.h,
+                );
+              },
+            ),
+          ] else ...[
+            Container(
+              width: designWidth.w,
+              height: 420.h,
+              child: Swiper(
+                itemCount: widget.model.selectedVariant.gallery.length,
+                autoplay: false,
+                curve: Curves.easeIn,
+                controller: _swiperController,
+                duration: 300,
+                autoplayDelay: 5000,
+                onIndexChanged: (value) {
+                  setState(() {
+                    activeIndex = value;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.viewFullImage,
+                      arguments: widget.model.selectedVariant.gallery,
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.model.selectedVariant.gallery[index],
+                      width: designWidth.w,
+                      height: 420.h,
+                      progressIndicatorBuilder: (_, __, ___) {
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 10.h),
+              child: SmoothIndicator(
+                offset: activeIndex.toDouble(),
+                count: widget.model.selectedVariant.gallery.length,
+                axisDirection: Axis.horizontal,
+                effect: SlideEffect(
+                  spacing: 8.0,
+                  radius: 30,
+                  dotWidth: 8.h,
+                  dotHeight: 8.h,
+                  paintStyle: PaintingStyle.fill,
+                  strokeWidth: 0,
+                  dotColor: greyLightColor,
+                  activeDotColor: primarySwatchColor,
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Preload.language == 'en' ? Alignment.bottomRight : Alignment.bottomLeft,
             child: _buildTitlebar(),
           ),
         ],
@@ -342,9 +419,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           Consumer<WishlistChangeNotifier>(
             builder: (_, model, __) {
               return InkWell(
-                onTap: () => user != null
-                    ? _onFavorite(widget.model)
-                    : Navigator.pushNamed(context, Routes.signIn),
+                onTap: () => user != null ? _onFavorite(widget.model) : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
                   scale: _favoriteScaleAnimation,
                   child: Container(
@@ -399,11 +474,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              if (details.typeId == 'configurable') ...[
-                _buildProductPrice()
-              ] else ...[
-                _buildStock()
-              ],
+              // if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
+              _buildProductPrice(),
             ],
           ),
           Text(
@@ -421,9 +493,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       children: [
         if (details?.brandEntity != null) ...[
           Text(
-            isStock
-                ? 'in_stock'.tr().toUpperCase()
-                : 'out_stock'.tr().toUpperCase(),
+            isStock ? 'in_stock'.tr().toUpperCase() : 'out_stock'.tr().toUpperCase(),
             style: mediumTextStyle.copyWith(
               color: isStock ? succeedColor : dangerColor,
               fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
@@ -443,99 +513,61 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     );
   }
 
-  SwiperController _swiperController = SwiperController();
-  Widget _buildProduct() {
-    if (preCachedImages.length == 1) {
-      return Container(
-        width: designWidth.w,
-        height: 420.h,
-        child: preCachedImages[0],
-      );
-    } else {
-      return Container(
-        width: designWidth.w,
-        height: 420.h,
-        child: Swiper(
-          itemCount: preCachedImages.length,
-          autoplay: false,
-          curve: Curves.easeIn,
-          controller: _swiperController,
-          duration: 300,
-          autoplayDelay: 5000,
-          onIndexChanged: (value) {
-            setState(() {
-              activeIndex = value;
-            });
-          },
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () => Navigator.pushNamed(
-                context,
-                Routes.viewFullImage,
-                arguments: details.gallery,
-              ),
-              child: preCachedImages[index],
-            );
-          },
-        ),
-      );
-    }
-  }
-
-  Widget _buildDescription() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isMore) ...[
-            Text(
-              details.shortDescription,
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ] else if (isLength(details.shortDescription, 110)) ...[
-            Text(
-              details.shortDescription.substring(0, 110) + ' ...',
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ] else ...[
-            Text(
-              details.shortDescription,
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-              ),
-            )
-          ],
-          if (isLength(details.shortDescription, 110)) ...[
-            InkWell(
-              onTap: () {
-                isMore = !isMore;
-                setState(() {});
-              },
-              child: Text(
-                isMore ? 'product_less'.tr() : 'product_more'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 14.sp,
-                ),
-              ),
-            )
-          ] else ...[
-            SizedBox.shrink()
-          ],
-        ],
-      ),
-    );
-  }
+  // Widget _buildDescription() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.symmetric(vertical: 10.h),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         if (isMore) ...[
+  //           Text(
+  //             details.shortDescription,
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ] else if (isLength(details.shortDescription, 110)) ...[
+  //           Text(
+  //             details.shortDescription.substring(0, 110) + ' ...',
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ] else ...[
+  //           Text(
+  //             details.shortDescription,
+  //             style: mediumTextStyle.copyWith(
+  //               fontSize: 14.sp,
+  //             ),
+  //           )
+  //         ],
+  //         if (isLength(details.shortDescription, 110)) ...[
+  //           InkWell(
+  //             onTap: () {
+  //               isMore = !isMore;
+  //               setState(() {});
+  //             },
+  //             child: Text(
+  //               isMore ? 'product_less'.tr() : 'product_more'.tr(),
+  //               style: mediumTextStyle.copyWith(
+  //                 color: primaryColor,
+  //                 fontSize: 14.sp,
+  //               ),
+  //             ),
+  //           )
+  //         ] else ...[
+  //           SizedBox.shrink()
+  //         ],
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPrice() {
     return Container(
       width: double.infinity,
+      margin: EdgeInsets.only(top: 10.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -549,11 +581,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
           ),
-          if (details.typeId == 'configurable') ...[
-            _buildStock()
-          ] else ...[
-            _buildProductPrice()
-          ],
+          _buildStock(),
+          // if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
         ],
       ),
     );
@@ -565,9 +594,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           SizedBox(width: 10.w),
           Text(
-            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
-                ' ' +
-                'currency'.tr(),
+            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) + ' ' + 'currency'.tr(),
             style: mediumTextStyle.copyWith(
               decorationStyle: TextDecorationStyle.solid,
               decoration: TextDecoration.lineThrough,
@@ -594,8 +621,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
             SizedBox(width: 1.w),
-            if (details.price != null ||
-                widget?.model?.selectedVariant?.price != null) ...[
+            if (details.price != null || widget?.model?.selectedVariant?.price != null) ...[
               Text(
                 'currency'.tr(),
                 style: mediumTextStyle.copyWith(
@@ -612,17 +638,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _onFavorite(ProductChangeNotifier model) async {
     if (model.productDetails.typeId == 'configurable' &&
-        model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "no_qty.svg");
+        model.selectedOptions.keys.toList().length != model.productDetails.configurable.keys.toList().length) {
+      flushBarService.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorDialog(
-          'out_of_stock_error'.tr(), "no_qty.svg");
+    if (model.productDetails.typeId == 'configurable' && (model?.selectedVariant?.stockQty == null || model.selectedVariant.stockQty == 0)) {
+      flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     _updateWishlist(model);
@@ -635,17 +656,14 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product, widget.model.selectedVariant);
+      await wishlistChangeNotifier.removeItemFromWishlist(user.token, widget.product, widget.model.selectedVariant);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
-          1, model.selectedOptions, widget.model.selectedVariant);
+      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product, 1, model.selectedOptions, widget.model.selectedVariant);
     }
   }
 
   _onShareProduct() async {
-    Uri shareLink =
-        await dynamicLinkService.productSharableLink(widget.product);
+    Uri shareLink = await dynamicLinkService.productSharableLink(widget.product);
     Share.share(shareLink.toString(), subject: details.name);
   }
 }

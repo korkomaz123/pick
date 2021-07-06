@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
@@ -19,11 +20,17 @@ class HomeBestDeals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
-      return Column(
-        children: [
-          _buildHeadline(),
-          Expanded(child: _buildProductsList()),
-        ],
+      return Container(
+        height: 360.h,
+        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.only(bottom: 10.h),
+        color: Colors.white,
+        child: Column(
+          children: [
+            _buildHeadline(),
+            Expanded(child: _buildProductsList()),
+          ],
+        ),
       );
     } else {
       return Container();
@@ -36,22 +43,26 @@ class HomeBestDeals extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            homeChangeNotifier.bestDealsTitle ?? '',
-            style: mediumTextStyle.copyWith(
-              fontSize: 26.sp,
-              color: greyDarkColor,
+          Expanded(
+            child: AutoSizeText(
+              homeChangeNotifier.bestDealsTitle ?? '',
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                fontSize: 26.sp,
+                color: greyDarkColor,
+              ),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 15.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(

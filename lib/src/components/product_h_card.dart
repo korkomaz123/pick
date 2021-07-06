@@ -34,6 +34,7 @@ class ProductHCard extends StatefulWidget {
   final bool isWishlist;
   final bool isShare;
   final bool isMinor;
+  final Function onTap;
 
   ProductHCard({
     this.cardWidth,
@@ -43,6 +44,7 @@ class ProductHCard extends StatefulWidget {
     this.isWishlist = false,
     this.isShare = false,
     this.isMinor = true,
+    this.onTap,
   });
 
   @override
@@ -119,11 +121,14 @@ class _ProductHCardState extends State<ProductHCard>
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(
-        context,
-        Routes.product,
-        arguments: widget.product,
-      ),
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.product,
+          arguments: widget.product,
+        );
+        if (widget.onTap != null) widget.onTap();
+      },
       child: Container(
         width: widget.cardWidth,
         height: widget.cardHeight,
@@ -341,8 +346,7 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(

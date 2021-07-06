@@ -13,7 +13,7 @@ class ToggleLanguageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120.w,
-      height: 25.h,
+      height: 26.h,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.w),
@@ -26,7 +26,7 @@ class ToggleLanguageWidget extends StatelessWidget {
               ? _globalProvider.languages[0]
               : _globalProvider.languages[1],
           itemWidth: 60.w,
-          itemHeight: 25.h,
+          itemHeight: 26.h,
           itemSpace: 0,
           titleSize: 12.sp,
           radius: 8,

@@ -56,8 +56,9 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   _loadData() async {
-    if (paymentMethods.isEmpty)
+    if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
+    }
     if (widget.reorder != null) {
       payment = widget.reorder.paymentMethod.id;
     }

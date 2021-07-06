@@ -1,8 +1,12 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -13,11 +17,12 @@ class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
   final Function onReviews;
   final Function onFirstReview;
-
+  final ProductChangeNotifier model;
   ProductReviewTotal({
     this.product,
     this.onReviews,
     this.onFirstReview,
+    this.model,
   });
 
   @override
@@ -38,74 +43,120 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 375.w,
-      margin: EdgeInsets.only(top: 10.h),
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
-      ),
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 5.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       color: Colors.white,
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'product_reviews'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 19.sp,
-              fontWeight: FontWeight.w700,
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 10.w),
+              child: Consumer<ProductReviewChangeNotifier>(
+                builder: (_, __, ___) {
+                  // if (model.reviews.isEmpty) {
+                  //   return _buildFirstReview();
+                  // } else {
+                  double total = 0;
+                  for (int i = 0; i < model.reviews.length; i++) {
+                    total += model.reviews[i].ratingValue;
+                  }
+                  if (total > 0)
+                    average = total / model.reviews.length;
+                  else
+                    average = 0;
+                  return _buildTotalReview(model);
+                  // }
+                },
+              ),
             ),
           ),
-          Consumer<ProductReviewChangeNotifier>(
-            builder: (_, __, ___) {
-              if (model.reviews.isEmpty) {
-                return _buildFirstReview();
-              } else {
-                double total = 0;
-                for (int i = 0; i < model.reviews.length; i++) {
-                  total += model.reviews[i].ratingValue;
-                }
-                average = total / model.reviews.length;
-                return _buildTotalReview(model);
-              }
-            },
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10.w, horizontal: 5.w),
+            child: InkWell(
+              onTap: widget.onFirstReview,
+              child: Row(
+                children: [
+                  Icon(Icons.add_circle_outline, color: primaryColor, size: 14.sp),
+                  SizedBox(width: 5.w),
+                  Text(
+                    'add_your_review'.tr(),
+                    style: mediumTextStyle.copyWith(fontSize: 11.sp),
+                  )
+                ],
+              ),
+            ),
           ),
+          Container(color: backgroundColor, width: 2.w, height: 40.h),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10.w),
+            child: InkWell(
+              onTap: () {
+                if (isStock) {
+                  FirebaseMessaging.instance.subscribeToTopic("alarm_${widget.product.productId}");
+                  FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                }
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: SvgPicture.asset(
+                      'lib/public/icons/price_alarm.svg',
+                      color: isStock ? null : greyColor,
+                      width: 18.sp,
+                    ),
+                  ),
+                  Text("price_alarm".tr(), style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: isStock ? null : greyColor)),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildFirstReview() {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        children: [
-          RatingBar(
-            initialRating: 0,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemCount: 5,
-            itemSize: 21.sp,
-            ratingWidget: RatingWidget(
-              empty: Icon(Icons.star_border, color: Colors.grey.shade300),
-              full: Icon(Icons.star, color: Colors.amber),
-              half: Icon(Icons.star_half, color: Colors.amber),
-            ),
-            ignoreGestures: true,
-            onRatingUpdate: (rating) {},
-          ),
-          InkWell(
-            onTap: widget.onFirstReview,
-            child: Text(
-              'first_review'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 16.sp,
-                color: primaryColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  // Widget _buildFirstReview() {
+  //   return Container(
+  //     width: double.infinity,
+  //     child: Row(
+  //       children: [
+  //         RatingBar(
+  //           initialRating: 0,
+  //           direction: Axis.horizontal,
+  //           allowHalfRating: true,
+  //           itemCount: 5,
+  //           itemSize: 18.sp,
+  //           ratingWidget: RatingWidget(
+  //             empty: Icon(Icons.star_border, color: Colors.grey.shade300),
+  //             full: Icon(Icons.star, color: Colors.amber),
+  //             half: Icon(Icons.star_half, color: Colors.amber),
+  //           ),
+  //           ignoreGestures: true,
+  //           onRatingUpdate: (rating) {},
+  //         ),
+  //         Text(
+  //           'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
+  //           style: mediumTextStyle.copyWith(
+  //             fontSize: 12.sp,
+  //             color: primaryColor,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  bool get isStock => _checkStockAvailability();
+  bool _checkStockAvailability() {
+    final variant = widget.model.selectedVariant;
+
+    if (variant != null) {
+      return variant.stockQty != null && variant.stockQty > 0;
+    }
+    return widget.product.stockQty != null && widget.product.stockQty > 0;
   }
 
   Widget _buildTotalReview(ProductReviewChangeNotifier model) {
@@ -118,7 +169,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
-            itemSize: 21.sp,
+            itemSize: 16.sp,
             ratingWidget: RatingWidget(
               empty: Icon(Icons.star_border, color: Colors.grey.shade300),
               full: Icon(Icons.star, color: Colors.amber),
@@ -128,13 +179,11 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             onRatingUpdate: (value) => null,
           ),
           InkWell(
-            onTap: widget.onReviews,
+            onTap: model.reviews.length > 0 ? widget.onReviews : widget.onFirstReview,
             child: Text(
-              'reviews_count'
-                  .tr()
-                  .replaceFirst('0', model.reviews.length.toString()),
+              'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
+                fontSize: 11.sp,
                 color: primaryColor,
               ),
             ),

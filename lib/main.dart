@@ -31,10 +31,16 @@ void main() async {
   /// Firebase initialize
   await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR)
-    FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
+    FirebaseFirestore.instance.settings = const Settings(
+      host: 'localhost:8080',
+      sslEnabled: false,
+      persistenceEnabled: false,
+    );
+
   if (Platform.isIOS)
     try {
-      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
+      final TrackingStatus status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
       if (status == TrackingStatus.notDetermined) {
         await AppTrackingTransparency.requestTrackingAuthorization();
       }
@@ -44,6 +50,7 @@ void main() async {
 
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
+
   runApp(
     EasyLocalization(
       path: 'lib/public/languages',

@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>29156493421-l74luoqj813t8g7a8043ii722rtguv16.apps.googleusercontent.com</string>
+	<string>5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.29156493421-l74luoqj813t8g7a8043ii722rtguv16</string>
+	<string>com.googleusercontent.apps.5336431605-bmr1kekmjnf3h5bqu5sg73ptk31kc7jt</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>5336431605-an298hbjhi64foj918bcdk7adbn99r58.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBdWzqnpic9p44SCsEf3qQBS1GDG5qHbD8</string>
+	<string>AIzaSyALf98xfoTIT3yNYbG2twd4dvE1uiO_DzQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>29156493421</string>
+	<string>5336431605</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.markaa.shop</string>
 	<key>PROJECT_ID</key>
-	<string>markaa-app</string>
+	<string>markaa-4c479</string>
 	<key>STORAGE_BUCKET</key>
-	<string>markaa-app.appspot.com</string>
+	<string>markaa-4c479.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:29156493421:ios:335b6ff2c18772ae579764</string>
+	<string>1:5336431605:ios:463c10f6b4719c7c9a3ebc</string>
 	<key>DATABASE_URL</key>
-	<string>https://markaa-app-default-rtdb.firebaseio.com</string>
+	<string>https://markaa-4c479.firebaseio.com</string>
 </dict>
 </plist>

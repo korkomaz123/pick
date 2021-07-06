@@ -19,29 +19,35 @@ class WalletChangeNotifier extends ChangeNotifier {
   List<TransactionEntity> transactionsList;
 
   void init() {
+    print('clear wallet cart');
     walletCartId = null;
     amount = null;
+    notifyListeners();
   }
 
   void createWalletCart({
+    String amount,
     Function onProcess,
     Function onSuccess,
     Function onFailure,
   }) async {
+    print('create wallet cart: $walletCartId');
     if (onProcess != null) onProcess();
 
     try {
       if (walletCartId != null && walletCartId.isNotEmpty) {
-        final result = await cartRepository.clearCartItems(walletCartId);
-
-        if (result['code'] == 'SUCCESS') {
+        if (this.amount == amount) {
           if (onSuccess != null) onSuccess();
         } else {
-          if (onFailure != null) onFailure();
+          final result = await cartRepository.clearCartItems(walletCartId);
+          if (result['code'] == 'SUCCESS') {
+            if (onSuccess != null) onSuccess();
+          } else {
+            if (onFailure != null) onFailure();
+          }
         }
       } else {
         walletCartId = await walletRepository.createWalletCart();
-
         if (walletCartId == null || walletCartId.isEmpty) {
           if (onFailure != null) onFailure('Error');
         } else {
@@ -51,6 +57,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     } catch (e) {
       if (onFailure != null) onFailure(e.toString());
     }
+    notifyListeners();
   }
 
   void addMoneyToWallet({
@@ -67,14 +74,16 @@ class WalletChangeNotifier extends ChangeNotifier {
     } else {
       final result =
           await walletRepository.addMoneyToWallet(walletCartId, amount, lang);
+      print(result);
 
       if (result['code'] == 'SUCCESS') {
         this.amount = amount;
         if (onSuccess != null) onSuccess();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure();
       }
     }
+    notifyListeners();
   }
 
   void transferMoneyToBank({
@@ -112,6 +121,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
     final result = await walletRepository.transferMoney(
         token, amount, lang, description, email);
+    print(result);
     if (result['code'] == 'SUCCESS') {
       if (onSuccess != null) onSuccess();
     } else {

@@ -4,6 +4,7 @@ import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 
 import 'address_entity.dart';
 import 'enum.dart';
@@ -52,8 +53,8 @@ class OrderEntity {
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
             ? '0.000'
-            : _getFormattedValue(json['base_grand_total']),
-        subtotalPrice = _getFormattedValue(json['base_subtotal']),
+            : StringService.roundString(json['base_grand_total'], 3),
+        subtotalPrice = StringService.roundString(json['base_subtotal'], 3),
         discountAmount = double.parse(
             json['discount'].isNotEmpty ? json['discount'] : '0.000'),
         discountType = json['discount_type'],
@@ -78,11 +79,6 @@ class OrderEntity {
     Duration timezone = DateTime.now().timeZoneOffset;
     DateTime convertedDateTime = dateTime.add(timezone);
     return DateFormat('yyyy-MM-dd HH:mm:ss').format(convertedDateTime);
-  }
-
-  static String _getFormattedValue(String value) {
-    double price = double.parse(value);
-    return price.toStringAsFixed(3);
   }
 
   static List<CartItemEntity> _getCartItems(List<dynamic> items) {

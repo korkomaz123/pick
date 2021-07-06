@@ -20,7 +20,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/product/widgets/product_more_about.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -35,11 +34,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'widgets/product_details_tabs.dart';
 import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
-import 'widgets/product_review.dart';
 import 'widgets/product_review_total.dart';
+import 'widgets/top_brands_in_category.dart';
 
 class ProductPage extends StatefulWidget {
   final Object arguments;
@@ -80,7 +80,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
       (productChangeNotifier.selectedVariant?.stockQty == null || productChangeNotifier.selectedVariant.stockQty == 0);
 
   bool get isParentOutOfStock =>
-      productChangeNotifier.productDetailsMap[productId].typeId == 'configurable' &&
+      productChangeNotifier.productDetailsMap[productId].typeId != 'configurable' &&
       (productChangeNotifier.productDetailsMap[productId]?.stockQty == null || productChangeNotifier.productDetailsMap[productId].stockQty == 0);
 
   @override
@@ -106,6 +106,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   void _loadDetails() async {
+    print('PRODUCT ID >>> $productId');
     await productChangeNotifier.getProductDetails(productId);
   }
 
@@ -177,35 +178,25 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               model: model,
                             ),
                             ProductReviewTotal(
+                              model: model,
                               product: model.productDetailsMap[productId],
                               onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
                               onReviews: () => _onReviews(model.productDetailsMap[productId]),
                             ),
-                            ProductRelatedItems(product: product),
                             ProductSameBrandProducts(product: product),
-                            ProductMoreAbout(
+                            ProductDetailsTabs(
+                              model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            ProductReview(
-                              product: model.productDetailsMap[productId],
-                            ),
-                            SizedBox(height: 5.h),
+                            TopBrandsInCategory(productId: productId),
+                            ProductRelatedItems(product: product),
+                            SizedBox(height: 60.h),
                           ],
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildToolbar(model),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      child: _buildStickyHeader(),
-                    ),
+                    Positioned(left: 0, right: 0, bottom: 0, child: _buildToolbar(model)),
+                    Positioned(left: 0, right: 0, top: 0, child: _buildStickyHeader()),
                   ],
                 );
               } else {
@@ -293,71 +284,69 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   Widget _buildToolbar(ProductChangeNotifier model) {
-    return Container(
-      width: 375.w,
-      height: 60.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (model.productDetailsMap[productId].stockQty != null && model.productDetailsMap[productId].stockQty > 0)
-            if (!isParentOutOfStock && !isChildOutOfStock) ...[
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, appModel, __) {
-                  if (appModel.buying) {
-                    return Container(
-                      width: 317.w,
-                      height: 60.h,
-                      color: Color(0xFFFF8B00),
-                      child: CircleLoadingSpinner(loadingColor: Colors.white),
-                    );
-                  } else {
-                    return Container(
-                        width: 317.w,
-                        height: 60.h,
-                        child: MarkaaTextButton(
-                          title: 'product_buy_now'.tr(),
-                          titleSize: 23.sp,
-                          titleColor: Colors.white,
-                          buttonColor: Color(0xFFFF8B00),
-                          borderColor: Colors.transparent,
-                          radius: 1,
-                          onPressed: () => _onBuyNow(model),
-                          isBold: true,
-                        ));
-                  }
-                },
-              ),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, appModel, __) {
-                  return MarkaaRoundImageButton(
-                    width: 58.w,
+    return Consumer<MarkaaAppChangeNotifier>(
+      builder: (_, appModel, __) {
+        if (model.productDetailsMap[productId].typeId == 'configurable' || (!isParentOutOfStock && !isChildOutOfStock)) {
+          return Container(
+            width: 375.w,
+            height: 60.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (appModel.buying) ...[
+                  Container(
+                    width: 317.w,
                     height: 60.h,
-                    color: primarySwatchColor,
-                    child: ScaleTransition(
-                      scale: _addToCartScaleAnimation,
-                      child: Container(
-                        width: 25.w,
-                        height: 25.h,
-                        child: SvgPicture.asset(
-                          shoppingCartIcon,
-                          color: Colors.white,
-                        ),
+                    color: Color(0xFFFF8B00),
+                    child: CircleLoadingSpinner(loadingColor: Colors.white),
+                  )
+                ] else ...[
+                  Container(
+                    width: 317.w,
+                    height: 60.h,
+                    child: MarkaaTextButton(
+                      title: 'product_buy_now'.tr(),
+                      titleSize: 23.sp,
+                      titleColor: Colors.white,
+                      buttonColor: Color(0xFFFF8B00),
+                      borderColor: Colors.transparent,
+                      radius: 1,
+                      onPressed: () => _onBuyNow(model),
+                      isBold: true,
+                    ),
+                  )
+                ],
+                MarkaaRoundImageButton(
+                  width: 58.w,
+                  height: 60.h,
+                  color: primarySwatchColor,
+                  child: ScaleTransition(
+                    scale: _addToCartScaleAnimation,
+                    child: Container(
+                      width: 25.w,
+                      height: 25.h,
+                      child: SvgPicture.asset(
+                        shoppingCartIcon,
+                        color: Colors.white,
                       ),
                     ),
-                    onTap: () {
-                      if (appModel.activeAddCart) {
-                        appModel.changeAddCartStatus(false);
-                        _onAddToCart(model);
-                        appModel.changeAddCartStatus(true);
-                      }
-                    },
-                    radius: 1,
-                  );
-                },
-              )
-            ],
-        ],
-      ),
+                  ),
+                  onTap: () {
+                    if (appModel.activeAddCart) {
+                      appModel.changeAddCartStatus(false);
+                      _onAddToCart(model);
+                      appModel.changeAddCartStatus(true);
+                    }
+                  },
+                  radius: 1,
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 

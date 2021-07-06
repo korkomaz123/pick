@@ -3,7 +3,6 @@ import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,40 +30,20 @@ class _ProductReviewState extends State<ProductReview> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProductReviewChangeNotifier>(
-      builder: (_, __, ___) {
-        if (model.reviews.isNotEmpty) {
-          return Container(
-            width: 375.w,
-            margin: EdgeInsets.only(
-              top: 10.h,
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 20.w,
-              vertical: 20.h,
-            ),
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'product_reviews'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 19.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Column(
-                  children: model.reviews
-                      .map((review) => _buildProductReview(review))
-                      .toList(),
-                ),
-              ],
-            ),
-          );
-        }
-        return Container();
-      },
+    return SingleChildScrollView(
+      child: Consumer<ProductReviewChangeNotifier>(
+        builder: (_, __, ___) {
+          if (model.reviews.isNotEmpty) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: model.reviews.map((review) => _buildProductReview(review)).toList(),
+              ),
+            );
+          }
+          return Container();
+        },
+      ),
     );
   }
 
@@ -80,7 +59,7 @@ class _ProductReviewState extends State<ProductReview> {
               Text(
                 review.nickname,
                 style: mediumTextStyle.copyWith(
-                  fontSize: 16.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   color: greyColor,
                 ),
@@ -121,7 +100,7 @@ class _ProductReviewState extends State<ProductReview> {
             child: Text(
               review.detail,
               style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
+                fontSize: 12.sp,
                 color: greyColor,
                 fontWeight: FontWeight.w100,
               ),

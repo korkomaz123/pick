@@ -1,3 +1,5 @@
+import 'package:markaa/src/utils/services/string_service.dart';
+
 import 'brand_entity.dart';
 
 class ProductModel {
@@ -22,6 +24,8 @@ class ProductModel {
   int stockQty;
   int qtySaveForLater;
   Map<String, dynamic> options;
+  bool isDeal;
+  List<dynamic> gallery;
 
   ProductModel({
     this.parentId,
@@ -44,6 +48,8 @@ class ProductModel {
     this.stockQty,
     this.qtySaveForLater,
     this.options,
+    this.isDeal,
+    this.gallery,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -62,12 +68,12 @@ class ProductModel {
         name = json['name'],
         metaDescription = json['meta_description'],
         price = json['special_price'] != null
-            ? double.parse(json['special_price']).toStringAsFixed(3)
+            ? StringService.roundString(json['special_price'], 3)
             : json['price'] != null
-                ? double.parse(json['price']).toStringAsFixed(3)
+                ? StringService.roundString(json['price'], 3)
                 : null,
         beforePrice = json['price'] != null
-            ? double.parse(json['price']).toStringAsFixed(3)
+            ? StringService.roundString(json['price'], 3)
             : null,
         discount = _getDiscount(
             json['special_price'] != null
@@ -90,7 +96,9 @@ class ProductModel {
             ? double.parse(json['qty_saveforlater']).ceil()
             : 0,
         options =
-            json.containsKey('options') ? _getOptions(json['options']) : null;
+            json.containsKey('options') ? _getOptions(json['options']) : null,
+        isDeal = json['sale'] == '1',
+        gallery = json.containsKey('gallery') ? json['gallery'] : [];
 
   static Map<String, dynamic> _getOptions(List<dynamic> list) {
     Map<String, dynamic> options = {};

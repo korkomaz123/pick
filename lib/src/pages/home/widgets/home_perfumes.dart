@@ -1,13 +1,7 @@
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,64 +21,31 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.perfumesProducts.isNotEmpty &&
         widget.homeChangeNotifier.perfumesProducts.length > 4) {
-      return Column(
-        children: [
-          _buildProductView(),
-          Divider(
-            height: 1.5.h,
-            thickness: 1.5.h,
-            color: greyColor.withOpacity(0.4),
-          ),
-          _buildIndicator(),
-          _buildFooter(context),
-        ],
+      return Container(
+        width: designWidth.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            _buildProductView(),
+            Divider(
+              height: 1.5.h,
+              thickness: 1.5.h,
+              color: greyColor.withOpacity(0.4),
+            ),
+            _buildIndicator(),
+          ],
+        ),
       );
     } else {
       return Container();
     }
   }
 
-  Widget _buildFooter(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: 4.h,
-        horizontal: 10.w,
-      ),
-      child: MarkaaTextIconButton(
-        onPressed: () {
-          ProductListArguments arguments = ProductListArguments(
-            category: homeCategories[2],
-            subCategory: homeCategories[2].subCategories,
-            brand: BrandEntity(),
-            selectedSubCategoryIndex: 0,
-            isFromBrand: false,
-          );
-          Navigator.pushNamed(
-            context,
-            Routes.productList,
-            arguments: arguments,
-          );
-        },
-        title: 'view_all_fragrances'.tr(),
-        titleColor: Colors.white,
-        titleSize: 18.sp,
-        icon: Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.white,
-          size: 24.sp,
-        ),
-        borderColor: primaryColor,
-        buttonColor: primaryColor,
-        leading: false,
-      ),
-    );
-  }
-
   Widget _buildIndicator() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 15.h),
       child: Center(
         child: SmoothIndicator(
           offset: activeIndex.toDouble(),

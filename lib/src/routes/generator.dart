@@ -31,9 +31,8 @@ import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_checkout_page.dart
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_failed_page.dart';
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_page.dart';
 import 'package:markaa/src/pages/my_wallet/checkout/my_wallet_payment_success_page.dart';
+import 'package:markaa/src/pages/my_wallet/gift/sent_gift_success_page.dart';
 import 'package:markaa/src/pages/my_wallet/my_wallet_details/my_wallet_details_page.dart';
-import 'package:markaa/src/pages/my_wallet/banks/banks_list_page.dart';
-import 'package:markaa/src/pages/my_wallet/banks/bank_page.dart';
 import 'package:markaa/src/pages/product/product_image.dart';
 import 'package:markaa/src/pages/product/product_page.dart';
 import 'package:markaa/src/pages/product_list/product_list_page.dart';
@@ -43,7 +42,6 @@ import 'package:markaa/src/pages/search/search_page.dart';
 import 'package:markaa/src/pages/sign_in/sign_in_page.dart';
 import 'package:markaa/src/pages/sign_up/sign_up_page.dart';
 import 'package:markaa/src/pages/splash/splash_page.dart';
-// import 'package:markaa/src/pages/splash/splash_page.dart';
 import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/summer_collection/summer_collection_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
@@ -278,16 +276,6 @@ class RouteGenerator {
           builder: (_) => MyWalletDetailsPage(amount: params),
           settings: RouteSettings(name: Routes.myWallet),
         );
-      case Routes.bankList:
-        return CupertinoPageRoute(
-          builder: (_) => BankListPage(),
-          settings: RouteSettings(name: Routes.bankList),
-        );
-      case Routes.addNewBankAccount:
-        return CupertinoPageRoute(
-          builder: (_) => BankPage(),
-          settings: RouteSettings(name: Routes.addNewBankAccount),
-        );
       case Routes.myWalletCheckout:
         return CupertinoPageRoute(
           builder: (_) => MyWalletCheckoutPage(reorder: params),
@@ -306,6 +294,11 @@ class RouteGenerator {
       case Routes.myWalletFailed:
         return CupertinoPageRoute(
           builder: (_) => MyWalletPaymentFailedPage(),
+          settings: settings,
+        );
+      case Routes.sentGiftSuccess:
+        return CupertinoPageRoute(
+          builder: (_) => SentGiftSuccessPage(amount: params),
           settings: settings,
         );
       default:

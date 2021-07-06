@@ -299,7 +299,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, Si
                     }
                     return Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
+                        horizontal: 5.w,
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(

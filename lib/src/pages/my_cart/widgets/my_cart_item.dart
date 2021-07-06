@@ -10,6 +10,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,12 +34,16 @@ class MyCartItem extends StatelessWidget {
     this.onSignIn,
   });
 
+  bool get discountable => discount != 0 && type == 'percentage';
+  bool get normalProduct =>
+      cartItem?.product?.beforePrice == cartItem?.product?.price;
+
   @override
   Widget build(BuildContext context) {
     String priceString = cartItem.product.price;
     double price = double.parse(priceString);
     double discountPrice = price * (100 - discount) / 100;
-    String discountPriceString = discountPrice.toStringAsFixed(3);
+    String discountPriceString = NumericService.roundString(discountPrice, 3);
     return Stack(
       children: [
         Container(
@@ -120,12 +125,10 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          discount != 0 &&
-                                  type == 'percentage' &&
-                                  cartItem?.product?.beforePrice ==
-                                      cartItem?.product?.price
-                              ? discountPriceString + ' ' + 'currency'.tr()
-                              : priceString + ' ' + 'currency'.tr(),
+                          // discountable && normalProduct
+                          discountable
+                              ? '$discountPriceString ${'currency'.tr()}'
+                              : '$priceString ${'currency'.tr()}',
                           style: mediumTextStyle.copyWith(
                             fontSize: 12.sp,
                             color: greyColor,
@@ -133,14 +136,12 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          cartItem?.product?.beforePrice !=
-                                  cartItem?.product?.price
-                              ? cartItem.product.beforePrice +
-                                  ' ' +
-                                  'currency'.tr()
-                              : discount != 0 && type == 'percentage'
-                                  ? priceString + ' ' + 'currency'.tr()
-                                  : '',
+                          // !normalProduct
+                          //     ? '${cartItem.product.beforePrice} ${'currency'.tr()}'
+                          //     : discountable
+                          //         ? '$priceString ${'currency'.tr()}'
+                          //         : '',
+                          discountable ? '$priceString ${'currency'.tr()}' : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,

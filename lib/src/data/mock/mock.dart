@@ -20,6 +20,35 @@ List<String> sortByList = [
   'name_za',
 ];
 
+List<String> enAlphabetList = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+];
+
 MessageEntity message = MessageEntity(
   time: '28-09-2020',
   title: 'Profile updated',
@@ -33,33 +62,6 @@ UserEntity user;
 String deviceToken = '';
 String lang = 'en';
 bool isNotification = true;
-
-List<TransactionEntity> transactions = [
-  TransactionEntity(
-    number: '292833',
-    amount: 1200,
-    date: '21/3/2021',
-    type: TransactionType.order,
-  ),
-  TransactionEntity(
-    number: '123456',
-    amount: -223,
-    date: '21/3/2021',
-    type: TransactionType.order,
-  ),
-  TransactionEntity(
-    number: '221123',
-    amount: 288,
-    date: '21/3/2021',
-    type: TransactionType.bank,
-  ),
-  TransactionEntity(
-    number: '2928384',
-    amount: 102,
-    date: '21/3/2021',
-    type: TransactionType.debit,
-  ),
-];
 
 List<BankAccountEntity> bankAccounts = [
   BankAccountEntity(

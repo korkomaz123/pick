@@ -1,7 +1,10 @@
 class EndPoints {
-  // static const String baseUrl = 'https://markaa.com/customapi/api';
-  // static const String baseUrl = 'https://cigaon.com/customapi/api';
-  static const String baseUrl = 'https://staging.markaa.com/customapi/api';
+  // static const String mainDomain = 'https://markaa.com';
+  //static const String mainDomain = 'https://cigaon.com';
+  static const String mainDomain = 'https://staging.markaa.com';
+  static const String baseUrl = '$mainDomain/customapi/api';
+  static const String gatewayform = '$mainDomain/gatewayform.php';
+  static const String privacyAndPolicy = '$mainDomain/privacy-policy';
   static const String login = '$baseUrl/login';
   static const String logout = '$baseUrl/Logout';
   static const String socialLogin = '$baseUrl/socialLogin';
@@ -95,4 +98,5 @@ class EndPoints {
   static const String transferMoney = '$baseUrl/Transfermoney';
   static const String getRecord = '$baseUrl/getwalletrecord';
   static const String createWalletCart = '$baseUrl/createwalletcart';
+  static const String getTopBrandsByCategory = '$baseUrl/getTopBrandsByCategory';
 }

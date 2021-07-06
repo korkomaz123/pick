@@ -25,7 +25,7 @@ class MarkaaAppBar extends StatefulWidget implements PreferredSizeWidget {
   _MarkaaAppBarState createState() => _MarkaaAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(100);
+  Size get preferredSize => Size.fromHeight(90);
 }
 
 class _MarkaaAppBarState extends State<MarkaaAppBar> {
@@ -85,10 +85,7 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(
-            right: 20.w,
-            left: 20.w,
-          ),
+          padding: EdgeInsets.only(right: 20.w, left: 20.w),
           child: InkWell(
             onTap: () => widget.isCartPage
                 ? null
@@ -125,16 +122,16 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
         ),
       ],
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(40),
+        preferredSize: Size.fromHeight(30),
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: 10.w,
           ),
           margin: EdgeInsets.only(
-            bottom: (widget.isCenter ? 15.h : 10.h),
+            bottom: (widget.isCenter ? 10.h : 5.h),
           ),
           width: double.infinity,
-          height: 40.h,
+          height: 30.h,
           child: TextFormField(
             controller: _searchController,
             decoration: InputDecoration(

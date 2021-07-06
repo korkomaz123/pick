@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -31,6 +32,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../preload.dart';
 
@@ -112,6 +114,16 @@ class _SignInPageState extends State<SignInPage> {
       Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
   }
 
+  void _onPrivacyPolicy() async {
+    String url = EndPoints.privacyAndPolicy;
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Preload.setLanguage();
@@ -140,7 +152,9 @@ class _SignInPageState extends State<SignInPage> {
                   Container(
                     width: 375.w,
                     padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                    alignment: lang == 'en'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -170,6 +184,18 @@ class _SignInPageState extends State<SignInPage> {
                   _buildExternalSignInButtons(),
                   SizedBox(height: 40),
                   if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
+                  Center(
+                    child: InkWell(
+                      onTap: _onPrivacyPolicy,
+                      child: Text(
+                        'suffix_agree_terms'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          color: Colors.white54,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -306,18 +332,16 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignInButton() {
     return Container(
       width: 375.w,
-      height: 50.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      height: 45.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'sign_in'.tr(),
-        titleSize: 19.sp,
+        titleSize: 18.sp,
         titleColor: primaryColor,
         buttonColor: Colors.white,
         borderColor: Colors.transparent,
         onPressed: () => _signIn(),
-        radius: 20,
+        radius: 30,
       ),
     );
   }
@@ -352,11 +376,14 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
-          Text(
-            'or_divider'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 17.sp,
-              color: Colors.white,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Text(
+              'or_divider'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: 17.sp,
+                color: Colors.white,
+              ),
             ),
           ),
           Expanded(child: Divider(color: greyLightColor, thickness: 0.5)),
@@ -455,7 +482,8 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final profile = await Api.getMethod('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = await Api.getMethod(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
@@ -475,6 +503,7 @@ class _SignInPageState extends State<SignInPage> {
   void _onGoogleSign() async {
     GoogleSignIn _googleSignIn = GoogleSignIn();
     try {
+      await _googleSignIn.signOut();
       final googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
         String email = googleAccount.email;

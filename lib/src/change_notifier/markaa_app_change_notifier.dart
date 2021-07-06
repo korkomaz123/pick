@@ -11,7 +11,14 @@ class MarkaaAppChangeNotifier extends ChangeNotifier {
 
   bool buying = false;
 
+  bool isShowingSearchBar = true;
+
   void rebuild() {
+    notifyListeners();
+  }
+
+  void changeSearchBarStatus(bool value) {
+    isShowingSearchBar = value;
     notifyListeners();
   }
 

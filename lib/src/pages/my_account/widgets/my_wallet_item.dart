@@ -33,7 +33,7 @@ class _MyWalletItemState extends State<MyWalletItem> {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(walletSimpleIcon),
+                  child: SvgPicture.asset(walletCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

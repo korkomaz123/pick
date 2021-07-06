@@ -36,6 +36,7 @@ class ProductVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
+  final Function onTap;
 
   ProductVCard({
     this.cardWidth,
@@ -46,6 +47,7 @@ class ProductVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
+    this.onTap,
   });
 
   @override
@@ -119,11 +121,14 @@ class _ProductVCardState extends State<ProductVCard>
   Widget build(BuildContext context) {
     if (widget?.product?.productId != null) {
       return InkWell(
-        onTap: () => Navigator.pushNamed(
-          Preload.navigatorKey.currentContext,
-          Routes.product,
-          arguments: widget.product,
-        ),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            Routes.product,
+            arguments: widget.product,
+          );
+          if (widget.onTap != null) widget.onTap();
+        },
         child: Container(
           width: widget.cardWidth,
           height: widget.cardHeight,
@@ -137,6 +142,7 @@ class _ProductVCardState extends State<ProductVCard>
                   Positioned(top: 0, right: 0, child: _buildDiscount()),
                 ],
               ],
+              if (widget.product.isDeal) ...[_buildDealValueLabel()],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -208,31 +214,6 @@ class _ProductVCardState extends State<ProductVCard>
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                // if (widget.isLine || widget.isMinor) ...[
-                //   Expanded(
-                //     child: Text(
-                //       widget.product.name,
-                //       maxLines: 2,
-                //       overflow: TextOverflow.ellipsis,
-                //       style: mediumTextStyle.copyWith(
-                //         color: greyDarkColor,
-                //         fontSize: widget.isMinor ? 12.sp : 16.sp,
-                //         fontWeight: FontWeight.w700,
-                //       ),
-                //     ),
-                //   )
-                // ] else ...[
-                //   Text(
-                //     widget.product.name,
-                //     maxLines: 2,
-                //     overflow: TextOverflow.ellipsis,
-                //     style: mediumTextStyle.copyWith(
-                //       color: greyDarkColor,
-                //       fontSize: widget.isMinor ? 12.sp : 16.sp,
-                //       fontWeight: FontWeight.w700,
-                //     ),
-                //   )
-                // ],
                 Spacer(),
                 if (widget.isLine) ...[
                   Divider(color: greyColor, thickness: 0.5.h, height: 10.h)
@@ -324,44 +305,79 @@ class _ProductVCardState extends State<ProductVCard>
     );
   }
 
+  Widget _buildDealValueLabel() {
+    return Align(
+      alignment:
+          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      child: Padding(
+        padding: EdgeInsets.only(top: widget.cardHeight * 0.63 - 22.h),
+        child: ClipPath(
+          clipper: DealClipPath(lang: Preload.language),
+          child: Container(
+            width: 66.w,
+            height: 22.h,
+            color: pinkColor,
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'deal_label'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildToolbar() {
-    return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
-      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
-      if (widget.isWishlist) {
-        return Align(
-          alignment:
-              Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(
-                      Preload.navigatorKey.currentContext,
-                      Routes.signIn,
-                    ),
-              child: ScaleTransition(
-                scale: _addToWishlistScaleAnimation,
-                child: Container(
-                  width: isWishlist ? 22.w : 25.w,
-                  height: isWishlist ? 22.w : 25.w,
-                  child: isWishlist
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+    return Consumer<WishlistChangeNotifier>(
+      builder: (_, model, __) {
+        String productId = widget.product.productId;
+        isWishlist = model.wishlistItemsMap.containsKey(productId);
+        if (widget.isWishlist) {
+          return Align(
+            alignment: Preload.language == 'en'
+                ? Alignment.topRight
+                : Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () => user != null
+                    ? _onWishlist()
+                    : Navigator.pushNamed(
+                        Preload.navigatorKey.currentContext,
+                        Routes.signIn,
+                      ),
+                child: ScaleTransition(
+                  scale: _addToWishlistScaleAnimation,
+                  child: Container(
+                    width: isWishlist ? 22.w : 25.w,
+                    height: isWishlist ? 22.w : 25.w,
+                    child: isWishlist
+                        ? SvgPicture.asset(wishlistedIcon)
+                        : SvgPicture.asset(favoriteIcon),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      } else {
-        return SizedBox.shrink();
-      }
-    });
+          );
+        } else {
+          return SizedBox.shrink();
+        }
+      },
+    );
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.typeId == 'simple' &&
-        (widget.product.stockQty == null || widget.product.stockQty == 0)) {
+    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
       return Align(
         alignment: Preload.language == 'en'
             ? Alignment.centerRight
@@ -467,5 +483,33 @@ class _ProductVCardState extends State<ProductVCard>
             .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
+  }
+}
+
+class DealClipPath extends CustomClipper<Path> {
+  final String lang;
+
+  DealClipPath({this.lang});
+
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    if (lang == 'ar') {
+      path.lineTo(6.w, size.height / 2);
+      path.lineTo(0, size.height);
+      path.lineTo(size.width, size.height);
+      path.lineTo(size.width, 0.0);
+    } else {
+      path.lineTo(0, size.height);
+      path.lineTo(size.width, size.height);
+      path.lineTo(size.width - 6.w, size.height / 2);
+      path.lineTo(size.width, 0.0);
+    }
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    return false;
   }
 }

@@ -17,8 +17,8 @@ class MyWalletPaymentSuccessPage extends StatefulWidget {
       _MyWalletPaymentSuccessPageState();
 }
 
-class _MyWalletPaymentSuccessPageState
-    extends State<MyWalletPaymentSuccessPage> {
+class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
+    with WidgetsBindingObserver {
   WalletChangeNotifier _walletChangeNotifier;
   String amount;
 
@@ -29,76 +29,87 @@ class _MyWalletPaymentSuccessPageState
 
     user.balance += double.parse(_walletChangeNotifier.amount);
     amount = _walletChangeNotifier.amount;
-    setState(() {});
 
     _walletChangeNotifier.init();
+
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == Routes.myWallet,
+        );
+        Navigator.pop(context);
+        return true;
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 25.sp,
-            color: greyColor,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 25.sp,
+              color: greyColor,
+            ),
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                (route) => route.settings.name == Routes.myWallet,
+              );
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == Routes.myWallet,
-            );
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: Container(
-        width: designWidth.w,
-        padding: EdgeInsets.symmetric(horizontal: 60.w),
-        child: Column(
-          children: [
-            SizedBox(height: 40.h),
-            SvgPicture.asset(walletSuccessIcon),
-            Text(
-              'checkout_ordered_success_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 52.sp,
-                fontWeight: FontWeight.w700,
-                color: primaryColor,
+        body: Container(
+          width: designWidth.w,
+          padding: EdgeInsets.symmetric(horizontal: 60.w),
+          child: Column(
+            children: [
+              SizedBox(height: 40.h),
+              SvgPicture.asset(walletSuccessIcon),
+              Text(
+                'checkout_ordered_success_title'.tr(),
+                style: mediumTextStyle.copyWith(
+                  fontSize: 52.sp,
+                  fontWeight: FontWeight.w700,
+                  color: primaryColor,
+                ),
               ),
-            ),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: amount ?? '',
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 55.sp,
-                      fontWeight: FontWeight.w700,
-                      color: primaryColor,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: amount ?? '',
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 55.sp,
+                        fontWeight: FontWeight.w700,
+                        color: primaryColor,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: 'kwd'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 22.sp,
-                      color: primaryColor,
+                    TextSpan(
+                      text: 'kwd'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 22.sp,
+                        color: primaryColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              'wallet_added_success_message'.tr(),
-              textAlign: TextAlign.center,
-              style: mediumTextStyle.copyWith(fontSize: 23.sp),
-            ),
-          ],
+              SizedBox(height: 10.h),
+              Text(
+                'wallet_added_success_message'.tr(),
+                textAlign: TextAlign.center,
+                style: mediumTextStyle.copyWith(fontSize: 23.sp),
+              ),
+            ],
+          ),
         ),
       ),
     );

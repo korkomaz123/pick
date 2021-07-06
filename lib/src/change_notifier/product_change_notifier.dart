@@ -8,9 +8,8 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import '../../preload.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
-  final ProductRepository productRepository = ProductRepository();
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
+  final productRepository = ProductRepository();
+  final localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -20,12 +19,15 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, ProductEntity> productDetailsMap = {};
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
+  List<String> productIds = [];
 
   close() {
-    productDetailsMap.remove(productDetails.productId);
+    String id = productIds[productIds.length - 1];
+    productDetailsMap.remove(id);
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
+    notifyListeners();
   }
 
   void initialize() {
@@ -35,6 +37,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   setInitalInfo(ProductModel product) {
+    productIds.add(product.productId);
     if (productDetailsMap.containsKey(product.productId)) {
       productDetails = productDetailsMap[product.productId];
     } else {
@@ -360,37 +363,42 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
   }
 
-  _updateDetails() {
-    if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
-      List<ProductModel> _selectedItem = productDetails.variants
-          .where((element) =>
-              element.sku == "${productDetails.sku}-$currentColor-$currentSize")
-          .toList();
-      if (_selectedItem.length > 0) {
-        productDetails = productDetails.copyWith(
-            imageUrl: _selectedItem.first.imageUrl,
-            gallery: [_selectedItem.first.imageUrl]);
-        productDetailsMap[productDetails.productId] = productDetails;
-      }
-    }
-  }
+  // _updateDetails() {
+  //   if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
+  //     List<ProductModel> _selectedItem = productDetails.variants
+  //         .where((element) =>
+  //             element.sku == "${productDetails.sku}-$currentColor-$currentSize")
+  //         .toList();
+  //     if (_selectedItem.length > 0) {
+  //       productDetails = productDetails.copyWith(
+  //           imageUrl: _selectedItem.first.imageUrl,
+  //           gallery: [_selectedItem.first.imageUrl]);
+  //       productDetailsMap[productDetails.productId] = productDetails;
+  //     }
+  //   }
+  // }
 
-  String currentColor = "";
-  void changeCurrentColor(_color) {
-    currentColor = _color;
-    _updateDetails();
-    notifyListeners();
-  }
+  // String currentColor = "";
+  // void changeCurrentColor(_color) {
+  //   currentColor = _color;
+  //   _updateDetails();
+  //   notifyListeners();
+  // }
 
-  String currentSize = "";
-  void changeCurrentSize(_size) {
-    currentSize = _size;
-    _updateDetails();
-    notifyListeners();
-  }
+  // String currentSize = "";
+  // void changeCurrentSize(_size) {
+  //   currentSize = _size;
+  //   _updateDetails();
+  //   notifyListeners();
+  // }
 
   /// select option in configurable product
-  void selectOption(String attributeId, String optionValue, bool selected) {
+  void selectOption(
+    String productId,
+    String attributeId,
+    String optionValue,
+    bool selected,
+  ) {
     if (selected) {
       selectedOptions[attributeId] = optionValue;
     } else {
@@ -398,13 +406,43 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
     selectedVariant = null;
 
-    for (var variant in productDetails.variants) {
-      if (mapEquals(selectedOptions, variant.options) ||
-          selectedOptions.toString().contains(variant.options.toString())) {
+    for (var variant in productDetailsMap[productId].variants) {
+      if (mapEquals(selectedOptions, variant.options)) {
         selectedVariant = variant;
         break;
       }
     }
     notifyListeners();
+  }
+
+  bool checkAttributeOptionAvailability(
+    String productId,
+    String attrId,
+    String optVal,
+  ) {
+    Map<String, dynamic> options = {};
+    for (var key in selectedOptions.keys.toList()) {
+      options[key] = selectedOptions[key];
+    }
+    options[attrId] = optVal;
+
+    bool isAvailable = false;
+
+    for (var variant in productDetailsMap[productId].variants) {
+      bool selectable = true;
+      for (var attributeId in options.keys.toList()) {
+        if (!variant.options.containsKey(attributeId) ||
+            variant.options[attributeId] != options[attributeId]) {
+          selectable = false;
+          break;
+        }
+      }
+      if (selectable) {
+        isAvailable = true;
+        break;
+      }
+    }
+
+    return isAvailable;
   }
 }

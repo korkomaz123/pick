@@ -1,5 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -26,19 +29,18 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.brandList.isNotEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(),
-          SizedBox(height: 20.h),
-          _buildStoresSlider(),
-          Divider(
-            height: 4.h,
-            thickness: 1.5.h,
-            color: greyColor.withOpacity(0.4),
-          ),
-          _buildFooter(),
-        ],
+      return Container(
+        height: 380.h,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(),
+            SizedBox(height: 20.h),
+            _buildStoresSlider(),
+          ],
+        ),
       );
     } else {
       return Container();
@@ -46,11 +48,42 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildTitle() {
-    return Text(
-      'brands_title'.tr(),
-      style: mediumTextStyle.copyWith(
-        color: greyDarkColor,
-        fontSize: 26.sp,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: AutoSizeText(
+              'brands_title'.tr(),
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(
+                color: greyDarkColor,
+                fontSize: 26.sp,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
+            height: 30.h,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
+              titleColor: primaryColor,
+              buttonColor: Colors.white,
+              borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
+              radius: 0,
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.brandList,
+                  arguments: widget.homeChangeNotifier.brandList,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -114,9 +147,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: (activeIndex / 2).floor().toDouble(),
                 count: (length / 2).ceil(),
@@ -135,39 +166,6 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: 4.h,
-      ),
-      child: InkWell(
-        onTap: () => Navigator.pushNamed(
-          context,
-          Routes.brandList,
-          arguments: widget.homeChangeNotifier.brandList,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'view_more_brands'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 15.sp,
-                color: primaryColor,
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: 15.sp,
-            ),
-          ],
-        ),
       ),
     );
   }

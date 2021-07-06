@@ -1,4 +1,4 @@
-import 'package:markaa/preload.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -29,6 +29,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'toggle_language.dart';
 
@@ -37,7 +38,8 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObserver {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu>
+    with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int activeIndex;
   double menuWidth;
@@ -69,6 +71,15 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
+  }
+
+  void _onPrivacyPolicy() async {
+    String url = EndPoints.privacyAndPolicy;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+    }
   }
 
   @override
@@ -110,7 +121,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     }
                   },
                 ),
-              )
+              ),
+              ListTile(
+                leading: Icon(Icons.privacy_tip),
+                onTap: _onPrivacyPolicy,
+                title: Text(
+                  'suffix_agree_terms'.tr(),
+                ),
+              ),
             ],
           );
         },
@@ -143,34 +161,38 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
         child: Row(
           children: [
             if (user?.token != null) ...[
-              CachedNetworkImage(
-                imageUrl: user?.profileUrl ?? '',
-                imageBuilder: (_, _imageProvider) {
-                  return Container(
-                    width: 60.w,
-                    height: 60.w,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: _imageProvider,
-                        fit: BoxFit.cover,
+              Container(
+                width: 60.w,
+                height: 60.w,
+                child: CachedNetworkImage(
+                  imageUrl: user?.profileUrl ?? '',
+                  imageBuilder: (_, _imageProvider) {
+                    return Container(
+                      width: 60.w,
+                      height: 60.w,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: _imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                        shape: BoxShape.circle,
                       ),
-                      shape: BoxShape.circle,
-                    ),
-                  );
-                },
-                errorWidget: (_, __, ___) {
-                  return Container(
-                    width: 60.w,
-                    height: 60.w,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('lib/public/images/profile.png'),
-                        fit: BoxFit.cover,
+                    );
+                  },
+                  errorWidget: (_, __, ___) {
+                    return Container(
+                      width: 60.w,
+                      height: 60.w,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('lib/public/images/profile.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        shape: BoxShape.circle,
                       ),
-                      shape: BoxShape.circle,
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
               SizedBox(width: 10.w),
               Text(
@@ -253,7 +275,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              if (_globalProvider.activeMenu == menu.id) ...[_buildSubmenu(menu)],
+              if (_globalProvider.activeMenu == menu.id) ...[
+                _buildSubmenu(menu)
+              ],
             ],
           );
         }).toList(),
@@ -262,9 +286,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
   }
 
   Widget _buildParentMenu(GlobalProvider _globalProvider, int index) {
-    CategoryMenuEntity menu = _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
+    CategoryMenuEntity menu =
+        _globalProvider.sideMenus[_globalProvider.currentLanguage][index];
     return InkWell(
-      onTap: () => menu.subMenu.isNotEmpty ? _globalProvider.displaySubmenu(menu, index) : _viewCategory(menu, 0),
+      onTap: () => menu.subMenu.isNotEmpty
+          ? _globalProvider.displaySubmenu(menu, index)
+          : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: 15.h),
@@ -280,7 +307,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
                     height: 25.w,
                     imageUrl: menu.iconUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],
                 SizedBox(width: 10.w),
@@ -295,7 +323,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
             ),
             if (menu.subMenu.isNotEmpty) ...[
               Icon(
-                _globalProvider.activeMenu == menu.id ? Icons.arrow_drop_down : Icons.arrow_right,
+                _globalProvider.activeMenu == menu.id
+                    ? Icons.arrow_drop_down
+                    : Icons.arrow_right,
                 size: 25.sp,
                 color: greyDarkColor,
               )
@@ -388,9 +418,9 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObse
 
     progressService.hideProgress();
 
-    Navigator.pop(Preload.navigatorKey.currentContext);
+    Navigator.pop(context);
     Navigator.popUntil(
-      Preload.navigatorKey.currentContext,
+      context,
       (route) => route.settings.name == Routes.home,
     );
   }

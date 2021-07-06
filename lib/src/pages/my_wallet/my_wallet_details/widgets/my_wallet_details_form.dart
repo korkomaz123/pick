@@ -33,13 +33,11 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   ProgressService _progressService;
   FlushBarService _flushBarService;
 
-  bool isValidAmount;
+  bool isValidAmount = false;
 
   @override
   void initState() {
     super.initState();
-
-    isValidAmount = false;
 
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
@@ -87,6 +85,14 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                 controller: _amountController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
+                maxLength: 3,
+                buildCounter: (
+                  BuildContext context, {
+                  int currentLength,
+                  int maxLength,
+                  bool isFocused,
+                }) =>
+                    null,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   border: OutlineInputBorder(
@@ -107,9 +113,19 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     width: 40.w,
                     margin: EdgeInsets.symmetric(vertical: 5.h),
                     decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(width: 0.5.w, color: primaryColor),
-                      ),
+                      border: Preload.language == 'en'
+                          ? Border(
+                              left: BorderSide(
+                                width: 0.5.w,
+                                color: primaryColor,
+                              ),
+                            )
+                          : Border(
+                              right: BorderSide(
+                                width: 0.5.w,
+                                color: primaryColor,
+                              ),
+                            ),
                     ),
                     alignment: Alignment.center,
                     child: Text(
@@ -122,7 +138,6 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                     ),
                   ),
                 ),
-                validator: (value) {},
               ),
             ),
             Consumer<MarkaaAppChangeNotifier>(
@@ -146,24 +161,6 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                         isBold: true,
                       ),
                     ),
-                    // SizedBox(height: 23.h),
-                    // Container(
-                    //   width: 203.w,
-                    //   height: 28.h,
-                    //   child: MarkaaTextButton(
-                    //     onPressed: () => isValidAmount
-                    //         ? Navigator.pushNamed(context, Routes.bankList)
-                    //         : null,
-                    //     title: 'transfer_amount_to_bank'.tr(),
-                    //     titleColor: isValidAmount ? primaryColor : Colors.white,
-                    //     titleSize: 13.sp,
-                    //     buttonColor: greyLightColor,
-                    //     borderColor:
-                    //         isValidAmount ? primaryColor : Colors.white,
-                    //     radius: 8.sp,
-                    //     isBold: true,
-                    //   ),
-                    // ),
                   ],
                 );
               },
@@ -175,11 +172,20 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   }
 
   void _onAddMoney() {
-    _walletChangeNotifier.createWalletCart(
-      onProcess: _onCreatingWalletCart,
-      onSuccess: _onCreatedWalletCartSuccess,
-      onFailure: _onCreatedWalletCartFailure,
-    );
+    if (isValidAmount) {
+      if (double.parse(_amountController.text) > 300) {
+        String title = 'top_up_failed_title'.tr();
+        String message = 'top_up_failed_message'.tr().replaceFirst('#', '300');
+        _flushBarService.showErrorCustomDialog(title, message);
+      } else {
+        _walletChangeNotifier.createWalletCart(
+          amount: _amountController.text,
+          onProcess: _onCreatingWalletCart,
+          onSuccess: _onCreatedWalletCartSuccess,
+          onFailure: _onCreatedWalletCartFailure,
+        );
+      }
+    }
   }
 
   void _onCreatingWalletCart() {
@@ -224,8 +230,8 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     );
   }
 
-  void _onAddedMoneyFailure(String message) {
+  void _onAddedMoneyFailure() {
     _progressService.hideProgress();
-    _flushBarService.showErrorDialog(message);
+    _flushBarService.showErrorDialog('added_money_wallet_failed'.tr());
   }
 }

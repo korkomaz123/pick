@@ -71,6 +71,8 @@ class MarkaaInputField extends StatelessWidget {
   /// maxLines
   final int maxLines;
 
+  final int maxLength;
+
   final Color focusedColor;
 
   final bool bordered;
@@ -101,6 +103,7 @@ class MarkaaInputField extends StatelessWidget {
     this.obsecureText = false,
     this.validator,
     this.maxLines,
+    this.maxLength,
     this.focusedColor,
     this.bordered = true,
     this.fillColor = Colors.white,
@@ -211,6 +214,14 @@ class MarkaaInputField extends StatelessWidget {
                   onFieldSubmitted: onFieldSubmitted,
                   textInputAction: textInputAction,
                   keyboardType: keyboardType,
+                  maxLength: maxLength,
+                  buildCounter: (
+                    BuildContext context, {
+                    int currentLength,
+                    int maxLength,
+                    bool isFocused,
+                  }) =>
+                      null,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 10,

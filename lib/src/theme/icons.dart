@@ -80,3 +80,20 @@ const String appleCircleIcon = '$iconsAssetPath/apple.svg';
 const String walletSuccessIcon = '$iconsAssetPath/wallet-success-icon.svg';
 const String walletFailedIcon = '$iconsAssetPath/wallet-failed-icon.svg';
 const String markaaTextIcon = '$iconsAssetPath/markaa-text-icon.svg';
+const String giftIcon = '$iconsAssetPath/gift-icon.svg';
+
+const String wishlistCustomIcon = '$iconsAssetPath/wishlist-custom-icon.svg';
+const String orderHistoryCustomIcon =
+    '$iconsAssetPath/order-history-custom-icon.svg';
+const String markaaCustomIcon = '$iconsAssetPath/markaa-custom-icon.svg';
+const String termsCustomIcon = '$iconsAssetPath/terms-custom-icon.svg';
+const String starCustomIcon = '$iconsAssetPath/star-custom-icon.svg';
+const String emailCustomIcon = '$iconsAssetPath/email-custom-icon.svg';
+const String messageCustomIcon = '$iconsAssetPath/message-custom-icon.svg';
+const String walletCustomIcon = '$iconsAssetPath/wallet-custom-icon.svg';
+const String contactCustomIcon = '$iconsAssetPath/contact-custom-icon.svg';
+const String keyCustomIcon = '$iconsAssetPath/key-custom-icon.svg';
+const String shippingCustomIcon = '$iconsAssetPath/shipping-custom-icon.svg';
+const String bellCustomIcon = '$iconsAssetPath/bell-custom-icon.svg';
+const String globalCustomIcon = '$iconsAssetPath/global-custom-icon.svg';
+const String logoutCustomIcon = '$iconsAssetPath/logout-custom-icon.svg';

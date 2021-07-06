@@ -18,6 +18,7 @@ Map<int, Color> markaaColor = {
 MaterialColor markaaMaterialColor = MaterialColor(0xFF0C5EED, markaaColor);
 
 final ThemeData markaaAppTheme = ThemeData(
+  scaffoldBackgroundColor: Colors.white,
   primarySwatch: markaaMaterialColor,
   primaryColor: Color(0xFF287EF2),
   accentColor: Color(0xFFB4C9FA),
@@ -50,3 +51,5 @@ const Color dangerColor = Color(0xFFC10000);
 const Color greyLightColor = Color(0xFFEAEAEA);
 const Color orangeColor = Color(0xFFFF800A);
 const Color inputFillColor = Color(0xFFF7F7F7);
+const Color scaffoldBackgroundColor = Color(0xFFE3E3E3);
+const Color pinkColor = Colors.pinkAccent;

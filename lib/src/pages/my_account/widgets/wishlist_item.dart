@@ -32,7 +32,7 @@ class _WishlistItemState extends State<WishlistItem> {
             Container(
               width: 22.w,
               height: 22.h,
-              child: SvgPicture.asset(wishlistIcon),
+              child: SvgPicture.asset(wishlistCustomIcon),
             ),
             SizedBox(width: 10.w),
             Text(

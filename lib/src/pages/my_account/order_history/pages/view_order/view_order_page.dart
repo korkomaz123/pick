@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 
 class ViewOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -347,7 +348,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           Text(
             fees == 0
                 ? 'free'.tr()
-                : 'currency'.tr() + ' ${fees.toStringAsFixed(3)}',
+                : '${'currency'.tr()} ${NumericService.roundString(fees, 3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -384,7 +385,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            'currency'.tr() + ' ${discount.toStringAsFixed(3)}',
+            '${'currency'.tr()} ${NumericService.roundString(discount, 3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

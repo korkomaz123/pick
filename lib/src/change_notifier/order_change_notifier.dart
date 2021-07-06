@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/preload.dart';
@@ -89,6 +90,14 @@ class OrderChangeNotifier extends ChangeNotifier {
             orderDetails['token'] != '' &&
             !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
+
+          await Preload.navigatorKey.currentContext
+              .read<OrderChangeNotifier>()
+              .loadOrderHistories(
+                user.token,
+                lang,
+                () {},
+              );
           setKeys();
           notifyListeners();
         }

@@ -19,8 +19,6 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 
-import '../../../../preload.dart';
-
 class LogoutItem extends StatefulWidget {
   final SnackBarService snackBarService;
   final ProgressService progressService;
@@ -90,7 +88,7 @@ class _LogoutItemState extends State<LogoutItem> {
                     Container(
                       width: 22.w,
                       height: 22.h,
-                      child: SvgPicture.asset(logoutIcon),
+                      child: SvgPicture.asset(logoutCustomIcon),
                     ),
                     SizedBox(width: 10.w),
                     Text(
@@ -115,7 +113,8 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logout() async {
-    final result = await flushBarService.showConfirmDialog(message: 'logout_confirm_dialog_text');
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
       signInBloc.add(SignOutSubmitted(token: user.token));
     }
@@ -137,7 +136,7 @@ class _LogoutItemState extends State<LogoutItem> {
 
     progressService.hideProgress();
 
-    Navigator.pop(Preload.navigatorKey.currentContext);
+    Navigator.pop(context);
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,

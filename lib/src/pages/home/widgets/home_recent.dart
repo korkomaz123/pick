@@ -16,7 +16,7 @@ class HomeRecent extends StatelessWidget {
       return Container(
         width: designWidth.w,
         height: 340.h,
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.only(left: 8.w, right: 8.w, top: 10.h),
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,
         child: Column(

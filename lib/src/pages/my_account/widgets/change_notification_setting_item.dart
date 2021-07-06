@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
@@ -47,7 +48,7 @@ class _ChangeNotificationSettingItemState
               Container(
                 width: 22.w,
                 height: 22.h,
-                child: SvgPicture.asset(notificationIcon),
+                child: SvgPicture.asset(bellCustomIcon),
               ),
               SizedBox(width: 10.w),
               Text(
@@ -59,12 +60,14 @@ class _ChangeNotificationSettingItemState
             ],
           ),
           Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              return Switch(
-                value: isNotification,
-                onChanged: (value) => _onChangeNotification(value),
-                activeColor: primaryColor,
-                inactiveTrackColor: Colors.grey.shade200,
+            builder: (_, model, ___) {
+              return Transform.scale(
+                scale: 0.8,
+                child: CupertinoSwitch(
+                  value: isNotification,
+                  onChanged: (value) => _onChangeNotification(value, model),
+                  activeColor: primaryColor,
+                ),
               );
             },
           ),
@@ -73,10 +76,12 @@ class _ChangeNotificationSettingItemState
     );
   }
 
-  void _onChangeNotification(bool value) {
+  void _onChangeNotification(bool value, MarkaaAppChangeNotifier model) {
     settingBloc.add(NotificationSettingChanged(
       token: user.token,
       isActive: value,
     ));
+    isNotification = !isNotification;
+    model.rebuild();
   }
 }

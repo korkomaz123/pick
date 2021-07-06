@@ -7,6 +7,7 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -51,8 +52,7 @@ class FlushBarService {
                       ),
                     ),
                     Text(
-                      'currency'.tr() +
-                          ' ${model.cartTotalPrice.toStringAsFixed(3)}',
+                      '${'currency'.tr()} ${NumericService.roundString(model.cartTotalPrice, 3)}',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 13.sp,
@@ -137,6 +137,56 @@ class FlushBarService {
     );
   }
 
+  showErrorCustomDialog(
+    String title,
+    String message,
+  ) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  title,
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  message,
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "close".tr(),
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   showErrorDialog(String message, [String image]) {
     showCupertinoDialog(
       context: context,
@@ -151,7 +201,10 @@ class FlushBarService {
               width: double.infinity,
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text(message),
+                child: Text(
+                  message,
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                ),
               ),
             ),
           ],

@@ -23,7 +23,7 @@ class AboutUsItem extends StatelessWidget {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(aboutUsIcon),
+                  child: SvgPicture.asset(markaaCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(

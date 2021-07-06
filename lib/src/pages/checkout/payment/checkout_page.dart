@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -19,6 +21,7 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,6 +70,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
   _loadData() async {
+    user = await Preload.currentUser;
+
     print(paymentMethods.length);
     if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
@@ -107,51 +112,62 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Consumer<MarkaaAppChangeNotifier>(
+    return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: MarkaaCheckoutAppBar(),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (paymentMethods.isEmpty) ...[
+                    Center(
+                      child: PulseLoadingSpinner(),
+                    ),
+                  ] else ...[
+                    Column(
+                      children: List.generate(paymentMethods.length, (index) {
+                        int idx = paymentMethods.length - index - 1;
+                        if ((user?.token == null ||
+                                user?.token != null && user.balance <= 0) &&
+                            paymentMethods[idx].id == 'wallet') {
+                          return Container();
+                        }
+                        return PaymentMethodCard(
+                          method: paymentMethods[idx],
+                          onChange: _onChangeMethod,
+                          value: payment,
+                          cardToken: cardToken,
+                          onAuthorizedSuccess: _onCardAuthorizedSuccess,
+                        );
+                      }),
+                    )
+                  ],
+                  SizedBox(height: 5.h),
+                  PaymentAddress(),
+                  PaymentSummary(details: details),
+                  _buildNote(),
+                  SizedBox(height: 100.h),
+                ],
+              );
+            },
+          ),
+        ),
+        bottomSheet: Consumer<MarkaaAppChangeNotifier>(
           builder: (_, __, ___) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: List.generate(paymentMethods.length, (index) {
-                    int idx = paymentMethods.length - index - 1;
-                    if ((user?.token == null ||
-                            user?.token != null && user.balance <= 0) &&
-                        paymentMethods[idx].id == 'wallet') {
-                      return Container();
-                    }
-                    return PaymentMethodCard(
-                      method: paymentMethods[idx],
-                      onChange: _onChangeMethod,
-                      value: payment,
-                      cardToken: cardToken,
-                      onAuthorizedSuccess: _onCardAuthorizedSuccess,
-                    );
-                  }),
-                ),
-                SizedBox(height: 5.h),
-                PaymentAddress(),
-                PaymentSummary(details: details),
-                _buildNote(),
-                SizedBox(height: 100.h),
-              ],
-            );
+            if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
+              return Container(height: 0);
+            }
+            return _buildPlacePaymentButton();
           },
         ),
-      ),
-      bottomSheet: Consumer<MarkaaAppChangeNotifier>(
-        builder: (_, __, ___) {
-          if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
-            return Container(height: 0);
-          }
-          return _buildPlacePaymentButton();
-        },
       ),
     );
   }
@@ -199,7 +215,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
       if (result != null) {
         double amount = double.parse(details['subTotalPrice']) - user.balance;
-        await Navigator.pushNamed(context, Routes.myWallet, arguments: amount);
+        double value = NumericService.roundDouble(amount, 3);
+        await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
         setState(() {});
       }
     } else {

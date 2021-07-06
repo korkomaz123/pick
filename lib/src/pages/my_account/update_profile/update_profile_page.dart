@@ -20,6 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
+import 'package:string_validator/string_validator.dart';
 
 import 'bloc/profile_bloc.dart';
 import 'widgets/update_profile_success_dialog.dart';
@@ -32,8 +33,7 @@ class UpdateProfilePage extends StatefulWidget {
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   File imageFile;
@@ -59,8 +59,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       scaffoldKey: scaffoldKey,
     );
     profileBloc = context.read<ProfileBloc>();
-    firstNameController.text = user.firstName;
-    lastNameController.text = user.lastName;
+    fullNameController.text = user.firstName + ' ' + user.lastName;
     phoneNumberController.text = user?.phoneNumber;
     emailController.text = user?.email;
   }
@@ -73,7 +72,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       drawer: MarkaaSideMenu(),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess || state is ProfileInformationUpdatedInProcess) {
+          if (state is ProfileImageUpdatedInProcess ||
+              state is ProfileInformationUpdatedInProcess) {
             progressService.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
@@ -85,8 +85,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           }
           if (state is ProfileInformationUpdatedSuccess) {
             progressService.hideProgress();
-            user.firstName = firstNameController.text;
-            user.lastName = lastNameController.text;
+            String fullName = fullNameController.text;
+            user.firstName = fullName.split(' ')[0];
+            user.lastName = fullName.split(' ')[1];
             user.phoneNumber = phoneNumberController.text;
             _showSuccessDialog();
           }
@@ -110,14 +111,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                       children: [
                         _buildProfilePicture(),
                         _buildEmail(),
-                        _buildFirstName(),
-                        SizedBox(height: 10.h),
-                        _buildLastName(),
+                        _buildFullName(),
                         SizedBox(height: 10.h),
                         _buildPhoneNumber(),
                         SizedBox(height: 10.h),
                         _buildEmailAddress(),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 30.h),
                         _buildUpdateButton(),
                         SizedBox(height: 30.h),
                       ],
@@ -167,7 +166,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty ? CachedNetworkImageProvider(user.profileUrl) : AssetImage('lib/public/images/profile.png'),
+                  image: user.profileUrl.isNotEmpty
+                      ? CachedNetworkImageProvider(user.profileUrl)
+                      : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
                 shape: BoxShape.circle,
@@ -222,44 +223,30 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     );
   }
 
-  Widget _buildFirstName() {
+  Widget _buildFullName() {
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
-        controller: firstNameController,
+        controller: fullNameController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
-        label: 'first_name'.tr(),
+        label: 'full_name'.tr(),
         labelColor: greyColor,
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-      ),
-    );
-  }
-
-  Widget _buildLastName() {
-    return Container(
-      width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 20.sp),
-      child: MarkaaInputField(
-        width: double.infinity,
-        controller: lastNameController,
-        space: 4.h,
-        radius: 4,
-        fontSize: 16.sp,
-        fontColor: greyDarkColor,
-        label: 'last_name'.tr(),
-        labelColor: greyColor,
-        labelSize: 16.sp,
-        fillColor: Colors.grey.shade300,
-        bordered: false,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (value.trim().indexOf(' ') == -1) {
+            return 'full_name_issue'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
@@ -272,7 +259,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: phoneNumberController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'phone_number_hint'.tr(),
@@ -280,7 +267,15 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        maxLength: 9,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'required_field'.tr();
+          } else if (!isLength(value, 8, 9)) {
+            return 'invalid_length_phone_number'.tr();
+          }
+          return null;
+        },
       ),
     );
   }
@@ -293,7 +288,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         width: double.infinity,
         controller: emailController,
         space: 4.h,
-        radius: 4,
+        radius: 4.sp,
         fontSize: 16.sp,
         fontColor: greyDarkColor,
         label: 'email_hint'.tr(),
@@ -309,6 +304,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildUpdateButton() {
     return Container(
       width: 375.w,
+      height: 50.h,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'update_button_title'.tr(),
@@ -317,7 +313,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         onPressed: () => _onSave(),
-        radius: 0,
+        radius: 30,
+        isBold: true,
       ),
     );
   }
@@ -336,13 +333,16 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   }
 
   void _onSave() {
-    profileBloc.add(ProfileInformationUpdated(
-      token: user.token,
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      phoneNumber: phoneNumberController.text,
-      email: emailController.text,
-    ));
+    if (formKey.currentState.validate()) {
+      String fullName = fullNameController.text;
+      profileBloc.add(ProfileInformationUpdated(
+        token: user.token,
+        firstName: fullName.split(' ')[0],
+        lastName: fullName.split(' ')[0],
+        phoneNumber: phoneNumberController.text,
+        email: emailController.text,
+      ));
+    }
   }
 
   void _showSuccessDialog() {

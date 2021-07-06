@@ -50,10 +50,11 @@ class HomeBestDeals extends StatelessWidget {
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: 15.sp,
+              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(

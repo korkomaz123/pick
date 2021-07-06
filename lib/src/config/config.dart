@@ -2,14 +2,19 @@ const double designWidth = 375;
 const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
+class ChatSupport {
+  static const String appKey =
+      '9be222f98ce7dc12af142e27097a8a8c'; //'3c8027a1ab0d1cbe9adcbf0d215bd2b02'; //
+}
+
 class MarkaaReporter {
-  static const String email = 'reporter@markaa.com';
+  static const String email = 'user@markaa.com';
   static const String password = 'markaa2021';
 }
 
 class MarkaaVersion {
-  static const int androidVersion = 158000;
-  static const int iOSVersion = 158000;
+  static const int androidVersion = 163000;
+  static const int iOSVersion = 163000;
 }
 
 class GoSellSdk {
@@ -62,9 +67,4 @@ class AdjustSDKConfig {
 class MarkaaNotificationChannels {
   static const String enChannel = 'markaa-all-en';
   static const String arChannel = 'markaa-all-ar';
-}
-
-class PaymentStatusUrls {
-  static const String success = 'https://markaa.com/checkout/onepage/success/';
-  static const String failure = 'https://markaa.com/checkout/cart/';
 }

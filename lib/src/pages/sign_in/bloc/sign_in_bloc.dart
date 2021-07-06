@@ -34,6 +34,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       yield* _mapSignUpSubmittedToState(
         event.firstName,
         event.lastName,
+        event.phoneNumber,
         event.email,
         event.password,
       );
@@ -99,13 +100,14 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   Stream<SignInState> _mapSignUpSubmittedToState(
     String firstName,
     String lastName,
+    String phoneNumber,
     String email,
     String password,
   ) async* {
     yield SignUpSubmittedInProcess();
     try {
       final result = await _signInRepository.register(
-          firstName, lastName, email, password);
+          firstName, lastName, phoneNumber, email, password);
       // print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];

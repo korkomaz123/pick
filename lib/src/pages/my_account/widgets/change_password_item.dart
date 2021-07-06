@@ -23,7 +23,7 @@ class ChangePasswordItem extends StatelessWidget {
                 Container(
                   width: 22.w,
                   height: 22.h,
-                  child: SvgPicture.asset(vpnIcon),
+                  child: SvgPicture.asset(keyCustomIcon),
                 ),
                 SizedBox(width: 10.w),
                 Text(
