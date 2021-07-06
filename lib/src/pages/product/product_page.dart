@@ -39,6 +39,7 @@ import 'widgets/product_related_items.dart';
 import 'widgets/product_same_brand_products.dart';
 import 'widgets/product_single_product.dart';
 import 'widgets/product_review_total.dart';
+import 'widgets/top_brands_in_category.dart';
 
 class ProductPage extends StatefulWidget {
   final Object arguments;
@@ -187,6 +188,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
+                            TopBrandsInCategory(productId: productId),
                             ProductRelatedItems(product: product),
                             SizedBox(height: 60.h),
                           ],
