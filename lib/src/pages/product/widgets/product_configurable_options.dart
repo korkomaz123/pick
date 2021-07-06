@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -15,7 +16,7 @@ class ProductConfigurableOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 375.w,
+      width: designWidth.w,
       margin: EdgeInsets.symmetric(vertical: 10.h),
       padding: EdgeInsets.symmetric(vertical: 10.h),
       color: Colors.white,
@@ -69,17 +70,14 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = model.checkAttributeOptionAvailability(
-              attributeId, attr['option_value']);
+              productEntity.productId, attributeId, attr['option_value']);
           bool isSelected = model.selectedOptions.containsKey(attributeId) &&
               model.selectedOptions[attributeId] == attr['option_value'];
           return InkWell(
             onTap: () {
               if (isAvaliable) {
-                model.selectOption(
-                  attributeId,
-                  attr['option_value'],
-                  !isSelected,
-                );
+                model.selectOption(productEntity.productId, attributeId,
+                    attr['option_value'], !isSelected);
               }
             },
             child: Container(
@@ -129,7 +127,7 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Row(
         children: options.map((attr) {
           bool isAvaliable = model.checkAttributeOptionAvailability(
-              attributeId, attr['option_value']);
+              productEntity.productId, attributeId, attr['option_value']);
           bool isSelected = model.selectedOptions.containsKey(attributeId) &&
               model.selectedOptions[attributeId] == attr['option_value'];
           Color optionColor = attr['color_value'] == null
@@ -138,11 +136,8 @@ class ProductConfigurableOptions extends StatelessWidget {
           return InkWell(
             onTap: () {
               if (isAvaliable) {
-                model.selectOption(
-                  attributeId,
-                  attr['option_value'],
-                  !isSelected,
-                );
+                model.selectOption(productEntity.productId, attributeId,
+                    attr['option_value'], !isSelected);
               }
             },
             child: Card(

@@ -100,7 +100,7 @@ class HomeGrooming extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 10.h),
-      height: 276.h,
+      height: 120.w * (1050 / 567),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
@@ -121,17 +121,11 @@ class HomeGrooming extends StatelessWidget {
               );
             }
           },
-          child: Container(
-            width: 151.w,
-            height: 276.h,
-            margin: EdgeInsets.only(right: 5.w),
-            padding: EdgeInsets.only(bottom: 10.h),
-            child: CachedNetworkImage(
-              imageUrl: categories[index].imageUrl,
-              fit: BoxFit.fill,
-              errorWidget: (context, url, error) =>
-                  Center(child: Icon(Icons.image, size: 20)),
-            ),
+          child: CachedNetworkImage(
+            imageUrl: categories[index].imageUrl,
+            fit: BoxFit.fill,
+            errorWidget: (context, url, error) =>
+                Center(child: Icon(Icons.image, size: 20)),
           ),
         ),
       ),

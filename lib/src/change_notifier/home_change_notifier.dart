@@ -250,7 +250,7 @@ class HomeChangeNotifier extends ChangeNotifier {
           response = await productRepository.getBrandProducts(
               result['data'][0]['brand_id'], 'all', Preload.language, 1);
         }
-        if (response['code'] == 'SUCCESS') {
+        if (response != null && response['code'] == 'SUCCESS') {
           result['items'] = response['products'];
         } else {
           result['items'] = [];

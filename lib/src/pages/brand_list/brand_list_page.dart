@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class BrandListPage extends StatefulWidget {
   @override
@@ -23,21 +22,44 @@ class BrandListPage extends StatefulWidget {
 }
 
 class _BrandListPageState extends State<BrandListPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final _refreshController = RefreshController(initialRefresh: false);
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _alphabetKey = GlobalKey();
+  final _itemKey = GlobalKey();
 
   HomeChangeNotifier _homeChangeNotifier;
+
+  List<String> alphabetList = ['All'];
+  List<String> nameCharList = [];
+  int selectedIndex = 0;
+  int brandIndex = 0;
+  Map<String, int> brandIndexMap = {};
+
   @override
   void initState() {
     super.initState();
+    alphabetList.addAll(enAlphabetList);
     _homeChangeNotifier = context.read<HomeChangeNotifier>();
     _loadingData = _homeChangeNotifier.getBrandsList('brand');
+
+    _homeChangeNotifier.addListener(() {
+      if (_homeChangeNotifier.sortedBrandList.isNotEmpty) {
+        for (var item in _homeChangeNotifier.sortedBrandList) {
+          String char = item.brandLabel.substring(0, 1).toUpperCase();
+          if (nameCharList.indexOf(char) < 0) {
+            int idx = _homeChangeNotifier.sortedBrandList.indexOf(item);
+            brandIndexMap[char] = idx;
+            nameCharList.add(char);
+          }
+        }
+        print(nameCharList);
+      }
+    });
   }
 
-  void _onRefresh(HomeChangeNotifier model) async {
-    await model.getBrandsList('brand');
-    _refreshController.refreshCompleted();
-  }
+  // void _onRefresh(HomeChangeNotifier model) async {
+  //   await model.getBrandsList('brand');
+  //   _refreshController.refreshCompleted();
+  // }
 
   Future _loadingData;
   @override
@@ -49,28 +71,100 @@ class _BrandListPageState extends State<BrandListPage> {
       drawer: MarkaaSideMenu(),
       body: Column(
         children: [
-          _buildAppBar(),
+          Container(
+            width: 375.w,
+            height: 40.h,
+            color: primarySwatchColor,
+            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildCategoryButton(),
+                _buildBrandButton(),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: alphabetList.map((value) {
+                int index = alphabetList.indexOf(value);
+                int half = (alphabetList.length / 2).ceil();
+                int keyIndex = selectedIndex < half ? 0 : half;
+                int nameIndex = nameCharList.indexOf(value);
+                return InkWell(
+                  key: index == keyIndex ? _alphabetKey : null,
+                  onTap: () {
+                    selectedIndex = index;
+                    if (nameIndex >= 0) brandIndex = brandIndexMap[value];
+                    setState(() {});
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Scrollable.ensureVisible(_alphabetKey.currentContext);
+                      Scrollable.ensureVisible(_itemKey.currentContext);
+                    });
+                  },
+                  child: Container(
+                    width: 20.w,
+                    height: 20.w,
+                    margin: EdgeInsets.all(2.w),
+                    decoration: BoxDecoration(
+                      color:
+                          index == selectedIndex ? primaryColor : Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: primaryColor),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.justify,
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 12.sp,
+                        color: index != selectedIndex
+                            ? primaryColor
+                            : Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
           FutureBuilder(
             future: _loadingData,
             builder: (_, model) {
-              if (model.connectionState == ConnectionState.waiting)
+              if (model.connectionState == ConnectionState.waiting) {
                 return Expanded(
                   child: Center(
                     child: PulseLoadingSpinner(),
                   ),
                 );
-
+              }
+              // return Expanded(
+              //   child: InViewNotifierList(
+              //     itemCount: _homeChangeNotifier.sortedBrandList.length,
+              //     builder: (context, index) {
+              //       return InViewNotifierWidget(
+              //         builder: (context, isInView, child) {
+              //           return child;
+              //         },
+              //         child: _buildBrandCard(_homeChangeNotifier, index),
+              //       );
+              //     },
+              //     isInViewPortCondition:
+              //         (deltaTop, deltaBottom, viewPortDimension) {
+              //       return true;
+              //     },
+              //   ),
+              // );
               return Expanded(
-                child: SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  header: MaterialClassicHeader(color: primaryColor),
-                  controller: _refreshController,
-                  onRefresh: () => _onRefresh(_homeChangeNotifier),
-                  onLoading: () => null,
-                  child: ListView.builder(
-                    itemBuilder: (context, index) => _buildBrandCard(_homeChangeNotifier, index),
-                    itemCount: _homeChangeNotifier.sortedBrandList.length,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      _homeChangeNotifier.sortedBrandList.length,
+                      (index) {
+                        return _buildBrandCard(_homeChangeNotifier, index);
+                      },
+                    ),
                   ),
                 ),
               );
@@ -80,22 +174,6 @@ class _BrandListPageState extends State<BrandListPage> {
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.store,
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Container(
-      width: 375.w,
-      height: 40.h,
-      color: primarySwatchColor,
-      padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildCategoryButton(),
-          _buildBrandButton(),
-        ],
       ),
     );
   }
@@ -158,6 +236,7 @@ class _BrandListPageState extends State<BrandListPage> {
 
   Widget _buildBrandCard(HomeChangeNotifier _homeChangeNotifier, int index) {
     return InkWell(
+      key: brandIndex == index ? _itemKey : null,
       onTap: () {
         ProductListArguments arguments = ProductListArguments(
           category: CategoryEntity(),
@@ -178,7 +257,8 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+              imageUrl:
+                  _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),

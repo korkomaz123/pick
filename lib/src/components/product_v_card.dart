@@ -36,6 +36,7 @@ class ProductVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
+  final Function onTap;
 
   ProductVCard({
     this.cardWidth,
@@ -46,6 +47,7 @@ class ProductVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
+    this.onTap,
   });
 
   @override
@@ -119,11 +121,14 @@ class _ProductVCardState extends State<ProductVCard>
   Widget build(BuildContext context) {
     if (widget?.product?.productId != null) {
       return InkWell(
-        onTap: () => Navigator.pushNamed(
-          Preload.navigatorKey.currentContext,
-          Routes.product,
-          arguments: widget.product,
-        ),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            Routes.product,
+            arguments: widget.product,
+          );
+          if (widget.onTap != null) widget.onTap();
+        },
         child: Container(
           width: widget.cardWidth,
           height: widget.cardHeight,

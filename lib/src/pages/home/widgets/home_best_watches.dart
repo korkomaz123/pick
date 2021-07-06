@@ -29,6 +29,8 @@ class HomeBestWatches extends StatefulWidget {
 class _HomeBestWatchesState extends State<HomeBestWatches> {
   final ProductRepository productRepository = ProductRepository();
 
+  int activeIndex = 0;
+
   Widget build(BuildContext context) {
     if ((widget.homeChangeNotifier.bestWatchesBanners != null &&
             widget.homeChangeNotifier.bestWatchesBanners.isNotEmpty) ||
@@ -86,17 +88,32 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             ],
           ),
         ),
-        Column(
-          children: banners.map((item) {
-            return InkWell(
-              onTap: () => _onLink(item),
-              child: CachedNetworkImage(
-                imageUrl: item.bannerImage,
-                errorWidget: (context, url, error) =>
-                    Center(child: Icon(Icons.image, size: 20)),
-              ),
-            );
-          }).toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: widget.homeChangeNotifier.bestWatchesBanners.map((item) {
+              int index =
+                  widget.homeChangeNotifier.bestWatchesBanners.indexOf(item);
+              return Row(
+                children: [
+                  InkWell(
+                    onTap: () => _onLink(item),
+                    child: CachedNetworkImage(
+                      width: 340.w,
+                      height: 340.w * (897 / 1096),
+                      imageUrl: item.bannerImage,
+                      fit: BoxFit.fitHeight,
+                      errorWidget: (context, url, error) =>
+                          Center(child: Icon(Icons.image, size: 20)),
+                    ),
+                  ),
+                  if (index <
+                      widget.homeChangeNotifier.bestWatchesBanners.length -
+                          1) ...[SizedBox(width: 5.w)],
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ],
     );

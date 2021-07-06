@@ -116,10 +116,9 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           count: widget.homeChangeNotifier.sliderImages.length,
           axisDirection: Axis.horizontal,
           effect: SlideEffect(
-            spacing: 8.0,
+            spacing: 5.w,
             radius: 10,
-            dotWidth: designWidth.w /
-                (widget.homeChangeNotifier.sliderImages.length * 3),
+            dotWidth: 20.w,
             dotHeight: 3.h,
             paintStyle: PaintingStyle.fill,
             strokeWidth: 0,

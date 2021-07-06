@@ -15,17 +15,25 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
 
-class HomeAdvertise extends StatelessWidget {
+class HomeAdvertise extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
   HomeAdvertise({@required this.homeChangeNotifier});
 
+  @override
+  _HomeAdvertiseState createState() => _HomeAdvertiseState();
+}
+
+class _HomeAdvertiseState extends State<HomeAdvertise> {
   final ProductRepository productRepository = ProductRepository();
+
+  int activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.ads != null && homeChangeNotifier.ads.isNotEmpty) {
-      SliderImageEntity banner = homeChangeNotifier.ads[0];
+    if (widget.homeChangeNotifier.ads != null &&
+        widget.homeChangeNotifier.ads.isNotEmpty) {
+      SliderImageEntity banner = widget.homeChangeNotifier.ads[0];
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -66,25 +74,41 @@ class HomeAdvertise extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              children: homeChangeNotifier.ads.map((item) {
-                return InkWell(
-                  onTap: () => _onLink(context, item),
-                  child: CachedNetworkImage(
-                    imageUrl: item.bannerImage,
-                  ),
-                );
-              }).toList(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.homeChangeNotifier.ads.map((item) {
+                  int index = widget.homeChangeNotifier.ads.indexOf(item);
+                  return Row(
+                    children: [
+                      InkWell(
+                        onTap: () => _onLink(context, item),
+                        child: CachedNetworkImage(
+                          width: 340.w,
+                          height: 340.w * (897 / 1096),
+                          imageUrl: item.bannerImage,
+                          fit: BoxFit.fitHeight,
+                          errorWidget: (context, url, error) =>
+                              Center(child: Icon(Icons.image, size: 20)),
+                        ),
+                      ),
+                      if (index < widget.homeChangeNotifier.ads.length - 1) ...[
+                        SizedBox(width: 5.w)
+                      ],
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
             Container(
               height: 175.w,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: homeChangeNotifier.perfumesItems.length,
+                itemCount: widget.homeChangeNotifier.perfumesItems.length,
                 itemBuilder: (context, index) => ProductCard(
                   cardWidth: 120.w,
                   cardHeight: 175.w,
-                  product: homeChangeNotifier.perfumesItems[index],
+                  product: widget.homeChangeNotifier.perfumesItems[index],
                   isWishlist: true,
                 ),
               ),

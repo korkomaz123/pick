@@ -63,10 +63,18 @@ class _MyCartPageState extends State<MyCartPage>
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
   _loadData() async {
-    if (shippingMethods.isEmpty)
+    if (shippingMethods.isEmpty) {
       shippingMethods = await checkoutRepo.getShippingMethod();
-    shippingMethodId = shippingMethods[0].id;
-    serviceFees = shippingMethods[0].serviceFees;
+    }
+    for (var shippingMethod in shippingMethods) {
+      if (shippingMethod.minOrderAmount <=
+          myCartChangeNotifier.cartDiscountedTotalPrice) {
+        shippingMethodId = shippingMethod.id;
+        serviceFees = shippingMethod.serviceFees;
+      } else {
+        break;
+      }
+    }
 
     if (myCartChangeNotifier.cartItemCount == 0)
       await myCartChangeNotifier.getCartItems(lang);

@@ -8,9 +8,8 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import '../../preload.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
-  final ProductRepository productRepository = ProductRepository();
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
+  final productRepository = ProductRepository();
+  final localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -20,12 +19,15 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, ProductEntity> productDetailsMap = {};
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
+  List<String> productIds = [];
 
   close() {
-    productDetailsMap.remove(productDetails.productId);
+    String id = productIds[productIds.length - 1];
+    productDetailsMap.remove(id);
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
+    notifyListeners();
   }
 
   void initialize() {
@@ -35,6 +37,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   setInitalInfo(ProductModel product) {
+    productIds.add(product.productId);
     if (productDetailsMap.containsKey(product.productId)) {
       productDetails = productDetailsMap[product.productId];
     } else {
@@ -390,7 +393,12 @@ class ProductChangeNotifier extends ChangeNotifier {
   // }
 
   /// select option in configurable product
-  void selectOption(String attributeId, String optionValue, bool selected) {
+  void selectOption(
+    String productId,
+    String attributeId,
+    String optionValue,
+    bool selected,
+  ) {
     if (selected) {
       selectedOptions[attributeId] = optionValue;
     } else {
@@ -398,7 +406,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
     selectedVariant = null;
 
-    for (var variant in productDetails.variants) {
+    for (var variant in productDetailsMap[productId].variants) {
       if (mapEquals(selectedOptions, variant.options)) {
         selectedVariant = variant;
         break;
@@ -407,7 +415,11 @@ class ProductChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool checkAttributeOptionAvailability(String attrId, String optVal) {
+  bool checkAttributeOptionAvailability(
+    String productId,
+    String attrId,
+    String optVal,
+  ) {
     Map<String, dynamic> options = {};
     for (var key in selectedOptions.keys.toList()) {
       options[key] = selectedOptions[key];
@@ -416,7 +428,7 @@ class ProductChangeNotifier extends ChangeNotifier {
 
     bool isAvailable = false;
 
-    for (var variant in productDetails.variants) {
+    for (var variant in productDetailsMap[productId].variants) {
       bool selectable = true;
       for (var attributeId in options.keys.toList()) {
         if (!variant.options.containsKey(attributeId) ||

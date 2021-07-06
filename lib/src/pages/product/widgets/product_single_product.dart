@@ -17,6 +17,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:progressive_image/progressive_image.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -118,41 +119,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return details.stockQty ?? 0;
   }
 
-  List<CachedNetworkImage> get preCachedImages => _loadCacheImages();
-  List<CachedNetworkImage> _loadCacheImages() {
-    List<CachedNetworkImage> list = [];
-
-    if (details?.gallery != null && details.gallery.isNotEmpty) {
-      for (int i = 0; i < details.gallery.length; i++) {
-        if (i == 0 && details.gallery[0] != details.imageUrl) {
-          list.add(CachedNetworkImage(
-            imageUrl: details.gallery[i],
-            width: designWidth.w,
-            height: 400.h,
-            fit: BoxFit.fitHeight,
-            progressIndicatorBuilder: (_, __, ___) {
-              return CachedNetworkImage(
-                imageUrl: details.imageUrl,
-                width: designWidth.w,
-                height: 400.h,
-                fit: BoxFit.fitHeight,
-              );
-            },
-          ));
-        } else {
-          list.add(CachedNetworkImage(
-            imageUrl: details.gallery[i],
-            width: designWidth.w,
-            height: 400.h,
-            fit: BoxFit.fitHeight,
-          ));
-        }
-      }
-    }
-
-    return list;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -172,6 +138,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       parent: _favoriteController,
       curve: Curves.easeIn,
     ));
+
+    widget.model.addListener(() {
+      if (widget.model.selectedVariant != null) {
+        if (activeIndex >= widget.model.selectedVariant.gallery.length) {
+          activeIndex = 0;
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
@@ -191,13 +166,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
             children: [
               SizedBox(height: 20.h),
               Consumer<ProductChangeNotifier>(
-                builder: (_, __, ___) {
-                  if (widget?.model?.selectedVariant?.productId != null) {
+                builder: (_, model, ___) {
+                  if (model?.selectedVariant?.productId != null) {
                     return _buildVariantCarousel();
-                  } else if (preCachedImages.isNotEmpty) {
+                  } else {
                     return _buildImageCarousel();
                   }
-                  return Container(width: designWidth.w, height: 420.h);
                 },
               ),
               Padding(
@@ -263,18 +237,25 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       height: 460.h,
       child: Stack(
         children: [
-          if (preCachedImages.length == 1) ...[
-            Container(
+          if (details.gallery.length == 1) ...[
+            CachedNetworkImage(
+              imageUrl: details.gallery[0],
               width: designWidth.w,
               height: 420.h,
-              child: preCachedImages[0],
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
+                  width: designWidth.w,
+                  height: 420.h,
+                );
+              },
             )
           ] else ...[
             Container(
               width: designWidth.w,
               height: 420.h,
               child: Swiper(
-                itemCount: preCachedImages.length,
+                itemCount: details.gallery.length,
                 autoplay: false,
                 curve: Curves.easeIn,
                 controller: _swiperController,
@@ -292,7 +273,18 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       Routes.viewFullImage,
                       arguments: details.gallery,
                     ),
-                    child: preCachedImages[index],
+                    child: CachedNetworkImage(
+                      imageUrl: details.gallery[index],
+                      width: designWidth.w,
+                      height: 420.h,
+                      progressIndicatorBuilder: (_, __, ___) {
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
+                      },
+                    ),
                   );
                 },
               ),
@@ -338,10 +330,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         children: [
           if (widget.model.selectedVariant.gallery.length == 1) ...[
             CachedNetworkImage(
+              imageUrl: widget.model.selectedVariant.gallery[0],
               width: designWidth.w,
               height: 420.h,
-              imageUrl: widget.model.selectedVariant.gallery[0],
-            )
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
+                  width: designWidth.w,
+                  height: 420.h,
+                );
+              },
+            ),
           ] else ...[
             Container(
               width: designWidth.w,
@@ -366,9 +365,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       arguments: widget.model.selectedVariant.gallery,
                     ),
                     child: CachedNetworkImage(
+                      imageUrl: widget.model.selectedVariant.gallery[index],
                       width: designWidth.w,
                       height: 420.h,
-                      imageUrl: widget.model.selectedVariant.gallery[index],
+                      progressIndicatorBuilder: (_, __, ___) {
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
+                      },
                     ),
                   );
                 },

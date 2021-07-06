@@ -20,6 +20,35 @@ List<String> sortByList = [
   'name_za',
 ];
 
+List<String> enAlphabetList = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+];
+
 MessageEntity message = MessageEntity(
   time: '28-09-2020',
   title: 'Profile updated',

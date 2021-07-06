@@ -16,18 +16,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-class HomeBestDealsBanner extends StatelessWidget {
+class HomeBestDealsBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
   HomeBestDealsBanner({@required this.homeChangeNotifier});
 
   @override
+  _HomeBestDealsBannerState createState() => _HomeBestDealsBannerState();
+}
+
+class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
+  int activeIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.bestDealsBanners.isNotEmpty) {
-      final banner = homeChangeNotifier.bestDealsBanners[0];
+    if (widget.homeChangeNotifier.bestDealsBanners.isNotEmpty) {
+      final banner = widget.homeChangeNotifier.bestDealsBanners[0];
       return Container(
         width: designWidth.w,
-        height: 550.w,
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
@@ -44,7 +50,7 @@ class HomeBestDealsBanner extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      homeChangeNotifier.bestDealsBannerTitle,
+                      widget.homeChangeNotifier.bestDealsBannerTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         fontSize: 26.sp,
@@ -68,31 +74,48 @@ class HomeBestDealsBanner extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              children: homeChangeNotifier.bestDealsBanners.map((item) {
-                return InkWell(
-                  onTap: () => _onLink(context, item),
-                  child: CachedNetworkImage(
-                    imageUrl: item.bannerImage,
-                    fit: BoxFit.fitHeight,
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.image, size: 20)),
-                  ),
-                );
-              }).toList(),
-            ),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: homeChangeNotifier.bestDealsItems.length,
-                itemBuilder: (context, index) {
-                  return ProductCard(
-                    cardWidth: 120.w,
-                    cardHeight: 175.w,
-                    product: homeChangeNotifier.bestDealsItems[index],
-                    isWishlist: true,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children:
+                    widget.homeChangeNotifier.bestDealsBanners.map((item) {
+                  int index =
+                      widget.homeChangeNotifier.bestDealsBanners.indexOf(item);
+                  return Row(
+                    children: [
+                      InkWell(
+                        onTap: () => _onLink(context, item),
+                        child: CachedNetworkImage(
+                          width: 340.w,
+                          height: 340.w * (897 / 1096),
+                          imageUrl: item.bannerImage,
+                          fit: BoxFit.fitHeight,
+                          errorWidget: (context, url, error) =>
+                              Center(child: Icon(Icons.image, size: 20)),
+                        ),
+                      ),
+                      if (index <
+                          widget.homeChangeNotifier.bestDealsBanners.length -
+                              1) ...[SizedBox(width: 5.w)],
+                    ],
                   );
-                },
+                }).toList(),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  widget.homeChangeNotifier.bestDealsItems.length,
+                  (index) {
+                    return ProductCard(
+                      cardWidth: 120.w,
+                      cardHeight: 175.w,
+                      product: widget.homeChangeNotifier.bestDealsItems[index],
+                      isWishlist: true,
+                    );
+                  },
+                ),
               ),
             ),
           ],
