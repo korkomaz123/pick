@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -14,6 +16,8 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
@@ -26,8 +30,10 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
+import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/payment_summary.dart';
@@ -50,6 +56,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String payment = 'knet';
   String cardToken;
   var details;
+  bool deliverAsGift = false;
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -152,6 +159,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ],
                   SizedBox(height: 5.h),
                   PaymentAddress(),
+                  _buildDeliverAsGift(),
                   PaymentSummary(details: details),
                   _buildNote(),
                   SizedBox(height: 100.h),
@@ -168,6 +176,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
             return _buildPlacePaymentButton();
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildDeliverAsGift() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 5.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(giftIcon),
+              SizedBox(width: 10.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'deliver_as_gift'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: primaryColor,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  Text(
+                    'special_reopen_special_message'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Transform.scale(
+            scale: 0.8,
+            child: CupertinoSwitch(
+              value: deliverAsGift,
+              onChanged: (value) {
+                deliverAsGift = value;
+                markaaAppChangeNotifier.rebuild();
+              },
+              activeColor: primaryColor,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -232,38 +287,60 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _onPlaceOrder() async {
-    orderDetails['paymentMethod'] = payment;
-    if (payment == 'tap') {
-      /// if the method is tap, check credit card already authorized
-      if (cardToken == null) {
-        flushBarService.showErrorDialog('fill_card_details_error'.tr());
+    if (deliverAsGift) {
+      final result = await showSlidingBottomSheet(
+        context,
+        builder: (_) {
+          return SlidingSheetDialog(
+            color: Colors.white,
+            elevation: 2,
+            cornerRadius: 10.sp,
+            snapSpec: const SnapSpec(
+              snap: true,
+              snappings: [1],
+              positioning: SnapPositioning.relativeToSheetHeight,
+            ),
+            duration: Duration(milliseconds: 500),
+            builder: (context, state) {
+              return DeliverAsGiftForm();
+            },
+          );
+        },
+      );
+    } else {
+      orderDetails['paymentMethod'] = payment;
+      if (payment == 'tap') {
+        /// if the method is tap, check credit card already authorized
+        if (cardToken == null) {
+          flushBarService.showErrorDialog('fill_card_details_error'.tr());
+          return;
+        }
+        orderDetails['tap_token'] = cardToken;
+      }
+      if (requireAddress) {
+        flushBarService.showErrorDialog('checkout_address_error'.tr());
         return;
       }
-      orderDetails['tap_token'] = cardToken;
+
+      var address;
+      if (user?.token != null)
+        address = addressChangeNotifier.defaultAddress.toJson();
+      else
+        address = addressChangeNotifier.guestAddress.toJson();
+      address['postcode'] = address['post_code'];
+      address['save_in_address_book'] = '0';
+      address['region'] = address['region_id'];
+      orderDetails['orderAddress'] = jsonEncode(address);
+
+      AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+      Adjust.trackEvent(adjustEvent);
+
+      /// submit the order, after call this api, the status will be pending till payment be processed
+      await orderChangeNotifier.submitOrder(orderDetails, lang,
+          onProcess: _onProcess,
+          onSuccess: _onOrderSubmittedSuccess,
+          onFailure: _onFailure);
     }
-    if (requireAddress) {
-      flushBarService.showErrorDialog('checkout_address_error'.tr());
-      return;
-    }
-
-    var address;
-    if (user?.token != null)
-      address = addressChangeNotifier.defaultAddress.toJson();
-    else
-      address = addressChangeNotifier.guestAddress.toJson();
-    address['postcode'] = address['post_code'];
-    address['save_in_address_book'] = '0';
-    address['region'] = address['region_id'];
-    orderDetails['orderAddress'] = jsonEncode(address);
-
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
-    Adjust.trackEvent(adjustEvent);
-
-    /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang,
-        onProcess: _onProcess,
-        onSuccess: _onOrderSubmittedSuccess,
-        onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {

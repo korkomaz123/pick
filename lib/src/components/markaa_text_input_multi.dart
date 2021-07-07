@@ -16,6 +16,7 @@ class MarkaaTextInputMulti extends StatelessWidget {
   final int maxLine;
   final Color borderColor;
   final double borderRadius;
+  final Color fillColor;
 
   MarkaaTextInputMulti({
     @required this.controller,
@@ -30,6 +31,7 @@ class MarkaaTextInputMulti extends StatelessWidget {
     this.maxLine,
     this.borderColor = greyDarkColor,
     this.borderRadius = 10,
+    this.fillColor = Colors.white,
   });
 
   @override
@@ -45,7 +47,7 @@ class MarkaaTextInputMulti extends StatelessWidget {
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(
-            horizontal: padding,
+            horizontal: 10.w,
             vertical: 5.h,
           ),
           hintText: hint,
@@ -61,6 +63,8 @@ class MarkaaTextInputMulti extends StatelessWidget {
             borderSide: BorderSide(color: borderColor),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
+          filled: true,
+          fillColor: fillColor,
         ),
         validator: (value) => validator(value),
         keyboardType: TextInputType.multiline,

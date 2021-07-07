@@ -369,11 +369,14 @@
     "top_up_failed_title": "Top up failed",
     "top_up_failed_message": "The maximum top up per transaction is # KWD",
     "ask_agree_privacy_policy": "You must agree with our Privacy and Policy",
-    "deal_label": "Best Value"
-    ,"price_alarm":"Price Alarm"
-    ,"add_your_review":"Add your review"
-    ,"more_details":"More Details"
-    ,"specifications":"Specifications"
-    ,"alarm_subscribed": "You've successfully subscribed to the alarm"
-
+    "deal_label": "Best Value",
+    "price_alarm": "Price Alarm",
+    "add_your_review": "Add your review",
+    "more_details": "More Details",
+    "specifications": "Specifications",
+    "alarm_subscribed": "You've successfully subscribed to the alarm",
+    "deliver_as_gift": "Deliver as a gift",
+    "special_reopen_special_message": "Special reopen with special message",
+    "receiver_email": "Receiver Email",
+    "message": "Message"
 }
