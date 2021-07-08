@@ -69,12 +69,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
-  bool get outOfBalance =>
-      double.parse(details['subTotalPrice']) > user.balance;
+  bool get outOfBalance => double.parse(details['subTotalPrice']) > user.balance;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
 
   _loadData() async {
     user = await Preload.currentUser;
@@ -142,9 +140,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     Column(
                       children: List.generate(paymentMethods.length, (index) {
                         int idx = paymentMethods.length - index - 1;
-                        if ((user?.token == null ||
-                                user?.token != null && user.balance <= 0) &&
-                            paymentMethods[idx].id == 'wallet') {
+                        if ((user?.token == null || user?.token != null && user.balance <= 0) && paymentMethods[idx].id == 'wallet') {
                           return Container();
                         }
                         return PaymentMethodCard(
@@ -288,7 +284,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onPlaceOrder() async {
     if (deliverAsGift) {
-      final result = await showSlidingBottomSheet(
+      await showSlidingBottomSheet(
         context,
         builder: (_) {
           return SlidingSheetDialog(
@@ -336,10 +332,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       Adjust.trackEvent(adjustEvent);
 
       /// submit the order, after call this api, the status will be pending till payment be processed
-      await orderChangeNotifier.submitOrder(orderDetails, lang,
-          onProcess: _onProcess,
-          onSuccess: _onOrderSubmittedSuccess,
-          onFailure: _onFailure);
+      await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
     }
   }
 
@@ -368,8 +361,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
-          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 

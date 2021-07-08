@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:badges/badges.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -344,7 +345,21 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
             ),
           );
         } else {
-          return Container();
+          return MarkaaTextButton(
+            title: 'notify_me'.tr(),
+            titleSize: 23.sp,
+            titleColor: Colors.white,
+            buttonColor: primaryColor,
+            borderColor: primaryColor,
+            image: 'price_alarm',
+            radius: 1,
+            onPressed: () {
+              print("${productId}_product_instock_${Preload.language}");
+              FirebaseMessaging.instance.subscribeToTopic("${productId}_product_instock_${Preload.language}");
+              FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+            },
+            isBold: true,
+          );
         }
       },
     );

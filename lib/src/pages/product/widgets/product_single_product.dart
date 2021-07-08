@@ -17,7 +17,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
-import 'package:progressive_image/progressive_image.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';

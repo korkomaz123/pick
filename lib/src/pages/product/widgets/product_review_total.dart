@@ -13,6 +13,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../preload.dart';
+
 class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
   final Function onReviews;
@@ -32,7 +34,7 @@ class ProductReviewTotal extends StatefulWidget {
 class _ProductReviewTotalState extends State<ProductReviewTotal> {
   double average = 0;
   ProductReviewChangeNotifier model;
-
+  String _alarmActive = '';
   @override
   void initState() {
     super.initState();
@@ -94,8 +96,11 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             child: InkWell(
               onTap: () {
                 if (isStock) {
-                  FirebaseMessaging.instance.subscribeToTopic("alarm_${widget.product.productId}");
+                  print("${widget.product.productId}_product_price_${Preload.language}");
+                  FirebaseMessaging.instance.subscribeToTopic("${widget.product.productId}_product_price_${Preload.language}");
                   FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                  _alarmActive = '_done';
+                  setState(() {});
                 }
               },
               child: Row(
@@ -103,7 +108,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: SvgPicture.asset(
-                      'lib/public/icons/price_alarm.svg',
+                      'lib/public/icons/price_alarm$_alarmActive.svg',
                       color: isStock ? null : greyColor,
                       width: 18.sp,
                     ),

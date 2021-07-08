@@ -378,5 +378,6 @@
     "deliver_as_gift": "Deliver as a gift",
     "special_reopen_special_message": "Special reopen with special message",
     "receiver_email": "Receiver Email",
-    "message": "Message"
+    "message": "Message",
+    "notify_me":"Notify me"
 }
