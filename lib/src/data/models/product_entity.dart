@@ -1,3 +1,6 @@
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
@@ -205,5 +208,13 @@ class ProductEntity {
       return 0;
     }
     return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
+  }
+
+  Future requestPriceAlarm(String type, String productId, {Map<String, dynamic> data}) async {
+    if (data == null) data = {};
+    data['type'] = type;
+    data['productId'] = productId;
+    data['email'] = user.email;
+    await Api.getMethod(EndPoints.requestPriceAlarm, data: data, extra: {"refresh": true});
   }
 }

@@ -25,6 +25,7 @@ import 'package:markaa/src/utils/services/snackbar_service.dart';
 
 import 'update_profile/bloc/profile_bloc.dart';
 import 'widgets/about_us_item.dart';
+import 'widgets/alarm_list.dart';
 import 'widgets/change_notification_setting_item.dart';
 import 'widgets/change_password_item.dart';
 import 'widgets/contact_us_item.dart';
@@ -284,6 +285,8 @@ class _AccountPageState extends State<AccountPage> {
             WishlistItem(snackBarService: snackBarService),
             SizedBox(height: 5.h),
             OrderHistoryItem(),
+            SizedBox(height: 5.h),
+            AlarmList(),
             SizedBox(height: 5.h),
           ],
           AboutUsItem(),

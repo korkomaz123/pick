@@ -377,5 +377,8 @@
     "special_reopen_special_message": "إعادة فتح خاص برسالة خاصة",
     "receiver_email": "البريد الإلكتروني المتلقي",
     "message": "رسالة",
-    "notify_me":"تنبيهي"
+    "notify_me":"تنبيهي",
+    "alarm_list":"قائمة تنبيهات المنتجات",
+    "stock_notification":"إشعار كمية",
+    "price_notification":"إشعار سعر"
 }

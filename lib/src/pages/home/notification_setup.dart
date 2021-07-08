@@ -38,8 +38,7 @@ class NotificationSetup {
   }
 
   void _configureMessaging() async {
-    RemoteMessage message =
-        await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage message = await FirebaseMessaging.instance.getInitialMessage();
     if (message != null) _onLaunchMessage(message.data);
     NotificationSettings settings = await firebaseMessaging.requestPermission(
       alert: true,
@@ -55,20 +54,15 @@ class NotificationSetup {
 
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _onLaunchMessage(message.data);
+      _onLaunchMessage(message?.data);
     });
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage message) {
-      _onLaunchMessage(message.data);
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage message) {
+      _onLaunchMessage(message?.data);
     });
 
-    await firebaseMessaging.unsubscribeFromTopic(Preload.language == 'en'
-        ? MarkaaNotificationChannels.arChannel
-        : MarkaaNotificationChannels.enChannel);
-    await firebaseMessaging.subscribeToTopic(Preload.language == 'en'
-        ? MarkaaNotificationChannels.enChannel
-        : MarkaaNotificationChannels.arChannel);
+    await firebaseMessaging
+        .unsubscribeFromTopic(Preload.language == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
+    await firebaseMessaging.subscribeToTopic(Preload.language == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
     updateFcmDeviceToken();
   }
 
@@ -88,8 +82,7 @@ class NotificationSetup {
   }
 
   void _initializeLocalNotification() async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
@@ -102,8 +95,7 @@ class NotificationSetup {
       onSelectNotification: onSelectNotification,
     );
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 

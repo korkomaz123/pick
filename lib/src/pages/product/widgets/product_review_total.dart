@@ -2,11 +2,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -19,12 +22,14 @@ class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
   final Function onReviews;
   final Function onFirstReview;
+  final ProgressService progressService;
   final ProductChangeNotifier model;
   ProductReviewTotal({
     this.product,
     this.onReviews,
     this.onFirstReview,
     this.model,
+    this.progressService
   });
 
   @override
@@ -94,10 +99,18 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10.w),
             child: InkWell(
-              onTap: () {
+              onTap: ()async {
                 if (isStock) {
+                  if (user == null || user.email == null) {
+                    Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
+                    return;
+                  }
+                  widget.progressService.showProgress();
+
                   print("${widget.product.productId}_product_price_${Preload.language}");
                   FirebaseMessaging.instance.subscribeToTopic("${widget.product.productId}_product_price_${Preload.language}");
+                  await widget.product.requestPriceAlarm('price', widget.product.productId);
+                 widget.progressService.hideProgress();
                   FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
                   _alarmActive = '_done';
                   setState(() {});

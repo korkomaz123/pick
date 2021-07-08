@@ -7,21 +7,19 @@ class Api {
   static Dio _dio = Dio();
   static _dioInit() async {
     if (_dio.interceptors.length > 0) return;
-    _dio.interceptors
-      ..add(
-          CacheInterceptor()); //..add(LogInterceptor(requestHeader: false, responseHeader: false));
+    _dio.interceptors..add(CacheInterceptor()); //..add(LogInterceptor(requestHeader: false, responseHeader: false));
   }
 
   static Future<Map<String, dynamic>> getMethod(
     String url, {
     Map<String, dynamic> data,
     Map<String, dynamic> headers,
+    Map<String, dynamic> extra,
   }) async {
     _dioInit();
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     print(requestUrl);
-    final response = await _dio.get(requestUrl,
-        options: Options(headers: headers ?? _getHeader()));
+    final response = await _dio.get(requestUrl, options: Options(headers: headers ?? _getHeader(), extra: extra));
     return response.data;
   }
 
