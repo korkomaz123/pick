@@ -11,14 +11,10 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/string_service.dart';
-
-import '../../../../preload.dart';
 
 class AlarmListPage extends StatefulWidget {
   @override

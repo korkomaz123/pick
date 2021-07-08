@@ -1,5 +1,4 @@
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
