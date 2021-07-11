@@ -296,7 +296,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onPlaceOrder() async {
     if (deliverAsGift) {
-      final result = await showSlidingBottomSheet(
+      await showSlidingBottomSheet(
         context,
         builder: (_) {
           return SlidingSheetDialog(

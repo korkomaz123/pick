@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:badges/badges.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -71,7 +72,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   String productId;
 
   bool isBuyNow = false;
-
   bool get variantSelectRequired =>
       productChangeNotifier.productDetailsMap[productId].typeId == 'configurable' && productChangeNotifier.selectedVariant == null;
 
@@ -178,6 +178,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               model: model,
                             ),
                             ProductReviewTotal(
+                              progressService: progressService,
                               model: model,
                               product: model.productDetailsMap[productId],
                               onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
@@ -344,7 +345,31 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
             ),
           );
         } else {
-          return Container();
+          if (model.productDetailsMap[productId].specification != null && model.productDetailsMap[productId].specification.isNotEmpty)
+            return MarkaaTextButton(
+              title: 'notify_me'.tr(),
+              titleSize: 23.sp,
+              titleColor: Colors.white,
+              buttonColor: primaryColor,
+              borderColor: primaryColor,
+              image: 'price_alarm',
+              radius: 1,
+              onPressed: () async {
+                if (user == null || user.email == null) {
+                  Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
+                  return;
+                }
+                progressService.showProgress();
+                print("${productId}_product_instock_${Preload.language}");
+                FirebaseMessaging.instance.subscribeToTopic("${productId}_product_instock_${Preload.language}");
+                await model.productDetailsMap[productId].requestPriceAlarm('stock', productId);
+                progressService.hideProgress();
+                FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+              },
+              isBold: true,
+            );
+          else
+            return Container();
         }
       },
     );

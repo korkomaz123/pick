@@ -380,5 +380,9 @@
     "receiver_email": "Receiver Email",
     "message": "Message",
     "brands_on_sale": "Brands On Sale",
-    "up_to": "Up to"
+    "up_to": "Up to",
+    "notify_me": "Notify me",
+    "alarm_list": "Products Alarm List",
+    "stock_notification": "Out Of Stock Notification",
+    "price_notification": "Price Notification"
 }

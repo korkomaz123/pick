@@ -377,5 +377,10 @@
     "special_reopen_special_message": "إعادة فتح خاص برسالة خاصة",
     "receiver_email": "البريد الإلكتروني المتلقي",
     "message": "رسالة",
-    "brands_on_sale": "العلامات التجارية للبيع"
+    "brands_on_sale": "العلامات التجارية للبيع",
+    "up_to": "تصل الى",
+    "notify_me": "تنبيهي",
+    "alarm_list": "قائمة تنبيهات المنتجات",
+    "stock_notification": "إشعار كمية",
+    "price_notification": "إشعار سعر"
 }
