@@ -253,10 +253,11 @@ class _ProductVCardState extends State<ProductVCard>
                         ],
                       ),
                     ),
-                    if (canAddToCart) ...[
-                      Consumer<MarkaaAppChangeNotifier>(
-                        builder: (_, model, __) {
-                          return InkWell(
+                    Consumer<MarkaaAppChangeNotifier>(
+                      builder: (_, model, __) {
+                        return Visibility(
+                          visible: canAddToCart,
+                          child: InkWell(
                             onTap: () {
                               if (model.activeAddCart) {
                                 model.changeAddCartStatus(false);
@@ -272,12 +273,10 @@ class _ProductVCardState extends State<ProductVCard>
                                 child: SvgPicture.asset(addCartIcon),
                               ),
                             ),
-                          );
-                        },
-                      )
-                    ] else ...[
-                      SizedBox.shrink()
-                    ],
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 SizedBox(height: 5.h),

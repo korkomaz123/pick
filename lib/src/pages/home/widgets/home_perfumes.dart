@@ -29,8 +29,8 @@ class _HomePerfumesState extends State<HomePerfumes> {
           children: [
             _buildProductView(),
             Divider(
-              height: 1.5.h,
-              thickness: 1.5.h,
+              height: 0.5.h,
+              thickness: 0.5.h,
               color: greyColor.withOpacity(0.4),
             ),
             _buildIndicator(),
@@ -71,7 +71,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget _buildProductView() {
     return Container(
       width: designWidth.w,
-      height: 590.h,
+      height: 581.h,
       child: Swiper(
         itemCount: widget.homeChangeNotifier.perfumesProducts.length > 40
             ? 10

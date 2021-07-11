@@ -76,8 +76,10 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     ),
                     hintText: 'my_cart_coupon_code_hint'.tr(),
                   ),
-                  validator: (value) =>
-                      value.isEmpty ? 'required_field'.tr() : null,
+                  validator: (value) {
+                    if (value.trim().isEmpty) return 'required_field'.tr();
+                    return null;
+                  },
                   readOnly: model.couponCode.isNotEmpty,
                 ),
               ),
@@ -113,7 +115,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                             model.cancelCouponCode(flushBarService);
                           } else {
                             model.applyCouponCode(
-                              couponCodeController.text,
+                              couponCodeController.text.trim(),
                               flushBarService,
                             );
                           }

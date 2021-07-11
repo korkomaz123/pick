@@ -41,6 +41,7 @@ import 'widgets/home_oriental_fragrances.dart';
 import 'widgets/home_perfumes.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_recent.dart';
+import 'widgets/home_sale_brands.dart';
 import 'widgets/home_smart_tech.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -105,6 +106,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     loadMegaBanner = _homeProvider.loadMegaBanner();
     loadBestDeals = _homeProvider.loadBestDeals();
     loadBestDealsBanner = _homeProvider.loadBestDealsBanner();
+    loadSaleBrands = _homeProvider.getBrandsOnSale();
     loadNewArrivals = _homeProvider.loadNewArrivals();
     loadExculisiveBanner = _homeProvider.loadExculisiveBanner();
     loadOrientalProducts = _homeProvider.loadOrientalProducts();
@@ -126,6 +128,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     loadMegaBanner = null;
     loadBestDeals = null;
     loadBestDealsBanner = null;
+    loadSaleBrands = null;
     loadNewArrivals = null;
     loadExculisiveBanner = null;
     loadOrientalProducts = null;
@@ -169,6 +172,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       loadMegaBanner,
       loadBestDeals,
       loadBestDealsBanner,
+      loadSaleBrands,
       loadNewArrivals,
       loadExculisiveBanner,
       loadOrientalProducts,
@@ -292,6 +296,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestDealsBanner(
+                                  homeChangeNotifier: _homeProvider),
+                        ),
+                        FutureBuilder(
+                          future: loadSaleBrands,
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
+                              ? Container(
+                                  height: 360.h,
+                                  padding: EdgeInsets.all(8.w),
+                                  margin: EdgeInsets.only(bottom: 10.h),
+                                  color: Colors.white,
+                                  child: Center(child: PulseLoadingSpinner()),
+                                )
+                              : HomeSaleBrands(
                                   homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(

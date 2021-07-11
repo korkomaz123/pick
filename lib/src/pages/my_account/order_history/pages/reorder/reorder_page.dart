@@ -68,22 +68,28 @@ class _ReOrderPageState extends State<ReOrderPage> {
         .containsKey(widget.order.address.addressId)) {
       widget.order.address = addressChangeNotifier.defaultAddress;
     }
-
-    _getReorderCartItems();
     _getOrderStatus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getReorderCartItems();
+    });
   }
 
-  void _getReorderCartItems() async {
+  void _getReorderCartItems() {
     myCartChangeNotifier.initializeReorderCart();
-    await myCartChangeNotifier.getReorderCartId(
+    myCartChangeNotifier.getReorderCartId(
       widget.order.orderId,
       lang,
       onProcess: _onLoading,
+      onSuccess: _onLoadedReorderCartId,
+      onFailure: _onFailure,
     );
-    await myCartChangeNotifier.getReorderCartItems(
+  }
+
+  void _onLoadedReorderCartId() {
+    myCartChangeNotifier.getReorderCartItems(
       lang,
-      onSuccess: _onLoaded,
-      onFailure: _onLoaded,
+      onSuccess: _onLoadedItemsSuccess,
+      onFailure: _onFailure,
     );
   }
 
@@ -91,9 +97,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
     progressService.showProgress();
   }
 
-  void _onLoaded() {
+  void _onLoadedItemsSuccess() {
     progressService.hideProgress();
     _getShippingMethods();
+  }
+
+  void _onFailure() {
+    progressService.hideProgress();
   }
 
   void _getShippingMethods() async {

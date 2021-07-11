@@ -15,11 +15,12 @@ class OrderRepository {
     String isVirtual,
   ) async {
     String url = EndPoints.submitOrder;
-    final details = jsonEncode(orderDetails['orderDetails']);
-    orderDetails['orderDetails'] = details;
-    orderDetails['lang'] = lang;
-    orderDetails['is_virtual'] = isVirtual;
-    final result = await Api.postMethod(url, data: orderDetails);
+    Map<String, dynamic> data =
+        orderDetails.map((key, value) => MapEntry(key, value));
+    data['orderDetails'] = jsonEncode(orderDetails['orderDetails']);
+    data['lang'] = lang;
+    data['is_virtual'] = isVirtual;
+    final result = await Api.postMethod(url, data: data);
 
     return result;
   }

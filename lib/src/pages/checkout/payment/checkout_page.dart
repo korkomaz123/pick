@@ -25,7 +25,6 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
-import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,6 +35,7 @@ import 'package:string_validator/string_validator.dart';
 import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
+import 'widgets/payment_method_list.dart';
 import 'widgets/payment_summary.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -52,6 +52,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
+  SheetController sheetController = SheetController();
 
   String payment = 'knet';
   String cardToken;
@@ -69,17 +70,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
-  bool get outOfBalance =>
-      double.parse(details['subTotalPrice']) > user.balance;
-
   bool get requireAddress =>
       user?.token != null && addressChangeNotifier.defaultAddress == null ||
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
-  _loadData() async {
+  void _loadData() async {
     user = await Preload.currentUser;
 
-    print(paymentMethods.length);
     if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
     }
@@ -92,8 +89,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-
-    print('init state');
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -134,33 +129,47 @@ class _CheckoutPageState extends State<CheckoutPage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  PaymentAddress(),
+                  _buildDeliverAsGift(),
                   if (paymentMethods.isEmpty) ...[
                     Center(
                       child: PulseLoadingSpinner(),
                     ),
                   ] else ...[
-                    Column(
-                      children: List.generate(paymentMethods.length, (index) {
-                        int idx = paymentMethods.length - index - 1;
-                        if ((user?.token == null ||
-                                user?.token != null && user.balance <= 0) &&
-                            paymentMethods[idx].id == 'wallet') {
-                          return Container();
-                        }
-                        return PaymentMethodCard(
-                          method: paymentMethods[idx],
-                          onChange: _onChangeMethod,
-                          value: payment,
-                          cardToken: cardToken,
-                          onAuthorizedSuccess: _onCardAuthorizedSuccess,
-                        );
-                      }),
-                    )
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'order_payment_method'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Column(
+                            children:
+                                List.generate(paymentMethods.length, (index) {
+                              int idx = paymentMethods.length - index - 1;
+                              if (paymentMethods[idx].id != payment) {
+                                return Container();
+                              }
+                              return PaymentMethodCard(
+                                method: paymentMethods[idx],
+                                value: payment,
+                                onChange: _onChangeMethod,
+                                isActive: false,
+                              );
+                            }),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
+                      ),
+                    ),
                   ],
-                  SizedBox(height: 5.h),
-                  PaymentAddress(),
-                  _buildDeliverAsGift(),
                   PaymentSummary(details: details),
+                  SizedBox(height: 20.h),
                   _buildNote(),
                   SizedBox(height: 100.h),
                 ],
@@ -168,14 +177,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             },
           ),
         ),
-        bottomSheet: Consumer<MarkaaAppChangeNotifier>(
-          builder: (_, __, ___) {
-            if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
-              return Container(height: 0);
-            }
-            return _buildPlacePaymentButton();
-          },
-        ),
+        bottomSheet: _buildPlacePaymentButton(),
       ),
     );
   }
@@ -183,7 +185,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _buildDeliverAsGift() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 5.h),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -260,30 +262,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  _onChangeMethod(String value) async {
-    if (value == 'wallet' && outOfBalance) {
-      final result = await flushBarService.showConfirmDialog(
-        title: 'sorry',
-        message: 'not_enough_balance',
-        yesButtonText: 'add_button_title',
-        noButtonText: 'cancel_button_title',
-      );
-      if (result != null) {
-        double amount = double.parse(details['subTotalPrice']) - user.balance;
-        double value = NumericService.roundDouble(amount, 3);
-        await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
-        setState(() {});
-      }
-    } else {
-      payment = value;
+  _onChangeMethod() async {
+    final result = await showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          controller: sheetController,
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 10.sp,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return PaymentMethodList(
+              value: payment,
+              controller: sheetController,
+            );
+          },
+        );
+      },
+    );
+    if (result != null) {
+      var data = result as Map<String, dynamic>;
+      payment = data['method'];
+      cardToken = data['cardToken'];
       markaaAppChangeNotifier.rebuild();
     }
-  }
-
-  _onCardAuthorizedSuccess(String token) {
-    cardToken = token;
-    setState(() {});
-    Future.delayed(Duration(milliseconds: 300), _onPlaceOrder);
   }
 
   _onPlaceOrder() async {

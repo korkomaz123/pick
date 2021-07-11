@@ -79,9 +79,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 10.h),
               child: Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
                   return SmoothIndicator(

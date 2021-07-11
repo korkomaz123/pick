@@ -21,14 +21,13 @@ class HomeBestDeals extends StatelessWidget {
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
       return Container(
-        height: 360.h,
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,
         child: Column(
           children: [
             _buildHeadline(),
-            Expanded(child: _buildProductsList()),
+            _buildProductsList(),
           ],
         ),
       );
@@ -89,30 +88,33 @@ class HomeBestDeals extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(top: 10.h, bottom: 5.h),
-      child: ListView.builder(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        itemCount: homeChangeNotifier.bestDealsProducts.length,
-        itemBuilder: (context, index) {
-          return Container(
-            // margin: EdgeInsets.only(left: 5.w),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey.shade300,
-                width: 0.5.w,
-              ),
-            ),
-            child: ProductVCard(
-              cardWidth: 170.w,
-              cardHeight: 280.h,
-              product: homeChangeNotifier.bestDealsProducts[index],
-              isShoppingCart: true,
-              isLine: true,
-              isMinor: true,
-              isWishlist: true,
-              isShare: false,
-            ),
-          );
-        },
+        child: Row(
+          children: List.generate(
+            homeChangeNotifier.bestDealsProducts.length,
+            (index) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 0.5.w,
+                  ),
+                ),
+                child: ProductVCard(
+                  cardWidth: 170.w,
+                  cardHeight: 280.h,
+                  product: homeChangeNotifier.bestDealsProducts[index],
+                  isShoppingCart: true,
+                  isLine: true,
+                  isMinor: true,
+                  isWishlist: true,
+                  isShare: false,
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

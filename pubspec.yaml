@@ -58,6 +58,7 @@ dependencies:
   image_cropper: ^1.4.0
   image_picker: ^0.7.4
   in_app_review: ^2.0.2
+  infinite_carousel: ^1.0.1
   intl_phone_number_input: ^0.7.0+1
   inview_notifier_list: ^2.0.0
   kommunicate_flutter: ^1.1.7

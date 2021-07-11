@@ -502,4 +502,11 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  List<BrandEntity> saleBrands = [];
+  Future getBrandsOnSale() async {
+    saleBrands.clear();
+    saleBrands = await brandRepository.getBrandsOnSale(Preload.language);
+    notifyListeners();
+  }
 }

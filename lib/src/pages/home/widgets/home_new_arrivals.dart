@@ -22,7 +22,7 @@ class HomeNewArrivals extends StatelessWidget {
   Widget build(BuildContext context) {
     if (homeChangeNotifier.newArrivalsProducts.isNotEmpty) {
       return Container(
-        height: 300.h,
+        height: 240.h,
         padding: EdgeInsets.all(8.w),
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,

@@ -404,9 +404,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
 
     try {
-      if (onSuccess != null) onSuccess();
-
       reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
+
+      if (onSuccess != null) onSuccess();
     } catch (e) {
       if (onFailure != null) onFailure();
     }
