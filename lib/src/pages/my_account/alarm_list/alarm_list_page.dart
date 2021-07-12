@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -74,7 +76,10 @@ class _AlarmListPageState extends State<AlarmListPage> {
         future: Api.getMethod(EndPoints.getAlarmItems, data: {"lang": lang, "email": user.email}, extra: {"refresh": true}),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null) return Container();
+            if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null)
+              return NoAvailableData(
+                message: 'no_items_in_list',
+              );
             return ListView.separated(
               padding: EdgeInsets.all(10.w),
               itemCount: snapshot.data['items'].length,
@@ -113,10 +118,11 @@ class _AlarmListPageState extends State<AlarmListPage> {
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        IconButton(
-                            icon: Icon(Icons.delete_outlined),
-                            onPressed: () async {
+                        InkWell(
+                            child: SvgPicture.asset("lib/public/icons/trash-icon.svg", color: Colors.black),
+                            onTap: () async {
                               progressService.showProgress();
                               ProductEntity _productEntity = ProductEntity.fromJson(snapshot.data['items'][i]['productdetail']);
                               if (snapshot.data['items'][i]['type'] == 'stock') {

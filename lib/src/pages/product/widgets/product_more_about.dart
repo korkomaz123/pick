@@ -16,7 +16,7 @@ class ProductMoreAbout extends StatelessWidget {
         margin: EdgeInsets.only(top: 10.h),
         child: Html(data:
             //"""${(productEntity.shortDescription != productEntity.description ? productEntity.shortDescription : "") + ""}""" +
-            """${Uri.decodeFull(productEntity.fullDescription)}"""),
+            """${productEntity.fullDescription}"""),
       ),
     );
   }

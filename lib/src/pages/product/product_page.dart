@@ -98,6 +98,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     flushBarService = FlushBarService(context: context);
 
     _loadDetails();
+    _getRelatedItems();
     _initAnimation();
     _sendViewedProduct();
 
@@ -105,9 +106,13 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     Adjust.trackEvent(adjustEvent);
   }
 
+  _getRelatedItems() async {
+    productChangeNotifier.getRelatedProducts(product.productId);
+  }
+
   void _loadDetails() async {
     print('PRODUCT ID >>> $productId');
-    await productChangeNotifier.getProductDetails(productId);
+    productChangeNotifier.getProductDetails(productId);
   }
 
   void _initAnimation() {
@@ -190,7 +195,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               productEntity: model.productDetailsMap[productId],
                             ),
                             TopBrandsInCategory(productId: productId),
-                            ProductRelatedItems(product: product),
+                            ProductRelatedItems(relatedItems: model.relatedItems),
                             SizedBox(height: 60.h),
                           ],
                         ),
@@ -360,7 +365,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                   return;
                 }
                 progressService.showProgress();
-                print("${productId}_product_instock_${Preload.language}");
                 FirebaseMessaging.instance.subscribeToTopic("${productId}_product_instock_${Preload.language}");
                 await model.productDetailsMap[productId].requestPriceAlarm('stock', productId);
                 progressService.hideProgress();

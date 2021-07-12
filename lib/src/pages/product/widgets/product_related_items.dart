@@ -5,38 +5,13 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
 
-class ProductRelatedItems extends StatefulWidget {
-  final ProductModel product;
-
-  ProductRelatedItems({this.product});
-
-  @override
-  _ProductRelatedItemsState createState() => _ProductRelatedItemsState();
-}
-
-class _ProductRelatedItemsState extends State<ProductRelatedItems> {
-  ProductModel product;
-  List<ProductModel> relatedItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    product = widget.product;
-    _getRelatedItems();
-  }
-
-  void _getRelatedItems() async {
-    relatedItems = await ProductRepository().getRelatedProducts(product.productId);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) setState(() {});
-    });
-  }
-
+class ProductRelatedItems extends StatelessWidget {
+  final List<ProductModel> relatedItems;
+  ProductRelatedItems({this.relatedItems});
   @override
   Widget build(BuildContext context) {
-    if (relatedItems.isNotEmpty) {
+    if (relatedItems != null && relatedItems.isNotEmpty) {
       return Container(
         width: 375.w,
         padding: EdgeInsets.symmetric(

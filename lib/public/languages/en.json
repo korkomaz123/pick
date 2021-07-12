@@ -51,7 +51,7 @@
     "home_discover_stores": "Discover our Stores",
     "home_discover_brands": "Discover our Brands",
     "home_recently_view": "Recently Viewed",
-    "home_top_brands": "Top Brands",
+    "home_top_brands": "Top Brands In ",
     "bottom_home": "Home",
     "bottom_category": "Category",
     "bottom_store": "Stores",
@@ -384,5 +384,7 @@
     "notify_me": "Notify me",
     "alarm_list": "Products Alarm List",
     "stock_notification": "Out Of Stock Notification",
-    "price_notification": "Price Notification"
+    "price_notification": "Price Notification",
+    "no_items_in_list":"Sorry, there is not products in the list",
+    "no_reviews":"sorry there is no reviews on this products"
 }
