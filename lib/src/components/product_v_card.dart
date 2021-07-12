@@ -68,10 +68,8 @@ class _ProductVCardState extends State<ProductVCard>
   FlushBarService _flushBarService;
   ProgressService _progressService;
 
-  bool get canAddToCart =>
-      widget.isShoppingCart &&
-      (widget.product.typeId != 'simple' ||
-          widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -253,30 +251,37 @@ class _ProductVCardState extends State<ProductVCard>
                         ],
                       ),
                     ),
-                    Consumer<MarkaaAppChangeNotifier>(
-                      builder: (_, model, __) {
-                        return Visibility(
-                          visible: canAddToCart,
-                          child: InkWell(
-                            onTap: () {
-                              if (model.activeAddCart) {
-                                model.changeAddCartStatus(false);
-                                _onAddProductToCart();
-                                model.changeAddCartStatus(true);
-                              }
-                            },
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: widget.isMinor ? 26.w : 32.w,
-                                height: widget.isMinor ? 26.w : 32.w,
-                                child: SvgPicture.asset(addCartIcon),
+                    if (widget.isShoppingCart) ...[
+                      Consumer<MarkaaAppChangeNotifier>(
+                        builder: (_, model, __) {
+                          if (!outOfStock) {
+                            return InkWell(
+                              onTap: () {
+                                if (model.activeAddCart) {
+                                  model.changeAddCartStatus(false);
+                                  _onAddProductToCart();
+                                  model.changeAddCartStatus(true);
+                                }
+                              },
+                              child: ScaleTransition(
+                                scale: _addToCartScaleAnimation,
+                                child: Container(
+                                  width: widget.isMinor ? 26.w : 32.w,
+                                  height: widget.isMinor ? 26.w : 32.w,
+                                  child: SvgPicture.asset(addCartIcon),
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                            );
+                          } else {
+                            return Container(
+                              width: widget.isMinor ? 26.w : 32.w,
+                              height: widget.isMinor ? 26.w : 32.w,
+                              child: SvgPicture.asset(greyAddCartIcon),
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ],
                 ),
                 SizedBox(height: 5.h),
@@ -376,7 +381,7 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (outOfStock) {
       return Align(
         alignment: Preload.language == 'en'
             ? Alignment.centerRight

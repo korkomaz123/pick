@@ -27,6 +27,7 @@ class _BrandListPageState extends State<BrandListPage> {
   final _itemKey = GlobalKey();
 
   HomeChangeNotifier _homeChangeNotifier;
+  ScrollController _brandListScrollController = ScrollController();
 
   List<String> alphabetList = ['All'];
   List<String> nameCharList = [];
@@ -86,6 +87,7 @@ class _BrandListPageState extends State<BrandListPage> {
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(vertical: 5.h),
             child: Row(
               children: alphabetList.map((value) {
                 int index = alphabetList.indexOf(value);
@@ -99,8 +101,16 @@ class _BrandListPageState extends State<BrandListPage> {
                     if (nameIndex >= 0) brandIndex = brandIndexMap[value];
                     setState(() {});
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Scrollable.ensureVisible(_alphabetKey.currentContext);
-                      Scrollable.ensureVisible(_itemKey.currentContext);
+                      if (selectedIndex == 0) {
+                        _brandListScrollController.animateTo(
+                          0,
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.easeIn,
+                        );
+                      } else {
+                        Scrollable.ensureVisible(_alphabetKey.currentContext);
+                        Scrollable.ensureVisible(_itemKey.currentContext);
+                      }
                     });
                   },
                   child: Container(
@@ -158,6 +168,7 @@ class _BrandListPageState extends State<BrandListPage> {
               // );
               return Expanded(
                 child: SingleChildScrollView(
+                  controller: _brandListScrollController,
                   child: Column(
                     children: List.generate(
                       _homeChangeNotifier.sortedBrandList.length,

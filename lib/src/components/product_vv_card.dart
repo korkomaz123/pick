@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -37,7 +35,6 @@ class ProductVVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final bool isPrimary;
 
   ProductVVCard({
     this.cardWidth,
@@ -48,7 +45,6 @@ class ProductVVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
-    this.isPrimary = true,
   });
 
   @override
@@ -69,6 +65,9 @@ class _ProductVVCardState extends State<ProductVVCard>
   Animation<double> _addToWishlistScaleAnimation;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
+
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -265,11 +264,8 @@ class _ProductVVCardState extends State<ProductVVCard>
                   ),
                 ),
                 if (widget.isLine) ...[Divider(color: primaryColor)],
-                if (widget.isShoppingCart &&
-                    (widget.product.typeId != 'simple' ||
-                        widget.product.stockQty != null &&
-                            widget.product.stockQty > 0)) ...[
-                  if (widget.isPrimary) ...[
+                if (widget.isShoppingCart) ...[
+                  if (!outOfStock) ...[
                     ScaleTransition(
                       scale: _addToCartScaleAnimation,
                       child: Container(
@@ -286,36 +282,19 @@ class _ProductVVCardState extends State<ProductVVCard>
                       ),
                     )
                   ] else ...[
-                    Consumer<MarkaaAppChangeNotifier>(
-                      builder: (_, model, __) {
-                        return ScaleTransition(
-                          scale: _addToCartScaleAnimation,
-                          child: Container(
-                            width: widget.cardWidth,
-                            height: 35.h,
-                            child: MarkaaTextIconButton(
-                              title: 'wishlist_add_cart_button_title'.tr(),
-                              titleColor: primaryColor,
-                              titleSize: 14.sp,
-                              icon: SvgPicture.asset(addCart1Icon, width: 24.w),
-                              leading: false,
-                              borderColor: Colors.transparent,
-                              buttonColor: Colors.white,
-                              onPressed: () {
-                                if (model.activeAddCart) {
-                                  model.changeAddCartStatus(false);
-                                  _onAddProductToCart();
-                                  model.changeAddCartStatus(true);
-                                }
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ]
-                ] else ...[
-                  SizedBox.shrink()
+                    Container(
+                      width: widget.cardWidth - 16.w,
+                      height: 35.h,
+                      child: MarkaaTextButton(
+                        title: 'wishlist_add_cart_button_title'.tr(),
+                        titleColor: Colors.white,
+                        titleSize: 14.sp,
+                        borderColor: Colors.transparent,
+                        buttonColor: greyColor,
+                        onPressed: () => null,
+                      ),
+                    )
+                  ],
                 ],
                 SizedBox(height: 5.h),
               ],
@@ -374,7 +353,7 @@ class _ProductVVCardState extends State<ProductVVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (outOfStock) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -403,7 +382,7 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
 
-      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+      if (!outOfStock) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,

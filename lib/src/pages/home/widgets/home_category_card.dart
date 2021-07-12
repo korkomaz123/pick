@@ -73,6 +73,7 @@ class HomeCategoryCard extends StatelessWidget {
               ),
             ),
             Container(
+              width: 120.w,
               padding: EdgeInsets.only(top: 4.h),
               child: MarkaaTextButton(
                 title: 'view_all'.tr(),

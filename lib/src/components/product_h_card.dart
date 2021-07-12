@@ -65,10 +65,8 @@ class _ProductHCardState extends State<ProductHCard>
   int index;
   bool isWishlist;
 
-  bool get canAddToCart =>
-      widget.isShoppingCart &&
-      (widget.product.typeId != 'simple' ||
-          widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
@@ -265,28 +263,36 @@ class _ProductHCardState extends State<ProductHCard>
                         ],
                       ),
                     ),
-                    if (canAddToCart) ...[
-                      Consumer<MarkaaAppChangeNotifier>(
-                        builder: (_, model, __) {
-                          return InkWell(
-                            onTap: () {
-                              if (model.activeAddCart) {
-                                model.changeAddCartStatus(false);
-                                _onAddProductToCart();
-                                model.changeAddCartStatus(true);
-                              }
-                            },
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: 32.h,
-                                height: 32.h,
-                                child: SvgPicture.asset(addCartIcon),
+                    if (widget.isShoppingCart) ...[
+                      if (!outOfStock) ...[
+                        Consumer<MarkaaAppChangeNotifier>(
+                          builder: (_, model, __) {
+                            return InkWell(
+                              onTap: () {
+                                if (model.activeAddCart) {
+                                  model.changeAddCartStatus(false);
+                                  _onAddProductToCart();
+                                  model.changeAddCartStatus(true);
+                                }
+                              },
+                              child: ScaleTransition(
+                                scale: _addToCartScaleAnimation,
+                                child: Container(
+                                  width: 32.h,
+                                  height: 32.h,
+                                  child: SvgPicture.asset(addCartIcon),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
+                      ] else ...[
+                        Container(
+                          width: 32.h,
+                          height: 32.h,
+                          child: SvgPicture.asset(greyAddCartIcon),
+                        )
+                      ]
                     ],
                   ],
                 ),
@@ -346,7 +352,7 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (outOfStock) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -378,7 +384,7 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
 
-      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+      if (!outOfStock) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,

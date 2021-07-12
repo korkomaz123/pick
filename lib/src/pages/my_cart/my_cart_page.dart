@@ -62,10 +62,7 @@ class _MyCartPageState extends State<MyCartPage>
 
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
-  _loadData() async {
-    if (shippingMethods.isEmpty) {
-      shippingMethods = await checkoutRepo.getShippingMethod();
-    }
+  _determineShippingMethod() {
     for (var shippingMethod in shippingMethods) {
       if (shippingMethod.minOrderAmount <=
           myCartChangeNotifier.cartDiscountedTotalPrice) {
@@ -75,6 +72,13 @@ class _MyCartPageState extends State<MyCartPage>
         break;
       }
     }
+  }
+
+  _loadData() async {
+    if (shippingMethods.isEmpty) {
+      shippingMethods = await checkoutRepo.getShippingMethod();
+    }
+    _determineShippingMethod();
 
     if (myCartChangeNotifier.cartItemCount == 0)
       await myCartChangeNotifier.getCartItems(lang);
@@ -460,6 +464,8 @@ class _MyCartPageState extends State<MyCartPage>
 
     adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
     Adjust.trackEvent(adjustEvent);
+
+    _determineShippingMethod();
 
     orderDetails = {};
     orderDetails['shipping'] = shippingMethodId;
