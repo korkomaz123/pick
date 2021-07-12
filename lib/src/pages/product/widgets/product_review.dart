@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
@@ -41,7 +42,13 @@ class _ProductReviewState extends State<ProductReview> {
               ),
             );
           }
-          return Container();
+          return Container(
+            color: greyColor.withOpacity(0.1),
+            margin: EdgeInsets.all(10.w),
+            width: double.infinity,
+            padding: EdgeInsets.all(10.w),
+            child: Center(child: Text("no_reviews".tr())),
+          );
         },
       ),
     );
