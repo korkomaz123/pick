@@ -6,34 +6,18 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductReview extends StatefulWidget {
+class ProductReview extends StatelessWidget {
   final ProductEntity product;
 
   ProductReview({this.product});
-
-  @override
-  _ProductReviewState createState() => _ProductReviewState();
-}
-
-class _ProductReviewState extends State<ProductReview> {
-  ProductReviewChangeNotifier model;
-
-  @override
-  void initState() {
-    super.initState();
-    model = context.read<ProductReviewChangeNotifier>();
-    model.getProductReviews(widget.product.productId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Consumer<ProductReviewChangeNotifier>(
-        builder: (_, __, ___) {
+        builder: (_, model, ___) {
           if (model.reviews.isNotEmpty) {
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -85,7 +69,6 @@ class _ProductReviewState extends State<ProductReview> {
                 ),
                 ignoreGestures: true,
                 onRatingUpdate: (rating) {
-                  print(rating);
                 },
               ),
             ],
