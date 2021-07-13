@@ -113,7 +113,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         onPressed: () {
-          if (widget.isReorder) {
+          if (widget?.isReorder != null && widget.isReorder) {
             Navigator.popAndPushNamed(
               context,
               Routes.myCart,

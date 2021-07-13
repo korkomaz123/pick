@@ -9,6 +9,27 @@ class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> sendAsGift(
+    String token,
+    String sender,
+    String receiver,
+    String message,
+  ) async {
+    String url = EndPoints.sendAsGift;
+    Map<String, dynamic> data = {
+      'token': token,
+      'sender': sender,
+      'receiver': receiver,
+      'message': message,
+    };
+    final result = await Api.postMethod(url, data: data);
+
+    return result;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> placeOrder(
     Map<String, dynamic> orderDetails,
     String lang,

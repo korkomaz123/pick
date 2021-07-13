@@ -253,7 +253,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       // ignore: deprecated_member_use
       child: RaisedButton(
         color: primaryColor,
-        onPressed: _onPlaceOrder,
+        onPressed: () =>
+            deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
         child: Text(
           'checkout_place_payment_button_title'.tr(),
           style: TextStyle(color: Colors.white, fontSize: 16.0),
@@ -294,61 +295,65 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
+  _onPlaceOrderAsGift() async {
+    final result = await showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 10.sp,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return DeliverAsGiftForm();
+          },
+        );
+      },
+    );
+    if (result != null) {
+      orderDetails['GiftMessageId'] = result;
+      _onPlaceOrder();
+    }
+  }
+
   _onPlaceOrder() async {
-    if (deliverAsGift) {
-      await showSlidingBottomSheet(
-        context,
-        builder: (_) {
-          return SlidingSheetDialog(
-            color: Colors.white,
-            elevation: 2,
-            cornerRadius: 10.sp,
-            snapSpec: const SnapSpec(
-              snap: true,
-              snappings: [1],
-              positioning: SnapPositioning.relativeToSheetHeight,
-            ),
-            duration: Duration(milliseconds: 500),
-            builder: (context, state) {
-              return DeliverAsGiftForm();
-            },
-          );
-        },
-      );
-    } else {
-      orderDetails['paymentMethod'] = payment;
-      if (payment == 'tap') {
-        /// if the method is tap, check credit card already authorized
-        if (cardToken == null) {
-          flushBarService.showErrorDialog('fill_card_details_error'.tr());
-          return;
-        }
-        orderDetails['tap_token'] = cardToken;
-      }
-      if (requireAddress) {
-        flushBarService.showErrorDialog('checkout_address_error'.tr());
+    orderDetails['paymentMethod'] = payment;
+    if (payment == 'tap') {
+      /// if the method is tap, check credit card already authorized
+      if (cardToken == null) {
+        flushBarService.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
-
-      var address;
-      if (user?.token != null)
-        address = addressChangeNotifier.defaultAddress.toJson();
-      else
-        address = addressChangeNotifier.guestAddress.toJson();
-      address['postcode'] = address['post_code'];
-      address['save_in_address_book'] = '0';
-      address['region'] = address['region_id'];
-      orderDetails['orderAddress'] = jsonEncode(address);
-
-      AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
-      Adjust.trackEvent(adjustEvent);
-
-      /// submit the order, after call this api, the status will be pending till payment be processed
-      await orderChangeNotifier.submitOrder(orderDetails, lang,
-          onProcess: _onProcess,
-          onSuccess: _onOrderSubmittedSuccess,
-          onFailure: _onFailure);
+      orderDetails['tap_token'] = cardToken;
     }
+    if (requireAddress) {
+      flushBarService.showErrorDialog('checkout_address_error'.tr());
+      return;
+    }
+
+    var address;
+    if (user?.token != null)
+      address = addressChangeNotifier.defaultAddress.toJson();
+    else
+      address = addressChangeNotifier.guestAddress.toJson();
+    address['postcode'] = address['post_code'];
+    address['save_in_address_book'] = '0';
+    address['region'] = address['region_id'];
+    orderDetails['orderAddress'] = jsonEncode(address);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+    Adjust.trackEvent(adjustEvent);
+
+    /// submit the order, after call this api, the status will be pending till payment be processed
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {

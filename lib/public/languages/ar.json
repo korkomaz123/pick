@@ -375,7 +375,8 @@
     "alarm_subscribed": "تم الإشتراك بنجاح في منبهة الأسعار",
     "deliver_as_gift": "تسليمها كهدية",
     "special_reopen_special_message": "إعادة فتح خاص برسالة خاصة",
-    "receiver_email": "البريد الإلكتروني المتلقي",
+    "sender_hint": "مرسل",
+    "receiver_hint": "جهاز استقبال",
     "message": "رسالة",
     "brands_on_sale": "العلامات التجارية للبيع",
     "up_to": "تصل الى",
@@ -383,6 +384,6 @@
     "alarm_list": "قائمة تنبيهات المنتجات",
     "stock_notification": "إشعار كمية",
     "price_notification": "إشعار سعر",
-    "no_items_in_list":"عفوا,لا يوجد منتجات في القائمة لعرضها",
-    "no_reviews":"عفوا, لا يوجد تقييمات لهذا المنتج"
+    "no_items_in_list": "عفوا,لا يوجد منتجات في القائمة لعرضها",
+    "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج"
 }

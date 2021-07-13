@@ -377,7 +377,8 @@
     "alarm_subscribed": "You've successfully subscribed to the alarm",
     "deliver_as_gift": "Deliver as a gift",
     "special_reopen_special_message": "Special reopen with special message",
-    "receiver_email": "Receiver Email",
+    "sender_hint": "Sender",
+    "receiver_hint": "Receiver",
     "message": "Message",
     "brands_on_sale": "Brands On Sale",
     "up_to": "Up to",
@@ -385,6 +386,6 @@
     "alarm_list": "Products Alarm List",
     "stock_notification": "Out Of Stock Notification",
     "price_notification": "Price Notification",
-    "no_items_in_list":"Sorry, there is not products in the list",
-    "no_reviews":"sorry there is no reviews on this products"
+    "no_items_in_list": "Sorry, there is not products in the list",
+    "no_reviews": "sorry there is no reviews on this products"
 }

@@ -107,4 +107,5 @@ class EndPoints {
       '$baseUrl/getTopBrandsByCategory';
   static const String requestPriceAlarm = '$baseUrl/RequestPriceAlarm';
   static const String getAlarmItems = '$baseUrl/GetAlarmItems';
+  static const String sendAsGift = '$baseUrl/SendAsGift';
 }

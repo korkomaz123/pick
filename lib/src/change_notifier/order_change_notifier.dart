@@ -91,13 +91,7 @@ class OrderChangeNotifier extends ChangeNotifier {
             !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
-          await Preload.navigatorKey.currentContext
-              .read<OrderChangeNotifier>()
-              .loadOrderHistories(
-                user.token,
-                lang,
-                () {},
-              );
+          await loadOrderHistories(user.token, lang);
           setKeys();
           notifyListeners();
         }
@@ -192,6 +186,30 @@ class OrderChangeNotifier extends ChangeNotifier {
       }
     } catch (e) {
       onFailure(e.toString());
+    }
+  }
+
+  Future<void> sendAsGift({
+    String token,
+    String sender,
+    String receiver,
+    String message,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
+    try {
+      final result =
+          await orderRepository.sendAsGift(token, sender, receiver, message);
+      if (result['code'] == 'SUCCESS') {
+        if (onSuccess != null) onSuccess(result['gift_message_id']);
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
     }
   }
 
