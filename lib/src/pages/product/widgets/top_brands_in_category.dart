@@ -48,7 +48,7 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
     return FutureBuilder(
       future: _loadTopBtands,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData)
+        if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData || brands.isEmpty)
           return Container();
         else
           return Container(
