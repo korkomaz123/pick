@@ -52,22 +52,22 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
           return Container();
         else
           return Container(
-            width: 375.w,
+            width: double.infinity,
             color: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             margin: EdgeInsets.symmetric(vertical: 10.h),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'home_top_brands'.tr() + snapshot.data['category_name'],
-                    style: mediumTextStyle.copyWith(color: greyColor, fontSize: 16.sp),
-                  ),
-                  Divider(),
-                  SizedBox(height: 4.h),
-                  Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'home_top_brands'.tr() + snapshot.data['category_name'],
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 16.sp),
+                ),
+                Divider(),
+                SizedBox(height: 4.h),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
                     children: brands
                         .map(
                           (e) => InkWell(
@@ -93,8 +93,8 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
                         )
                         .toList(),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
       },

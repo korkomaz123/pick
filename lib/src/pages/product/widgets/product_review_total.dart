@@ -24,13 +24,7 @@ class ProductReviewTotal extends StatefulWidget {
   final Function onFirstReview;
   final ProgressService progressService;
   final ProductChangeNotifier model;
-  ProductReviewTotal({
-    this.product,
-    this.onReviews,
-    this.onFirstReview,
-    this.model,
-    this.progressService
-  });
+  ProductReviewTotal({this.product, this.onReviews, this.onFirstReview, this.model, this.progressService});
 
   @override
   _ProductReviewTotalState createState() => _ProductReviewTotalState();
@@ -99,8 +93,8 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10.w),
             child: InkWell(
-              onTap: ()async {
-                if (isStock) {
+              onTap: () async {
+                if (isStock && _alarmActive.isEmpty) {
                   if (user == null || user.email == null) {
                     Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
                     return;
@@ -110,7 +104,7 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                   print("${widget.product.productId}_product_price_${Preload.language}");
                   FirebaseMessaging.instance.subscribeToTopic("${widget.product.productId}_product_price_${Preload.language}");
                   await widget.product.requestPriceAlarm('price', widget.product.productId);
-                 widget.progressService.hideProgress();
+                  widget.progressService.hideProgress();
                   FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
                   _alarmActive = '_done';
                   setState(() {});
