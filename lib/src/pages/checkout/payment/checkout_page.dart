@@ -71,7 +71,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier.defaultAddress == null ||
+      user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -148,7 +149,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             ),
                           ),
                           Column(
-                            children: List.generate(paymentMethods.length, (index) {
+                            children:
+                                List.generate(paymentMethods.length, (index) {
                               int idx = paymentMethods.length - index - 1;
                               if (paymentMethods[idx].id != payment) {
                                 return Container();
@@ -251,7 +253,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       // ignore: deprecated_member_use
       child: RaisedButton(
         color: primaryColor,
-        onPressed: _onPlaceOrder,
+        onPressed: () =>
+            deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
         child: Text(
           'checkout_place_payment_button_title'.tr(),
           style: TextStyle(color: Colors.white, fontSize: 16.0),
@@ -292,32 +295,33 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  _onPlaceOrder() async {
-    if (deliverAsGift) {
-      String messageId = await showSlidingBottomSheet(
-        context,
-        builder: (_) {
-          return SlidingSheetDialog(
-            color: Colors.white,
-            elevation: 2,
-            cornerRadius: 10.sp,
-            snapSpec: const SnapSpec(
-              snap: true,
-              snappings: [1],
-              positioning: SnapPositioning.relativeToSheetHeight,
-            ),
-            duration: Duration(milliseconds: 500),
-            builder: (context, state) {
-              return DeliverAsGiftForm(orderChangeNotifier: orderChangeNotifier);
-            },
-          );
-        },
-      );
-      if (messageId == null || messageId.isEmpty) return;
-      print("messageId ===> $messageId #");
-      orderDetails['GiftMessageId'] = messageId;
+  _onPlaceOrderAsGift() async {
+    final result = await showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 10.sp,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return DeliverAsGiftForm();
+          },
+        );
+      },
+    );
+    if (result != null) {
+      orderDetails['GiftMessageId'] = result;
+      _onPlaceOrder();
     }
-    //else {
+  }
+
+  _onPlaceOrder() async {
     orderDetails['paymentMethod'] = payment;
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
@@ -346,8 +350,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
-    // }
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -375,7 +381,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order,
+          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 

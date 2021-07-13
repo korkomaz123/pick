@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,14 +22,21 @@ class DeliverAsGiftForm extends StatefulWidget {
 }
 
 class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _senderEmailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _senderController = TextEditingController();
+  final _receiverController = TextEditingController();
   final _messageController = TextEditingController();
-  _sendGift() async {
-    if (_formKey.currentState.validate()) {
-      var _res = await widget.orderChangeNotifier.sendAsGift(_senderEmailController.text, _messageController.text);
-      Navigator.of(context).pop(_res);
-    }
+
+  OrderChangeNotifier _orderChangeNotifier;
+  ProgressService _progressService;
+  FlushBarService _flushBarService;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderChangeNotifier = context.read<OrderChangeNotifier>();
+    _progressService = ProgressService(context: context);
+    _flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -77,37 +88,64 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
               SizedBox(height: 10.h),
               MarkaaInputField(
                 width: double.infinity,
-                controller: _senderEmailController,
+                controller: _senderController,
                 radius: 4.sp,
                 fontSize: 12.sp,
                 fontColor: darkColor,
                 label: '',
                 labelColor: darkColor,
                 labelSize: 12.sp,
-                hint: 'receiver_email'.tr(),
+                hint: 'sender_hint'.tr(),
                 hintSize: 12.sp,
                 hintColor: greyDarkColor,
                 fillColor: greyLightColor,
-                keyboardType: TextInputType.emailAddress,
-                validator: (String value) {
-                  if (value.isEmpty) return 'required'.tr();
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'required_field'.tr();
+                  }
+                  return null;
                 },
               ),
-              SizedBox(height: 10.h),
+              MarkaaInputField(
+                width: double.infinity,
+                controller: _receiverController,
+                radius: 4.sp,
+                fontSize: 12.sp,
+                fontColor: darkColor,
+                label: '',
+                labelColor: darkColor,
+                labelSize: 12.sp,
+                hint: 'receiver_hint'.tr(),
+                hintSize: 12.sp,
+                hintColor: greyDarkColor,
+                fillColor: greyLightColor,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'required_field'.tr();
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20.h),
               MarkaaTextInputMulti(
                 width: double.infinity,
                 controller: _messageController,
                 borderRadius: 4.sp,
                 fontSize: 12.sp,
                 hint: 'message'.tr(),
-                validator: (String value) {
-                  if (value.isEmpty) return 'required'.tr();
-                },
                 padding: 0.w,
                 inputType: TextInputType.text,
                 borderColor: Colors.transparent,
                 fillColor: greyLightColor,
                 maxLine: 5,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'required_field'.tr();
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 30.h),
               Container(
@@ -119,7 +157,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                   titleColor: Colors.white,
                   buttonColor: primaryColor,
                   borderColor: primaryColor,
-                  onPressed: _sendGift,
+                  onPressed: _onDone,
                   radius: 30.sp,
                 ),
               ),
@@ -128,5 +166,32 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
         ),
       ),
     );
+  }
+
+  _onDone() {
+    if (_formKey.currentState.validate()) {
+      _orderChangeNotifier.sendAsGift(
+          token: user?.token,
+          sender: _senderController.text,
+          receiver: _receiverController.text,
+          message: _messageController.text,
+          onProcess: _onProcess,
+          onSuccess: _onSuccess,
+          onFailure: _onFailure);
+    }
+  }
+
+  _onProcess() {
+    _progressService.showProgress();
+  }
+
+  _onSuccess(String giftMessageId) {
+    _progressService.hideProgress();
+    Navigator.pop(context, giftMessageId);
+  }
+
+  _onFailure(String message) {
+    _progressService.hideProgress();
+    _flushBarService.showErrorMessage(message);
   }
 }
