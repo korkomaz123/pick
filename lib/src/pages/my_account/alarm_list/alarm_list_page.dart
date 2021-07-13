@@ -76,7 +76,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
         future: Api.getMethod(EndPoints.getAlarmItems, data: {"lang": lang, "email": user.email}, extra: {"refresh": true}),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null)
+            if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null || snapshot.data['items'].isEmpty)
               return NoAvailableData(
                 message: 'no_items_in_list',
               );
