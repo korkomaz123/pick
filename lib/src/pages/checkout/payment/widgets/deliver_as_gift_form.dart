@@ -15,6 +15,8 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
 class DeliverAsGiftForm extends StatefulWidget {
+  final OrderChangeNotifier orderChangeNotifier;
+  DeliverAsGiftForm({this.orderChangeNotifier});
   @override
   _DeliverAsGiftFormState createState() => _DeliverAsGiftFormState();
 }
