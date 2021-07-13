@@ -71,8 +71,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -149,8 +148,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             ),
                           ),
                           Column(
-                            children:
-                                List.generate(paymentMethods.length, (index) {
+                            children: List.generate(paymentMethods.length, (index) {
                               int idx = paymentMethods.length - index - 1;
                               if (paymentMethods[idx].id != payment) {
                                 return Container();
@@ -296,7 +294,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onPlaceOrder() async {
     if (deliverAsGift) {
-      await showSlidingBottomSheet(
+      String messageId = await showSlidingBottomSheet(
         context,
         builder: (_) {
           return SlidingSheetDialog(
@@ -310,45 +308,46 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             duration: Duration(milliseconds: 500),
             builder: (context, state) {
-              return DeliverAsGiftForm();
+              return DeliverAsGiftForm(orderChangeNotifier: orderChangeNotifier);
             },
           );
         },
       );
-    } else {
-      orderDetails['paymentMethod'] = payment;
-      if (payment == 'tap') {
-        /// if the method is tap, check credit card already authorized
-        if (cardToken == null) {
-          flushBarService.showErrorDialog('fill_card_details_error'.tr());
-          return;
-        }
-        orderDetails['tap_token'] = cardToken;
-      }
-      if (requireAddress) {
-        flushBarService.showErrorDialog('checkout_address_error'.tr());
+      if (messageId == null || messageId.isEmpty) return;
+      print("messageId ===> $messageId #");
+      orderDetails['GiftMessageId'] = messageId;
+    }
+    //else {
+    orderDetails['paymentMethod'] = payment;
+    if (payment == 'tap') {
+      /// if the method is tap, check credit card already authorized
+      if (cardToken == null) {
+        flushBarService.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
-
-      var address;
-      if (user?.token != null)
-        address = addressChangeNotifier.defaultAddress.toJson();
-      else
-        address = addressChangeNotifier.guestAddress.toJson();
-      address['postcode'] = address['post_code'];
-      address['save_in_address_book'] = '0';
-      address['region'] = address['region_id'];
-      orderDetails['orderAddress'] = jsonEncode(address);
-
-      AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
-      Adjust.trackEvent(adjustEvent);
-
-      /// submit the order, after call this api, the status will be pending till payment be processed
-      await orderChangeNotifier.submitOrder(orderDetails, lang,
-          onProcess: _onProcess,
-          onSuccess: _onOrderSubmittedSuccess,
-          onFailure: _onFailure);
+      orderDetails['tap_token'] = cardToken;
     }
+    if (requireAddress) {
+      flushBarService.showErrorDialog('checkout_address_error'.tr());
+      return;
+    }
+
+    var address;
+    if (user?.token != null)
+      address = addressChangeNotifier.defaultAddress.toJson();
+    else
+      address = addressChangeNotifier.guestAddress.toJson();
+    address['postcode'] = address['post_code'];
+    address['save_in_address_book'] = '0';
+    address['region'] = address['region_id'];
+    orderDetails['orderAddress'] = jsonEncode(address);
+
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+    Adjust.trackEvent(adjustEvent);
+
+    /// submit the order, after call this api, the status will be pending till payment be processed
+    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
+    // }
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -376,8 +375,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
-          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 

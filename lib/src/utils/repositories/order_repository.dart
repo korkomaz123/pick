@@ -37,6 +37,15 @@ class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> sendAsGift(String token, String sender, String receiver,String message) async {
+    String url = EndPoints.sendAsGift;
+    final params = {'token': token, 'sender': sender, 'receiver': receiver, 'message': message};
+    return await Api.postMethod(url, data: params);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> cancelOrderById(String orderId, String lang) async {
     String url = EndPoints.cancelOrderById;
     final params = {'orderId': orderId, 'lang': lang};
