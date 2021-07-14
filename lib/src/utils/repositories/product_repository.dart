@@ -206,8 +206,6 @@ class ProductRepository {
   ) async {
     String url = EndPoints.getSameBrandProducts;
     final params = {'productId': productId, 'lang': Preload.language};
-    print(url);
-    print(params);
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       List<ProductModel> products = [];
