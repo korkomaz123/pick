@@ -60,6 +60,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;

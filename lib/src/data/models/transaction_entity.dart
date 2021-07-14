@@ -24,7 +24,7 @@ class TransactionEntity {
         number = json['order_id'],
         amount = double.parse(json['amount']),
         date = json['created_at'],
-        type = json['order_id'] == 'Admin Debit'
+        type = json['is_cashback'] == "1" || json['order_id'] == 'Admin Debit'
             ? TransactionType.admin
             : json['order_id'] == 'Wallet-Transfer'
                 ? TransactionType.transfer
