@@ -57,6 +57,7 @@ class SliderImageEntity {
                 optionId: json['brand_id'],
                 brandThumbnail: json['brand_thumbnail'],
                 brandLabel: json['brand_label'],
+                brandImage: json['brand_thumbnail'],
               )
             : null,
         productId = json.containsKey('product_id') ? json['product_id'] : null;

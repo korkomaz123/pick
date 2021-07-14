@@ -31,7 +31,8 @@ class SummerCollectionPage extends StatefulWidget {
 class _SummerCollectionPageState extends State<SummerCollectionPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final SummerCollectionNotifier _summerCollectionNotifier = Preload.navigatorKey.currentContext.read<SummerCollectionNotifier>();
+  final SummerCollectionNotifier _summerCollectionNotifier =
+      Preload.navigatorKey.currentContext.read<SummerCollectionNotifier>();
   @override
   void initState() {
     _summerCollectionNotifier.getSummerCollection();
@@ -58,7 +59,13 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
     } else if (item.brandId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(),
-        brand: BrandEntity(brandLabel: item.brandLabel, entityId: item.brandId, optionId: item.brandId, brandThumbnail: item.brandLogo),
+        brand: BrandEntity(
+          brandLabel: item.brandLabel,
+          entityId: item.brandId,
+          optionId: item.brandId,
+          brandThumbnail: item.brandLogo,
+          brandImage: item.brandLogo,
+        ),
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: true,
@@ -102,7 +109,9 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
                   : GridView.count(
                       crossAxisCount: 2,
                       children: _summerCollectionNotifier.categories
-                          .map((e) => InkWell(onTap: () => _goToPage(e), child: CachedNetworkImage(imageUrl: e.imageUrl)))
+                          .map((e) => InkWell(
+                              onTap: () => _goToPage(e),
+                              child: CachedNetworkImage(imageUrl: e.imageUrl)))
                           .toList());
             }),
           )

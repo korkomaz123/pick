@@ -30,7 +30,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.brandList.isNotEmpty) {
       return Container(
-        height: 280.h,
+        height: 300.h,
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
@@ -125,9 +125,19 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     );
                   },
                   child: CachedNetworkImage(
-                    imageUrl: brand.brandThumbnail,
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.image, size: 20)),
+                    imageUrl: brand.brandImage,
+                    width: designWidth.w,
+                    height: 200.h,
+                    fit: BoxFit.fitHeight,
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    progressIndicatorBuilder: (_, __, ___) {
+                      return CachedNetworkImage(
+                        imageUrl: brand.brandThumbnail,
+                        width: designWidth.w,
+                        height: 200.h,
+                        fit: BoxFit.fitHeight,
+                      );
+                    },
                   ),
                 );
               },
