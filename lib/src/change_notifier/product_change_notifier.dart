@@ -27,7 +27,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
-    notifyListeners();
+    //notifyListeners();
   }
 
   void initialize() {
