@@ -98,7 +98,6 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     flushBarService = FlushBarService(context: context);
 
     _loadDetails();
-    _getRelatedItems();
     _initAnimation();
     _sendViewedProduct();
 
@@ -106,12 +105,9 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     Adjust.trackEvent(adjustEvent);
   }
 
-  _getRelatedItems() async {
-    productChangeNotifier.getRelatedProducts(product.productId);
-  }
-
-  void _loadDetails() async {
+  void _loadDetails() {
     print('PRODUCT ID >>> $productId');
+    productChangeNotifier.getProductInfoBrand(productId);
     productChangeNotifier.getProductDetails(productId);
   }
 
@@ -189,12 +185,12 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                               onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
                               onReviews: () => _onReviews(model.productDetailsMap[productId]),
                             ),
-                            ProductSameBrandProducts(product: product),
+                            ProductSameBrandProducts(product: product, model: model),
                             ProductDetailsTabs(
                               model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            TopBrandsInCategory(productId: productId),
+                            TopBrandsInCategory(productId: productId, model: model),
                             ProductRelatedItems(relatedItems: model.relatedItems),
                             SizedBox(height: 60.h),
                           ],

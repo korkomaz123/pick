@@ -36,6 +36,18 @@ class ProductChangeNotifier extends ChangeNotifier {
     isReachedMax = false;
   }
 
+  List<ProductModel> sameBrandProducts = [];
+  List<BrandEntity> brands = [];
+  dynamic category = {};
+  Future<void> getProductInfoBrand(String productId) async {
+    productRepository.getProductInfoBrand(productId).then((_items) {
+      sameBrandProducts = _items['sameBrandProducts'];
+      brands = _items['brands'];
+      category = _items['category'];
+      notifyListeners();
+    });
+  }
+
   setInitalInfo(ProductModel product) {
     productIds.add(product.productId);
     if (productDetailsMap.containsKey(product.productId)) {
@@ -49,9 +61,8 @@ class ProductChangeNotifier extends ChangeNotifier {
   Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
     selectedVariant = null;
-
-    final result = await productRepository.getProductDetails(productId, Preload.language);
-
+    relatedItems.clear();
+    final result = await productRepository.getProductInfo(productId, Preload.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
       productDetails = null;
@@ -59,18 +70,40 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
+      //Releated products
+      for (int i = 0; i < result['relateditems'].length; i++) {
+        relatedItems.add(ProductModel.fromJson(result['relateditems'][i]));
+      }
     }
     productDetailsMap[productId] = productDetails;
+
     notifyListeners();
   }
+  // Future<void> getProductDetails(String productId) async {
+  //   selectedOptions = {};
+  //   selectedVariant = null;
+
+  //   final result = await productRepository.getProductDetails(productId, Preload.language);
+
+  //   List<dynamic> _gallery = productDetails?.gallery ?? [];
+  //   if (result['code'] == 'SUCCESS') {
+  //     productDetails = null;
+  //     _gallery.addAll(result['moreAbout']['gallery']);
+  //     if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
+  //     result['moreAbout']['gallery'] = _gallery;
+  //     productDetails = ProductEntity.fromJson(result['moreAbout']);
+  //   }
+  //   productDetailsMap[productId] = productDetails;
+  //   notifyListeners();
+  // }
 
   List<ProductModel> relatedItems = [];
-  Future<void> getRelatedProducts(String productId) async {
-    productRepository.getRelatedProducts(productId).then((_items) {
-      relatedItems = _items;
-      notifyListeners();
-    });
-  }
+  // Future<void> getRelatedProducts(String productId) async {
+  //   productRepository.getRelatedProducts(productId).then((_items) {
+  //     relatedItems = _items;
+  //     notifyListeners();
+  //   });
+  // }
 
   /// category products list loading...
   Future<void> initialLoadCategoryProducts(

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
 
@@ -180,6 +181,12 @@ class ProductRepository {
     return await Api.getMethod(url, data: params);
   }
 
+  Future<dynamic> getProductInfo(String productId, String lang) async {
+    String url = EndPoints.getProductInfo;
+    final params = {'productId': productId, 'lang': lang};
+    return await Api.getMethod(url, data: params);
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
@@ -195,6 +202,26 @@ class ProductRepository {
       return products;
     } else {
       return [];
+    }
+  }
+
+  Future<dynamic> getProductInfoBrand(String productId) async {
+    String url = EndPoints.getProductInfoBrand;
+    final params = {'productId': productId, 'lang': Preload.language};
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      List<ProductModel> sameBrandProducts = [];
+
+      List<BrandEntity> brands = [];
+      for (int i = 0; i < result['samebranditems'].length; i++) {
+        sameBrandProducts.add(ProductModel.fromJson(result['samebranditems'][i]));
+      }
+      result['brands'].forEach((key, obj) {
+        brands.add(BrandEntity.fromJson(obj));
+      });
+      return {"sameBrandProducts": sameBrandProducts, "brands": brands, "category": result['categories'][0]};
+    } else {
+      return {};
     }
   }
 
