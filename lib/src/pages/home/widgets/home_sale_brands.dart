@@ -97,9 +97,17 @@ class _HomeSaleBrandsState extends State<HomeSaleBrands> {
                 ),
                 child: CachedNetworkImage(
                   imageUrl: widget
-                      .homeChangeNotifier.saleBrands[itemIndex].brandThumbnail,
+                      .homeChangeNotifier.saleBrands[itemIndex].brandImage,
                   width: 110.w,
                   height: 110.w,
+                  progressIndicatorBuilder: (_, __, ___) {
+                    return CachedNetworkImage(
+                      width: 110.w,
+                      height: 110.w,
+                      imageUrl: widget.homeChangeNotifier.saleBrands[itemIndex]
+                          .brandThumbnail,
+                    );
+                  },
                 ),
               ),
             ),

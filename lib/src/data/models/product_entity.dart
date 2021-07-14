@@ -134,8 +134,14 @@ class ProductEntity {
             : json['price'] != null
                 ? StringService.roundString(json['price'], 3)
                 : null,
-        beforePrice = json['price'] != null ? StringService.roundString(json['price'], 3) : null,
-        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
+        beforePrice = json['price'] != null
+            ? StringService.roundString(json['price'], 3)
+            : null,
+        discount = _getDiscount(
+            json['special_price'] != null
+                ? json['special_price']
+                : json['price'],
+            json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -148,13 +154,15 @@ class ProductEntity {
                 optionId: json['brand_id'],
                 brandLabel: json['brand_label'],
                 brandThumbnail: json['brand_thumbnail'],
+                brandImage: json['brand_thumbnail'],
               )
             : null,
         stockQty = json['stockQty'],
         configurable = json['configurable'],
         variants = _getVariants(json['child_products']),
         isDeal = json['sale'] == '1';
-  static List<Specification> _getSpecifications(Map<String, dynamic> _specification) {
+  static List<Specification> _getSpecifications(
+      Map<String, dynamic> _specification) {
     List<Specification> _list = [];
     if (_specification != null && _specification.length > 0) {
       _specification.forEach((key, element) {
@@ -178,7 +186,8 @@ class ProductEntity {
       : entityId = product.entityId,
         typeId = product.typeId,
         sku = product.sku ?? "",
-        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
+        inStock =
+            product.stockQty != null && product.stockQty > 0 ? true : false,
         metaKeyword = product.metaKeyword ?? "",
         description = product.description ?? '',
         fullDescription = product.description ?? '',
@@ -202,19 +211,23 @@ class ProductEntity {
         isDeal = product.isDeal;
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice = afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice = beforePriceString != null ? double.parse(beforePriceString) : 0;
+    double afterPrice =
+        afterPriceString != null ? double.parse(afterPriceString) : 0;
+    double beforePrice =
+        beforePriceString != null ? double.parse(beforePriceString) : 0;
     if (beforePrice == 0) {
       return 0;
     }
     return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
   }
 
-  Future requestPriceAlarm(String type, String productId, {Map<String, dynamic> data}) async {
+  Future requestPriceAlarm(String type, String productId,
+      {Map<String, dynamic> data}) async {
     if (data == null) data = {};
     data['type'] = type;
     data['productId'] = productId;
     data['email'] = user.email;
-    await Api.getMethod(EndPoints.requestPriceAlarm, data: data, extra: {"refresh": true});
+    await Api.getMethod(EndPoints.requestPriceAlarm,
+        data: data, extra: {"refresh": true});
   }
 }

@@ -255,10 +255,18 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              imageUrl: brand.brandThumbnail,
+              imageUrl: brand.brandImage,
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: brand.brandThumbnail,
+                  width: 120.w,
+                  height: 60.h,
+                  fit: BoxFit.fitHeight,
+                );
+              },
             ),
           ),
         );

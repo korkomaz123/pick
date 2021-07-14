@@ -89,6 +89,7 @@ class ProductModel {
                 optionId: json['brand_id'],
                 brandThumbnail: json['brand_thumbnail'],
                 brandLabel: json['brand_label'],
+                brandImage: json['brand_thumbnail'],
               )
             : null,
         stockQty = json['stockQty'],

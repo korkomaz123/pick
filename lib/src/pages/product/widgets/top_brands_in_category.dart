@@ -23,7 +23,8 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
   final ProductRepository productRepository = ProductRepository();
   List<BrandEntity> brands = [];
   Future<dynamic> _loadData() async {
-    var res = await productRepository.getTopBrandByProductCategory(widget.productId, Preload.language);
+    var res = await productRepository.getTopBrandByProductCategory(
+        widget.productId, Preload.language);
     if (res['code'] == 'SUCCESS') {
       if (res['brands'].length > 0) {
         brands.clear();
@@ -48,7 +49,9 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
     return FutureBuilder(
       future: _loadTopBtands,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData || brands.isEmpty)
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !snapshot.hasData ||
+            brands.isEmpty)
           return Container();
         else
           return Container(
@@ -61,7 +64,8 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
               children: [
                 Text(
                   'home_top_brands'.tr() + snapshot.data['category_name'],
-                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 16.sp),
+                  style: mediumTextStyle.copyWith(
+                      color: greyColor, fontSize: 16.sp),
                 ),
                 Divider(),
                 SizedBox(height: 4.h),
@@ -72,22 +76,33 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
                         .map(
                           (e) => InkWell(
                             onTap: () {
-                              ProductListArguments arguments = ProductListArguments(
+                              ProductListArguments arguments =
+                                  ProductListArguments(
                                 category: CategoryEntity(),
                                 subCategory: [],
                                 brand: e,
                                 selectedSubCategoryIndex: 0,
                                 isFromBrand: true,
                               );
-                              Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+                              Navigator.pushNamed(context, Routes.productList,
+                                  arguments: arguments);
                             },
                             child: CachedNetworkImage(
-                              imageUrl: e.brandThumbnail,
+                              imageUrl: e.brandImage,
                               placeholder: (context, url) => Container(),
-                              errorWidget: (context, url, error) => Icon(Icons.error),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                               width: 120.w,
                               height: 60.h,
                               fit: BoxFit.fitHeight,
+                              progressIndicatorBuilder: (_, __, ___) {
+                                return CachedNetworkImage(
+                                  imageUrl: e.brandThumbnail,
+                                  width: 120.w,
+                                  height: 60.h,
+                                  fit: BoxFit.fitHeight,
+                                );
+                              },
                             ),
                           ),
                         )

@@ -268,10 +268,15 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl:
-                  _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage,
               placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Icon(Icons.error),
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl:
+                      _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                );
+              },
             ),
             Text(
               _homeChangeNotifier.sortedBrandList[index].brandLabel,
