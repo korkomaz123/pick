@@ -185,7 +185,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _buildDeliverAsGift() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 20.h),
+      padding: EdgeInsets.symmetric(vertical: 40.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

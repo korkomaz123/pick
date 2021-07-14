@@ -30,14 +30,13 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.brandList.isNotEmpty) {
       return Container(
-        height: 380.h,
+        height: 280.h,
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitle(),
-            SizedBox(height: 20.h),
             _buildStoresSlider(),
           ],
         ),
@@ -97,7 +96,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         children: [
           Container(
             width: designWidth.w,
-            height: 380.h,
+            height: 200.h,
             child: Swiper(
               itemCount: length,
               autoplay: true,
@@ -125,20 +124,10 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                       arguments: arguments,
                     );
                   },
-                  child: Container(
-                    width: designWidth.w,
-                    height: 380.h,
-                    padding: EdgeInsets.only(
-                      left: 30.w,
-                      right: 30.w,
-                      bottom: 50.h,
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: brand.brandThumbnail,
-                      fit: BoxFit.fill,
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.image, size: 20)),
-                    ),
+                  child: CachedNetworkImage(
+                    imageUrl: brand.brandThumbnail,
+                    errorWidget: (context, url, error) =>
+                        Center(child: Icon(Icons.image, size: 20)),
                   ),
                 );
               },
