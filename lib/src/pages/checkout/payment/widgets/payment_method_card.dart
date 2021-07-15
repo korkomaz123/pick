@@ -245,7 +245,7 @@ class PaymentMethodCard extends StatelessWidget {
             TextButton(
               onPressed: onChange,
               child: Text(
-                'change_address_button_title'.tr(),
+                'change_button_title'.tr(),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: 14.sp,
