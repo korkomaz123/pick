@@ -115,71 +115,66 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      left: false,
-      right: false,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.white,
-        appBar: MarkaaCheckoutAppBar(),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PaymentAddress(),
-                  _buildDeliverAsGift(),
-                  if (paymentMethods.isEmpty) ...[
-                    Center(
-                      child: PulseLoadingSpinner(),
-                    ),
-                  ] else ...[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'order_payment_method'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      appBar: MarkaaCheckoutAppBar(),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Consumer<MarkaaAppChangeNotifier>(
+          builder: (_, __, ___) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PaymentAddress(),
+                _buildDeliverAsGift(),
+                if (paymentMethods.isEmpty) ...[
+                  Center(
+                    child: PulseLoadingSpinner(),
+                  ),
+                ] else ...[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'order_payment_method'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
                           ),
-                          Column(
-                            children:
-                                List.generate(paymentMethods.length, (index) {
-                              int idx = paymentMethods.length - index - 1;
-                              if (paymentMethods[idx].id != payment) {
-                                return Container();
-                              }
-                              return PaymentMethodCard(
-                                method: paymentMethods[idx],
-                                value: payment,
-                                onChange: _onChangeMethod,
-                                isActive: false,
-                              );
-                            }),
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
-                      ),
+                        ),
+                        Column(
+                          children:
+                              List.generate(paymentMethods.length, (index) {
+                            int idx = paymentMethods.length - index - 1;
+                            if (paymentMethods[idx].id != payment) {
+                              return Container();
+                            }
+                            return PaymentMethodCard(
+                              method: paymentMethods[idx],
+                              value: payment,
+                              onChange: _onChangeMethod,
+                              isActive: false,
+                            );
+                          }),
+                        ),
+                        SizedBox(height: 20.h),
+                      ],
                     ),
-                  ],
-                  PaymentSummary(details: details),
-                  SizedBox(height: 20.h),
-                  _buildNote(),
-                  SizedBox(height: 100.h),
+                  ),
                 ],
-              );
-            },
-          ),
+                PaymentSummary(details: details),
+                SizedBox(height: 20.h),
+                _buildNote(),
+                SizedBox(height: 100.h),
+              ],
+            );
+          },
         ),
-        bottomSheet: _buildPlacePaymentButton(),
       ),
+      bottomSheet: _buildPlacePaymentButton(),
     );
   }
 
@@ -251,6 +246,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Container(
       width: designWidth.w,
       height: 50.h,
+      margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'checkout_place_payment_button_title'.tr(),
