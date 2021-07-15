@@ -10,6 +10,7 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -70,7 +71,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
-  bool get requireAddress => user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
+  bool get requireAddress =>
+      user?.token != null && addressChangeNotifier.defaultAddress == null ||
+      user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -112,65 +115,71 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: MarkaaCheckoutAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Consumer<MarkaaAppChangeNotifier>(
-          builder: (_, __, ___) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PaymentAddress(),
-                _buildDeliverAsGift(),
-                if (paymentMethods.isEmpty) ...[
-                  Center(
-                    child: PulseLoadingSpinner(),
-                  ),
-                ] else ...[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'order_payment_method'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Column(
-                          children: List.generate(paymentMethods.length, (index) {
-                            int idx = paymentMethods.length - index - 1;
-                            if (paymentMethods[idx].id != payment) {
-                              return Container();
-                            }
-                            return PaymentMethodCard(
-                              method: paymentMethods[idx],
-                              value: payment,
-                              onChange: _onChangeMethod,
-                              isActive: false,
-                            );
-                          }),
-                        ),
-                        SizedBox(height: 20.h),
-                      ],
+    return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: MarkaaCheckoutAppBar(),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PaymentAddress(),
+                  _buildDeliverAsGift(),
+                  if (paymentMethods.isEmpty) ...[
+                    Center(
+                      child: PulseLoadingSpinner(),
                     ),
-                  ),
+                  ] else ...[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'order_payment_method'.tr(),
+                            style: mediumTextStyle.copyWith(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Column(
+                            children:
+                                List.generate(paymentMethods.length, (index) {
+                              int idx = paymentMethods.length - index - 1;
+                              if (paymentMethods[idx].id != payment) {
+                                return Container();
+                              }
+                              return PaymentMethodCard(
+                                method: paymentMethods[idx],
+                                value: payment,
+                                onChange: _onChangeMethod,
+                                isActive: false,
+                              );
+                            }),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
+                      ),
+                    ),
+                  ],
+                  PaymentSummary(details: details),
+                  SizedBox(height: 20.h),
+                  _buildNote(),
+                  SizedBox(height: 100.h),
                 ],
-                PaymentSummary(details: details),
-                SizedBox(height: 20.h),
-                _buildNote(),
-                SizedBox(height: 100.h),
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
+        bottomSheet: _buildPlacePaymentButton(),
       ),
-      bottomSheet: _buildPlacePaymentButton(),
     );
   }
 
@@ -240,19 +249,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Widget _buildPlacePaymentButton() {
     return Container(
-      height: 70.h,
       width: designWidth.w,
-      padding: EdgeInsets.only(bottom: 20.h),
-      color: primaryColor,
-      // ignore: deprecated_member_use
-      child: RaisedButton(
-        elevation: 0,
-        color: primaryColor,
-        onPressed: () => deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
-        child: Text(
-          'checkout_place_payment_button_title'.tr(),
-          style: TextStyle(color: Colors.white, fontSize: 18.sp),
-        ),
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: MarkaaTextButton(
+        title: 'checkout_place_payment_button_title'.tr(),
+        titleColor: Colors.white,
+        titleSize: 18.sp,
+        buttonColor: primaryColor,
+        borderColor: primaryColor,
+        onPressed: () =>
+            deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
+        radius: 6.sp,
       ),
     );
   }
@@ -344,7 +352,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -372,7 +383,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order,
+          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 
