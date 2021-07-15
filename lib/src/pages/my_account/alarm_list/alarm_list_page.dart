@@ -29,6 +29,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
   ProgressService progressService;
   @override
   void initState() {
+    _getAlarmITems = Api.getMethod(EndPoints.getAlarmItems, data: {"lang": lang, "email": user.email}, extra: {"refresh": true});
     progressService = ProgressService(context: context);
     super.initState();
   }
@@ -70,19 +71,22 @@ class _AlarmListPageState extends State<AlarmListPage> {
     );
   }
 
+  List<dynamic> _items = [];
+  Future _getAlarmITems;
   Widget _buildAboutUsView() {
     return Expanded(
       child: FutureBuilder(
-        future: Api.getMethod(EndPoints.getAlarmItems, data: {"lang": lang, "email": user.email}, extra: {"refresh": true}),
+        future: _getAlarmITems,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null || snapshot.data['items'].isEmpty)
               return NoAvailableData(
                 message: 'no_items_in_list',
               );
+            _items = snapshot.data['items'];
             return ListView.separated(
               padding: EdgeInsets.all(10.w),
-              itemCount: snapshot.data['items'].length,
+              itemCount: _items.length,
               separatorBuilder: (context, i) => Divider(),
               itemBuilder: (context, i) => Container(
                 height: 80.h,
@@ -90,7 +94,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
                 child: Row(
                   children: [
                     CachedNetworkImage(
-                      imageUrl: snapshot.data['items'][i]['productdetail']['image_url'],
+                      imageUrl: _items[i]['productdetail']['image_url'],
                       width: 90.w,
                       height: 80.h,
                       fit: BoxFit.fitHeight,
@@ -100,17 +104,17 @@ class _AlarmListPageState extends State<AlarmListPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            snapshot.data['items'][i]['productdetail']['brand_label'],
+                            _items[i]['productdetail']['brand_label'],
                             style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            snapshot.data['items'][i]['productdetail']['name'],
+                            _items[i]['productdetail']['name'],
                             overflow: TextOverflow.ellipsis,
                           ),
                           Spacer(),
-                          if (snapshot.data['items'][i]['status'] != '1')
+                          if (_items[i]['status'] != '1')
                             Text(
-                              snapshot.data['items'][i]['type'] == 'stock' ? "stock_notification".tr() : "price_notification".tr(),
+                              _items[i]['type'] == 'stock' ? "stock_notification".tr() : "price_notification".tr(),
                               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10.sp),
                             ),
                         ],
@@ -124,27 +128,22 @@ class _AlarmListPageState extends State<AlarmListPage> {
                             child: SvgPicture.asset("lib/public/icons/trash-icon.svg", color: Colors.black),
                             onTap: () async {
                               progressService.showProgress();
-                              ProductEntity _productEntity = ProductEntity.fromJson(snapshot.data['items'][i]['productdetail']);
-                              if (snapshot.data['items'][i]['type'] == 'stock') {
-                                FirebaseMessaging.instance
-                                    .unsubscribeFromTopic("${snapshot.data['items'][i]['productdetail']['product_id']}_product_instock_en");
-                                FirebaseMessaging.instance
-                                    .unsubscribeFromTopic("${snapshot.data['items'][i]['productdetail']['product_id']}_product_instock_ar");
-                                await _productEntity
-                                    .requestPriceAlarm('remove', _productEntity.productId, data: {"stockItem_Id": snapshot.data['items'][i]['id']});
-                              } else if (snapshot.data['items'][i]['type'] == 'price') {
-                                FirebaseMessaging.instance
-                                    .unsubscribeFromTopic("${snapshot.data['items'][i]['productdetail']['product_id']}_product_price_en");
-                                FirebaseMessaging.instance
-                                    .unsubscribeFromTopic("${snapshot.data['items'][i]['productdetail']['product_id']}_product_price_ar");
-                                await _productEntity
-                                    .requestPriceAlarm('remove', _productEntity.productId, data: {"priceItem_Id": snapshot.data['items'][i]['id']});
+                              ProductEntity _productEntity = ProductEntity.fromJson(_items[i]['productdetail']);
+                              if (_items[i]['type'] == 'stock') {
+                                FirebaseMessaging.instance.unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_instock_en");
+                                FirebaseMessaging.instance.unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_instock_ar");
+                                await _productEntity.requestPriceAlarm('remove', _productEntity.productId, data: {"stockItem_Id": _items[i]['id']});
+                              } else if (_items[i]['type'] == 'price') {
+                                FirebaseMessaging.instance.unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_price_en");
+                                FirebaseMessaging.instance.unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_price_ar");
+                                await _productEntity.requestPriceAlarm('remove', _productEntity.productId, data: {"priceItem_Id": _items[i]['id']});
                               }
                               progressService.hideProgress();
+                              _items.removeAt(i);
                               setState(() {});
                             }),
                         Spacer(),
-                        Text(StringService.roundString(snapshot.data['items'][i]['productdetail']['price'], 3) + " " + "currency".tr())
+                        Text(StringService.roundString(_items[i]['productdetail']['price'], 3) + " " + "currency".tr())
                       ],
                     )
                   ],
