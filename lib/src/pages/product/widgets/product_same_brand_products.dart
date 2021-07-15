@@ -98,7 +98,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
 
   @override
   Widget build(BuildContext context) {
-    return model.sameBrandProducts.isNotEmpty
+    return model.sameBrandProducts != null && model.sameBrandProducts.isNotEmpty
         ? Container(
             width: 375.w,
             color: Colors.white,
