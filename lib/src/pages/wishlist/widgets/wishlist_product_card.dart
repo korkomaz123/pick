@@ -58,10 +58,10 @@ class WishlistProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 4.h),
                     Text(
                       product.shortDescription,
                       maxLines: 2,
@@ -80,14 +80,17 @@ class WishlistProductCard extends StatelessWidget {
                     ),
                     SizedBox(height: 10.h),
                     if (product.stockQty != null && product.stockQty > 0) ...[
-                      MarkaaTextButton(
-                        title: 'wishlist_add_cart_button_title'.tr(),
-                        titleSize: 15.sp,
-                        titleColor: Colors.white,
-                        buttonColor: primaryColor,
-                        borderColor: Colors.transparent,
-                        onPressed: onAddToCart,
-                        radius: 10,
+                      Container(
+                        width: 130.w,
+                        child: MarkaaTextButton(
+                          title: 'wishlist_add_cart_button_title'.tr(),
+                          titleSize: 15.sp,
+                          titleColor: Colors.white,
+                          buttonColor: primaryColor,
+                          borderColor: Colors.transparent,
+                          onPressed: onAddToCart,
+                          radius: 6.sp,
+                        ),
                       )
                     ],
                   ],

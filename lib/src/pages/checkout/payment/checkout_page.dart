@@ -181,7 +181,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _buildDeliverAsGift() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 40.h),
+      padding: EdgeInsets.symmetric(vertical: 30.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -213,9 +213,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
             scale: 0.8,
             child: CupertinoSwitch(
               value: deliverAsGift,
-              onChanged: (value) {
+              onChanged: (value) async {
                 deliverAsGift = value;
                 markaaAppChangeNotifier.rebuild();
+                if (deliverAsGift) await _onSendAsGift();
               },
               activeColor: primaryColor,
             ),
@@ -246,7 +247,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Container(
       width: designWidth.w,
       height: 50.h,
-      margin: EdgeInsets.only(bottom: 10.h),
+      margin: EdgeInsets.only(bottom: 20.h),
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'checkout_place_payment_button_title'.tr(),
@@ -254,8 +255,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         titleSize: 18.sp,
         buttonColor: primaryColor,
         borderColor: primaryColor,
-        onPressed: () =>
-            deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
+        onPressed: () => _onPlaceOrder(),
         radius: 6.sp,
       ),
     );
@@ -293,7 +293,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  _onPlaceOrderAsGift() async {
+  Future _onSendAsGift() async {
     final result = await showSlidingBottomSheet(
       context,
       builder: (_) {
@@ -315,7 +315,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
     if (result != null) {
       orderDetails['GiftMessageId'] = result;
-      _onPlaceOrder();
+    } else {
+      deliverAsGift = false;
+      markaaAppChangeNotifier.rebuild();
     }
   }
 
