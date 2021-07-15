@@ -70,9 +70,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
-  bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier.guestAddress == null;
+  bool get requireAddress => user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -145,8 +143,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         ),
                         Column(
-                          children:
-                              List.generate(paymentMethods.length, (index) {
+                          children: List.generate(paymentMethods.length, (index) {
                             int idx = paymentMethods.length - index - 1;
                             if (paymentMethods[idx].id != payment) {
                               return Container();
@@ -242,14 +239,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _buildPlacePaymentButton() {
-    return SizedBox(
-      height: 60.h,
+    return Container(
+      height: 70.h,
       width: designWidth.w,
+      padding: EdgeInsets.only(bottom: 20.h),
+      color: primaryColor,
       // ignore: deprecated_member_use
       child: RaisedButton(
+        elevation: 0,
         color: primaryColor,
-        onPressed: () =>
-            deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
+        onPressed: () => deliverAsGift ? _onPlaceOrderAsGift() : _onPlaceOrder(),
         child: Text(
           'checkout_place_payment_button_title'.tr(),
           style: TextStyle(color: Colors.white, fontSize: 18.sp),
@@ -345,10 +344,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang,
-        onProcess: _onProcess,
-        onSuccess: _onOrderSubmittedSuccess,
-        onFailure: _onFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -376,8 +372,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
-          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 
