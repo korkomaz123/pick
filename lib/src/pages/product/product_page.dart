@@ -285,6 +285,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
     );
   }
 
+  bool _notified = false;
   Widget _buildToolbar(ProductChangeNotifier model) {
     return Consumer<MarkaaAppChangeNotifier>(
       builder: (_, appModel, __) {
@@ -346,30 +347,34 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
             ),
           );
         } else {
-          if (model.productDetailsMap[productId].specification != null && model.productDetailsMap[productId].specification.isNotEmpty)
-            return MarkaaTextButton(
-              title: 'notify_me'.tr(),
-              titleSize: 23.sp,
-              titleColor: Colors.white,
-              buttonColor: primaryColor,
-              borderColor: primaryColor,
-              image: 'price_alarm',
-              radius: 1,
-              onPressed: () async {
-                if (user == null || user.email == null) {
-                  Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
-                  return;
-                }
-                progressService.showProgress();
-                FirebaseMessaging.instance.subscribeToTopic("${productId}_product_instock_${Preload.language}");
-                await model.productDetailsMap[productId].requestPriceAlarm('stock', productId);
-                progressService.hideProgress();
-                FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
-              },
-              isBold: true,
-            );
-          else
-            return Container();
+          // if (model.productDetailsMap[productId].specification != null && model.productDetailsMap[productId].specification.isNotEmpty)
+          return MarkaaTextButton(
+            title: 'notify_me'.tr(),
+            titleSize: 23.sp,
+            titleColor: Colors.white,
+            buttonColor: _notified ? greyColor : primaryColor,
+            borderColor: _notified ? greyColor : primaryColor,
+            image: 'price_alarm',
+            radius: 1,
+            onPressed: () async {
+              if (_notified) return;
+              if (user == null || user.email == null) {
+                Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
+                return;
+              }
+              progressService.showProgress();
+              FirebaseMessaging.instance.subscribeToTopic("${productId}_product_instock_${Preload.language}");
+              await model.productDetailsMap[productId].requestPriceAlarm('stock', productId);
+              progressService.hideProgress();
+              FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+              setState(() {
+                _notified = true;
+              });
+            },
+            isBold: true,
+          );
+          // else
+          //   return Container();
         }
       },
     );
