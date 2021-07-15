@@ -213,12 +213,14 @@ class ProductRepository {
       List<ProductModel> sameBrandProducts = [];
 
       List<BrandEntity> brands = [];
-      for (int i = 0; i < result['samebranditems'].length; i++) {
-        sameBrandProducts.add(ProductModel.fromJson(result['samebranditems'][i]));
-      }
-      result['brands'].forEach((key, obj) {
-        brands.add(BrandEntity.fromJson(obj));
-      });
+      if (result['samebranditems'] != null)
+        for (int i = 0; i < result['samebranditems'].length; i++) {
+          sameBrandProducts.add(ProductModel.fromJson(result['samebranditems'][i]));
+        }
+      if (result['brands'] != null && result['brands'].isNotEmpty)
+        result['brands'].forEach((key, obj) {
+          brands.add(BrandEntity.fromJson(obj));
+        });
       return {"sameBrandProducts": sameBrandProducts, "brands": brands, "category": result['categories'][0]};
     } else {
       return {};

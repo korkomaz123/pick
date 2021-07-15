@@ -15,7 +15,7 @@ class TopBrandsInCategory extends StatelessWidget {
   TopBrandsInCategory({this.productId, this.model});
   @override
   Widget build(BuildContext context) {
-    if (model.brands.isEmpty)
+    if (model.brands == null || model.brands.isEmpty)
       return Container();
     else
       return Container(
