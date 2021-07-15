@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
@@ -10,21 +11,13 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
-class HomeSaleBrands extends StatefulWidget {
+class HomeSaleBrands extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
   HomeSaleBrands({this.homeChangeNotifier});
-
-  @override
-  _HomeSaleBrandsState createState() => _HomeSaleBrandsState();
-}
-
-class _HomeSaleBrandsState extends State<HomeSaleBrands> {
-  int activeIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.saleBrands.isNotEmpty) {
+    if (homeChangeNotifier.saleBrands.isNotEmpty) {
       return Container(
         width: designWidth.w,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -49,7 +42,7 @@ class _HomeSaleBrandsState extends State<HomeSaleBrands> {
                 padding: EdgeInsets.symmetric(vertical: 10.h),
                 child: Row(
                   children: List.generate(
-                    widget.homeChangeNotifier.saleBrands.length,
+                    homeChangeNotifier.saleBrands.length,
                     (itemIndex) => _buildSaleBrandCard(itemIndex),
                   ),
                 ),
@@ -67,13 +60,13 @@ class _HomeSaleBrandsState extends State<HomeSaleBrands> {
       onTap: () {
         final arguments = ProductListArguments(
           category: CategoryEntity(),
-          brand: widget.homeChangeNotifier.saleBrands[itemIndex],
+          brand: homeChangeNotifier.saleBrands[itemIndex],
           subCategory: [],
           selectedSubCategoryIndex: 0,
           isFromBrand: true,
         );
         Navigator.pushNamed(
-          context,
+          Preload.navigatorKey.currentContext,
           Routes.productList,
           arguments: arguments,
         );
@@ -96,16 +89,14 @@ class _HomeSaleBrandsState extends State<HomeSaleBrands> {
                   borderRadius: BorderRadius.circular(10.sp),
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: widget
-                      .homeChangeNotifier.saleBrands[itemIndex].brandImage,
+                  imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandImage,
                   width: 110.w,
                   height: 110.w,
                   progressIndicatorBuilder: (_, __, ___) {
                     return CachedNetworkImage(
                       width: 110.w,
                       height: 110.w,
-                      imageUrl: widget.homeChangeNotifier.saleBrands[itemIndex]
-                          .brandThumbnail,
+                      imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandThumbnail,
                     );
                   },
                 ),
@@ -124,7 +115,7 @@ class _HomeSaleBrandsState extends State<HomeSaleBrands> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '${widget.homeChangeNotifier.saleBrands[itemIndex].percentage}%',
+                      '${homeChangeNotifier.saleBrands[itemIndex].percentage}%',
                       style: mediumTextStyle.copyWith(
                         fontSize: 16.sp,
                         color: Colors.white,
