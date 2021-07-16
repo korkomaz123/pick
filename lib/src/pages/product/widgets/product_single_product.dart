@@ -272,13 +272,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       imageUrl: details.gallery[index],
                       width: designWidth.w,
                       height: 420.h,
-                      progressIndicatorBuilder: (_, __, ___) {
-                        return CachedNetworkImage(
-                          imageUrl: details.imageUrl,
-                          width: designWidth.w,
-                          height: 420.h,
-                        );
-                      },
+                      progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                        child: CircularProgressIndicator(value: downloadProgress.progress),
+                      ),
                     ),
                   );
                 },
@@ -361,13 +357,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       imageUrl: widget.model.selectedVariant.gallery[index],
                       width: designWidth.w,
                       height: 420.h,
-                      progressIndicatorBuilder: (_, __, ___) {
-                        return CachedNetworkImage(
-                          imageUrl: details.imageUrl,
-                          width: designWidth.w,
-                          height: 420.h,
-                        );
-                      },
+                      progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                        child: CircularProgressIndicator(value: downloadProgress.progress),
+                      ),
                     ),
                   );
                 },
