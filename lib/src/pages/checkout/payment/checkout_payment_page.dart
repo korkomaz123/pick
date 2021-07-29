@@ -4,6 +4,7 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -48,6 +49,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -58,6 +61,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     url = widget.params['url'];
     order = widget.params['order'];
     reorder = widget.params['reorder'];
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+
+    super.dispose();
   }
 
   void _onBack() async {

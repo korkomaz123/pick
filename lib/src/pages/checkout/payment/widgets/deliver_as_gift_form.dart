@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/utils/services/flushbar_service.dart';
-import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +12,9 @@ import 'package:markaa/src/theme/theme.dart';
 
 class DeliverAsGiftForm extends StatefulWidget {
   final OrderChangeNotifier orderChangeNotifier;
+
   DeliverAsGiftForm({this.orderChangeNotifier});
+
   @override
   _DeliverAsGiftFormState createState() => _DeliverAsGiftFormState();
 }
@@ -27,16 +25,9 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
   final _receiverController = TextEditingController();
   final _messageController = TextEditingController();
 
-  OrderChangeNotifier _orderChangeNotifier;
-  ProgressService _progressService;
-  FlushBarService _flushBarService;
-
   @override
   void initState() {
     super.initState();
-    _orderChangeNotifier = context.read<OrderChangeNotifier>();
-    _progressService = ProgressService(context: context);
-    _flushBarService = FlushBarService(context: context);
   }
 
   @override
@@ -170,28 +161,12 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
 
   _onDone() {
     if (_formKey.currentState.validate()) {
-      _orderChangeNotifier.sendAsGift(
-          token: user?.token,
-          sender: _senderController.text,
-          receiver: _receiverController.text,
-          message: _messageController.text,
-          onProcess: _onProcess,
-          onSuccess: _onSuccess,
-          onFailure: _onFailure);
+      Navigator.pop(context, {
+        'deliver_as_gift': '1',
+        'sender': _senderController.text,
+        'receiver': _receiverController.text,
+        'message': _messageController.text,
+      });
     }
-  }
-
-  _onProcess() {
-    _progressService.showProgress();
-  }
-
-  _onSuccess(String giftMessageId) {
-    _progressService.hideProgress();
-    Navigator.pop(context, giftMessageId);
-  }
-
-  _onFailure(String message) {
-    _progressService.hideProgress();
-    _flushBarService.showErrorMessage(message);
   }
 }

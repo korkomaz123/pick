@@ -161,10 +161,7 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: 40.h,
-                      bottom: 100.h,
-                    ),
+                    padding: EdgeInsets.only(top: 40.h, bottom: 100.h),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       hLogoIcon,
@@ -208,9 +205,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildEmail() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: TextFormField(
         controller: emailController,
         style: mediumTextStyle.copyWith(
@@ -262,10 +257,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildPassword() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        vertical: 10.h,
-        horizontal: 20.w,
-      ),
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
       child: TextFormField(
         controller: passwordController,
         style: mediumTextStyle.copyWith(
