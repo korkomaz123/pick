@@ -7,6 +7,7 @@ import 'package:markaa/src/routes/routes.dart';
 
 class DynamicLinkService {
   final ProductRepository productRepository = ProductRepository();
+
   Future<Uri> productSharableLink(ProductModel product) async {
     final productId = product.productId;
     final imageUrl = product.imageUrl;
@@ -66,7 +67,8 @@ class DynamicLinkService {
 
   Future<void> initialDynamicLink() async {
     try {
-      PendingDynamicLinkData dynamicLink = await FirebaseDynamicLinks.instance.getInitialLink();
+      PendingDynamicLinkData dynamicLink =
+          await FirebaseDynamicLinks.instance.getInitialLink();
       final Uri deepLink = dynamicLink?.link;
       if (deepLink != null) {
         if (deepLink.queryParameters.containsKey('id')) {
