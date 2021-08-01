@@ -133,7 +133,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PaymentAddress(),
-                _buildDeliverAsGift(),
+                // _buildDeliverAsGift(),
                 if (paymentMethods.isEmpty) ...[
                   Center(
                     child: PulseLoadingSpinner(),

@@ -84,8 +84,13 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: 340.w,
-                          height: 340.w * (897 / 1096),
+                          width: widget.homeChangeNotifier.ads.length == 1
+                              ? 375.w
+                              : 340.w,
+                          height: (widget.homeChangeNotifier.ads.length == 1
+                                  ? 375.w
+                                  : 340.w) *
+                              (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>

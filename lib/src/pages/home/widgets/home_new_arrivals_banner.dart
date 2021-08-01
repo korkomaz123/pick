@@ -85,8 +85,8 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: 340.w,
-                          height: 340.w * (897 / 1096),
+                          width: widget.homeChangeNotifier.newArrivalsBanners.length == 1 ? 375.w : 340.w,
+                          height: (widget.homeChangeNotifier.newArrivalsBanners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
