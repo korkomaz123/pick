@@ -367,11 +367,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Widget _buildDiscount() {
     double discount = .0;
     if (widget.order.discountType == 'percentage') {
-      discount = -double.parse(widget.order.subtotalPrice) *
+      discount = double.parse(widget.order.subtotalPrice) *
           widget.order.discountAmount /
           100;
     } else {
-      discount = -widget.order.discountAmount;
+      discount = widget.order.discountAmount;
     }
     return Container(
       width: double.infinity,

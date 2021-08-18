@@ -15,6 +15,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -55,8 +56,10 @@ class ProductCustomVVCard extends StatefulWidget {
 
 class _ProductCustomVVCardState extends State<ProductCustomVVCard>
     with TickerProviderStateMixin {
-  bool isWishlist;
   int index;
+  bool isWishlist;
+  ProductModel _product;
+  ProductRepository _productRepository = ProductRepository();
 
   FlushBarService flushBarService;
   ProgressService progressService;
@@ -68,13 +71,13 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
 
-  bool get outOfStock =>
-      !(widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock => !(_product.stockQty != null && _product.stockQty > 0);
 
   @override
   void initState() {
-    super.initState();
     isWishlist = false;
+    _product = widget.product;
+    super.initState();
 
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
@@ -126,7 +129,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
         onTap: () => Navigator.pushNamed(
           context,
           Routes.product,
-          arguments: widget.product,
+          arguments: _product,
         ),
         child: Container(
           width: widget.cardWidth,
@@ -134,7 +137,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
           child: Stack(
             children: [
               _buildProductCard(),
-              if (widget.product.discount > 0) ...[
+              if (_product.discount > 0) ...[
                 if (lang == 'en') ...[
                   Positioned(
                     top: 0,
@@ -182,7 +185,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
         child: Column(
           children: [
             CachedNetworkImage(
-              imageUrl: widget.product.imageUrl,
+              imageUrl: _product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
               fit: BoxFit.fitHeight,
@@ -200,7 +203,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                         ProductListArguments arguments = ProductListArguments(
                           category: CategoryEntity(),
                           subCategory: [],
-                          brand: widget.product.brandEntity,
+                          brand: _product.brandEntity,
                           selectedSubCategoryIndex: 0,
                           isFromBrand: true,
                         );
@@ -222,7 +225,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                   if (widget.isLine || widget.isMinor) ...[
                     Expanded(
                       child: Text(
-                        widget.product.name,
+                        _product.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: mediumTextStyle.copyWith(
@@ -234,7 +237,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                     )
                   ] else ...[
                     Text(
-                      widget.product.name,
+                      _product.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -250,8 +253,8 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                     child: Row(
                       children: [
                         Text(
-                          widget.product.price != null
-                              ? (widget.product.price + ' ' + 'currency'.tr())
+                          _product.price != null
+                              ? (_product.price + ' ' + 'currency'.tr())
                               : '',
                           style: mediumTextStyle.copyWith(
                             fontSize: widget.isMinor ? 12.sp : 14.sp,
@@ -259,10 +262,10 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        if (widget.product.discount > 0) ...[
+                        if (_product.discount > 0) ...[
                           SizedBox(width: widget.isMinor ? 4.w : 10.w),
                           Text(
-                            widget.product.beforePrice + ' ' + 'currency'.tr(),
+                            _product.beforePrice + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
                               decorationStyle: TextDecorationStyle.solid,
                               decoration: TextDecoration.lineThrough,
@@ -324,7 +327,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
-        '${widget.product.discount}% ${'off'.tr()}',
+        '${_product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
@@ -336,7 +339,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
 
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
-      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
+      isWishlist = model.wishlistItemsMap.containsKey(_product.productId);
       if (widget.isWishlist) {
         return Align(
           alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
@@ -386,8 +389,8 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
   }
 
   void _onAddProductToCart() async {
-    if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
+    if (_product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: _product);
     } else {
       _addToCartController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -396,7 +399,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
+        await myCartChangeNotifier.addProductToCart(_product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
@@ -427,7 +430,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
           ),
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: widget.product);
+            return MarkaaCartAddedSuccessDialog(product: _product);
           },
         );
       },
@@ -437,14 +440,16 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
     Adjust.trackEvent(adjustEvent);
   }
 
-  _onAddFailure(String message) {
+  _onAddFailure(String message) async {
     progressService.hideProgress();
     flushBarService.showErrorDialog(message, "no_qty.svg");
+    _product = await _productRepository.getProduct(_product.productId);
+    setState(() {});
   }
 
   void _onWishlist() async {
-    if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
+    if (_product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: _product);
     } else {
       _addToWishlistController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -452,11 +457,9 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user.token, _product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user.token, _product, 1, {});
       }
     }
   }

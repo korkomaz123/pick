@@ -13,6 +13,7 @@ import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 
 class MyCartChangeNotifier extends ChangeNotifier {
   final myCartRepository = MyCartRepository();
@@ -93,7 +94,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartTotalPrice += item.rowPrice;
           cartTotalCount += item.itemCount;
           cartDiscountedTotalPrice +=
-              double.parse(item.product.price) >= condition['value']
+              StringService.roundDouble(item.product.price, 3) >=
+                      condition['value']
                   ? item.rowPrice * (100 - discount) / 100
                   : item.rowPrice;
         }
@@ -155,7 +157,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final item = cartItemsMap[key];
     cartTotalPrice -= cartItemsMap[key].rowPrice;
     cartDiscountedTotalPrice -=
-        double.parse(item.product.price) >= condition['value']
+        StringService.roundDouble(item.product.price, 3) >= condition['value']
             ? item.rowPrice * (100 - discount) / 100
             : item.rowPrice;
     cartItemCount -= 1;
@@ -169,7 +171,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['errorMessage']);
         cartTotalPrice += item.rowPrice;
         cartDiscountedTotalPrice +=
-            double.parse(item.product.price) >= condition['value']
+            StringService.roundDouble(item.product.price, 3) >=
+                    condition['value']
                 ? item.rowPrice * (100 - discount) / 100
                 : item.rowPrice;
         cartItemCount += 1;
@@ -186,7 +189,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       onFailure('Network connection is bad');
       cartTotalPrice += item.rowPrice;
       cartDiscountedTotalPrice +=
-          double.parse(item.product.price) >= condition['value']
+          StringService.roundDouble(item.product.price, 3) >= condition['value']
               ? item.rowPrice * (100 - discount) / 100
               : item.rowPrice;
       cartItemCount += 1;
@@ -228,7 +231,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
         if (cartItemsMap.containsKey(newItem.itemId)) {
           cartTotalPrice -= oldItem.rowPrice;
           cartDiscountedTotalPrice -=
-              double.parse(oldItem.product.price) >= condition['value']
+              StringService.roundDouble(oldItem.product.price, 3) >=
+                      condition['value']
                   ? oldItem.rowPrice * (100 - discount) / 100
                   : oldItem.rowPrice;
         } else {
@@ -237,7 +241,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount += qty;
         cartTotalPrice += newItem.rowPrice;
         cartDiscountedTotalPrice +=
-            double.parse(newItem.product.price) >= condition['value']
+            StringService.roundDouble(newItem.product.price, 3) >=
+                    condition['value']
                 ? newItem.rowPrice * (100 - discount) / 100
                 : newItem.rowPrice;
         cartItemsMap[newItem.itemId] = newItem;
@@ -266,15 +271,17 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'qty': qty
     };
     int updatedQty = qty - item.itemCount;
-    double updatedPrice = double.parse(item.product.price) * updatedQty;
+    double updatedPrice =
+        StringService.roundDouble(item.product.price, 3) * updatedQty;
     cartTotalCount += updatedQty;
     cartTotalPrice += updatedPrice;
     cartDiscountedTotalPrice +=
-        double.parse(item.product.price) >= condition['value']
+        StringService.roundDouble(item.product.price, 3) >= condition['value']
             ? updatedPrice * (100 - discount) / 100
             : updatedPrice;
     cartItemsMap[item.itemId].itemCount = qty;
-    cartItemsMap[item.itemId].rowPrice = double.parse(item.product.price) * qty;
+    cartItemsMap[item.itemId].rowPrice =
+        StringService.roundDouble(item.product.price, 3) * qty;
     notifyListeners();
 
     try {
@@ -285,12 +292,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
         cartDiscountedTotalPrice -=
-            double.parse(item.product.price) >= condition['value']
+            StringService.roundDouble(item.product.price, 3) >=
+                    condition['value']
                 ? updatedPrice * (100 - discount) / 100
                 : updatedPrice;
         cartItemsMap[item.itemId].itemCount = item.itemCount;
         cartItemsMap[item.itemId].rowPrice =
-            double.parse(item.product.price) * item.itemCount;
+            StringService.roundDouble(item.product.price, 3) * item.itemCount;
         notifyListeners();
 
         if (processStatus != ProcessStatus.process) {
@@ -303,12 +311,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -=
-          double.parse(item.product.price) >= condition['value']
+          StringService.roundDouble(item.product.price, 3) >= condition['value']
               ? updatedPrice * (100 - discount) / 100
               : updatedPrice;
       cartItemsMap[item.itemId].itemCount = item.itemCount;
       cartItemsMap[item.itemId].rowPrice =
-          double.parse(item.product.price) * item.itemCount;
+          StringService.roundDouble(item.product.price, 3) * item.itemCount;
       notifyListeners();
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
@@ -447,7 +455,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     for (var key in cartItemsMap.keys.toList()) {
       final item = cartItemsMap[key];
       cartDiscountedTotalPrice +=
-          double.parse(item.product.price) < condition['value']
+          StringService.roundDouble(item.product.price, 3) < condition['value']
               ? item.rowPrice
               : item.rowPrice * (100 - discount) / 100;
     }

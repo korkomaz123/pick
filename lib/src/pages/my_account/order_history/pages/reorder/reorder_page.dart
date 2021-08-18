@@ -454,7 +454,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
       double totalPrice =
-          order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
+          shippingMethod.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(

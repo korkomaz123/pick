@@ -60,13 +60,14 @@ class MyCartRepository {
         'couponCode': result['coupon_code'] ?? '',
         'discount': result['discount'],
         'type': result['type'],
-        'condition': result['condition'].isNotEmpty
-            ? result['condition']
-            : {
-                'attribute': 'special_price',
-                'value': 0,
-                'operator': '>=',
-              },
+        'condition':
+            result.containsKey('condition') && result['condition'] != ''
+                ? result['condition']
+                : {
+                    'attribute': 'special_price',
+                    'value': 0,
+                    'operator': '>=',
+                  },
       };
     }
     return result;
