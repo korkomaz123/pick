@@ -282,21 +282,11 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories[activeSubcategoryIndex].id,
           brandId: brand.optionId,
-          minPrice: filterValues.containsKey('minPrice')
-              ? filterValues['minPrice']
-              : null,
-          maxPrice: filterValues.containsKey('maxPrice')
-              ? filterValues['maxPrice']
-              : null,
-          selectedCategories: filterValues.containsKey('selectedCategories')
-              ? filterValues['selectedCategories']
-              : [],
-          selectedGenders: filterValues.containsKey('selectedGenders')
-              ? filterValues['selectedGenders']
-              : [],
-          selectedValues: filterValues.containsKey('selectedValues')
-              ? filterValues['selectedValues']
-              : {},
+          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
+          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
+          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
+          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
+          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
         );
       },
     );
@@ -337,7 +327,7 @@ class _ProductListPageState extends State<ProductListPage> {
     });
     if (result != null && sortByItem != result) {
       sortByItem = result;
-      if (sortByItem == 'default') {
+      if (sortByItem == 'default' || sortByItem.isEmpty) {
         if (isFromBrand) {
           viewMode = ProductViewModeEnum.brand;
         } else {
@@ -374,10 +364,15 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onChangeTab(int index) async {
     activeSubcategoryIndex = index;
-    if (isFromBrand)
-      viewMode = ProductViewModeEnum.brand;
-    else
-      viewMode = ProductViewModeEnum.category;
+    if (sortByItem == 'default') {
+      if (isFromBrand) {
+        viewMode = ProductViewModeEnum.brand;
+      } else {
+        viewMode = ProductViewModeEnum.category;
+      }
+    } else {
+      viewMode = ProductViewModeEnum.sort;
+    }
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       scrollChangeNotifier.initialize();
@@ -392,11 +387,17 @@ class _ProductListPageState extends State<ProductListPage> {
           subCategories[index].id,
           lang,
         );
+      } else {
+        await productChangeNotifier.initialLoadSortedProducts(
+          brand.optionId ?? '',
+          subCategories[activeSubcategoryIndex].id,
+          sortByItem,
+          lang,
+        );
       }
       filterValues = {};
       filterBloc.add(FilterAttributesLoaded(
-        categoryId:
-            subCategories[index].id == 'all' ? null : subCategories[index].id,
+        categoryId: subCategories[index].id == 'all' ? null : subCategories[index].id,
         brandId: brand.optionId,
         lang: lang,
       ));
