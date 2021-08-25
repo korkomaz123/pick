@@ -383,7 +383,9 @@
     "up_to": "Up to",
     "notify_me": "Notify me",
     "alarm_list": "Products Alarm List",
+    "stock_notification_fixed": "Return in Stock",
     "stock_notification": "Out Of Stock Notification",
+    "price_notification_fixed": "Price Changed",
     "price_notification": "Price Notification",
     "no_items_in_list": "Sorry, there is not products in the list",
     "no_reviews": "sorry there is no reviews on this products"
