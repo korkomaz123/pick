@@ -284,17 +284,17 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Icon(
+                  Icons.keyboard_arrow_up,
+                  size: 30.sp,
+                  color: Colors.white70,
+                ),
                 Text(
                   '${productChangeNotifier.currentpage[key] ?? ''}/${productChangeNotifier.totalPages[key] ?? ''}',
                   style: TextStyle(
                     color: Colors.white70,
                   ),
                 ),
-                Icon(
-                  Icons.keyboard_arrow_up,
-                  size: 30.sp,
-                  color: Colors.white70,
-                )
               ],
             ),
           ),
