@@ -269,16 +269,16 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
     print('key key $key');
     return AnimatedPositioned(
-      right: (MediaQuery.of(context).size.width - 100) / 2,
+      right: (MediaQuery.of(context).size.width - 70.w) / 2,
       bottom: 4.h - widget.pos,
       duration: Duration(milliseconds: 500),
       child: InkWell(
         onTap: () => _onGotoTop(),
         child: Container(
           // height: 40.h,
-          padding: EdgeInsets.all(5.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.w),
           alignment: Alignment.center,
-          decoration: BoxDecoration(color: primarySwatchColor.withOpacity(0.8), borderRadius: BorderRadius.circular(5.w)),
+          decoration: BoxDecoration(color: primarySwatchColor.withOpacity(0.8), borderRadius: BorderRadius.circular(15.w)),
           child: Center(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -286,7 +286,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
               children: [
                 Icon(
                   Icons.keyboard_arrow_up,
-                  size: 30.sp,
+                  size: 20.sp,
                   color: Colors.white70,
                 ),
                 Text(

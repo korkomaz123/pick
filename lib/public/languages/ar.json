@@ -382,9 +382,9 @@
     "up_to": "تصل الى",
     "notify_me": "تنبيهي",
     "alarm_list": "قائمة تنبيهات المنتجات",
-    "stock_notification_fixed": "متاح حاليا",
+    "stock_notification_fixed": "متوفر حاليا",
     "stock_notification": "إشعار كمية",
-    "price_notification_fixed": "تغير السعر",
+    "price_notification_fixed": "تم تغير السعر",
     "price_notification": "إشعار سعر",
     "no_items_in_list": "عفوا,لا يوجد منتجات في القائمة لعرضها",
     "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج"
