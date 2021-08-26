@@ -41,6 +41,10 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     couponCodeController.text = myCartChangeNotifier.couponCode;
+
+    myCartChangeNotifier.addListener(() {
+      couponCodeController.text = myCartChangeNotifier.couponCode;
+    });
   }
 
   @override

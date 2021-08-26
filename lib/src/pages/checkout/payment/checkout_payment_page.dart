@@ -49,7 +49,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
 
     super.initState();
     progressService = ProgressService(context: context);
@@ -65,7 +65,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
 
     super.dispose();
   }

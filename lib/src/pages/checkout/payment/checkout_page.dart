@@ -370,6 +370,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
     progressService.hideProgress();
+    print(payUrl);
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);

@@ -82,6 +82,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       String isVirtual = isWallet ? '1' : '0';
       final result =
           await orderRepository.placeOrder(orderDetails, lang, isVirtual);
+      print(result);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final newOrder = OrderEntity.fromJson(result['order']);

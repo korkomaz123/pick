@@ -57,7 +57,7 @@ class RouteGenerator {
     switch (settings.name) {
       case Routes.start:
         return PageRouteBuilder(
-          settings: RouteSettings(name: Routes.start),
+          settings: settings,
           transitionDuration: Duration.zero,
           pageBuilder: (_, __, ___) => SplashPage(),
         );
@@ -308,10 +308,10 @@ class RouteGenerator {
           settings: settings,
         );
       default:
-      // return CupertinoPageRoute(
-      //   builder: (context) => SplashPage(),
-      //   settings: RouteSettings(name: Routes.start),
-      // );
+        return CupertinoPageRoute(
+          builder: (context) => SplashPage(),
+          settings: settings,
+        );
     }
   }
 }
