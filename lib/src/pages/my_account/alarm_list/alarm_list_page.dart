@@ -10,6 +10,7 @@ import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -60,6 +61,14 @@ class _AlarmListPageState extends State<AlarmListPage> {
     );
   }
 
+  _goDetails(context, product) {
+    Navigator.pushNamed(
+      context,
+      Routes.product,
+      arguments: ProductModel.fromJson(product),
+    );
+  }
+
   List<dynamic> _items = [];
   Future _getAlarmITems;
   Widget _buildAboutUsView() {
@@ -80,31 +89,41 @@ class _AlarmListPageState extends State<AlarmListPage> {
                 padding: EdgeInsets.all(10.w),
                 child: Row(
                   children: [
-                    CachedNetworkImage(imageUrl: _items[i]['productdetail']['image_url'], width: 90.w, height: 80.h, fit: BoxFit.fitHeight),
+                    InkWell(
+                        onTap: () {
+                          _goDetails(context, _items[i]['productdetail']);
+                        },
+                        child:
+                            CachedNetworkImage(imageUrl: _items[i]['productdetail']['image_url'], width: 90.w, height: 80.h, fit: BoxFit.fitHeight)),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _items[i]['productdetail']['brand_label'],
-                            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            _items[i]['productdetail']['name'],
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Spacer(),
-                          if (_items[i]['status'].toString() != '1')
+                      child: InkWell(
+                        onTap: () {
+                          _goDetails(context, _items[i]['productdetail']);
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              _items[i]['type'] == 'stock' ? "stock_notification".tr() : "price_notification".tr(),
-                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10.sp),
+                              _items[i]['productdetail']['brand_label'],
+                              style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
                             ),
-                          if (_items[i]['status'].toString() == '1')
                             Text(
-                              _items[i]['type'] == 'stock' ? "stock_notification_fixed".tr() : "price_notification_fixed".tr(),
-                              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 10.sp),
+                              _items[i]['productdetail']['name'],
+                              overflow: TextOverflow.ellipsis,
                             ),
-                        ],
+                            Spacer(),
+                            if (_items[i]['status'].toString() != '1')
+                              Text(
+                                _items[i]['type'] == 'stock' ? "stock_notification".tr() : "price_notification".tr(),
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10.sp),
+                              ),
+                            if (_items[i]['status'].toString() == '1')
+                              Text(
+                                _items[i]['type'] == 'stock' ? "stock_notification_fixed".tr() : "price_notification_fixed".tr(),
+                                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 10.sp),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                     Column(
