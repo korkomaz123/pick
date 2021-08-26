@@ -67,10 +67,14 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   ScrollChangeNotifier scrollChangeNotifier;
   FilterBloc filterBloc;
   ScrollController scrollController = ScrollController();
-
+  int _currentProduct = 0;
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(() {
+      _currentProduct = ((scrollController.offset ~/ 280.h).floor() * 2) + 4;
+      setState(() {});
+    });
     subCategories = widget.subCategories;
     scaffoldKey = widget.scaffoldKey;
     isFromBrand = widget.isFromBrand;
@@ -289,12 +293,13 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   size: 20.sp,
                   color: Colors.white70,
                 ),
-                Text(
-                  '${productChangeNotifier.currentpage[key] ?? ''}/${productChangeNotifier.totalPages[key] ?? ''}',
-                  style: TextStyle(
-                    color: Colors.white70,
+                if (productChangeNotifier.totalProducts[key] != null)
+                  Text(
+                    '${int.parse(productChangeNotifier.totalProducts[key]) > _currentProduct ? _currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
