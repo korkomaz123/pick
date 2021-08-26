@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
@@ -26,6 +27,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'product_v_card.dart';
 
 class ProductVVCard extends StatefulWidget {
   final double cardWidth;
@@ -150,6 +153,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                   ),
                 ],
               ],
+              if (product.isDeal) ...[_buildDealValueLabel()],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -319,6 +323,38 @@ class _ProductVVCardState extends State<ProductVVCard>
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDealValueLabel() {
+    return Align(
+      alignment:
+          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      child: Padding(
+        padding: EdgeInsets.only(top: widget.cardHeight * 0.6 - 22.h),
+        child: ClipPath(
+          clipper: DealClipPath(lang: Preload.language),
+          child: Container(
+            width: 66.w,
+            height: 22.h,
+            color: pinkColor,
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'deal_label'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

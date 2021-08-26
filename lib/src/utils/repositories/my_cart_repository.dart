@@ -62,9 +62,9 @@ class MyCartRepository {
         'type': result['type'],
         'condition':
             result.containsKey('condition') && result['condition'] != ''
-                ? result['condition']
+                ? result['condition'][0]
                 : {
-                    'attribute': 'special_price',
+                    'attribute': 'price',
                     'value': 0,
                     'operator': '>=',
                   },

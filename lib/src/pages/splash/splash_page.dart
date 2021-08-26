@@ -1,3 +1,4 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../preload.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -61,20 +61,20 @@ class _SplashPageState extends State<SplashPage> {
         height: designHeight.h,
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: 260.94.w,
-                height: 180.h,
-                margin: EdgeInsets.only(top: 262.7.h),
-                child: SvgPicture.asset(vLogoIcon),
+            Positioned(
+              top: 262.7.h,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: SvgPicture.asset(vLogoIcon, height: 130.h),
               ),
             ),
             if (isNew) ...[
-              Align(
-                alignment: Alignment.bottomCenter,
+              Positioned(
+                bottom: 141.h,
+                left: 0,
+                right: 0,
                 child: Container(
-                  padding: EdgeInsets.only(bottom: 141.h),
                   width: double.infinity,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

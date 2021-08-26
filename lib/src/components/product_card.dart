@@ -18,6 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'product_v_card.dart';
+
 class ProductCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
@@ -96,6 +98,7 @@ class _ProductCardState extends State<ProductCard>
                   Positioned(top: 0, right: 0, child: _buildDiscount()),
                 ],
               ],
+              if (widget.product.isDeal) ...[_buildDealValueLabel()],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -121,6 +124,38 @@ class _ProductCardState extends State<ProductCard>
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDealValueLabel() {
+    return Align(
+      alignment:
+          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      child: Padding(
+        padding: EdgeInsets.only(top: widget.cardHeight / 2),
+        child: ClipPath(
+          clipper: DealClipPath(lang: Preload.language),
+          child: Container(
+            width: 66.w,
+            height: 22.h,
+            color: pinkColor,
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'deal_label'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

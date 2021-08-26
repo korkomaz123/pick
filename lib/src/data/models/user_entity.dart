@@ -28,7 +28,7 @@ class UserEntity {
         profileUrl = json['profileUrl'] ?? '',
         balance =
             json.containsKey('amount_wallet') && json['amount_wallet'] != null
-                ? double.parse(json['amount_wallet'])
+                ? double.parse(json['amount_wallet'].toString())
                 : 0;
 
   Map<String, dynamic> toJson() => {

@@ -349,6 +349,7 @@
     "order_number": "رقم الأمر",
     "date": "تاريخ",
     "user_debit": "المستخدم المدين",
+    "credit": "ائتمان",
     "debit": "مدين",
     "transaction_id": "معرف المعاملة",
     "added_money_wallet_failed": "هناك خطأ ما. الرجاء معاودة المحاولة في وقت لاحق!",
@@ -387,5 +388,6 @@
     "price_notification_fixed": "تم تغير السعر",
     "price_notification": "إشعار سعر",
     "no_items_in_list": "عفوا,لا يوجد منتجات في القائمة لعرضها",
-    "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج"
+    "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج",
+    "cashback": "استرداد النقود"
 }

@@ -13,6 +13,7 @@ import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/string_service.dart';
 
 class MyCartChangeNotifier extends ChangeNotifier {
@@ -38,8 +39,40 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Map<String, CartItemEntity> reorderCartItemsMap = {};
   String errorMessage;
   String type;
-  String cartIssue = 'Something went wrong regarding your shopping cart: ';
   bool isApplying = false;
+
+  double getDiscountedRowPrice(CartItemEntity item) {
+    double price = .0;
+    if (condition['attribute'] == 'price') {
+      price = StringService.roundDouble(item.product.beforePrice, 3);
+    } else {
+      if (item.product.price == item.product.beforePrice) {
+        price = 0;
+      } else {
+        price = StringService.roundDouble(item.product.price, 3);
+      }
+    }
+    return price <= condition['value']
+        ? NumericService.roundDouble(item.rowPrice * (100 - discount) / 100, 3)
+        : item.rowPrice;
+  }
+
+  double getDiscountedProductPrice(CartItemEntity item) {
+    double price = .0;
+    if (condition['attribute'] == 'price') {
+      price = StringService.roundDouble(item.product.beforePrice, 3);
+    } else {
+      if (item.product.price == item.product.beforePrice) {
+        price = 0;
+      } else {
+        price = StringService.roundDouble(item.product.price, 3);
+      }
+    }
+    return price <= condition['value']
+        ? NumericService.roundDouble(
+            double.parse(item.product.price) * (100 - discount) / 100, 3)
+        : StringService.roundDouble(item.product.price, 3);
+  }
 
   void initialize() {
     cartId = '';
@@ -56,7 +89,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     type = '';
     couponCode = '';
     discount = .0;
-    condition = {};
+    condition = {'value': 0, 'attribute': 'price'};
     notifyListeners();
   }
 
@@ -93,11 +126,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartItemsMap[item.itemId] = item;
           cartTotalPrice += item.rowPrice;
           cartTotalCount += item.itemCount;
-          cartDiscountedTotalPrice +=
-              StringService.roundDouble(item.product.price, 3) >=
-                      condition['value']
-                  ? item.rowPrice * (100 - discount) / 100
-                  : item.rowPrice;
+          cartDiscountedTotalPrice += getDiscountedRowPrice(item);
         }
 
         processStatus = ProcessStatus.done;
@@ -120,46 +149,43 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> clearCart(
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    final data = {'action': 'clearCart'};
-    onProcess();
-    try {
-      String clearCartId = cartId;
-      String clearType = type;
-      String clearCouponCode = couponCode;
-      double clearDiscount = discount;
-      final result = await myCartRepository.clearCartItems(clearCartId);
-      if (result['code'] != 'SUCCESS') {
-        onFailure(result['errorMessage']);
+  // Future<void> clearCart(
+  //   Function onProcess,
+  //   Function onSuccess,
+  //   Function onFailure,
+  // ) async {
+  //   final data = {'action': 'clearCart'};
+  //   onProcess();
+  //   try {
+  //     String clearCartId = cartId;
+  //     String clearType = type;
+  //     String clearCouponCode = couponCode;
+  //     double clearDiscount = discount;
+  //     final result = await myCartRepository.clearCartItems(clearCartId);
+  //     if (result['code'] != 'SUCCESS') {
+  //       onFailure(result['errorMessage']);
 
-        reportCartIssue(result, data);
-      } else {
-        initialize();
-        notifyListeners();
-        cartId = clearCartId;
-        type = clearType;
-        couponCode = clearCouponCode;
-        discount = clearDiscount;
-        onSuccess();
-      }
-    } catch (e) {
-      onFailure('Network connection is bad');
-      reportCartIssue(e.toString(), data);
-    }
-  }
+  //       reportCartIssue(result, data);
+  //     } else {
+  //       initialize();
+  //       notifyListeners();
+  //       cartId = clearCartId;
+  //       type = clearType;
+  //       couponCode = clearCouponCode;
+  //       discount = clearDiscount;
+  //       onSuccess();
+  //     }
+  //   } catch (e) {
+  //     onFailure('Network connection is bad');
+  //     reportCartIssue(e.toString(), data);
+  //   }
+  // }
 
   Future<void> removeCartItem(String key, Function onFailure) async {
     final data = {'action': 'removeCartItem', 'productId': key};
     final item = cartItemsMap[key];
     cartTotalPrice -= cartItemsMap[key].rowPrice;
-    cartDiscountedTotalPrice -=
-        StringService.roundDouble(item.product.price, 3) >= condition['value']
-            ? item.rowPrice * (100 - discount) / 100
-            : item.rowPrice;
+    cartDiscountedTotalPrice -= getDiscountedRowPrice(item);
     cartItemCount -= 1;
     cartTotalCount -= cartItemsMap[key].itemCount;
     cartItemsMap.remove(key);
@@ -170,11 +196,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (result['code'] != 'SUCCESS') {
         onFailure(result['errorMessage']);
         cartTotalPrice += item.rowPrice;
-        cartDiscountedTotalPrice +=
-            StringService.roundDouble(item.product.price, 3) >=
-                    condition['value']
-                ? item.rowPrice * (100 - discount) / 100
-                : item.rowPrice;
+        cartDiscountedTotalPrice += getDiscountedRowPrice(item);
         cartItemCount += 1;
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
@@ -188,10 +210,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     } catch (e) {
       onFailure('Network connection is bad');
       cartTotalPrice += item.rowPrice;
-      cartDiscountedTotalPrice +=
-          StringService.roundDouble(item.product.price, 3) >= condition['value']
-              ? item.rowPrice * (100 - discount) / 100
-              : item.rowPrice;
+      cartDiscountedTotalPrice += getDiscountedRowPrice(item);
       cartItemCount += 1;
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
@@ -230,21 +249,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
         CartItemEntity oldItem = cartItemsMap[newItem.itemId];
         if (cartItemsMap.containsKey(newItem.itemId)) {
           cartTotalPrice -= oldItem.rowPrice;
-          cartDiscountedTotalPrice -=
-              StringService.roundDouble(oldItem.product.price, 3) >=
-                      condition['value']
-                  ? oldItem.rowPrice * (100 - discount) / 100
-                  : oldItem.rowPrice;
+          cartDiscountedTotalPrice -= getDiscountedRowPrice(oldItem);
         } else {
           cartItemCount += 1;
         }
         cartTotalCount += qty;
         cartTotalPrice += newItem.rowPrice;
-        cartDiscountedTotalPrice +=
-            StringService.roundDouble(newItem.product.price, 3) >=
-                    condition['value']
-                ? newItem.rowPrice * (100 - discount) / 100
-                : newItem.rowPrice;
+        cartDiscountedTotalPrice += getDiscountedRowPrice(newItem);
         cartItemsMap[newItem.itemId] = newItem;
         if (onSuccess != null) onSuccess();
         notifyListeners();
@@ -253,6 +264,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
+      print(e.toString());
       onFailure('Network connection is bad');
       reportCartIssue(e.toString(), data);
 
@@ -275,13 +287,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
         StringService.roundDouble(item.product.price, 3) * updatedQty;
     cartTotalCount += updatedQty;
     cartTotalPrice += updatedPrice;
-    cartDiscountedTotalPrice +=
-        StringService.roundDouble(item.product.price, 3) >= condition['value']
-            ? updatedPrice * (100 - discount) / 100
-            : updatedPrice;
+    cartDiscountedTotalPrice -=
+        getDiscountedRowPrice(cartItemsMap[item.itemId]);
     cartItemsMap[item.itemId].itemCount = qty;
     cartItemsMap[item.itemId].rowPrice =
         StringService.roundDouble(item.product.price, 3) * qty;
+    cartDiscountedTotalPrice +=
+        getDiscountedRowPrice(cartItemsMap[item.itemId]);
     notifyListeners();
 
     try {
@@ -292,13 +304,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
         cartDiscountedTotalPrice -=
-            StringService.roundDouble(item.product.price, 3) >=
-                    condition['value']
-                ? updatedPrice * (100 - discount) / 100
-                : updatedPrice;
+            getDiscountedRowPrice(cartItemsMap[item.itemId]);
         cartItemsMap[item.itemId].itemCount = item.itemCount;
         cartItemsMap[item.itemId].rowPrice =
             StringService.roundDouble(item.product.price, 3) * item.itemCount;
+        cartDiscountedTotalPrice +=
+            getDiscountedRowPrice(cartItemsMap[item.itemId]);
         notifyListeners();
 
         if (processStatus != ProcessStatus.process) {
@@ -311,12 +322,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -=
-          StringService.roundDouble(item.product.price, 3) >= condition['value']
-              ? updatedPrice * (100 - discount) / 100
-              : updatedPrice;
+          getDiscountedRowPrice(cartItemsMap[item.itemId]);
       cartItemsMap[item.itemId].itemCount = item.itemCount;
       cartItemsMap[item.itemId].rowPrice =
           StringService.roundDouble(item.product.price, 3) * item.itemCount;
+      cartDiscountedTotalPrice +=
+          getDiscountedRowPrice(cartItemsMap[item.itemId]);
       notifyListeners();
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
@@ -439,8 +450,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       type = result['type'];
       isApplying = false;
       condition = !result.containsKey('condition') || result['condition'] == ''
-          ? {'value': 0}
-          : result['condition'];
+          ? {'value': 0, 'attribute': 'price'}
+          : result['condition'][0];
       resetDiscountPrice();
     } else {
       errorMessage = result['errorMessage'];
@@ -454,10 +465,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartDiscountedTotalPrice = 0;
     for (var key in cartItemsMap.keys.toList()) {
       final item = cartItemsMap[key];
-      cartDiscountedTotalPrice +=
-          StringService.roundDouble(item.product.price, 3) < condition['value']
-              ? item.rowPrice
-              : item.rowPrice * (100 - discount) / 100;
+      cartDiscountedTotalPrice += getDiscountedRowPrice(item);
     }
   }
 

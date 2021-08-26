@@ -510,6 +510,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         message: 'remove_reorder_item_subtitle');
     if (result != null) {
       await myCartChangeNotifier.removeReorderCartItem(key);
+      _getShippingMethods();
     }
   }
 
@@ -530,7 +531,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   _prepareDetails() {
     orderDetails = {};
-    orderDetails['shipping'] = widget.order.shippingMethod.id;
+    orderDetails['shipping'] = shippingMethod.id;
     orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
     orderDetails['token'] = user.token;
 

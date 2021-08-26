@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/preload.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,15 +28,21 @@ class _PaymentMethodListState extends State<PaymentMethodList> {
   var details;
   String value;
 
-  bool get outOfBalance =>
-      double.parse(details['subTotalPrice']) > user.balance;
+  bool get outOfBalance => double.parse(details['totalPrice']) > user.balance;
 
   @override
   void initState() {
     value = widget.value;
     details = orderDetails['orderDetails'];
+    _onLoadUser();
+
     super.initState();
     _flushBarService = FlushBarService(context: context);
+  }
+
+  _onLoadUser() async {
+    user = await Preload.currentUser;
+    setState(() {});
   }
 
   @override

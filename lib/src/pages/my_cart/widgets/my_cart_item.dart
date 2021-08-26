@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -10,7 +11,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/services/numeric_service.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,15 +36,14 @@ class MyCartItem extends StatelessWidget {
   });
 
   bool get discountable => discount != 0 && type == 'percentage';
-  bool get normalProduct =>
-      cartItem?.product?.beforePrice == cartItem?.product?.price;
 
   @override
   Widget build(BuildContext context) {
-    String priceString = cartItem.product.price;
-    double price = double.parse(priceString);
-    double discountPrice = price * (100 - discount) / 100;
-    String discountPriceString = NumericService.roundString(discountPrice, 3);
+    double price = StringService.roundDouble(cartItem.product.price, 3);
+    double discountPrice = context
+        .watch<MyCartChangeNotifier>()
+        .getDiscountedProductPrice(cartItem);
+    bool discounted = price > discountPrice;
     return Stack(
       children: [
         Container(
@@ -125,10 +125,9 @@ class MyCartItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          // discountable && normalProduct
                           discountable
-                              ? '$discountPriceString ${'currency'.tr()}'
-                              : '$priceString ${'currency'.tr()}',
+                              ? '$discountPrice ${'currency'.tr()}'
+                              : '$price ${'currency'.tr()}',
                           style: mediumTextStyle.copyWith(
                             fontSize: 12.sp,
                             color: greyColor,
@@ -136,12 +135,7 @@ class MyCartItem extends StatelessWidget {
                         ),
                         SizedBox(width: 20.w),
                         Text(
-                          // !normalProduct
-                          //     ? '${cartItem.product.beforePrice} ${'currency'.tr()}'
-                          //     : discountable
-                          //         ? '$priceString ${'currency'.tr()}'
-                          //         : '',
-                          discountable ? '$priceString ${'currency'.tr()}' : '',
+                          discounted ? '$price ${'currency'.tr()}' : '',
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,

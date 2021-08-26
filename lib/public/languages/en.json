@@ -350,6 +350,7 @@
     "order_number": "Order Number",
     "date": "Date",
     "user_debit": "User Debit",
+    "credit": "Credit",
     "debit": "Debit",
     "transaction_id": "Transaction ID",
     "added_money_wallet_failed": "Something went wrong. Please try again later!",
@@ -388,5 +389,6 @@
     "price_notification_fixed": "Price changed",
     "price_notification": "Price Notification",
     "no_items_in_list": "Sorry, there is not products in the list",
-    "no_reviews": "sorry there is no reviews on this products"
+    "no_reviews": "sorry there is no reviews on this products",
+    "cashback": "Cashback"
 }
