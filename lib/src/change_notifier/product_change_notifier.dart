@@ -145,6 +145,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     String key = 'cat-products-$categoryId-$lang-$page';
+
     final exist = await localStorageRepository.existItem(key);
     if (exist) {
       List<dynamic> productList = await localStorageRepository.getItem(key);
@@ -161,6 +162,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
     final result = await productRepository.getProducts(categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
+      if (result['currentpage'] != null) currentpage['-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['-$categoryId'] = result['totalpage'].toString();
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
         List<dynamic> productList = result['products'];
@@ -242,6 +245,9 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
     final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
+      print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
+      if (result['currentpage'] != null) currentpage['$brandId-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
       await localStorageRepository.setItem(key, result['products']);
       if (!exist) {
         List<dynamic> productList = result['products'];
@@ -302,6 +308,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     await loadSortedProducts(1, brandId, categoryId, sortItem, lang);
   }
 
+  Map<String, dynamic> totalPages = {};
+  Map<String, dynamic> currentpage = {};
   Future<void> loadSortedProducts(
     int page,
     String brandId,
@@ -312,6 +320,9 @@ class ProductChangeNotifier extends ChangeNotifier {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
     final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
+      print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
+      if (result['currentpage'] != null) currentpage['${brandId ?? ''}-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];

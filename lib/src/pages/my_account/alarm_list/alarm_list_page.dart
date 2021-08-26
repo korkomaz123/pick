@@ -41,14 +41,9 @@ class _AlarmListPageState extends State<AlarmListPage> {
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildAboutUsView(),
-        ],
+        children: [_buildAppBar(), _buildAboutUsView()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -56,17 +51,11 @@ class _AlarmListPageState extends State<AlarmListPage> {
     return AppBar(
       elevation: 0,
       toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
+      leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios, size: 22.sp)),
       centerTitle: true,
       title: Text(
         'alarm_list'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -80,9 +69,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (!snapshot.hasData || snapshot.data == null || snapshot.data['items'] == null || snapshot.data['items'].isEmpty)
-              return NoAvailableData(
-                message: 'no_items_in_list',
-              );
+              return NoAvailableData(message: 'no_items_in_list');
             _items = snapshot.data['items'];
             return ListView.separated(
               padding: EdgeInsets.all(10.w),
@@ -93,12 +80,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
                 padding: EdgeInsets.all(10.w),
                 child: Row(
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: _items[i]['productdetail']['image_url'],
-                      width: 90.w,
-                      height: 80.h,
-                      fit: BoxFit.fitHeight,
-                    ),
+                    CachedNetworkImage(imageUrl: _items[i]['productdetail']['image_url'], width: 90.w, height: 80.h, fit: BoxFit.fitHeight),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,10 +94,15 @@ class _AlarmListPageState extends State<AlarmListPage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Spacer(),
-                          if (_items[i]['status'] != '1')
+                          if (_items[i]['status'].toString() != '1')
                             Text(
                               _items[i]['type'] == 'stock' ? "stock_notification".tr() : "price_notification".tr(),
                               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10.sp),
+                            ),
+                          if (_items[i]['status'].toString() == '1')
+                            Text(
+                              _items[i]['type'] == 'stock' ? "stock_notification_fixed".tr() : "price_notification_fixed".tr(),
+                              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 10.sp),
                             ),
                         ],
                       ),
