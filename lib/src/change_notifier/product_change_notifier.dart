@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
+// import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
@@ -9,7 +9,7 @@ import '../../preload.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
   final productRepository = ProductRepository();
-  final localStorageRepository = LocalStorageRepository();
+  // final localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -146,26 +146,29 @@ class ProductChangeNotifier extends ChangeNotifier {
   ) async {
     String key = 'cat-products-$categoryId-$lang-$page';
 
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> productList = await localStorageRepository.getItem(key);
-      if (!data.containsKey(categoryId)) {
-        data[categoryId] = [];
-      }
-      for (int i = 0; i < productList.length; i++) {
-        data[categoryId].add(ProductModel.fromJson(productList[i]));
-      }
-      if (productList.length < 50 && page > 0) {
-        isReachedMax = true;
-      }
-      notifyListeners();
-    }
+    // final exist = await localStorageRepository.existItem(key);
+    // if (exist) {
+    //   List<dynamic> productList = await localStorageRepository.getItem(key);
+    //   if (!data.containsKey(categoryId)) {
+    //     data[categoryId] = [];
+    //   }
+    //   for (int i = 0; i < productList.length; i++) {
+    //     data[categoryId].add(ProductModel.fromJson(productList[i]));
+    //   }
+    //   if (productList.length < 50 && page > 0) {
+    //     isReachedMax = true;
+    //   }
+    //   notifyListeners();
+    // }
     final result = await productRepository.getProducts(categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       if (result['currentpage'] != null) currentpage['-$categoryId'] = page.toString();
       if (result['totalpage'] != null) totalPages['-$categoryId'] = result['totalpage'].toString();
-      await localStorageRepository.setItem(key, result['products']);
-      if (!exist) {
+      if (result['totalproducts'] != null) totalProducts['-$categoryId'] = result['totalproducts'].toString();
+
+      // await localStorageRepository.setItem(key, result['products']);
+      // if (!exist)
+      {
         List<dynamic> productList = result['products'];
         if (!data.containsKey(categoryId)) {
           data[categoryId] = [];
@@ -228,34 +231,38 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = brandId + '_' + categoryId ?? '';
-    String key = 'cat-products-$brandId-$categoryId-$lang-$page';
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> productList = await localStorageRepository.getItem(key);
-      if (!data.containsKey(index)) {
-        data[index] = [];
-      }
-      for (int i = 0; i < productList.length; i++) {
-        data[index].add(ProductModel.fromJson(productList[i]));
-      }
-      if (productList.length < 50 && page > 0) {
-        isReachedMax = true;
-      }
-      notifyListeners();
-    }
+    // String key = 'cat-products-$brandId-$categoryId-$lang-$page';
+    // final exist = await localStorageRepository.existItem(key);
+    // if (exist) {
+    //   List<dynamic> productList = await localStorageRepository.getItem(key);
+    //   if (!data.containsKey(index)) {
+    //     data[index] = [];
+    //   }
+    //   for (int i = 0; i < productList.length; i++) {
+    //     if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+    //       data[index].add(ProductModel.fromJson(productList[i]));
+    //   }
+    //   if (productList.length < 50 && page > 0) {
+    //     isReachedMax = true;
+    //   }
+    //   notifyListeners();
+    // }
     final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
       if (result['currentpage'] != null) currentpage['$brandId-$categoryId'] = page.toString();
       if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
-      await localStorageRepository.setItem(key, result['products']);
-      if (!exist) {
+      if (result['totalproducts'] != null) totalProducts['${brandId != null ? brandId : ''}-$categoryId'] = result['totalproducts'].toString();
+      // await localStorageRepository.setItem(key, result['products']);
+      // if (!exist)
+      {
         List<dynamic> productList = result['products'];
         if (!data.containsKey(index)) {
           data[index] = [];
         }
         for (int i = 0; i < productList.length; i++) {
-          data[index].add(ProductModel.fromJson(productList[i]));
+          if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+            data[index].add(ProductModel.fromJson(productList[i]));
         }
         if (productList.length < 50 && page > 0) {
           isReachedMax = true;
@@ -309,6 +316,7 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   Map<String, dynamic> totalPages = {};
+  Map<String, dynamic> totalProducts = {};
   Map<String, dynamic> currentpage = {};
   Future<void> loadSortedProducts(
     int page,
@@ -323,12 +331,14 @@ class ProductChangeNotifier extends ChangeNotifier {
       print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
       if (result['currentpage'] != null) currentpage['${brandId ?? ''}-$categoryId'] = page.toString();
       if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
+      if (result['totalproducts'] != null) totalProducts['${brandId != null ? brandId : ''}-$categoryId'] = result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        data[index].add(ProductModel.fromJson(productList[i]));
+        if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+          data[index].add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
@@ -399,7 +409,8 @@ class ProductChangeNotifier extends ChangeNotifier {
           data[index] = [];
         }
         for (int i = 0; i < productList.length; i++) {
-          data[index].add(ProductModel.fromJson(productList[i]));
+          if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+            data[index].add(ProductModel.fromJson(productList[i]));
         }
         if (productList.length < 50 && page > 0) {
           isReachedMax = true;
