@@ -102,7 +102,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartConditionMatched = condition.operator == '=='
             ? item.product.sku == condition.value
             : item.product.sku != condition.value;
-      } else if (condition.attribute == 'brand') {
+      } else if (condition.attribute == 'manufacturer') {
         cartConditionMatched = condition.operator == '=='
             ? item.product.brandEntity.optionId == condition.value
             : item.product.brandEntity.optionId != condition.value;
@@ -140,7 +140,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         productConditionMatched = condition.operator == '=='
             ? item.product.sku == condition.value
             : item.product.sku != condition.value;
-      } else if (condition.attribute == 'brand') {
+      } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
             ? item.product.brandEntity.optionId == condition.value
             : item.product.brandEntity.optionId != condition.value;
