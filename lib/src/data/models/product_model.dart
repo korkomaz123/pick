@@ -26,6 +26,9 @@ class ProductModel {
   Map<String, dynamic> options;
   bool isDeal;
   List<dynamic> gallery;
+  List<dynamic> categories;
+  List<dynamic> subCategories;
+  List<dynamic> parentCategories;
 
   ProductModel({
     this.parentId,
@@ -50,6 +53,9 @@ class ProductModel {
     this.options,
     this.isDeal,
     this.gallery,
+    this.categories,
+    this.subCategories,
+    this.parentCategories,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
@@ -99,7 +105,13 @@ class ProductModel {
         options =
             json.containsKey('options') ? _getOptions(json['options']) : null,
         isDeal = json['sale'] == '1',
-        gallery = json.containsKey('gallery') ? json['gallery'] : [];
+        gallery = json.containsKey('gallery') ? json['gallery'] : [],
+        categories = json.containsKey('categories') ? json['categories'] : [],
+        subCategories =
+            json.containsKey('subcategories') ? json['subcategories'] : [],
+        parentCategories = json.containsKey('parentcategories')
+            ? json['parentcategories']
+            : [];
 
   static Map<String, dynamic> _getOptions(List<dynamic> list) {
     Map<String, dynamic> options = {};

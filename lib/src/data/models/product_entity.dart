@@ -34,6 +34,9 @@ class ProductEntity {
   final List<ProductModel> variants;
   final List<Specification> specification;
   final bool isDeal;
+  final List<dynamic> categories;
+  final List<dynamic> subCategories;
+  final List<dynamic> parentCategories;
 
   ProductEntity({
     this.entityId,
@@ -61,6 +64,9 @@ class ProductEntity {
     this.configurable,
     this.variants,
     this.isDeal,
+    this.categories,
+    this.subCategories,
+    this.parentCategories,
   });
 
   ProductEntity copyWith({
@@ -89,6 +95,9 @@ class ProductEntity {
     configurable,
     variants,
     isDeal,
+    categories,
+    subCategories,
+    parentCategories,
   }) =>
       ProductEntity(
         entityId: entityId ?? this.entityId,
@@ -116,6 +125,9 @@ class ProductEntity {
         configurable: configurable ?? this.configurable,
         variants: variants ?? this.variants,
         isDeal: isDeal ?? this.isDeal,
+        categories: categories ?? this.categories,
+        subCategories: subCategories ?? this.subCategories,
+        parentCategories: parentCategories ?? this.parentCategories,
       );
 
   ProductEntity.fromJson(Map<String, dynamic> json)
@@ -160,7 +172,11 @@ class ProductEntity {
         stockQty = json['stockQty'],
         configurable = json['configurable'],
         variants = _getVariants(json['child_products']),
-        isDeal = json['sale'] == '1';
+        isDeal = json['sale'] == '1',
+        categories = json['categories'],
+        subCategories = json['subcategories'],
+        parentCategories = json['parentcategories'];
+
   static List<Specification> _getSpecifications(
       Map<String, dynamic> _specification) {
     List<Specification> _list = [];
@@ -208,7 +224,10 @@ class ProductEntity {
         specification = null,
         configurable = null,
         variants = _getVariants(null),
-        isDeal = product.isDeal;
+        isDeal = product.isDeal,
+        categories = <String>[],
+        subCategories = <String>[],
+        parentCategories = <String>[];
 
   static int _getDiscount(String afterPriceString, String beforePriceString) {
     double afterPrice =
@@ -221,13 +240,19 @@ class ProductEntity {
     return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
   }
 
-  Future requestPriceAlarm(String type, String productId,
-      {Map<String, dynamic> data}) async {
+  Future requestPriceAlarm(
+    String type,
+    String productId, {
+    Map<String, dynamic> data,
+  }) async {
     if (data == null) data = {};
     data['type'] = type;
     data['productId'] = productId;
     data['email'] = user.email;
-    await Api.getMethod(EndPoints.requestPriceAlarm,
-        data: data, extra: {"refresh": true});
+    await Api.getMethod(
+      EndPoints.requestPriceAlarm,
+      data: data,
+      extra: {"refresh": true},
+    );
   }
 }

@@ -42,7 +42,7 @@ class MyCartItem extends StatelessWidget {
     double price = StringService.roundDouble(cartItem.product.price, 3);
     double discountPrice = context
         .watch<MyCartChangeNotifier>()
-        .getDiscountedProductPrice(cartItem);
+        .getDiscountedPrice(cartItem, isRowPrice: false);
     bool discounted = price > discountPrice;
     return Stack(
       children: [
