@@ -144,7 +144,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
-    String key = 'cat-products-$categoryId-$lang-$page';
+    // String key = 'cat-products-$categoryId-$lang-$page';
 
     // final exist = await localStorageRepository.existItem(key);
     // if (exist) {
