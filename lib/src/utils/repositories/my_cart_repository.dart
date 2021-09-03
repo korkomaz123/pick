@@ -132,7 +132,6 @@ class MyCartRepository {
       'lang': lang,
       'option': jsonEncode(options),
     };
-    print(params);
     final result = await Api.postMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       final item = result['cart'][0];

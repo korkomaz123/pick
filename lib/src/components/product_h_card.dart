@@ -467,9 +467,9 @@ class _ProductHCardState extends State<ProductHCard>
 
   _onAddFailure(String message) async {
     progressService.hideProgress();
-    flushBarService.showErrorDialog(message, "no_qty.svg");
     _product = await _productRepository.getProduct(_product.productId);
     setState(() {});
+    flushBarService.showErrorDialog(message, "no_qty.svg");
   }
 
   void _onWishlist() async {

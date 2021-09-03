@@ -40,6 +40,10 @@ class MarkaaCountryInput extends StatelessWidget {
           fontSize: fontSize,
         ),
         decoration: InputDecoration(
+          errorStyle: mediumTextStyle.copyWith(
+            color: Colors.red,
+            fontSize: fontSize,
+          ),
           hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: fontSize,

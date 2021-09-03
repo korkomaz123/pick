@@ -22,7 +22,9 @@ class ProductReview extends StatelessWidget {
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
-                children: model.reviews.map((review) => _buildProductReview(review)).toList(),
+                children: model.reviews
+                    .map((review) => _buildProductReview(review))
+                    .toList(),
               ),
             );
           }
@@ -31,7 +33,9 @@ class ProductReview extends StatelessWidget {
             margin: EdgeInsets.all(10.w),
             width: double.infinity,
             padding: EdgeInsets.all(10.w),
-            child: Center(child: Text("no_reviews".tr())),
+            child: Center(
+              child: Text("no_reviews".tr(), style: mediumTextStyle),
+            ),
           );
         },
       ),
@@ -68,8 +72,7 @@ class ProductReview extends StatelessWidget {
                   half: Icon(Icons.star_half, color: Colors.amber),
                 ),
                 ignoreGestures: true,
-                onRatingUpdate: (rating) {
-                },
+                onRatingUpdate: (rating) {},
               ),
             ],
           ),

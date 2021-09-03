@@ -127,7 +127,10 @@ class MarkaaInputField extends StatelessWidget {
           obsecureText
               ? TextFormField(
                   controller: controller,
-                  style: TextStyle(color: fontColor, fontSize: fontSize),
+                  style: mediumTextStyle.copyWith(
+                    color: fontColor,
+                    fontSize: fontSize,
+                  ),
                   focusNode: focusNode,
                   onTap: onTap,
                   onEditingComplete: onEditingComplete,
@@ -196,7 +199,14 @@ class MarkaaInputField extends StatelessWidget {
                             ),
                           ),
                     hintText: hint,
-                    hintStyle: TextStyle(color: hintColor, fontSize: hintSize),
+                    hintStyle: mediumTextStyle.copyWith(
+                      color: hintColor,
+                      fontSize: hintSize,
+                    ),
+                    errorStyle: mediumTextStyle.copyWith(
+                      color: Colors.red,
+                      fontSize: hintSize,
+                    ),
                     fillColor: fillColor,
                     filled: true,
                   ),
@@ -284,7 +294,14 @@ class MarkaaInputField extends StatelessWidget {
                             ),
                           ),
                     hintText: hint,
-                    hintStyle: TextStyle(color: hintColor, fontSize: hintSize),
+                    hintStyle: mediumTextStyle.copyWith(
+                      color: hintColor,
+                      fontSize: hintSize,
+                    ),
+                    errorStyle: mediumTextStyle.copyWith(
+                      color: Colors.red,
+                      fontSize: hintSize,
+                    ),
                     fillColor: fillColor,
                     filled: true,
                   ),

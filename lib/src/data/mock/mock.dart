@@ -49,6 +49,39 @@ List<String> enAlphabetList = [
   'Z'
 ];
 
+List<String> arAlphabetList = [
+  'ا',
+  'ب',
+  'پ',
+  'ت',
+  'ث',
+  'ج',
+  'چ',
+  'ح',
+  'خ',
+  'د',
+  'ذ',
+  'ر',
+  'ز',
+  'ژ',
+  'ص',
+  'ض',
+  'ط',
+  'ظ',
+  'ع',
+  'غ',
+  'ف',
+  'ق',
+  'ک',
+  'گ',
+  'ل',
+  'م',
+  'ن',
+  'و',
+  'ه',
+  'ی'
+];
+
 MessageEntity message = MessageEntity(
   time: '28-09-2020',
   title: 'Profile updated',

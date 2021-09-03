@@ -81,7 +81,7 @@ class ProductConfigurableOptions extends StatelessWidget {
               }
             },
             child: Container(
-              width: 70.w,
+              constraints: BoxConstraints(minWidth: 60.w),
               margin: EdgeInsets.symmetric(
                 horizontal: 4.w,
                 vertical: 5.h,

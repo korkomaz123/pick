@@ -3,6 +3,7 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
@@ -15,6 +16,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +42,13 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget paymentWidget = SizedBox.shrink();
   Map<String, dynamic> cancelItemsMap = {};
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  CheckoutRepository checkoutRepo = CheckoutRepository();
+
+  double subtotalPrice = .0;
+  double totalPrice = .0;
+  double discount = .0;
   double canceledPrice = .0;
+  double serviceFees = .0;
 
   @override
   void initState() {
@@ -48,6 +56,10 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     order = widget.order;
+    subtotalPrice = double.parse(order.subtotalPrice);
+    totalPrice = double.parse(order.totalPrice);
+    serviceFees = order.shippingMethod.serviceFees;
+    discount = subtotalPrice + serviceFees - totalPrice;
     switch (order.status) {
       case OrderStatusEnum.pending:
         icon = pendingIcon;
@@ -85,6 +97,21 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         width: 35.w,
         height: 20.h,
       );
+    }
+  }
+
+  void _getShippingMethods() async {
+    if (shippingMethods.isEmpty) {
+      shippingMethods = await checkoutRepo.getShippingMethod();
+    }
+    for (var shippingMethod in shippingMethods) {
+      if (shippingMethod.minOrderAmount <= subtotalPrice - discount) {
+        double differ = shippingMethod.serviceFees - serviceFees;
+        serviceFees = shippingMethod.serviceFees;
+        totalPrice += differ;
+      } else {
+        break;
+      }
     }
   }
 
@@ -294,6 +321,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
     String productId = cartItem.product.productId.toString();
     bool isDefaultValue = cancelItemsMap.containsKey(productId);
+    double discountedPrice =
+        order.getDiscountedPrice(cartItem, isRowPrice: false);
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -329,13 +358,35 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      cartItem.product.price + ' ' + 'currency'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 16.sp,
-                        color: primaryColor,
+                    if (discountedPrice ==
+                        double.parse(cartItem.product.price)) ...[
+                      Text(
+                        cartItem.product.price + ' ' + 'currency'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: 16.sp,
+                          color: primaryColor,
+                        ),
+                      )
+                    ] else ...[
+                      Text(
+                        '$discountedPrice ' + 'currency'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          fontSize: 16.sp,
+                          color: primaryColor,
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 5.w),
+                      Text(
+                        cartItem.product.price + ' ' + 'currency'.tr(),
+                        style: mediumTextStyle.copyWith(
+                          decorationStyle: TextDecorationStyle.solid,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: dangerColor,
+                          fontSize: 12.sp,
+                          color: greyColor,
+                        ),
+                      )
+                    ],
                     MyCartQtyHorizontalPicker(
                       cartItem: cartItem,
                       cartId: 'cartId',
@@ -358,15 +409,22 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       child: IconButton(
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
+          double discountedRowPrice =
+              order.getDiscountedPrice(order.cartItems[index]);
           if (isSelected) {
-            canceledPrice -= order.cartItems[index].itemCount *
-                double.parse(order.cartItems[index].product.price);
+            canceledPrice -= discountedRowPrice;
             cancelItemsMap.remove(key);
+            subtotalPrice += order.cartItems[index].rowPrice;
+            totalPrice += discountedRowPrice;
+            discount += (order.cartItems[index].rowPrice - discountedRowPrice);
           } else {
-            canceledPrice += order.cartItems[index].itemCount *
-                double.parse(order.cartItems[index].product.price);
+            canceledPrice += discountedRowPrice;
             cancelItemsMap[key] = order.cartItems[index].itemCount;
+            subtotalPrice -= order.cartItems[index].rowPrice;
+            totalPrice -= discountedRowPrice;
+            discount -= (order.cartItems[index].rowPrice - discountedRowPrice);
           }
+          _getShippingMethods();
           markaaAppChangeNotifier.rebuild();
         },
       ),
@@ -444,7 +502,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            '${'currency'.tr()} ${NumericService.roundString(double.parse(order.subtotalPrice) - canceledPrice, 3)}',
+            '${'currency'.tr()} ${NumericService.roundDouble(subtotalPrice, 3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -456,12 +514,6 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildShippingCost() {
-    double subtotalPrice = double.parse(order.subtotalPrice);
-    double changedPrice = subtotalPrice - canceledPrice;
-    double fees = .0;
-    if (changedPrice > 0) {
-      fees = order.shippingMethod.serviceFees;
-    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -479,9 +531,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            fees == 0
+            serviceFees == 0
                 ? 'free'.tr()
-                : '${'currency'.tr()} ${NumericService.roundString(fees, 3)}',
+                : '${'currency'.tr()} ${NumericService.roundString(serviceFees, 3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -493,14 +545,6 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildDiscount() {
-    double subtotalPrice = double.parse(order.subtotalPrice);
-    double changedPrice = canceledPrice - subtotalPrice;
-    double discount = .0;
-    if (widget.order.discountType == 'percentage') {
-      discount = changedPrice * widget.order.discountAmount / 100;
-    } else {
-      discount = widget.order.discountAmount;
-    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -518,7 +562,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            '${'currency'.tr()} ${NumericService.roundString(discount, 3)}',
+            '${'currency'.tr()} ${NumericService.roundDouble(discount, 3)}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -530,20 +574,6 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   Widget _buildTotal() {
-    double subtotalPrice = double.parse(order.subtotalPrice);
-    double changedPrice = subtotalPrice - canceledPrice;
-    double fees = .0;
-    if (changedPrice > 0) {
-      fees = order.shippingMethod.serviceFees;
-    }
-    double discount = .0;
-    if (widget.order.discountType == 'percentage') {
-      discount = changedPrice * widget.order.discountAmount / 100;
-    } else {
-      if (changedPrice != 0) {
-        discount = widget.order.discountAmount;
-      }
-    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -562,7 +592,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            '${'currency'.tr()} ${NumericService.roundString(changedPrice - discount + fees, 3)}',
+            '${'currency'.tr()} ${NumericService.roundDouble(totalPrice, 3)}',
             style: mediumTextStyle.copyWith(
               color: primaryColor,
               fontSize: 16.sp,
@@ -614,9 +644,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       } else {
         updatedCount = count - order.cartItems[index].itemCount;
       }
-      canceledPrice +=
+      double discountedUpdatePrice =
+          order.getDiscountedPrice(order.cartItems[index], isRowPrice: false) *
+              updatedCount;
+      double updatePrice =
           double.parse(order.cartItems[index].product.price) * updatedCount;
+      canceledPrice += discountedUpdatePrice;
+      subtotalPrice -= updatePrice;
+      totalPrice -= discountedUpdatePrice;
+      discount -= (updatePrice - discountedUpdatePrice);
       cancelItemsMap[key] = count;
+      _getShippingMethods();
       markaaAppChangeNotifier.rebuild();
     }
   }

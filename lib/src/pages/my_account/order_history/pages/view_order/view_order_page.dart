@@ -258,6 +258,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           return Column(
             children: [
               OrderItemCard(
+                order: order,
                 cartItem: order.cartItems[index],
                 canceled: order.cartItems[index].itemCountCanceled > 0,
                 returned: order.cartItems[index].itemCountReturned > 0,
