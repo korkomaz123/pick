@@ -181,7 +181,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       getBrandsList,
       getViewedProducts;
 
-  String _test;
   @override
   Widget build(BuildContext context) {
     Preload.setLanguage();
@@ -211,7 +210,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             child: Column(
               children: [
                 MarkaaSimpleAppBar(scaffoldKey: scaffoldKey),
-                Text(_test),
                 Expanded(
                   child: SingleChildScrollView(
                     controller: _scrollController,
