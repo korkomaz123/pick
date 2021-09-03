@@ -1118,13 +1118,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
-  slack_notifier:
-    dependency: "direct main"
-    description:
-      name: slack_notifier
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   sliding_sheet:
     dependency: "direct main"
     description:
