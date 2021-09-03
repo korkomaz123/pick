@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
@@ -207,7 +205,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       }
       await myCartChangeNotifier.getCartId();
     }
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);
 
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);

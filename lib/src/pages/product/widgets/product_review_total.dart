@@ -24,7 +24,12 @@ class ProductReviewTotal extends StatefulWidget {
   final Function onFirstReview;
   final ProgressService progressService;
   final ProductChangeNotifier model;
-  ProductReviewTotal({this.product, this.onReviews, this.onFirstReview, this.model, this.progressService});
+  ProductReviewTotal(
+      {this.product,
+      this.onReviews,
+      this.onFirstReview,
+      this.model,
+      this.progressService});
 
   @override
   _ProductReviewTotalState createState() => _ProductReviewTotalState();
@@ -79,7 +84,8 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
               onTap: widget.onFirstReview,
               child: Row(
                 children: [
-                  Icon(Icons.add_circle_outline, color: primaryColor, size: 14.sp),
+                  Icon(Icons.add_circle_outline,
+                      color: primaryColor, size: 14.sp),
                   SizedBox(width: 5.w),
                   Text(
                     'add_your_review'.tr(),
@@ -96,16 +102,21 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
               onTap: () async {
                 if (isStock && _alarmActive.isEmpty) {
                   if (user == null || user.email == null) {
-                    Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.signIn);
+                    Navigator.pushNamed(
+                        Preload.navigatorKey.currentContext, Routes.signIn);
                     return;
                   }
                   widget.progressService.showProgress();
 
-                  print("${widget.product.productId}_product_price_${Preload.language}");
-                  FirebaseMessaging.instance.subscribeToTopic("${widget.product.productId}_product_price_${Preload.language}");
-                  await widget.product.requestPriceAlarm('price', widget.product.productId);
+                  print(
+                      "${widget.product.productId}_product_price_${Preload.language}");
+                  FirebaseMessaging.instance.subscribeToTopic(
+                      "${widget.product.productId}_product_price_${Preload.language}");
+                  await widget.product
+                      .requestPriceAlarm('price', widget.product.productId);
                   widget.progressService.hideProgress();
-                  FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                  FlushBarService(context: context).showErrorDialog(
+                      "alarm_subscribed".tr(), "../icons/price_alarm.svg");
                   _alarmActive = '_done';
                   setState(() {});
                 }
@@ -120,7 +131,14 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                       width: 18.sp,
                     ),
                   ),
-                  Text("price_alarm".tr(), style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: isStock ? null : greyColor)),
+                  Text(
+                    "price_alarm".tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isStock ? null : greyColor,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -191,9 +209,13 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             onRatingUpdate: (value) => null,
           ),
           InkWell(
-            onTap: model.reviews.length > 0 ? widget.onReviews : widget.onFirstReview,
+            onTap: model.reviews.length > 0
+                ? widget.onReviews
+                : widget.onFirstReview,
             child: Text(
-              'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
+              'reviews_count'
+                  .tr()
+                  .replaceFirst('0', model.reviews.length.toString()),
               style: mediumTextStyle.copyWith(
                 fontSize: 11.sp,
                 color: primaryColor,

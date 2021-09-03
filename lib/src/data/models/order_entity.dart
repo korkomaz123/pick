@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
+import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/payment_method_entity.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/shipping_method_entity.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/string_service.dart';
 
 import 'address_entity.dart';
@@ -24,6 +26,10 @@ class OrderEntity {
   String cartId;
   List<CartItemEntity> cartItems;
   AddressEntity address;
+  List<ConditionEntity> productCondition;
+  List<ConditionEntity> cartCondition;
+  bool isProductConditionOkay;
+  bool isCartConditionOkay;
 
   OrderEntity({
     this.orderId,
@@ -40,6 +46,10 @@ class OrderEntity {
     this.cartId,
     this.cartItems,
     this.address,
+    this.productCondition,
+    this.cartCondition,
+    this.isCartConditionOkay,
+    this.isProductConditionOkay,
   });
 
   OrderEntity.fromJson(Map<String, dynamic> json)
@@ -53,8 +63,8 @@ class OrderEntity {
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
             ? '0.000'
-            : StringService.roundString(json['base_grand_total'], 3),
-        subtotalPrice = StringService.roundString(json['base_subtotal'], 3),
+            : StringService.roundString(json['grand_total'], 3),
+        subtotalPrice = StringService.roundString(json['subtotal'], 3),
         discountAmount = double.parse(
             json['discount'].isNotEmpty ? json['discount'] : '0.000'),
         discountType = json['discount_type'],
@@ -71,7 +81,23 @@ class OrderEntity {
         cartItems = _getCartItems(json['products']),
         address = json.containsKey('shippingAddress')
             ? AddressEntity.fromJson(json['shippingAddress'])
-            : AddressEntity();
+            : AddressEntity(),
+        cartCondition =
+            json.containsKey('cart_condition') && json['cart_condition'] != ''
+                ? _getCondition(json['cart_condition'])
+                : [],
+        productCondition = json.containsKey('product_condition') &&
+                json['product_condition'] != ''
+            ? _getCondition(json['product_condition'])
+            : [],
+        isProductConditionOkay = json.containsKey('product_condition') &&
+                json['product_condition'] != ''
+            ? json['product_condition']['value'] == '1'
+            : true,
+        isCartConditionOkay =
+            json.containsKey('cart_condition') && json['cart_condition'] != ''
+                ? json['cart_condition']['value'] == '1'
+                : true;
 
   static String _covertLocalTime(int timestamp) {
     int milliseconds = timestamp * 1000;
@@ -98,5 +124,121 @@ class OrderEntity {
       }
     }
     return list;
+  }
+
+  static List<ConditionEntity> _getCondition(dynamic condition) {
+    List<ConditionEntity> cartConditions = [];
+    List<dynamic> conditionsList = [];
+    for (var productCondition in condition['conditions']) {
+      if (productCondition.containsKey('conditions')) {
+        conditionsList.addAll(productCondition['conditions']);
+      } else {
+        conditionsList.add(productCondition);
+      }
+    }
+    for (var condition in conditionsList) {
+      cartConditions.add(ConditionEntity.fromJson(condition));
+    }
+
+    return cartConditions;
+  }
+
+  double getDiscountedPrice(
+    CartItemEntity item, {
+    bool isRowPrice = true,
+  }) {
+    double price = .0;
+    bool cartConditionMatched = true;
+    for (var condition in cartCondition) {
+      if (condition.attribute == 'price' ||
+          condition.attribute == 'special_price') {
+        if (condition.attribute == 'price') {
+          price = StringService.roundDouble(item.product.beforePrice, 3);
+        } else if (condition.attribute == 'special_price') {
+          if (item.product.price == item.product.beforePrice)
+            price = 0;
+          else
+            price = StringService.roundDouble(item.product.price, 3);
+        }
+        cartConditionMatched = condition.operator == '>='
+            ? price >= double.parse(condition.value)
+            : condition.operator == '>'
+                ? price > double.parse(condition.value)
+                : condition.operator == '<='
+                    ? price <= double.parse(condition.value)
+                    : price < double.parse(condition.value);
+      } else if (condition.attribute == 'sku') {
+        cartConditionMatched = condition.operator == '=='
+            ? item.product.sku == condition.value
+            : item.product.sku != condition.value;
+      } else if (condition.attribute == 'manufacturer') {
+        cartConditionMatched = condition.operator == '=='
+            ? item.product.brandEntity.optionId == condition.value
+            : item.product.brandEntity.optionId != condition.value;
+      } else if (condition.attribute == 'category_ids') {
+        List<String> values = condition.value.split(', ');
+        cartConditionMatched = condition.operator == '=='
+            ? values.any((value) =>
+                item.product.categories.contains(value) ||
+                item.product.parentCategories.contains(value))
+            : !values.any((value) =>
+                item.product.categories.contains(value) ||
+                item.product.parentCategories.contains(value));
+      }
+    }
+    bool productConditionMatched = true;
+    for (var condition in productCondition) {
+      if (condition.attribute == 'price' ||
+          condition.attribute == 'special_price') {
+        if (condition.attribute == 'price') {
+          price = StringService.roundDouble(item.product.beforePrice, 3);
+        } else if (condition.attribute == 'special_price') {
+          if (item.product.price == item.product.beforePrice)
+            price = 0;
+          else
+            price = StringService.roundDouble(item.product.price, 3);
+        }
+        productConditionMatched = condition.operator == '>='
+            ? price >= double.parse(condition.value)
+            : condition.operator == '>'
+                ? price > double.parse(condition.value)
+                : condition.operator == '<='
+                    ? price <= double.parse(condition.value)
+                    : price < double.parse(condition.value);
+      } else if (condition.attribute == 'sku') {
+        productConditionMatched = condition.operator == '=='
+            ? item.product.sku == condition.value
+            : item.product.sku != condition.value;
+      } else if (condition.attribute == 'manufacturer') {
+        productConditionMatched = condition.operator == '=='
+            ? item.product.brandEntity.optionId == condition.value
+            : item.product.brandEntity.optionId != condition.value;
+      } else if (condition.attribute == 'category_ids') {
+        List<String> values = condition.value.split(', ');
+        productConditionMatched = condition.operator == '=='
+            ? values.any((value) =>
+                item.product.categories.contains(value) ||
+                item.product.parentCategories.contains(value))
+            : !values.any((value) =>
+                item.product.categories.contains(value) ||
+                item.product.parentCategories.contains(value));
+      }
+    }
+    bool isOkay =
+        (cartConditionMatched && isCartConditionOkay == isCartConditionOkay) &&
+            (productConditionMatched &&
+                isProductConditionOkay == isProductConditionOkay);
+    if (isRowPrice) {
+      return isOkay
+          ? NumericService.roundDouble(
+              item.rowPrice * (100 - discountAmount) / 100, 3)
+          : item.rowPrice;
+    } else {
+      return isOkay
+          ? NumericService.roundDouble(
+              double.parse(item.product.price) * (100 - discountAmount) / 100,
+              3)
+          : StringService.roundDouble(item.product.price, 3);
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -29,7 +30,7 @@ class _BrandListPageState extends State<BrandListPage> {
   HomeChangeNotifier _homeChangeNotifier;
   ScrollController _brandListScrollController = ScrollController();
 
-  List<String> alphabetList = ['All'];
+  List<String> alphabetList = ['all'.tr()];
   List<String> nameCharList = [];
   int selectedIndex = 0;
   int brandIndex = 0;
@@ -38,7 +39,12 @@ class _BrandListPageState extends State<BrandListPage> {
   @override
   void initState() {
     super.initState();
-    alphabetList.addAll(enAlphabetList);
+    if (Preload.language == 'en') {
+      alphabetList.addAll(enAlphabetList);
+    } else {
+      alphabetList.addAll(arAlphabetList);
+    }
+
     _homeChangeNotifier = context.read<HomeChangeNotifier>();
     _loadingData = _homeChangeNotifier.getBrandsList('brand');
 
@@ -118,7 +124,8 @@ class _BrandListPageState extends State<BrandListPage> {
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color: index == selectedIndex ? primaryColor : Colors.white,
+                      color:
+                          index == selectedIndex ? primaryColor : Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(color: primaryColor),
                     ),
@@ -128,7 +135,9 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex ? primaryColor : Colors.white,
+                        color: index != selectedIndex
+                            ? primaryColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -270,7 +279,8 @@ class _BrandListPageState extends State<BrandListPage> {
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                  imageUrl:
+                      _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
                 );
               },
             ),

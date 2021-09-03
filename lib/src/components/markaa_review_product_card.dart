@@ -93,22 +93,22 @@ class MarkaaReviewProductCard extends StatelessWidget {
                             color: primaryColor,
                           ),
                         ),
-                        if (cartItem.product.price !=
-                            cartItem.product.beforePrice) ...[
-                          SizedBox(width: 5.w),
-                          Text(
-                            cartItem.product.beforePrice +
-                                ' ' +
-                                'currency'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              decorationStyle: TextDecorationStyle.solid,
-                              decoration: TextDecoration.lineThrough,
-                              decorationColor: dangerColor,
-                              fontSize: 12.sp,
-                              color: greyColor,
-                            ),
-                          ),
-                        ]
+                        // if (cartItem.product.price !=
+                        //     cartItem.product.beforePrice) ...[
+                        //   SizedBox(width: 5.w),
+                        //   Text(
+                        //     cartItem.product.beforePrice +
+                        //         ' ' +
+                        //         'currency'.tr(),
+                        //     style: mediumTextStyle.copyWith(
+                        //       decorationStyle: TextDecorationStyle.solid,
+                        //       decoration: TextDecoration.lineThrough,
+                        //       decorationColor: dangerColor,
+                        //       fontSize: 12.sp,
+                        //       color: greyColor,
+                        //     ),
+                        //   ),
+                        // ]
                       ],
                     ),
                   ],
