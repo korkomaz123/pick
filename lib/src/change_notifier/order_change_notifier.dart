@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,6 +5,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -152,12 +151,14 @@ class OrderChangeNotifier extends ChangeNotifier {
       } catch (e) {}
 
       String isVirtual = isWallet ? '1' : '0';
-      log(jsonEncode(orderDetails));
       final result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
-      print(result);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
-        final newOrder = OrderEntity.fromJson(result['order']);
+        final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
+
+        SlackChannels.send(
+            'new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}] [totalPrice : ${newOrder.totalPrice}]',
+            SlackChannels.logAddOrder);
         if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
@@ -168,6 +169,8 @@ class OrderChangeNotifier extends ChangeNotifier {
 
         onSuccess(result['payurl'], newOrder);
       } else {
+        SlackChannels.send('new Order [${result['code']}] : ${result['errorMessage']}', SlackChannels.logAddOrder);
+
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
