@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:markaa/slack.dart';
 
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/routes/routes.dart';
@@ -23,6 +24,7 @@ void main() async {
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
+    SlackChannels.send(e.exceptionAsString(), SlackChannels.logAppErrors);
     return Center(
       child: Text("There was an error! ${e.exception}"),
     );
@@ -39,8 +41,7 @@ void main() async {
 
   if (Platform.isIOS)
     try {
-      final TrackingStatus status =
-          await AppTrackingTransparency.trackingAuthorizationStatus;
+      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
       if (status == TrackingStatus.notDetermined) {
         await AppTrackingTransparency.requestTrackingAuthorization();
       }

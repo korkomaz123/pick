@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -31,6 +32,7 @@ import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:slack_notifier/slack_notifier.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -90,6 +92,7 @@ class _SignInPageState extends State<SignInPage> {
   void _loggedInSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
+      SlackChannels.send('new login [${user.email}][${user.toJson()}]', SlackChannels.logAppUsers);
       await localRepo.setToken(user.token);
 
       await orderChangeNotifier.loadOrderHistories(user.token, lang);
@@ -152,9 +155,7 @@ class _SignInPageState extends State<SignInPage> {
                   Container(
                     width: 375.w,
                     padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
+                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
@@ -474,8 +475,7 @@ class _SignInPageState extends State<SignInPage> {
   void _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final profile = await Api.getMethod(
-          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = await Api.getMethod('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
