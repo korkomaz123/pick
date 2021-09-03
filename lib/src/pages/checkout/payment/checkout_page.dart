@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -17,7 +17,7 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/icons.dart';
+// import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -33,7 +33,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
-import 'widgets/deliver_as_gift_form.dart';
+// import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/payment_method_list.dart';
@@ -72,8 +72,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -152,8 +151,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         ),
                         Column(
-                          children:
-                              List.generate(paymentMethods.length, (index) {
+                          children: List.generate(paymentMethods.length, (index) {
                             int idx = paymentMethods.length - index - 1;
                             if (paymentMethods[idx].id != payment) {
                               return Container();
@@ -184,53 +182,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildDeliverAsGift() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 30.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              SvgPicture.asset(giftIcon),
-              SizedBox(width: 10.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'deliver_as_gift'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  Text(
-                    'special_reopen_special_message'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Transform.scale(
-            scale: 0.8,
-            child: CupertinoSwitch(
-              value: deliverAsGift,
-              onChanged: (value) async {
-                deliverAsGift = value;
-                markaaAppChangeNotifier.rebuild();
-                if (deliverAsGift) await _onSendAsGift();
-              },
-              activeColor: primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildDeliverAsGift() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.symmetric(vertical: 30.h),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             SvgPicture.asset(giftIcon),
+  //             SizedBox(width: 10.w),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   'deliver_as_gift'.tr(),
+  //                   style: mediumTextStyle.copyWith(
+  //                     color: primaryColor,
+  //                     fontSize: 14.sp,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   'special_reopen_special_message'.tr(),
+  //                   style: mediumTextStyle.copyWith(
+  //                     fontSize: 12.sp,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //         Transform.scale(
+  //           scale: 0.8,
+  //           child: CupertinoSwitch(
+  //             value: deliverAsGift,
+  //             onChanged: (value) async {
+  //               deliverAsGift = value;
+  //               markaaAppChangeNotifier.rebuild();
+  //               if (deliverAsGift) await _onSendAsGift();
+  //             },
+  //             activeColor: primaryColor,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildNote() {
     return Padding(
@@ -299,39 +297,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  Future _onSendAsGift() async {
-    final result = await showSlidingBottomSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 10.sp,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return DeliverAsGiftForm();
-          },
-        );
-      },
-    );
-    if (result != null) {
-      orderDetails['deliver_as_gift'] = result;
-    } else {
-      deliverAsGift = false;
-      orderDetails['deliver_as_gift'] = {
-        'deliver_as_gift': '0',
-        'sender': '',
-        'receiver': '',
-        'message': '',
-      };
-      markaaAppChangeNotifier.rebuild();
-    }
-  }
+  // Future _onSendAsGift() async {
+  //   final result = await showSlidingBottomSheet(
+  //     context,
+  //     builder: (_) {
+  //       return SlidingSheetDialog(
+  //         color: Colors.white,
+  //         elevation: 2,
+  //         cornerRadius: 10.sp,
+  //         snapSpec: const SnapSpec(
+  //           snap: true,
+  //           snappings: [1],
+  //           positioning: SnapPositioning.relativeToSheetHeight,
+  //         ),
+  //         duration: Duration(milliseconds: 500),
+  //         builder: (context, state) {
+  //           return DeliverAsGiftForm();
+  //         },
+  //       );
+  //     },
+  //   );
+  //   if (result != null) {
+  //     orderDetails['deliver_as_gift'] = result;
+  //   } else {
+  //     deliverAsGift = false;
+  //     orderDetails['deliver_as_gift'] = {
+  //       'deliver_as_gift': '0',
+  //       'sender': '',
+  //       'receiver': '',
+  //       'message': '',
+  //     };
+  //     markaaAppChangeNotifier.rebuild();
+  //   }
+  // }
 
   _onPlaceOrder() async {
     orderDetails['paymentMethod'] = payment;
@@ -362,10 +360,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang,
-        onProcess: _onProcess,
-        onSuccess: _onOrderSubmittedSuccess,
-        onFailure: _onFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -394,8 +389,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
-          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 

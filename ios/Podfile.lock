@@ -494,6 +494,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - PromisesObjC (1.2.12)
@@ -543,6 +545,7 @@ DEPENDENCIES:
   - kommunicate_flutter (from `.symlinks/plugins/kommunicate_flutter/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - share (from `.symlinks/plugins/share/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -642,6 +645,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
     :path: ".symlinks/plugins/libphonenumber_plugin/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   share:
@@ -719,6 +724,7 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   libphonenumber_plugin: 7cf755ad1656145935d6c208173a476bd3f12898
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
