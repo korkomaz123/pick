@@ -157,7 +157,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
 
         SlackChannels.send(
-            'new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}] [totalPrice : ${newOrder.totalPrice}]',
+            '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user.email}=>${user.customerId}]''',
             SlackChannels.logAddOrder);
         if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
