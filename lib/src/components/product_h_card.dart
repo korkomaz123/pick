@@ -16,7 +16,6 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -39,6 +38,7 @@ class ProductHCard extends StatefulWidget {
   final bool isShare;
   final bool isMinor;
   final Function onTap;
+  final Function onAddToCartFailure;
 
   ProductHCard({
     this.cardWidth,
@@ -49,6 +49,7 @@ class ProductHCard extends StatefulWidget {
     this.isShare = false,
     this.isMinor = true,
     this.onTap,
+    this.onAddToCartFailure,
   });
 
   @override
@@ -70,15 +71,13 @@ class _ProductHCardState extends State<ProductHCard>
 
   int index;
   bool isWishlist;
-  ProductModel _product;
-  ProductRepository _productRepository = ProductRepository();
 
-  bool get outOfStock => !(_product.stockQty != null && _product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
     isWishlist = false;
-    _product = widget.product;
     super.initState();
 
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -131,7 +130,7 @@ class _ProductHCardState extends State<ProductHCard>
         Navigator.pushNamed(
           context,
           Routes.product,
-          arguments: _product,
+          arguments: widget.product,
         );
         if (widget.onTap != null) widget.onTap();
       },
@@ -141,7 +140,7 @@ class _ProductHCardState extends State<ProductHCard>
         child: Stack(
           children: [
             _buildProductCard(),
-            if (_product.discount > 0) ...[
+            if (widget.product.discount > 0) ...[
               if (lang == 'en') ...[
                 Positioned(
                   top: 0,
@@ -156,7 +155,7 @@ class _ProductHCardState extends State<ProductHCard>
                 ),
               ],
             ],
-            if (_product.isDeal) ...[_buildDealValueLabel()],
+            if (widget.product.isDeal) ...[_buildDealValueLabel()],
             _buildToolbar(),
             _buildOutofStock(),
           ],
@@ -180,7 +179,7 @@ class _ProductHCardState extends State<ProductHCard>
               left: lang == 'ar' ? 5.w : 0,
             ),
             child: CachedNetworkImage(
-              imageUrl: _product.imageUrl,
+              imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.9,
               fit: BoxFit.fitHeight,
@@ -200,7 +199,7 @@ class _ProductHCardState extends State<ProductHCard>
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
-                        brand: _product.brandEntity,
+                        brand: widget.product.brandEntity,
                         selectedSubCategoryIndex: 0,
                         isFromBrand: true,
                       );
@@ -225,7 +224,7 @@ class _ProductHCardState extends State<ProductHCard>
                     left: lang == 'ar' ? 20.w : 0,
                   ),
                   child: Text(
-                    _product.name,
+                    widget.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
@@ -243,8 +242,8 @@ class _ProductHCardState extends State<ProductHCard>
                       child: Row(
                         children: [
                           Text(
-                            _product.price != null
-                                ? (_product.price + ' ' + 'currency'.tr())
+                            widget.product.price != null
+                                ? (widget.product.price + ' ' + 'currency'.tr())
                                 : '',
                             style: mediumTextStyle.copyWith(
                               fontSize: 14.sp,
@@ -252,12 +251,14 @@ class _ProductHCardState extends State<ProductHCard>
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (_product.discount > 0) ...[
+                          if (widget.product.discount > 0) ...[
                             SizedBox(
                               width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
-                              _product.beforePrice + ' ' + 'currency'.tr(),
+                              widget.product.beforePrice +
+                                  ' ' +
+                                  'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -317,7 +318,7 @@ class _ProductHCardState extends State<ProductHCard>
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
-        '${_product.discount}% ${'off'.tr()}',
+        '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
@@ -361,7 +362,7 @@ class _ProductHCardState extends State<ProductHCard>
 
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
-      isWishlist = model.wishlistItemsMap.containsKey(_product.productId);
+      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
       if (widget.isWishlist) {
         return Align(
           alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
@@ -414,8 +415,8 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   void _onAddProductToCart() async {
-    if (_product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: _product);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
       _addToCartController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -424,7 +425,7 @@ class _ProductHCardState extends State<ProductHCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier.addProductToCart(_product, 1, lang, {},
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
@@ -455,7 +456,7 @@ class _ProductHCardState extends State<ProductHCard>
           ),
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: _product);
+            return MarkaaCartAddedSuccessDialog(product: widget.product);
           },
         );
       },
@@ -465,16 +466,15 @@ class _ProductHCardState extends State<ProductHCard>
     Adjust.trackEvent(adjustEvent);
   }
 
-  _onAddFailure(String message) async {
+  _onAddFailure(String message) {
     progressService.hideProgress();
-    _product = await _productRepository.getProduct(_product.productId);
-    setState(() {});
     flushBarService.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure();
   }
 
   void _onWishlist() async {
-    if (_product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: _product);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
       _addToWishlistController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -482,9 +482,11 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(user.token, _product);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product);
       } else {
-        wishlistChangeNotifier.addItemToWishlist(user.token, _product, 1, {});
+        wishlistChangeNotifier
+            .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }

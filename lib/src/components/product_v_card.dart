@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
@@ -16,17 +21,11 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/preload.dart';
 
 class ProductVCard extends StatefulWidget {
   final double cardWidth;
@@ -38,6 +37,7 @@ class ProductVCard extends StatefulWidget {
   final bool isLine;
   final bool isMinor;
   final Function onTap;
+  final Function onAddToCartFailure;
 
   ProductVCard({
     this.cardWidth,
@@ -49,6 +49,7 @@ class ProductVCard extends StatefulWidget {
     this.isLine = false,
     this.isMinor = true,
     this.onTap,
+    this.onAddToCartFailure,
   });
 
   @override
@@ -57,8 +58,6 @@ class ProductVCard extends StatefulWidget {
 
 class _ProductVCardState extends State<ProductVCard>
     with TickerProviderStateMixin {
-  ProductRepository _productRepository = ProductRepository();
-  ProductModel _product;
   bool _isWishlist;
 
   AnimationController _addToCartController;
@@ -71,11 +70,11 @@ class _ProductVCardState extends State<ProductVCard>
   FlushBarService _flushBarService;
   ProgressService _progressService;
 
-  bool get outOfStock => !(_product.stockQty != null && _product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
-    _product = widget.product;
     _isWishlist = false;
     super.initState();
 
@@ -127,7 +126,7 @@ class _ProductVCardState extends State<ProductVCard>
           Navigator.pushNamed(
             context,
             Routes.product,
-            arguments: _product,
+            arguments: widget.product,
           );
           if (widget.onTap != null) widget.onTap();
         },
@@ -137,14 +136,14 @@ class _ProductVCardState extends State<ProductVCard>
           child: Stack(
             children: [
               _buildProductCard(),
-              if (_product.discount > 0) ...[
+              if (widget.product.discount > 0) ...[
                 if (Preload.language == 'en') ...[
                   Positioned(top: 0, left: 0, child: _buildDiscount()),
                 ] else ...[
                   Positioned(top: 0, right: 0, child: _buildDiscount()),
                 ],
               ],
-              if (_product.isDeal) ...[_buildDealValueLabel()],
+              if (widget.product.isDeal) ...[_buildDealValueLabel()],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -168,7 +167,7 @@ class _ProductVCardState extends State<ProductVCard>
       child: Column(
         children: [
           CachedNetworkImage(
-            imageUrl: _product.imageUrl,
+            imageUrl: widget.product.imageUrl,
             width: widget.cardWidth,
             height: widget.cardHeight * 0.63,
             fit: BoxFit.cover,
@@ -187,7 +186,7 @@ class _ProductVCardState extends State<ProductVCard>
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
-                        brand: _product.brandEntity,
+                        brand: widget.product.brandEntity,
                         selectedSubCategoryIndex: 0,
                         isFromBrand: true,
                       );
@@ -207,7 +206,7 @@ class _ProductVCardState extends State<ProductVCard>
                   ),
                 ),
                 Text(
-                  _product.name,
+                  widget.product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(
@@ -228,8 +227,8 @@ class _ProductVCardState extends State<ProductVCard>
                       child: Row(
                         children: [
                           Text(
-                            _product.price != null
-                                ? (_product.price + ' ' + 'currency'.tr())
+                            widget.product.price != null
+                                ? (widget.product.price + ' ' + 'currency'.tr())
                                 : '',
                             style: mediumTextStyle.copyWith(
                               fontSize: widget.isMinor ? 12.sp : 14.sp,
@@ -237,10 +236,12 @@ class _ProductVCardState extends State<ProductVCard>
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (_product.discount > 0) ...[
+                          if (widget.product.discount > 0) ...[
                             SizedBox(width: widget.isMinor ? 4.w : 10.w),
                             Text(
-                              _product.beforePrice + ' ' + 'currency'.tr(),
+                              widget.product.beforePrice +
+                                  ' ' +
+                                  'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -301,7 +302,7 @@ class _ProductVCardState extends State<ProductVCard>
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
-        '${_product.discount}% ${'off'.tr()}',
+        '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
@@ -346,7 +347,8 @@ class _ProductVCardState extends State<ProductVCard>
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(
       builder: (_, model, __) {
-        _isWishlist = model.wishlistItemsMap.containsKey(_product.productId);
+        _isWishlist =
+            model.wishlistItemsMap.containsKey(widget.product.productId);
         if (widget.isWishlist) {
           return Align(
             alignment: Preload.language == 'en'
@@ -408,11 +410,11 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   void _onAddProductToCart() async {
-    if (_product.typeId == 'configurable') {
+    if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(
         Preload.navigatorKey.currentContext,
         Routes.product,
-        arguments: _product,
+        arguments: widget.product,
       );
     } else {
       _addToCartController.repeat(reverse: true);
@@ -421,8 +423,9 @@ class _ProductVCardState extends State<ProductVCard>
         timer.cancel();
       });
 
-      if (_product.stockQty != null && _product.stockQty > 0) {
-        await _myCartChangeNotifier.addProductToCart(_product, 1, lang, {},
+      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+        await _myCartChangeNotifier.addProductToCart(
+            widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
@@ -453,7 +456,7 @@ class _ProductVCardState extends State<ProductVCard>
           ),
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: _product);
+            return MarkaaCartAddedSuccessDialog(product: widget.product);
           },
         );
       },
@@ -463,19 +466,18 @@ class _ProductVCardState extends State<ProductVCard>
     Adjust.trackEvent(adjustEvent);
   }
 
-  _onAddFailure(String message) async {
+  _onAddFailure(String message) {
     _progressService.hideProgress();
-    _product = await _productRepository.getProduct(_product.productId);
-    setState(() {});
     _flushBarService.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure();
   }
 
   void _onWishlist() async {
-    if (_product.typeId == 'configurable') {
+    if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(
         Preload.navigatorKey.currentContext,
         Routes.product,
-        arguments: _product,
+        arguments: widget.product,
       );
     } else {
       _addToWishlistController.repeat(reverse: true);
@@ -486,11 +488,11 @@ class _ProductVCardState extends State<ProductVCard>
       if (_isWishlist) {
         await Preload.navigatorKey.currentContext
             .read<WishlistChangeNotifier>()
-            .removeItemFromWishlist(user.token, _product);
+            .removeItemFromWishlist(user.token, widget.product);
       } else {
         await Preload.navigatorKey.currentContext
             .read<WishlistChangeNotifier>()
-            .addItemToWishlist(user.token, _product, 1, {});
+            .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }

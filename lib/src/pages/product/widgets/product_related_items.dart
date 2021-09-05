@@ -37,9 +37,7 @@ class ProductRelatedItems extends StatelessWidget {
                 itemCount: relatedItems.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.only(
-                      right: 10.w,
-                    ),
+                    padding: EdgeInsets.only(right: 10.w),
                     child: ProductVCard(
                       cardWidth: 180.w,
                       cardHeight: 320.h,

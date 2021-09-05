@@ -127,16 +127,12 @@ class _LogoutItemState extends State<LogoutItem> {
 
     orderChangeNotifier.initializeOrders();
     wishlistChangeNotifier.initialize();
-
     myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-
     homeChangeNotifier.loadRecentlyViewedGuest();
 
     progressService.hideProgress();
-
-    Navigator.pop(context);
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,

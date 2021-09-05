@@ -16,7 +16,13 @@ class SlackChannels {
       'text': message,
     };
 
-    var result = http.post(Uri.parse(mainUrl + channel), body: json.encode(request), headers: requestHeader).then((response) {
+    var result = http
+        .post(
+      Uri.parse(mainUrl + channel),
+      body: json.encode(request),
+      headers: requestHeader,
+    )
+        .then((response) {
       print(response.body);
     });
     print(result);

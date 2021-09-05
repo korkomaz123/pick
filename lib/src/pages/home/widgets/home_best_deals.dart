@@ -8,6 +8,7 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -16,20 +17,26 @@ import '../../../../preload.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestDeals({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-        margin: EdgeInsets.only(bottom: 10.h),
-        color: Colors.white,
-        child: Column(
-          children: [
-            _buildHeadline(),
-            _buildProductsList(),
-          ],
-        ),
+      return Consumer<HomeChangeNotifier>(
+        builder: (_, __, ___) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+            margin: EdgeInsets.only(bottom: 10.h),
+            color: Colors.white,
+            child: Column(
+              children: [
+                _buildHeadline(),
+                _buildProductsList(),
+              ],
+            ),
+          );
+        },
       );
     } else {
       return Container();
@@ -110,6 +117,8 @@ class HomeBestDeals extends StatelessWidget {
                   isMinor: true,
                   isWishlist: true,
                   isShare: false,
+                  onAddToCartFailure: () =>
+                      homeChangeNotifier.updateBestDealProduct(index),
                 ),
               );
             },

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/preload.dart';
+import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -16,26 +17,30 @@ import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeNewArrivals({@required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.newArrivalsProducts.isNotEmpty) {
-      return Container(
-        height: 240.h,
-        padding: EdgeInsets.all(8.w),
-        margin: EdgeInsets.only(bottom: 10.h),
-        color: Colors.white,
-        child: Column(
-          children: [
-            _buildHeadline(context),
-            HomeProductsCarousel(
-              products: homeChangeNotifier.newArrivalsProducts,
-              isVerticalCard: false,
-            ),
-          ],
-        ),
-      );
+      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
+        return Container(
+          height: 240.h,
+          padding: EdgeInsets.all(8.w),
+          margin: EdgeInsets.only(bottom: 10.h),
+          color: Colors.white,
+          child: Column(
+            children: [
+              _buildHeadline(context),
+              HomeProductsCarousel(
+                products: homeChangeNotifier.newArrivalsProducts,
+                isVerticalCard: false,
+                onAddToCartFailure: homeChangeNotifier.updateNewArrivalsProduct,
+              ),
+            ],
+          ),
+        );
+      });
     } else {
       return Container();
     }

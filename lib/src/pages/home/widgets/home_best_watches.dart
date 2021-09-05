@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/preload.dart';
@@ -35,17 +36,19 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
     if ((widget.homeChangeNotifier.bestWatchesBanners != null &&
             widget.homeChangeNotifier.bestWatchesBanners.isNotEmpty) ||
         widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) {
-      return Container(
-        width: designWidth.w,
-        color: Colors.white,
-        margin: EdgeInsets.only(bottom: 10.h),
-        child: Column(
-          children: [
-            _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
-            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-          ],
-        ),
-      );
+      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
+        return Container(
+          width: designWidth.w,
+          color: Colors.white,
+          margin: EdgeInsets.only(bottom: 10.h),
+          child: Column(
+            children: [
+              _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
+              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
+            ],
+          ),
+        );
+      });
     }
     return Container();
   }
@@ -60,11 +63,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  banners[0]?.categoryId != null
-                      ? banners[0].categoryName
-                      : banners[0]?.brand != null
-                          ? banners[0].brand.brandLabel
-                          : '',
+                  widget.homeChangeNotifier.bestWatchesTitle,
                   maxLines: 1,
                   style: mediumTextStyle.copyWith(
                     fontSize: 26.sp,
@@ -147,6 +146,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
+            onAddToCartFailure: () =>
+                widget.homeChangeNotifier.updateBestWatchesProduct(index),
           ),
         ),
       ),

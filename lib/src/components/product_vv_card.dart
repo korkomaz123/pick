@@ -16,7 +16,6 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -39,6 +38,7 @@ class ProductVVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
+  final Function onAddToCartFailure;
 
   ProductVVCard({
     this.cardWidth,
@@ -49,6 +49,7 @@ class ProductVVCard extends StatefulWidget {
     this.isShare = false,
     this.isLine = false,
     this.isMinor = true,
+    this.onAddToCartFailure,
   });
 
   @override
@@ -57,8 +58,6 @@ class ProductVVCard extends StatefulWidget {
 
 class _ProductVVCardState extends State<ProductVVCard>
     with TickerProviderStateMixin {
-  ProductRepository productRepository = ProductRepository();
-  ProductModel product;
   bool isWishlist;
   int index;
 
@@ -72,11 +71,11 @@ class _ProductVVCardState extends State<ProductVVCard>
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
 
-  bool get outOfStock => !(product.stockQty != null && product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
-    product = widget.product;
     isWishlist = false;
     super.initState();
 
@@ -130,7 +129,7 @@ class _ProductVVCardState extends State<ProductVVCard>
         onTap: () => Navigator.pushNamed(
           context,
           Routes.product,
-          arguments: product,
+          arguments: widget.product,
         ),
         child: Container(
           width: widget.cardWidth,
@@ -138,7 +137,7 @@ class _ProductVVCardState extends State<ProductVVCard>
           child: Stack(
             children: [
               _buildProductCard(),
-              if (product.discount > 0) ...[
+              if (widget.product.discount > 0) ...[
                 if (lang == 'en') ...[
                   Positioned(
                     top: 0,
@@ -153,7 +152,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                   ),
                 ],
               ],
-              if (product.isDeal) ...[_buildDealValueLabel()],
+              if (widget.product.isDeal) ...[_buildDealValueLabel()],
               _buildToolbar(),
               _buildOutofStock(),
             ],
@@ -177,7 +176,7 @@ class _ProductVVCardState extends State<ProductVVCard>
       child: Column(
         children: [
           CachedNetworkImage(
-            imageUrl: product.imageUrl,
+            imageUrl: widget.product.imageUrl,
             width: widget.cardHeight * 0.65,
             height: widget.cardHeight * 0.6,
             fit: BoxFit.fitHeight,
@@ -195,7 +194,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                       ProductListArguments arguments = ProductListArguments(
                         category: CategoryEntity(),
                         subCategory: [],
-                        brand: product.brandEntity,
+                        brand: widget.product.brandEntity,
                         selectedSubCategoryIndex: 0,
                         isFromBrand: true,
                       );
@@ -217,7 +216,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                 if (widget.isLine || widget.isMinor) ...[
                   Expanded(
                     child: Text(
-                      product.name,
+                      widget.product.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -229,7 +228,7 @@ class _ProductVVCardState extends State<ProductVVCard>
                   )
                 ] else ...[
                   Text(
-                    product.name,
+                    widget.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: mediumTextStyle.copyWith(
@@ -245,8 +244,8 @@ class _ProductVVCardState extends State<ProductVVCard>
                   child: Row(
                     children: [
                       Text(
-                        product.price != null
-                            ? (product.price + ' ' + 'currency'.tr())
+                        widget.product.price != null
+                            ? (widget.product.price + ' ' + 'currency'.tr())
                             : '',
                         style: mediumTextStyle.copyWith(
                           fontSize: widget.isMinor ? 12.sp : 14.sp,
@@ -254,10 +253,10 @@ class _ProductVVCardState extends State<ProductVVCard>
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      if (product.discount > 0) ...[
+                      if (widget.product.discount > 0) ...[
                         SizedBox(width: widget.isMinor ? 4.w : 10.w),
                         Text(
-                          product.beforePrice + ' ' + 'currency'.tr(),
+                          widget.product.beforePrice + ' ' + 'currency'.tr(),
                           style: mediumTextStyle.copyWith(
                             decorationStyle: TextDecorationStyle.solid,
                             decoration: TextDecoration.lineThrough,
@@ -318,7 +317,7 @@ class _ProductVVCardState extends State<ProductVVCard>
       color: Colors.redAccent,
       alignment: Alignment.center,
       child: Text(
-        '${product.discount}% ${'off'.tr()}',
+        '${widget.product.discount}% ${'off'.tr()}',
         textAlign: TextAlign.center,
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
@@ -362,7 +361,7 @@ class _ProductVVCardState extends State<ProductVVCard>
 
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
-      isWishlist = model.wishlistItemsMap.containsKey(product.productId);
+      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
       if (widget.isWishlist) {
         return Align(
           alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
@@ -412,8 +411,8 @@ class _ProductVVCardState extends State<ProductVVCard>
   }
 
   void _onAddProductToCart() async {
-    if (product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: product);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
       _addToCartController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -422,7 +421,7 @@ class _ProductVVCardState extends State<ProductVVCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier.addProductToCart(product, 1, lang, {},
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
@@ -453,7 +452,7 @@ class _ProductVVCardState extends State<ProductVVCard>
           ),
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: product);
+            return MarkaaCartAddedSuccessDialog(product: widget.product);
           },
         );
       },
@@ -463,16 +462,15 @@ class _ProductVVCardState extends State<ProductVVCard>
     Adjust.trackEvent(adjustEvent);
   }
 
-  _onAddFailure(String message) async {
+  _onAddFailure(String message) {
     progressService.hideProgress();
-    product = await productRepository.getProduct(product.productId);
-    setState(() {});
     flushBarService.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure();
   }
 
   void _onWishlist() async {
-    if (product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: product);
+    if (widget.product.typeId == 'configurable') {
+      Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
       _addToWishlistController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -480,9 +478,11 @@ class _ProductVVCardState extends State<ProductVVCard>
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(user.token, product);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, widget.product);
       } else {
-        wishlistChangeNotifier.addItemToWishlist(user.token, product, 1, {});
+        wishlistChangeNotifier
+            .addItemToWishlist(user.token, widget.product, 1, {});
       }
     }
   }
