@@ -243,6 +243,7 @@ class _MyCartPageState extends State<MyCartPage>
                           onSaveForLaterItem: () =>
                               _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
+                          myCartChangeNotifier: myCartChangeNotifier,
                         ),
                         index < (myCartChangeNotifier.cartItemCount - 1)
                             ? Divider(color: greyColor, thickness: 0.5)

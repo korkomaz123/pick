@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -24,6 +25,7 @@ class MyCartItem extends StatelessWidget {
   final Function onRemoveCartItem;
   final Function onSaveForLaterItem;
   final Function onSignIn;
+  final MyCartChangeNotifier myCartChangeNotifier;
 
   MyCartItem({
     this.cartItem,
@@ -33,6 +35,7 @@ class MyCartItem extends StatelessWidget {
     this.onRemoveCartItem,
     this.onSaveForLaterItem,
     this.onSignIn,
+    this.myCartChangeNotifier,
   });
 
   bool get discountable => discount != 0 && type == 'percentage';
@@ -165,7 +168,22 @@ class MyCartItem extends StatelessWidget {
             ],
           ),
         ),
-        cartItem.availableCount == 0 ? _buildOutOfStock() : SizedBox.shrink(),
+        if (cartItem.availableCount == 0) ...[_buildOutOfStock()],
+        if (discounted) ...[
+          Align(
+            alignment: Preload.language == 'en'
+                ? Alignment.topRight
+                : Alignment.topLeft,
+            child: Tooltip(
+              message: 'coupon_apply_notice'
+                  .tr()
+                  .replaceFirst('[code]', myCartChangeNotifier.couponCode),
+              child: Icon(Icons.help_outline, color: dangerColor, size: 20.sp),
+              waitDuration: Duration(milliseconds: 100),
+              showDuration: Duration(milliseconds: 3000),
+            ),
+          )
+        ],
       ],
     );
   }

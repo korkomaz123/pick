@@ -51,7 +51,7 @@
     "home_discover_stores": "العلامات التجارية",
     "home_discover_brands": "العلامات التجارية",
     "home_recently_view": "عرض مؤخرا",
-    "home_top_brands": "ارقى الماركات في ",
+    "home_top_brands": "العلامات التجارية التي قد ترغب فيها ",
     "bottom_home": "الرئيسية",
     "bottom_category": "الفئة",
     "bottom_store": "المتاجر",
@@ -284,7 +284,7 @@
     "no_more_products": "عذراً، لا يوجد منتجات اخري متاحة.",
     "login_with": "دخول عن طريق",
     "call_us": "اتصل بنا",
-    "discount": "خصم",
+    "discount": "خصومات",
     "incorrect_coupon_code": "نأسف، كود الكوبون غير صحيح",
     "continue_as_guest": "المتابعة كضيف",
     "sorry": "عذرا",
@@ -380,7 +380,7 @@
     "receiver_hint": "جهاز استقبال",
     "message": "رسالة",
     "brands_on_sale": "خصومات الماركات",
-    "up_to": "تصل الى",
+    "up_to": "تصل إلي",
     "notify_me": "تنبيهي",
     "alarm_list": "قائمة تنبيهات المنتجات",
     "stock_notification_fixed": "متوفر حاليا",
@@ -389,5 +389,6 @@
     "price_notification": "إشعار سعر",
     "no_items_in_list": "عفوا,لا يوجد منتجات في القائمة لعرضها",
     "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج",
-    "cashback": "استرداد النقود"
+    "cashback": "استرداد النقود",
+    "coupon_apply_notice": "هذا العنصر الذي ينتمي إلى [code] لم يتم تطبيقه على القسيمة."
 }

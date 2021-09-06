@@ -27,10 +27,12 @@ class ProductSameBrandProducts extends StatefulWidget {
   ProductSameBrandProducts({this.product, this.model});
 
   @override
-  _ProductSameBrandProductsState createState() => _ProductSameBrandProductsState();
+  _ProductSameBrandProductsState createState() =>
+      _ProductSameBrandProductsState();
 }
 
-class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> with TickerProviderStateMixin {
+class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
+    with TickerProviderStateMixin {
   AnimationController _favoriteController;
   Animation<double> _favoriteScaleAnimation;
   ProductModel product;
@@ -41,7 +43,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
   @override
   void initState() {
     model = Preload.navigatorKey.currentContext.read<ProductChangeNotifier>();
-    wishlistChangeNotifier = Preload.navigatorKey.currentContext.read<WishlistChangeNotifier>();
+    wishlistChangeNotifier =
+        Preload.navigatorKey.currentContext.read<WishlistChangeNotifier>();
     super.initState();
     flushBarService = FlushBarService(context: context);
     _favoriteController = AnimationController(
@@ -61,13 +64,16 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   _onShareProduct() async {
-    Uri shareLink = await dynamicLinkService.productSharableLink(model.sameBrandProducts[activeIndex]);
-    Share.share(shareLink.toString(), subject: model.sameBrandProducts[activeIndex].name);
+    Uri shareLink = await dynamicLinkService
+        .productSharableLink(model.sameBrandProducts[activeIndex]);
+    Share.share(shareLink.toString(),
+        subject: model.sameBrandProducts[activeIndex].name);
   }
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: model.sameBrandProducts[activeIndex]);
+      Navigator.pushNamed(context, Routes.product,
+          arguments: model.sameBrandProducts[activeIndex]);
     } else {
       _favoriteController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -75,9 +81,11 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(user.token, model.sameBrandProducts[activeIndex]);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, model.sameBrandProducts[activeIndex]);
       } else {
-        wishlistChangeNotifier.addItemToWishlist(user.token, model.sameBrandProducts[activeIndex], 1, {});
+        wishlistChangeNotifier.addItemToWishlist(
+            user.token, model.sameBrandProducts[activeIndex], 1, {});
       }
     }
   }
@@ -91,7 +99,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
     if (model.sameBrandProducts[activeIndex].typeId == 'configurable') {
       favorite = wishlistItems.containsKey(variant?.productId ?? '');
     } else {
-      favorite = wishlistItems.containsKey(model.sameBrandProducts[activeIndex].productId);
+      favorite = wishlistItems
+          .containsKey(model.sameBrandProducts[activeIndex].productId);
     }
     return favorite;
   }
@@ -115,21 +124,24 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
                     Expanded(
                       child: Text(
                         'product_same_brand'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 16.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 16.sp),
                       ),
                     ),
                     InkWell(
                       onTap: () => _onShareProduct(),
-                      child: SvgPicture.asset(shareIcon, width: 28.w, height: 28.h),
+                      child: SvgPicture.asset(
+                        shareIcon,
+                        width: 28.w,
+                        height: 28.h,
+                      ),
                     ),
                     SizedBox(width: 10.w),
                     Consumer<WishlistChangeNotifier>(
                       builder: (_, model, __) {
                         return InkWell(
-                          onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
+                          onTap: () => user != null
+                              ? _onWishlist()
+                              : Navigator.pushNamed(context, Routes.signIn),
                           child: ScaleTransition(
                             scale: _favoriteScaleAnimation,
                             child: Container(
@@ -162,7 +174,9 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
             width: 350.w,
             height: 220.h,
             child: Swiper(
-              itemCount: model.sameBrandProducts.length > 10 ? 10 : model.sameBrandProducts.length,
+              itemCount: model.sameBrandProducts.length > 10
+                  ? 10
+                  : model.sameBrandProducts.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -188,7 +202,9 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
               ),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: model.sameBrandProducts.length > 10 ? 10 : model.sameBrandProducts.length,
+                count: model.sameBrandProducts.length > 10
+                    ? 10
+                    : model.sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:markaa/preload.dart';
 
 class Api {
   static Dio _dio = Dio();
   static _dioInit() async {
     if (_dio.interceptors.length > 0) return;
-    _dio.interceptors..add(CacheInterceptor()); //..add(LogInterceptor(requestHeader: false, responseHeader: false));
+    _dio.interceptors
+      ..add(
+          CacheInterceptor()); //..add(LogInterceptor(requestHeader: false, responseHeader: false));
   }
 
   static Future<Map<String, dynamic>> getMethod(
@@ -19,7 +22,8 @@ class Api {
     _dioInit();
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     print(requestUrl);
-    final response = await _dio.get(requestUrl, options: Options(headers: headers ?? _getHeader(), extra: extra));
+    final response = await _dio.get(requestUrl,
+        options: Options(headers: headers ?? _getHeader(), extra: extra));
     return response.data;
   }
 
@@ -30,6 +34,8 @@ class Api {
   }) async {
     print(url);
     print(data);
+    if (!data.containsKey('lang')) data['lang'] = Preload.language;
+
     final response = await _dio.post(
       url,
       options: Options(headers: headers ?? _getHeader()),
@@ -42,6 +48,9 @@ class Api {
   static String _getFullUrl(String url, Map<String, dynamic> params) {
     String fullUrl = url;
     List<String> keys = params.keys.toList();
+
+    if (!params.containsKey('lang')) params['lang'] = Preload.language;
+
     for (int i = 0; i < keys.length; i++) {
       String key = keys[i];
       if (i == 0) {

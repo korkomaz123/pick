@@ -37,7 +37,7 @@ class BrandRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<BrandEntity>> getBrandsOnSale(String lang) async {
+  Future<dynamic> getBrandsOnSale(String lang) async {
     final params = {'lang': lang};
     String url = EndPoints.getBrandsOnSale;
 
@@ -49,6 +49,6 @@ class BrandRepository {
         list.add(BrandEntity.fromJson(data[key]));
       }
     }
-    return list;
+    return {'list': list, 'title': result['title']};
   }
 }

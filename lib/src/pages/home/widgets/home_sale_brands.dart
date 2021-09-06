@@ -26,9 +26,9 @@ class HomeSaleBrands extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
               child: Text(
-                'brands_on_sale'.tr(),
+                homeChangeNotifier.saleBrandsTitle,
                 style: mediumTextStyle.copyWith(
                   fontSize: 26.sp,
                   color: darkColor,
@@ -39,7 +39,7 @@ class HomeSaleBrands extends StatelessWidget {
               width: double.infinity,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: Row(
                   children: List.generate(
                     homeChangeNotifier.saleBrands.length,
@@ -73,7 +73,7 @@ class HomeSaleBrands extends StatelessWidget {
       },
       child: Container(
         width: 120.w,
-        height: 130.w,
+        height: 126.w,
         child: Stack(
           children: [
             Card(
@@ -96,7 +96,8 @@ class HomeSaleBrands extends StatelessWidget {
                     return CachedNetworkImage(
                       width: 110.w,
                       height: 110.w,
-                      imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandThumbnail,
+                      imageUrl: homeChangeNotifier
+                          .saleBrands[itemIndex].brandThumbnail,
                     );
                   },
                 ),
@@ -114,6 +115,27 @@ class HomeSaleBrands extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'discount'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 8.sp,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        Text(
+                          'up_to'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 8.sp,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 4.w),
                     Text(
                       '${homeChangeNotifier.saleBrands[itemIndex].percentage}%',
                       style: mediumTextStyle.copyWith(
@@ -121,27 +143,6 @@ class HomeSaleBrands extends StatelessWidget {
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
-                    ),
-                    SizedBox(width: 2.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'up_to'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 8.sp,
-                            color: Colors.white60,
-                          ),
-                        ),
-                        Text(
-                          'off'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 8.sp,
-                            color: Colors.white60,
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),

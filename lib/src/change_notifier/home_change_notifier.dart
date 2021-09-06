@@ -546,9 +546,13 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   List<BrandEntity> saleBrands = [];
+  String saleBrandsTitle = '';
   Future getBrandsOnSale() async {
     saleBrands.clear();
-    saleBrands = await brandRepository.getBrandsOnSale(Preload.language);
+    saleBrandsTitle = '';
+    final result = await brandRepository.getBrandsOnSale(Preload.language);
+    saleBrands = result['list'];
+    saleBrandsTitle = result['title'];
     notifyListeners();
   }
 }
