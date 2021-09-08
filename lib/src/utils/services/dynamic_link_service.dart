@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -10,6 +11,7 @@ import 'package:markaa/src/routes/routes.dart';
 class DynamicLinkService {
   final ProductRepository productRepository = ProductRepository();
   final CategoryRepository categoryRepository = CategoryRepository();
+  final BrandRepository brandRepository = BrandRepository();
 
   Future<Uri> productSharableLink(ProductModel product) async {
     final productId = product.productId;
@@ -99,6 +101,20 @@ class DynamicLinkService {
         brand: BrandEntity(),
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
+      );
+      Navigator.pushNamed(
+        Preload.navigatorKey.currentContext,
+        Routes.productList,
+        arguments: arguments,
+      );
+    } else if (target == 'brand') {
+      final brand = await brandRepository.getBrand(id, Preload.language);
+      ProductListArguments arguments = ProductListArguments(
+        category: CategoryEntity(),
+        subCategory: [],
+        brand: brand,
+        selectedSubCategoryIndex: 0,
+        isFromBrand: true,
       );
       Navigator.pushNamed(
         Preload.navigatorKey.currentContext,
