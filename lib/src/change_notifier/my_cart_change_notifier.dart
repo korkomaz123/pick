@@ -155,10 +155,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
                 item.product.parentCategories.contains(value));
       }
     }
-    bool isOkay =
-        (cartConditionMatched && isOkayCartCondition == isOkayCartCondition) &&
-            (productConditionMatched &&
-                isOkayProductCondition == isOkayProductCondition);
+    bool isOkay = (cartConditionMatched == isOkayCartCondition) &&
+        (productConditionMatched == isOkayProductCondition);
     if (isRowPrice) {
       return isOkay
           ? NumericService.roundDouble(
@@ -340,7 +338,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function onFailure,
   }) async {
     if (onProcess != null) onProcess();
-    if (cartId.isEmpty) await getCartId();
+    if (cartId.isEmpty) {
+      await getCartId();
+      await getCartItems(lang);
+    }
     final data = {
       'action': 'addProductToCart',
       'productId': product.productId,

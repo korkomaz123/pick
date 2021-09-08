@@ -30,6 +30,7 @@ class OrderEntity {
   List<ConditionEntity> cartCondition;
   bool isProductConditionOkay;
   bool isCartConditionOkay;
+  double discountPrice;
 
   OrderEntity({
     this.orderId,
@@ -50,6 +51,7 @@ class OrderEntity {
     this.cartCondition,
     this.isCartConditionOkay,
     this.isProductConditionOkay,
+    this.discountPrice,
   });
 
   OrderEntity.fromJson(Map<String, dynamic> json)
@@ -63,8 +65,11 @@ class OrderEntity {
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
             ? '0.000'
-            : StringService.roundString(json['grand_total'], 3),
-        subtotalPrice = StringService.roundString(json['subtotal'], 3),
+            : StringService.roundString(json['base_grand_total'], 3),
+        subtotalPrice = StringService.roundString(json['base_subtotal'], 3),
+        discountPrice = json.containsKey('discount_amount')
+            ? StringService.roundDouble(json['discount_amount'], 3) * -1
+            : 0,
         discountAmount = double.parse(
             json['discount'].isNotEmpty ? json['discount'] : '0.000'),
         discountType = json['discount_type'],
@@ -150,6 +155,7 @@ class OrderEntity {
     double price = .0;
     bool cartConditionMatched = true;
     for (var condition in cartCondition) {
+      print(condition.attribute);
       if (condition.attribute == 'price' ||
           condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
@@ -224,10 +230,8 @@ class OrderEntity {
                 item.product.parentCategories.contains(value));
       }
     }
-    bool isOkay =
-        (cartConditionMatched && isCartConditionOkay == isCartConditionOkay) &&
-            (productConditionMatched &&
-                isProductConditionOkay == isProductConditionOkay);
+    bool isOkay = (cartConditionMatched == isCartConditionOkay) &&
+        (productConditionMatched == isProductConditionOkay);
     if (isRowPrice) {
       return isOkay
           ? NumericService.roundDouble(

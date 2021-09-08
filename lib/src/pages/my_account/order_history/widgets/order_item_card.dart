@@ -26,6 +26,7 @@ class OrderItemCard extends StatelessWidget {
         cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
     double discountedPrice =
         order.getDiscountedPrice(cartItem, isRowPrice: false);
+    print(discountedPrice);
     return Stack(
       children: [
         Container(

@@ -366,14 +366,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildDiscount() {
-    double discount = .0;
-    if (widget.order.discountType == 'percentage') {
-      discount = double.parse(widget.order.subtotalPrice) *
-          widget.order.discountAmount /
-          100;
-    } else {
-      discount = widget.order.discountAmount;
-    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -391,7 +383,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            '${'currency'.tr()} ${NumericService.roundString(discount, 3)}',
+            '${'currency'.tr()} ${widget.order.discountPrice}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
