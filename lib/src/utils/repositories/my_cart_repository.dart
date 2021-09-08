@@ -20,20 +20,17 @@ class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> createCart() async {
+  Future<String> getShoppingCart([String token]) async {
     String url = EndPoints.createCart;
-    // final params = {};
-    return await Api.postMethod(url);
-  }
+    Map<String, dynamic> params = {};
+    if (token != null) params['token'] = token;
 
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getCartId(String token) async {
-    String url = EndPoints.createCart;
-    final params = {'token': token};
-
-    return await Api.postMethod(url, data: params);
+    final result = await Api.postMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      return result['cartId'];
+    } else {
+      return '';
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////

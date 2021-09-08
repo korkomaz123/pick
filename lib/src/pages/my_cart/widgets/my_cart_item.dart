@@ -169,7 +169,7 @@ class MyCartItem extends StatelessWidget {
           ),
         ),
         if (cartItem.availableCount == 0) ...[_buildOutOfStock()],
-        if (discounted) ...[
+        if (discount > 0 && !discounted) ...[
           Align(
             alignment: Preload.language == 'en'
                 ? Alignment.topRight
@@ -178,7 +178,16 @@ class MyCartItem extends StatelessWidget {
               message: 'coupon_apply_notice'
                   .tr()
                   .replaceFirst('[code]', myCartChangeNotifier.couponCode),
-              child: Icon(Icons.help_outline, color: dangerColor, size: 20.sp),
+              textStyle: mediumTextStyle.copyWith(
+                color: Colors.white,
+                fontSize: 14.sp,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.sp),
+                color: Colors.black54,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+              child: SvgPicture.asset(errorOutlineIcon),
               waitDuration: Duration(milliseconds: 100),
               showDuration: Duration(milliseconds: 3000),
             ),

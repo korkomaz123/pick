@@ -98,3 +98,4 @@ const String shippingCustomIcon = '$iconsAssetPath/shipping-custom-icon.svg';
 const String bellCustomIcon = '$iconsAssetPath/bell-custom-icon.svg';
 const String globalCustomIcon = '$iconsAssetPath/global-custom-icon.svg';
 const String logoutCustomIcon = '$iconsAssetPath/logout-custom-icon.svg';
+const String errorOutlineIcon = '$iconsAssetPath/Icon-material-error-outline.svg';

@@ -217,42 +217,43 @@ class MyCartChangeNotifier extends ChangeNotifier {
     if (onProcess != null) {
       onProcess();
     }
-    // try {
-    final result = await myCartRepository.getCartItems(cartId, lang);
-    if (result['code'] == 'SUCCESS') {
-      couponCode = result['couponCode'];
-      discount = result['discount'] + .0;
-      type = result['type'];
-      cartConditions = result['cartCondition'];
-      productConditions = result['productCondition'];
-      isOkayCartCondition = result['isCartConditionOkay'];
-      isOkayProductCondition = result['isProductConditionOkay'];
-      cartItemCount = result['items'].length;
-      for (var item in result['items']) {
-        cartItemsMap[item.itemId] = item;
-        cartTotalPrice += item.rowPrice;
-        cartTotalCount += item.itemCount;
-        cartDiscountedTotalPrice += getDiscountedPrice(item);
-      }
+    try {
+      if (cartId.isEmpty) await getCartId();
+      final result = await myCartRepository.getCartItems(cartId, lang);
+      if (result['code'] == 'SUCCESS') {
+        couponCode = result['couponCode'];
+        discount = result['discount'] + .0;
+        type = result['type'];
+        cartConditions = result['cartCondition'];
+        productConditions = result['productCondition'];
+        isOkayCartCondition = result['isCartConditionOkay'];
+        isOkayProductCondition = result['isProductConditionOkay'];
+        cartItemCount = result['items'].length;
+        for (var item in result['items']) {
+          cartItemsMap[item.itemId] = item;
+          cartTotalPrice += item.rowPrice;
+          cartTotalCount += item.itemCount;
+          cartDiscountedTotalPrice += getDiscountedPrice(item);
+        }
 
-      processStatus = ProcessStatus.done;
-      if (onSuccess != null) {
-        onSuccess();
+        processStatus = ProcessStatus.done;
+        if (onSuccess != null) {
+          onSuccess();
+        }
+      } else {
+        processStatus = ProcessStatus.failed;
+        if (onFailure != null) {
+          onFailure(result['errorMessage']);
+          reportCartIssue(result, data);
+        }
       }
-    } else {
-      processStatus = ProcessStatus.failed;
-      if (onFailure != null) {
-        onFailure(result['errorMessage']);
-        reportCartIssue(result, data);
-      }
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+      if (onFailure != null) onFailure('Network connection is bad');
+      reportCartIssue(e.toString(), data);
+      notifyListeners();
     }
-    notifyListeners();
-    // } catch (e) {
-    //   print(e.toString());
-    //   if (onFailure != null) onFailure('Network connection is bad');
-    //   reportCartIssue(e.toString(), data);
-    //   notifyListeners();
-    // }
   }
 
   // Future<void> clearCart(
@@ -339,6 +340,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function onFailure,
   }) async {
     if (onProcess != null) onProcess();
+    if (cartId.isEmpty) await getCartId();
     final data = {
       'action': 'addProductToCart',
       'productId': product.productId,
@@ -441,19 +443,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> getCartId() async {
     try {
       if (user?.token != null) {
-        final result = await myCartRepository.getCartId(user.token);
-        if (result['code'] == 'SUCCESS') {
-          cartId = result['cartId'];
-        }
+        cartId = await myCartRepository.getShoppingCart(user.token);
       } else {
         if (await localStorageRepository.existItem('cartId')) {
           cartId = await localStorageRepository.getCartId();
         } else {
-          final result = await myCartRepository.createCart();
-          if (result['code'] == 'SUCCESS') {
-            cartId = result['cartId'];
-            await localStorageRepository.setCartId(cartId);
-          }
+          cartId = await myCartRepository.getShoppingCart();
         }
       }
       notifyListeners();
