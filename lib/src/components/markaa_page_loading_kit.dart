@@ -44,27 +44,6 @@ class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
   }
 }
 
-class PouringHourLoadingSpinner extends StatefulWidget {
-  @override
-  _PouringHourLoadingSpinnerState createState() =>
-      _PouringHourLoadingSpinnerState();
-}
-
-class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner>
-    with TickerProviderStateMixin {
-  @override
-  Widget build(BuildContext context) {
-    return SpinKitPouringHourglass(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
-      color: primarySwatchColor,
-      size: 40,
-    );
-  }
-}
-
 class BounceLoadingSpinner extends StatefulWidget {
   @override
   _BounceLoadingSpinnerState createState() => _BounceLoadingSpinnerState();
