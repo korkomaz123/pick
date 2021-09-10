@@ -72,7 +72,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AddressChangeNotifier addressChangeNotifier;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null || user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier.defaultAddress == null ||
+      user?.token == null && addressChangeNotifier.guestAddress == null;
 
   void _loadData() async {
     user = await Preload.currentUser;
@@ -135,7 +136,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 // _buildDeliverAsGift(),
                 if (paymentMethods.isEmpty) ...[
                   Center(
-                    child: PulseLoadingSpinner(),
+                    child: SpinningLinesBar(),
                   ),
                 ] else ...[
                   Padding(
@@ -151,7 +152,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         ),
                         Column(
-                          children: List.generate(paymentMethods.length, (index) {
+                          children:
+                              List.generate(paymentMethods.length, (index) {
                             int idx = paymentMethods.length - index - 1;
                             if (paymentMethods[idx].id != payment) {
                               return Container();
@@ -360,7 +362,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang, onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
+        onProcess: _onProcess,
+        onSuccess: _onOrderSubmittedSuccess,
+        onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -389,7 +394,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order,
+          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 

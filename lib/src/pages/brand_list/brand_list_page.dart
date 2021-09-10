@@ -59,6 +59,7 @@ class _BrandListPageState extends State<BrandListPage> {
           }
         }
         print(nameCharList);
+        setState(() {});
       }
     });
   }
@@ -151,7 +152,7 @@ class _BrandListPageState extends State<BrandListPage> {
               if (model.connectionState == ConnectionState.waiting) {
                 return Expanded(
                   child: Center(
-                    child: PulseLoadingSpinner(),
+                    child: SpinningLinesBar(),
                   ),
                 );
               }

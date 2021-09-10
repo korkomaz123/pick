@@ -187,7 +187,7 @@ class MyCartItem extends StatelessWidget {
                 color: Colors.black54,
               ),
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-              child: SvgPicture.asset(errorOutlineIcon),
+              child: SvgPicture.asset(errorOutlineIcon, color: dangerColor),
               waitDuration: Duration(milliseconds: 100),
               showDuration: Duration(milliseconds: 3000),
             ),

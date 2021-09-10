@@ -30,8 +30,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.bestDealsBanners.isNotEmpty) {
-      final banner = widget.homeChangeNotifier.bestDealsBanners[0];
+    if (widget.homeChangeNotifier.faceCareViewAll != null) {
       return Container(
         width: designWidth.w,
         color: Colors.white,
@@ -50,7 +49,7 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      widget.homeChangeNotifier.bestDealsBannerTitle,
+                      widget.homeChangeNotifier.faceCareTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         fontSize: 26.sp,
@@ -68,7 +67,10 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                       borderColor: primaryColor,
                       borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
-                      onPressed: () => _onLink(context, banner),
+                      onPressed: () => _onLink(
+                        context,
+                        widget.homeChangeNotifier.faceCareViewAll,
+                      ),
                     ),
                   ),
                 ],
@@ -77,35 +79,28 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children:
-                    widget.homeChangeNotifier.bestDealsBanners.map((item) {
-                  int index =
-                      widget.homeChangeNotifier.bestDealsBanners.indexOf(item);
+                children: widget.homeChangeNotifier.faceCareBanners.map((item) {
+                  List<SliderImageEntity> faceCareBanners = [];
+                  faceCareBanners = widget.homeChangeNotifier.faceCareBanners;
+                  int index = faceCareBanners.indexOf(item);
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.bestDealsBanners
-                                      .length ==
-                                  1
-                              ? 375.w
-                              : 340.w,
-                          height: (widget.homeChangeNotifier.bestDealsBanners
-                                          .length ==
-                                      1
-                                  ? 375.w
-                                  : 340.w) *
-                              (897 / 1096),
+                          width: faceCareBanners.length == 1 ? 375.w : 340.w,
+                          height:
+                              (faceCareBanners.length == 1 ? 375.w : 340.w) *
+                                  (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
                               Center(child: Icon(Icons.image, size: 20)),
                         ),
                       ),
-                      if (index <
-                          widget.homeChangeNotifier.bestDealsBanners.length -
-                              1) ...[SizedBox(width: 5.w)],
+                      if (index < faceCareBanners.length - 1) ...[
+                        SizedBox(width: 5.w)
+                      ],
                     ],
                   );
                 }).toList(),
@@ -115,12 +110,13 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: List.generate(
-                  widget.homeChangeNotifier.bestDealsItems.length,
+                  widget.homeChangeNotifier.faceCareProducts.length,
                   (index) {
                     return ProductCard(
                       cardWidth: 120.w,
                       cardHeight: 175.w,
-                      product: widget.homeChangeNotifier.bestDealsItems[index],
+                      product:
+                          widget.homeChangeNotifier.faceCareProducts[index],
                       isWishlist: true,
                     );
                   },

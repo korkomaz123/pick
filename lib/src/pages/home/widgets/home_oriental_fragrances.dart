@@ -37,7 +37,7 @@ class HomeOrientalFragrances extends StatelessWidget {
               future: homeChangeNotifier.loadExculisiveBanner(),
               builder: (_, snapShot) =>
                   snapShot.connectionState == ConnectionState.waiting
-                      ? Center(child: PulseLoadingSpinner())
+                      ? Center(child: SpinningLinesBar())
                       : HomeExculisiveBanner(
                           homeChangeNotifier: homeChangeNotifier),
             ),

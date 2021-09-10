@@ -230,7 +230,7 @@ class _ProductPageState extends State<ProductPage>
                   ],
                 );
               } else {
-                return Center(child: PulseLoadingSpinner());
+                return Center(child: SpinningLinesBar());
               }
             },
           ),

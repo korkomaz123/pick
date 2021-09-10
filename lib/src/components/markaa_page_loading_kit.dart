@@ -141,3 +141,24 @@ class _DualRingSpinnerState extends State<DualRingSpinner>
     );
   }
 }
+
+class SpinningLinesBar extends StatefulWidget {
+  @override
+  _SpinningLinesBarState createState() => _SpinningLinesBarState();
+}
+
+class _SpinningLinesBarState extends State<SpinningLinesBar>
+    with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitSpinningLines(
+      lineWidth: 2,
+      size: 30,
+      controller: AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 1000),
+      ),
+      color: primarySwatchColor,
+    );
+  }
+}

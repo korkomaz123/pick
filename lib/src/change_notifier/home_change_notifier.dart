@@ -15,17 +15,14 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import '../../preload.dart';
 
 class HomeChangeNotifier extends ChangeNotifier {
-  final HomeRepository homeRepository = HomeRepository();
-  final CategoryRepository categoryRepository = CategoryRepository();
-  final ProductRepository productRepository = ProductRepository();
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
-  final BrandRepository brandRepository = BrandRepository();
+  final homeRepository = HomeRepository();
+  final categoryRepository = CategoryRepository();
+  final productRepository = ProductRepository();
+  final localStorageRepository = LocalStorageRepository();
+  final brandRepository = BrandRepository();
 
-  List<ProductModel> bestDealsItems = [];
   SliderImageEntity megaBanner;
   String message;
-  String bestDealsBannerTitle = '';
 
   changeLanguage() {
     print("changeLanguage");
@@ -38,7 +35,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     loadNewArrivals();
     loadExculisiveBanner();
     loadOrientalProducts();
-    loadBestDealsBanner();
+    loadFaceCare();
     loadFragrancesBanner();
     loadPerfumes();
     loadBestWatches();
@@ -257,34 +254,23 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<SliderImageEntity> bestDealsBanners = [];
-  Future loadBestDealsBanner() async {
+  String faceCareTitle = '';
+  SliderImageEntity faceCareViewAll;
+  List<ProductModel> faceCareProducts = [];
+  List<SliderImageEntity> faceCareBanners = [];
+  Future loadFaceCare() async {
     try {
-      final result =
-          await homeRepository.getHomeBestDealsBanners(Preload.language);
+      final result = await homeRepository.getFaceCareSection(Preload.language);
       if (result['code'] == 'SUCCESS') {
-        dynamic response;
-        if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(
-              result['data'][0]['category_id'], Preload.language, 1);
-        } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', Preload.language, 1);
-        }
-        if (response != null && response['code'] == 'SUCCESS') {
-          result['items'] = response['products'];
-        } else {
-          result['items'] = [];
-        }
-        bestDealsBannerTitle = result['title'];
-        bestDealsBanners.clear();
-        bestDealsItems.clear();
-        for (var banner in result['data']) {
-          bestDealsBanners.add(SliderImageEntity.fromJson(banner));
-        }
-        for (var item in result['items']) {
-          bestDealsItems.add(ProductModel.fromJson(item));
-        }
+        faceCareTitle = result['title'];
+        faceCareViewAll = result['viewAll'];
+        faceCareProducts = result['products'];
+        faceCareBanners = result['banners'];
+      } else {
+        faceCareTitle = '';
+        faceCareViewAll = null;
+        faceCareProducts = [];
+        faceCareBanners = [];
       }
     } catch (e) {
       print('best deals banner');
