@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -46,8 +47,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void initState() {
-    // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
-
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -62,8 +61,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void dispose() {
-    // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-
     super.dispose();
   }
 
@@ -124,24 +121,27 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
             ),
           ),
         ),
-        body: WebView(
-          initialUrl: url,
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (controller) {
-            webViewController = controller;
-            progressService.showProgress();
-          },
-          navigationDelegate: (action) {
-            _onPageLoaded(action.url);
-            return NavigationDecision.navigate;
-          },
-          onPageFinished: (_) {
-            if (isLoading) {
-              progressService.hideProgress();
-              isLoading = false;
-              setState(() {});
-            }
-          },
+        body: Stack(
+          children: [
+            WebView(
+              initialUrl: url,
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              navigationDelegate: (action) {
+                _onPageLoaded(action.url);
+                return NavigationDecision.navigate;
+              },
+              onPageFinished: (_) {
+                if (isLoading) {
+                  isLoading = false;
+                  setState(() {});
+                }
+              },
+            ),
+            if (isLoading) ...[Center(child: SpinningLinesBar())],
+          ],
         ),
       ),
     );
