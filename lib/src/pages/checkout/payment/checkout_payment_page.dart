@@ -140,7 +140,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
                 }
               },
             ),
-            if (isLoading) ...[Center(child: SpinningLinesBar())],
+            if (isLoading) ...[Center(child: PulseLoadingSpinner())],
           ],
         ),
       ),

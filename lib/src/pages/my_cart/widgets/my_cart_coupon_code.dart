@@ -91,7 +91,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                 Container(
                   width: 120.w,
                   height: 40.h,
-                  child: SpinningLinesBar(),
+                  child: PulseLoadingSpinner(),
                 ),
               ] else ...[
                 Container(

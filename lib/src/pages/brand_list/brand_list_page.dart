@@ -125,7 +125,8 @@ class _BrandListPageState extends State<BrandListPage> {
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color: index == selectedIndex ? primaryColor : Colors.white,
+                      color:
+                          index == selectedIndex ? primaryColor : Colors.white,
                       borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
@@ -135,7 +136,9 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex ? primaryColor : Colors.white,
+                        color: index != selectedIndex
+                            ? primaryColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -149,7 +152,7 @@ class _BrandListPageState extends State<BrandListPage> {
               if (model.connectionState == ConnectionState.waiting) {
                 return Expanded(
                   child: Center(
-                    child: SpinningLinesBar(),
+                    child: PulseLoadingSpinner(),
                   ),
                 );
               }
@@ -277,7 +280,8 @@ class _BrandListPageState extends State<BrandListPage> {
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                  imageUrl:
+                      _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
                 );
               },
             ),

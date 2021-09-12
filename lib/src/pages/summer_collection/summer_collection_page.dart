@@ -105,7 +105,7 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
             right: 0.w,
             child: Consumer<SummerCollectionNotifier>(builder: (_, model, __) {
               return _summerCollectionNotifier.categories.isEmpty
-                  ? Center(child: SpinningLinesBar())
+                  ? Center(child: PulseLoadingSpinner())
                   : GridView.count(
                       crossAxisCount: 2,
                       children: _summerCollectionNotifier.categories

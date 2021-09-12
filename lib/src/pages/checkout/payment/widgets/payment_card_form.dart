@@ -36,7 +36,7 @@ class _PaymentCardFormState extends State<PaymentCardForm> {
           onPageStarted: _onPageLoading,
           onPageFinished: _onPageLoaded,
         ),
-        if (isLoading) ...[Center(child: SpinningLinesBar())],
+        if (isLoading) ...[Center(child: PulseLoadingSpinner())],
       ],
     );
   }

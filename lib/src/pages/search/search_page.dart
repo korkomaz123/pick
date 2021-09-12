@@ -536,7 +536,7 @@ class _SearchPageState extends State<SearchPage>
       child: Consumer<SuggestionChangeNotifier>(
         builder: (_, __, ___) {
           if (suggestionChangeNotifier.searchedProducts == null) {
-            return SpinningLinesBar();
+            return PulseLoadingSpinner();
           } else if (suggestionChangeNotifier.searchedProducts.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(

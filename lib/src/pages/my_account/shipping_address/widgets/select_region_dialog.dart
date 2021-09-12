@@ -74,7 +74,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
               ),
             ),
           ),
-          regions.isNotEmpty ? _buildRegionList() : SpinningLinesBar(),
+          regions.isNotEmpty ? _buildRegionList() : PulseLoadingSpinner(),
         ],
       ),
     );

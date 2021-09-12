@@ -131,7 +131,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
                 }
               },
             ),
-            if (isLoading) ...[Center(child: SpinningLinesBar())],
+            if (isLoading) ...[Center(child: PulseLoadingSpinner())],
           ],
         ),
       ),

@@ -22,14 +22,15 @@ void main() async {
   await Firebase.initializeApp();
 
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
     int _errorLength = e.stack.toString().length;
     SlackChannels.send('''${e.exceptionAsString()}
-     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''', SlackChannels.logAppErrors);
+     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+        SlackChannels.logAppErrors);
     return Center(
       child: Text("There was an error! ${e.exception}"),
     );
@@ -44,7 +45,8 @@ void main() async {
 
   if (Platform.isIOS)
     try {
-      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
+      final TrackingStatus status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
       if (status == TrackingStatus.notDetermined) {
         await AppTrackingTransparency.requestTrackingAuthorization();
       }

@@ -112,7 +112,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     String lang = _globalProvider.currentLanguage;
                     if (_globalProvider.sideMenus[lang].length == 0) {
                       return Center(
-                        child: SpinningLinesBar(),
+                        child: PulseLoadingSpinner(),
                       );
                     } else {
                       return SingleChildScrollView(

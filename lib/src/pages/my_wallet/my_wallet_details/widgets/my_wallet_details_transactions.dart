@@ -43,7 +43,7 @@ class _MyWalletDetailsTransactionsState
         builder: (_, model, __) {
           if (model.transactionsList == null) {
             return Center(
-              child: SpinningLinesBar(),
+              child: PulseLoadingSpinner(),
             );
           } else if (model.transactionsList.isEmpty) {
             return Center(

@@ -271,7 +271,7 @@ class _ProductListViewState extends State<ProductListView>
                       if (!productChangeNotifier.data.containsKey(index) ||
                           productChangeNotifier.data[index] == null) {
                         return //Container();
-                            Center(child: SpinningLinesBar());
+                            Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable();
                       } else {

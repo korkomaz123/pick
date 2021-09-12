@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 width: double.infinity,
                                 height: designWidth.w * 579 / 1125,
                                 color: Colors.white,
-                                child: Center(child: SpinningLinesBar()),
+                                child: Center(child: PulseLoadingSpinner()),
                               );
                             else
                               return HomeHeaderCarousel(
@@ -247,7 +247,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             builder: (_, snapShot) =>
                                 snapShot.connectionState ==
                                         ConnectionState.waiting
-                                    ? Center(child: SpinningLinesBar())
+                                    ? Center(child: PulseLoadingSpinner())
                                     : HomeFeaturedCategories(
                                         homeChangeNotifier: _homeProvider),
                           ),
@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestDeals(
                                   homeChangeNotifier: _homeProvider),
@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeGrooming(homeChangeNotifier: _homeProvider),
                         ),
@@ -293,7 +293,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestDealsBanner(
                                   homeChangeNotifier: _homeProvider),
@@ -307,7 +307,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeSaleBrands(
                                   homeChangeNotifier: _homeProvider),
@@ -321,7 +321,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeNewArrivals(
                                   homeChangeNotifier: _homeProvider),
@@ -335,7 +335,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeOrientalFragrances(
                                   homeChangeNotifier: _homeProvider),
@@ -349,7 +349,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeNewArrivalsBanner(
                                   homeChangeNotifier: _homeProvider),
@@ -362,7 +362,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeFragrancesBanners(
                                   homeChangeNotifier: _homeProvider),
@@ -376,7 +376,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomePerfumes(homeChangeNotifier: _homeProvider),
                         ),
@@ -389,7 +389,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestWatches(
                                   homeChangeNotifier: _homeProvider),
@@ -403,7 +403,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeAdvertise(
                                   homeChangeNotifier: _homeProvider),
@@ -417,7 +417,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeExploreCategories(
                                   homeChangeNotifier: _homeProvider),
@@ -431,7 +431,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeDiscoverStores(
                                   homeChangeNotifier: _homeProvider),
@@ -445,7 +445,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeSmartTech(
                                   homeChangeNotifier: _homeProvider),
@@ -459,7 +459,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   padding: EdgeInsets.all(8.w),
                                   margin: EdgeInsets.only(bottom: 10.h),
                                   color: Colors.white,
-                                  child: Center(child: SpinningLinesBar()),
+                                  child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeRecent(homeChangeNotifier: _homeProvider),
                         ),

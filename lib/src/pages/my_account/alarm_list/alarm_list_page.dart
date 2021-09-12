@@ -195,7 +195,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
             //snapshot.data['stockitems']priceitems
           } else {
             return Center(
-              child: SpinningLinesBar(),
+              child: PulseLoadingSpinner(),
             );
           }
         },

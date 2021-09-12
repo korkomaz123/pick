@@ -136,7 +136,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 // _buildDeliverAsGift(),
                 if (paymentMethods.isEmpty) ...[
                   Center(
-                    child: SpinningLinesBar(),
+                    child: PulseLoadingSpinner(),
                   ),
                 ] else ...[
                   Padding(
