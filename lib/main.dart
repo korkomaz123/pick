@@ -18,8 +18,11 @@ const bool USE_FIRESTORE_EMULATOR = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  /// Firebase initialize
+  await Firebase.initializeApp();
+
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
@@ -32,8 +35,6 @@ void main() async {
     );
   });
 
-  /// Firebase initialize
-  await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR)
     FirebaseFirestore.instance.settings = const Settings(
       host: 'localhost:8080',

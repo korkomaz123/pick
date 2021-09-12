@@ -121,13 +121,12 @@ class _BrandListPageState extends State<BrandListPage> {
                     });
                   },
                   child: Container(
-                    width: 20.w,
+                    width: 30.w,
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color:
-                          index == selectedIndex ? primaryColor : Colors.white,
-                      shape: BoxShape.circle,
+                      color: index == selectedIndex ? primaryColor : Colors.white,
+                      borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
                     alignment: Alignment.center,
@@ -136,9 +135,7 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex
-                            ? primaryColor
-                            : Colors.white,
+                        color: index != selectedIndex ? primaryColor : Colors.white,
                       ),
                     ),
                   ),
@@ -280,8 +277,7 @@ class _BrandListPageState extends State<BrandListPage> {
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl:
-                      _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
                 );
               },
             ),
