@@ -121,7 +121,7 @@ class _BrandListPageState extends State<BrandListPage> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    width: 25.w,
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
