@@ -713,7 +713,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.3"
+    version: "3.0.4"
   image_cropper:
     dependency: "direct main"
     description:
