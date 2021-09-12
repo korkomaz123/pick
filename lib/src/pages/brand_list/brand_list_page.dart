@@ -121,12 +121,12 @@ class _BrandListPageState extends State<BrandListPage> {
                     });
                   },
                   child: Container(
-                    width: 25.w,
+                    width: 30.w,
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
                       color: index == selectedIndex ? primaryColor : Colors.white,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
                     alignment: Alignment.center,

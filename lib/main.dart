@@ -22,7 +22,7 @@ void main() async {
   await Firebase.initializeApp();
 
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
