@@ -247,7 +247,7 @@ class _ProductListPageState extends State<ProductListPage> {
           top: 40.h - extra,
           left: 0,
           right: 0,
-          duration: Duration(milliseconds: 500),
+          duration: Duration(milliseconds: 350),
           child: Container(
             width: 375.w,
             height: 80.h,
@@ -282,11 +282,21 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories[activeSubcategoryIndex].id,
           brandId: brand.optionId,
-          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
-          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
-          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
-          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
-          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
+          minPrice: filterValues.containsKey('minPrice')
+              ? filterValues['minPrice']
+              : null,
+          maxPrice: filterValues.containsKey('maxPrice')
+              ? filterValues['maxPrice']
+              : null,
+          selectedCategories: filterValues.containsKey('selectedCategories')
+              ? filterValues['selectedCategories']
+              : [],
+          selectedGenders: filterValues.containsKey('selectedGenders')
+              ? filterValues['selectedGenders']
+              : [],
+          selectedValues: filterValues.containsKey('selectedValues')
+              ? filterValues['selectedValues']
+              : {},
         );
       },
     );
@@ -397,7 +407,8 @@ class _ProductListPageState extends State<ProductListPage> {
       }
       filterValues = {};
       filterBloc.add(FilterAttributesLoaded(
-        categoryId: subCategories[index].id == 'all' ? null : subCategories[index].id,
+        categoryId:
+            subCategories[index].id == 'all' ? null : subCategories[index].id,
         brandId: brand.optionId,
         lang: lang,
       ));

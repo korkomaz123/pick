@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -17,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class MyCartItem extends StatelessWidget {
+class MyCartItem extends StatefulWidget {
   final CartItemEntity cartItem;
   final double discount;
   final String type;
@@ -38,14 +39,33 @@ class MyCartItem extends StatelessWidget {
     this.myCartChangeNotifier,
   });
 
-  bool get discountable => discount != 0 && type == 'percentage';
+  @override
+  _MyCartItemState createState() => _MyCartItemState();
+}
+
+class _MyCartItemState extends State<MyCartItem> {
+  JustTheController _tooltipController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tooltipController = JustTheController(value: ControllerState.empty());
+  }
+
+  @override
+  void dispose() {
+    _tooltipController.dispose();
+    super.dispose();
+  }
+
+  bool get discountable => widget.discount != 0 && widget.type == 'percentage';
 
   @override
   Widget build(BuildContext context) {
-    double price = StringService.roundDouble(cartItem.product.price, 3);
+    double price = StringService.roundDouble(widget.cartItem.product.price, 3);
     double discountPrice = context
         .watch<MyCartChangeNotifier>()
-        .getDiscountedPrice(cartItem, isRowPrice: false);
+        .getDiscountedPrice(widget.cartItem, isRowPrice: false);
     bool discounted = price > discountPrice;
     return Stack(
       children: [
@@ -58,7 +78,7 @@ class MyCartItem extends StatelessWidget {
                 height: 150.h,
                 alignment: Alignment.topCenter,
                 child: InkWell(
-                  onTap: onRemoveCartItem,
+                  onTap: widget.onRemoveCartItem,
                   child: SvgPicture.asset(
                     trashIcon,
                     width: 16.w,
@@ -67,7 +87,7 @@ class MyCartItem extends StatelessWidget {
                 ),
               ),
               CachedNetworkImage(
-                imageUrl: cartItem.product.imageUrl,
+                imageUrl: widget.cartItem.product.imageUrl,
                 width: 104.w,
                 height: 150.h,
                 fit: BoxFit.fitHeight,
@@ -83,11 +103,12 @@ class MyCartItem extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        if (cartItem?.product?.brandEntity?.optionId != null) {
+                        if (widget.cartItem?.product?.brandEntity?.optionId !=
+                            null) {
                           ProductListArguments arguments = ProductListArguments(
                             category: CategoryEntity(),
                             subCategory: [],
-                            brand: cartItem.product.brandEntity,
+                            brand: widget.cartItem.product.brandEntity,
                             selectedSubCategoryIndex: 0,
                             isFromBrand: true,
                           );
@@ -99,7 +120,7 @@ class MyCartItem extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        cartItem?.product?.brandEntity?.brandLabel ?? '',
+                        widget.cartItem?.product?.brandEntity?.brandLabel ?? '',
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
                           fontSize: 10.sp,
@@ -107,7 +128,7 @@ class MyCartItem extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      cartItem.product.name,
+                      widget.cartItem.product.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -117,7 +138,7 @@ class MyCartItem extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      cartItem.product.shortDescription,
+                      widget.cartItem.product.shortDescription,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -154,10 +175,10 @@ class MyCartItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildSaveForLaterTextButton(),
-                        if (cartItem.availableCount > 0) ...[
+                        if (widget.cartItem.availableCount > 0) ...[
                           MyCartShopCounter(
-                            cartItem: cartItem,
-                            cartId: cartId,
+                            cartItem: widget.cartItem,
+                            cartId: widget.cartId,
                           ),
                         ]
                       ],
@@ -168,28 +189,36 @@ class MyCartItem extends StatelessWidget {
             ],
           ),
         ),
-        if (cartItem.availableCount == 0) ...[_buildOutOfStock()],
-        if (discount > 0 && !discounted) ...[
+        if (widget.cartItem.availableCount == 0) ...[_buildOutOfStock()],
+        if (widget.discount > 0 && !discounted) ...[
           Align(
             alignment: Preload.language == 'en'
                 ? Alignment.topRight
                 : Alignment.topLeft,
-            child: Tooltip(
-              message: 'coupon_apply_notice'
-                  .tr()
-                  .replaceFirst('[code]', myCartChangeNotifier.couponCode),
-              textStyle: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: 14.sp,
+            child: JustTheTooltip(
+              controller: _tooltipController,
+              backgroundColor: dangerColor.withOpacity(0.9),
+              child: InkWell(
+                onTap: () {
+                  if (_tooltipController.isShowing) {
+                    _tooltipController.hideTooltip();
+                  } else {
+                    _tooltipController.showTooltip();
+                  }
+                },
+                child: SvgPicture.asset(errorOutlineIcon, color: dangerColor),
               ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.sp),
-                color: Colors.black54,
+              content: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'coupon_apply_notice'.tr().replaceFirst(
+                      '[code]', widget.myCartChangeNotifier.couponCode),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 12.sp,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-              child: SvgPicture.asset(errorOutlineIcon, color: dangerColor),
-              waitDuration: Duration(milliseconds: 100),
-              showDuration: Duration(milliseconds: 3000),
             ),
           )
         ],
@@ -205,10 +234,10 @@ class MyCartItem extends StatelessWidget {
             onTap: () {
               if (user?.token != null) {
                 model.changeSaveForLaterStatus(false);
-                onSaveForLaterItem();
+                widget.onSaveForLaterItem();
                 model.changeSaveForLaterStatus(true);
               } else {
-                onSignIn();
+                widget.onSignIn();
               }
             },
             child: Text(

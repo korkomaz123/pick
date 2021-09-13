@@ -69,6 +69,7 @@ class _ProductListViewState extends State<ProductListView>
   FilterBloc filterBloc;
   ScrollController scrollController = ScrollController();
   int _currentProduct = 0;
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +96,12 @@ class _ProductListViewState extends State<ProductListView>
       widget.onChangeTab(tabController.index);
     });
     scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   void _onScroll() {
@@ -137,8 +144,7 @@ class _ProductListViewState extends State<ProductListView>
     });
   }
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController;
   bool isStillRefresh = false;
   Future<void> _onRefresh() async {
     if (isStillRefresh == true) return;
@@ -345,9 +351,9 @@ class _ProductListViewState extends State<ProductListView>
         controller: tabController,
         indicator: BoxDecoration(
           color: primaryColor,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
         ),
-        unselectedLabelColor: greyDarkColor,
+        unselectedLabelColor: primaryColor,
         labelColor: Colors.white,
         isScrollable: true,
         tabs: List.generate(
@@ -371,6 +377,7 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList(List<ProductModel> products) {
+    _refreshController = RefreshController(initialRefresh: false);
     return RefreshConfiguration(
       footerTriggerDistance: 2500,
       shouldFooterFollowWhenNotFull: (LoadStatus mode) {
@@ -387,7 +394,6 @@ class _ProductListViewState extends State<ProductListView>
               body = CupertinoActivityIndicator();
             } else if (mode == LoadStatus.noMore ||
                 productChangeNotifier.isReachedMax) {
-              // body = Text("No more Data");
               body = Container(
                 width: 375.w,
                 alignment: Alignment.center,

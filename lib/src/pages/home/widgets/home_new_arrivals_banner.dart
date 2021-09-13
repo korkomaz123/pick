@@ -30,8 +30,8 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.newArrivalsBanners.isNotEmpty) {
-      final banner = widget.homeChangeNotifier.newArrivalsBanners[0];
+    if (widget.homeChangeNotifier.sunglassesViewAll != null) {
+      final banner = widget.homeChangeNotifier.sunglassesViewAll;
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -49,7 +49,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      widget.homeChangeNotifier.newArrivalsBannerTitle,
+                      widget.homeChangeNotifier.sunglassesTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         fontSize: Preload.language == 'en' ? 26 : 24,
@@ -76,26 +76,21 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children:
-                    widget.homeChangeNotifier.newArrivalsBanners.map((item) {
-                  int index = widget.homeChangeNotifier.newArrivalsBanners
-                      .indexOf(item);
+                children: widget.homeChangeNotifier.sunglassesBanners.map((item) {
+                  int index = widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.newArrivalsBanners.length == 1 ? 375.w : 340.w,
-                          height: (widget.homeChangeNotifier.newArrivalsBanners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                          width: widget.homeChangeNotifier.sunglassesBanners.length == 1 ? 375.w : 340.w,
+                          height: (widget.homeChangeNotifier.sunglassesBanners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) =>
-                              Center(child: Icon(Icons.image, size: 20)),
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                         ),
                       ),
-                      if (index <
-                          widget.homeChangeNotifier.newArrivalsBanners.length -
-                              1) ...[SizedBox(width: 5.w)],
+                      if (index < widget.homeChangeNotifier.sunglassesBanners.length - 1) ...[SizedBox(width: 5.w)],
                     ],
                   );
                 }).toList(),
@@ -105,11 +100,11 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
               height: 175.w,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.homeChangeNotifier.newArrivalsItems.length,
+                itemCount: widget.homeChangeNotifier.sunglassesItems.length,
                 itemBuilder: (context, index) => ProductCard(
                   cardWidth: 120.w,
                   cardHeight: 175.w,
-                  product: widget.homeChangeNotifier.newArrivalsItems[index],
+                  product: widget.homeChangeNotifier.sunglassesItems[index],
                   isWishlist: true,
                 ),
               ),

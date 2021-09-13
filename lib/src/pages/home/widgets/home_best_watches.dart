@@ -33,9 +33,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
   int activeIndex = 0;
 
   Widget build(BuildContext context) {
-    if ((widget.homeChangeNotifier.bestWatchesBanners != null &&
-            widget.homeChangeNotifier.bestWatchesBanners.isNotEmpty) ||
-        widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) {
+    if (widget.homeChangeNotifier.bestWatchesViewAll != null) {
       return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
         return Container(
           width: designWidth.w,
@@ -81,7 +79,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderColor: primaryColor,
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
-                  onPressed: () => _onLink(banners[0]),
+                  onPressed: () => _onLink(widget.homeChangeNotifier.bestWatchesViewAll),
                 ),
               ),
             ],
@@ -90,34 +88,21 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: widget.homeChangeNotifier.bestWatchesBanners.map((item) {
-              int index =
-                  widget.homeChangeNotifier.bestWatchesBanners.indexOf(item);
+            children: banners.map((item) {
+              int index = banners.indexOf(item);
               return Row(
                 children: [
                   InkWell(
                     onTap: () => _onLink(item),
                     child: CachedNetworkImage(
-                      width:
-                          widget.homeChangeNotifier.bestWatchesBanners.length ==
-                                  1
-                              ? 375.w
-                              : 340.w,
-                      height: (widget.homeChangeNotifier.bestWatchesBanners
-                                      .length ==
-                                  1
-                              ? 375.w
-                              : 340.w) *
-                          (897 / 1096),
+                      width: banners.length == 1 ? 375.w : 340.w,
+                      height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                       imageUrl: item.bannerImage,
                       fit: BoxFit.fitHeight,
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.image, size: 20)),
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
-                  if (index <
-                      widget.homeChangeNotifier.bestWatchesBanners.length -
-                          1) ...[SizedBox(width: 5.w)],
+                  if (index < banners.length - 1) ...[SizedBox(width: 5.w)],
                 ],
               );
             }).toList(),
@@ -146,8 +131,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
-            onAddToCartFailure: () =>
-                widget.homeChangeNotifier.updateBestWatchesProduct(index),
+            onAddToCartFailure: () => widget.homeChangeNotifier.updateBestWatchesProduct(index),
           ),
         ),
       ),

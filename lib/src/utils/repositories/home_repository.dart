@@ -51,8 +51,7 @@ class HomeRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> getFaceCareSection(String lang) async {
-    String url = EndPoints.getFaceCareSection;
+  Future<dynamic> getHomeSection(String lang, String url) async {
     final params = {'lang': lang};
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {

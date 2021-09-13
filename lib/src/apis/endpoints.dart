@@ -113,4 +113,10 @@ class EndPoints {
   static const String sendAsGift = '$baseUrl/SendAsGift';
   static const String getProductInfoBrand = '$baseUrl/GetProductInfoBrand';
   static const String getProductInfo = '$baseUrl/GetProductInfo';
+
+  /// new home section endpoints
+  static const String homeSection1 = '$baseUrl/getHomepageSection1';
+  static const String homeSection2 = '$baseUrl/getHomepageSection2';
+  static const String homeSection3 = '$baseUrl/getHomepageSection3';
+  static const String homeSection4 = '$baseUrl/getHomepageSection4';
 }

@@ -74,24 +74,19 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
         Navigator.popUntil(context, (route) => route.settings.name == router);
         return true;
       },
-      child: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
-          body: Column(
-            children: [
-              MyWalletDetailsForm(amount: widget.amount),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _controller,
-                  child: MyWalletDetailsTransactions(),
-                ),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
+        body: Column(
+          children: [
+            MyWalletDetailsForm(amount: widget.amount),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _controller,
+                child: MyWalletDetailsTransactions(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
