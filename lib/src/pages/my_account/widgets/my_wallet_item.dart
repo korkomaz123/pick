@@ -24,7 +24,7 @@ class _MyWalletItemState extends State<MyWalletItem> {
 
   _onLoadUser() async {
     user = await Preload.currentUser;
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
