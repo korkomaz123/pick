@@ -112,13 +112,11 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
             width: 375.w,
             color: Colors.white,
             margin: EdgeInsets.only(top: 10.h),
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 15.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 5.h),
                 Row(
                   children: [
                     Expanded(
@@ -131,8 +129,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
                       onTap: () => _onShareProduct(),
                       child: SvgPicture.asset(
                         shareIcon,
-                        width: 28.w,
-                        height: 28.h,
+                        width: 24.w,
+                        height: 24.h,
                       ),
                     ),
                     SizedBox(width: 10.w),
@@ -145,8 +143,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
                           child: ScaleTransition(
                             scale: _favoriteScaleAnimation,
                             child: Container(
-                              width: 28.w,
-                              height: 28.h,
+                              width: 24.w,
+                              height: 24.h,
                               child: SvgPicture.asset(
                                 isWishlist ? wishlistedIcon : favoriteIcon,
                               ),
@@ -166,13 +164,13 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
 
   Widget _buildProductCarousel() {
     return Container(
-      width: 350.w,
-      height: 220.h,
+      width: 375.w,
+      height: 140.h,
       child: Stack(
         children: [
           Container(
-            width: 350.w,
-            height: 220.h,
+            width: 375.w,
+            height: 140.h,
             child: Swiper(
               itemCount: model.sameBrandProducts.length > 10
                   ? 10
@@ -187,9 +185,10 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
               },
               itemBuilder: (context, index) {
                 return ProductHCard(
-                  cardWidth: 343.w,
-                  cardHeight: 208.h,
+                  cardWidth: 375.w,
+                  cardHeight: 140.h,
                   product: model.sameBrandProducts[index],
+                  isDesc: true,
                 );
               },
             ),
@@ -197,9 +196,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 10.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
                 count: model.sameBrandProducts.length > 10
@@ -207,7 +204,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
                     : model.sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
-                  spacing: 8.0,
+                  spacing: 8.w,
                   radius: 30,
                   dotWidth: 8.h,
                   dotHeight: 8.h,

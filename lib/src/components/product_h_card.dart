@@ -33,6 +33,7 @@ class ProductHCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
   final ProductModel product;
+  final bool isDesc;
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
@@ -44,6 +45,7 @@ class ProductHCard extends StatefulWidget {
     this.cardWidth,
     this.cardHeight,
     this.product,
+    this.isDesc = false,
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
@@ -180,8 +182,8 @@ class _ProductHCardState extends State<ProductHCard>
             ),
             child: CachedNetworkImage(
               imageUrl: widget.product.imageUrl,
-              width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.9,
+              width: widget.cardWidth * 0.34,
+              height: widget.cardHeight,
               fit: BoxFit.fitHeight,
               errorWidget: (context, url, error) {
                 return Center(child: Icon(Icons.image, size: 20.sp));
@@ -192,7 +194,7 @@ class _ProductHCardState extends State<ProductHCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: widget.cardHeight * 0.2),
+                SizedBox(height: 10.h),
                 InkWell(
                   onTap: () {
                     if (widget?.product?.brandEntity?.optionId != null) {
@@ -234,6 +236,23 @@ class _ProductHCardState extends State<ProductHCard>
                     ),
                   ),
                 ),
+                if (widget.isDesc) ...[
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: lang == 'en' ? 20.w : 0,
+                      left: lang == 'ar' ? 20.w : 0,
+                    ),
+                    child: Text(
+                      widget.product.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: mediumTextStyle.copyWith(
+                        color: greyDarkColor,
+                        fontSize: widget.isMinor ? 10.sp : 14.sp,
+                      ),
+                    ),
+                  )
+                ],
                 SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,9 +1,6 @@
 class EndPoints {
-  // static const String mainDomain = 'https://markaa.com';
-  // static const String mainDomain = 'https://cigaon.com';
-  // static const String mainDomain = 'https://staging.markaa.com';
-  static const String mainDomain =
-      'https://magento-627030-2077233.cloudwaysapps.com';
+  static const String mainDomain = 'https://markaa.com';
+  // static const String mainDomain = 'https://magento-627030-2077233.cloudwaysapps.com';
   static const String baseUrl = '$mainDomain/customapi/api';
   static const String gatewayform = '$mainDomain/gatewayform.php';
   static const String privacyAndPolicy = '$mainDomain/privacy-policy';
