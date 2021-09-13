@@ -13,19 +13,17 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 import '../../preload.dart';
+import '../apis/endpoints.dart';
 
 class HomeChangeNotifier extends ChangeNotifier {
-  final HomeRepository homeRepository = HomeRepository();
-  final CategoryRepository categoryRepository = CategoryRepository();
-  final ProductRepository productRepository = ProductRepository();
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
-  final BrandRepository brandRepository = BrandRepository();
+  final homeRepository = HomeRepository();
+  final categoryRepository = CategoryRepository();
+  final productRepository = ProductRepository();
+  final localStorageRepository = LocalStorageRepository();
+  final brandRepository = BrandRepository();
 
-  List<ProductModel> bestDealsItems = [];
   SliderImageEntity megaBanner;
   String message;
-  String bestDealsBannerTitle = '';
 
   changeLanguage() {
     print("changeLanguage");
@@ -38,7 +36,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     loadNewArrivals();
     loadExculisiveBanner();
     loadOrientalProducts();
-    loadBestDealsBanner();
+    loadFaceCare();
     loadFragrancesBanner();
     loadPerfumes();
     loadBestWatches();
@@ -82,6 +80,13 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   String bestDealsTitle = '';
   List<ProductModel> bestDealsProducts = [];
+  Future updateBestDealProduct(int index) async {
+    String productId = bestDealsProducts[index].productId;
+    final product = await productRepository.getProduct(productId);
+    bestDealsProducts[index] = product;
+    notifyListeners();
+  }
+
   Future loadBestDeals() async {
     try {
       final result =
@@ -141,36 +146,24 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  String newArrivalsBannerTitle = '';
-  List<SliderImageEntity> newArrivalsBanners = [];
-  List<ProductModel> newArrivalsItems = [];
+  String sunglassesTitle = '';
+  List<SliderImageEntity> sunglassesBanners = [];
+  List<ProductModel> sunglassesItems = [];
+  SliderImageEntity sunglassesViewAll;
   Future loadNewArrivalsBanner() async {
     try {
-      final result =
-          await homeRepository.getHomeNewArrivalsBanners(Preload.language);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection3);
       if (result['code'] == 'SUCCESS') {
-        dynamic response;
-        if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(
-              result['data'][0]['category_id'], Preload.language, 1);
-        } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', Preload.language, 1);
-        }
-        if (response['code'] == 'SUCCESS') {
-          result['items'] = response['products'];
-        } else {
-          result['items'] = [];
-        }
-        newArrivalsBannerTitle = result['title'];
-        newArrivalsBanners.clear();
-        newArrivalsItems.clear();
-        for (var banner in result['data']) {
-          newArrivalsBanners.add(SliderImageEntity.fromJson(banner));
-        }
-        for (var item in result['items']) {
-          newArrivalsItems.add(ProductModel.fromJson(item));
-        }
+        sunglassesTitle = result['title'];
+        sunglassesViewAll = result['viewAll'];
+        sunglassesItems = result['products'];
+        sunglassesBanners = result['banners'];
+      } else {
+        sunglassesTitle = '';
+        sunglassesViewAll = null;
+        sunglassesItems = [];
+        sunglassesBanners = [];
       }
     } catch (e) {
       print(e.toString());
@@ -180,6 +173,13 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   List<ProductModel> newArrivalsProducts = [];
   String newArrivalsTitle = '';
+  Future updateNewArrivalsProduct(int index) async {
+    String productId = newArrivalsProducts[index].productId;
+    final product = await productRepository.getProduct(productId);
+    newArrivalsProducts[index] = product;
+    notifyListeners();
+  }
+
   Future loadNewArrivals() async {
     try {
       final result =
@@ -218,6 +218,13 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> orientalProducts = [];
   CategoryEntity orientalCategory;
   String orientalTitle = '';
+  Future updateOrientalProduct(int index) async {
+    String productId = orientalProducts[index].productId;
+    final product = await productRepository.getProduct(productId);
+    orientalProducts[index] = product;
+    notifyListeners();
+  }
+
   Future loadOrientalProducts() async {
     try {
       final result =
@@ -236,37 +243,27 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<SliderImageEntity> bestDealsBanners = [];
-  Future loadBestDealsBanner() async {
+  String faceCareTitle = '';
+  SliderImageEntity faceCareViewAll;
+  List<ProductModel> faceCareProducts = [];
+  List<SliderImageEntity> faceCareBanners = [];
+  Future loadFaceCare() async {
     try {
-      final result =
-          await homeRepository.getHomeBestDealsBanners(Preload.language);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection1);
       if (result['code'] == 'SUCCESS') {
-        dynamic response;
-        if (result['data'][0]['category_id'] != null) {
-          response = await productRepository.getProducts(
-              result['data'][0]['category_id'], Preload.language, 1);
-        } else if (result['data'][0]['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              result['data'][0]['brand_id'], 'all', Preload.language, 1);
-        }
-        if (response != null && response['code'] == 'SUCCESS') {
-          result['items'] = response['products'];
-        } else {
-          result['items'] = [];
-        }
-        bestDealsBannerTitle = result['title'];
-        bestDealsBanners.clear();
-        bestDealsItems.clear();
-        for (var banner in result['data']) {
-          bestDealsBanners.add(SliderImageEntity.fromJson(banner));
-        }
-        for (var item in result['items']) {
-          bestDealsItems.add(ProductModel.fromJson(item));
-        }
+        faceCareTitle = result['title'];
+        faceCareViewAll = result['viewAll'];
+        faceCareProducts = result['products'];
+        faceCareBanners = result['banners'];
+      } else {
+        faceCareTitle = '';
+        faceCareViewAll = null;
+        faceCareProducts = [];
+        faceCareBanners = [];
       }
     } catch (e) {
-      print('best deals banner');
+      print('Face Care');
       print(e.toString());
     }
     notifyListeners();
@@ -293,6 +290,13 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   String perfumesTitle = '';
   List<ProductModel> perfumesProducts = [];
+  Future updatePerfumesProduct(int index) async {
+    String productId = perfumesProducts[index].productId;
+    final product = await productRepository.getProduct(productId);
+    perfumesProducts[index] = product;
+    notifyListeners();
+  }
+
   Future loadPerfumes() async {
     try {
       final result =
@@ -310,21 +314,30 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  String bestWatchesTitle = '';
   List<SliderImageEntity> bestWatchesBanners = [];
   List<ProductModel> bestWatchesItems = [];
+  SliderImageEntity bestWatchesViewAll;
+  Future updateBestWatchesProduct(int index) async {
+    String productId = bestWatchesItems[index].productId;
+    final product = await productRepository.getProduct(productId);
+    bestWatchesItems[index] = product;
+    notifyListeners();
+  }
+
   Future loadBestWatches() async {
     try {
-      final result = await homeRepository.getHomeBestWatches(Preload.language);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection2);
       if (result['code'] == 'SUCCESS') {
-        bestWatchesBanners = [];
-        List<dynamic> data = result['data'];
-        for (var item in data) {
-          bestWatchesBanners.add(SliderImageEntity.fromJson(item));
-        }
+        bestWatchesTitle = result['title'];
+        bestWatchesViewAll = result['viewAll'];
+        bestWatchesItems = result['products'];
+        bestWatchesBanners = result['banners'];
+      } else {
+        bestWatchesTitle = '';
+        bestWatchesViewAll = null;
         bestWatchesItems = [];
-        for (var item in result['products']) {
-          bestWatchesItems.add(ProductModel.fromJson(item));
-        }
+        bestWatchesBanners = [];
       }
     } catch (e) {
       print(e.toString());
@@ -332,35 +345,23 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<SliderImageEntity> ads = [];
-  List<ProductModel> perfumesItems = [];
+  List<SliderImageEntity> skinCareBanners = [];
+  List<ProductModel> skinCareItems = [];
+  String skinCareTitle = '';
+  SliderImageEntity skinCareViewAll;
   Future loadAds() async {
     try {
-      var result = await homeRepository.getHomeAds(Preload.language);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection4);
       if (result['code'] == 'SUCCESS') {
-        final adsData = result['data'][0];
-        var response;
-        if (adsData['category_id'] != null) {
-          response = await productRepository.getProducts(
-              adsData['category_id'], Preload.language, 1);
-        } else if (adsData['brand_id'] != null) {
-          response = await productRepository.getBrandProducts(
-              adsData['brand_id'], 'all', Preload.language, 1);
-        }
-        if (response['code'] == 'SUCCESS') {
-          result['items'] = response['products'];
-        } else {
-          result['items'] = [];
-        }
-        perfumesItems.clear();
-        for (var item in result['items']) {
-          perfumesItems.add(ProductModel.fromJson(item));
-        }
-        ads.clear();
-        List<dynamic> data = result['data'];
-        for (var item in data) {
-          ads.add(SliderImageEntity.fromJson(item));
-        }
+        skinCareTitle = result['title'];
+        skinCareViewAll = result['viewAll'];
+        skinCareItems = result['products'];
+        skinCareBanners = result['banners'];
+      } else {
+        skinCareTitle = '';
+        skinCareViewAll = null;
+        skinCareItems = [];
+        skinCareBanners = [];
       }
     } catch (e) {
       print(e.toString());
@@ -369,9 +370,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   Future getViewedProducts() async {
-    print("user ==> 111");
     await Preload.currentUser;
-    print(user);
     if (user?.token != null) {
       await loadRecentlyViewedCustomer();
     } else {
@@ -380,6 +379,13 @@ class HomeChangeNotifier extends ChangeNotifier {
   }
 
   List<ProductModel> recentlyViewedProducts = [];
+  Future updateRecentlyViewedProduct(int index) async {
+    String productId = recentlyViewedProducts[index].productId;
+    final product = await productRepository.getProduct(productId);
+    recentlyViewedProducts[index] = product;
+    notifyListeners();
+  }
+
   Future loadRecentlyViewedGuest() async {
     List<String> ids = await localStorageRepository.getRecentlyViewedIds();
     try {
@@ -500,6 +506,17 @@ class HomeChangeNotifier extends ChangeNotifier {
         sortedBrandList = brands;
       }
     }
+    notifyListeners();
+  }
+
+  List<BrandEntity> saleBrands = [];
+  String saleBrandsTitle = '';
+  Future getBrandsOnSale() async {
+    saleBrands.clear();
+    saleBrandsTitle = '';
+    final result = await brandRepository.getBrandsOnSale(Preload.language);
+    saleBrands = result['list'];
+    saleBrandsTitle = result['title'];
     notifyListeners();
   }
 }

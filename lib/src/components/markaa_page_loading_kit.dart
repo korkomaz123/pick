@@ -31,36 +31,29 @@ class CircleLoadingSpinner extends StatefulWidget {
 
 class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitCircle(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
+      controller: _controller,
       color: widget.loadingColor,
       size: 30,
-    );
-  }
-}
-
-class PouringHourLoadingSpinner extends StatefulWidget {
-  @override
-  _PouringHourLoadingSpinnerState createState() =>
-      _PouringHourLoadingSpinnerState();
-}
-
-class _PouringHourLoadingSpinnerState extends State<PouringHourLoadingSpinner>
-    with TickerProviderStateMixin {
-  @override
-  Widget build(BuildContext context) {
-    return SpinKitPouringHourglass(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
-      color: primarySwatchColor,
-      size: 40,
     );
   }
 }
@@ -72,13 +65,27 @@ class BounceLoadingSpinner extends StatefulWidget {
 
 class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitDoubleBounce(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
+      controller: _controller,
       color: primarySwatchColor,
     );
   }
@@ -91,13 +98,27 @@ class PulseLoadingSpinner extends StatefulWidget {
 
 class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitPulse(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
+      controller: _controller,
       color: primarySwatchColor,
     );
   }
@@ -110,14 +131,28 @@ class WaveLoadingSpinner extends StatefulWidget {
 
 class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitWave(
       size: 30,
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
+      controller: _controller,
       color: primarySwatchColor,
     );
   }
@@ -130,13 +165,27 @@ class RippleLoadingSpinner extends StatefulWidget {
 
 class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitRipple(
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1200),
-      ),
+      controller: _controller,
       color: primarySwatchColor,
     );
   }
@@ -149,15 +198,64 @@ class DualRingSpinner extends StatefulWidget {
 
 class _DualRingSpinnerState extends State<DualRingSpinner>
     with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpinKitDualRing(
       lineWidth: 2,
       size: 30,
-      controller: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1000),
-      ),
+      controller: _controller,
+      color: primarySwatchColor,
+    );
+  }
+}
+
+class SpinningLinesBar extends StatefulWidget {
+  @override
+  _SpinningLinesBarState createState() => _SpinningLinesBarState();
+}
+
+class _SpinningLinesBarState extends State<SpinningLinesBar>
+    with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitSpinningLines(
+      lineWidth: 2,
+      size: 30,
+      controller: _controller,
       color: primarySwatchColor,
     );
   }

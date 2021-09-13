@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
@@ -5,43 +6,37 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductReview extends StatefulWidget {
+class ProductReview extends StatelessWidget {
   final ProductEntity product;
 
   ProductReview({this.product});
-
-  @override
-  _ProductReviewState createState() => _ProductReviewState();
-}
-
-class _ProductReviewState extends State<ProductReview> {
-  ProductReviewChangeNotifier model;
-
-  @override
-  void initState() {
-    super.initState();
-    model = context.read<ProductReviewChangeNotifier>();
-    model.getProductReviews(widget.product.productId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Consumer<ProductReviewChangeNotifier>(
-        builder: (_, __, ___) {
+        builder: (_, model, ___) {
           if (model.reviews.isNotEmpty) {
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
-                children: model.reviews.map((review) => _buildProductReview(review)).toList(),
+                children: model.reviews
+                    .map((review) => _buildProductReview(review))
+                    .toList(),
               ),
             );
           }
-          return Container();
+          return Container(
+            color: greyColor.withOpacity(0.1),
+            margin: EdgeInsets.all(10.w),
+            width: double.infinity,
+            padding: EdgeInsets.all(10.w),
+            child: Center(
+              child: Text("no_reviews".tr(), style: mediumTextStyle),
+            ),
+          );
         },
       ),
     );
@@ -77,9 +72,7 @@ class _ProductReviewState extends State<ProductReview> {
                   half: Icon(Icons.star_half, color: Colors.amber),
                 ),
                 ignoreGestures: true,
-                onRatingUpdate: (rating) {
-                  print(rating);
-                },
+                onRatingUpdate: (rating) {},
               ),
             ],
           ),

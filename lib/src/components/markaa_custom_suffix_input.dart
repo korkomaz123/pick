@@ -41,6 +41,10 @@ class MarkaaCustomSuffixInput extends StatelessWidget {
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
+          errorStyle: mediumTextStyle.copyWith(
+            color: Colors.red,
+            fontSize: fontSize,
+          ),
           hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: fontSize,

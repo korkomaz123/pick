@@ -8,6 +8,7 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -16,21 +17,26 @@ import '../../../../preload.dart';
 
 class HomeBestDeals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeBestDeals({@required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.bestDealsProducts.isNotEmpty) {
-      return Container(
-        height: 360.h,
-        padding: EdgeInsets.all(8.w),
-        margin: EdgeInsets.only(bottom: 10.h),
-        color: Colors.white,
-        child: Column(
-          children: [
-            _buildHeadline(),
-            Expanded(child: _buildProductsList()),
-          ],
-        ),
+      return Consumer<HomeChangeNotifier>(
+        builder: (_, __, ___) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+            margin: EdgeInsets.only(bottom: 10.h),
+            color: Colors.white,
+            child: Column(
+              children: [
+                _buildHeadline(),
+                _buildProductsList(),
+              ],
+            ),
+          );
+        },
       );
     } else {
       return Container();
@@ -89,30 +95,35 @@ class HomeBestDeals extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(top: 10.h, bottom: 5.h),
-      child: ListView.builder(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        itemCount: homeChangeNotifier.bestDealsProducts.length,
-        itemBuilder: (context, index) {
-          return Container(
-            // margin: EdgeInsets.only(left: 5.w),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey.shade300,
-                width: 0.5.w,
-              ),
-            ),
-            child: ProductVCard(
-              cardWidth: 170.w,
-              cardHeight: 280.h,
-              product: homeChangeNotifier.bestDealsProducts[index],
-              isShoppingCart: true,
-              isLine: true,
-              isMinor: true,
-              isWishlist: true,
-              isShare: false,
-            ),
-          );
-        },
+        child: Row(
+          children: List.generate(
+            homeChangeNotifier.bestDealsProducts.length,
+            (index) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 0.5.w,
+                  ),
+                ),
+                child: ProductVCard(
+                  cardWidth: 170.w,
+                  cardHeight: 280.h,
+                  product: homeChangeNotifier.bestDealsProducts[index],
+                  isShoppingCart: true,
+                  isLine: true,
+                  isMinor: true,
+                  isWishlist: true,
+                  isShare: false,
+                  onAddToCartFailure: () =>
+                      homeChangeNotifier.updateBestDealProduct(index),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

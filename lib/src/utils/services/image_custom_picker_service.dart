@@ -36,12 +36,12 @@ class ImageCustomPickerService {
     if (result == null) {
       return null;
     }
-    PickedFile file;
+    XFile file;
     try {
       if (result.toString() == 'gallery') {
-        file = await ImagePicker().getImage(source: ImageSource.gallery);
+        file = await ImagePicker().pickImage(source: ImageSource.gallery);
       } else {
-        file = await ImagePicker().getImage(source: ImageSource.camera);
+        file = await ImagePicker().pickImage(source: ImageSource.camera);
       }
       File croppedFile = await ImageCropper.cropImage(
         sourcePath: file.path,

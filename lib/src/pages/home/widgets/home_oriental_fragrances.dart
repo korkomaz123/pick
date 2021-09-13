@@ -12,6 +12,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../preload.dart';
@@ -19,7 +20,9 @@ import 'home_exculisive_banner.dart';
 
 class HomeOrientalFragrances extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeOrientalFragrances({@required this.homeChangeNotifier});
+
   Widget build(BuildContext context) {
     if (homeChangeNotifier.orientalProducts.isNotEmpty) {
       return Container(
@@ -38,7 +41,9 @@ class HomeOrientalFragrances extends StatelessWidget {
                       : HomeExculisiveBanner(
                           homeChangeNotifier: homeChangeNotifier),
             ),
-            _buildProductsList(homeChangeNotifier.orientalProducts),
+            Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
+              return _buildProductsList(homeChangeNotifier.orientalProducts);
+            }),
           ],
         ),
       );
@@ -115,6 +120,8 @@ class HomeOrientalFragrances extends StatelessWidget {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
+            onAddToCartFailure: () =>
+                homeChangeNotifier.updateOrientalProduct(index),
           ),
         ),
       ),

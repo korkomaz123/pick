@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -27,8 +28,9 @@ class _BrandListPageState extends State<BrandListPage> {
   final _itemKey = GlobalKey();
 
   HomeChangeNotifier _homeChangeNotifier;
+  ScrollController _brandListScrollController = ScrollController();
 
-  List<String> alphabetList = ['All'];
+  List<String> alphabetList = ['all'.tr()];
   List<String> nameCharList = [];
   int selectedIndex = 0;
   int brandIndex = 0;
@@ -37,7 +39,12 @@ class _BrandListPageState extends State<BrandListPage> {
   @override
   void initState() {
     super.initState();
-    alphabetList.addAll(enAlphabetList);
+    if (Preload.language == 'en') {
+      alphabetList.addAll(enAlphabetList);
+    } else {
+      alphabetList.addAll(arAlphabetList);
+    }
+
     _homeChangeNotifier = context.read<HomeChangeNotifier>();
     _loadingData = _homeChangeNotifier.getBrandsList('brand');
 
@@ -52,6 +59,7 @@ class _BrandListPageState extends State<BrandListPage> {
           }
         }
         print(nameCharList);
+        setState(() {});
       }
     });
   }
@@ -86,6 +94,7 @@ class _BrandListPageState extends State<BrandListPage> {
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(vertical: 5.h),
             child: Row(
               children: alphabetList.map((value) {
                 int index = alphabetList.indexOf(value);
@@ -99,18 +108,25 @@ class _BrandListPageState extends State<BrandListPage> {
                     if (nameIndex >= 0) brandIndex = brandIndexMap[value];
                     setState(() {});
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Scrollable.ensureVisible(_alphabetKey.currentContext);
-                      Scrollable.ensureVisible(_itemKey.currentContext);
+                      if (selectedIndex == 0) {
+                        _brandListScrollController.animateTo(
+                          0,
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.easeIn,
+                        );
+                      } else {
+                        // Scrollable.ensureVisible(_alphabetKey.currentContext);
+                        Scrollable.ensureVisible(_itemKey.currentContext);
+                      }
                     });
                   },
                   child: Container(
-                    width: 20.w,
+                    width: 30.w,
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color:
-                          index == selectedIndex ? primaryColor : Colors.white,
-                      shape: BoxShape.circle,
+                      color: index == selectedIndex ? primaryColor : Colors.white,
+                      borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
                     alignment: Alignment.center,
@@ -119,9 +135,7 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex
-                            ? primaryColor
-                            : Colors.white,
+                        color: index != selectedIndex ? primaryColor : Colors.white,
                       ),
                     ),
                   ),
@@ -158,6 +172,7 @@ class _BrandListPageState extends State<BrandListPage> {
               // );
               return Expanded(
                 child: SingleChildScrollView(
+                  controller: _brandListScrollController,
                   child: Column(
                     children: List.generate(
                       _homeChangeNotifier.sortedBrandList.length,
@@ -257,10 +272,14 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl:
-                  _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
-              placeholder: (context, url) => Container(),
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage,
+              // placeholder: (context, url) => Container(),
               errorWidget: (context, url, error) => Icon(Icons.error),
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                );
+              },
             ),
             Text(
               _homeChangeNotifier.sortedBrandList[index].brandLabel,

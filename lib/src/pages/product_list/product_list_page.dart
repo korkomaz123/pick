@@ -247,7 +247,7 @@ class _ProductListPageState extends State<ProductListPage> {
           top: 40.h - extra,
           left: 0,
           right: 0,
-          duration: Duration(milliseconds: 500),
+          duration: Duration(milliseconds: 350),
           child: Container(
             width: 375.w,
             height: 80.h,
@@ -255,10 +255,18 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              imageUrl: brand.brandThumbnail,
+              imageUrl: brand.brandImage,
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
+              progressIndicatorBuilder: (_, __, ___) {
+                return CachedNetworkImage(
+                  imageUrl: brand.brandThumbnail,
+                  width: 120.w,
+                  height: 60.h,
+                  fit: BoxFit.fitHeight,
+                );
+              },
             ),
           ),
         );
@@ -329,7 +337,7 @@ class _ProductListPageState extends State<ProductListPage> {
     });
     if (result != null && sortByItem != result) {
       sortByItem = result;
-      if (sortByItem == 'default') {
+      if (sortByItem == 'default' || sortByItem.isEmpty) {
         if (isFromBrand) {
           viewMode = ProductViewModeEnum.brand;
         } else {
@@ -366,10 +374,15 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onChangeTab(int index) async {
     activeSubcategoryIndex = index;
-    if (isFromBrand)
-      viewMode = ProductViewModeEnum.brand;
-    else
-      viewMode = ProductViewModeEnum.category;
+    if (sortByItem == 'default') {
+      if (isFromBrand) {
+        viewMode = ProductViewModeEnum.brand;
+      } else {
+        viewMode = ProductViewModeEnum.category;
+      }
+    } else {
+      viewMode = ProductViewModeEnum.sort;
+    }
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       scrollChangeNotifier.initialize();
@@ -382,6 +395,13 @@ class _ProductListPageState extends State<ProductListPage> {
         await productChangeNotifier.initialLoadBrandProducts(
           brand.optionId,
           subCategories[index].id,
+          lang,
+        );
+      } else {
+        await productChangeNotifier.initialLoadSortedProducts(
+          brand.optionId ?? '',
+          subCategories[activeSubcategoryIndex].id,
+          sortByItem,
           lang,
         );
       }

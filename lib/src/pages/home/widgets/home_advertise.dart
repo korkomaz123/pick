@@ -31,9 +31,8 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.ads != null &&
-        widget.homeChangeNotifier.ads.isNotEmpty) {
-      SliderImageEntity banner = widget.homeChangeNotifier.ads[0];
+    if (widget.homeChangeNotifier.skinCareViewAll != null) {
+      SliderImageEntity banner = widget.homeChangeNotifier.skinCareViewAll;
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -46,11 +45,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      banner?.categoryId != null
-                          ? banner.categoryName
-                          : banner?.brand != null
-                              ? banner.brand.brandLabel
-                              : '',
+                      widget.homeChangeNotifier.skinCareTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
                         fontSize: 26.sp,
@@ -77,22 +72,21 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: widget.homeChangeNotifier.ads.map((item) {
-                  int index = widget.homeChangeNotifier.ads.indexOf(item);
+                children: widget.homeChangeNotifier.skinCareBanners.map((item) {
+                  int index = widget.homeChangeNotifier.skinCareBanners.indexOf(item);
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: 340.w,
-                          height: 340.w * (897 / 1096),
+                          width: widget.homeChangeNotifier.skinCareBanners.length == 1 ? 375.w : 340.w,
+                          height: (widget.homeChangeNotifier.skinCareBanners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) =>
-                              Center(child: Icon(Icons.image, size: 20)),
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                         ),
                       ),
-                      if (index < widget.homeChangeNotifier.ads.length - 1) ...[
+                      if (index < widget.homeChangeNotifier.skinCareBanners.length - 1) ...[
                         SizedBox(width: 5.w)
                       ],
                     ],
@@ -104,11 +98,11 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
               height: 175.w,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.homeChangeNotifier.perfumesItems.length,
+                itemCount: widget.homeChangeNotifier.skinCareItems.length,
                 itemBuilder: (context, index) => ProductCard(
                   cardWidth: 120.w,
                   cardHeight: 175.w,
-                  product: widget.homeChangeNotifier.perfumesItems[index],
+                  product: widget.homeChangeNotifier.skinCareItems[index],
                   isWishlist: true,
                 ),
               ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -58,6 +57,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     url = widget.params['url'];
     order = widget.params['order'];
     reorder = widget.params['reorder'];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _onBack() async {
@@ -117,24 +121,27 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
             ),
           ),
         ),
-        body: WebView(
-          initialUrl: url,
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (controller) {
-            webViewController = controller;
-            progressService.showProgress();
-          },
-          navigationDelegate: (action) {
-            _onPageLoaded(action.url);
-            return NavigationDecision.navigate;
-          },
-          onPageFinished: (_) {
-            if (isLoading) {
-              progressService.hideProgress();
-              isLoading = false;
-              setState(() {});
-            }
-          },
+        body: Stack(
+          children: [
+            WebView(
+              initialUrl: url,
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              navigationDelegate: (action) {
+                _onPageLoaded(action.url);
+                return NavigationDecision.navigate;
+              },
+              onPageFinished: (_) {
+                if (isLoading) {
+                  isLoading = false;
+                  setState(() {});
+                }
+              },
+            ),
+            if (isLoading) ...[Center(child: PulseLoadingSpinner())],
+          ],
         ),
       ),
     );
@@ -198,7 +205,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       }
       await myCartChangeNotifier.getCartId();
     }
-    final priceDetails = jsonDecode(orderDetails['orderDetails']);
+    final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);
 
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);

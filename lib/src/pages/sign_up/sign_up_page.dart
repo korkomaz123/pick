@@ -107,10 +107,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   Container(
                     width: 375.w,
-                    padding: EdgeInsets.only(
-                      top: 30.h,
-                      bottom: 30.h,
-                    ),
+                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
                     alignment: lang == 'en'
                         ? Alignment.centerLeft
                         : Alignment.centerRight,
@@ -120,10 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: 20.h,
-                      bottom: 60.h,
-                    ),
+                    padding: EdgeInsets.only(top: 20.h, bottom: 60.h),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       hLogoIcon,

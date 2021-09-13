@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:share/share.dart';
@@ -24,26 +23,28 @@ import 'package:provider/provider.dart';
 
 class ProductSameBrandProducts extends StatefulWidget {
   final ProductModel product;
-
-  ProductSameBrandProducts({this.product});
+  final ProductChangeNotifier model;
+  ProductSameBrandProducts({this.product, this.model});
 
   @override
-  _ProductSameBrandProductsState createState() => _ProductSameBrandProductsState();
+  _ProductSameBrandProductsState createState() =>
+      _ProductSameBrandProductsState();
 }
 
-class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> with TickerProviderStateMixin {
+class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
+    with TickerProviderStateMixin {
   AnimationController _favoriteController;
   Animation<double> _favoriteScaleAnimation;
   ProductModel product;
   int activeIndex = 0;
-  List<ProductModel> sameBrandProducts = [];
   FlushBarService flushBarService;
   ProductChangeNotifier model;
   WishlistChangeNotifier wishlistChangeNotifier;
   @override
   void initState() {
     model = Preload.navigatorKey.currentContext.read<ProductChangeNotifier>();
-    wishlistChangeNotifier = Preload.navigatorKey.currentContext.read<WishlistChangeNotifier>();
+    wishlistChangeNotifier =
+        Preload.navigatorKey.currentContext.read<WishlistChangeNotifier>();
     super.initState();
     flushBarService = FlushBarService(context: context);
     _favoriteController = AnimationController(
@@ -59,23 +60,20 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
       curve: Curves.easeIn,
     ));
     product = widget.product;
-    _getSameBrandProducts();
-  }
-
-  void _getSameBrandProducts() async {
-    sameBrandProducts = await ProductRepository().getSameBrandProducts(product.productId);
-    if (mounted) setState(() {});
   }
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   _onShareProduct() async {
-    Uri shareLink = await dynamicLinkService.productSharableLink(sameBrandProducts[activeIndex]);
-    Share.share(shareLink.toString(), subject: sameBrandProducts[activeIndex].name);
+    Uri shareLink = await dynamicLinkService
+        .productSharableLink(model.sameBrandProducts[activeIndex]);
+    Share.share(shareLink.toString(),
+        subject: model.sameBrandProducts[activeIndex].name);
   }
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: sameBrandProducts[activeIndex]);
+      Navigator.pushNamed(context, Routes.product,
+          arguments: model.sameBrandProducts[activeIndex]);
     } else {
       _favoriteController.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
@@ -83,66 +81,70 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(user.token, sameBrandProducts[activeIndex]);
+        wishlistChangeNotifier.removeItemFromWishlist(
+            user.token, model.sameBrandProducts[activeIndex]);
       } else {
-        wishlistChangeNotifier.addItemToWishlist(user.token, sameBrandProducts[activeIndex], 1, {});
+        wishlistChangeNotifier.addItemToWishlist(
+            user.token, model.sameBrandProducts[activeIndex], 1, {});
       }
     }
   }
 
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
-    final variant = sameBrandProducts[activeIndex];
+    final variant = model.sameBrandProducts[activeIndex];
     final wishlistItems = wishlistChangeNotifier.wishlistItemsMap;
 
     bool favorite = false;
-    if (sameBrandProducts[activeIndex].typeId == 'configurable') {
+    if (model.sameBrandProducts[activeIndex].typeId == 'configurable') {
       favorite = wishlistItems.containsKey(variant?.productId ?? '');
     } else {
-      favorite = wishlistItems.containsKey(sameBrandProducts[activeIndex].productId);
+      favorite = wishlistItems
+          .containsKey(model.sameBrandProducts[activeIndex].productId);
     }
     return favorite;
   }
 
   @override
   Widget build(BuildContext context) {
-    return sameBrandProducts.isNotEmpty
+    return model.sameBrandProducts != null && model.sameBrandProducts.isNotEmpty
         ? Container(
             width: 375.w,
             color: Colors.white,
             margin: EdgeInsets.only(top: 10.h),
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 15.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 5.h),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'product_same_brand'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 16.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 16.sp),
                       ),
                     ),
                     InkWell(
                       onTap: () => _onShareProduct(),
-                      child: SvgPicture.asset(shareIcon, width: 28.w, height: 28.h),
+                      child: SvgPicture.asset(
+                        shareIcon,
+                        width: 24.w,
+                        height: 24.h,
+                      ),
                     ),
                     SizedBox(width: 10.w),
                     Consumer<WishlistChangeNotifier>(
                       builder: (_, model, __) {
                         return InkWell(
-                          onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
+                          onTap: () => user != null
+                              ? _onWishlist()
+                              : Navigator.pushNamed(context, Routes.signIn),
                           child: ScaleTransition(
                             scale: _favoriteScaleAnimation,
                             child: Container(
-                              width: 28.w,
-                              height: 28.h,
+                              width: 24.w,
+                              height: 24.h,
                               child: SvgPicture.asset(
                                 isWishlist ? wishlistedIcon : favoriteIcon,
                               ),
@@ -162,15 +164,17 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
 
   Widget _buildProductCarousel() {
     return Container(
-      width: 350.w,
-      height: 220.h,
+      width: 375.w,
+      height: 140.h,
       child: Stack(
         children: [
           Container(
-            width: 350.w,
-            height: 220.h,
+            width: 375.w,
+            height: 140.h,
             child: Swiper(
-              itemCount: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              itemCount: model.sameBrandProducts.length > 10
+                  ? 10
+                  : model.sameBrandProducts.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -181,9 +185,10 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
               },
               itemBuilder: (context, index) {
                 return ProductHCard(
-                  cardWidth: 343.w,
-                  cardHeight: 208.h,
-                  product: sameBrandProducts[index],
+                  cardWidth: 375.w,
+                  cardHeight: 140.h,
+                  product: model.sameBrandProducts[index],
+                  isDesc: true,
                 );
               },
             ),
@@ -191,15 +196,15 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts> wit
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 10.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+                count: model.sameBrandProducts.length > 10
+                    ? 10
+                    : model.sameBrandProducts.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
-                  spacing: 8.0,
+                  spacing: 8.w,
                   radius: 30,
                   dotWidth: 8.h,
                   dotHeight: 8.h,

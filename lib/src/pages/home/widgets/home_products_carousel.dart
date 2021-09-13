@@ -13,10 +13,12 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class HomeProductsCarousel extends StatefulWidget {
   final List<ProductModel> products;
   final bool isVerticalCard;
+  final Function onAddToCartFailure;
 
   HomeProductsCarousel({
     this.products,
     this.isVerticalCard = true,
+    @required this.onAddToCartFailure,
   });
 
   @override
@@ -61,6 +63,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     isWishlist: true,
                     isShare: true,
                     isMinor: false,
+                    onAddToCartFailure: () => widget.onAddToCartFailure(index),
                   );
                 } else {
                   return ProductHCard(
@@ -71,6 +74,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                     isWishlist: true,
                     isShare: true,
                     isMinor: false,
+                    onAddToCartFailure: () => widget.onAddToCartFailure(index),
                   );
                 }
               },
@@ -79,9 +83,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: 20.h,
-              ),
+              padding: EdgeInsets.only(bottom: 10.h),
               child: Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
                   return SmoothIndicator(

@@ -6,6 +6,7 @@ import 'package:markaa/src/components/markaa_review_product_card.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_payment_method.dart';
@@ -16,6 +17,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -34,18 +36,27 @@ class ReOrderPage extends StatefulWidget {
 
 class _ReOrderPageState extends State<ReOrderPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
   OrderEntity order;
+  ShippingMethodEntity shippingMethod;
+
   String icon = '';
   Color color;
   String status = '';
+
   Widget paymentWidget = SizedBox.shrink();
+
   ProgressService progressService;
   FlushBarService flushBarService;
+
   MyCartChangeNotifier myCartChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
+  CheckoutRepository checkoutRepo = CheckoutRepository();
+
   @override
   void initState() {
+    shippingMethod = widget.order.shippingMethod;
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -57,30 +68,57 @@ class _ReOrderPageState extends State<ReOrderPage> {
         .containsKey(widget.order.address.addressId)) {
       widget.order.address = addressChangeNotifier.defaultAddress;
     }
-
-    Future.delayed(Duration.zero, () async {
-      myCartChangeNotifier.initializeReorderCart();
-      await myCartChangeNotifier.getReorderCartId(
-        widget.order.orderId,
-        lang,
-        onProcess: _onLoading,
-      );
-      await myCartChangeNotifier.getReorderCartItems(
-        lang,
-        onSuccess: _onLoaded,
-        onFailure: _onLoaded,
-      );
-    });
-
     _getOrderStatus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getReorderCartItems();
+    });
+  }
+
+  void _getReorderCartItems() {
+    myCartChangeNotifier.initializeReorderCart();
+    myCartChangeNotifier.getReorderCartId(
+      widget.order.orderId,
+      lang,
+      onProcess: _onLoading,
+      onSuccess: _onLoadedReorderCartId,
+      onFailure: _onFailure,
+    );
+  }
+
+  void _onLoadedReorderCartId() {
+    myCartChangeNotifier.getReorderCartItems(
+      lang,
+      onSuccess: _onLoadedItemsSuccess,
+      onFailure: _onFailure,
+    );
   }
 
   void _onLoading() {
     progressService.showProgress();
   }
 
-  void _onLoaded() {
+  void _onLoadedItemsSuccess() {
     progressService.hideProgress();
+    _getShippingMethods();
+  }
+
+  void _onFailure() {
+    progressService.hideProgress();
+  }
+
+  void _getShippingMethods() async {
+    if (shippingMethods.isEmpty) {
+      shippingMethods = await checkoutRepo.getShippingMethod();
+    }
+    for (var shippingMethod in shippingMethods) {
+      if (shippingMethod.minOrderAmount <=
+          myCartChangeNotifier.reorderCartTotalPrice) {
+        this.shippingMethod = shippingMethod;
+      } else {
+        break;
+      }
+    }
+    setState(() {});
   }
 
   @override
@@ -400,11 +438,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            order.shippingMethod.serviceFees == 0
+            shippingMethod.serviceFees == 0
                 ? 'free'.tr()
-                : 'currency'.tr() +
-                    ' ' +
-                    order.shippingMethod.serviceFees.toString(),
+                : 'currency'.tr() + ' ' + shippingMethod.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -418,7 +454,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
       double totalPrice =
-          order.shippingMethod.serviceFees + model.reorderCartTotalPrice;
+          shippingMethod.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -474,6 +510,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         message: 'remove_reorder_item_subtitle');
     if (result != null) {
       await myCartChangeNotifier.removeReorderCartItem(key);
+      _getShippingMethods();
     }
   }
 
@@ -494,7 +531,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   _prepareDetails() {
     orderDetails = {};
-    orderDetails['shipping'] = widget.order.shippingMethod.id;
+    orderDetails['shipping'] = shippingMethod.id;
     orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
     orderDetails['token'] = user.token;
 
@@ -503,7 +540,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     double discount = .0;
 
     subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
-    totalPrice = subtotalPrice + widget.order.shippingMethod.serviceFees;
+    totalPrice = subtotalPrice + shippingMethod.serviceFees;
 
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['discount'] =
@@ -513,6 +550,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
     orderDetails['orderDetails']['subTotalPrice'] =
         NumericService.roundString(subtotalPrice, 3);
     orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(widget.order.shippingMethod.serviceFees, 3);
+        NumericService.roundString(shippingMethod.serviceFees, 3);
   }
 }

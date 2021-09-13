@@ -24,13 +24,15 @@ class TransactionEntity {
         number = json['order_id'],
         amount = double.parse(json['amount']),
         date = json['created_at'],
-        type = json['order_id'] == 'Admin Debit'
-            ? TransactionType.admin
-            : json['order_id'] == 'Wallet-Transfer'
-                ? TransactionType.transfer
-                : json['is_walletrecharge'] == "1"
-                    ? TransactionType.debit
-                    : TransactionType.order,
+        type = json['order_id'] == 'Admin Credit'
+            ? TransactionType.admin_credit
+            : json['order_id'] == 'Admin Debit'
+                ? TransactionType.admin_debit
+                : json['order_id'] == 'Wallet-Transfer'
+                    ? TransactionType.transfer
+                    : json['is_walletrecharge'] == "1"
+                        ? TransactionType.debit
+                        : TransactionType.order,
         paymentMethod = json['payment_code'],
         isIncome = json['action'] == "0";
 

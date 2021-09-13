@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
@@ -19,13 +24,8 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/preload.dart';
 
 class ProductVCard extends StatefulWidget {
   final double cardWidth;
@@ -37,6 +37,7 @@ class ProductVCard extends StatefulWidget {
   final bool isLine;
   final bool isMinor;
   final Function onTap;
+  final Function onAddToCartFailure;
 
   ProductVCard({
     this.cardWidth,
@@ -48,6 +49,7 @@ class ProductVCard extends StatefulWidget {
     this.isLine = false,
     this.isMinor = true,
     this.onTap,
+    this.onAddToCartFailure,
   });
 
   @override
@@ -56,8 +58,8 @@ class ProductVCard extends StatefulWidget {
 
 class _ProductVCardState extends State<ProductVCard>
     with TickerProviderStateMixin {
-  bool isWishlist;
-  int index;
+  bool _isWishlist;
+
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
@@ -68,15 +70,14 @@ class _ProductVCardState extends State<ProductVCard>
   FlushBarService _flushBarService;
   ProgressService _progressService;
 
-  bool get canAddToCart =>
-      widget.isShoppingCart &&
-      (widget.product.typeId != 'simple' ||
-          widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
+    _isWishlist = false;
     super.initState();
-    isWishlist = false;
+
     _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _flushBarService = FlushBarService(context: context);
     _progressService = ProgressService(context: context);
@@ -253,30 +254,36 @@ class _ProductVCardState extends State<ProductVCard>
                         ],
                       ),
                     ),
-                    if (canAddToCart) ...[
+                    if (widget.isShoppingCart) ...[
                       Consumer<MarkaaAppChangeNotifier>(
                         builder: (_, model, __) {
-                          return InkWell(
-                            onTap: () {
-                              if (model.activeAddCart) {
-                                model.changeAddCartStatus(false);
-                                _onAddProductToCart();
-                                model.changeAddCartStatus(true);
-                              }
-                            },
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: widget.isMinor ? 26.w : 32.w,
-                                height: widget.isMinor ? 26.w : 32.w,
-                                child: SvgPicture.asset(addCartIcon),
+                          if (!outOfStock) {
+                            return InkWell(
+                              onTap: () {
+                                if (model.activeAddCart) {
+                                  model.changeAddCartStatus(false);
+                                  _onAddProductToCart();
+                                  model.changeAddCartStatus(true);
+                                }
+                              },
+                              child: ScaleTransition(
+                                scale: _addToCartScaleAnimation,
+                                child: Container(
+                                  width: widget.isMinor ? 26.w : 32.w,
+                                  height: widget.isMinor ? 26.w : 32.w,
+                                  child: SvgPicture.asset(addCartIcon),
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return Container(
+                              width: widget.isMinor ? 26.w : 32.w,
+                              height: widget.isMinor ? 26.w : 32.w,
+                              child: SvgPicture.asset(greyAddCartIcon),
+                            );
+                          }
                         },
-                      )
-                    ] else ...[
-                      SizedBox.shrink()
+                      ),
                     ],
                   ],
                 ),
@@ -340,8 +347,8 @@ class _ProductVCardState extends State<ProductVCard>
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(
       builder: (_, model, __) {
-        String productId = widget.product.productId;
-        isWishlist = model.wishlistItemsMap.containsKey(productId);
+        _isWishlist =
+            model.wishlistItemsMap.containsKey(widget.product.productId);
         if (widget.isWishlist) {
           return Align(
             alignment: Preload.language == 'en'
@@ -350,18 +357,22 @@ class _ProductVCardState extends State<ProductVCard>
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => user != null
-                    ? _onWishlist()
-                    : Navigator.pushNamed(
-                        Preload.navigatorKey.currentContext,
-                        Routes.signIn,
-                      ),
+                onTap: () {
+                  if (user != null) {
+                    _onWishlist();
+                  } else {
+                    Navigator.pushNamed(
+                      Preload.navigatorKey.currentContext,
+                      Routes.signIn,
+                    );
+                  }
+                },
                 child: ScaleTransition(
                   scale: _addToWishlistScaleAnimation,
                   child: Container(
-                    width: isWishlist ? 22.w : 25.w,
-                    height: isWishlist ? 22.w : 25.w,
-                    child: isWishlist
+                    width: _isWishlist ? 22.w : 25.w,
+                    height: _isWishlist ? 22.w : 25.w,
+                    child: _isWishlist
                         ? SvgPicture.asset(wishlistedIcon)
                         : SvgPicture.asset(favoriteIcon),
                   ),
@@ -377,7 +388,7 @@ class _ProductVCardState extends State<ProductVCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (outOfStock) {
       return Align(
         alignment: Preload.language == 'en'
             ? Alignment.centerRight
@@ -458,6 +469,7 @@ class _ProductVCardState extends State<ProductVCard>
   _onAddFailure(String message) {
     _progressService.hideProgress();
     _flushBarService.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure();
   }
 
   void _onWishlist() async {
@@ -473,7 +485,7 @@ class _ProductVCardState extends State<ProductVCard>
         _addToWishlistController.stop(canceled: true);
         timer.cancel();
       });
-      if (isWishlist) {
+      if (_isWishlist) {
         await Preload.navigatorKey.currentContext
             .read<WishlistChangeNotifier>()
             .removeItemFromWishlist(user.token, widget.product);

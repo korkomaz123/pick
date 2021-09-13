@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:markaa/slack.dart';
 
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/routes/routes.dart';
@@ -17,19 +18,24 @@ const bool USE_FIRESTORE_EMULATOR = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  /// Firebase initialize
+  await Firebase.initializeApp();
+
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
+    int _errorLength = e.stack.toString().length;
+    SlackChannels.send('''${e.exceptionAsString()}
+     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+        SlackChannels.logAppErrors);
     return Center(
       child: Text("There was an error! ${e.exception}"),
     );
   });
 
-  /// Firebase initialize
-  await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR)
     FirebaseFirestore.instance.settings = const Settings(
       host: 'localhost:8080',

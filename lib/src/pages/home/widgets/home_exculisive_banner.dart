@@ -35,7 +35,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
             height: designWidth.w * (495 / 1466),
             child: Swiper(
               itemCount: widget.homeChangeNotifier.exculisiveBanners.length,
-              autoplay: true,
+              autoplay: false,
               autoplayDelay: 5000,
               curve: Curves.easeInOutCubic,
               onIndexChanged: (value) => setState(() => activeIndex = value),

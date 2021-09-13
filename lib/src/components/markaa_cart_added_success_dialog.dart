@@ -64,6 +64,7 @@ class _MarkaaCartAddedSuccessDialogState
                     ],
                   ),
                 ),
+                SizedBox(width: 5.w),
                 Consumer<MyCartChangeNotifier>(
                   builder: (_, model, ___) {
                     return Column(

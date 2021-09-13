@@ -60,6 +60,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;
@@ -253,6 +258,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
           return Column(
             children: [
               OrderItemCard(
+                order: order,
                 cartItem: order.cartItems[index],
                 canceled: order.cartItems[index].itemCountCanceled > 0,
                 returned: order.cartItems[index].itemCountReturned > 0,
@@ -360,14 +366,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   Widget _buildDiscount() {
-    double discount = .0;
-    if (widget.order.discountType == 'percentage') {
-      discount = -double.parse(widget.order.subtotalPrice) *
-          widget.order.discountAmount /
-          100;
-    } else {
-      discount = -widget.order.discountAmount;
-    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -385,7 +383,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            '${'currency'.tr()} ${NumericService.roundString(discount, 3)}',
+            '${'currency'.tr()} ${widget.order.discountPrice}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

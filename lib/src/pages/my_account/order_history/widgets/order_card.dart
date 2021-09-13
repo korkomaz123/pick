@@ -33,8 +33,7 @@ class _OrderCardState extends State<OrderCard> {
   void _checkOrderItems() {
     if (widget?.order?.cartItems != null) {
       for (int i = 0; i < widget.order.cartItems.length; i++) {
-        if (widget.order.cartItems[i].product.stockQty != null &&
-            widget.order.cartItems[i].product.stockQty > 0) {
+        if (widget.order.cartItems[i].product.stockQty != null && widget.order.cartItems[i].product.stockQty > 0) {
           isStock = true;
           break;
         }
@@ -246,8 +245,7 @@ class _OrderCardState extends State<OrderCard> {
                 SizedBox(width: 5.w),
                 MaterialButton(
                   elevation: 0,
-                  onPressed: !isStock ||
-                          widget.order.status == OrderStatusEnum.canceled
+                  onPressed: !isStock //|| widget.order.status == OrderStatusEnum.canceled
                       ? () => null
                       : () => Navigator.pushNamed(
                             context,
@@ -259,8 +257,7 @@ class _OrderCardState extends State<OrderCard> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: !isStock ||
-                          widget.order.status == OrderStatusEnum.canceled
+                  color: !isStock //||widget.order.status == OrderStatusEnum.canceled
                       ? greyColor
                       : primaryColor,
                   child: Row(

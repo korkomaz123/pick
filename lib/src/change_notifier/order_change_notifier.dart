@@ -1,16 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:provider/provider.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class OrderChangeNotifier extends ChangeNotifier {
   final OrderRepository orderRepository = OrderRepository();
@@ -70,6 +72,55 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
+    return <String, dynamic>{
+      'version.securityPatch': build.version.securityPatch,
+      'version.sdkInt': build.version.sdkInt,
+      'version.release': build.version.release,
+      'version.previewSdkInt': build.version.previewSdkInt,
+      'version.incremental': build.version.incremental,
+      'version.codename': build.version.codename,
+      'version.baseOS': build.version.baseOS,
+      'board': build.board,
+      'bootloader': build.bootloader,
+      'brand': build.brand,
+      'device': build.device,
+      'display': build.display,
+      'fingerprint': build.fingerprint,
+      'hardware': build.hardware,
+      'host': build.host,
+      'id': build.id,
+      'manufacturer': build.manufacturer,
+      'model': build.model,
+      'product': build.product,
+      'supported32BitAbis': build.supported32BitAbis,
+      'supported64BitAbis': build.supported64BitAbis,
+      'supportedAbis': build.supportedAbis,
+      'tags': build.tags,
+      'type': build.type,
+      'isPhysicalDevice': build.isPhysicalDevice,
+      'androidId': build.androidId,
+      'systemFeatures': build.systemFeatures,
+    };
+  }
+
+  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
+    return <String, dynamic>{
+      'name': data.name,
+      'systemName': data.systemName,
+      'systemVersion': data.systemVersion,
+      'model': data.model,
+      'localizedModel': data.localizedModel,
+      'identifierForVendor': data.identifierForVendor,
+      'isPhysicalDevice': data.isPhysicalDevice,
+      'utsname.sysname:': data.utsname.sysname,
+      'utsname.nodename:': data.utsname.nodename,
+      'utsname.release:': data.utsname.release,
+      'utsname.version:': data.utsname.version,
+      'utsname.machine:': data.utsname.machine,
+    };
+  }
+
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
     String lang, {
@@ -80,30 +131,46 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     onProcess();
     try {
+      try {
+        Map<String, dynamic> deviceData = <String, dynamic>{};
+        final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
+        orderDetails['appInfo'] = {
+          'appName': _packageInfo.appName,
+          'packageName': _packageInfo.packageName,
+          'version': _packageInfo.version,
+          'buildNumber': _packageInfo.buildNumber,
+          'buildSignature': _packageInfo.buildSignature,
+        };
+        final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+        if (Platform.isAndroid) {
+          deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+        } else if (Platform.isIOS) {
+          deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+        }
+        orderDetails['deviceInfo'] = deviceData;
+      } catch (e) {}
+
       String isVirtual = isWallet ? '1' : '0';
-      final result =
-          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
+      final result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
-        final newOrder = OrderEntity.fromJson(result['order']);
-        if (orderDetails['token'] != null &&
-            orderDetails['token'] != '' &&
-            !isWallet) {
+        final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
+
+        SlackChannels.send(
+            '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user.email}=>${user.customerId}]''',
+            SlackChannels.logAddOrder);
+        if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
-          await Preload.navigatorKey.currentContext
-              .read<OrderChangeNotifier>()
-              .loadOrderHistories(
-                user.token,
-                lang,
-                () {},
-              );
+          await loadOrderHistories(user.token, lang);
           setKeys();
           notifyListeners();
         }
 
         onSuccess(result['payurl'], newOrder);
       } else {
+        SlackChannels.send('new Order [${result['code']}] : ${result['errorMessage']}', SlackChannels.logAddOrder);
+
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
@@ -123,8 +190,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     try {
       final orderId = order.orderId;
 
-      final result =
-          await orderRepository.cancelOrderById(orderId, Preload.language);
+      final result = await orderRepository.cancelOrderById(orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
@@ -153,8 +219,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
 
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
@@ -183,8 +248,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.returnOrder(
-          token, orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         onSuccess();
       } else {
@@ -195,18 +259,37 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> sendAsGift({
+    String token,
+    String sender,
+    String receiver,
+    String message,
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
+    try {
+      final result = await orderRepository.sendAsGift(token, sender, receiver, message);
+      if (result['code'] == 'SUCCESS') {
+        if (onSuccess != null) onSuccess(result['gift_message_id']);
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure(e.toString());
+    }
+  }
+
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -220,12 +303,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };

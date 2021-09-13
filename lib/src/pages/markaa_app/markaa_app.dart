@@ -76,6 +76,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
   final checkoutRepository = CheckoutRepository();
 
   final firebaseRepository = FirebaseRepository();
+
   _loadData() async {
     Timer(Duration(seconds: 1), () async {
       bool isExist = await LocalStorageRepository().existItem('usage');

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
@@ -26,25 +27,31 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'product_v_card.dart';
+
 class ProductHCard extends StatefulWidget {
   final double cardWidth;
   final double cardHeight;
   final ProductModel product;
+  final bool isDesc;
   final bool isShoppingCart;
   final bool isWishlist;
   final bool isShare;
   final bool isMinor;
   final Function onTap;
+  final Function onAddToCartFailure;
 
   ProductHCard({
     this.cardWidth,
     this.cardHeight,
     this.product,
+    this.isDesc = false,
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
     this.isMinor = true,
     this.onTap,
+    this.onAddToCartFailure,
   });
 
   @override
@@ -55,26 +62,26 @@ class _ProductHCardState extends State<ProductHCard>
     with TickerProviderStateMixin {
   FlushBarService flushBarService;
   ProgressService progressService;
+
   AnimationController _addToCartController;
   Animation<double> _addToCartScaleAnimation;
   AnimationController _addToWishlistController;
   Animation<double> _addToWishlistScaleAnimation;
+
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
 
   int index;
   bool isWishlist;
 
-  bool get canAddToCart =>
-      widget.isShoppingCart &&
-      (widget.product.typeId != 'simple' ||
-          widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock =>
+      !(widget.product.stockQty != null && widget.product.stockQty > 0);
 
   @override
   void initState() {
+    isWishlist = false;
     super.initState();
 
-    isWishlist = false;
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
@@ -150,6 +157,7 @@ class _ProductHCardState extends State<ProductHCard>
                 ),
               ],
             ],
+            if (widget.product.isDeal) ...[_buildDealValueLabel()],
             _buildToolbar(),
             _buildOutofStock(),
           ],
@@ -174,8 +182,8 @@ class _ProductHCardState extends State<ProductHCard>
             ),
             child: CachedNetworkImage(
               imageUrl: widget.product.imageUrl,
-              width: widget.cardHeight * 0.65,
-              height: widget.cardHeight * 0.9,
+              width: widget.cardWidth * 0.34,
+              height: widget.cardHeight,
               fit: BoxFit.fitHeight,
               errorWidget: (context, url, error) {
                 return Center(child: Icon(Icons.image, size: 20.sp));
@@ -186,7 +194,7 @@ class _ProductHCardState extends State<ProductHCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: widget.cardHeight * 0.2),
+                SizedBox(height: 10.h),
                 InkWell(
                   onTap: () {
                     if (widget?.product?.brandEntity?.optionId != null) {
@@ -228,6 +236,23 @@ class _ProductHCardState extends State<ProductHCard>
                     ),
                   ),
                 ),
+                if (widget.isDesc) ...[
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: lang == 'en' ? 20.w : 0,
+                      left: lang == 'ar' ? 20.w : 0,
+                    ),
+                    child: Text(
+                      widget.product.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: mediumTextStyle.copyWith(
+                        color: greyDarkColor,
+                        fontSize: widget.isMinor ? 10.sp : 14.sp,
+                      ),
+                    ),
+                  )
+                ],
                 SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -265,28 +290,36 @@ class _ProductHCardState extends State<ProductHCard>
                         ],
                       ),
                     ),
-                    if (canAddToCart) ...[
-                      Consumer<MarkaaAppChangeNotifier>(
-                        builder: (_, model, __) {
-                          return InkWell(
-                            onTap: () {
-                              if (model.activeAddCart) {
-                                model.changeAddCartStatus(false);
-                                _onAddProductToCart();
-                                model.changeAddCartStatus(true);
-                              }
-                            },
-                            child: ScaleTransition(
-                              scale: _addToCartScaleAnimation,
-                              child: Container(
-                                width: 32.h,
-                                height: 32.h,
-                                child: SvgPicture.asset(addCartIcon),
+                    if (widget.isShoppingCart) ...[
+                      if (!outOfStock) ...[
+                        Consumer<MarkaaAppChangeNotifier>(
+                          builder: (_, model, __) {
+                            return InkWell(
+                              onTap: () {
+                                if (model.activeAddCart) {
+                                  model.changeAddCartStatus(false);
+                                  _onAddProductToCart();
+                                  model.changeAddCartStatus(true);
+                                }
+                              },
+                              child: ScaleTransition(
+                                scale: _addToCartScaleAnimation,
+                                child: Container(
+                                  width: 32.h,
+                                  height: 32.h,
+                                  child: SvgPicture.asset(addCartIcon),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
+                      ] else ...[
+                        Container(
+                          width: 32.h,
+                          height: 32.h,
+                          child: SvgPicture.asset(greyAddCartIcon),
+                        )
+                      ]
                     ],
                   ],
                 ),
@@ -309,6 +342,38 @@ class _ProductHCardState extends State<ProductHCard>
         style: mediumTextStyle.copyWith(
           fontSize: widget.isMinor ? 10.sp : 14.sp,
           color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDealValueLabel() {
+    return Align(
+      alignment:
+          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      child: Padding(
+        padding: EdgeInsets.only(top: widget.cardHeight * 0.45),
+        child: ClipPath(
+          clipper: DealClipPath(lang: Preload.language),
+          child: Container(
+            width: 66.w,
+            height: 22.h,
+            color: pinkColor,
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'deal_label'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -346,7 +411,7 @@ class _ProductHCardState extends State<ProductHCard>
   }
 
   Widget _buildOutofStock() {
-    if (widget.product.stockQty == null || widget.product.stockQty == 0) {
+    if (outOfStock) {
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -378,7 +443,7 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
 
-      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
+      if (!outOfStock) {
         await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
@@ -423,6 +488,7 @@ class _ProductHCardState extends State<ProductHCard>
   _onAddFailure(String message) {
     progressService.hideProgress();
     flushBarService.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure();
   }
 
   void _onWishlist() async {

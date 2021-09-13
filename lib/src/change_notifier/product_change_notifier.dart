@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
@@ -9,7 +8,6 @@ import '../../preload.dart';
 
 class ProductChangeNotifier extends ChangeNotifier {
   final productRepository = ProductRepository();
-  final localStorageRepository = LocalStorageRepository();
 
   bool isReachedMax = false;
   String brandId;
@@ -27,13 +25,25 @@ class ProductChangeNotifier extends ChangeNotifier {
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
-    notifyListeners();
+    //notifyListeners();
   }
 
   void initialize() {
     data = {};
     pages = {};
     isReachedMax = false;
+  }
+
+  List<ProductModel> sameBrandProducts = [];
+  List<BrandEntity> brands = [];
+  dynamic category = {};
+  Future<void> getProductInfoBrand(String productId) async {
+    productRepository.getProductInfoBrand(productId).then((_items) {
+      sameBrandProducts = _items['sameBrandProducts'];
+      brands = _items['brands'];
+      category = _items['category'];
+      notifyListeners();
+    });
   }
 
   setInitalInfo(ProductModel product) {
@@ -49,10 +59,9 @@ class ProductChangeNotifier extends ChangeNotifier {
   Future<void> getProductDetails(String productId) async {
     selectedOptions = {};
     selectedVariant = null;
-
+    relatedItems.clear();
     final result =
-        await productRepository.getProductDetails(productId, Preload.language);
-
+        await productRepository.getProductInfo(productId, Preload.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
       productDetails = null;
@@ -61,10 +70,40 @@ class ProductChangeNotifier extends ChangeNotifier {
         _gallery.removeAt(0);
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
+      //Releated products
+      for (int i = 0; i < result['relateditems'].length; i++) {
+        relatedItems.add(ProductModel.fromJson(result['relateditems'][i]));
+      }
     }
     productDetailsMap[productId] = productDetails;
+
     notifyListeners();
   }
+  // Future<void> getProductDetails(String productId) async {
+  //   selectedOptions = {};
+  //   selectedVariant = null;
+
+  //   final result = await productRepository.getProductDetails(productId, Preload.language);
+
+  //   List<dynamic> _gallery = productDetails?.gallery ?? [];
+  //   if (result['code'] == 'SUCCESS') {
+  //     productDetails = null;
+  //     _gallery.addAll(result['moreAbout']['gallery']);
+  //     if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
+  //     result['moreAbout']['gallery'] = _gallery;
+  //     productDetails = ProductEntity.fromJson(result['moreAbout']);
+  //   }
+  //   productDetailsMap[productId] = productDetails;
+  //   notifyListeners();
+  // }
+
+  List<ProductModel> relatedItems = [];
+  // Future<void> getRelatedProducts(String productId) async {
+  //   productRepository.getRelatedProducts(productId).then((_items) {
+  //     relatedItems = _items;
+  //     notifyListeners();
+  //   });
+  // }
 
   /// category products list loading...
   Future<void> initialLoadCategoryProducts(
@@ -105,10 +144,16 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
-    String key = 'cat-products-$categoryId-$lang-$page';
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> productList = await localStorageRepository.getItem(key);
+    final result = await productRepository.getProducts(categoryId, lang, page);
+    if (result['code'] == 'SUCCESS') {
+      if (result['currentpage'] != null)
+        currentpage['-$categoryId'] = page.toString();
+      if (result['totalpage'] != null)
+        totalPages['-$categoryId'] = result['totalpage'].toString();
+      if (result['totalproducts'] != null)
+        totalProducts['-$categoryId'] = result['totalproducts'].toString();
+
+      List<dynamic> productList = result['products'];
       if (!data.containsKey(categoryId)) {
         data[categoryId] = [];
       }
@@ -119,23 +164,6 @@ class ProductChangeNotifier extends ChangeNotifier {
         isReachedMax = true;
       }
       notifyListeners();
-    }
-    final result = await productRepository.getProducts(categoryId, lang, page);
-    if (result['code'] == 'SUCCESS') {
-      await localStorageRepository.setItem(key, result['products']);
-      if (!exist) {
-        List<dynamic> productList = result['products'];
-        if (!data.containsKey(categoryId)) {
-          data[categoryId] = [];
-        }
-        for (int i = 0; i < productList.length; i++) {
-          data[categoryId].add(ProductModel.fromJson(productList[i]));
-        }
-        if (productList.length < 50 && page > 0) {
-          isReachedMax = true;
-        }
-        notifyListeners();
-      }
     }
   }
 
@@ -186,38 +214,34 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = brandId + '_' + categoryId ?? '';
-    String key = 'cat-products-$brandId-$categoryId-$lang-$page';
-    final exist = await localStorageRepository.existItem(key);
-    if (exist) {
-      List<dynamic> productList = await localStorageRepository.getItem(key);
+    final result = await productRepository.getBrandProducts(
+        brandId, categoryId, lang, page);
+    if (result['code'] == 'SUCCESS') {
+      print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
+      if (result['currentpage'] != null)
+        currentpage['$brandId-$categoryId'] = page.toString();
+      if (result['totalpage'] != null)
+        totalPages['${brandId != null ? brandId : ''}-$categoryId'] =
+            result['totalpage'].toString();
+      if (result['totalproducts'] != null)
+        totalProducts['${brandId != null ? brandId : ''}-$categoryId'] =
+            result['totalproducts'].toString();
+
+      List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        data[index].add(ProductModel.fromJson(productList[i]));
+        if (data[index]
+                .where((element) => element.sku == productList[i]['sku'])
+                .toList()
+                .length ==
+            0) data[index].add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
       notifyListeners();
-    }
-    final result = await productRepository.getBrandProducts(
-        brandId, categoryId, lang, page);
-    if (result['code'] == 'SUCCESS') {
-      await localStorageRepository.setItem(key, result['products']);
-      if (!exist) {
-        List<dynamic> productList = result['products'];
-        if (!data.containsKey(index)) {
-          data[index] = [];
-        }
-        for (int i = 0; i < productList.length; i++) {
-          data[index].add(ProductModel.fromJson(productList[i]));
-        }
-        if (productList.length < 50 && page > 0) {
-          isReachedMax = true;
-        }
-        notifyListeners();
-      }
     }
   }
 
@@ -264,6 +288,9 @@ class ProductChangeNotifier extends ChangeNotifier {
     await loadSortedProducts(1, brandId, categoryId, sortItem, lang);
   }
 
+  Map<String, dynamic> totalPages = {};
+  Map<String, dynamic> totalProducts = {};
+  Map<String, dynamic> currentpage = {};
   Future<void> loadSortedProducts(
     int page,
     String brandId,
@@ -275,12 +302,25 @@ class ProductChangeNotifier extends ChangeNotifier {
     final result = await productRepository.sortProducts(
         categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
+      print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
+      if (result['currentpage'] != null)
+        currentpage['${brandId ?? ''}-$categoryId'] = page.toString();
+      if (result['totalpage'] != null)
+        totalPages['${brandId != null ? brandId : ''}-$categoryId'] =
+            result['totalpage'].toString();
+      if (result['totalproducts'] != null)
+        totalProducts['${brandId != null ? brandId : ''}-$categoryId'] =
+            result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        data[index].add(ProductModel.fromJson(productList[i]));
+        if (data[index]
+                .where((element) => element.sku == productList[i]['sku'])
+                .toList()
+                .length ==
+            0) data[index].add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
@@ -351,7 +391,11 @@ class ProductChangeNotifier extends ChangeNotifier {
           data[index] = [];
         }
         for (int i = 0; i < productList.length; i++) {
-          data[index].add(ProductModel.fromJson(productList[i]));
+          if (data[index]
+                  .where((element) => element.sku == productList[i]['sku'])
+                  .toList()
+                  .length ==
+              0) data[index].add(ProductModel.fromJson(productList[i]));
         }
         if (productList.length < 50 && page > 0) {
           isReachedMax = true;
@@ -362,35 +406,6 @@ class ProductChangeNotifier extends ChangeNotifier {
       print(e.toString());
     }
   }
-
-  // _updateDetails() {
-  //   if (currentColor.isNotEmpty && currentSize.isNotEmpty) {
-  //     List<ProductModel> _selectedItem = productDetails.variants
-  //         .where((element) =>
-  //             element.sku == "${productDetails.sku}-$currentColor-$currentSize")
-  //         .toList();
-  //     if (_selectedItem.length > 0) {
-  //       productDetails = productDetails.copyWith(
-  //           imageUrl: _selectedItem.first.imageUrl,
-  //           gallery: [_selectedItem.first.imageUrl]);
-  //       productDetailsMap[productDetails.productId] = productDetails;
-  //     }
-  //   }
-  // }
-
-  // String currentColor = "";
-  // void changeCurrentColor(_color) {
-  //   currentColor = _color;
-  //   _updateDetails();
-  //   notifyListeners();
-  // }
-
-  // String currentSize = "";
-  // void changeCurrentSize(_size) {
-  //   currentSize = _size;
-  //   _updateDetails();
-  //   notifyListeners();
-  // }
 
   /// select option in configurable product
   void selectOption(

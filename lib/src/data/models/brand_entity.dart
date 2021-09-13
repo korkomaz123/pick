@@ -6,8 +6,10 @@ class BrandEntity {
   final String brandLabel;
   final String sortOrder;
   final String brandThumbnail;
+  final String brandImage;
   final String url;
   final int productsCount;
+  final int percentage;
 
   BrandEntity({
     this.entityId,
@@ -17,8 +19,10 @@ class BrandEntity {
     this.brandLabel,
     this.sortOrder,
     this.brandThumbnail,
+    this.brandImage,
     this.url,
     this.productsCount,
+    this.percentage,
   });
 
   BrandEntity.fromJson(Map<String, dynamic> json)
@@ -29,6 +33,10 @@ class BrandEntity {
         brandLabel = json['brand_label'],
         sortOrder = json['sort_order'],
         brandThumbnail = json['brand_thumbnail'],
+        brandImage = json.containsKey('brand_image')
+            ? json['brand_image']
+            : json['brand_thumbnail'],
         url = json['url'],
-        productsCount = json['item_count'];
+        productsCount = json['item_count'],
+        percentage = json.containsKey('disPercent') ? json['disPercent'] : 0;
 }

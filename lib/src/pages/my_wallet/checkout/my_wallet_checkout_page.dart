@@ -259,7 +259,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   void _gotoFailedPage() {
     Navigator.pushNamedAndRemoveUntil(
       context,
-      Routes.paymentFailed,
+      Routes.myWalletFailed,
       (route) => route.settings.name == Routes.myWallet,
     );
   }

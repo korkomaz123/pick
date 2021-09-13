@@ -10,6 +10,7 @@ import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:markaa/src/pages/home/home_page.dart';
 import 'package:markaa/src/pages/my_account/about_us/about_us_page.dart';
 import 'package:markaa/src/pages/my_account/account_page.dart';
+import 'package:markaa/src/pages/my_account/alarm_list/alarm_list_page.dart';
 import 'package:markaa/src/pages/my_account/change_password/change_password_page.dart';
 import 'package:markaa/src/pages/my_account/contact_us/contact_us_page.dart';
 import 'package:markaa/src/pages/my_account/contact_us/contact_us_success_page.dart';
@@ -56,7 +57,7 @@ class RouteGenerator {
     switch (settings.name) {
       case Routes.start:
         return PageRouteBuilder(
-          settings: RouteSettings(name: Routes.start),
+          settings: settings,
           transitionDuration: Duration.zero,
           pageBuilder: (_, __, ___) => SplashPage(),
         );
@@ -301,11 +302,16 @@ class RouteGenerator {
           builder: (_) => SentGiftSuccessPage(amount: params),
           settings: settings,
         );
+      case Routes.alarmList:
+        return CupertinoPageRoute(
+          builder: (_) => AlarmListPage(),
+          settings: settings,
+        );
       default:
-      // return CupertinoPageRoute(
-      //   builder: (context) => SplashPage(),
-      //   settings: RouteSettings(name: Routes.start),
-      // );
+        return CupertinoPageRoute(
+          builder: (context) => SplashPage(),
+          settings: settings,
+        );
     }
   }
 }

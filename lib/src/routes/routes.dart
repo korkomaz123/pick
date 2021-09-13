@@ -59,9 +59,9 @@ class Routes {
   static const String account = '/my-account';
   static const String updateProfile = '/update-profile';
   static const String notificationMessages = '/notification-messages';
-  static const String notificationMessageDetails =
-      '/notification-message-details';
+  static const String notificationMessageDetails = '/notification-message-details';
   static const String orderHistory = '/order-history';
+  static const String alarmList = '/alarm-list';
   static const String terms = '/terms';
   static const String aboutUs = '/about-us';
   static const String contactUs = '/contact-us';

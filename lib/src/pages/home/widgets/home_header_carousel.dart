@@ -7,6 +7,7 @@ import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -29,17 +30,19 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         widget.homeChangeNotifier.sliderImages.isEmpty) {
       return Container();
     }
-    return Container(
-      width: double.infinity,
-      height: designWidth.w * 579 / 1125,
-      color: Colors.white,
-      child: Stack(
-        children: [
-          _buildImageSlider(),
-          _buildIndicator(),
-        ],
-      ),
-    );
+    return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
+      return Container(
+        width: double.infinity,
+        height: designWidth.w * 579 / 1125,
+        color: Colors.white,
+        child: Stack(
+          children: [
+            _buildImageSlider(),
+            _buildIndicator(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildImageSlider() {

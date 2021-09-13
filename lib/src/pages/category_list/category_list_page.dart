@@ -58,30 +58,32 @@ class _CategoryListPageState extends State<CategoryListPage>
       body: Column(
         children: [
           _buildAppBar(),
-          Consumer<HomeChangeNotifier>(builder: (_, _homeChangeNotifier, ___) {
-            categories = _homeChangeNotifier.categories;
-            return Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: List.generate(
-                    categories.length,
-                    (index) => Column(
-                      children: [
-                        Container(
-                          key: activeIndex == index ? dataKey : null,
-                          child: _buildCategoryCard(categories[index]),
-                        ),
-                        activeIndex == index
-                            ? _buildSubcategoriesList(categories[index])
-                            : SizedBox.shrink(),
-                        SizedBox(height: 6.h),
-                      ],
+          Consumer<HomeChangeNotifier>(
+            builder: (_, _homeChangeNotifier, ___) {
+              categories = _homeChangeNotifier.categories;
+              return Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      categories.length,
+                      (index) => Column(
+                        children: [
+                          Container(
+                            key: activeIndex == index ? dataKey : null,
+                            child: _buildCategoryCard(categories[index]),
+                          ),
+                          if (activeIndex == index) ...[
+                            _buildSubcategoriesList(categories[index])
+                          ],
+                          SizedBox(height: 6.h),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -252,7 +254,9 @@ class _CategoryListPageState extends State<CategoryListPage>
                         color: greyLightColor,
                         margin: EdgeInsets.only(bottom: 1.h),
                         padding: EdgeInsets.symmetric(
-                            horizontal: 20.w, vertical: 10.h),
+                          horizontal: 20.w,
+                          vertical: 10.h,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

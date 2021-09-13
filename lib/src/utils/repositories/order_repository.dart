@@ -9,17 +9,39 @@ class OrderRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> sendAsGift(
+    String token,
+    String sender,
+    String receiver,
+    String message,
+  ) async {
+    String url = EndPoints.sendAsGift;
+    Map<String, dynamic> data = {
+      'token': token,
+      'sender': sender,
+      'receiver': receiver,
+      'message': message,
+    };
+    final result = await Api.postMethod(url, data: data);
+
+    return result;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> placeOrder(
     Map<String, dynamic> orderDetails,
     String lang,
     String isVirtual,
   ) async {
     String url = EndPoints.submitOrder;
-    final details = jsonEncode(orderDetails['orderDetails']);
-    orderDetails['orderDetails'] = details;
-    orderDetails['lang'] = lang;
-    orderDetails['is_virtual'] = isVirtual;
-    final result = await Api.postMethod(url, data: orderDetails);
+    Map<String, dynamic> data =
+        orderDetails.map((key, value) => MapEntry(key, value));
+    data['orderDetails'] = jsonEncode(orderDetails['orderDetails']);
+    data['lang'] = lang;
+    data['is_virtual'] = isVirtual;
+    final result = await Api.postMethod(url, data: data);
 
     return result;
   }

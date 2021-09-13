@@ -69,14 +69,19 @@ class _MyWalletDetailsTransactionsState
               ),
               Column(
                 children: model.transactionsList.map((item) {
-                  if (item.type == TransactionType.admin) {
+                  if (item.type == TransactionType.admin_credit) {
+                    return _buildAdminCreditCard(item);
+                  } else if (item.type == TransactionType.admin_debit) {
                     return _buildAdminDebitCard(item);
                   } else if (item.type == TransactionType.debit) {
                     return _buildUserDebitCard(item);
                   } else if (item.type == TransactionType.transfer) {
                     return _buildWalletTransferCard(item);
+                  } else if (item.isIncome) {
+                    return _buildCashback(item);
+                  } else {
+                    return _buildOrderCard(item);
                   }
-                  return _buildOrderCard(item);
                 }).toList(),
               ),
             ],
@@ -86,7 +91,7 @@ class _MyWalletDetailsTransactionsState
     );
   }
 
-  Widget _buildAdminDebitCard(TransactionEntity item) {
+  Widget _buildAdminCreditCard(TransactionEntity item) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: 10.h),
@@ -120,6 +125,74 @@ class _MyWalletDetailsTransactionsState
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,
                       color: succeedColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset(markaaTextIcon, height: 18.h),
+                  SizedBox(width: 5.w),
+                  Text(
+                    'credit'.tr(),
+                    style: mediumTextStyle.copyWith(fontSize: 16.sp),
+                  ),
+                ],
+              ),
+              Text(
+                'date'.tr() + ': ${item.date}',
+                style: mediumTextStyle.copyWith(
+                  fontSize: 14.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdminDebitCard(TransactionEntity item) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      color: greyLightColor,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'thankyou'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 11.sp,
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    _getAmountString(item.amount, item),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                      color: dangerColor,
+                    ),
+                  ),
+                  Text(
+                    ' (${'kwd'.tr()})',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: dangerColor,
                     ),
                   ),
                 ],
@@ -325,6 +398,80 @@ class _MyWalletDetailsTransactionsState
     );
   }
 
+  Widget _buildCashback(TransactionEntity item) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      color: greyLightColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'cashback'.tr(),
+            style: mediumTextStyle.copyWith(
+              fontSize: 11.sp,
+              color: primaryColor,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'order_number'.tr(),
+                style: mediumTextStyle.copyWith(fontSize: 11.sp),
+              ),
+              Row(
+                children: [
+                  Text(
+                    _getAmountString(item.amount, item),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                      color: succeedColor,
+                    ),
+                  ),
+                  Text(
+                    ' (${'kwd'.tr()})',
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: succeedColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  Routes.viewOrder,
+                  arguments: _orderChangeNotifier.ordersMap[item.orderId],
+                ),
+                child: Text(
+                  '#${item.number}',
+                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
+                ),
+              ),
+              Text(
+                'date'.tr() + ': ${item.date}',
+                style: mediumTextStyle.copyWith(
+                  fontSize: 14.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildOrderCard(TransactionEntity item) {
     return Container(
       width: double.infinity,
@@ -392,25 +539,9 @@ class _MyWalletDetailsTransactionsState
   }
 
   String _getAmountString(double amount, TransactionEntity item) {
-    switch (item.type) {
-      case TransactionType.order:
-        return '- $amount';
-        break;
-      case TransactionType.transfer:
-        if (item.isIncome) {
-          return '+ $amount';
-        } else {
-          return '- $amount';
-        }
-        break;
-      case TransactionType.debit:
-        return '+ $amount';
-        break;
-      case TransactionType.admin:
-        return '+ $amount';
-        break;
-      default:
-        return '- $amount';
-    }
+    if (item.isIncome)
+      return '+ $amount';
+    else
+      return '- $amount';
   }
 }

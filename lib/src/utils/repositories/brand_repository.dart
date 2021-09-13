@@ -33,4 +33,22 @@ class BrandRepository {
     String url = EndPoints.getBrandCategories;
     return await Api.getMethod(url, data: params);
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///
+  //////////////////////////////////////////////////////////////////////////////
+  Future<dynamic> getBrandsOnSale(String lang) async {
+    final params = {'lang': lang};
+    String url = EndPoints.getBrandsOnSale;
+
+    List<BrandEntity> list = [];
+    final result = await Api.getMethod(url, data: params);
+    if (result['code'] == 'SUCCESS') {
+      Map<String, dynamic> data = result['brands'];
+      for (var key in data.keys.toList()) {
+        list.add(BrandEntity.fromJson(data[key]));
+      }
+    }
+    return {'list': list, 'title': result['title']};
+  }
 }

@@ -68,10 +68,15 @@ class _ProductListViewState extends State<ProductListView>
   ScrollChangeNotifier scrollChangeNotifier;
   FilterBloc filterBloc;
   ScrollController scrollController = ScrollController();
+  int _currentProduct = 0;
 
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(() {
+      _currentProduct = ((scrollController.offset ~/ 280.h).floor() * 2) + 4;
+      setState(() {});
+    });
     subCategories = widget.subCategories;
     scaffoldKey = widget.scaffoldKey;
     isFromBrand = widget.isFromBrand;
@@ -91,6 +96,12 @@ class _ProductListViewState extends State<ProductListView>
       widget.onChangeTab(tabController.index);
     });
     scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   void _onScroll() {
@@ -133,8 +144,7 @@ class _ProductListViewState extends State<ProductListView>
     });
   }
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController;
   bool isStillRefresh = false;
   Future<void> _onRefresh() async {
     if (isStillRefresh == true) return;
@@ -281,30 +291,50 @@ class _ProductListViewState extends State<ProductListView>
             ),
           ],
         ),
-        _buildArrowButton(),
+        Consumer<ProductChangeNotifier>(builder: (ctx, notifier, _) {
+          return _buildArrowButton();
+        })
       ],
     );
   }
 
   Widget _buildArrowButton() {
+    final key =
+        '${brand.optionId != null ? brand.optionId : ''}-${subCategories[widget.activeIndex].id}';
+
+    print('key key $key');
     return AnimatedPositioned(
-      right: 4.w,
+      right: (MediaQuery.of(context).size.width - 70.w) / 2,
       bottom: 4.h - widget.pos,
       duration: Duration(milliseconds: 500),
       child: InkWell(
         onTap: () => _onGotoTop(),
         child: Container(
-          width: 40.h,
-          height: 40.h,
+          // height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.w),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: primarySwatchColor.withOpacity(0.8),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.keyboard_arrow_up,
-            size: 30.sp,
-            color: Colors.white70,
+              color: primarySwatchColor.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(15.w)),
+          child: Center(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.keyboard_arrow_up,
+                  size: 20.sp,
+                  color: Colors.white70,
+                ),
+                if (productChangeNotifier.totalProducts[key] != null)
+                  Text(
+                    '${int.parse(productChangeNotifier.totalProducts[key]) > _currentProduct ? _currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -321,9 +351,9 @@ class _ProductListViewState extends State<ProductListView>
         controller: tabController,
         indicator: BoxDecoration(
           color: primaryColor,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
         ),
-        unselectedLabelColor: greyDarkColor,
+        unselectedLabelColor: primaryColor,
         labelColor: Colors.white,
         isScrollable: true,
         tabs: List.generate(
@@ -334,6 +364,9 @@ class _ProductListViewState extends State<ProductListView>
                 index == 0 ? 'all'.tr() : subCategories[index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: 14.sp,
+                  color: tabController.index == index
+                      ? Colors.white
+                      : Colors.black,
                 ),
               ),
             );
@@ -344,6 +377,7 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildProductList(List<ProductModel> products) {
+    _refreshController = RefreshController(initialRefresh: false);
     return RefreshConfiguration(
       footerTriggerDistance: 2500,
       shouldFooterFollowWhenNotFull: (LoadStatus mode) {
@@ -360,7 +394,6 @@ class _ProductListViewState extends State<ProductListView>
               body = CupertinoActivityIndicator();
             } else if (mode == LoadStatus.noMore ||
                 productChangeNotifier.isReachedMax) {
-              // body = Text("No more Data");
               body = Container(
                 width: 375.w,
                 alignment: Alignment.center,

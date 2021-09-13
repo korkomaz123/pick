@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderItemCard extends StatelessWidget {
+  final OrderEntity order;
   final CartItemEntity cartItem;
   final bool canceled;
   final bool returned;
 
   OrderItemCard({
+    this.order,
     this.cartItem,
     this.canceled = false,
     this.returned = false,
@@ -22,6 +24,9 @@ class OrderItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isStock =
         cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
+    double discountedPrice =
+        order.getDiscountedPrice(cartItem, isRowPrice: false);
+    print(discountedPrice);
     return Stack(
       children: [
         Container(
@@ -74,20 +79,26 @@ class OrderItemCard extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Text(
-                              cartItem.product.price + ' ' + 'currency'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 16.sp,
-                                color: primaryColor,
+                            if (discountedPrice ==
+                                double.parse(cartItem.product.price)) ...[
+                              Text(
+                                cartItem.product.price + ' ' + 'currency'.tr(),
+                                style: mediumTextStyle.copyWith(
+                                  fontSize: 16.sp,
+                                  color: primaryColor,
+                                ),
+                              )
+                            ] else ...[
+                              Text(
+                                '$discountedPrice ' + 'currency'.tr(),
+                                style: mediumTextStyle.copyWith(
+                                  fontSize: 16.sp,
+                                  color: primaryColor,
+                                ),
                               ),
-                            ),
-                            if (cartItem.product.price !=
-                                cartItem.product.beforePrice) ...[
                               SizedBox(width: 5.w),
                               Text(
-                                cartItem.product.beforePrice +
-                                    ' ' +
-                                    'currency'.tr(),
+                                cartItem.product.price + ' ' + 'currency'.tr(),
                                 style: mediumTextStyle.copyWith(
                                   decorationStyle: TextDecorationStyle.solid,
                                   decoration: TextDecoration.lineThrough,
@@ -95,8 +106,8 @@ class OrderItemCard extends StatelessWidget {
                                   fontSize: 12.sp,
                                   color: greyColor,
                                 ),
-                              ),
-                            ]
+                              )
+                            ],
                           ],
                         ),
                       ],

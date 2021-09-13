@@ -83,22 +83,6 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 8.w, right: 8.w, top: 30.h),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(deliveredIcon),
-                    SizedBox(width: 1.w),
-                    Text(
-                      'delivery_time'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 15.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               if (user?.token != null) ...[_buildShowAllMyOrderedButton()],
               Text(
                 'checkout_ordered_success_account_title'.tr(),

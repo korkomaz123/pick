@@ -44,6 +44,10 @@ class MarkaaCustomInputMulti extends StatelessWidget {
             horizontal: padding,
             vertical: 5,
           ),
+          errorStyle: mediumTextStyle.copyWith(
+            color: Colors.red,
+            fontSize: fontSize,
+          ),
           hintStyle: mediumTextStyle.copyWith(
             color: greyColor,
             fontSize: fontSize,

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/preload.dart';
@@ -32,20 +33,20 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
   int activeIndex = 0;
 
   Widget build(BuildContext context) {
-    if ((widget.homeChangeNotifier.bestWatchesBanners != null &&
-            widget.homeChangeNotifier.bestWatchesBanners.isNotEmpty) ||
-        widget.homeChangeNotifier.bestWatchesItems.isNotEmpty) {
-      return Container(
-        width: designWidth.w,
-        color: Colors.white,
-        margin: EdgeInsets.only(bottom: 10.h),
-        child: Column(
-          children: [
-            _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
-            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-          ],
-        ),
-      );
+    if (widget.homeChangeNotifier.bestWatchesViewAll != null) {
+      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
+        return Container(
+          width: designWidth.w,
+          color: Colors.white,
+          margin: EdgeInsets.only(bottom: 10.h),
+          child: Column(
+            children: [
+              _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
+              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
+            ],
+          ),
+        );
+      });
     }
     return Container();
   }
@@ -60,11 +61,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  banners[0]?.categoryId != null
-                      ? banners[0].categoryName
-                      : banners[0]?.brand != null
-                          ? banners[0].brand.brandLabel
-                          : '',
+                  widget.homeChangeNotifier.bestWatchesTitle,
                   maxLines: 1,
                   style: mediumTextStyle.copyWith(
                     fontSize: 26.sp,
@@ -82,7 +79,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderColor: primaryColor,
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
-                  onPressed: () => _onLink(banners[0]),
+                  onPressed: () => _onLink(widget.homeChangeNotifier.bestWatchesViewAll),
                 ),
               ),
             ],
@@ -91,25 +88,21 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: widget.homeChangeNotifier.bestWatchesBanners.map((item) {
-              int index =
-                  widget.homeChangeNotifier.bestWatchesBanners.indexOf(item);
+            children: banners.map((item) {
+              int index = banners.indexOf(item);
               return Row(
                 children: [
                   InkWell(
                     onTap: () => _onLink(item),
                     child: CachedNetworkImage(
-                      width: 340.w,
-                      height: 340.w * (897 / 1096),
+                      width: banners.length == 1 ? 375.w : 340.w,
+                      height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                       imageUrl: item.bannerImage,
                       fit: BoxFit.fitHeight,
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.image, size: 20)),
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
-                  if (index <
-                      widget.homeChangeNotifier.bestWatchesBanners.length -
-                          1) ...[SizedBox(width: 5.w)],
+                  if (index < banners.length - 1) ...[SizedBox(width: 5.w)],
                 ],
               );
             }).toList(),
@@ -138,6 +131,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
+            onAddToCartFailure: () => widget.homeChangeNotifier.updateBestWatchesProduct(index),
           ),
         ),
       ),

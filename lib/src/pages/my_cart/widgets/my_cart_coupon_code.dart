@@ -41,6 +41,10 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     couponCodeController.text = myCartChangeNotifier.couponCode;
+
+    myCartChangeNotifier.addListener(() {
+      couponCodeController.text = myCartChangeNotifier.couponCode;
+    });
   }
 
   @override
@@ -76,8 +80,10 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     ),
                     hintText: 'my_cart_coupon_code_hint'.tr(),
                   ),
-                  validator: (value) =>
-                      value.isEmpty ? 'required_field'.tr() : null,
+                  validator: (value) {
+                    if (value.trim().isEmpty) return 'required_field'.tr();
+                    return null;
+                  },
                   readOnly: model.couponCode.isNotEmpty,
                 ),
               ),
@@ -85,7 +91,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                 Container(
                   width: 120.w,
                   height: 40.h,
-                  child: CircleLoadingSpinner(),
+                  child: PulseLoadingSpinner(),
                 ),
               ] else ...[
                 Container(
@@ -113,7 +119,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                             model.cancelCouponCode(flushBarService);
                           } else {
                             model.applyCouponCode(
-                              couponCodeController.text,
+                              couponCodeController.text.trim(),
                               flushBarService,
                             );
                           }

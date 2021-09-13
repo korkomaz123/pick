@@ -13,130 +13,248 @@ import 'payment_card_form.dart';
 
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethodEntity method;
-  final Function onChange;
   final String value;
+  final Function onChange;
   final String cardToken;
   final Function onAuthorizedSuccess;
+  final bool isActive;
 
   PaymentMethodCard({
     @required this.method,
-    @required this.onChange,
     @required this.value,
-    @required this.cardToken,
-    @required this.onAuthorizedSuccess,
+    this.onChange,
+    this.cardToken,
+    this.onAuthorizedSuccess,
+    this.isActive = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          margin: EdgeInsets.only(bottom: 5.h),
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          decoration: BoxDecoration(
-            color: greyLightColor,
-            borderRadius: BorderRadius.circular(10.sp),
-          ),
-          child: RadioListTile(
-            value: method.id,
-            groupValue: value,
-            onChanged: onChange,
-            activeColor: primaryColor,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (method.id == 'cashondelivery') ...[
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'lib/public/icons/cashondelivery.svg',
-                        height: 20.h,
-                        width: 30.w,
-                      ),
-                      Text(
-                        "    " + method.title,
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ] else if (method.id == 'knet') ...[
-                  SvgPicture.asset(
-                    'lib/public/icons/knet.svg',
-                    height: 30.h,
-                    width: 45.w,
-                  ),
-                ] else if (method.id == 'tap') ...[
-                  Row(
-                    children: [
-                      Image.asset(
-                        'lib/public/images/visa-card.png',
-                        height: 25.h,
-                        width: 75.w,
-                      ),
-                      SizedBox(
-                        width: 6.w,
-                      ),
-                      SvgPicture.asset(
-                        'lib/public/icons/line.svg',
-                        height: 25.h,
-                        width: 10.w,
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      SvgPicture.asset(
-                        'lib/public/icons/master-card.svg',
-                        height: 25.h,
-                        width: 45.w,
-                      ),
-                    ],
-                  ),
-                ] else ...[
-                  Row(
-                    children: [
-                      SvgPicture.asset(walletIcon, width: 40.w, height: 30.h),
-                      SizedBox(width: 10.w),
-                      SvgPicture.asset(walletTitle, height: 25.h, width: 50.w),
-                    ],
-                  ),
-                  if (user?.token != null) ...[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+    if (isActive) {
+      return Column(
+        children: [
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(bottom: 5.h),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            decoration: BoxDecoration(
+              color: greyLightColor,
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+            child: RadioListTile(
+              value: method.id,
+              groupValue: value,
+              onChanged: onChange,
+              activeColor: primaryColor,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (method.id == 'cashondelivery') ...[
+                    Row(
                       children: [
-                        Text(
-                          'your_amount'.tr(),
-                          style: mediumTextStyle.copyWith(
-                              fontSize: 10.sp, color: primaryColor),
+                        SvgPicture.asset(
+                          'lib/public/icons/cashondelivery.svg',
+                          height: 20.h,
+                          width: 30.w,
                         ),
                         Text(
-                          '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
+                          "    " + method.title,
                           style: mediumTextStyle.copyWith(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
+                            color: greyColor,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ],
                     ),
+                  ] else if (method.id == 'knet') ...[
+                    SvgPicture.asset(
+                      'lib/public/icons/knet.svg',
+                      height: 30.h,
+                      width: 45.w,
+                    ),
+                  ] else if (method.id == 'tap') ...[
+                    Row(
+                      children: [
+                        Image.asset(
+                          'lib/public/images/visa-card.png',
+                          height: 25.h,
+                          width: 75.w,
+                        ),
+                        SizedBox(
+                          width: 6.w,
+                        ),
+                        SvgPicture.asset(
+                          'lib/public/icons/line.svg',
+                          height: 25.h,
+                          width: 10.w,
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        SvgPicture.asset(
+                          'lib/public/icons/master-card.svg',
+                          height: 25.h,
+                          width: 45.w,
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    Row(
+                      children: [
+                        SvgPicture.asset(walletIcon, width: 40.w, height: 30.h),
+                        SizedBox(width: 10.w),
+                        SvgPicture.asset(walletTitle,
+                            height: 25.h, width: 50.w),
+                      ],
+                    ),
+                    if (user?.token != null) ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'your_amount'.tr(),
+                            style: mediumTextStyle.copyWith(
+                                fontSize: 10.sp, color: primaryColor),
+                          ),
+                          Text(
+                            '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
+                            style: mediumTextStyle.copyWith(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ],
-              ],
+              ),
             ),
           ),
+          if (method.id == 'tap' && value == 'tap' && cardToken == null) ...[
+            Container(
+              width: double.infinity,
+              height: 300.h,
+              child: PaymentCardForm(
+                onAuthorizedSuccess: onAuthorizedSuccess,
+              ),
+            ),
+          ]
+        ],
+      );
+    } else {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        decoration: BoxDecoration(
+          color: greyLightColor,
+          borderRadius: BorderRadius.circular(10.sp),
         ),
-        if (method.id == 'tap' && value == 'tap' && cardToken == null) ...[
-          Container(
-            width: double.infinity,
-            height: 280.h,
-            child: PaymentCardForm(
-              onAuthorizedSuccess: onAuthorizedSuccess,
+        child: Row(
+          children: [
+            Icon(Icons.radio_button_checked, color: primaryColor, size: 26.sp),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (method.id == 'cashondelivery') ...[
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            'lib/public/icons/cashondelivery.svg',
+                            height: 20.h,
+                            width: 30.w,
+                          ),
+                          Text(
+                            "    " + method.title,
+                            style: mediumTextStyle.copyWith(
+                              color: greyColor,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ] else if (method.id == 'knet') ...[
+                      SvgPicture.asset(
+                        'lib/public/icons/knet.svg',
+                        height: 30.h,
+                        width: 45.w,
+                      ),
+                    ] else if (method.id == 'tap') ...[
+                      Row(
+                        children: [
+                          Image.asset(
+                            'lib/public/images/visa-card.png',
+                            height: 25.h,
+                            width: 75.w,
+                          ),
+                          SizedBox(
+                            width: 6.w,
+                          ),
+                          SvgPicture.asset(
+                            'lib/public/icons/line.svg',
+                            height: 25.h,
+                            width: 10.w,
+                          ),
+                          SizedBox(
+                            width: 10.w,
+                          ),
+                          SvgPicture.asset(
+                            'lib/public/icons/master-card.svg',
+                            height: 25.h,
+                            width: 45.w,
+                          ),
+                        ],
+                      ),
+                    ] else ...[
+                      Row(
+                        children: [
+                          SvgPicture.asset(walletIcon,
+                              width: 40.w, height: 30.h),
+                          SizedBox(width: 10.w),
+                          SvgPicture.asset(walletTitle,
+                              height: 25.h, width: 50.w),
+                        ],
+                      ),
+                      if (user?.token != null) ...[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'your_amount'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                  fontSize: 10.sp, color: primaryColor),
+                            ),
+                            Text(
+                              '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ]
-      ],
-    );
+            TextButton(
+              onPressed: onChange,
+              child: Text(
+                'change_button_title'.tr(),
+                style: mediumTextStyle.copyWith(
+                  color: primaryColor,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

@@ -2,18 +2,23 @@ import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
+import 'package:flutter/cupertino.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
+import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
+// import 'package:markaa/src/theme/icons.dart';
+import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
@@ -21,15 +26,17 @@ import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
-import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
+// import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
+import 'widgets/payment_method_list.dart';
 import 'widgets/payment_summary.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -46,10 +53,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   AwesomeLoaderController loaderController = AwesomeLoaderController();
   TextEditingController noteController = TextEditingController();
+  SheetController sheetController = SheetController();
 
   String payment = 'knet';
   String cardToken;
   var details;
+  bool deliverAsGift = false;
 
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -62,17 +71,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   OrderChangeNotifier orderChangeNotifier;
   AddressChangeNotifier addressChangeNotifier;
 
-  bool get outOfBalance =>
-      double.parse(details['subTotalPrice']) > user.balance;
-
   bool get requireAddress =>
       user?.token != null && addressChangeNotifier.defaultAddress == null ||
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
-  _loadData() async {
+  void _loadData() async {
     user = await Preload.currentUser;
 
-    print(paymentMethods.length);
     if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
     }
@@ -86,8 +91,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void initState() {
     super.initState();
 
-    print('init state');
-
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
@@ -97,6 +100,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     details = orderDetails['orderDetails'];
+    orderDetails['deliver_as_gift'] = {
+      'deliver_as_gift': '0',
+      'sender': '',
+      'receiver': '',
+      'message': '',
+    };
 
     _loadData();
   }
@@ -112,65 +121,116 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      left: false,
-      right: false,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.white,
-        appBar: MarkaaCheckoutAppBar(),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (paymentMethods.isEmpty) ...[
-                    Center(
-                      child: PulseLoadingSpinner(),
-                    ),
-                  ] else ...[
-                    Column(
-                      children: List.generate(paymentMethods.length, (index) {
-                        int idx = paymentMethods.length - index - 1;
-                        if ((user?.token == null ||
-                                user?.token != null && user.balance <= 0) &&
-                            paymentMethods[idx].id == 'wallet') {
-                          return Container();
-                        }
-                        return PaymentMethodCard(
-                          method: paymentMethods[idx],
-                          onChange: _onChangeMethod,
-                          value: payment,
-                          cardToken: cardToken,
-                          onAuthorizedSuccess: _onCardAuthorizedSuccess,
-                        );
-                      }),
-                    )
-                  ],
-                  SizedBox(height: 5.h),
-                  PaymentAddress(),
-                  PaymentSummary(details: details),
-                  _buildNote(),
-                  SizedBox(height: 100.h),
-                ],
-              );
-            },
-          ),
-        ),
-        bottomSheet: Consumer<MarkaaAppChangeNotifier>(
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      appBar: MarkaaCheckoutAppBar(),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Consumer<MarkaaAppChangeNotifier>(
           builder: (_, __, ___) {
-            if (payment == 'tap' || payment == 'wallet' && outOfBalance) {
-              return Container(height: 0);
-            }
-            return _buildPlacePaymentButton();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PaymentAddress(),
+                // _buildDeliverAsGift(),
+                if (paymentMethods.isEmpty) ...[
+                  Center(
+                    child: PulseLoadingSpinner(),
+                  ),
+                ] else ...[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'order_payment_method'.tr(),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Column(
+                          children:
+                              List.generate(paymentMethods.length, (index) {
+                            int idx = paymentMethods.length - index - 1;
+                            if (paymentMethods[idx].id != payment) {
+                              return Container();
+                            }
+                            return PaymentMethodCard(
+                              method: paymentMethods[idx],
+                              value: payment,
+                              onChange: _onChangeMethod,
+                              isActive: false,
+                            );
+                          }),
+                        ),
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  ),
+                ],
+                PaymentSummary(details: details),
+                SizedBox(height: 20.h),
+                _buildNote(),
+                SizedBox(height: 100.h),
+              ],
+            );
           },
         ),
       ),
+      bottomSheet: _buildPlacePaymentButton(),
     );
   }
+
+  // Widget _buildDeliverAsGift() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.symmetric(vertical: 30.h),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             SvgPicture.asset(giftIcon),
+  //             SizedBox(width: 10.w),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   'deliver_as_gift'.tr(),
+  //                   style: mediumTextStyle.copyWith(
+  //                     color: primaryColor,
+  //                     fontSize: 14.sp,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   'special_reopen_special_message'.tr(),
+  //                   style: mediumTextStyle.copyWith(
+  //                     fontSize: 12.sp,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //         Transform.scale(
+  //           scale: 0.8,
+  //           child: CupertinoSwitch(
+  //             value: deliverAsGift,
+  //             onChanged: (value) async {
+  //               deliverAsGift = value;
+  //               markaaAppChangeNotifier.rebuild();
+  //               if (deliverAsGift) await _onSendAsGift();
+  //             },
+  //             activeColor: primaryColor,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildNote() {
     return Padding(
@@ -190,46 +250,88 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _buildPlacePaymentButton() {
-    return SizedBox(
-      height: 45,
+    return Container(
       width: designWidth.w,
-      // ignore: deprecated_member_use
-      child: RaisedButton(
-        color: primaryColor,
-        onPressed: _onPlaceOrder,
-        child: Text(
-          'checkout_place_payment_button_title'.tr(),
-          style: TextStyle(color: Colors.white, fontSize: 16.0),
-        ),
+      height: 50.h,
+      margin: EdgeInsets.only(bottom: 20.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: MarkaaTextButton(
+        title: 'checkout_place_payment_button_title'.tr(),
+        titleColor: Colors.white,
+        titleSize: 18.sp,
+        buttonColor: primaryColor,
+        borderColor: primaryColor,
+        onPressed: () => _onPlaceOrder(),
+        radius: 6.sp,
       ),
     );
   }
 
-  _onChangeMethod(String value) async {
-    if (value == 'wallet' && outOfBalance) {
-      final result = await flushBarService.showConfirmDialog(
-        title: 'sorry',
-        message: 'not_enough_balance',
-        yesButtonText: 'add_button_title',
-        noButtonText: 'cancel_button_title',
-      );
-      if (result != null) {
-        double amount = double.parse(details['subTotalPrice']) - user.balance;
-        double value = NumericService.roundDouble(amount, 3);
-        await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
-        setState(() {});
-      }
-    } else {
-      payment = value;
+  _onChangeMethod() async {
+    final result = await showSlidingBottomSheet(
+      context,
+      builder: (_) {
+        return SlidingSheetDialog(
+          controller: sheetController,
+          color: Colors.white,
+          elevation: 2,
+          cornerRadius: 10.sp,
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [1],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          duration: Duration(milliseconds: 500),
+          builder: (context, state) {
+            return PaymentMethodList(
+              value: payment,
+              controller: sheetController,
+            );
+          },
+        );
+      },
+    );
+    if (result != null) {
+      var data = result as Map<String, dynamic>;
+      payment = data['method'];
+      cardToken = data['cardToken'];
       markaaAppChangeNotifier.rebuild();
     }
   }
 
-  _onCardAuthorizedSuccess(String token) {
-    cardToken = token;
-    setState(() {});
-    Future.delayed(Duration(milliseconds: 300), _onPlaceOrder);
-  }
+  // Future _onSendAsGift() async {
+  //   final result = await showSlidingBottomSheet(
+  //     context,
+  //     builder: (_) {
+  //       return SlidingSheetDialog(
+  //         color: Colors.white,
+  //         elevation: 2,
+  //         cornerRadius: 10.sp,
+  //         snapSpec: const SnapSpec(
+  //           snap: true,
+  //           snappings: [1],
+  //           positioning: SnapPositioning.relativeToSheetHeight,
+  //         ),
+  //         duration: Duration(milliseconds: 500),
+  //         builder: (context, state) {
+  //           return DeliverAsGiftForm();
+  //         },
+  //       );
+  //     },
+  //   );
+  //   if (result != null) {
+  //     orderDetails['deliver_as_gift'] = result;
+  //   } else {
+  //     deliverAsGift = false;
+  //     orderDetails['deliver_as_gift'] = {
+  //       'deliver_as_gift': '0',
+  //       'sender': '',
+  //       'receiver': '',
+  //       'message': '',
+  //     };
+  //     markaaAppChangeNotifier.rebuild();
+  //   }
+  // }
 
   _onPlaceOrder() async {
     orderDetails['paymentMethod'] = payment;
@@ -268,6 +370,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
     progressService.hideProgress();
+    print(payUrl);
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);

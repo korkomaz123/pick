@@ -41,9 +41,8 @@ class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
       onWillPop: () async {
         Navigator.popUntil(
           context,
-          (route) => route.settings.name == Routes.myWallet,
+          (route) => route.settings.name == Routes.home,
         );
-        Navigator.pop(context);
         return true;
       },
       child: Scaffold(
@@ -60,9 +59,8 @@ class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
             onPressed: () {
               Navigator.popUntil(
                 context,
-                (route) => route.settings.name == Routes.myWallet,
+                (route) => route.settings.name == Routes.home,
               );
-              Navigator.pop(context);
             },
           ),
         ),

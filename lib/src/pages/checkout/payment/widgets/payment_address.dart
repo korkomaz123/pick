@@ -124,44 +124,48 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   _buildGuestAddressCard()
                 ],
               ] else ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(addressIcon, height: 80.h),
-                    SizedBox(width: 30.w),
-                    Column(
-                      children: [
-                        Text(
-                          'shipment_address_title'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            color: greyDarkColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16.sp,
-                          ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SvgPicture.asset(addressIcon, height: 80.h),
+                      SizedBox(width: 20.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'shipment_address_title'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                color: greyDarkColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                            SizedBox(height: 5.h),
+                            Text(
+                              'no_saved_addresses'.tr(),
+                              style: mediumTextStyle.copyWith(fontSize: 12.sp),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 5.h),
-                        Text(
-                          'no_saved_addresses'.tr(),
-                          style: mediumTextStyle.copyWith(fontSize: 12.sp),
+                      ),
+                      Container(
+                        height: 24.h,
+                        child: MarkaaTextButton(
+                          title: 'add_new_address_button_title'.tr(),
+                          titleSize: 9.sp,
+                          titleColor: Colors.white,
+                          buttonColor: primaryColor,
+                          borderColor: Colors.transparent,
+                          onPressed: _onAddNewAddress,
+                          isBold: true,
+                          radius: 30.sp,
                         ),
-                        SizedBox(height: 20.h),
-                        Container(
-                          width: 126.w,
-                          height: 28.h,
-                          child: MarkaaTextButton(
-                            title: 'add_new_address_button_title'.tr(),
-                            titleSize: 10.sp,
-                            titleColor: Colors.white,
-                            buttonColor: primaryColor,
-                            borderColor: Colors.transparent,
-                            onPressed: _onAddNewAddress,
-                            isBold: true,
-                            radius: 30.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ],
