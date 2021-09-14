@@ -77,7 +77,7 @@ List<String> arAlphabetList = [
   'ن',
   'ه',
   'و',
-  'ی'
+  'ي'
 ];
 
 MessageEntity message = MessageEntity(
