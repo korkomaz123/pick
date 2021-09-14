@@ -48,13 +48,11 @@ class _AlarmListState extends State<AlarmList> {
             FutureBuilder(
               future: future,
               builder: (context, snapshot) => snapshot.connectionState != ConnectionState.waiting && snapshot.hasData
-                  ? CircleAvatar(
-                      radius: 10,
-                      child: Center(
-                        child: Text(
-                          snapshot.data['items'].length.toString(),
-                          style: TextStyle(fontSize: 10.sp),
-                        ),
+                  ? Text(
+                      'items'.tr().replaceFirst('0', '${snapshot.data['items'].length.toString()}'),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 16.sp,
+                        color: primaryColor,
                       ),
                     )
                   : Container(),
