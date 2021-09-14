@@ -31,24 +31,20 @@ class _AlarmListState extends State<AlarmList> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 5.h),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 22.w,
-                  height: 22.h,
-                  child: Icon(Icons.alarm, color: primaryColor),
-                ),
-                SizedBox(width: 10.w),
-                Text(
-                  'alarm_list'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 16.sp,
-                  ),
-                ),
-              ],
+            Container(
+              width: 22.w,
+              height: 22.h,
+              child: Icon(Icons.alarm, color: primaryColor),
             ),
+            SizedBox(width: 10.w),
+            Text(
+              'alarm_list'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: 16.sp,
+              ),
+            ),
+            Spacer(),
             FutureBuilder(
               future: future,
               builder: (context, snapshot) => snapshot.connectionState != ConnectionState.waiting && snapshot.hasData
