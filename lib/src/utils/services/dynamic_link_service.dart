@@ -83,7 +83,7 @@ class DynamicLinkService {
     String id = deepLink.queryParameters['id'];
     String target = deepLink.queryParameters.containsKey('target')
         ? deepLink.queryParameters['target']
-        : 'product';
+        : '';
     if (target == 'product') {
       final product = await productRepository.getProduct(id);
       Navigator.pushNamedAndRemoveUntil(
@@ -121,6 +121,13 @@ class DynamicLinkService {
         Routes.productList,
         arguments: arguments,
       );
+    } else if (target == 'page') {
+      if (id == 'home') {
+        Navigator.popUntil(
+          Preload.navigatorKey.currentContext,
+          (route) => route.settings.name == Routes.home,
+        );
+      }
     }
   }
 }

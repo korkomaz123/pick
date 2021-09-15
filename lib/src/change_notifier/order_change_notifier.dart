@@ -129,7 +129,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function onFailure,
     bool isWallet = false,
   }) async {
-    onProcess();
+    if (onProcess != null) onProcess();
     try {
       try {
         Map<String, dynamic> deviceData = <String, dynamic>{};
@@ -156,9 +156,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
 
-        SlackChannels.send(
-            '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user.email}=>${user.customerId}]''',
-            SlackChannels.logAddOrder);
+        SlackChannels.send('''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',SlackChannels.logAddOrder);
         if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
