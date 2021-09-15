@@ -96,9 +96,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () => widget.isCartPage
-                          ? null
-                          : Navigator.pushNamed(context, Routes.myCart),
+                      onPressed: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
                       icon: Center(
                         child: Consumer<MyCartChangeNotifier>(
                           builder: (_, model, __) {
@@ -114,9 +112,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                               showBadge: model.cartItemCount > 0,
                               toAnimate: false,
                               animationDuration: Duration.zero,
-                              position: lang == 'ar'
-                                  ? BadgePosition.topStart(start: -8.w)
-                                  : BadgePosition.topEnd(end: -8.w),
+                              position: lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
                               child: Container(
                                 width: 25.w,
                                 height: 25.h,
@@ -134,7 +130,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                 duration: Duration(milliseconds: 300),
                 width: designWidth.w,
                 height: model.isShowingSearchBar ? 40.h : 0,
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 5.h),
                 child: TextFormField(
                   controller: _searchController,
                   decoration: InputDecoration(
