@@ -272,16 +272,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               width: designWidth.w,
               height: 420.h,
               progressIndicatorBuilder: (_, __, ___) {
-                return Container(
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
                   width: designWidth.w,
                   height: 420.h,
-                  child: PulseLoadingSpinner(),
                 );
-                // return CachedNetworkImage(
-                //   imageUrl: details.imageUrl,
-                //   width: designWidth.w,
-                //   height: 420.h,
-                // );
               },
             )
           ] else ...[
@@ -312,16 +307,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (context, url, downloadProgress) {
-                        return Container(
-                          width: designWidth.w,
-                          height: 420.h,
-                          child: PulseLoadingSpinner(),
-                        );
-                        // return CachedNetworkImage(
-                        //   imageUrl: details.imageUrl,
+                        // return Container(
                         //   width: designWidth.w,
                         //   height: 420.h,
+                        //   child: PulseLoadingSpinner(),
                         // );
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
                       },
                     ),
                   );
@@ -371,17 +366,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               width: designWidth.w,
               height: 420.h,
               progressIndicatorBuilder: (_, __, ___) {
-                return Container(
-                  width: designWidth.w,
-                  height: 420.h,
-                  child: PulseLoadingSpinner(),
-                );
-
-                // return CachedNetworkImage(
-                //   imageUrl: details.imageUrl,
+                // return Container(
                 //   width: designWidth.w,
                 //   height: 420.h,
+                //   child: PulseLoadingSpinner(),
                 // );
+
+                return CachedNetworkImage(
+                  imageUrl: details.imageUrl,
+                  width: designWidth.w,
+                  height: 420.h,
+                );
               },
             ),
           ] else ...[
@@ -412,17 +407,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {
-                        return Container(
-                          width: designWidth.w,
-                          height: 420.h,
-                          child: PulseLoadingSpinner(),
-                        );
-
-                        // return CachedNetworkImage(
-                        //   imageUrl: details.imageUrl,
+                        // return Container(
                         //   width: designWidth.w,
                         //   height: 420.h,
+                        //   child: PulseLoadingSpinner(),
                         // );
+
+                        return CachedNetworkImage(
+                          imageUrl: details.imageUrl,
+                          width: designWidth.w,
+                          height: 420.h,
+                        );
                       },
                     ),
                   );

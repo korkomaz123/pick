@@ -1,13 +1,24 @@
+import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/data/models/product_model.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductRelatedItems extends StatelessWidget {
-  final List<ProductModel> relatedItems;
-  ProductRelatedItems({this.relatedItems});
+class ProductRelatedItems extends StatefulWidget {
+  final String productId;
+  final ProductChangeNotifier model;
+
+  ProductRelatedItems({this.productId, this.model});
+
+  @override
+  State<ProductRelatedItems> createState() => _ProductRelatedItemsState();
+}
+
+class _ProductRelatedItemsState extends State<ProductRelatedItems> {
+  List<ProductModel> get relatedItems => widget.model.relatedItemsMap[widget.productId];
+
   @override
   Widget build(BuildContext context) {
     if (relatedItems != null && relatedItems.isNotEmpty) {

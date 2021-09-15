@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -8,15 +9,25 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class TopBrandsInCategory extends StatelessWidget {
+class TopBrandsInCategory extends StatefulWidget {
   final String productId;
   final ProductChangeNotifier model;
+
   TopBrandsInCategory({this.productId, this.model});
+
+  @override
+  State<TopBrandsInCategory> createState() => _TopBrandsInCategoryState();
+}
+
+class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
+  List<BrandEntity> get brands => widget.model.brandsMap[widget.productId];
+  dynamic get category => widget.model.categoryMap[widget.productId];
+
   @override
   Widget build(BuildContext context) {
-    if (model.brands == null || model.brands.isEmpty)
+    if (brands == null || brands.isEmpty) {
       return Container();
-    else
+    } else {
       return Container(
         width: double.infinity,
         color: Colors.white,
@@ -26,7 +37,7 @@ class TopBrandsInCategory extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'home_top_brands'.tr() + model.category['category_name'],
+              'home_top_brands'.tr() + category['category_name'],
               style: mediumTextStyle.copyWith(fontSize: 16.sp),
             ),
             Divider(),
@@ -34,36 +45,33 @@ class TopBrandsInCategory extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: model.brands
-                    .map(
-                      (e) => InkWell(
-                        onTap: () {
-                          ProductListArguments arguments = ProductListArguments(
-                            category: CategoryEntity(),
-                            subCategory: [],
-                            brand: e,
-                            selectedSubCategoryIndex: 0,
-                            isFromBrand: true,
-                          );
-                          Navigator.pushNamed(context, Routes.productList,
-                              arguments: arguments);
-                        },
-                        child: CachedNetworkImage(
-                          imageUrl: e.brandThumbnail,
-                          placeholder: (context, url) => Container(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                          width: 120.w,
-                          height: 60.h,
-                          fit: BoxFit.fitHeight,
-                        ),
-                      ),
-                    )
-                    .toList(),
+                children: brands.map((e) =>
+                  InkWell(
+                    onTap: () {
+                      ProductListArguments arguments = ProductListArguments(
+                        category: CategoryEntity(),
+                        subCategory: [],
+                        brand: e,
+                        selectedSubCategoryIndex: 0,
+                        isFromBrand: true,
+                      );
+                      Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: e.brandThumbnail,
+                      placeholder: (context, url) => Container(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      width: 120.w,
+                      height: 60.h,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ).toList(),
               ),
             ),
           ],
         ),
       );
+    }
   }
 }

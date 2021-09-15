@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeAdvertise extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -71,6 +72,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: CustomScrollPhysics(),
               child: Row(
                 children: widget.homeChangeNotifier.skinCareBanners.map((item) {
                   int index = widget.homeChangeNotifier.skinCareBanners.indexOf(item);

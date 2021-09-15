@@ -15,6 +15,10 @@ class ProductChangeNotifier extends ChangeNotifier {
   Map<String, int> pages = {};
   ProductEntity productDetails;
   Map<String, ProductEntity> productDetailsMap = {};
+  Map<String, List<ProductModel>> sameBrandProductsMap = {};
+  Map<String, List<BrandEntity>> brandsMap = {};
+  Map<String, List<ProductModel>> relatedItemsMap = {};
+  Map<String, dynamic> categoryMap = {};
   Map<String, dynamic> selectedOptions = {};
   ProductModel selectedVariant;
   List<String> productIds = [];
@@ -22,6 +26,10 @@ class ProductChangeNotifier extends ChangeNotifier {
   close() {
     String id = productIds[productIds.length - 1];
     productDetailsMap.remove(id);
+    sameBrandProductsMap.remove(id);
+    brandsMap.remove(id);
+    relatedItemsMap.remove(id);
+    categoryMap.remove(id);
     productDetails = null;
     selectedOptions = {};
     selectedVariant = null;
@@ -34,18 +42,11 @@ class ProductChangeNotifier extends ChangeNotifier {
     isReachedMax = false;
   }
 
-  List<ProductModel> sameBrandProducts = [];
-  List<BrandEntity> brands = [];
-  dynamic category = {};
   Future<void> getProductInfoBrand(String productId) async {
-    sameBrandProducts.clear();
-    brands.clear();
-    category.clear();
-    notifyListeners();
-    dynamic _items = await productRepository.getProductInfoBrand(productId);
-    sameBrandProducts = _items['sameBrandProducts'];
-    brands = _items['brands'];
-    category = _items['category'];
+    final _items = await productRepository.getProductInfoBrand(productId);
+    sameBrandProductsMap[productId] = _items['sameBrandProducts'];
+    brandsMap[productId] = _items['brands'];
+    categoryMap[productId] = _items['category'];
     notifyListeners();
   }
 
@@ -60,9 +61,9 @@ class ProductChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> getProductDetails(String productId) async {
+    List<ProductModel> relatedItems = [];
     selectedOptions = {};
     selectedVariant = null;
-    relatedItems.clear();
     final result = await productRepository.getProductInfo(productId, Preload.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
@@ -77,34 +78,10 @@ class ProductChangeNotifier extends ChangeNotifier {
       }
     }
     productDetailsMap[productId] = productDetails;
+    relatedItemsMap[productId] = relatedItems;
 
     notifyListeners();
   }
-  // Future<void> getProductDetails(String productId) async {
-  //   selectedOptions = {};
-  //   selectedVariant = null;
-
-  //   final result = await productRepository.getProductDetails(productId, Preload.language);
-
-  //   List<dynamic> _gallery = productDetails?.gallery ?? [];
-  //   if (result['code'] == 'SUCCESS') {
-  //     productDetails = null;
-  //     _gallery.addAll(result['moreAbout']['gallery']);
-  //     if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
-  //     result['moreAbout']['gallery'] = _gallery;
-  //     productDetails = ProductEntity.fromJson(result['moreAbout']);
-  //   }
-  //   productDetailsMap[productId] = productDetails;
-  //   notifyListeners();
-  // }
-
-  List<ProductModel> relatedItems = [];
-  // Future<void> getRelatedProducts(String productId) async {
-  //   productRepository.getRelatedProducts(productId).then((_items) {
-  //     relatedItems = _items;
-  //     notifyListeners();
-  //   });
-  // }
 
   /// category products list loading...
   Future<void> initialLoadCategoryProducts(
@@ -113,7 +90,6 @@ class ProductChangeNotifier extends ChangeNotifier {
   ) async {
     isReachedMax = false;
     if (!data.containsKey(categoryId)) {
-      // data[categoryId] = <ProductModel>[];
       pages[categoryId] = 1;
       await loadCategoryProducts(1, categoryId, lang);
     } else {
