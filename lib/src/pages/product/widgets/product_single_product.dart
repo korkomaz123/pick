@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -274,6 +275,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 return Container(
                   width: designWidth.w,
                   height: 420.h,
+                  child: PulseLoadingSpinner(),
                 );
                 // return CachedNetworkImage(
                 //   imageUrl: details.imageUrl,
@@ -313,6 +315,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                         return Container(
                           width: designWidth.w,
                           height: 420.h,
+                          child: PulseLoadingSpinner(),
                         );
                         // return CachedNetworkImage(
                         //   imageUrl: details.imageUrl,
@@ -371,6 +374,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                 return Container(
                   width: designWidth.w,
                   height: 420.h,
+                  child: PulseLoadingSpinner(),
                 );
 
                 // return CachedNetworkImage(
@@ -408,11 +412,17 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {
-                        return CachedNetworkImage(
-                          imageUrl: details.imageUrl,
+                        return Container(
                           width: designWidth.w,
                           height: 420.h,
+                          child: PulseLoadingSpinner(),
                         );
+
+                        // return CachedNetworkImage(
+                        //   imageUrl: details.imageUrl,
+                        //   width: designWidth.w,
+                        //   height: 420.h,
+                        // );
                       },
                     ),
                   );
