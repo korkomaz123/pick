@@ -38,12 +38,15 @@ class ProductChangeNotifier extends ChangeNotifier {
   List<BrandEntity> brands = [];
   dynamic category = {};
   Future<void> getProductInfoBrand(String productId) async {
-    productRepository.getProductInfoBrand(productId).then((_items) {
-      sameBrandProducts = _items['sameBrandProducts'];
-      brands = _items['brands'];
-      category = _items['category'];
-      notifyListeners();
-    });
+    sameBrandProducts.clear();
+    brands.clear();
+    category.clear();
+    notifyListeners();
+    dynamic _items = await productRepository.getProductInfoBrand(productId);
+    sameBrandProducts = _items['sameBrandProducts'];
+    brands = _items['brands'];
+    category = _items['category'];
+    notifyListeners();
   }
 
   setInitalInfo(ProductModel product) {
@@ -60,14 +63,12 @@ class ProductChangeNotifier extends ChangeNotifier {
     selectedOptions = {};
     selectedVariant = null;
     relatedItems.clear();
-    final result =
-        await productRepository.getProductInfo(productId, Preload.language);
+    final result = await productRepository.getProductInfo(productId, Preload.language);
     List<dynamic> _gallery = productDetails?.gallery ?? [];
     if (result['code'] == 'SUCCESS') {
       productDetails = null;
       _gallery.addAll(result['moreAbout']['gallery']);
-      if (_gallery.length != result['moreAbout']['gallery'].length)
-        _gallery.removeAt(0);
+      if (_gallery.length != result['moreAbout']['gallery'].length) _gallery.removeAt(0);
       result['moreAbout']['gallery'] = _gallery;
       productDetails = ProductEntity.fromJson(result['moreAbout']);
       //Releated products
@@ -146,12 +147,9 @@ class ProductChangeNotifier extends ChangeNotifier {
   ) async {
     final result = await productRepository.getProducts(categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
-      if (result['currentpage'] != null)
-        currentpage['-$categoryId'] = page.toString();
-      if (result['totalpage'] != null)
-        totalPages['-$categoryId'] = result['totalpage'].toString();
-      if (result['totalproducts'] != null)
-        totalProducts['-$categoryId'] = result['totalproducts'].toString();
+      if (result['currentpage'] != null) currentpage['-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['-$categoryId'] = result['totalpage'].toString();
+      if (result['totalproducts'] != null) totalProducts['-$categoryId'] = result['totalproducts'].toString();
 
       List<dynamic> productList = result['products'];
       if (!data.containsKey(categoryId)) {
@@ -214,29 +212,20 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = brandId + '_' + categoryId ?? '';
-    final result = await productRepository.getBrandProducts(
-        brandId, categoryId, lang, page);
+    final result = await productRepository.getBrandProducts(brandId, categoryId, lang, page);
     if (result['code'] == 'SUCCESS') {
       print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
-      if (result['currentpage'] != null)
-        currentpage['$brandId-$categoryId'] = page.toString();
-      if (result['totalpage'] != null)
-        totalPages['${brandId != null ? brandId : ''}-$categoryId'] =
-            result['totalpage'].toString();
-      if (result['totalproducts'] != null)
-        totalProducts['${brandId != null ? brandId : ''}-$categoryId'] =
-            result['totalproducts'].toString();
+      if (result['currentpage'] != null) currentpage['$brandId-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
+      if (result['totalproducts'] != null) totalProducts['${brandId != null ? brandId : ''}-$categoryId'] = result['totalproducts'].toString();
 
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        if (data[index]
-                .where((element) => element.sku == productList[i]['sku'])
-                .toList()
-                .length ==
-            0) data[index].add(ProductModel.fromJson(productList[i]));
+        if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+          data[index].add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
@@ -299,28 +288,19 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final index = sortItem + '_' + (brandId ?? '') + '_' + (categoryId ?? '');
-    final result = await productRepository.sortProducts(
-        categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
+    final result = await productRepository.sortProducts(categoryId == 'all' ? null : categoryId, brandId, sortItem, lang, page);
     if (result['code'] == 'SUCCESS') {
       print('key ==== >' + '${brandId != null ? brandId : ''}-$categoryId');
-      if (result['currentpage'] != null)
-        currentpage['${brandId ?? ''}-$categoryId'] = page.toString();
-      if (result['totalpage'] != null)
-        totalPages['${brandId != null ? brandId : ''}-$categoryId'] =
-            result['totalpage'].toString();
-      if (result['totalproducts'] != null)
-        totalProducts['${brandId != null ? brandId : ''}-$categoryId'] =
-            result['totalproducts'].toString();
+      if (result['currentpage'] != null) currentpage['${brandId ?? ''}-$categoryId'] = page.toString();
+      if (result['totalpage'] != null) totalPages['${brandId != null ? brandId : ''}-$categoryId'] = result['totalpage'].toString();
+      if (result['totalproducts'] != null) totalProducts['${brandId != null ? brandId : ''}-$categoryId'] = result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
       if (!data.containsKey(index)) {
         data[index] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        if (data[index]
-                .where((element) => element.sku == productList[i]['sku'])
-                .toList()
-                .length ==
-            0) data[index].add(ProductModel.fromJson(productList[i]));
+        if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+          data[index].add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
@@ -391,11 +371,8 @@ class ProductChangeNotifier extends ChangeNotifier {
           data[index] = [];
         }
         for (int i = 0; i < productList.length; i++) {
-          if (data[index]
-                  .where((element) => element.sku == productList[i]['sku'])
-                  .toList()
-                  .length ==
-              0) data[index].add(ProductModel.fromJson(productList[i]));
+          if (data[index].where((element) => element.sku == productList[i]['sku']).toList().length == 0)
+            data[index].add(ProductModel.fromJson(productList[i]));
         }
         if (productList.length < 50 && page > 0) {
           isReachedMax = true;
@@ -446,8 +423,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     for (var variant in productDetailsMap[productId].variants) {
       bool selectable = true;
       for (var attributeId in options.keys.toList()) {
-        if (!variant.options.containsKey(attributeId) ||
-            variant.options[attributeId] != options[attributeId]) {
+        if (!variant.options.containsKey(attributeId) || variant.options[attributeId] != options[attributeId]) {
           selectable = false;
           break;
         }
