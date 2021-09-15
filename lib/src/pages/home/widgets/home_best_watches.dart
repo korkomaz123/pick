@@ -17,6 +17,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeBestWatches extends StatefulWidget {
@@ -87,6 +88,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          physics: CustomScrollPhysics(),
           child: Row(
             children: banners.map((item) {
               int index = banners.indexOf(item);

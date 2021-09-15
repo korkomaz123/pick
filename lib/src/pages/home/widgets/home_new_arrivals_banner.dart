@@ -14,6 +14,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -75,6 +76,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: CustomScrollPhysics(),
               child: Row(
                 children: widget.homeChangeNotifier.sunglassesBanners.map((item) {
                   int index = widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
