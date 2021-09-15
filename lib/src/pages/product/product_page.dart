@@ -195,21 +195,16 @@ class _ProductPageState extends State<ProductPage>
                               progressService: progressService,
                               model: model,
                               product: model.productDetailsMap[productId],
-                              onFirstReview: () => _onFirstReview(
-                                  model.productDetailsMap[productId]),
-                              onReviews: () => _onReviews(
-                                  model.productDetailsMap[productId]),
+                              onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
+                              onReviews: () => _onReviews(model.productDetailsMap[productId]),
                             ),
-                            ProductSameBrandProducts(
-                                product: product, model: model),
+                            ProductSameBrandProducts(product: product, model: model),
                             ProductDetailsTabs(
                               model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            TopBrandsInCategory(
-                                productId: productId, model: model),
-                            ProductRelatedItems(
-                                relatedItems: model.relatedItems),
+                            TopBrandsInCategory(productId: productId, model: model),
+                            ProductRelatedItems(productId: productId, model: model),
                             SizedBox(height: 60.h),
                           ],
                         ),
