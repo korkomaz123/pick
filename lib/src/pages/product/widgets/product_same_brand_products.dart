@@ -40,8 +40,6 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
   WishlistChangeNotifier wishlistChangeNotifier;
   List<ProductModel> get sameBrandProducts => widget.model.sameBrandProductsMap[widget.product.productId];
 
-
-
   @override
   void initState() {
     super.initState();
@@ -160,12 +158,12 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
   Widget _buildProductCarousel() {
     return Container(
       width: 375.w,
-      height: 140.h,
+      height: 150.h,
       child: Stack(
         children: [
           Container(
             width: 375.w,
-            height: 140.h,
+            height: 150.h,
             child: Swiper(
               itemCount: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               autoplay: false,
@@ -179,31 +177,30 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
               itemBuilder: (context, index) {
                 return ProductHCard(
                   cardWidth: 375.w,
-                  cardHeight: 140.h,
+                  cardHeight: 150.h,
                   product: sameBrandProducts[index],
                   isDesc: true,
                 );
               },
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
-              child: SmoothIndicator(
-                offset: activeIndex.toDouble(),
-                count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
-                axisDirection: Axis.horizontal,
-                effect: SlideEffect(
-                  spacing: 8.w,
-                  radius: 30,
-                  dotWidth: 8.h,
-                  dotHeight: 8.h,
-                  paintStyle: PaintingStyle.fill,
-                  strokeWidth: 0,
-                  dotColor: greyLightColor,
-                  activeDotColor: primarySwatchColor,
-                ),
+          Positioned(
+            bottom: 10.h,
+            left: Preload.language == 'en' ? 0.38 * 375.w : 0,
+            right: Preload.language == 'en' ? 0 : 0.8 * 375.w,
+            child: SmoothIndicator(
+              offset: activeIndex.toDouble(),
+              count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              axisDirection: Axis.horizontal,
+              effect: SlideEffect(
+                spacing: 5.w,
+                radius: 16,
+                dotWidth: 6.h,
+                dotHeight: 6.h,
+                paintStyle: PaintingStyle.fill,
+                strokeWidth: 0,
+                dotColor: greyLightColor,
+                activeDotColor: primarySwatchColor,
               ),
             ),
           ),

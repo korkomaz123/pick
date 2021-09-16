@@ -187,8 +187,7 @@ class _ProductPageState extends State<ProductPage>
                           children: [
                             ProductSingleProduct(
                               product: product,
-                              productDetails:
-                                  model.productDetailsMap[productId],
+                              productDetails: model.productDetailsMap[productId],
                               model: model,
                             ),
                             ProductReviewTotal(

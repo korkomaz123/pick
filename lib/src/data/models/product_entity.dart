@@ -202,8 +202,7 @@ class ProductEntity {
       : entityId = product.entityId,
         typeId = product.typeId,
         sku = product.sku ?? "",
-        inStock =
-            product.stockQty != null && product.stockQty > 0 ? true : false,
+        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
         metaKeyword = product.metaKeyword ?? "",
         description = product.description ?? '',
         fullDescription = product.description ?? '',
