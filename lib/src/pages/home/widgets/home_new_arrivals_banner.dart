@@ -14,7 +14,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
+// import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -76,23 +76,37 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              physics: CustomScrollPhysics(),
+              // physics: CustomScrollPhysics(),
               child: Row(
-                children: widget.homeChangeNotifier.sunglassesBanners.map((item) {
-                  int index = widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
+                children:
+                    widget.homeChangeNotifier.sunglassesBanners.map((item) {
+                  int index =
+                      widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.sunglassesBanners.length == 1 ? 375.w : 340.w,
-                          height: (widget.homeChangeNotifier.sunglassesBanners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                          width: widget.homeChangeNotifier.sunglassesBanners
+                                      .length ==
+                                  1
+                              ? 375.w
+                              : 340.w,
+                          height: (widget.homeChangeNotifier.sunglassesBanners
+                                          .length ==
+                                      1
+                                  ? 375.w
+                                  : 340.w) *
+                              (897 / 1096),
                           imageUrl: item.bannerImage,
                           fit: BoxFit.fitHeight,
-                          errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                          errorWidget: (context, url, error) =>
+                              Center(child: Icon(Icons.image, size: 20)),
                         ),
                       ),
-                      if (index < widget.homeChangeNotifier.sunglassesBanners.length - 1) ...[SizedBox(width: 5.w)],
+                      if (index <
+                          widget.homeChangeNotifier.sunglassesBanners.length -
+                              1) ...[SizedBox(width: 5.w)],
                     ],
                   );
                 }).toList(),
