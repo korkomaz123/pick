@@ -12,8 +12,8 @@ class MarkaaReporter {
 }
 
 class MarkaaVersion {
-  static const int androidVersion = 158000;
-  static const int iOSVersion = 158000;
+  static const int androidVersion = 181000;
+  static const int iOSVersion = 181000;
 }
 
 class GoSellSdk {
