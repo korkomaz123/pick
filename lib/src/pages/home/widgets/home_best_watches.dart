@@ -17,7 +17,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
+// import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeBestWatches extends StatefulWidget {
@@ -80,7 +80,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderColor: primaryColor,
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
-                  onPressed: () => _onLink(widget.homeChangeNotifier.bestWatchesViewAll),
+                  onPressed: () =>
+                      _onLink(widget.homeChangeNotifier.bestWatchesViewAll),
                 ),
               ),
             ],
@@ -88,7 +89,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          physics: CustomScrollPhysics(),
+          // physics: CustomScrollPhysics(),
           child: Row(
             children: banners.map((item) {
               int index = banners.indexOf(item);
@@ -98,10 +99,12 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                     onTap: () => _onLink(item),
                     child: CachedNetworkImage(
                       width: banners.length == 1 ? 375.w : 340.w,
-                      height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                      height:
+                          (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                       imageUrl: item.bannerImage,
                       fit: BoxFit.fitHeight,
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                      errorWidget: (context, url, error) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
                   if (index < banners.length - 1) ...[SizedBox(width: 5.w)],
@@ -133,7 +136,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
-            onAddToCartFailure: () => widget.homeChangeNotifier.updateBestWatchesProduct(index),
+            onAddToCartFailure: () =>
+                widget.homeChangeNotifier.updateBestWatchesProduct(index),
           ),
         ),
       ),
