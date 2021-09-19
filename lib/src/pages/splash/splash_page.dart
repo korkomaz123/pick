@@ -30,8 +30,8 @@ class _SplashPageState extends State<SplashPage> {
       setState(() {});
     });
 
-    Future.delayed(Duration(milliseconds: 1000), () {
-      if (!isNew)
+    Future.delayed(Duration(milliseconds: 1000), () async {
+      if (await Preload.checkAppVersion() != true) if (!isNew)
         Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
           Routes.home,
           (route) => false,
@@ -40,9 +40,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _onLang(String val) async {
-    Preload.navigatorKey.currentContext
-        .read<GlobalProvider>()
-        .changeLanguage(val, fromSplash: true);
+    Preload.navigatorKey.currentContext.read<GlobalProvider>().changeLanguage(val, fromSplash: true);
     await localRepo.setItem('usage', 'markaa');
     //Start Loading Assets
     await Preload.appOpen();
