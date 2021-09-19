@@ -995,7 +995,8 @@ class _SlidingSheetState extends State<SlidingSheet>
     if (scrollSpec.overscroll) {
       scrollView = GlowingOverscrollIndicator(
         axisDirection: AxisDirection.down,
-        color: scrollSpec.overscrollColor ?? Theme.of(context).accentColor,
+        color: scrollSpec.overscrollColor ??
+            Theme.of(context).colorScheme.secondary,
         child: scrollView,
       );
     }

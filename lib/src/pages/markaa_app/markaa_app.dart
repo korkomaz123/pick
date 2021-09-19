@@ -156,7 +156,11 @@ class _MarkaaAppState extends State<MarkaaApp> {
           supportedLocales: EasyLocalization.of(context).supportedLocales,
           locale: EasyLocalization.of(context).locale,
           debugShowCheckedModeBanner: false,
-          theme: markaaAppTheme,
+          theme: markaaAppTheme.copyWith(
+            colorScheme: markaaAppTheme.colorScheme.copyWith(
+              secondary: Color(0xFFB4C9FA),
+            ),
+          ),
           title: 'Markaa',
           initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,

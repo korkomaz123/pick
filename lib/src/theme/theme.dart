@@ -21,7 +21,6 @@ final ThemeData markaaAppTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   primarySwatch: markaaMaterialColor,
   primaryColor: Color(0xFF287EF2),
-  accentColor: Color(0xFFB4C9FA),
   primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
   appBarTheme: AppBarTheme(
     color: markaaMaterialColor,
