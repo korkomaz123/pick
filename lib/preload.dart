@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
@@ -57,7 +58,7 @@ class Preload {
   static final localRepo = LocalStorageRepository();
   static final appRepo = AppRepository();
 
-  static Future<void> checkAppVersion() async {
+  static Future<dynamic> checkAppVersion() async {
     print('checking app version///');
     final versionEntity = await appRepo.checkAppVersion(
       Platform.isAndroid,
@@ -85,6 +86,7 @@ class Preload {
       //   }
       // }
     }
+    return versionEntity.updateMandatory;
   }
 
   static loadAssets() async {
