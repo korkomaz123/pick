@@ -1,18 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:adjust_sdk/adjust.dart';
-import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
-import 'package:markaa/src/components/custom/sliding_sheet.dart';
-import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -442,28 +438,7 @@ class _ProductVCardState extends State<ProductVCard>
 
   void _onAddSuccess() {
     _progressService.hideProgress();
-    showSlidingTopSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 0,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: widget.product);
-          },
-        );
-      },
-    );
-
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
-    Adjust.trackEvent(adjustEvent);
+    ActionHandler.addedItemToCartSuccess(context, widget.product);
   }
 
   _onAddFailure(String message) {
