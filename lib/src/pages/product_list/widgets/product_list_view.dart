@@ -285,19 +285,6 @@ class _ProductListViewState extends State<ProductListView>
                             if (productChangeNotifier.isLoading) ...[
                               Center(child: ThreeBounceLoadingBar())
                             ],
-                            if (productChangeNotifier.isReachedMax) ...[
-                              Container(
-                                width: 375.w,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: Text(
-                                  'no_more_products'.tr(),
-                                  style: mediumTextStyle.copyWith(
-                                    fontSize: 14.sp,
-                                  ),
-                                ),
-                              )
-                            ],
                           ],
                         );
                       }
@@ -363,55 +350,73 @@ class _ProductListViewState extends State<ProductListView>
         itemCount: (products.length / 2).ceil(),
         itemBuilder: (ctx, index) {
           int pIndex = 2 * index;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: greyColor,
+                          width: 0.5.w,
+                        ),
+                      ),
+                    ),
+                    child: ProductVCard(
+                      product: products[pIndex],
+                      cardWidth: 187.25.w,
+                      cardHeight: 280.h,
+                      isShoppingCart: true,
+                      isWishlist: true,
+                      isShare: true,
+                    ),
+                  ),
+                  Container(
+                    height: 280.h,
+                    child: VerticalDivider(
                       color: greyColor,
                       width: 0.5.w,
                     ),
                   ),
-                ),
-                child: ProductVCard(
-                  product: products[pIndex],
-                  cardWidth: 187.25.w,
-                  cardHeight: 280.h,
-                  isShoppingCart: true,
-                  isWishlist: true,
-                  isShare: true,
-                ),
-              ),
-              Container(
-                height: 280.h,
-                child: VerticalDivider(
-                  color: greyColor,
-                  width: 0.5.w,
-                ),
-              ),
-              if (pIndex + 1 < products.length) ...[
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: greyColor,
-                        width: 0.5.w,
+                  if (pIndex + 1 < products.length) ...[
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: greyColor,
+                            width: 0.5.w,
+                          ),
+                        ),
+                      ),
+                      child: ProductVCard(
+                        product: products[pIndex + 1],
+                        cardWidth: 187.25.w,
+                        cardHeight: 280.h,
+                        isShoppingCart: true,
+                        isWishlist: true,
+                        isShare: true,
                       ),
                     ),
+                  ] else ...[
+                    Container(width: 187.25.w, height: 280.h),
+                  ],
+                ],
+              ),
+              if (productChangeNotifier.isReachedMax &&
+                  (pIndex + 1 >= products.length)) ...[
+                Container(
+                  width: 375.w,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(top: 10.h),
+                  child: Text(
+                    'no_more_products'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      fontSize: 14.sp,
+                    ),
                   ),
-                  child: ProductVCard(
-                    product: products[2 * index + 1],
-                    cardWidth: 187.25.w,
-                    cardHeight: 280.h,
-                    isShoppingCart: true,
-                    isWishlist: true,
-                    isShare: true,
-                  ),
-                ),
-              ] else ...[
-                Container(width: 187.25.w, height: 280.h),
+                )
               ],
             ],
           );
