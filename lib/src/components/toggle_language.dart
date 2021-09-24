@@ -3,6 +3,7 @@ import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -39,8 +40,10 @@ class ToggleLanguageWidget extends StatelessWidget {
           isVertical: false,
           listStyle: true,
           onTap: (value) async {
-            _globalProvider.changeLanguage(
-                _globalProvider.languages[0] == value ? 'en' : 'ar');
+            String lang = _globalProvider.languages[0] == value ? 'en' : 'ar';
+            _globalProvider.changeLanguage(lang);
+            OneSignal.shared.deleteTag('lang');
+            OneSignal.shared.sendTag('lang', lang);
 
             await Preload.appOpen();
 
