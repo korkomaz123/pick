@@ -9,6 +9,7 @@ import '../../preload.dart';
 class ProductChangeNotifier extends ChangeNotifier {
   final productRepository = ProductRepository();
 
+  bool isLoading = false;
   bool isReachedMax = false;
   String brandId;
   Map<String, List<ProductModel>> data = {};
@@ -105,6 +106,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
+    isLoading = true;
+    notifyListeners();
     pages[key] = page;
     await loadCategoryProducts(key, page, categoryId, lang);
   }
@@ -144,6 +147,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
+      isLoading = false;
       notifyListeners();
     }
   }
@@ -171,6 +175,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
+    isLoading = true;
+    notifyListeners();
     pages[key] = page;
     await loadBrandProducts(key, page, brandId, categoryId, lang);
   }
@@ -218,6 +224,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
+      isLoading = false;
       notifyListeners();
     }
   }
@@ -247,6 +254,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     String sortItem,
     String lang,
   ) async {
+    isLoading = true;
+    notifyListeners();
     pages[key] = page;
     await loadSortedProducts(key, page, brandId, categoryId, sortItem, lang);
   }
@@ -298,6 +307,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
+      isLoading = false;
       notifyListeners();
     }
   }
@@ -324,6 +334,8 @@ class ProductChangeNotifier extends ChangeNotifier {
     Map<String, dynamic> filterValues,
     String lang,
   ) async {
+    isLoading = true;
+    notifyListeners();
     pages[key] = page;
     await loadFilteredProducts(
         key, page, brandId, categoryId, filterValues, lang);
@@ -350,33 +362,30 @@ class ProductChangeNotifier extends ChangeNotifier {
     Map<String, dynamic> filterValues,
     String lang,
   ) async {
-    try {
-      final result = await productRepository.filterProducts(
-        categoryId == 'all' ? null : categoryId,
-        brandId,
-        filterValues,
-        lang,
-        page,
-      );
-      if (result['code'] == 'SUCCESS') {
-        List<dynamic> productList = result['products'];
-        if (!data.containsKey(key) || data[key] == null) {
-          data[key] = [];
-        }
-        for (int i = 0; i < productList.length; i++) {
-          if (data[key]
-                  .where((element) => element.sku == productList[i]['sku'])
-                  .toList()
-                  .length ==
-              0) data[key].add(ProductModel.fromJson(productList[i]));
-        }
-        if (productList.length < 50 && page > 0) {
-          isReachedMax = true;
-        }
-        notifyListeners();
+    final result = await productRepository.filterProducts(
+      categoryId == 'all' ? null : categoryId,
+      brandId,
+      filterValues,
+      lang,
+      page,
+    );
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> productList = result['products'];
+      if (!data.containsKey(key) || data[key] == null) {
+        data[key] = [];
       }
-    } catch (e) {
-      print(e.toString());
+      for (int i = 0; i < productList.length; i++) {
+        if (data[key]
+                .where((element) => element.sku == productList[i]['sku'])
+                .toList()
+                .length ==
+            0) data[key].add(ProductModel.fromJson(productList[i]));
+      }
+      if (productList.length < 50 && page > 0) {
+        isReachedMax = true;
+      }
+      isLoading = false;
+      notifyListeners();
     }
   }
 

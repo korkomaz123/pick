@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
@@ -61,6 +62,7 @@ class _ProductListViewState extends State<ProductListView>
   FlushBarService flushBarService;
   ProductChangeNotifier productChangeNotifier;
   ScrollChangeNotifier scrollChangeNotifier;
+  MarkaaAppChangeNotifier markaaAppChangeNotifier;
   FilterBloc filterBloc;
 
   List<CategoryEntity> subCategories;
@@ -77,10 +79,6 @@ class _ProductListViewState extends State<ProductListView>
   @override
   void initState() {
     super.initState();
-    scrollController.addListener(() {
-      currentProduct = ((scrollController.offset ~/ 280.h).floor() * 2) + 4;
-      setState(() {});
-    });
     subCategories = widget.subCategories;
     scaffoldKey = widget.scaffoldKey;
     isFromBrand = widget.isFromBrand;
@@ -89,6 +87,7 @@ class _ProductListViewState extends State<ProductListView>
     flushBarService = FlushBarService(context: context);
     productChangeNotifier = context.read<ProductChangeNotifier>();
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
+    markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     filterBloc = context.read<FilterBloc>();
 
     tabController = TabController(
@@ -112,7 +111,11 @@ class _ProductListViewState extends State<ProductListView>
   void _onScroll() {
     double maxScroll = scrollController.position.maxScrollExtent;
     double currentScroll = scrollController.position.pixels;
+
     scrollChangeNotifier.controlBrandBar(currentScroll);
+
+    currentProduct = ((currentScroll ~/ 280.h).floor() * 2) + 4;
+    markaaAppChangeNotifier.rebuild();
 
     if (!productChangeNotifier.isReachedMax &&
         (maxScroll - currentScroll <= 200)) {
@@ -273,7 +276,30 @@ class _ProductListViewState extends State<ProductListView>
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable();
                       } else {
-                        return _buildPList(productChangeNotifier.data[index]);
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: _buildPList(
+                                  productChangeNotifier.data[index]),
+                            ),
+                            if (productChangeNotifier.isLoading) ...[
+                              Center(child: ThreeBounceLoadingBar())
+                            ],
+                            if (productChangeNotifier.isReachedMax) ...[
+                              Container(
+                                width: 375.w,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.only(top: 10.h),
+                                child: Text(
+                                  'no_more_products'.tr(),
+                                  style: mediumTextStyle.copyWith(
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ],
+                        );
                       }
                     },
                   );
@@ -282,49 +308,12 @@ class _ProductListViewState extends State<ProductListView>
             ),
           ],
         ),
-        Consumer<ProductChangeNotifier>(builder: (ctx, notifier, _) {
-          return _buildArrowButton();
-        })
+        Consumer<MarkaaAppChangeNotifier>(
+          builder: (ctx, notifier, _) {
+            return _buildArrowButton();
+          },
+        )
       ],
-    );
-  }
-
-  Widget _buildArrowButton() {
-    String key = _generateKey(subCategories[tabController.index]);
-    return AnimatedPositioned(
-      right: (designWidth.w - 70.w) / 2,
-      bottom: 4.h - widget.pos,
-      duration: Duration(milliseconds: 500),
-      child: InkWell(
-        onTap: () => _onGotoTop(),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.w),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: primarySwatchColor.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(15.w),
-          ),
-          child: Center(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.keyboard_arrow_up,
-                  size: 20.sp,
-                  color: Colors.white70,
-                ),
-                if (productChangeNotifier.totalProducts[key] != null) ...[
-                  Text(
-                    '${int.parse(productChangeNotifier.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
-                    style: TextStyle(color: Colors.white70),
-                  )
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -374,76 +363,97 @@ class _ProductListViewState extends State<ProductListView>
         itemCount: (products.length / 2).ceil(),
         itemBuilder: (ctx, index) {
           int pIndex = 2 * index;
-          return Column(
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: greyColor,
-                          width: 0.5.w,
-                        ),
-                      ),
-                    ),
-                    child: ProductVCard(
-                      product: products[pIndex],
-                      cardWidth: 187.25.w,
-                      cardHeight: 280.h,
-                      isShoppingCart: true,
-                      isWishlist: true,
-                      isShare: true,
-                    ),
-                  ),
-                  Container(
-                    height: 280.h,
-                    child: VerticalDivider(
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
                       color: greyColor,
                       width: 0.5.w,
                     ),
                   ),
-                  if (pIndex + 1 < products.length) ...[
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: greyColor,
-                            width: 0.5.w,
-                          ),
-                        ),
-                      ),
-                      child: ProductVCard(
-                        product: products[2 * index + 1],
-                        cardWidth: 187.25.w,
-                        cardHeight: 280.h,
-                        isShoppingCart: true,
-                        isWishlist: true,
-                        isShare: true,
-                      ),
-                    ),
-                  ] else ...[
-                    Container(width: 187.25.w, height: 280.h),
-                  ],
-                ],
+                ),
+                child: ProductVCard(
+                  product: products[pIndex],
+                  cardWidth: 187.25.w,
+                  cardHeight: 280.h,
+                  isShoppingCart: true,
+                  isWishlist: true,
+                  isShare: true,
+                ),
               ),
-              if (productChangeNotifier.isReachedMax) ...[
+              Container(
+                height: 280.h,
+                child: VerticalDivider(
+                  color: greyColor,
+                  width: 0.5.w,
+                ),
+              ),
+              if (pIndex + 1 < products.length) ...[
                 Container(
-                  width: 375.w,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: 10.h),
-                  child: Text(
-                    'no_more_products'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 14.sp,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: greyColor,
+                        width: 0.5.w,
+                      ),
                     ),
                   ),
-                )
+                  child: ProductVCard(
+                    product: products[2 * index + 1],
+                    cardWidth: 187.25.w,
+                    cardHeight: 280.h,
+                    isShoppingCart: true,
+                    isWishlist: true,
+                    isShare: true,
+                  ),
+                ),
+              ] else ...[
+                Container(width: 187.25.w, height: 280.h),
               ],
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildArrowButton() {
+    String key = _generateKey(subCategories[tabController.index]);
+    return AnimatedPositioned(
+      left: 120.w,
+      right: 120.w,
+      bottom: 10.h - widget.pos,
+      duration: Duration(milliseconds: 500),
+      child: InkWell(
+        onTap: () => _onGotoTop(),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 5.w),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: primarySwatchColor.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(15.w),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.keyboard_arrow_up,
+                size: 20.sp,
+                color: Colors.white70,
+              ),
+              if (productChangeNotifier.totalProducts[key] != null) ...[
+                Text(
+                  '${int.parse(productChangeNotifier.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
+                  style: TextStyle(color: Colors.white70),
+                )
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
