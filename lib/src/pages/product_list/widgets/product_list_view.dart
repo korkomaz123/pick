@@ -3,7 +3,6 @@ import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -55,8 +54,7 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView>
-    with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey;
   ProgressService progressService;
   FlushBarService flushBarService;
@@ -117,8 +115,7 @@ class _ProductListViewState extends State<ProductListView>
     currentProduct = ((currentScroll ~/ 280.h).floor() * 2) + 4;
     markaaAppChangeNotifier.rebuild();
 
-    if (!productChangeNotifier.isReachedMax &&
-        (maxScroll - currentScroll <= 200)) {
+    if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
@@ -163,9 +160,7 @@ class _ProductListViewState extends State<ProductListView>
         );
       }
       filterBloc.add(FilterAttributesLoaded(
-        categoryId: subCategories[widget.activeIndex].id == 'all'
-            ? null
-            : subCategories[widget.activeIndex].id,
+        categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
         brandId: brand.optionId,
         lang: lang,
       ));
@@ -270,8 +265,7 @@ class _ProductListViewState extends State<ProductListView>
                   return Consumer<ProductChangeNotifier>(
                     builder: (ctx, notifier, _) {
                       String index = _generateKey(cat);
-                      if (!productChangeNotifier.data.containsKey(index) ||
-                          productChangeNotifier.data[index] == null) {
+                      if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
                         return Center(child: PulseLoadingSpinner());
                       } else if (productChangeNotifier.data[index].isEmpty) {
                         return ProductNoAvailable();
@@ -279,12 +273,9 @@ class _ProductListViewState extends State<ProductListView>
                         return Column(
                           children: [
                             Expanded(
-                              child: _buildPList(
-                                  productChangeNotifier.data[index]),
+                              child: _buildPList(productChangeNotifier.data[index]),
                             ),
-                            if (productChangeNotifier.isLoading) ...[
-                              Center(child: ThreeBounceLoadingBar())
-                            ],
+                            if (productChangeNotifier.isLoading) ...[Center(child: ThreeBounceLoadingBar())],
                           ],
                         );
                       }
@@ -327,9 +318,7 @@ class _ProductListViewState extends State<ProductListView>
                 index == 0 ? 'all'.tr() : subCategories[index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: 14.sp,
-                  color: tabController.index == index
-                      ? Colors.white
-                      : Colors.black,
+                  color: tabController.index == index ? Colors.white : Colors.black,
                 ),
               ),
             );
@@ -404,8 +393,7 @@ class _ProductListViewState extends State<ProductListView>
                   ],
                 ],
               ),
-              if (productChangeNotifier.isReachedMax &&
-                  (pIndex + 1 >= products.length)) ...[
+              if (productChangeNotifier.isReachedMax && (pIndex + 1 >= products.length)) ...[
                 Container(
                   width: 375.w,
                   alignment: Alignment.center,
