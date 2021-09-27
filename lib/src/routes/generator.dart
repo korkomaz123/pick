@@ -1,5 +1,6 @@
 import 'package:markaa/src/pages/brand_list/brand_list_page.dart';
 import 'package:markaa/src/pages/category_list/category_list_page.dart';
+import 'package:markaa/src/pages/celeberities_list/celeberities_list.dart';
 import 'package:markaa/src/pages/checkout/confirmed/checkout_confirmed_page.dart';
 import 'package:markaa/src/pages/checkout/confirmed/payment_failed_page.dart';
 import 'package:markaa/src/pages/checkout/payment/checkout_page.dart';
@@ -306,6 +307,11 @@ class RouteGenerator {
         return CupertinoPageRoute(
           builder: (_) => AlarmListPage(),
           settings: settings,
+        );
+      case Routes.celebritiesList:
+        return CupertinoPageRoute(
+          builder: (context) => CelebritiesListPage(arguments: params),
+          settings: RouteSettings(name: Routes.productList),
         );
       default:
         return CupertinoPageRoute(

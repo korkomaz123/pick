@@ -112,4 +112,6 @@ class EndPoints {
   static const String homeSection2 = '$baseUrl/getHomepageSection2';
   static const String homeSection3 = '$baseUrl/getHomepageSection3';
   static const String homeSection4 = '$baseUrl/getHomepageSection4';
+
+  static const String getAllCelebrities = '$baseUrl/getAllCelebrities';
 }

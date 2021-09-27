@@ -3,45 +3,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/routes/routes.dart';
 
-class CelebrityCard extends StatefulWidget {
+class CelebrityCard extends StatelessWidget {
   final double cardWidth;
   final double cardHeight;
+  final String image;
   final Map<String, dynamic> celebrity;
 
-  CelebrityCard({
-    this.cardWidth,
-    this.cardHeight,
-    this.celebrity,
-  });
-
-  @override
-  _CelebrityCardState createState() => _CelebrityCardState();
-}
-
-class _CelebrityCardState extends State<CelebrityCard> with TickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  CelebrityCard({this.cardWidth, this.cardHeight, this.celebrity, this.image});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.product,
-          arguments: widget.celebrity,
-        );
+        //entity_id
+        // Navigator.pushNamed(
+        //   context,
+        //   Routes.product,
+        //   arguments: celebrity,
+        // );
       },
       child: Container(
-        width: widget.cardWidth,
-        height: widget.cardHeight,
+        width: cardWidth,
+        height: cardHeight,
         child: _buildProductCard(),
       ),
     );
@@ -49,14 +32,18 @@ class _CelebrityCardState extends State<CelebrityCard> with TickerProviderStateM
 
   Widget _buildProductCard() {
     return Container(
-      width: widget.cardWidth,
-      height: widget.cardHeight,
+      width: cardWidth,
+      height: cardHeight,
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: CachedNetworkImage(
-        imageUrl: widget.celebrity['image'],
-        width: widget.cardWidth,
-        height: widget.cardHeight * 0.63,
+        progressIndicatorBuilder: (_, __, ___) {
+          return Center(child: CircularProgressIndicator());
+        },
+        imageUrl: image,
+        width: cardWidth,
+        height: cardHeight * 0.63,
+        fadeInDuration: Duration.zero,
         fit: BoxFit.cover,
         errorWidget: (context, url, error) {
           return Center(child: Icon(Icons.image, size: 20.sp));
