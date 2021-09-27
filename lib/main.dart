@@ -23,16 +23,14 @@ void main() async {
   await Firebase.initializeApp();
 
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-      overlays: SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
     int _errorLength = e.stack.toString().length;
     SlackChannels.send('''${e.exceptionAsString()}
-     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
-        SlackChannels.logAppErrors);
+     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''', SlackChannels.logAppErrors);
     return Center(
       child: Text("There was an error! ${e.exception}"),
     );
@@ -47,8 +45,7 @@ void main() async {
 
   if (Platform.isIOS)
     try {
-      final TrackingStatus status =
-          await AppTrackingTransparency.trackingAuthorizationStatus;
+      final TrackingStatus status = await AppTrackingTransparency.trackingAuthorizationStatus;
       if (status == TrackingStatus.notDetermined) {
         await AppTrackingTransparency.requestTrackingAuthorization();
       }
@@ -59,7 +56,7 @@ void main() async {
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
 
-  // initOneSignalPlatform();
+  initOneSignalPlatform();
 
   runApp(
     EasyLocalization(
@@ -86,15 +83,13 @@ initOneSignalPlatform() {
     print("Accepted permission: $accepted");
   });
 
-  OneSignal.shared.setNotificationWillShowInForegroundHandler(
-      (OSNotificationReceivedEvent event) {
+  OneSignal.shared.setNotificationWillShowInForegroundHandler((OSNotificationReceivedEvent event) {
     // Will be called whenever a notification is received in foreground
     // Display Notification, pass null param for not displaying the notification
     event.complete(event.notification);
   });
 
-  OneSignal.shared
-      .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+  OneSignal.shared.setNotificationOpenedHandler((OSNotificationOpenedResult result) {
     // Will be called whenever a notification is opened/button pressed.
   });
 
@@ -103,14 +98,12 @@ initOneSignalPlatform() {
     // (ie. user taps Allow on the permission prompt in iOS)
   });
 
-  OneSignal.shared
-      .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+  OneSignal.shared.setSubscriptionObserver((OSSubscriptionStateChanges changes) {
     // Will be called whenever the subscription changes
     // (ie. user gets registered with OneSignal and gets a user ID)
   });
 
-  OneSignal.shared.setEmailSubscriptionObserver(
-      (OSEmailSubscriptionStateChanges emailChanges) {
+  OneSignal.shared.setEmailSubscriptionObserver((OSEmailSubscriptionStateChanges emailChanges) {
     // Will be called whenever then user's email subscription changes
     // (ie. OneSignal.setEmail(email) is called and the user gets registered
   });
