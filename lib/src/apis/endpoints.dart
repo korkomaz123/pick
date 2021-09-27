@@ -1,6 +1,6 @@
 class EndPoints {
-  static const String mainDomain = 'https://markaa.com';
-  // static const String mainDomain = 'https://magento-627030-2077233.cloudwaysapps.com';
+  // static const String mainDomain = 'https://markaa.com';
+  static const String mainDomain = 'https://magento-627030-2077233.cloudwaysapps.com';
   static const String baseUrl = '$mainDomain/customapi/api';
   static const String gatewayform = '$mainDomain/gatewayform.php';
   static const String privacyAndPolicy = '$mainDomain/privacy-policy';
@@ -32,8 +32,7 @@ class EndPoints {
   static const String getHomeSliders = '$baseUrl/getHomeSliders';
   static const String getPaymentMethod = '$baseUrl/getPaymentMethod';
   static const String getShippingMethod = '$baseUrl/getShippingMethod';
-  static const String getMyShippingAddresses =
-      '$baseUrl/getMyShippingAddresses';
+  static const String getMyShippingAddresses = '$baseUrl/getMyShippingAddresses';
   static const String addShippingAddress = '$baseUrl/addShippingAddress';
   static const String deleteShippingAddress = '$baseUrl/deleteShippingAddress';
   static const String updateShippingAddress = '$baseUrl/updateShippingAddress';
@@ -42,10 +41,8 @@ class EndPoints {
   static const String getAllBrands = '$baseUrl/getAllBrands';
   static const String getBrandProducts = '$baseUrl/getBrandProducts';
   static const String getAboutus = '$baseUrl/getaboutus';
-  static const String getNotificationSetting =
-      '$baseUrl/getNotificationSetting';
-  static const String changeNotificationSetting =
-      '$baseUrl/changeNotificationSetting';
+  static const String getNotificationSetting = '$baseUrl/getNotificationSetting';
+  static const String changeNotificationSetting = '$baseUrl/changeNotificationSetting';
   static const String getTerms = '$baseUrl/getterms';
   static const String submitContactUs = '$baseUrl/submitContactus';
   static const String getOrderHistory = '$baseUrl/getOrderHistories';
@@ -66,8 +63,7 @@ class EndPoints {
   static const String applyCouponCode = '$baseUrl/applyCouponCode';
   static const String getSearchSuggestion = '$baseUrl/getSearchSuggetion';
   static const String getReorderCartId = '$baseUrl/getReorderCartId';
-  static const String getProductAvailableCount =
-      '$baseUrl/getAvailableProductsCount';
+  static const String getProductAvailableCount = '$baseUrl/getAvailableProductsCount';
   static const String getRegions = '$baseUrl/getRegions';
   static const String getProductReviews = '$baseUrl/getProductReviews';
   static const String addProductReview = '$baseUrl/addProductReview';
@@ -103,8 +99,7 @@ class EndPoints {
   static const String transferMoney = '$baseUrl/Transfermoney';
   static const String getRecord = '$baseUrl/getwalletrecord';
   static const String createWalletCart = '$baseUrl/createwalletcart';
-  static const String getTopBrandsByCategory =
-      '$baseUrl/getTopBrandsByCategory';
+  static const String getTopBrandsByCategory = '$baseUrl/getTopBrandsByCategory';
   static const String requestPriceAlarm = '$baseUrl/RequestPriceAlarm';
   static const String getAlarmItems = '$baseUrl/GetAlarmItems';
   static const String sendAsGift = '$baseUrl/SendAsGift';
@@ -112,6 +107,7 @@ class EndPoints {
   static const String getProductInfo = '$baseUrl/GetProductInfo';
 
   /// new home section endpoints
+  static const String gethomecelebrity = '$baseUrl/gethomecelebrity';
   static const String homeSection1 = '$baseUrl/getHomepageSection1';
   static const String homeSection2 = '$baseUrl/getHomepageSection2';
   static const String homeSection3 = '$baseUrl/getHomepageSection3';
