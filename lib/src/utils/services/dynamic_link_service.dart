@@ -128,6 +128,8 @@ class DynamicLinkService {
           (route) => route.settings.name == Routes.home,
         );
       }
+    } else if (target == 'cart') {
+      Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.myCart);
     }
   }
 }
