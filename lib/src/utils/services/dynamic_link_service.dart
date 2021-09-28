@@ -80,7 +80,9 @@ class DynamicLinkService {
   }
 
   dynamicLinkHandler(Uri deepLink) async {
-    String id = deepLink.queryParameters['id'];
+    String id = deepLink.queryParameters.containsKey('id')
+        ? deepLink.queryParameters['id']
+        : '';
     String target = deepLink.queryParameters.containsKey('target')
         ? deepLink.queryParameters['target']
         : '';
@@ -128,6 +130,8 @@ class DynamicLinkService {
           (route) => route.settings.name == Routes.home,
         );
       }
+    } else if (target == 'cart') {
+      Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.myCart);
     }
   }
 }

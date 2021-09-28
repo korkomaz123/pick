@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
-
     xmlns:tools="http://schemas.android.com/tools"
     package="com.app.markaa">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -28,6 +27,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="high_importance_channel" />
+        <meta-data android:name="com.onesignal.suppressLaunchURLs" android:value="true"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
