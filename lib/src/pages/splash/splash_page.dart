@@ -47,7 +47,7 @@ class _SplashPageState extends State<SplashPage> {
         .changeLanguage(val, fromSplash: true);
 
     /// Set language on onesignal
-    OneSignal.shared.addTrigger('lang', val);
+    await OneSignal.shared.sendTag('lang', val);
 
     /// Set first time opening passed
     await localRepo.setItem('usage', 'markaa');

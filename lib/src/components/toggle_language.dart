@@ -42,8 +42,8 @@ class ToggleLanguageWidget extends StatelessWidget {
           onTap: (value) async {
             String lang = _globalProvider.languages[0] == value ? 'en' : 'ar';
             _globalProvider.changeLanguage(lang);
-            OneSignal.shared.deleteTag('lang');
-            OneSignal.shared.sendTag('lang', lang);
+            await OneSignal.shared.deleteTag('lang');
+            await OneSignal.shared.sendTag('lang', lang);
 
             await Preload.appOpen();
 
