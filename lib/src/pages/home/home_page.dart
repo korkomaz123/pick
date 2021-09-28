@@ -63,6 +63,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   HomeChangeNotifier _homeProvider;
   MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  ProductChangeNotifier _productChangeNotifier;
+  MyCartChangeNotifier _myCartChangeNotifier;
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
@@ -73,6 +75,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    _productChangeNotifier = context.read<ProductChangeNotifier>();
+    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _loadHomePage();
 
@@ -80,7 +84,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     Preload.currentUser.then((data) {
       user = data;
       NotificationSetup().init();
-      _onLoadHomePage();
+      _onLoadData();
     });
 
     dynamicLinkService.initialDynamicLink();
@@ -144,16 +148,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getViewedProducts = null;
   }
 
-  void _onLoadHomePage() async {
-    Preload.navigatorKey.currentContext
-        .read<ProductChangeNotifier>()
-        .initialize();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartId();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartItems(Preload.language);
+  void _onLoadData() async {
+    _productChangeNotifier.initialize();
+    await _myCartChangeNotifier.getCartId();
+    await _myCartChangeNotifier.getCartItems(Preload.language);
 
     _homeProvider.loadPopup(_onShowPopup);
   }

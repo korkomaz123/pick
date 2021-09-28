@@ -16,6 +16,7 @@ import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/string_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class MyCartChangeNotifier extends ChangeNotifier {
   final myCartRepository = MyCartRepository();
@@ -311,6 +312,14 @@ class MyCartChangeNotifier extends ChangeNotifier {
           await getCartItems(lang);
         }
         reportCartIssue(result, data);
+      } else {
+        if (cartTotalCount == 0) {
+          OneSignal.shared.sendTags({
+            'cart_update': '',
+            'product_name': '',
+            'product_image': '',
+          });
+        }
       }
     } catch (e) {
       onFailure('Network connection is bad');
