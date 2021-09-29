@@ -23,6 +23,7 @@ import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 import 'package:provider/provider.dart';
+import 'src/change_notifier/home_change_notifier.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
 import 'src/data/models/user_entity.dart';
@@ -52,6 +53,7 @@ class Preload {
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 
+  static final homeChangeNotifier = HomeChangeNotifier();
   static final myCartChangeNotifier = MyCartChangeNotifier();
   static final globalProvider = GlobalProvider();
 
@@ -77,36 +79,7 @@ class Preload {
     return versionEntity.updateMandatory;
   }
 
-  static loadAssets() async {
-    if (signInRepo.getFirebaseUser() == null) {
-      try {
-        await signInRepo.loginFirebase(
-          email: MarkaaReporter.email,
-          password: MarkaaReporter.password,
-        );
-      } catch (e) {
-        print('FIREBASE LOGIN ERROR: $e');
-      }
-    }
-
-    await _getCurrentUser();
-
-    if (user?.token != null) {
-      navigatorKey.currentContext
-          .read<WishlistChangeNotifier>()
-          .getWishlistItems(user.token, lang);
-      navigatorKey.currentContext
-          .read<OrderChangeNotifier>()
-          .loadOrderHistories(user.token, lang);
-      navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
-      navigatorKey.currentContext
-          .read<AddressChangeNotifier>()
-          .loadAddresses(user.token);
-    }
-    _loadExtraData();
-  }
-
-  static _loadExtraData() {
+  static loadAssetData() {
     checkoutRepo
         .getShippingMethod()
         .then((result) => shippingMethods = result)
@@ -125,6 +98,7 @@ class Preload {
         .catchError((error) {
       print('GET REGION LIST TIMEOUT ERROR: $error');
     });
+    homeChangeNotifier.getHomeCategories();
   }
 
   static Future<UserEntity> get currentUser => _getCurrentUser();
@@ -149,7 +123,31 @@ class Preload {
   static appOpen() async {
     bool isExist = await LocalStorageRepository().existItem('usage');
     if (isExist) {
-      loadAssets();
+      if (signInRepo.getFirebaseUser() == null) {
+        try {
+          await signInRepo.loginFirebase(
+            email: MarkaaReporter.email,
+            password: MarkaaReporter.password,
+          );
+        } catch (e) {
+          print('FIREBASE LOGIN ERROR: $e');
+        }
+      }
+
+      await _getCurrentUser();
+
+      if (user?.token != null) {
+        navigatorKey.currentContext
+            .read<WishlistChangeNotifier>()
+            .getWishlistItems(user.token, lang);
+        navigatorKey.currentContext
+            .read<OrderChangeNotifier>()
+            .loadOrderHistories(user.token, lang);
+        navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
+        navigatorKey.currentContext
+            .read<AddressChangeNotifier>()
+            .loadAddresses(user.token);
+      }
     }
   }
 

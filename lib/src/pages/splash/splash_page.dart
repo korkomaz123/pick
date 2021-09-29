@@ -32,11 +32,15 @@ class _SplashPageState extends State<SplashPage> {
     });
 
     Future.delayed(Duration(milliseconds: 1000), () async {
-      if (await Preload.checkAppVersion() != true) if (!isNew)
-        Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
-          Routes.home,
-          (route) => false,
-        );
+      if (await Preload.checkAppVersion() != true) {
+        if (!isNew) {
+          Preload.loadAssetData();
+          Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
+            Routes.home,
+            (route) => false,
+          );
+        }
+      }
     });
   }
 
@@ -56,6 +60,7 @@ class _SplashPageState extends State<SplashPage> {
 
     /// Start Loading Assets
     await Preload.appOpen();
+    Preload.loadAssetData();
     Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
       Routes.home,
       (route) => false,
