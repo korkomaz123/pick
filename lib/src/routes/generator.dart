@@ -9,6 +9,7 @@ import 'package:markaa/src/pages/checkout/search_address/search_address_screen.d
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/forgot_password/forgot_password_page.dart';
 import 'package:markaa/src/pages/home/home_page.dart';
+import 'package:markaa/src/pages/infollowencer_products/infollowencer_products.dart';
 import 'package:markaa/src/pages/my_account/about_us/about_us_page.dart';
 import 'package:markaa/src/pages/my_account/account_page.dart';
 import 'package:markaa/src/pages/my_account/alarm_list/alarm_list_page.dart';
@@ -311,7 +312,12 @@ class RouteGenerator {
       case Routes.celebritiesList:
         return CupertinoPageRoute(
           builder: (context) => CelebritiesListPage(arguments: params),
-          settings: RouteSettings(name: Routes.productList),
+          settings: settings,
+        );
+      case Routes.infollowencerProductsPage:
+        return CupertinoPageRoute(
+          builder: (context) => InfollowencerProductsPage(arguments: params),
+          settings: settings,
         );
       default:
         return CupertinoPageRoute(

@@ -114,4 +114,5 @@ class EndPoints {
   static const String homeSection4 = '$baseUrl/getHomepageSection4';
 
   static const String getAllCelebrities = '$baseUrl/getAllCelebrities';
+  static const String celebrityProducts = '$baseUrl/getCelebrityPage';
 }

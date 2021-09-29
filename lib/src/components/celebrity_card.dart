@@ -6,21 +6,24 @@ import 'package:markaa/src/routes/routes.dart';
 class CelebrityCard extends StatelessWidget {
   final double cardWidth;
   final double cardHeight;
-  final String image;
   final Map<String, dynamic> celebrity;
 
-  CelebrityCard({this.cardWidth, this.cardHeight, this.celebrity, this.image});
+  CelebrityCard({this.cardWidth, this.cardHeight, this.celebrity});
+  String _image() {
+    return celebrity['image'] ?? celebrity['profile_picture'] ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        //entity_id
-        // Navigator.pushNamed(
-        //   context,
-        //   Routes.product,
-        //   arguments: celebrity,
-        // );
+        Navigator.pushNamed(
+          context,
+          Routes.infollowencerProductsPage,
+          arguments: {
+            "id": celebrity['entity_id'],
+          },
+        );
       },
       child: Container(
         width: cardWidth,
@@ -40,7 +43,7 @@ class CelebrityCard extends StatelessWidget {
         progressIndicatorBuilder: (_, __, ___) {
           return Center(child: CircularProgressIndicator());
         },
-        imageUrl: image,
+        imageUrl: _image(),
         width: cardWidth,
         height: cardHeight * 0.63,
         fadeInDuration: Duration.zero,

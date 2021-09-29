@@ -84,4 +84,5 @@ class Routes {
   static const String myWalletSuccess = '/my-wallet-success';
   static const String myWalletFailed = '/my-wallet-failed';
   static const String sentGiftSuccess = '/sent-gift-success';
+  static const String infollowencerProductsPage = '/infollowencerProductsPage';
 }

@@ -65,7 +65,6 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
                     celebrity: allCelebritiesList[index],
                     cardWidth: 187.25.w,
                     cardHeight: 280.h,
-                    image: allCelebritiesList[index]['image'] ?? allCelebritiesList[index]['profile_picture'] ?? '',
                   ),
                 );
               },
