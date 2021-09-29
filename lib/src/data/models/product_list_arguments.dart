@@ -9,12 +9,14 @@ class ProductListArguments {
   final List<CategoryEntity> subCategory;
   final int selectedSubCategoryIndex;
   final bool isFromBrand;
+  final bool isFromCelebrity;
 
   ProductListArguments({
     this.category,
     this.brand,
     this.subCategory,
     this.selectedSubCategoryIndex,
-    this.isFromBrand,
+    this.isFromBrand = false,
+    this.isFromCelebrity = false,
   });
 }

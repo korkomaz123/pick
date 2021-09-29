@@ -66,16 +66,16 @@ class HomeRepository {
       for (var product in result['product']) {
         products.add(ProductModel.fromJson(product));
       }
-      return {
-        'code': 'SUCCESS',
-        'title': title,
-        'viewAll': viewAll,
-        'banners': banners,
-        'products': products
-      };
+      return {'code': 'SUCCESS', 'title': title, 'viewAll': viewAll, 'banners': banners, 'products': products};
     } else {
       return {'code': 'ERROR'};
     }
+  }
+
+  Future<dynamic> gethomecelebrity(String lang, String url) async {
+    final params = {'lang': lang};
+    final result = await Api.getMethod(url, data: params);
+    return result;
   }
 
   //////////////////////////////////////////////////////////////////////////////
