@@ -34,13 +34,19 @@ class Preload {
   static String imagesUrl = "";
   static String languageCode;
 
-  static String get language => EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
+  static String get language => EasyLocalization.of(navigatorKey.currentContext)
+      .locale
+      .languageCode
+      .toLowerCase();
   static set language(String val) => setLanguage(val: val);
 
   static setLanguage({String val}) {
     val != null && val.isNotEmpty
         ? languageCode = val
-        : languageCode = EasyLocalization.of(navigatorKey.currentContext).locale.languageCode.toLowerCase();
+        : languageCode = EasyLocalization.of(navigatorKey.currentContext)
+            .locale
+            .languageCode
+            .toLowerCase();
     lang = languageCode;
   }
 
@@ -56,7 +62,7 @@ class Preload {
   static final appRepo = AppRepository();
 
   static Future<dynamic> checkAppVersion() async {
-    print('checking app version///');
+    print('CHECKING THE APP VERSION');
     final versionEntity = await appRepo.checkAppVersion(
       Platform.isAndroid,
       languageCode,
@@ -67,56 +73,58 @@ class Preload {
         Routes.update,
         arguments: versionEntity.storeLink,
       );
-    } else if (versionEntity.canUpdate) {
-      // final result = await showDialog(
-      //   context: navigatorKey.currentContext,
-      //   builder: (context) {
-      //     return UpdateAvailableDialog(
-      //       title: versionEntity.dialogTitle,
-      //       content: versionEntity.dialogContent,
-      //     );
-      //   },
-      // );
-      // if (result != null) {
-      //   if (await canLaunch(versionEntity.storeLink)) {
-      //     await launch(versionEntity.storeLink);
-      //   }
-      // }
-    }
+    } else if (versionEntity.canUpdate) {}
     return versionEntity.updateMandatory;
   }
 
   static loadAssets() async {
     if (signInRepo.getFirebaseUser() == null) {
-      print(MarkaaReporter.email);
-      print(MarkaaReporter.password);
       try {
         await signInRepo.loginFirebase(
           email: MarkaaReporter.email,
           password: MarkaaReporter.password,
         );
       } catch (e) {
-        print(e.toString());
+        print('FIREBASE LOGIN ERROR: $e');
       }
     }
 
     await _getCurrentUser();
 
     if (user?.token != null) {
-      //   isNotification = await settingRepo.getNotificationSetting(user.token);
-      navigatorKey.currentContext.read<WishlistChangeNotifier>().getWishlistItems(user.token, lang);
-      navigatorKey.currentContext.read<OrderChangeNotifier>().loadOrderHistories(user.token, lang);
+      navigatorKey.currentContext
+          .read<WishlistChangeNotifier>()
+          .getWishlistItems(user.token, lang);
+      navigatorKey.currentContext
+          .read<OrderChangeNotifier>()
+          .loadOrderHistories(user.token, lang);
       navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
-      navigatorKey.currentContext.read<AddressChangeNotifier>().loadAddresses(user.token);
+      navigatorKey.currentContext
+          .read<AddressChangeNotifier>()
+          .loadAddresses(user.token);
     }
-    await _loadExtraData();
+    _loadExtraData();
   }
 
-  static Future _loadExtraData() async {
-    shippingMethods = await checkoutRepo.getShippingMethod();
-    paymentMethods = await checkoutRepo.getPaymentMethod();
-    regions = await shippingAddressRepo.getRegions();
-    print("regions ====>");
+  static _loadExtraData() {
+    checkoutRepo
+        .getShippingMethod()
+        .then((result) => shippingMethods = result)
+        .catchError((error) {
+      print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
+    });
+    checkoutRepo
+        .getPaymentMethod()
+        .then((result) => paymentMethods = result)
+        .catchError((error) {
+      print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
+    });
+    shippingAddressRepo
+        .getRegions()
+        .then((result) => regions = result)
+        .catchError((error) {
+      print('GET REGION LIST TIMEOUT ERROR: $error');
+    });
   }
 
   static Future<UserEntity> get currentUser => _getCurrentUser();
@@ -139,7 +147,6 @@ class Preload {
   }
 
   static appOpen() async {
-    // await checkAppVersion();
     bool isExist = await LocalStorageRepository().existItem('usage');
     if (isExist) {
       loadAssets();
@@ -158,8 +165,10 @@ class Preload {
       print('[Adjust]: Attribution changed!');
 
       if (attributionChangedData.trackerToken != null) {
-        print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
+        print(
+            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
       }
+
       if (attributionChangedData.trackerName != null) {
         print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
       }
@@ -213,8 +222,10 @@ class Preload {
         print('[Adjust]: Adid: ' + sessionFailureData.adid);
       }
       if (sessionFailureData.willRetry != null) {
-        print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+        print(
+            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
       }
+
       if (sessionFailureData.jsonResponse != null) {
         print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
       }
@@ -298,12 +309,7 @@ class Preload {
 
   static bool chatInitiated = false;
   static Future startSupportChat() async {
-    dynamic kmUser,
-        conversationObject = {
-          'appId': ChatSupport.appKey,
-        };
-    // await _getCurrentUser();
-    // if (await KommunicateFlutterPlugin.isLoggedIn()) await KommunicateFlutterPlugin.logout();
+    dynamic kmUser, conversationObject = {'appId': ChatSupport.appKey};
     if (user != null) {
       kmUser = {
         'userId': user.customerId,
@@ -313,7 +319,8 @@ class Preload {
       };
       conversationObject['kmUser'] = jsonEncode(kmUser);
     }
-    dynamic clientConversationId = await KommunicateFlutterPlugin.buildConversation(conversationObject);
+    dynamic clientConversationId =
+        await KommunicateFlutterPlugin.buildConversation(conversationObject);
     print("Conversation builder success : " + clientConversationId.toString());
     chatInitiated = true;
   }

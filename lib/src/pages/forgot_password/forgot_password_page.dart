@@ -1,7 +1,7 @@
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/forgot_password/widgets/new_password_sent_dialog.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -27,14 +27,16 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
-  SignInBloc signInBloc;
+
   ProgressService progressService;
   FlushBarService flushBarService;
+
+  AuthChangeNotifier authChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    signInBloc = context.read<SignInBloc>();
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
@@ -43,68 +45,50 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primarySwatchColor,
-      body: BlocConsumer<SignInBloc, SignInState>(
-        listener: (context, state) {
-          if (state is NewPasswordRequestSubmittedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is NewPasswordRequestSubmittedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorDialog(state.message);
-          }
-          if (state is NewPasswordRequestSubmittedSuccess) {
-            progressService.hideProgress();
-            _showSuccessDialog();
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Container(
-                    width: 375.w,
-                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 60.h, bottom: 120.h),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(
-                      hLogoIcon,
-                      width: 120.w,
-                      height: 45.h,
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'forgot_password_title'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  _buildUsernameOrEmail(),
-                  SizedBox(height: 40),
-                  _buildGetNewPassButton(),
-                  SizedBox(height: 60),
-                  _buildAuthChoiceDivider(),
-                  SizedBox(height: 40),
-                ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                width: 375.w,
+                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
+                alignment:
+                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
-            ),
-          );
-        },
+              Container(
+                padding: EdgeInsets.only(top: 60.h, bottom: 120.h),
+                alignment: Alignment.center,
+                child: SvgPicture.asset(
+                  hLogoIcon,
+                  width: 120.w,
+                  height: 45.h,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  'forgot_password_title'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              _buildUsernameOrEmail(),
+              SizedBox(height: 40),
+              _buildGetNewPassButton(),
+              SizedBox(height: 60),
+              _buildAuthChoiceDivider(),
+              SizedBox(height: 40),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -223,13 +207,28 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  void _onGetNewPassword() {
+  _onGetNewPassword() {
     if (_formKey.currentState.validate()) {
-      signInBloc.add(NewPasswordRequestSubmitted(email: emailController.text));
+      authChangeNotifier.requestNewPassword(
+        emailController.text,
+        onProcess: _onProcess,
+        onSuccess: _onSuccess,
+        onFailure: _onFailure,
+      );
     }
   }
 
-  void _showSuccessDialog() async {
+  _onProcess() {
+    progressService.showProgress();
+  }
+
+  _onFailure(message) {
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
+  }
+
+  Future _onSuccess() async {
+    progressService.hideProgress();
     await showDialog(
       context: context,
       builder: (context) {
