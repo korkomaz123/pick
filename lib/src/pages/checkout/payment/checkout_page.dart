@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -17,7 +16,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
-// import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -27,13 +25,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
-// import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/payment_method_list.dart';
@@ -107,6 +105,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       'message': '',
     };
 
+    OneSignal.shared.addTrigger('page', 'checkout');
+
     _loadData();
   }
 
@@ -117,6 +117,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onFailure(String error) {
     progressService.hideProgress();
     flushBarService.showErrorDialog(error);
+  }
+
+  @override
+  void dispose() {
+    OneSignal.shared.removeTriggerForKey('page');
+    super.dispose();
   }
 
   @override
@@ -369,8 +375,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
+    OneSignal.shared.removeTriggerForKey('page');
     progressService.hideProgress();
-    print(payUrl);
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);
@@ -383,7 +389,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         context,
         Routes.checkoutConfirmed,
         (route) => route.settings.name == Routes.home,
-        arguments: order.orderNo,
+        arguments: order,
       );
     } else if (isURL(payUrl)) {
       /// payment method is knet or tap, go to payment webview page

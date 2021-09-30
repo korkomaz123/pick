@@ -102,6 +102,10 @@ initOneSignalPlatform() {
     DynamicLinkService().dynamicLinkHandler(Uri.parse(launchUrl));
   });
 
+  // OneSignal.shared.setInAppMessageClickedHandler((action) {
+
+  // });
+
   OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
     // Will be called whenever the permission changes
     // (ie. user taps Allow on the permission prompt in iOS)

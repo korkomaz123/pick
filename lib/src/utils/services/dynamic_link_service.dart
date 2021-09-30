@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
+import 'package:provider/provider.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -7,6 +9,8 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:markaa/src/routes/routes.dart';
+
+import 'flushbar_service.dart';
 
 class DynamicLinkService {
   final ProductRepository productRepository = ProductRepository();
@@ -132,6 +136,16 @@ class DynamicLinkService {
       }
     } else if (target == 'cart') {
       Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.myCart);
+    } else if (target == 'coupon') {
+      String code = deepLink.queryParameters['code'];
+      final context = Preload.navigatorKey.currentContext;
+      final cartModel = context.read<MyCartChangeNotifier>();
+      final flushBarService = FlushBarService(context: context);
+      cartModel.applyCouponCode(code, flushBarService);
+      Navigator.popUntil(
+        context,
+        (route) => route.settings.name == Routes.myCart,
+      );
     }
   }
 }

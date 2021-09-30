@@ -404,6 +404,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Future _onLoginSuccess(UserEntity loggedInUser) async {
     try {
+      user = loggedInUser;
       SlackChannels.send('new login [${user.email}][${user.toJson()}]',
           SlackChannels.logAppUsers);
       await localRepo.setToken(user.token);

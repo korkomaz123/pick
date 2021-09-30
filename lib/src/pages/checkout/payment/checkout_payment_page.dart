@@ -187,7 +187,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
             context,
             Routes.checkoutConfirmed,
             (route) => route.settings.name == Routes.home,
-            arguments: order.orderNo,
+            arguments: order,
           );
         }
       }
