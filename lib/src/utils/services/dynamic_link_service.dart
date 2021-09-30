@@ -20,8 +20,7 @@ class DynamicLinkService {
     final shortDescription = product.shortDescription;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://markaa.page.link',
-      link: Uri.parse(
-          'https://markaa.page.link.com/product?id=$productId&target="product"'),
+      link: Uri.parse('https://markaa.page.link.com/product?id=$productId&target="product"'),
       androidParameters: AndroidParameters(
         packageName: 'com.app.markaa',
         minimumVersion: 1,
@@ -66,8 +65,7 @@ class DynamicLinkService {
 
   Future<void> initialDynamicLink() async {
     try {
-      PendingDynamicLinkData dynamicLink =
-          await FirebaseDynamicLinks.instance.getInitialLink();
+      PendingDynamicLinkData dynamicLink = await FirebaseDynamicLinks.instance.getInitialLink();
       final Uri deepLink = dynamicLink?.link;
       if (deepLink != null) {
         if (deepLink.queryParameters.containsKey('id')) {
@@ -81,9 +79,7 @@ class DynamicLinkService {
 
   dynamicLinkHandler(Uri deepLink) async {
     String id = deepLink.queryParameters['id'];
-    String target = deepLink.queryParameters.containsKey('target')
-        ? deepLink.queryParameters['target']
-        : '';
+    String target = deepLink.queryParameters.containsKey('target') ? deepLink.queryParameters['target'] : '';
     if (target == 'product') {
       final product = await productRepository.getProduct(id);
       Navigator.pushNamedAndRemoveUntil(
@@ -93,8 +89,7 @@ class DynamicLinkService {
         arguments: product,
       );
     } else if (target == 'category') {
-      final category =
-          await categoryRepository.getCategory(id, Preload.language);
+      final category = await categoryRepository.getCategory(id, Preload.language);
       ProductListArguments arguments = ProductListArguments(
         category: category,
         subCategory: [],
@@ -128,6 +123,12 @@ class DynamicLinkService {
           (route) => route.settings.name == Routes.home,
         );
       }
+    } else if (target == 'celebrity') {
+      Navigator.pushNamed(
+        Preload.navigatorKey.currentContext,
+        Routes.infollowencerProductsPage,
+        arguments: {"id": id.toString()},
+      );
     }
   }
 }
