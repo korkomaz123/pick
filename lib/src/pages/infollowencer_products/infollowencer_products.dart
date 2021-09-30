@@ -35,7 +35,8 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
   void getAllCelebrities() async {
     items = [];
     setState(() => isLoading = true);
-    final result = await Api.getMethod(EndPoints.celebrityProducts, data: {'lang': lang, 'customerId': widget.arguments['id'].toString()});
+    final result = await Api.getMethod(EndPoints.celebrityProducts,
+        data: {'lang': lang, 'customerId': widget.arguments['id'].toString()}, extra: {"refresh": true});
     if (result['code'] == 'SUCCESS') {
       items = result['items'];
       _info = result['userinfo'];
@@ -82,14 +83,16 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                       child: SingleChildScrollView(
                         child: Wrap(
                           children: items
-                              .map((item) => ProductVCard(
-                                    product: ProductModel.fromJson(item),
-                                    cardWidth: 187.25.w,
-                                    cardHeight: 280.h,
-                                    isShoppingCart: true,
-                                    isWishlist: true,
-                                    isShare: true,
-                                  ))
+                              .map(
+                                (item) => ProductVCard(
+                                  product: ProductModel.fromJson(item),
+                                  cardWidth: 187.25.w,
+                                  cardHeight: 280.h,
+                                  isShoppingCart: true,
+                                  isWishlist: true,
+                                  isShare: true,
+                                ),
+                              )
                               .toList(),
                         ),
                       ),

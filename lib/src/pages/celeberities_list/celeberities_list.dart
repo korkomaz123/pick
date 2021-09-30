@@ -29,7 +29,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
   void getAllCelebrities() async {
     allCelebritiesList = [];
     setState(() => isLoading = true);
-    final result = await Api.getMethod(EndPoints.getAllCelebrities, data: {'lang': lang});
+    final result = await Api.getMethod(EndPoints.getAllCelebrities, data: {'lang': lang}, extra: {"refresh": true});
     if (result['code'] == 'SUCCESS') allCelebritiesList = result['celebrities'];
     setState(() => isLoading = false);
   }
