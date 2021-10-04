@@ -3,6 +3,7 @@ import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,12 +41,15 @@ class ToggleLanguageWidget extends StatelessWidget {
           isVertical: false,
           listStyle: true,
           onTap: (value) async {
+            final progressService = ProgressService(context: context);
+            progressService.showProgress();
+
             String lang = _globalProvider.languages[0] == value ? 'en' : 'ar';
             _globalProvider.changeLanguage(lang);
             await OneSignal.shared.sendTag('lang', lang);
-
             await Preload.appOpen();
 
+            progressService.hideProgress();
             Navigator.pushNamedAndRemoveUntil(
               context,
               Routes.home,
