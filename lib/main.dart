@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
@@ -96,7 +97,14 @@ initOneSignalPlatform() {
   OneSignal.shared
       .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
     // Will be called whenever a notification is opened/button pressed.
+    String launchUrl = result.notification.launchUrl;
+    print('LAUNCH URL >>>> $launchUrl');
+    DynamicLinkService().dynamicLinkHandler(Uri.parse(launchUrl));
   });
+
+  // OneSignal.shared.setInAppMessageClickedHandler((action) {
+
+  // });
 
   OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
     // Will be called whenever the permission changes

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
@@ -10,7 +11,6 @@ import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/home/notification_setup.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -57,8 +57,7 @@ class _SignInPageState extends State<SignInPage> {
 
   bool isShowPass = false;
 
-  SignInBloc signInBloc;
-
+  AuthChangeNotifier authChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
@@ -79,8 +78,7 @@ class _SignInPageState extends State<SignInPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
-    signInBloc = context.read<SignInBloc>();
-
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
@@ -88,37 +86,8 @@ class _SignInPageState extends State<SignInPage> {
     addressChangeNotifier = context.read<AddressChangeNotifier>();
   }
 
-  void _loggedInSuccess(UserEntity loggedInUser) async {
-    try {
-      user = loggedInUser;
-      SlackChannels.send('new login [${user.email}][${user.toJson()}]', SlackChannels.logAppUsers);
-      await localRepo.setToken(user.token);
-
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
-
-      await myCartChangeNotifier.getCartId();
-      await myCartChangeNotifier.transferCartItems();
-      await myCartChangeNotifier.getCartItems(lang);
-
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
-      NotificationSetup().updateFcmDeviceToken();
-    } catch (e) {
-      print(e.toString());
-    }
-    homeChangeNotifier.loadRecentlyViewedCustomer();
-    progressService.hideProgress();
-    if (Navigator.of(context).canPop())
-      Navigator.pop(context);
-    else
-      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
-  }
-
   void _onPrivacyPolicy() async {
     String url = EndPoints.privacyAndPolicy;
-    print(url);
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -132,72 +101,57 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
-      body: BlocConsumer<SignInBloc, SignInState>(
-        listener: (context, state) {
-          if (state is SignInSubmittedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is SignInSubmittedSuccess) {
-            _loggedInSuccess(state.user);
-          }
-          if (state is SignInSubmittedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorDialog(state.message);
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Container(
-                    width: 375.w,
-                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 40.h, bottom: 100.h),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(
-                      hLogoIcon,
-                      width: 120.w,
-                      height: 45.h,
-                    ),
-                  ),
-                  _buildEmail(),
-                  _buildPassword(),
-                  SizedBox(height: 40),
-                  _buildSignInButton(),
-                  SizedBox(height: 10),
-                  _buildForgotPassword(),
-                  SizedBox(height: 40),
-                  _buildOrDivider(),
-                  SizedBox(height: 40),
-                  _buildExternalSignInButtons(),
-                  SizedBox(height: 40),
-                  if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
-                  Center(
-                    child: InkWell(
-                      onTap: _onPrivacyPolicy,
-                      child: Text(
-                        'suffix_agree_terms'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          color: Colors.white54,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                width: 375.w,
+                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
+                alignment:
+                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
-            ),
-          );
-        },
+              Container(
+                padding: EdgeInsets.only(top: 40.h, bottom: 100.h),
+                alignment: Alignment.center,
+                child: SvgPicture.asset(
+                  hLogoIcon,
+                  width: 120.w,
+                  height: 45.h,
+                ),
+              ),
+              _buildEmail(),
+              _buildPassword(),
+              SizedBox(height: 40),
+              _buildSignInButton(),
+              SizedBox(height: 10),
+              _buildForgotPassword(),
+              SizedBox(height: 40),
+              _buildOrDivider(),
+              SizedBox(height: 40),
+              _buildExternalSignInButtons(),
+              SizedBox(height: 40),
+              if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
+              Center(
+                child: InkWell(
+                  onTap: _onPrivacyPolicy,
+                  child: Text(
+                    'suffix_agree_terms'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: Colors.white54,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -444,16 +398,58 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _signIn() {
-    if (_formKey.currentState.validate()) {
-      signInBloc.add(SignInSubmitted(
-        email: emailController.text,
-        password: passwordController.text,
-      ));
+  _onLoginProcess() {
+    progressService.showProgress();
+  }
+
+  Future _onLoginSuccess(UserEntity loggedInUser) async {
+    try {
+      user = loggedInUser;
+      SlackChannels.send('new login [${user.email}][${user.toJson()}]',
+          SlackChannels.logAppUsers);
+      await localRepo.setToken(user.token);
+
+      await orderChangeNotifier.loadOrderHistories(user.token, lang);
+
+      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier.transferCartItems();
+      await myCartChangeNotifier.getCartItems(lang);
+
+      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user.token);
+      NotificationSetup().updateFcmDeviceToken();
+    } catch (e) {
+      print(e.toString());
+    }
+    homeChangeNotifier.loadRecentlyViewedCustomer();
+    progressService.hideProgress();
+    if (Navigator.of(context).canPop()) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
     }
   }
 
-  void _onFacebookSign() async {
+  _onLoginFailure(message) {
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
+  }
+
+  _signIn() {
+    if (_formKey.currentState.validate()) {
+      authChangeNotifier.login(
+        emailController.text,
+        passwordController.text,
+        onProcess: _onLoginProcess,
+        onSuccess: _onLoginSuccess,
+        onFailure: _onLoginFailure,
+      );
+    }
+  }
+
+  Future _onFacebookSign() async {
     final facebookLogin = FacebookLogin();
     await facebookLogin.logOut();
     final result = await facebookLogin.logIn(['email']);
@@ -471,23 +467,21 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _loginWithFacebook(FacebookLoginResult result) async {
+  Future _loginWithFacebook(FacebookLoginResult result) async {
     try {
       final token = result.accessToken.token;
-      final profile = await Api.getMethod('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+      final profile = await Api.getMethod(
+          'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'Facebook Sign',
-        lang: lang,
-      ));
+      authChangeNotifier.loginWithSocial(
+          email, firstName, lastName, 'Facebook Sign', lang,
+          onProcess: _onLoginProcess,
+          onSuccess: _onLoginSuccess,
+          onFailure: _onLoginFailure);
     } catch (e) {
-      print('/// _loginWithFacebook Error ///');
-      print(e.toString());
+      print('/// LOGIN WITH FACEBOOK ERROR: $e ///');
     }
   }
 
@@ -501,16 +495,14 @@ class _SignInPageState extends State<SignInPage> {
         String displayName = googleAccount.displayName;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        signInBloc.add(SocialSignInSubmitted(
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          loginType: 'Google Sign',
-          lang: lang,
-        ));
+        authChangeNotifier.loginWithSocial(
+            email, firstName, lastName, 'Google Sign', lang,
+            onProcess: _onLoginProcess,
+            onSuccess: _onLoginSuccess,
+            onFailure: _onLoginFailure);
       }
-    } catch (error) {
-      print(error);
+    } catch (e) {
+      print('/// LOGIN WITH GOOGLE ERROR: $e ///');
     }
   }
 
@@ -532,16 +524,14 @@ class _SignInPageState extends State<SignInPage> {
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'apple',
-        lang: lang,
-        appleId: appleId,
-      ));
-    } catch (error) {
-      print(error);
+      authChangeNotifier.loginWithSocial(
+          email, firstName, lastName, 'apple', lang,
+          appleId: appleId,
+          onProcess: _onLoginProcess,
+          onSuccess: _onLoginSuccess,
+          onFailure: _onLoginFailure);
+    } catch (e) {
+      print('LOGIN WITH APPLE ERROR: $e');
     }
   }
 }

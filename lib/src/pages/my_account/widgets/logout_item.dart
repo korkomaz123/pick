@@ -1,7 +1,7 @@
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -34,11 +34,10 @@ class _LogoutItemState extends State<LogoutItem> {
   ProgressService progressService;
   FlushBarService flushBarService;
 
-  SignInBloc signInBloc;
-
   LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
 
+  AuthChangeNotifier authChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -51,8 +50,7 @@ class _LogoutItemState extends State<LogoutItem> {
     progressService = widget.progressService;
     flushBarService = FlushBarService(context: context);
 
-    signInBloc = context.read<SignInBloc>();
-
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
@@ -61,54 +59,38 @@ class _LogoutItemState extends State<LogoutItem> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SignInBloc, SignInState>(
-      listener: (context, state) {
-        if (state is SignOutSubmittedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is SignOutSubmittedSuccess) {
-          _logoutUser();
-        }
-        if (state is SignOutSubmittedFailure) {
-          progressService.hideProgress();
-          snackBarService.showErrorSnackBar(state.message);
-        }
-      },
-      builder: (context, state) {
-        return InkWell(
-          onTap: () => _logout(),
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 5.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InkWell(
+      onTap: () => _logout(),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 5.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 22.w,
-                      height: 22.h,
-                      child: SvgPicture.asset(logoutCustomIcon),
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'account_logout'.tr(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                  ],
+                Container(
+                  width: 22.w,
+                  height: 22.h,
+                  child: SvgPicture.asset(logoutCustomIcon),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 20.sp,
-                  color: greyDarkColor,
+                SizedBox(width: 10.w),
+                Text(
+                  'account_logout'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20.sp,
+              color: greyDarkColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -116,14 +98,26 @@ class _LogoutItemState extends State<LogoutItem> {
     final result = await flushBarService.showConfirmDialog(
         message: 'logout_confirm_dialog_text');
     if (result != null) {
-      signInBloc.add(SignOutSubmitted(token: user.token));
+      authChangeNotifier.logout(
+        onProcess: _onProcess,
+        onSuccess: _onSuccess,
+        onFailure: _onFailure,
+      );
     }
   }
 
-  void _logoutUser() async {
+  _onProcess() {
+    progressService.showProgress();
+  }
+
+  _onFailure(message) {
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
+  }
+
+  void _onSuccess() async {
     await localRepo.setToken('');
     await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
-    user = null;
 
     orderChangeNotifier.initializeOrders();
     wishlistChangeNotifier.initialize();

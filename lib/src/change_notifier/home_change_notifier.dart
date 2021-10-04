@@ -101,7 +101,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print(e.toString());
     }
-    await getHomeCategories();
+    // await getHomeCategories();
     notifyListeners();
   }
 
@@ -319,7 +319,8 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadBestWatches() async {
     try {
-      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection2);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection2);
       if (result['code'] == 'SUCCESS') {
         bestWatchesTitle = result['title'];
         bestWatchesViewAll = result['viewAll'];
@@ -365,7 +366,8 @@ class HomeChangeNotifier extends ChangeNotifier {
   SliderImageEntity skinCareViewAll;
   Future loadAds() async {
     try {
-      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection4);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection4);
       if (result['code'] == 'SUCCESS') {
         skinCareTitle = result['title'];
         skinCareViewAll = result['viewAll'];

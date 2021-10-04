@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
@@ -20,6 +21,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -64,30 +66,57 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   HomeChangeNotifier _homeProvider;
   MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  ProductChangeNotifier _productChangeNotifier;
+  MyCartChangeNotifier _myCartChangeNotifier;
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
-
   ScrollDirection _prevDirection = ScrollDirection.forward;
+
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    _productChangeNotifier = context.read<ProductChangeNotifier>();
+    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _loadHomePage();
+    _preloadSetup();
 
+    dynamicLinkService.initialDynamicLink();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _timer = Timer(
+        Duration(milliseconds: 1000),
+        () => dynamicLinkService.retrieveDynamicLink(),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    super.dispose();
+  }
+
+  _preloadSetup() {
     Preload.setupAdjustSDK();
     Preload.currentUser.then((data) {
       user = data;
+      OneSignal.shared.sendTag('wallet', user.balance);
       NotificationSetup().init();
-      _onLoadHomePage();
+      _onLoadData();
     });
-
-    dynamicLinkService.initialDynamicLink();
-    dynamicLinkService.retrieveDynamicLink();
-
-    _scrollController.addListener(_onScroll);
   }
 
   _onScroll() {
@@ -147,10 +176,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getViewedProducts = null;
   }
 
-  void _onLoadHomePage() async {
-    Preload.navigatorKey.currentContext.read<ProductChangeNotifier>().initialize();
-    await Preload.navigatorKey.currentContext.read<MyCartChangeNotifier>().getCartId();
-    await Preload.navigatorKey.currentContext.read<MyCartChangeNotifier>().getCartItems(Preload.language);
+  void _onLoadData() async {
+    _productChangeNotifier.initialize();
+    await _myCartChangeNotifier.getCartId();
+    await _myCartChangeNotifier.getCartItems(Preload.language);
 
     _homeProvider.loadPopup(_onShowPopup);
   }
@@ -222,7 +251,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         FutureBuilder(
                           future: loadSliderImages,
                           builder: (_, snapShot) {
-                            if (snapShot.connectionState == ConnectionState.waiting)
+                            if (snapShot.connectionState ==
+                                ConnectionState.waiting)
                               return Container(
                                 width: double.infinity,
                                 height: designWidth.w * 579 / 1125,
@@ -241,18 +271,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           padding: EdgeInsets.symmetric(vertical: 10.h),
                           child: FutureBuilder(
                             future: getFeaturedCategoriesList,
-                            builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
-                                ? Center(child: PulseLoadingSpinner())
-                                : HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
+                            builder: (_, snapShot) =>
+                                snapShot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? Center(child: PulseLoadingSpinner())
+                                    : HomeFeaturedCategories(
+                                        homeChangeNotifier: _homeProvider),
                           ),
                         ),
                         FutureBuilder(
                           future: loadMegaBanner,
-                          builder: (_, snapShot) => HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                          builder: (_, snapShot) =>
+                              HomeMegaBanner(homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadBestDeals,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -260,11 +295,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeBestDeals(homeChangeNotifier: _homeProvider),
+                              : HomeBestDeals(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: gethomecelebrity,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -272,11 +309,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeCelebrity(homeChangeNotifier: _homeProvider),
+                              : HomeCelebrity(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadGrooming,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -288,7 +327,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ),
                         FutureBuilder(
                           future: loadFaceCare,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -296,11 +336,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
+                              : HomeBestDealsBanner(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadSaleBrands,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -308,11 +350,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeSaleBrands(homeChangeNotifier: _homeProvider),
+                              : HomeSaleBrands(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadNewArrivals,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -320,11 +364,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                              : HomeNewArrivals(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadOrientalProducts,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -332,11 +378,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
+                              : HomeOrientalFragrances(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadNewArrivalsBanner,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -344,22 +392,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
+                              : HomeNewArrivalsBanner(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadFragrancesBanner,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
+                              : HomeFragrancesBanners(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadPerfumes,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -371,7 +423,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ),
                         FutureBuilder(
                           future: loadBestWatches,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -379,11 +432,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeBestWatches(homeChangeNotifier: _homeProvider),
+                              : HomeBestWatches(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadAds,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -391,11 +446,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeAdvertise(homeChangeNotifier: _homeProvider),
+                              : HomeAdvertise(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: getCategoriesList,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -403,11 +460,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeExploreCategories(homeChangeNotifier: _homeProvider),
+                              : HomeExploreCategories(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: getBrandsList,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -415,11 +474,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeDiscoverStores(homeChangeNotifier: _homeProvider),
+                              : HomeDiscoverStores(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: loadSmartTech,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),
@@ -427,11 +488,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
-                              : HomeSmartTech(homeChangeNotifier: _homeProvider),
+                              : HomeSmartTech(
+                                  homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(
                           future: getViewedProducts,
-                          builder: (_, snapShot) => snapShot.connectionState == ConnectionState.waiting
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
                               ? Container(
                                   height: 360.h,
                                   padding: EdgeInsets.all(8.w),

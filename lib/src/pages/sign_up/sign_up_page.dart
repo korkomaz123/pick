@@ -1,13 +1,13 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/user_entity.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -47,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool agreeTerms = false;
 
-  SignInBloc signInBloc;
+  AuthChangeNotifier authChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
 
@@ -60,13 +60,13 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
-    signInBloc = context.read<SignInBloc>();
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
   }
 
-  void _saveToken(UserEntity loggedInUser) async {
+  void _onLoginSuccess(UserEntity loggedInUser) async {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.register);
     Adjust.trackEvent(adjustEvent);
     user = loggedInUser;
@@ -86,63 +86,46 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primarySwatchColor,
-      body: BlocConsumer<SignInBloc, SignInState>(
-        listener: (context, state) {
-          if (state is SignUpSubmittedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is SignUpSubmittedSuccess) {
-            _saveToken(state.user);
-          }
-          if (state is SignUpSubmittedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorDialog(state.message);
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Container(
-                    width: 375.w,
-                    padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                    alignment: lang == 'en'
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 20.h, bottom: 60.h),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(
-                      hLogoIcon,
-                      width: 120.w,
-                      height: 45.h,
-                    ),
-                  ),
-                  _buildFullName(),
-                  SizedBox(height: 10),
-                  _buildPhoneNumber(),
-                  SizedBox(height: 10),
-                  _buildEmail(),
-                  SizedBox(height: 10),
-                  _buildPassword(),
-                  SizedBox(height: 40),
-                  _buildTermsAndConditions(),
-                  SizedBox(height: 40),
-                  _buildSignUpButton(),
-                  SizedBox(height: 40),
-                  if (!widget.isFromCheckout) ...[_buildSignInPhase()],
-                ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                width: 375.w,
+                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
+                alignment:
+                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
-            ),
-          );
-        },
+              Container(
+                padding: EdgeInsets.only(top: 20.h, bottom: 60.h),
+                alignment: Alignment.center,
+                child: SvgPicture.asset(
+                  hLogoIcon,
+                  width: 120.w,
+                  height: 45.h,
+                ),
+              ),
+              _buildFullName(),
+              SizedBox(height: 10),
+              _buildPhoneNumber(),
+              SizedBox(height: 10),
+              _buildEmail(),
+              SizedBox(height: 10),
+              _buildPassword(),
+              SizedBox(height: 40),
+              _buildTermsAndConditions(),
+              SizedBox(height: 40),
+              _buildSignUpButton(),
+              SizedBox(height: 40),
+              if (!widget.isFromCheckout) ...[_buildSignInPhase()],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -458,23 +441,35 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void _onSignUp() {
+  _onSignUp() {
     if (_formKey.currentState.validate()) {
       if (agreeTerms) {
         String fullName = fullNameController.text;
         String firstName = fullName.split(' ')[0];
         String lastName = fullName.split(' ')[1];
-        signInBloc.add(SignUpSubmitted(
-          firstName: firstName,
-          lastName: lastName,
-          phoneNumber: phoneNumberController.text,
-          email: emailController.text,
-          password: passwordController.text,
-        ));
+        authChangeNotifier.signUp(
+          firstName,
+          lastName,
+          phoneNumberController.text,
+          emailController.text,
+          passwordController.text,
+          onProcess: _onProcess,
+          onSuccess: _onLoginSuccess,
+          onFailure: _onFailure,
+        );
       } else {
         flushBarService.showErrorDialog('ask_agree_privacy_policy'.tr());
       }
     }
+  }
+
+  _onProcess() {
+    progressService.showProgress();
+  }
+
+  _onFailure(message) {
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   void _onPrivacyPolicy() async {

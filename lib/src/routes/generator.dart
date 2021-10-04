@@ -154,7 +154,7 @@ class RouteGenerator {
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutConfirmedPage(orderNo: params),
+          builder: (context) => CheckoutConfirmedPage(order: params),
           settings: RouteSettings(name: Routes.checkoutConfirmed),
         );
       case Routes.paymentFailed:

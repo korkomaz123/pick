@@ -8,6 +8,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -31,19 +32,35 @@ class _SplashPageState extends State<SplashPage> {
     });
 
     Future.delayed(Duration(milliseconds: 1000), () async {
-      if (await Preload.checkAppVersion() != true) if (!isNew)
-        Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
-          Routes.home,
-          (route) => false,
-        );
+      if (await Preload.checkAppVersion() != true) {
+        if (!isNew) {
+          Preload.loadAssetData();
+          Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
+            Routes.home,
+            (route) => false,
+          );
+        }
+      }
     });
   }
 
   void _onLang(String val) async {
-    Preload.navigatorKey.currentContext.read<GlobalProvider>().changeLanguage(val, fromSplash: true);
+    /// Set the language on the backend side
+    Preload.navigatorKey.currentContext
+        .read<GlobalProvider>()
+        .changeLanguage(val, fromSplash: true);
+
+    /// Set language on onesignal
+    OneSignal.shared.sendTag('lang', val).then((result) {
+      print('ONESIGNAL >>> SENT THE LANG TAG SUCCESS');
+    });
+
+    /// Set first time opening passed
     await localRepo.setItem('usage', 'markaa');
-    //Start Loading Assets
+
+    /// Start Loading Assets
     await Preload.appOpen();
+    Preload.loadAssetData();
     Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
       Routes.home,
       (route) => false,

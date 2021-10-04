@@ -38,31 +38,30 @@ class NotificationSetup {
   }
 
   void _configureMessaging() async {
-    RemoteMessage message = await FirebaseMessaging.instance.getInitialMessage();
+    final message = await FirebaseMessaging.instance.getInitialMessage();
     if (message != null) _onLaunchMessage(message.data);
-    NotificationSettings settings = await firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    await firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true, badge: true, sound: true);
+    NotificationSettings settings = await firebaseMessaging.requestPermission();
 
     print('User granted permission: ${settings.authorizationStatus}');
 
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+    // FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _onLaunchMessage(message?.data);
     });
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage message) {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
       _onLaunchMessage(message?.data);
     });
 
-    await firebaseMessaging
-        .unsubscribeFromTopic(Preload.language == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
-    await firebaseMessaging.subscribeToTopic(Preload.language == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
+    await firebaseMessaging.unsubscribeFromTopic(Preload.language == 'en'
+        ? MarkaaNotificationChannels.arChannel
+        : MarkaaNotificationChannels.enChannel);
+    await firebaseMessaging.subscribeToTopic(Preload.language == 'en'
+        ? MarkaaNotificationChannels.enChannel
+        : MarkaaNotificationChannels.arChannel);
     updateFcmDeviceToken();
   }
 
@@ -82,7 +81,8 @@ class NotificationSetup {
   }
 
   void _initializeLocalNotification() async {
-    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
@@ -95,7 +95,8 @@ class NotificationSetup {
       onSelectNotification: onSelectNotification,
     );
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
@@ -130,24 +131,24 @@ class NotificationSetup {
     );
   }
 
-  Future<void> _onForegroundMessage(RemoteMessage message) async {
-    print('on foreground notification');
-    print(message.data);
-    await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message.data['title'],
-      message.data['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      payload: jsonEncode(message.data),
-    );
-  }
+  // Future<void> _onForegroundMessage(RemoteMessage message) async {
+  //   print('on foreground notification');
+  //   print(message.data);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     message.hashCode,
+  //     message.data['title'],
+  //     message.data['body'],
+  //     NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //       ),
+  //       iOS: IOSNotificationDetails(),
+  //     ),
+  //     payload: jsonEncode(message.data),
+  //   );
+  // }
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
     try {

@@ -1,10 +1,3 @@
-//
-//  NotificationService.swift
-//  OneSignalNotificationServiceExtension
-//
-//  Created by Myworld on 9/20/21.
-//
-
 import UserNotifications
 
 import OneSignal
