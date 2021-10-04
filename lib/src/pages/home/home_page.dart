@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
@@ -20,6 +21,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -68,29 +70,52 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
-
   ScrollDirection _prevDirection = ScrollDirection.forward;
+
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     _productChangeNotifier = context.read<ProductChangeNotifier>();
     _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _loadHomePage();
+    _preloadSetup();
 
+    dynamicLinkService.initialDynamicLink();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _timer = Timer(
+        Duration(milliseconds: 1000),
+        () => dynamicLinkService.retrieveDynamicLink(),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    super.dispose();
+  }
+
+  _preloadSetup() {
     Preload.setupAdjustSDK();
     Preload.currentUser.then((data) {
       user = data;
+      OneSignal.shared.sendTag('wallet', user.balance);
       NotificationSetup().init();
       _onLoadData();
     });
-
-    dynamicLinkService.initialDynamicLink();
-    dynamicLinkService.retrieveDynamicLink();
-
-    _scrollController.addListener(_onScroll);
   }
 
   _onScroll() {
