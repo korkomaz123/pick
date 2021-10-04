@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
-  final LocalStorageRepository localStorageRepository =
-      LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
   final CategoryRepository categoryRepository = CategoryRepository();
   final BrandRepository brandRepository = BrandRepository();
 
@@ -36,8 +37,7 @@ class CategoryChangeNotifier extends ChangeNotifier {
         isLoading = false;
         notifyListeners();
       }
-      final result =
-          await categoryRepository.getSubCategories(categoryId, lang);
+      final result = await categoryRepository.getSubCategories(categoryId, lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['categories']);
         if (!isCached) {
@@ -99,6 +99,26 @@ class CategoryChangeNotifier extends ChangeNotifier {
           isLoading = false;
           notifyListeners();
         }
+      }
+    } catch (e) {
+      subCategories = [];
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<dynamic> allCelebritiesList = [];
+  void getAllCelebrities(String lang) async {
+    allCelebritiesList = [];
+    isLoading = true;
+    notifyListeners();
+    try {
+      // String key = 'brand-subCat-celebrites-$lang';
+      final result = await Api.getMethod(EndPoints.getAllCelebrities, data: {'lang': lang});
+      if (result['code'] == 'SUCCESS') {
+        allCelebritiesList = result['celebrities'];
+        isLoading = false;
+        notifyListeners();
       }
     } catch (e) {
       subCategories = [];

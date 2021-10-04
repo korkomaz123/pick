@@ -30,6 +30,7 @@ import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
 import 'widgets/home_best_watches.dart';
+import 'widgets/home_celebrity.dart';
 import 'widgets/home_discover_stores.dart';
 import 'widgets/home_explore_categories.dart';
 import 'widgets/home_featured_categories.dart';
@@ -143,6 +144,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     loadFragrancesBanner = _homeProvider.loadFragrancesBanner();
     loadPerfumes = _homeProvider.loadPerfumes();
     loadBestWatches = _homeProvider.loadBestWatches();
+    gethomecelebrity = _homeProvider.gethomecelebrity();
     loadGrooming = _homeProvider.loadGrooming();
     loadAds = _homeProvider.loadAds();
     loadSmartTech = _homeProvider.loadSmartTech();
@@ -156,6 +158,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getFeaturedCategoriesList = null;
     loadMegaBanner = null;
     loadBestDeals = null;
+    gethomecelebrity = null;
     loadFaceCare = null;
     loadSaleBrands = null;
     loadNewArrivals = null;
@@ -194,6 +197,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       getFeaturedCategoriesList,
       loadMegaBanner,
       loadBestDeals,
+      gethomecelebrity,
       loadFaceCare,
       loadSaleBrands,
       loadNewArrivals,
@@ -292,6 +296,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestDeals(
+                                  homeChangeNotifier: _homeProvider),
+                        ),
+                        FutureBuilder(
+                          future: gethomecelebrity,
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
+                              ? Container(
+                                  height: 360.h,
+                                  padding: EdgeInsets.all(8.w),
+                                  margin: EdgeInsets.only(bottom: 10.h),
+                                  color: Colors.white,
+                                  child: Center(child: PulseLoadingSpinner()),
+                                )
+                              : HomeCelebrity(
                                   homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(

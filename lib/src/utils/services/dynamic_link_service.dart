@@ -146,6 +146,12 @@ class DynamicLinkService {
         context,
         (route) => route.settings.name == Routes.myCart,
       );
+    } else if (target == 'celebrity') {
+      Navigator.pushNamed(
+        Preload.navigatorKey.currentContext,
+        Routes.infollowencerProductsPage,
+        arguments: {"id": id.toString()},
+      );
     }
   }
 }
