@@ -21,6 +21,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -96,6 +97,7 @@ class _MyCartPageState extends State<MyCartPage>
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    OneSignal.shared.addTrigger('page', 'checkout');
     _loadData();
   }
 

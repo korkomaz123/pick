@@ -25,7 +25,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -105,8 +104,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       'message': '',
     };
 
-    OneSignal.shared.addTrigger('page', 'checkout');
-
     _loadData();
   }
 
@@ -121,7 +118,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   void dispose() {
-    OneSignal.shared.removeTriggerForKey('page');
     super.dispose();
   }
 
@@ -375,7 +371,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    OneSignal.shared.removeTriggerForKey('page');
     progressService.hideProgress();
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
