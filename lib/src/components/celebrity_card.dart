@@ -10,7 +10,7 @@ class CelebrityCard extends StatelessWidget {
 
   CelebrityCard({this.cardWidth, this.cardHeight, this.celebrity});
   String _image() {
-    return celebrity['image'] ?? celebrity['profile_picture'] ?? '';
+    return celebrity['image'] ?? celebrity['cover_picture'] ?? '';
   }
 
   @override
