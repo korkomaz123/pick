@@ -278,6 +278,10 @@ class _MyCartQuickAccessLoginDialogState
   void _onReloadItemSuccess() {
     progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    if (myCartChangeNotifier.cartItemCount == 0) {
+      flushBarService.showErrorDialog('cart_empty_error'.tr());
+      return;
+    }
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorDialog(
