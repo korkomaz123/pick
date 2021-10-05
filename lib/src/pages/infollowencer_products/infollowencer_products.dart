@@ -82,19 +82,24 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Wrap(
-                          children: items
-                              .map(
-                                (item) => ProductVCard(
-                                  product: ProductModel.fromJson(item),
-                                  cardWidth: 187.25.w,
-                                  cardHeight: 280.h,
-                                  isShoppingCart: true,
-                                  isWishlist: true,
-                                  isShare: true,
-                                ),
-                              )
-                              .toList(),
+                        child: Container(
+                          color: Colors.grey.shade200,
+                          child: Wrap(
+                            spacing: 2.w,
+                            runSpacing: 2.w,
+                            children: items
+                                .map(
+                                  (item) => ProductVCard(
+                                    product: ProductModel.fromJson(item),
+                                    cardWidth: 184.25.w,
+                                    cardHeight: 280.h,
+                                    isShoppingCart: true,
+                                    isWishlist: true,
+                                    isShare: true,
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
                       ),
                     )
@@ -162,7 +167,8 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
       top: 40.h,
       left: 0,
       right: 0,
-      child: Padding(
+      child: Container(
+        color: Colors.grey.shade100,
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
@@ -174,6 +180,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
               ),
             Spacer(),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
