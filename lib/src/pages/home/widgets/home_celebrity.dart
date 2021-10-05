@@ -90,6 +90,7 @@ class HomeCelebrity extends StatelessWidget {
             homeChangeNotifier.celebrityItems.length,
             (index) {
               return Container(
+                margin: EdgeInsets.all(2.w),
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.grey.shade300,
@@ -97,8 +98,8 @@ class HomeCelebrity extends StatelessWidget {
                   ),
                 ),
                 child: CelebrityCard(
-                  cardWidth: 170.w,
-                  cardHeight: 280.h,
+                  cardWidth: 100.w,
+                  cardHeight: 200.h,
                   celebrity: homeChangeNotifier.celebrityItems[index],
                 ),
               );
