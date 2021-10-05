@@ -169,8 +169,10 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
       right: 0,
       child: Container(
         color: Colors.grey.shade100,
+        height: 110.h,
         padding: const EdgeInsets.all(8.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_info['profile_picture'] != null)
               CircleAvatar(
@@ -181,24 +183,46 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
             Spacer(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
-                  style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'AvenirMedium',
+                  ),
                 ),
                 if (_info['coupon'] != null && _info['coupon'].toString().isNotEmpty)
                   RichText(
                     text: TextSpan(
                       text: '${'coupon'.tr()} : ',
-                      style: TextStyle(fontSize: 20, color: Colors.orange, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'AvenirMedium',
+                      ),
                       children: [
                         TextSpan(
                           text: '${_info['coupon']}',
-                          style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'AvenirMedium',
+                          ),
                         ),
                       ],
                     ),
                   ),
+                Expanded(
+                  child: Container(),
+                ),
+                Text(
+                  'items'.tr().replaceAll('0', items.length.toString()),
+                ),
               ],
             ),
             SizedBox(width: 20),
