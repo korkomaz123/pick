@@ -102,9 +102,10 @@ initOneSignalPlatform() {
     DynamicLinkService().dynamicLinkHandler(Uri.parse(launchUrl));
   });
 
-  // OneSignal.shared.setInAppMessageClickedHandler((action) {
-
-  // });
+  OneSignal.shared.setInAppMessageClickedHandler((action) {
+    String actionId = action.clickName;
+    DynamicLinkService().dynamicLinkHandler(Uri.parse(actionId));
+  });
 
   OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
     // Will be called whenever the permission changes
