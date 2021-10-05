@@ -68,7 +68,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
                   ),
                 );
               },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 3 / 4),
             ),
           _buildAppBar(),
         ],

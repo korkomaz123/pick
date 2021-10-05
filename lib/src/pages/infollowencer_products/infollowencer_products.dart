@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InfollowencerProductsPage extends StatefulWidget {
   final dynamic arguments;
@@ -172,8 +173,26 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 radius: 50,
               ),
             Spacer(),
-            Text(
-              '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
+            Column(
+              children: [
+                Text(
+                  '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
+                  style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                ),
+                if (_info['coupon'] != null && _info['coupon'].toString().isNotEmpty)
+                  RichText(
+                    text: TextSpan(
+                      text: '${'coupon'.tr()} : ',
+                      style: TextStyle(fontSize: 20, color: Colors.orange, fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                          text: '${_info['coupon']}',
+                          style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
             SizedBox(width: 20),
           ],
