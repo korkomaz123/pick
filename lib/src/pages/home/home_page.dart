@@ -73,8 +73,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   ScrollController _scrollController = ScrollController();
   ScrollDirection _prevDirection = ScrollDirection.forward;
 
-  Timer _timer;
-
   @override
   void initState() {
     super.initState();
@@ -85,27 +83,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _homeProvider = context.read<HomeChangeNotifier>();
     _loadHomePage();
     _preloadSetup();
-
-    dynamicLinkService.initialDynamicLink();
     _scrollController.addListener(_onScroll);
+    dynamicLinkService.initialDynamicLink();
+    dynamicLinkService.retrieveDynamicLink();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _timer = Timer(
-        Duration(milliseconds: 1000),
-        () => dynamicLinkService.retrieveDynamicLink(),
-      );
+      // dynamicLinkService.retrieveDynamicLink();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (_timer != null) {
-      _timer.cancel();
-    }
     super.dispose();
   }
 
