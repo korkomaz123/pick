@@ -459,6 +459,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartId = await localStorageRepository.getCartId();
         } else {
           cartId = await myCartRepository.getShoppingCart();
+          await localStorageRepository.setCartId(cartId);
         }
       }
       notifyListeners();

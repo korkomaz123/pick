@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class AuthChangeNotifier extends ChangeNotifier {
   final _signInRepository = SignInRepository();
+  final _localRepository = LocalStorageRepository();
   UserEntity currentUser;
+
+  Future getCurrentUser() async {
+    String token = await _localRepository.getToken();
+    if (token.isNotEmpty) {
+      SignInRepository signInRepo = SignInRepository();
+      final result = await signInRepo.getCurrentUser(token);
+      if (result['code'] == 'SUCCESS') {
+        result['data']['customer']['token'] = token;
+        result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
+        currentUser = UserEntity.fromJson(result['data']['customer']);
+      } else {
+        await _localRepository.removeToken();
+      }
+    }
+  }
 
   Future login(
     String email,

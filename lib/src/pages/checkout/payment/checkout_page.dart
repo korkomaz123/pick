@@ -72,16 +72,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user?.token != null && addressChangeNotifier.defaultAddress == null ||
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
-  void _loadData() async {
-    user = await Preload.currentUser;
-
-    if (paymentMethods.isEmpty) {
-      paymentMethods = await checkoutRepo.getPaymentMethod();
+  void _loadAssetData() async {
+    try {
+      user = await Preload.currentUser;
+      print(paymentMethods.length);
+      if (paymentMethods.isEmpty) {
+        paymentMethods = await checkoutRepo.getPaymentMethod();
+      }
+      print(paymentMethods.length);
+      if (widget.reorder != null) {
+        payment = widget.reorder.paymentMethod.id;
+      }
+      setState(() {});
+    } catch (e) {
+      print('CHECKOUT PAGE LOAD ASSET DATA ERROR: $e');
     }
-    if (widget.reorder != null) {
-      payment = widget.reorder.paymentMethod.id;
-    }
-    setState(() {});
   }
 
   @override
@@ -104,7 +109,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       'message': '',
     };
 
-    _loadData();
+    _loadAssetData();
   }
 
   void _onProcess() {
@@ -127,11 +132,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaCheckoutAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Consumer<MarkaaAppChangeNotifier>(
-          builder: (_, __, ___) {
-            return Column(
+      body: Consumer<MarkaaAppChangeNotifier>(
+        builder: (_, __, ___) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PaymentAddress(),
@@ -178,9 +183,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 _buildNote(),
                 SizedBox(height: 100.h),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       bottomSheet: _buildPlacePaymentButton(),
     );

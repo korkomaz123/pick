@@ -2,15 +2,11 @@ import 'package:markaa/src/data/models/index.dart';
 
 /// category list for home screen
 List<CategoryEntity> homeCategories = [];
-
 List<RegionEntity> regions = [];
-int wishlistCount = 0;
-List<ProductModel> wishlistItems = [];
-List<String> wishlistIds = [];
-
-Map<String, dynamic> orderDetails = {};
 List<ShippingMethodEntity> shippingMethods = [];
 List<PaymentMethodEntity> paymentMethods = [];
+
+Map<String, dynamic> orderDetails = {};
 
 List<String> sortByList = [
   'price_low_high',
