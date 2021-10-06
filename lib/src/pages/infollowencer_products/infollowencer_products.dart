@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InfollowencerProductsPage extends StatefulWidget {
   final dynamic arguments;
@@ -81,19 +82,24 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Wrap(
-                          children: items
-                              .map(
-                                (item) => ProductVCard(
-                                  product: ProductModel.fromJson(item),
-                                  cardWidth: 187.25.w,
-                                  cardHeight: 280.h,
-                                  isShoppingCart: true,
-                                  isWishlist: true,
-                                  isShare: true,
-                                ),
-                              )
-                              .toList(),
+                        child: Container(
+                          color: Colors.grey.shade200,
+                          child: Wrap(
+                            spacing: 2.w,
+                            runSpacing: 2.w,
+                            children: items
+                                .map(
+                                  (item) => ProductVCard(
+                                    product: ProductModel.fromJson(item),
+                                    cardWidth: 184.25.w,
+                                    cardHeight: 280.h,
+                                    isShoppingCart: true,
+                                    isWishlist: true,
+                                    isShare: true,
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
                       ),
                     )
@@ -161,9 +167,12 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
       top: 40.h,
       left: 0,
       right: 0,
-      child: Padding(
+      child: Container(
+        color: Colors.grey.shade100,
+        height: 110.h,
         padding: const EdgeInsets.all(8.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_info['profile_picture'] != null)
               CircleAvatar(
@@ -172,8 +181,49 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 radius: 50,
               ),
             Spacer(),
-            Text(
-              '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'AvenirMedium',
+                  ),
+                ),
+                if (_info['coupon'] != null && _info['coupon'].toString().isNotEmpty)
+                  RichText(
+                    text: TextSpan(
+                      text: '${'coupon'.tr()} : ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'AvenirMedium',
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '${_info['coupon']}',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'AvenirMedium',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: Container(),
+                ),
+                Text(
+                  'items'.tr().replaceAll('0', items.length.toString()),
+                ),
+              ],
             ),
             SizedBox(width: 20),
           ],

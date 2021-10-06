@@ -392,5 +392,6 @@
     "no_reviews": "sorry there is no reviews on this products",
     "cashback": "Cashback",
     "coupon_apply_notice": "This item doesn't include the coupons Offer.",
-    "cart_empty_error": "Sorry! There is no items in your cart."
+    "cart_empty_error": "Sorry! There is no items in your cart.",
+    "coupon": "Discount Coupon"
 }
