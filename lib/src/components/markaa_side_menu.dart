@@ -398,15 +398,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
     orderChangeNotifier.initializeOrders();
     wishlistChangeNotifier.initialize();
-
     myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-
     homeChangeNotifier.loadRecentlyViewedGuest();
 
     progressService.hideProgress();
-
     Navigator.pop(context);
     Navigator.popUntil(
       context,
