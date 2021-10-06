@@ -209,11 +209,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);
 
-    OneSignal.shared.sendTags({
-      'cart_update': '',
-      'product_name': '',
-      'product_image': '',
-    });
+    // OneSignal.shared.sendTags({
+    //   'cart_update': '',
+    //   'product_name': '',
+    //   'product_image': '',
+    // });
 
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
     Adjust.trackEvent(adjustEvent);

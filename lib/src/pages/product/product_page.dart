@@ -465,11 +465,11 @@ class _ProductPageState extends State<ProductPage>
 
   _onBuySuccess() {
     /// Send the tag to onesignal for adding item to cart
-    OneSignal.shared.sendTags({
-      'cart_update': DateTime.now().microsecondsSinceEpoch,
-      'product_name': product.name,
-      'product_image': product.imageUrl
-    });
+    // OneSignal.shared.sendTags({
+    //   'cart_update': DateTime.now().microsecondsSinceEpoch,
+    //   'product_name': product.name,
+    //   'product_image': product.imageUrl
+    // });
 
     /// Trigger the adjust event for adding item to cart
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);

@@ -314,11 +314,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       } else {
         if (cartTotalCount == 0) {
-          OneSignal.shared.sendTags({
-            'cart_update': '',
-            'product_name': '',
-            'product_image': '',
-          });
+          // OneSignal.shared.sendTags({
+          //   'cart_update': '',
+          //   'product_name': '',
+          //   'product_image': '',
+          // });
         }
       }
     } catch (e) {

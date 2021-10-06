@@ -97,7 +97,7 @@ class _MyCartPageState extends State<MyCartPage>
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
-    OneSignal.shared.addTrigger('page', 'checkout');
+    // OneSignal.shared.addTrigger('page', 'checkout');
     _loadData();
   }
 

@@ -60,7 +60,7 @@ void main() async {
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
 
-  initOneSignalPlatform();
+  // initOneSignalPlatform();
 
   runApp(
     EasyLocalization(

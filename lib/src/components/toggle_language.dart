@@ -46,8 +46,8 @@ class ToggleLanguageWidget extends StatelessWidget {
 
             String lang = _globalProvider.languages[0] == value ? 'en' : 'ar';
             _globalProvider.changeLanguage(lang);
-            await OneSignal.shared.sendTag('lang', lang);
-            await Preload.appOpen();
+            await // OneSignal.shared.sendTag('lang', lang);
+                await Preload.appOpen();
 
             progressService.hideProgress();
             Navigator.pushNamedAndRemoveUntil(
