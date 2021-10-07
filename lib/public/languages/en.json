@@ -393,5 +393,6 @@
     "cashback": "Cashback",
     "coupon_apply_notice": "This item doesn't include the coupons Offer.",
     "cart_empty_error": "Sorry! There is no items in your cart.",
-    "coupon": "Discount Coupon"
+    "coupon": "Discount Coupon",
+    "connection_error": "Oops! Connection is poor, please try again later."
 }

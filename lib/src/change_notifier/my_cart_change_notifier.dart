@@ -617,7 +617,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       print(result);
       onSuccess(result['transaction']['url'], result['id']);
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 
@@ -637,7 +637,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['response']['message']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 
@@ -664,7 +664,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['response']['message']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 

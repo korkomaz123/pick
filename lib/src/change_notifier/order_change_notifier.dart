@@ -143,7 +143,8 @@ class OrderChangeNotifier extends ChangeNotifier {
         };
         final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
         if (Platform.isAndroid) {
-          deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+          deviceData =
+              _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
         } else if (Platform.isIOS) {
           deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
         }
@@ -151,13 +152,18 @@ class OrderChangeNotifier extends ChangeNotifier {
       } catch (e) {}
 
       String isVirtual = isWallet ? '1' : '0';
-      final result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
+      final result =
+          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
       if (result['code'] == 'SUCCESS') {
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
 
-        SlackChannels.send('''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',SlackChannels.logAddOrder);
-        if (orderDetails['token'] != null && orderDetails['token'] != '' && !isWallet) {
+        SlackChannels.send(
+            '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',
+            SlackChannels.logAddOrder);
+        if (orderDetails['token'] != null &&
+            orderDetails['token'] != '' &&
+            !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
           await loadOrderHistories(user.token, lang);
@@ -167,13 +173,15 @@ class OrderChangeNotifier extends ChangeNotifier {
 
         onSuccess(result['payurl'], newOrder);
       } else {
-        SlackChannels.send('new Order [${result['code']}] : ${result['errorMessage']}', SlackChannels.logAddOrder);
+        SlackChannels.send(
+            'new Order [${result['code']}] : ${result['errorMessage']}',
+            SlackChannels.logAddOrder);
 
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
       reportOrderIssue(e.toString(), orderDetails);
     }
   }
@@ -188,7 +196,8 @@ class OrderChangeNotifier extends ChangeNotifier {
     try {
       final orderId = order.orderId;
 
-      final result = await orderRepository.cancelOrderById(orderId, Preload.language);
+      final result =
+          await orderRepository.cancelOrderById(orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
@@ -200,7 +209,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -217,7 +226,8 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, product, imageName);
 
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
@@ -228,7 +238,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -246,14 +256,15 @@ class OrderChangeNotifier extends ChangeNotifier {
   ) async {
     onProcess();
     try {
-      final result = await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.returnOrder(
+          token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         onSuccess();
       } else {
         onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 
@@ -269,14 +280,15 @@ class OrderChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
 
     try {
-      final result = await orderRepository.sendAsGift(token, sender, receiver, message);
+      final result =
+          await orderRepository.sendAsGift(token, sender, receiver, message);
       if (result['code'] == 'SUCCESS') {
         if (onSuccess != null) onSuccess(result['gift_message_id']);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -286,8 +298,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -301,8 +317,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': orderDetails,
       'customer': user?.token != null ? user.toJson() : 'guest',
-      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };

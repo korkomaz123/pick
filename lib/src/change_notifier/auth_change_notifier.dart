@@ -44,7 +44,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -74,7 +74,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -91,7 +91,7 @@ class AuthChangeNotifier extends ChangeNotifier {
       currentUser = null;
       if (onSuccess != null) onSuccess();
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -119,7 +119,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -139,7 +139,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 }

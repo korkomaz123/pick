@@ -42,7 +42,7 @@ class AddressChangeNotifier extends ChangeNotifier {
       notifyListeners();
       if (onSuccess != null) onSuccess();
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -110,7 +110,7 @@ class AddressChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -135,7 +135,7 @@ class AddressChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -163,7 +163,7 @@ class AddressChangeNotifier extends ChangeNotifier {
         onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 }
