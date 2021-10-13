@@ -152,15 +152,18 @@ class OrderChangeNotifier extends ChangeNotifier {
       } catch (e) {}
 
       String isVirtual = isWallet ? '1' : '0';
+
       final result =
           await orderRepository.placeOrder(orderDetails, lang, isVirtual);
       submitOrderResult(result, orderDetails);
+
       if (result['code'] == 'SUCCESS') {
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
 
         SlackChannels.send(
-            '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',
-            SlackChannels.logAddOrder);
+          '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',
+          SlackChannels.logAddOrder,
+        );
         if (orderDetails['token'] != null &&
             orderDetails['token'] != '' &&
             !isWallet) {
@@ -174,8 +177,9 @@ class OrderChangeNotifier extends ChangeNotifier {
         onSuccess(result['payurl'], newOrder);
       } else {
         SlackChannels.send(
-            'new Order [${result['code']}] : ${result['errorMessage']}',
-            SlackChannels.logAddOrder);
+          'new Order [${result['code']}] : ${result['errorMessage']}',
+          SlackChannels.logAddOrder,
+        );
 
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);

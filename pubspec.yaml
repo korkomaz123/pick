@@ -51,7 +51,7 @@ dependencies:
   flutter_svg: ^0.22.0
   flutter_swiper: ^1.1.6
   font_awesome_flutter: ^9.0.0
-  geolocator: ^7.0.3
+  geolocator: ^7.7.0
   google_fonts: ^2.0.0
   google_maps_flutter: ^2.0.3
   google_sign_in: ^5.0.2

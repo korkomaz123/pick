@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     Preload.setupAdjustSDK();
     Preload.currentUser.then((data) {
       user = data;
-      // OneSignal.shared.sendTag('wallet', user?.balance ?? 0);
+      OneSignal.shared.sendTag('wallet', user?.balance ?? 0);
       NotificationSetup().init();
       _onLoadData();
     });

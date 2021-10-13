@@ -31,15 +31,15 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
   @override
   void initState() {
     super.initState();
-
-    _cartProvider = context.read<MyCartChangeNotifier>();
-
-    Future.delayed(Duration.zero, () async {
-      await _cartProvider.activateCart();
-    });
-
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.failedPayment);
     Adjust.trackEvent(adjustEvent);
+
+    if (!widget.isReorder) {
+      _cartProvider = context.read<MyCartChangeNotifier>();
+      _cartProvider.activateCart().then((value) {
+        print('CART ACTIVATED: $value');
+      });
+    }
   }
 
   @override
@@ -113,17 +113,10 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
         onPressed: () {
-          if (widget?.isReorder != null && widget.isReorder) {
-            Navigator.popAndPushNamed(
-              context,
-              Routes.myCart,
-            );
-          } else {
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == Routes.myCart,
-            );
-          }
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == Routes.myCart,
+          );
         },
         radius: 30,
       ),

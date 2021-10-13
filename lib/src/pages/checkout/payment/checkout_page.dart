@@ -25,6 +25,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -382,6 +383,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       _onSuccessOrder(order);
       if (payment == 'wallet') {
         user.balance -= double.parse(order.totalPrice);
+        OneSignal.shared.sendTag('wallet', user.balance);
       }
 
       /// payment method is equal to cod, go to success page directly

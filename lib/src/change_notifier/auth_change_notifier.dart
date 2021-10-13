@@ -38,7 +38,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
-        // OneSignal.shared.sendTag('wallet', currentUser.balance);
+        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
         if (onSuccess != null) onSuccess(currentUser);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
@@ -68,7 +68,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
-        // OneSignal.shared.sendTag('wallet', currentUser.balance);
+        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
         if (onSuccess != null) onSuccess(currentUser);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
@@ -87,7 +87,7 @@ class AuthChangeNotifier extends ChangeNotifier {
 
     try {
       await _signInRepository.logout(currentUser.token);
-      // OneSignal.shared.sendTag('wallet', 0);
+      OneSignal.shared.sendTag('wallet', 0);
       currentUser = null;
       if (onSuccess != null) onSuccess();
     } catch (e) {
@@ -113,7 +113,7 @@ class AuthChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         currentUser = UserEntity.fromJson(result['user']);
-        // OneSignal.shared.sendTag('wallet', currentUser.balance);
+        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
         if (onSuccess != null) onSuccess(currentUser);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);

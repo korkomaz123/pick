@@ -249,7 +249,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e.toString());
-      if (onFailure != null) onFailure('Network connection is bad');
+      if (onFailure != null) onFailure('connection_error');
       reportCartIssue(e.toString(), data);
       notifyListeners();
     }
@@ -282,7 +282,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   //       onSuccess();
   //     }
   //   } catch (e) {
-  //     onFailure('Network connection is bad');
+  //     onFailure('connection_error');
   //     reportCartIssue(e.toString(), data);
   //   }
   // }
@@ -314,15 +314,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       } else {
         if (cartTotalCount == 0) {
-          // OneSignal.shared.sendTags({
-          //   'cart_update': '',
-          //   'product_name': '',
-          //   'product_image': '',
-          // });
+          OneSignal.shared.sendTags({
+            'cart_update': '',
+            'product_name': '',
+            'product_image': '',
+          });
         }
       }
     } catch (e) {
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       cartTotalPrice += item.rowPrice;
       cartDiscountedTotalPrice += getDiscountedPrice(item);
       cartItemCount += 1;
@@ -383,10 +383,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
     } catch (e) {
       print(e.toString());
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       reportCartIssue(e.toString(), data);
-
-      // if (processStatus != ProcessStatus.process) await getCartItems(lang);
     }
   }
 
@@ -434,7 +432,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]);
@@ -468,16 +466,18 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> activateCart() async {
+  Future<bool> activateCart() async {
     try {
       final result = await myCartRepository.activateCart(cartId);
       if (result['code'] == 'SUCCESS') {
-        print('activated your cart success');
+        return true;
       } else {
         print('activated failure: ${result['errorMessage']}');
+        return false;
       }
     } catch (e) {
       print('activated catch failure:  $e');
+      return false;
     }
   }
 

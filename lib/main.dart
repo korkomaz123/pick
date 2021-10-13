@@ -6,14 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 import 'slack.dart';
 import 'src/routes/routes.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
+import 'src/utils/services/dynamic_link_service.dart';
 
 const bool USE_FIRESTORE_EMULATOR = false;
 
@@ -22,8 +23,9 @@ void main() async {
 
   /// Firebase initialize
   await Firebase.initializeApp();
-
   await EasyLocalization.ensureInitialized();
+  await DefaultCacheManager().emptyCache();
+
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -35,7 +37,7 @@ void main() async {
      ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
         SlackChannels.logAppErrors);
     return Center(
-      child: Text("There was an error! ${e.exception}"),
+      child: Text("Something went wrong"),
     );
   });
 
@@ -60,7 +62,7 @@ void main() async {
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
 
-  // initOneSignalPlatform();
+  initOneSignalPlatform();
 
   runApp(
     EasyLocalization(

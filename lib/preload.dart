@@ -98,7 +98,6 @@ class Preload {
         .catchError((error) {
       print('GET REGION LIST TIMEOUT ERROR: $error');
     });
-    homeChangeNotifier.getHomeCategories();
   }
 
   static Future<UserEntity> get currentUser => _getCurrentUser();
@@ -148,14 +147,15 @@ class Preload {
             .read<AddressChangeNotifier>()
             .loadAddresses(user.token);
       }
+      homeChangeNotifier.getHomeCategories();
     }
   }
 
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      AdjustEnvironment.production,
-      // AdjustEnvironment.sandbox,
+      // AdjustEnvironment.production,
+      AdjustEnvironment.sandbox,
     );
     config.logLevel = AdjustLogLevel.verbose;
 

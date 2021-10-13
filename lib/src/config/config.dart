@@ -67,3 +67,7 @@ class MarkaaNotificationChannels {
   static const String enChannel = 'markaa-all-en';
   static const String arChannel = 'markaa-all-ar';
 }
+
+class SmartLookConfig {
+  static const String key = 'be238addb42844bb6668c56c0e5c2612903c8077';
+}

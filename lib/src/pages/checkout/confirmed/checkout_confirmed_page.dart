@@ -28,15 +28,15 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   @override
   void initState() {
     super.initState();
-    // OneSignal.shared.getTags().then((tags) {
-    // if (tags.containsKey('amount_spent')) {
-    //   double orderPrice =
-    //       StringService.roundDouble(widget.order.totalPrice, 3);
-    //   double value =
-    //       StringService.roundDouble(tags['amount_spent'].toString(), 3);
-    // OneSignal.shared.sendTag('amount_sent', value + orderPrice);
-    // }
-    // });
+    OneSignal.shared.getTags().then((tags) {
+      if (tags.containsKey('amount_spent')) {
+        double orderPrice =
+            StringService.roundDouble(widget.order.totalPrice, 3);
+        double value =
+            StringService.roundDouble(tags['amount_spent'].toString(), 3);
+        OneSignal.shared.sendTag('amount_sent', value + orderPrice);
+      }
+    });
   }
 
   @override
@@ -66,9 +66,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               ),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(
-                  vertical: 10.h,
-                ),
+                margin: EdgeInsets.symmetric(vertical: 10.h),
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 color: greyLightColor,
                 child: Text(
