@@ -55,7 +55,7 @@ class WalletChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      if (onFailure != null) onFailure(e.toString());
+      if (onFailure != null) onFailure('connection_error');
     }
     notifyListeners();
   }

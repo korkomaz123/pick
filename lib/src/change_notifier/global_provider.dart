@@ -11,13 +11,7 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 class GlobalProvider extends ChangeNotifier {
   Map<String, List<CategoryMenuEntity>> sideMenus = {"ar": [], "en": []};
   List<dynamic> languages = <dynamic>['EN', 'عربى'];
-
-  UserEntity currentUser;
-
-  void updateUser(UserEntity loggedInUser) {
-    currentUser = loggedInUser;
-    notifyListeners();
-  }
+  List<PaymentMethodEntity> paymentMethods = [];
 
   changeLanguage(String val, {fromSplash = false}) {
     BuildContext _context = Preload.navigatorKey.currentContext;
@@ -26,32 +20,20 @@ class GlobalProvider extends ChangeNotifier {
       final enLocale = EasyLocalization.of(_context).supportedLocales.first;
       final arLocale = EasyLocalization.of(_context).supportedLocales.last;
 
-      _current == 'ar' ? _context.setLocale(enLocale) : _context.setLocale(arLocale);
+      _current == 'ar'
+          ? _context.setLocale(enLocale)
+          : _context.setLocale(arLocale);
 
       lang = Preload.language = _current == "ar" ? "en" : "ar";
 
-      FirebaseMessaging.instance.unsubscribeFromTopic(lang == 'en' ? MarkaaNotificationChannels.arChannel : MarkaaNotificationChannels.enChannel);
-      FirebaseMessaging.instance.subscribeToTopic(lang == 'en' ? MarkaaNotificationChannels.enChannel : MarkaaNotificationChannels.arChannel);
+      FirebaseMessaging.instance.unsubscribeFromTopic(lang == 'en'
+          ? MarkaaNotificationChannels.arChannel
+          : MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance.subscribeToTopic(lang == 'en'
+          ? MarkaaNotificationChannels.enChannel
+          : MarkaaNotificationChannels.arChannel);
     }
     fetchCategories();
-
-    // // notifyListeners();
-    // // Update Details page if i am in details page
-    // // if (_context.read<ProductChangeNotifier>().productDetails != null) {
-    // //   _context.read<ProductChangeNotifier>().getProductDetails(_context.read<ProductChangeNotifier>().productDetails.productId);
-    // //   _context.read<ProductChangeNotifier>().productDetails = null;
-    // // }
-
-    // // update cart items
-    // final _cartProvider = _context.read<MyCartChangeNotifier>();
-    // _cartProvider.getCartItems(lang);
-
-    // // update homde data
-    // final _homeProvider = _context.read<HomeChangeNotifier>();
-
-    // if (!fromSplash) _homeProvider.changeLanguage();
-
-    // NotificationSetup().updateFcmDeviceToken();
   }
 
   GlobalProvider() {
@@ -59,9 +41,9 @@ class GlobalProvider extends ChangeNotifier {
   }
 
   fetchCategories() async {
-    print("currentLanguage $currentLanguage");
     String _lang = currentLanguage;
-    if (sideMenus[_lang].length == 0) sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
+    if (sideMenus[_lang].length == 0)
+      sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
     notifyListeners();
   }
 
@@ -77,5 +59,9 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get currentLanguage => EasyLocalization.of(Preload.navigatorKey.currentContext).locale.languageCode.toLowerCase();
+  String get currentLanguage =>
+      EasyLocalization.of(Preload.navigatorKey.currentContext)
+          .locale
+          .languageCode
+          .toLowerCase();
 }

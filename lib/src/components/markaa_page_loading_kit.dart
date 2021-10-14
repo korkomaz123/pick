@@ -260,3 +260,37 @@ class _SpinningLinesBarState extends State<SpinningLinesBar>
     );
   }
 }
+
+class ThreeBounceLoadingBar extends StatefulWidget {
+  @override
+  _ThreeBounceLoadingBarState createState() => _ThreeBounceLoadingBarState();
+}
+
+class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar>
+    with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitThreeBounce(
+      size: 20,
+      controller: _controller,
+      color: primarySwatchColor,
+    );
+  }
+}

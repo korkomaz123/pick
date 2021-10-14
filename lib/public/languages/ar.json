@@ -327,7 +327,7 @@
     "payment_title": "دفع",
     "continue_with_google": "تواصل مع جوجل",
     "continue_with_facebook": "تواصل مع الفيسبوك",
-    "continue_with_apple": "تواصل مع أبل",
+    "continue_with_apple": "Apple الاستمرار باستخدام",
     "stock_count": "باقي # متوفر",
     "payment_abort_dialog_text": "الخروج من عمليه الدفع",
     "not_available": "غير متوفر",
@@ -390,5 +390,8 @@
     "no_items_in_list": "عفوا,لا يوجد منتجات في القائمة لعرضها",
     "no_reviews": "عفوا, لا يوجد تقييمات لهذا المنتج",
     "cashback": "استرداد النقود",
-    "coupon_apply_notice": "كبون الخصم لا يشمل هذا المنتج."
+    "coupon_apply_notice": "كبون الخصم لا يشمل هذا المنتج.",
+    "cart_empty_error": "آسف! لا توجد عناصر في سلة التسوق الخاصة بك.",
+    "coupon": "كوبون الخصم",
+    "connection_error": "وجه الفتاة! الاتصال ضعيف ، يرجى المحاولة مرة أخرى لاحقًا."
 }

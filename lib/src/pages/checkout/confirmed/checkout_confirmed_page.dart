@@ -1,6 +1,7 @@
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -9,11 +10,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/utils/services/string_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class CheckoutConfirmedPage extends StatefulWidget {
-  final String orderNo;
+  final OrderEntity order;
 
-  CheckoutConfirmedPage({this.orderNo});
+  CheckoutConfirmedPage({this.order});
 
   @override
   _CheckoutConfirmedPageState createState() => _CheckoutConfirmedPageState();
@@ -21,6 +24,20 @@ class CheckoutConfirmedPage extends StatefulWidget {
 
 class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   TextEditingController noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    OneSignal.shared.getTags().then((tags) {
+      if (tags.containsKey('amount_spent')) {
+        double orderPrice =
+            StringService.roundDouble(widget.order.totalPrice, 3);
+        double value =
+            StringService.roundDouble(tags['amount_spent'].toString(), 3);
+        OneSignal.shared.sendTag('amount_sent', value + orderPrice);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +66,13 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
               ),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(
-                  vertical: 10.h,
-                ),
+                margin: EdgeInsets.symmetric(vertical: 10.h),
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 color: greyLightColor,
                 child: Text(
                   'checkout_ordered_success_text'
                       .tr()
-                      .replaceFirst('0', widget.orderNo),
+                      .replaceFirst('0', widget.order.orderNo),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
                     fontSize: 14.sp,

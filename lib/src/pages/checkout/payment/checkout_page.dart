@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
@@ -17,7 +17,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
-// import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -33,7 +32,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
-// import 'widgets/deliver_as_gift_form.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/payment_method_list.dart';
@@ -66,6 +64,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
+  AuthChangeNotifier authChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -75,16 +74,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user?.token != null && addressChangeNotifier.defaultAddress == null ||
       user?.token == null && addressChangeNotifier.guestAddress == null;
 
-  void _loadData() async {
-    user = await Preload.currentUser;
-
-    if (paymentMethods.isEmpty) {
-      paymentMethods = await checkoutRepo.getPaymentMethod();
+  void _loadAssetData() async {
+    try {
+      user = await Preload.currentUser;
+      print(paymentMethods.length);
+      if (paymentMethods.isEmpty) {
+        paymentMethods = await checkoutRepo.getPaymentMethod();
+      }
+      print(paymentMethods.length);
+      if (widget.reorder != null) {
+        payment = widget.reorder.paymentMethod.id;
+      }
+      setState(() {});
+    } catch (e) {
+      print('CHECKOUT PAGE LOAD ASSET DATA ERROR: $e');
     }
-    if (widget.reorder != null) {
-      payment = widget.reorder.paymentMethod.id;
-    }
-    setState(() {});
   }
 
   @override
@@ -94,6 +98,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -107,7 +112,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       'message': '',
     };
 
-    _loadData();
+    _loadAssetData();
   }
 
   void _onProcess() {
@@ -120,16 +125,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaCheckoutAppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Consumer<MarkaaAppChangeNotifier>(
-          builder: (_, __, ___) {
-            return Column(
+      body: Consumer<MarkaaAppChangeNotifier>(
+        builder: (_, __, ___) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PaymentAddress(),
@@ -176,9 +186,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 _buildNote(),
                 SizedBox(height: 100.h),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       bottomSheet: _buildPlacePaymentButton(),
     );
@@ -370,12 +380,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
     progressService.hideProgress();
-    print(payUrl);
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);
       if (payment == 'wallet') {
         user.balance -= double.parse(order.totalPrice);
+        authChangeNotifier.updateUserEntity(user);
       }
 
       /// payment method is equal to cod, go to success page directly
@@ -383,7 +393,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         context,
         Routes.checkoutConfirmed,
         (route) => route.settings.name == Routes.home,
-        arguments: order.orderNo,
+        arguments: order,
       );
     } else if (isURL(payUrl)) {
       /// payment method is knet or tap, go to payment webview page

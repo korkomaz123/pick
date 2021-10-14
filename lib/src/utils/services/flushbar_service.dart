@@ -20,10 +20,7 @@ class FlushBarService {
 
   void showAddCartMessage(ProductModel product) {
     Flushbar(
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       borderRadius: 10.sp,
       messageText: Container(
         width: 300.w,
@@ -137,10 +134,7 @@ class FlushBarService {
     );
   }
 
-  showErrorCustomDialog(
-    String title,
-    String message,
-  ) {
+  showErrorCustomDialog(String title, String message) {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
@@ -165,7 +159,7 @@ class FlushBarService {
               padding: const EdgeInsets.all(8.0),
               child: Center(
                 child: Text(
-                  message,
+                  message.tr(),
                   style: mediumTextStyle.copyWith(fontSize: 14.sp),
                 ),
               ),
@@ -202,7 +196,7 @@ class FlushBarService {
               padding: const EdgeInsets.all(8.0),
               child: Center(
                 child: Text(
-                  message,
+                  message.tr(),
                   style: mediumTextStyle.copyWith(fontSize: 14.sp),
                 ),
               ),
@@ -229,7 +223,7 @@ class FlushBarService {
       context: context,
       type: CoolAlertType.error,
       title: 'error'.tr(),
-      text: message,
+      text: message.tr(),
       confirmBtnText: 'close'.tr(),
       confirmBtnColor: primaryColor,
       borderRadius: 2.sp,
@@ -255,7 +249,7 @@ class FlushBarService {
   void showSuccessMessage(String message) {
     Flushbar(
       messageText: Text(
-        message,
+        message.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: 15.sp,
@@ -272,7 +266,7 @@ class FlushBarService {
   void showInformMessage(String message) {
     Flushbar(
       messageText: Text(
-        message,
+        message.tr(),
         style: mediumTextStyle.copyWith(
           color: Colors.white,
           fontSize: 15.sp,

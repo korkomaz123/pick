@@ -248,7 +248,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e.toString());
-      if (onFailure != null) onFailure('Network connection is bad');
+      if (onFailure != null) onFailure('connection_error');
       reportCartIssue(e.toString(), data);
       notifyListeners();
     }
@@ -281,7 +281,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   //       onSuccess();
   //     }
   //   } catch (e) {
-  //     onFailure('Network connection is bad');
+  //     onFailure('connection_error');
   //     reportCartIssue(e.toString(), data);
   //   }
   // }
@@ -313,7 +313,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       cartTotalPrice += item.rowPrice;
       cartDiscountedTotalPrice += getDiscountedPrice(item);
       cartItemCount += 1;
@@ -374,10 +374,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
     } catch (e) {
       print(e.toString());
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       reportCartIssue(e.toString(), data);
-
-      // if (processStatus != ProcessStatus.process) await getCartItems(lang);
     }
   }
 
@@ -419,13 +417,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
             getDiscountedPrice(cartItemsMap[item.itemId]);
         notifyListeners();
 
-        if (processStatus != ProcessStatus.process) {
-          await getCartItems(lang);
-        }
+        await getCartItems(lang);
         reportCartIssue(result, data);
       }
     } catch (e) {
-      onFailure('Network connection is bad');
+      onFailure('connection_error');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
       cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]);
@@ -450,6 +446,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartId = await localStorageRepository.getCartId();
         } else {
           cartId = await myCartRepository.getShoppingCart();
+          await localStorageRepository.setCartId(cartId);
         }
       }
       notifyListeners();
@@ -458,16 +455,18 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> activateCart() async {
+  Future<bool> activateCart() async {
     try {
       final result = await myCartRepository.activateCart(cartId);
       if (result['code'] == 'SUCCESS') {
-        print('activated your cart success');
+        return true;
       } else {
         print('activated failure: ${result['errorMessage']}');
+        return false;
       }
     } catch (e) {
       print('activated catch failure:  $e');
+      return false;
     }
   }
 
@@ -607,7 +606,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       print(result);
       onSuccess(result['transaction']['url'], result['id']);
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 
@@ -627,7 +626,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['response']['message']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 
@@ -654,7 +653,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         onFailure(result['response']['message']);
       }
     } catch (e) {
-      onFailure(e.toString());
+      onFailure('connection_error');
     }
   }
 

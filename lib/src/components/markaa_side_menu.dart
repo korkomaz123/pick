@@ -1,4 +1,5 @@
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -10,7 +11,6 @@ import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/category_menu_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -44,14 +44,13 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   int activeIndex;
   double menuWidth;
 
-  SignInBloc signInBloc;
-
   ProgressService progressService;
   FlushBarService flushBarService;
 
   final LocalStorageRepository localRepo = LocalStorageRepository();
   final SettingRepository settingRepo = SettingRepository();
 
+  AuthChangeNotifier authChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   WishlistChangeNotifier wishlistChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -61,13 +60,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   @override
   void initState() {
     super.initState();
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-
-    signInBloc = context.read<SignInBloc>();
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -89,49 +87,33 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       width: menuWidth,
       height: 812.h,
       color: Colors.white,
-      child: BlocConsumer<SignInBloc, SignInState>(
-        listener: (context, state) {
-          if (state is SignOutSubmittedInProcess) {
-            progressService.showProgress();
-          }
-          if (state is SignOutSubmittedSuccess) {
-            _logoutUser();
-          }
-          if (state is SignOutSubmittedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorDialog(state.message);
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildMenuHeader(),
-              Expanded(
-                child: Consumer<GlobalProvider>(
-                  builder: (_, _globalProvider, __) {
-                    String lang = _globalProvider.currentLanguage;
-                    if (_globalProvider.sideMenus[lang].length == 0) {
-                      return Center(
-                        child: PulseLoadingSpinner(),
-                      );
-                    } else {
-                      return SingleChildScrollView(
-                        child: _buildMenuItems(_globalProvider),
-                      );
-                    }
-                  },
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.privacy_tip),
-                onTap: _onPrivacyPolicy,
-                title: Text(
-                  'suffix_agree_terms'.tr(),
-                ),
-              ),
-            ],
-          );
-        },
+      child: Column(
+        children: [
+          _buildMenuHeader(),
+          Expanded(
+            child: Consumer<GlobalProvider>(
+              builder: (_, _globalProvider, __) {
+                String lang = _globalProvider.currentLanguage;
+                if (_globalProvider.sideMenus[lang].length == 0) {
+                  return Center(
+                    child: PulseLoadingSpinner(),
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    child: _buildMenuItems(_globalProvider),
+                  );
+                }
+              },
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.privacy_tip),
+            onTap: _onPrivacyPolicy,
+            title: Text(
+              'suffix_agree_terms'.tr(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -398,7 +380,14 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     final result = await flushBarService.showConfirmDialog(
         message: 'logout_confirm_dialog_text');
     if (result != null) {
-      signInBloc.add(SignOutSubmitted(token: user.token));
+      authChangeNotifier.logout(
+        onProcess: () => progressService.showProgress(),
+        onSuccess: _logoutUser,
+        onFailure: (message) {
+          progressService.hideProgress();
+          flushBarService.showErrorDialog(message);
+        },
+      );
     }
   }
 
@@ -409,15 +398,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
     orderChangeNotifier.initializeOrders();
     wishlistChangeNotifier.initialize();
-
     myCartChangeNotifier.initialize();
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.getCartItems(lang);
-
     homeChangeNotifier.loadRecentlyViewedGuest();
 
     progressService.hideProgress();
-
     Navigator.pop(context);
     Navigator.popUntil(
       context,

@@ -309,7 +309,9 @@ class _ProductListPageState extends State<ProductListPage> {
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         scrollChangeNotifier.initialize();
+        String key = _generateKey(subCategories[activeSubcategoryIndex]);
         await productChangeNotifier.initialLoadFilteredProducts(
+          key,
           brand.optionId,
           subCategories[activeSubcategoryIndex].id,
           filterValues,
@@ -349,19 +351,23 @@ class _ProductListPageState extends State<ProductListPage> {
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         scrollChangeNotifier.initialize();
+        String key = _generateKey(subCategories[activeSubcategoryIndex]);
         if (viewMode == ProductViewModeEnum.category) {
           await productChangeNotifier.initialLoadCategoryProducts(
+            key,
             subCategories[activeSubcategoryIndex].id,
             lang,
           );
         } else if (viewMode == ProductViewModeEnum.brand) {
           await productChangeNotifier.initialLoadBrandProducts(
+            key,
             brand.optionId,
             subCategories[activeSubcategoryIndex].id,
             lang,
           );
         } else {
           await productChangeNotifier.initialLoadSortedProducts(
+            key,
             brand.optionId ?? '',
             subCategories[activeSubcategoryIndex].id,
             sortByItem,
@@ -386,19 +392,23 @@ class _ProductListPageState extends State<ProductListPage> {
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       scrollChangeNotifier.initialize();
+      String key = _generateKey(subCategories[index]);
       if (viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier.initialLoadCategoryProducts(
+          key,
           subCategories[index].id,
           lang,
         );
       } else if (viewMode == ProductViewModeEnum.brand) {
         await productChangeNotifier.initialLoadBrandProducts(
+          key,
           brand.optionId,
           subCategories[index].id,
           lang,
         );
       } else {
         await productChangeNotifier.initialLoadSortedProducts(
+          key,
           brand.optionId ?? '',
           subCategories[activeSubcategoryIndex].id,
           sortByItem,
@@ -418,5 +428,19 @@ class _ProductListPageState extends State<ProductListPage> {
   void _onScrolling() {
     double pos = scrollController.position.pixels;
     scrollChangeNotifier.controlBrandBar(pos);
+  }
+
+  String _generateKey([CategoryEntity category]) {
+    String key;
+    if (viewMode == ProductViewModeEnum.category) {
+      key = category.id;
+    } else if (viewMode == ProductViewModeEnum.brand) {
+      key = brand.optionId + '_' + category.id;
+    } else if (viewMode == ProductViewModeEnum.sort) {
+      key = '${sortByItem}_${brand.optionId ?? ''}_${category.id ?? ''}';
+    } else if (viewMode == ProductViewModeEnum.filter) {
+      key = 'filter_${brand.optionId ?? ''}_${category.id ?? 'all'}';
+    }
+    return key;
   }
 }

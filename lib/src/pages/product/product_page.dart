@@ -10,9 +10,7 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
-import 'package:markaa/src/components/custom/sliding_sheet.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_round_image_button.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
@@ -28,6 +26,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
@@ -187,23 +186,29 @@ class _ProductPageState extends State<ProductPage>
                           children: [
                             ProductSingleProduct(
                               product: product,
-                              productDetails: model.productDetailsMap[productId],
+                              productDetails:
+                                  model.productDetailsMap[productId],
                               model: model,
                             ),
                             ProductReviewTotal(
                               progressService: progressService,
                               model: model,
                               product: model.productDetailsMap[productId],
-                              onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]),
-                              onReviews: () => _onReviews(model.productDetailsMap[productId]),
+                              onFirstReview: () => _onFirstReview(
+                                  model.productDetailsMap[productId]),
+                              onReviews: () => _onReviews(
+                                  model.productDetailsMap[productId]),
                             ),
-                            ProductSameBrandProducts(product: product, model: model),
+                            ProductSameBrandProducts(
+                                product: product, model: model),
                             ProductDetailsTabs(
                               model: model,
                               productEntity: model.productDetailsMap[productId],
                             ),
-                            TopBrandsInCategory(productId: productId, model: model),
-                            ProductRelatedItems(productId: productId, model: model),
+                            TopBrandsInCategory(
+                                productId: productId, model: model),
+                            ProductRelatedItems(
+                                productId: productId, model: model),
                             SizedBox(height: 60.h),
                           ],
                         ),
@@ -458,6 +463,7 @@ class _ProductPageState extends State<ProductPage>
   }
 
   _onBuySuccess() {
+    /// Trigger the adjust event for adding item to cart
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);
 
@@ -478,28 +484,7 @@ class _ProductPageState extends State<ProductPage>
 
   _onAddSuccess() {
     progressService.hideProgress();
-    showSlidingTopSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 0,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: product);
-          },
-        );
-      },
-    );
-
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
-    Adjust.trackEvent(adjustEvent);
+    ActionHandler.addedItemToCartSuccess(context, product);
   }
 
   _onAddFailure(String message) {

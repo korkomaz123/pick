@@ -19,6 +19,6 @@ enum OrderStatusEnum {
   pending_paypal,
   processing
 }
-enum ProductViewModeEnum { category, brand, filter, sort }
+enum ProductViewModeEnum { category, brand, filter, sort, celebrity }
 enum ProcessStatus { none, process, done, failed }
 enum TransactionType { order, transfer, debit, admin_credit, admin_debit }

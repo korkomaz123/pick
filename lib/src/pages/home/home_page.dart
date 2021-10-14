@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -20,6 +22,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:markaa/src/utils/services/onesignal_communicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -28,6 +31,7 @@ import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
 import 'widgets/home_best_watches.dart';
+import 'widgets/home_celebrity.dart';
 import 'widgets/home_discover_stores.dart';
 import 'widgets/home_explore_categories.dart';
 import 'widgets/home_featured_categories.dart';
@@ -63,44 +67,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   HomeChangeNotifier _homeProvider;
   MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  ProductChangeNotifier _productChangeNotifier;
+  MyCartChangeNotifier _myCartChangeNotifier;
+  AuthChangeNotifier _authChangeNotifier;
 
-  DynamicLinkService dynamicLinkService = DynamicLinkService();
+  OneSignalCommunicator _oneSignalCommunicator;
+  DynamicLinkService _dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
-
   ScrollDirection _prevDirection = ScrollDirection.forward;
 
-  @override
-  void initState() {
-    super.initState();
-    _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    _homeProvider = context.read<HomeChangeNotifier>();
-    _loadHomePage();
-
-    Preload.setupAdjustSDK();
-    Preload.currentUser.then((data) {
-      user = data;
-      NotificationSetup().init();
-      _onLoadHomePage();
-    });
-
-    dynamicLinkService.initialDynamicLink();
-    dynamicLinkService.retrieveDynamicLink();
-
-    _scrollController.addListener(_onScroll);
-  }
-
-  _onScroll() {
-    if (_prevDirection != _scrollController.position.userScrollDirection) {
-      if (_prevDirection == ScrollDirection.forward) {
-        _markaaAppChangeNotifier.changeSearchBarStatus(false);
-      } else if (_prevDirection == ScrollDirection.reverse) {
-        _markaaAppChangeNotifier.changeSearchBarStatus(true);
-      }
-    }
-    _prevDirection = _scrollController.position.userScrollDirection;
-  }
-
   void _loadHomePage() {
+    _homeProvider.loadPopup(_onShowPopup);
+
     loadSliderImages = _homeProvider.loadSliderImages();
     getFeaturedCategoriesList = _homeProvider.getFeaturedCategoriesList();
     loadMegaBanner = _homeProvider.loadMegaBanner();
@@ -114,6 +92,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     loadFragrancesBanner = _homeProvider.loadFragrancesBanner();
     loadPerfumes = _homeProvider.loadPerfumes();
     loadBestWatches = _homeProvider.loadBestWatches();
+    gethomecelebrity = _homeProvider.gethomecelebrity();
     loadGrooming = _homeProvider.loadGrooming();
     loadAds = _homeProvider.loadAds();
     loadSmartTech = _homeProvider.loadSmartTech();
@@ -127,6 +106,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getFeaturedCategoriesList = null;
     loadMegaBanner = null;
     loadBestDeals = null;
+    gethomecelebrity = null;
     loadFaceCare = null;
     loadSaleBrands = null;
     loadNewArrivals = null;
@@ -144,18 +124,51 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getViewedProducts = null;
   }
 
-  void _onLoadHomePage() async {
-    Preload.navigatorKey.currentContext
-        .read<ProductChangeNotifier>()
-        .initialize();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartId();
-    await Preload.navigatorKey.currentContext
-        .read<MyCartChangeNotifier>()
-        .getCartItems(Preload.language);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    Preload.setupAdjustSDK();
 
-    _homeProvider.loadPopup(_onShowPopup);
+    _authChangeNotifier = context.read<AuthChangeNotifier>();
+    _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    _productChangeNotifier = context.read<ProductChangeNotifier>();
+    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    _homeProvider = context.read<HomeChangeNotifier>();
+    _oneSignalCommunicator = OneSignalCommunicator(context: context);
+
+    _oneSignalCommunicator.subscribeToChangeNotifiers();
+    _dynamicLinkService.initialDynamicLink();
+    _dynamicLinkService.retrieveDynamicLink();
+
+    _authChangeNotifier.getCurrentUser(
+      onSuccess: (data) async {
+        user = data;
+        NotificationSetup().init();
+        await _myCartChangeNotifier.getCartId();
+        await _myCartChangeNotifier.getCartItems(Preload.language);
+      },
+    );
+    _productChangeNotifier.initialize();
+    _scrollController.addListener(_onScroll);
+    _loadHomePage();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  _onScroll() {
+    if (_prevDirection != _scrollController.position.userScrollDirection) {
+      if (_prevDirection == ScrollDirection.forward) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(false);
+      } else if (_prevDirection == ScrollDirection.reverse) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(true);
+      }
+    }
+    _prevDirection = _scrollController.position.userScrollDirection;
   }
 
   void _onShowPopup(SliderImageEntity popupItem) async {
@@ -171,6 +184,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       getFeaturedCategoriesList,
       loadMegaBanner,
       loadBestDeals,
+      gethomecelebrity,
       loadFaceCare,
       loadSaleBrands,
       loadNewArrivals,
@@ -269,6 +283,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   child: Center(child: PulseLoadingSpinner()),
                                 )
                               : HomeBestDeals(
+                                  homeChangeNotifier: _homeProvider),
+                        ),
+                        FutureBuilder(
+                          future: gethomecelebrity,
+                          builder: (_, snapShot) => snapShot.connectionState ==
+                                  ConnectionState.waiting
+                              ? Container(
+                                  height: 360.h,
+                                  padding: EdgeInsets.all(8.w),
+                                  margin: EdgeInsets.only(bottom: 10.h),
+                                  color: Colors.white,
+                                  child: Center(child: PulseLoadingSpinner()),
+                                )
+                              : HomeCelebrity(
                                   homeChangeNotifier: _homeProvider),
                         ),
                         FutureBuilder(

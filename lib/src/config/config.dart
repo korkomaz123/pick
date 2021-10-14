@@ -3,7 +3,7 @@ const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
 
 class ChatSupport {
-  static const String appKey = '9be222f98ce7dc12af142e27097a8a8c'; //'3c8027a1ab0d1cbe9adcbf0d215bd2b02'; //
+  static const String appKey = '9be222f98ce7dc12af142e27097a8a8c';
 }
 
 class MarkaaReporter {
@@ -12,8 +12,8 @@ class MarkaaReporter {
 }
 
 class MarkaaVersion {
-  static const int androidVersion = 181000;
-  static const int iOSVersion = 181000;
+  static const int androidVersion = 182800;
+  static const int iOSVersion = 182900;
 }
 
 class GoSellSdk {
@@ -30,15 +30,23 @@ class AlgoliaConfig {
 
 class AlgoliaIndexes {
   static const String enProducts = 'magento2_default_products';
-  static const String enPriceDescProducts = 'magento2_default_products_price_default_desc';
-  static const String enPriceAscProducts = 'magento2_default_products_price_default_asc';
-  static const String enCreatedAtDescProducts = 'magento2_default_products_created_at_desc';
-  static const String enCreatedAtAscProducts = 'magento2_default_products_created_at_asc';
+  static const String enPriceDescProducts =
+      'magento2_default_products_price_default_desc';
+  static const String enPriceAscProducts =
+      'magento2_default_products_price_default_asc';
+  static const String enCreatedAtDescProducts =
+      'magento2_default_products_created_at_desc';
+  static const String enCreatedAtAscProducts =
+      'magento2_default_products_created_at_asc';
   static const String arProducts = 'magento2_arabic_products';
-  static const String arPriceDescProducts = 'magento2_arabic_products_price_default_desc';
-  static const String arPriceAscProducts = 'magento2_arabic_products_price_default_asc';
-  static const String arCreatedAtDescProducts = 'magento2_arabic_products_created_at_desc';
-  static const String arCreatedAtAscProducts = 'magento2_arabic_products_created_at_asc';
+  static const String arPriceDescProducts =
+      'magento2_arabic_products_price_default_desc';
+  static const String arPriceAscProducts =
+      'magento2_arabic_products_price_default_asc';
+  static const String arCreatedAtDescProducts =
+      'magento2_arabic_products_created_at_desc';
+  static const String arCreatedAtAscProducts =
+      'magento2_arabic_products_created_at_asc';
 }
 
 class AdjustSDKConfig {
@@ -58,4 +66,8 @@ class AdjustSDKConfig {
 class MarkaaNotificationChannels {
   static const String enChannel = 'markaa-all-en';
   static const String arChannel = 'markaa-all-ar';
+}
+
+class SmartLookConfig {
+  static const String key = 'be238addb42844bb6668c56c0e5c2612903c8077';
 }

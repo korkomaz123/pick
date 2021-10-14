@@ -1,6 +1,9 @@
+import 'package:markaa/env.dart';
+
 class EndPoints {
-  static const String mainDomain = 'https://markaa.com';
-  // static const String mainDomain = 'https://magento-627030-2077233.cloudwaysapps.com';
+  static const String mainDomain = dev
+      ? 'https://magento-627030-2077233.cloudwaysapps.com'
+      : 'https://markaa.com';
   static const String baseUrl = '$mainDomain/customapi/api';
   static const String gatewayform = '$mainDomain/gatewayform.php';
   static const String privacyAndPolicy = '$mainDomain/privacy-policy';
@@ -112,8 +115,12 @@ class EndPoints {
   static const String getProductInfo = '$baseUrl/GetProductInfo';
 
   /// new home section endpoints
+  static const String gethomecelebrity = '$baseUrl/gethomecelebrity';
   static const String homeSection1 = '$baseUrl/getHomepageSection1';
   static const String homeSection2 = '$baseUrl/getHomepageSection2';
   static const String homeSection3 = '$baseUrl/getHomepageSection3';
   static const String homeSection4 = '$baseUrl/getHomepageSection4';
+
+  static const String getAllCelebrities = '$baseUrl/getAllCelebrities';
+  static const String celebrityProducts = '$baseUrl/getCelebrityPage';
 }

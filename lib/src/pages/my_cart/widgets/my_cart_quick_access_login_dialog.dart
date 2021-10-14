@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/api.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -34,7 +35,6 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 
 class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
@@ -54,12 +54,11 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
 
 class _MyCartQuickAccessLoginDialogState
     extends State<MyCartQuickAccessLoginDialog> {
-  SignInBloc signInBloc;
-
   final LocalStorageRepository localRepo = LocalStorageRepository();
   final WishlistRepository wishlistRepo = WishlistRepository();
   final SettingRepository settingRepo = SettingRepository();
 
+  AuthChangeNotifier authChangeNotifier;
   HomeChangeNotifier homeChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
@@ -74,11 +73,10 @@ class _MyCartQuickAccessLoginDialogState
   void initState() {
     super.initState();
 
-    signInBloc = context.read<SignInBloc>();
-
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
@@ -87,7 +85,7 @@ class _MyCartQuickAccessLoginDialogState
     orderChangeNotifier = context.read<OrderChangeNotifier>();
   }
 
-  void _loggedInSuccess(UserEntity loggedInUser) async {
+  void _onLoginSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
       await localRepo.setToken(user.token);
@@ -116,61 +114,47 @@ class _MyCartQuickAccessLoginDialogState
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignInBloc, SignInState>(
-      listener: (context, state) {
-        if (state is SignInSubmittedInProcess) {
-          progressService.showProgress();
-        }
-        if (state is SignInSubmittedSuccess) {
-          _loggedInSuccess(state.user);
-        }
-        if (state is SignInSubmittedFailure) {
-          progressService.hideProgress();
-          flushBarService.showErrorDialog(state.message);
-        }
-      },
-      child: Material(
-        color: Colors.black38,
-        type: MaterialType.transparency,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 375.w,
-              padding: EdgeInsets.only(bottom: 20.h),
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Preload.languageCode == 'en'
-                        ? Alignment.topRight
-                        : Alignment.topLeft,
-                    child: IconButton(
-                      icon: SvgPicture.asset(closeIcon),
-                      onPressed: () => Navigator.pop(context),
-                    ),
+    return Material(
+      color: Colors.black38,
+      type: MaterialType.transparency,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 375.w,
+            padding: EdgeInsets.only(bottom: 20.h),
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Preload.languageCode == 'en'
+                      ? Alignment.topRight
+                      : Alignment.topLeft,
+                  child: IconButton(
+                    icon: SvgPicture.asset(closeIcon),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  Text(
-                    'login_with'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                Text(
+                  'login_with'.tr(),
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: 10.h),
-                  _buildSocialSignInButtons(),
-                  SizedBox(height: 20.h),
-                  _buildAuthChoice(),
-                  SizedBox(height: 20.h),
-                ],
-              ),
+                ),
+                SizedBox(height: 10.h),
+                _buildSocialSignInButtons(),
+                SizedBox(height: 20.h),
+                _buildAuthChoice(),
+                SizedBox(height: 20.h),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -291,13 +275,13 @@ class _MyCartQuickAccessLoginDialogState
     );
   }
 
-  void _onProcess() {
-    progressService.showProgress();
-  }
-
   void _onReloadItemSuccess() {
     progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    if (myCartChangeNotifier.cartItemCount == 0) {
+      flushBarService.showErrorDialog('cart_empty_error'.tr());
+      return;
+    }
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorDialog(
@@ -309,6 +293,10 @@ class _MyCartQuickAccessLoginDialogState
     }
     widget.prepareDetails();
     Navigator.popAndPushNamed(context, Routes.checkout);
+  }
+
+  void _onProcess() {
+    progressService.showProgress();
   }
 
   void _onFailure(String message) {
@@ -356,14 +344,11 @@ class _MyCartQuickAccessLoginDialogState
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      print(profile);
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'Facebook Sign',
-        lang: lang,
-      ));
+      authChangeNotifier.loginWithSocial(
+          email, firstName, lastName, 'Facebook Sign', lang,
+          onProcess: _onProcess,
+          onSuccess: _onLoginSuccess,
+          onFailure: _onFailure);
     } catch (e) {
       print('/// _loginWithFacebook Error ///');
       print(e.toString());
@@ -379,13 +364,11 @@ class _MyCartQuickAccessLoginDialogState
         String displayName = googleAccount.displayName;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        signInBloc.add(SocialSignInSubmitted(
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          loginType: 'Google Sign',
-          lang: lang,
-        ));
+        authChangeNotifier.loginWithSocial(
+            email, firstName, lastName, 'Google Sign', lang,
+            onProcess: _onProcess,
+            onSuccess: _onLoginSuccess,
+            onFailure: _onFailure);
       }
     } catch (error) {
       print(error);
@@ -410,14 +393,17 @@ class _MyCartQuickAccessLoginDialogState
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      signInBloc.add(SocialSignInSubmitted(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        loginType: 'apple',
-        lang: lang,
+      authChangeNotifier.loginWithSocial(
+        email,
+        firstName,
+        lastName,
+        'apple',
+        lang,
         appleId: appleId,
-      ));
+        onProcess: _onProcess,
+        onSuccess: _onLoginSuccess,
+        onFailure: _onFailure,
+      );
     } catch (error) {
       print(error);
     }

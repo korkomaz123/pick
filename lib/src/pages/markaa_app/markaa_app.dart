@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -20,7 +21,6 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
-import 'package:markaa/src/pages/sign_in/bloc/sign_in_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
@@ -100,6 +100,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => GlobalProvider()),
         ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => AuthChangeNotifier()),
         ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
         ChangeNotifierProvider(create: (_) => ScrollChangeNotifier()),
         ChangeNotifierProvider(create: (_) => SuggestionChangeNotifier()),
@@ -121,9 +122,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
   Widget _buildMultiBlocProvider(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => SignInBloc(),
-        ),
         BlocProvider(
           create: (context) => SettingBloc(),
         ),
@@ -156,7 +154,11 @@ class _MarkaaAppState extends State<MarkaaApp> {
           supportedLocales: EasyLocalization.of(context).supportedLocales,
           locale: EasyLocalization.of(context).locale,
           debugShowCheckedModeBanner: false,
-          theme: markaaAppTheme,
+          theme: markaaAppTheme.copyWith(
+            colorScheme: markaaAppTheme.colorScheme.copyWith(
+              secondary: Color(0xFFB4C9FA),
+            ),
+          ),
           title: 'Markaa',
           initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,

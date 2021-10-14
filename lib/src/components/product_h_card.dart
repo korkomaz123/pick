@@ -1,13 +1,8 @@
 import 'dart:async';
 
-import 'package:adjust_sdk/adjust.dart';
-import 'package:adjust_sdk/adjust_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
-import 'package:markaa/src/components/custom/sliding_sheet.dart';
-import 'package:markaa/src/components/markaa_cart_added_success_dialog.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -16,6 +11,7 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -461,28 +457,7 @@ class _ProductHCardState extends State<ProductHCard>
 
   _onAddSuccess() {
     progressService.hideProgress();
-    showSlidingTopSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 0,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return MarkaaCartAddedSuccessDialog(product: widget.product);
-          },
-        );
-      },
-    );
-
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
-    Adjust.trackEvent(adjustEvent);
+    ActionHandler.addedItemToCartSuccess(context, widget.product);
   }
 
   _onAddFailure(String message) {

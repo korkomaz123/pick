@@ -21,6 +21,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -96,6 +97,7 @@ class _MyCartPageState extends State<MyCartPage>
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
+    OneSignal.shared.addTrigger('page', 'checkout');
     _loadData();
   }
 
@@ -121,52 +123,59 @@ class _MyCartPageState extends State<MyCartPage>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Consumer<MyCartChangeNotifier>(
-              builder: (_, model, ___) {
-                if (model.cartItemCount > 0) {
-                  return Column(
-                    children: [
-                      _buildTitleBar(),
-                      _buildCartItems(),
-                      MyCartCouponCode(
-                        cartId: cartId,
-                        onSignIn: () => _onSignIn(false),
-                      ),
-                      _buildTotalPrice(),
-                      _buildCheckoutButton(),
-                    ],
-                  );
-                } else {
-                  return Consumer<WishlistChangeNotifier>(
-                    builder: (_, model, ___) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical:
-                              model.wishlistItemsCount > 0 ? 100.h : 250.h,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await myCartChangeNotifier.getCartItems(lang);
+        },
+        color: primaryColor,
+        backgroundColor: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Consumer<MyCartChangeNotifier>(
+                builder: (_, model, ___) {
+                  if (model.cartItemCount > 0) {
+                    return Column(
+                      children: [
+                        _buildTitleBar(),
+                        _buildCartItems(),
+                        MyCartCouponCode(
+                          cartId: cartId,
+                          onSignIn: () => _onSignIn(false),
                         ),
-                        child: Center(
-                          child: NoAvailableData(
-                            message: 'no_cart_items_available',
+                        _buildTotalPrice(),
+                        _buildCheckoutButton(),
+                      ],
+                    );
+                  } else {
+                    return Consumer<WishlistChangeNotifier>(
+                      builder: (_, model, ___) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical:
+                                model.wishlistItemsCount > 0 ? 100.h : 250.h,
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-            if (user?.token != null) ...[
-              MyCartSaveForLaterItems(
-                progressService: progressService,
-                flushBarService: flushBarService,
-                myCartChangeNotifier: myCartChangeNotifier,
-                wishlistChangeNotifier: wishlistChangeNotifier,
-              )
-            ]
-          ],
+                          child: Center(
+                            child: NoAvailableData(
+                              message: 'no_cart_items_available',
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+              if (user?.token != null) ...[
+                MyCartSaveForLaterItems(
+                  progressService: progressService,
+                  flushBarService: flushBarService,
+                  myCartChangeNotifier: myCartChangeNotifier,
+                  wishlistChangeNotifier: wishlistChangeNotifier,
+                )
+              ]
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -442,9 +451,12 @@ class _MyCartPageState extends State<MyCartPage>
 
   void _onReloadItemSuccess() {
     progressService.hideProgress();
-
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
 
+    if (myCartChangeNotifier.cartItemCount == 0) {
+      flushBarService.showErrorDialog('cart_empty_error'.tr());
+      return;
+    }
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
       if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
         flushBarService.showErrorDialog(

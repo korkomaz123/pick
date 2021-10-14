@@ -85,10 +85,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   void _onCanceledSuccess() {
     progressService.hideProgress();
-    Navigator.popUntil(
-      context,
-      (route) => route.settings.name == Routes.myCart,
-    );
+    Navigator.pop(context);
   }
 
   void _onCanceledFailure(String message) {
@@ -162,17 +159,15 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           }
 
           if (reorder != null) {
-            Navigator.pushNamedAndRemoveUntil(
+            Navigator.popAndPushNamed(
               context,
               Routes.paymentFailed,
-              (route) => route.settings.name == Routes.home,
               arguments: true,
             );
           } else {
-            Navigator.pushNamedAndRemoveUntil(
+            Navigator.popAndPushNamed(
               context,
               Routes.paymentFailed,
-              (route) => route.settings.name == Routes.myCart,
               arguments: false,
             );
           }
@@ -186,7 +181,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
             context,
             Routes.checkoutConfirmed,
             (route) => route.settings.name == Routes.home,
-            arguments: order.orderNo,
+            arguments: order,
           );
         }
       }

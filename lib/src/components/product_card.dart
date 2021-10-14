@@ -279,10 +279,7 @@ class _ProductCardState extends State<ProductCard>
       return Align(
         alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 3.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
           color: primarySwatchColor.withOpacity(0.4),
           child: Text(
             'out_stock'.tr(),
