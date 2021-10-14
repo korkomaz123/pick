@@ -11,6 +11,7 @@ import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:kommunicate_flutter/kommunicate_flutter.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/global_provider.dart';
@@ -22,13 +23,14 @@ import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
-import 'package:provider/provider.dart';
 import 'src/change_notifier/home_change_notifier.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
 import 'src/data/models/user_entity.dart';
 import 'src/utils/repositories/local_storage_repository.dart';
 import 'src/utils/repositories/sign_in_repository.dart';
+
+import 'env.dart';
 
 class Preload {
   static String baseUrl = "";
@@ -154,8 +156,7 @@ class Preload {
   static setupAdjustSDK() async {
     AdjustConfig config = new AdjustConfig(
       AdjustSDKConfig.app,
-      // AdjustEnvironment.production,
-      AdjustEnvironment.sandbox,
+      dev ? AdjustEnvironment.sandbox : AdjustEnvironment.production,
     );
     config.logLevel = AdjustLogLevel.verbose;
 
