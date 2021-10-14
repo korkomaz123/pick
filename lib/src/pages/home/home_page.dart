@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -21,7 +22,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:markaa/src/utils/services/onesignal_communicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -68,61 +69,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   MarkaaAppChangeNotifier _markaaAppChangeNotifier;
   ProductChangeNotifier _productChangeNotifier;
   MyCartChangeNotifier _myCartChangeNotifier;
+  AuthChangeNotifier _authChangeNotifier;
 
-  DynamicLinkService dynamicLinkService = DynamicLinkService();
+  OneSignalCommunicator _oneSignalCommunicator;
+  DynamicLinkService _dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
   ScrollDirection _prevDirection = ScrollDirection.forward;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    _productChangeNotifier = context.read<ProductChangeNotifier>();
-    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    _homeProvider = context.read<HomeChangeNotifier>();
-    _loadHomePage();
-    _preloadSetup();
-    _scrollController.addListener(_onScroll);
-    dynamicLinkService.initialDynamicLink();
-    dynamicLinkService.retrieveDynamicLink();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // dynamicLinkService.retrieveDynamicLink();
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  _preloadSetup() {
-    Preload.setupAdjustSDK();
-    Preload.currentUser.then((data) {
-      user = data;
-      OneSignal.shared.sendTag('wallet', user?.balance ?? 0);
-      NotificationSetup().init();
-      _onLoadData();
-    });
-  }
-
-  _onScroll() {
-    if (_prevDirection != _scrollController.position.userScrollDirection) {
-      if (_prevDirection == ScrollDirection.forward) {
-        _markaaAppChangeNotifier.changeSearchBarStatus(false);
-      } else if (_prevDirection == ScrollDirection.reverse) {
-        _markaaAppChangeNotifier.changeSearchBarStatus(true);
-      }
-    }
-    _prevDirection = _scrollController.position.userScrollDirection;
-  }
-
   void _loadHomePage() {
+    _homeProvider.loadPopup(_onShowPopup);
+
     loadSliderImages = _homeProvider.loadSliderImages();
     getFeaturedCategoriesList = _homeProvider.getFeaturedCategoriesList();
     loadMegaBanner = _homeProvider.loadMegaBanner();
@@ -168,12 +124,51 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     getViewedProducts = null;
   }
 
-  void _onLoadData() async {
-    _productChangeNotifier.initialize();
-    await _myCartChangeNotifier.getCartId();
-    await _myCartChangeNotifier.getCartItems(Preload.language);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    Preload.setupAdjustSDK();
 
-    _homeProvider.loadPopup(_onShowPopup);
+    _authChangeNotifier = context.read<AuthChangeNotifier>();
+    _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    _productChangeNotifier = context.read<ProductChangeNotifier>();
+    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
+    _homeProvider = context.read<HomeChangeNotifier>();
+    _oneSignalCommunicator = OneSignalCommunicator(context: context);
+
+    _oneSignalCommunicator.subscribeToChangeNotifiers();
+    _dynamicLinkService.initialDynamicLink();
+    _dynamicLinkService.retrieveDynamicLink();
+
+    _authChangeNotifier.getCurrentUser(
+      onSuccess: (data) async {
+        user = data;
+        NotificationSetup().init();
+        await _myCartChangeNotifier.getCartId();
+        await _myCartChangeNotifier.getCartItems(Preload.language);
+      },
+    );
+    _productChangeNotifier.initialize();
+    _scrollController.addListener(_onScroll);
+    _loadHomePage();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  _onScroll() {
+    if (_prevDirection != _scrollController.position.userScrollDirection) {
+      if (_prevDirection == ScrollDirection.forward) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(false);
+      } else if (_prevDirection == ScrollDirection.reverse) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(true);
+      }
+    }
+    _prevDirection = _scrollController.position.userScrollDirection;
   }
 
   void _onShowPopup(SliderImageEntity popupItem) async {

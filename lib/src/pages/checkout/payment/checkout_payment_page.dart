@@ -16,7 +16,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
@@ -203,12 +202,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     }
     final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);
-
-    OneSignal.shared.sendTags({
-      'cart_update': '',
-      'product_name': '',
-      'product_image': '',
-    });
 
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.successPayment);
     Adjust.trackEvent(adjustEvent);

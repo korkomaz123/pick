@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class AuthChangeNotifier extends ChangeNotifier {
   final _signInRepository = SignInRepository();
   final _localRepository = LocalStorageRepository();
   UserEntity currentUser;
 
-  Future getCurrentUser() async {
+  Future getCurrentUser({
+    Function onProcess,
+    Function onSuccess,
+    Function onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
     String token = await _localRepository.getToken();
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
@@ -18,9 +23,15 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         currentUser = UserEntity.fromJson(result['data']['customer']);
+
+        if (onSuccess != null) onSuccess(currentUser);
       } else {
+        currentUser = null;
         await _localRepository.removeToken();
+
+        if (onFailure != null) onFailure();
       }
+      notifyListeners();
     }
   }
 
@@ -38,8 +49,9 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
-        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
+
         if (onSuccess != null) onSuccess(currentUser);
+        notifyListeners();
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
@@ -68,8 +80,9 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
-        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
+
         if (onSuccess != null) onSuccess(currentUser);
+        notifyListeners();
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
@@ -87,9 +100,10 @@ class AuthChangeNotifier extends ChangeNotifier {
 
     try {
       await _signInRepository.logout(currentUser.token);
-      OneSignal.shared.sendTag('wallet', 0);
       currentUser = null;
+
       if (onSuccess != null) onSuccess();
+      notifyListeners();
     } catch (e) {
       if (onFailure != null) onFailure('connection_error');
     }
@@ -113,8 +127,9 @@ class AuthChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         currentUser = UserEntity.fromJson(result['user']);
-        OneSignal.shared.sendTag('wallet', currentUser?.balance ?? 0);
+
         if (onSuccess != null) onSuccess(currentUser);
+        notifyListeners();
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
@@ -141,5 +156,10 @@ class AuthChangeNotifier extends ChangeNotifier {
     } catch (e) {
       if (onFailure != null) onFailure('connection_error');
     }
+  }
+
+  updateUserEntity(entity) {
+    currentUser = entity;
+    notifyListeners();
   }
 }

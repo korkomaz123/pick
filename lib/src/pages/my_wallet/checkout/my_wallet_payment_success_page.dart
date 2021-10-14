@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,18 +20,20 @@ class MyWalletPaymentSuccessPage extends StatefulWidget {
 
 class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
     with WidgetsBindingObserver {
+  AuthChangeNotifier _authChangeNotifier;
   WalletChangeNotifier _walletChangeNotifier;
   String amount;
 
   @override
   void initState() {
     super.initState();
+    _authChangeNotifier = context.read<AuthChangeNotifier>();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
 
     user.balance += double.parse(_walletChangeNotifier.amount);
     amount = _walletChangeNotifier.amount;
     _walletChangeNotifier.init();
-    OneSignal.shared.sendTag('wallet', user.balance);
+    _authChangeNotifier.updateUserEntity(user);
 
     setState(() {});
   }

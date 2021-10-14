@@ -29,7 +29,6 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/services/action_handler.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -464,13 +463,6 @@ class _ProductPageState extends State<ProductPage>
   }
 
   _onBuySuccess() {
-    /// Send the tag to onesignal for adding item to cart
-    OneSignal.shared.sendTags({
-      'cart_update': DateTime.now().microsecondsSinceEpoch,
-      'product_name': product.name,
-      'product_image': product.imageUrl
-    });
-
     /// Trigger the adjust event for adding item to cart
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.addToCart);
     Adjust.trackEvent(adjustEvent);

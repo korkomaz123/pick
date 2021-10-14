@@ -5,6 +5,7 @@ import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
@@ -25,7 +26,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -64,6 +64,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
+  AuthChangeNotifier authChangeNotifier;
   MyCartChangeNotifier myCartChangeNotifier;
   MarkaaAppChangeNotifier markaaAppChangeNotifier;
   OrderChangeNotifier orderChangeNotifier;
@@ -97,6 +98,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
+    authChangeNotifier = context.read<AuthChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
@@ -383,7 +385,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       _onSuccessOrder(order);
       if (payment == 'wallet') {
         user.balance -= double.parse(order.totalPrice);
-        OneSignal.shared.sendTag('wallet', user.balance);
+        authChangeNotifier.updateUserEntity(user);
       }
 
       /// payment method is equal to cod, go to success page directly

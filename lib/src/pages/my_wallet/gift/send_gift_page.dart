@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -34,6 +35,7 @@ class _SendGiftPageState extends State<SendGiftPage> {
 
   bool isValid = false;
 
+  AuthChangeNotifier _authChangeNotifier;
   WalletChangeNotifier _walletChangeNotifier;
   ProgressService _progressService;
   FlushBarService _flushBarService;
@@ -45,6 +47,7 @@ class _SendGiftPageState extends State<SendGiftPage> {
     _amountController.addListener(_onChange);
     _emailController.addListener(_onChange);
 
+    _authChangeNotifier = context.read<AuthChangeNotifier>();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
     _progressService = ProgressService(context: context);
     _flushBarService = FlushBarService(context: context);
@@ -272,6 +275,7 @@ class _SendGiftPageState extends State<SendGiftPage> {
   _onSuccess() {
     _progressService.hideProgress();
     user.balance -= StringService.roundDouble(_amountController.text, 3);
+    _authChangeNotifier.updateUserEntity(user);
 
     if (widget.fromCheckout) {
       Navigator.popUntil(
