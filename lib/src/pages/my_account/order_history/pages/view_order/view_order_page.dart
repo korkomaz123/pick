@@ -156,10 +156,10 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               if (isStock && order.status != OrderStatusEnum.canceled) ...[
                 _buildReorderButton()
               ],
-              if (order.status == OrderStatusEnum.pending ||
-                  order.status == OrderStatusEnum.order_approval_pending) ...[
-                _buildCancelOrderButton()
-              ],
+              // if (order.status == OrderStatusEnum.pending ||
+              //     order.status == OrderStatusEnum.order_approval_pending) ...[
+              //   _buildCancelOrderButton()
+              // ],
               if (order.status == OrderStatusEnum.complete) ...[
                 _buildReturnOrderButton()
               ]
@@ -463,25 +463,25 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     );
   }
 
-  Widget _buildCancelOrderButton() {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(
-        context,
-        Routes.cancelOrder,
-        arguments: order,
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        child: Text(
-          'cancel_order_button_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            fontSize: 17.sp,
-            color: dangerColor,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildCancelOrderButton() {
+  //   return InkWell(
+  //     onTap: () => Navigator.pushNamed(
+  //       context,
+  //       Routes.cancelOrder,
+  //       arguments: order,
+  //     ),
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(vertical: 10.h),
+  //       child: Text(
+  //         'cancel_order_button_title'.tr(),
+  //         style: mediumTextStyle.copyWith(
+  //           fontSize: 17.sp,
+  //           color: dangerColor,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildReturnOrderButton() {
     return InkWell(
