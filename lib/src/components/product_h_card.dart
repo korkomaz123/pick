@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -34,13 +33,13 @@ class ProductHCard extends StatefulWidget {
   final bool isWishlist;
   final bool isShare;
   final bool isMinor;
-  final Function onTap;
-  final Function onAddToCartFailure;
+  final Function? onTap;
+  final Function? onAddToCartFailure;
 
   ProductHCard({
-    this.cardWidth,
-    this.cardHeight,
-    this.product,
+    required this.cardWidth,
+    required this.cardHeight,
+    required this.product,
     this.isDesc = false,
     this.isShoppingCart = false,
     this.isWishlist = false,
@@ -56,22 +55,21 @@ class ProductHCard extends StatefulWidget {
 
 class _ProductHCardState extends State<ProductHCard>
     with TickerProviderStateMixin {
-  FlushBarService flushBarService;
-  ProgressService progressService;
+  FlushBarService? flushBarService;
+  ProgressService? progressService;
 
-  AnimationController _addToCartController;
-  Animation<double> _addToCartScaleAnimation;
-  AnimationController _addToWishlistController;
-  Animation<double> _addToWishlistScaleAnimation;
+  AnimationController? _addToCartController;
+  Animation<double>? _addToCartScaleAnimation;
+  AnimationController? _addToWishlistController;
+  Animation<double>? _addToWishlistScaleAnimation;
 
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
 
-  int index;
-  bool isWishlist;
+  int? index;
+  bool? isWishlist;
 
-  bool get outOfStock =>
-      !(widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock => !(widget.product.stockQty! > 0);
 
   @override
   void initState() {
@@ -102,7 +100,7 @@ class _ProductHCardState extends State<ProductHCard>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _addToCartController,
+      parent: _addToCartController!,
       curve: Curves.easeIn,
     ));
 
@@ -116,7 +114,7 @@ class _ProductHCardState extends State<ProductHCard>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _addToWishlistController,
+      parent: _addToWishlistController!,
       curve: Curves.easeIn,
     ));
   }
@@ -130,7 +128,7 @@ class _ProductHCardState extends State<ProductHCard>
           Routes.product,
           arguments: widget.product,
         );
-        if (widget.onTap != null) widget.onTap();
+        widget.onTap!();
       },
       child: Container(
         width: widget.cardWidth,
@@ -138,7 +136,7 @@ class _ProductHCardState extends State<ProductHCard>
         child: Stack(
           children: [
             _buildProductCard(),
-            if (widget.product.discount > 0) ...[
+            if (widget.product.discount! > 0) ...[
               if (lang == 'en') ...[
                 Positioned(
                   top: 0,
@@ -153,7 +151,7 @@ class _ProductHCardState extends State<ProductHCard>
                 ),
               ],
             ],
-            if (widget.product.isDeal) ...[_buildDealValueLabel()],
+            if (widget.product.isDeal!) ...[_buildDealValueLabel()],
             _buildToolbar(),
             _buildOutofStock(),
           ],
@@ -193,9 +191,9 @@ class _ProductHCardState extends State<ProductHCard>
                 SizedBox(height: 10.h),
                 InkWell(
                   onTap: () {
-                    if (widget?.product?.brandEntity?.optionId != null) {
+                    if (widget.product.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
-                        category: CategoryEntity(),
+                        category: null,
                         subCategory: [],
                         brand: widget.product.brandEntity,
                         selectedSubCategoryIndex: 0,
@@ -209,7 +207,7 @@ class _ProductHCardState extends State<ProductHCard>
                     }
                   },
                   child: Text(
-                    widget?.product?.brandEntity?.brandLabel ?? '',
+                    widget.product.brandEntity!.brandLabel,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 14.sp,
@@ -239,7 +237,7 @@ class _ProductHCardState extends State<ProductHCard>
                       left: lang == 'ar' ? 20.w : 0,
                     ),
                     child: Text(
-                      widget.product.description,
+                      widget.product.description!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -257,21 +255,19 @@ class _ProductHCardState extends State<ProductHCard>
                       child: Row(
                         children: [
                           Text(
-                            widget.product.price != null
-                                ? (widget.product.price + ' ' + 'currency'.tr())
-                                : '',
+                            (widget.product.price + ' ' + 'currency'.tr()),
                             style: mediumTextStyle.copyWith(
                               fontSize: 14.sp,
                               color: greyColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (widget.product.discount > 0) ...[
+                          if (widget.product.discount! > 0) ...[
                             SizedBox(
                               width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
-                              widget.product.beforePrice +
+                              widget.product.beforePrice! +
                                   ' ' +
                                   'currency'.tr(),
                               style: mediumTextStyle.copyWith(
@@ -299,7 +295,7 @@ class _ProductHCardState extends State<ProductHCard>
                                 }
                               },
                               child: ScaleTransition(
-                                scale: _addToCartScaleAnimation,
+                                scale: _addToCartScaleAnimation!,
                                 child: Container(
                                   width: 32.h,
                                   height: 32.h,
@@ -388,11 +384,11 @@ class _ProductHCardState extends State<ProductHCard>
                   ? _onWishlist()
                   : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
-                scale: _addToWishlistScaleAnimation,
+                scale: _addToWishlistScaleAnimation!,
                 child: Container(
-                  width: isWishlist ? 22.sp : 25.sp,
-                  height: isWishlist ? 22.sp : 25.sp,
-                  child: isWishlist
+                  width: isWishlist! ? 22.sp : 25.sp,
+                  height: isWishlist! ? 22.sp : 25.sp,
+                  child: isWishlist!
                       ? SvgPicture.asset(wishlistedIcon)
                       : SvgPicture.asset(favoriteIcon),
                 ),
@@ -433,54 +429,55 @@ class _ProductHCardState extends State<ProductHCard>
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      _addToCartController.repeat(reverse: true);
+      _addToCartController!.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
-        _addToCartController.stop(canceled: true);
+        _addToCartController!.stop(canceled: true);
         timer.cancel();
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
+        await myCartChangeNotifier!.addProductToCart(
+            widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
       } else {
-        flushBarService.showErrorDialog(
-            'out_of_stock_error'.tr(), "no_qty.svg");
+        flushBarService!
+            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
 
   _onAdding() {
-    progressService.addingProductProgress();
+    progressService!.addingProductProgress();
   }
 
   _onAddSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     ActionHandler.addedItemToCartSuccess(context, widget.product);
   }
 
   _onAddFailure(String message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message, "no_qty.svg");
-    widget.onAddToCartFailure();
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure!();
   }
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(context, Routes.product, arguments: widget.product);
     } else {
-      _addToWishlistController.repeat(reverse: true);
+      _addToWishlistController!.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
-        _addToWishlistController.stop(canceled: true);
+        _addToWishlistController!.stop(canceled: true);
         timer.cancel();
       });
-      if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user.token, widget.product);
+      if (isWishlist!) {
+        wishlistChangeNotifier!
+            .removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user.token, widget.product, 1, {});
+        wishlistChangeNotifier!
+            .addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

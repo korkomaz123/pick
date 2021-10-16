@@ -11,16 +11,16 @@ class MarkaaTextInput extends StatelessWidget {
   final TextInputType inputType;
   final Function validator;
   final bool readOnly;
-  final Function onTap;
+  final void Function()? onTap;
 
   MarkaaTextInput({
-    @required this.controller,
-    @required this.width,
-    @required this.padding,
-    @required this.fontSize,
-    @required this.hint,
-    @required this.inputType,
-    @required this.validator,
+    required this.controller,
+    required this.width,
+    required this.padding,
+    required this.fontSize,
+    required this.hint,
+    required this.inputType,
+    required this.validator,
     this.readOnly = false,
     this.onTap,
   });

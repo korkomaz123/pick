@@ -11,16 +11,16 @@ part of 'sheet.dart';
 ///
 /// The `resizeToAvoidBottomInset` parameter can be used to avoid the keyboard from obscuring
 /// the content bottom sheet.
-Future<T> showSlidingTopSheet<T>(
+Future<T?> showSlidingTopSheet<T>(
   BuildContext context, {
-  @required SlidingSheetDialog Function(BuildContext context) builder,
-  Widget Function(BuildContext context, SlidingSheet sheet) parentBuilder,
-  RouteSettings routeSettings,
+  required SlidingSheetDialog Function(BuildContext context) builder,
+  Widget Function(BuildContext context, SlidingSheet sheet)? parentBuilder,
+  RouteSettings? routeSettings,
   bool useRootNavigator = false,
   bool resizeToAvoidBottomInset = true,
 }) {
   SlidingSheetDialog dialog = builder(context);
-  final SheetController controller = dialog.controller ?? SheetController();
+  final SheetController? controller = dialog.controller;
 
   final theme = Theme.of(context);
   final ValueNotifier<int> rebuilder = ValueNotifier(0);
@@ -30,7 +30,7 @@ Future<T> showSlidingTopSheet<T>(
     rootNavigator: useRootNavigator,
   ).push(
     _SlidingSheetRoute(
-      duration: dialog.duration,
+      duration: dialog.duration!,
       settings: routeSettings,
       builder: (context, animation, route) {
         return ValueListenableBuilder(
@@ -41,14 +41,14 @@ Future<T> showSlidingTopSheet<T>(
             // Assign the rebuild function in order to
             // be able to change the dialogs parameters
             // inside a dialog.
-            controller._rebuild = () {
+            controller!._rebuild = () {
               rebuilder.value++;
             };
 
             var snapSpec = dialog.snapSpec;
-            if (snapSpec.snappings.first != 0.0) {
+            if (snapSpec!.snappings!.first != 0.0) {
               snapSpec = snapSpec.copyWith(
-                snappings: [0.0] + snapSpec.snappings,
+                snappings: [0.0] + snapSpec.snappings!,
               );
             }
 
@@ -56,36 +56,36 @@ Future<T> showSlidingTopSheet<T>(
               route: route,
               controller: controller,
               snapSpec: snapSpec,
-              duration: dialog.duration,
+              duration: dialog.duration!,
               color: dialog.color ??
                   theme.bottomSheetTheme.backgroundColor ??
                   theme.dialogTheme.backgroundColor ??
                   theme.dialogBackgroundColor,
-              backdropColor: dialog.backdropColor,
-              shadowColor: dialog.shadowColor,
-              elevation: dialog.elevation,
-              padding: dialog.padding,
-              avoidStatusBar: dialog.avoidStatusBar,
-              margin: dialog.margin,
-              border: dialog.border,
-              cornerRadius: dialog.cornerRadius,
+              backdropColor: dialog.backdropColor!,
+              shadowColor: dialog.shadowColor!,
+              elevation: dialog.elevation!,
+              padding: dialog.padding!,
+              avoidStatusBar: dialog.avoidStatusBar!,
+              margin: dialog.margin!,
+              border: dialog.border!,
+              cornerRadius: dialog.cornerRadius!,
               cornerRadiusOnFullscreen: dialog.cornerRadiusOnFullscreen,
-              closeOnBackdropTap: dialog.dismissOnBackdropTap,
-              builder: dialog.builder,
+              closeOnBackdropTap: dialog.dismissOnBackdropTap!,
+              builder: dialog.builder!,
               headerBuilder: dialog.headerBuilder,
               footerBuilder: dialog.footerBuilder,
-              listener: dialog.listener,
-              scrollSpec: dialog.scrollSpec,
-              maxWidth: dialog.maxWidth,
+              listener: dialog.listener!,
+              scrollSpec: dialog.scrollSpec!,
+              maxWidth: dialog.maxWidth!,
               closeSheetOnBackButtonPressed: false,
-              minHeight: dialog.minHeight,
-              isDismissable: dialog.isDismissable,
+              minHeight: dialog.minHeight!,
+              isDismissable: dialog.isDismissable!,
               onDismissPrevented: dialog.onDismissPrevented,
-              isBackdropInteractable: dialog.isBackdropInteractable,
-              axisAlignment: dialog.axisAlignment,
-              extendBody: dialog.extendBody,
-              liftOnScrollHeaderElevation: dialog.liftOnScrollHeaderElevation,
-              liftOnScrollFooterElevation: dialog.liftOnScrollFooterElevation,
+              isBackdropInteractable: dialog.isBackdropInteractable!,
+              axisAlignment: dialog.axisAlignment!,
+              extendBody: dialog.extendBody!,
+              liftOnScrollHeaderElevation: dialog.liftOnScrollHeaderElevation!,
+              liftOnScrollFooterElevation: dialog.liftOnScrollFooterElevation!,
               body: null,
             );
 
@@ -113,93 +113,93 @@ Future<T> showSlidingTopSheet<T>(
 /// A wrapper class to show a [SlidingSheet] as a bottom sheet dialog.
 class SlidingSheetDialog {
   /// {@macro sliding_sheet.builder}
-  final SheetBuilder builder;
+  final SheetBuilder? builder;
 
   /// {@macro sliding_sheet.headerBuilder}
-  final SheetBuilder headerBuilder;
+  final SheetBuilder? headerBuilder;
 
   /// {@macro sliding_sheet.footerBuilder}
-  final SheetBuilder footerBuilder;
+  final SheetBuilder? footerBuilder;
 
   /// {@macro sliding_sheet.snapSpec}
-  final SnapSpec snapSpec;
+  final SnapSpec? snapSpec;
 
   /// {@macro sliding_sheet.duration}
-  final Duration duration;
+  final Duration? duration;
 
   /// {@macro sliding_sheet.color}
-  final Color color;
+  final Color? color;
 
   /// {@macro sliding_sheet.backdropColor}
-  final Color backdropColor;
+  final Color? backdropColor;
 
   /// {@macro sliding_sheet.shadowColor}
-  final Color shadowColor;
+  final Color? shadowColor;
 
   /// {@macro sliding_sheet.elevation}
-  final double elevation;
+  final double? elevation;
 
   /// {@macro sliding_sheet.padding}
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// {@macro sliding_sheet.avoidStatusBar}
-  final bool avoidStatusBar;
+  final bool? avoidStatusBar;
 
   /// {@macro sliding_sheet.margin}
-  final EdgeInsets margin;
+  final EdgeInsets? margin;
 
   /// {@macro sliding_sheet.border}
-  final Border border;
+  final Border? border;
 
   /// {@macro sliding_sheet.cornerRadius}
-  final double cornerRadius;
+  final double? cornerRadius;
 
   /// {@macro sliding_sheet.cornerRadiusOnFullscreen}
-  final double cornerRadiusOnFullscreen;
+  final double? cornerRadiusOnFullscreen;
 
   /// If true, the sheet will be dismissed the backdrop
   /// was tapped.
-  final bool dismissOnBackdropTap;
+  final bool? dismissOnBackdropTap;
 
   /// {@macro sliding_sheet.listener}
-  final SheetListener listener;
+  final SheetListener? listener;
 
   /// {@macro sliding_sheet.controller}
-  final SheetController controller;
+  final SheetController? controller;
 
   /// {@macro sliding_sheet.scrollSpec}
-  final ScrollSpec scrollSpec;
+  final ScrollSpec? scrollSpec;
 
   /// {@macro sliding_sheet.maxWidth}
-  final double maxWidth;
+  final double? maxWidth;
 
   /// {@macro sliding_sheet.minHeight}
-  final double minHeight;
+  final double? minHeight;
 
   /// {@macro sliding_sheet.isDismissable}
-  final bool isDismissable;
+  final bool? isDismissable;
 
   /// {@macro sliding_sheet.onDismissPrevented}
-  final OnDismissPreventedCallback onDismissPrevented;
+  final OnDismissPreventedCallback? onDismissPrevented;
 
   /// {@macro sliding_sheet.isBackDropInteractable}
-  final bool isBackdropInteractable;
+  final bool? isBackdropInteractable;
 
   /// {@macro sliding_sheet.axisAlignment}
-  final double axisAlignment;
+  final double? axisAlignment;
 
   /// {@macro sliding_sheet.extendBody}
-  final bool extendBody;
+  final bool? extendBody;
 
   /// {@macro sliding_sheet.liftOnScrollHeaderElevation}
-  final double liftOnScrollHeaderElevation;
+  final double? liftOnScrollHeaderElevation;
 
   /// {@macro sliding_sheet.liftOnScrollFooterElevation}
-  final double liftOnScrollFooterElevation;
+  final double? liftOnScrollFooterElevation;
 
   /// Creates a wrapper class to show a [SlidingSheet] as a bottom sheet dialog.
   const SlidingSheetDialog({
-    @required this.builder,
+    required this.builder,
     this.headerBuilder,
     this.footerBuilder,
     this.snapSpec = const SnapSpec(),
@@ -236,9 +236,9 @@ class _SlidingSheetRoute<T> extends PageRoute<T> {
       builder;
   final Duration duration;
   _SlidingSheetRoute({
-    @required this.builder,
-    @required this.duration,
-    RouteSettings settings,
+    required this.builder,
+    required this.duration,
+    RouteSettings? settings,
   }) : super(
           settings: settings,
           fullscreenDialog: false,
@@ -251,10 +251,10 @@ class _SlidingSheetRoute<T> extends PageRoute<T> {
   bool get barrierDismissible => false;
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   bool get maintainState => true;

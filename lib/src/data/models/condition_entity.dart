@@ -6,11 +6,11 @@ class ConditionEntity {
   bool isValueProcessed;
 
   ConditionEntity({
-    this.type,
-    this.attribute,
-    this.operator,
-    this.value,
-    this.isValueProcessed,
+    required this.type,
+    required this.attribute,
+    required this.operator,
+    required this.value,
+    required this.isValueProcessed,
   });
 
   ConditionEntity.fromJson(Map<String, dynamic> json)

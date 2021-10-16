@@ -38,7 +38,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   Future<void> loadOrderHistories(
     String token,
     String lang, [
-    Function onSuccess,
+    Function? onSuccess,
   ]) async {
     final result = await orderRepository.getOrderHistory(token, lang);
     if (result['code'] == 'SUCCESS') {
@@ -50,9 +50,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       }
       setKeys();
       notifyListeners();
-      if (onSuccess != null) {
-        onSuccess();
-      }
+      onSuccess!();
     }
   }
 
@@ -124,12 +122,12 @@ class OrderChangeNotifier extends ChangeNotifier {
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
     String lang, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
     bool isWallet = false,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
     try {
       try {
         Map<String, dynamic> deviceData = <String, dynamic>{};
@@ -169,37 +167,36 @@ class OrderChangeNotifier extends ChangeNotifier {
             !isWallet) {
           ordersMap[newOrder.orderId] = newOrder;
 
-          await loadOrderHistories(user.token, lang);
+          await loadOrderHistories(user!.token, lang);
           setKeys();
           notifyListeners();
         }
 
-        onSuccess(result['payurl'], newOrder);
+        onSuccess!(result['payurl'], newOrder);
       } else {
         SlackChannels.send(
           'new Order [${result['code']}] : ${result['errorMessage']}',
           SlackChannels.logAddOrder,
         );
 
-        onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
-      onFailure('connection_error');
+      onFailure!('connection_error');
       reportOrderIssue(e.toString(), orderDetails);
     }
   }
 
   Future<void> cancelFullOrder(
     OrderEntity order, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
     try {
       final orderId = order.orderId;
-
       final result =
           await orderRepository.cancelOrderById(orderId, Preload.language);
 
@@ -208,12 +205,12 @@ class OrderChangeNotifier extends ChangeNotifier {
           ordersMap.remove(order.orderId);
         }
         notifyListeners();
-        if (onSuccess != null) onSuccess();
+        onSuccess!();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
@@ -224,25 +221,24 @@ class OrderChangeNotifier extends ChangeNotifier {
     String reason,
     Uint8List product,
     String imageName, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
     try {
       final result = await orderRepository.cancelOrder(
           orderId, items, additionalInfo, reason, product, imageName);
-
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
         notifyListeners();
-        if (onSuccess != null) onSuccess();
+        onSuccess!();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
@@ -273,26 +269,26 @@ class OrderChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> sendAsGift({
-    String token,
-    String sender,
-    String receiver,
-    String message,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? token,
+    String? sender,
+    String? receiver,
+    String? message,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     try {
-      final result =
-          await orderRepository.sendAsGift(token, sender, receiver, message);
+      final result = await orderRepository.sendAsGift(
+          token!, sender!, receiver!, message!);
       if (result['code'] == 'SUCCESS') {
-        if (onSuccess != null) onSuccess(result['gift_message_id']);
+        onSuccess!(result['gift_message_id']);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
@@ -301,7 +297,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     final reportData = {
       'result': result,
       'orderDetails': orderDetails,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user?.token != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -320,7 +316,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     final resultData = {
       'result': result,
       'orderDetails': orderDetails,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user?.token != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {

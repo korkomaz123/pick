@@ -11,7 +11,10 @@ class ProductConfigurableOptions extends StatelessWidget {
   final ProductEntity productEntity;
   final ProductChangeNotifier model;
 
-  ProductConfigurableOptions({this.productEntity, this.model});
+  ProductConfigurableOptions({
+    required this.productEntity,
+    required this.model,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +26,20 @@ class ProductConfigurableOptions extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (productEntity?.configurable?.keys != null) ...[
+          if (productEntity.configurable?.keys != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: productEntity.configurable.keys.toList().map((key) {
+              children: productEntity.configurable!.keys.toList().map((key) {
                 List<dynamic> options =
-                    productEntity.configurable[key]['attribute_options'];
+                    productEntity.configurable![key]['attribute_options'];
                 String attributeId =
-                    productEntity.configurable[key]['attribute_id'];
+                    productEntity.configurable![key]['attribute_id'];
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      productEntity.configurable[key]['attribute_name'] + " : ",
+                      productEntity.configurable![key]['attribute_name'] +
+                          " : ",
                       style: mediumTextStyle.copyWith(
                         fontSize: 20.sp,
                         color: primaryColor,

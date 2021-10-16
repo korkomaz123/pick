@@ -6,15 +6,14 @@ import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 class AuthChangeNotifier extends ChangeNotifier {
   final _signInRepository = SignInRepository();
   final _localRepository = LocalStorageRepository();
-  UserEntity currentUser;
+  UserEntity? currentUser;
 
   Future getCurrentUser({
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
-
+    onProcess!();
     String token = await _localRepository.getToken();
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
@@ -23,13 +22,11 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         currentUser = UserEntity.fromJson(result['data']['customer']);
-
-        if (onSuccess != null) onSuccess(currentUser);
+        onSuccess!(currentUser);
       } else {
         currentUser = null;
         await _localRepository.removeToken();
-
-        if (onFailure != null) onFailure();
+        onFailure!();
       }
       notifyListeners();
     }
@@ -38,11 +35,11 @@ class AuthChangeNotifier extends ChangeNotifier {
   Future login(
     String email,
     String password, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
     try {
       final result = await _signInRepository.login(email, password);
       if (result['code'] == 'SUCCESS') {
@@ -50,13 +47,13 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
 
-        if (onSuccess != null) onSuccess(currentUser);
+        onSuccess!(currentUser);
         notifyListeners();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
@@ -66,46 +63,46 @@ class AuthChangeNotifier extends ChangeNotifier {
     String lastName,
     String loginType,
     String lang, {
-    String appleId,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? appleId,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     try {
       final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang, appleId);
+          email, firstName, lastName, loginType, lang, appleId!);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
         currentUser = UserEntity.fromJson(result['user']);
 
-        if (onSuccess != null) onSuccess(currentUser);
+        onSuccess!(currentUser);
         notifyListeners();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
   Future logout({
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     try {
-      await _signInRepository.logout(currentUser.token);
+      await _signInRepository.logout(currentUser!.token);
       currentUser = null;
 
-      if (onSuccess != null) onSuccess();
+      onSuccess!();
       notifyListeners();
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
@@ -115,11 +112,11 @@ class AuthChangeNotifier extends ChangeNotifier {
     String phoneNumber,
     String email,
     String password, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     try {
       final result = await _signInRepository.register(
@@ -128,33 +125,33 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['user']['token'] = result['token'];
         currentUser = UserEntity.fromJson(result['user']);
 
-        if (onSuccess != null) onSuccess(currentUser);
+        onSuccess!(currentUser);
         notifyListeners();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 
   Future requestNewPassword(
     String email, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     try {
       final result = await _signInRepository.getNewPassword(email);
       if (result['code'] == 'SUCCESS') {
-        if (onSuccess != null) onSuccess();
+        onSuccess!();
       } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
   }
 

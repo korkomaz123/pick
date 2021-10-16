@@ -48,7 +48,7 @@ import 'no_network_access_page.dart';
 
 class MarkaaApp extends StatefulWidget {
   final String home;
-  MarkaaApp({Key key, @required this.home}) : super(key: key);
+  MarkaaApp({Key? key, required this.home}) : super(key: key);
 
   @override
   _MarkaaAppState createState() => _MarkaaAppState();
@@ -148,11 +148,11 @@ class _MarkaaAppState extends State<MarkaaApp> {
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
-            EasyLocalization.of(context).delegate,
+            EasyLocalization.of(context)!.delegate,
             const FallbackCupertinoLocalisationsDelegate(),
           ],
-          supportedLocales: EasyLocalization.of(context).supportedLocales,
-          locale: EasyLocalization.of(context).locale,
+          supportedLocales: EasyLocalization.of(context)!.supportedLocales,
+          locale: EasyLocalization.of(context)!.locale,
           debugShowCheckedModeBanner: false,
           theme: markaaAppTheme.copyWith(
             colorScheme: markaaAppTheme.colorScheme.copyWith(
@@ -172,14 +172,14 @@ class _MarkaaAppState extends State<MarkaaApp> {
                     return FutureBuilder<void>(
                       future: Preload.checkAppVersion(),
                       builder: (context, snapshot) {
-                        return child;
+                        return child!;
                       },
                     );
                   } else {
                     return NoNetworkAccessPage();
                   }
                 }
-                return child;
+                return child!;
               },
             );
           },

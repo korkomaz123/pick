@@ -48,12 +48,12 @@ class NotificationSetup {
 
     // FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _onLaunchMessage(message?.data);
+      _onLaunchMessage(message.data);
     });
     FirebaseMessaging.instance
         .getInitialMessage()
-        .then((RemoteMessage message) {
-      _onLaunchMessage(message?.data);
+        .then((RemoteMessage? message) {
+      _onLaunchMessage(message!.data);
     });
 
     await firebaseMessaging.unsubscribeFromTopic(Preload.language == 'en'
@@ -66,11 +66,11 @@ class NotificationSetup {
   }
 
   void updateFcmDeviceToken() async {
-    firebaseMessaging.getToken().then((String token) async {
-      deviceToken = token;
+    firebaseMessaging.getToken().then((String? token) async {
+      deviceToken = token!;
       if (user?.token != null) {
         await settingRepository.updateFcmDeviceToken(
-          user.token,
+          user!.token,
           Platform.isAndroid ? token : '',
           Platform.isIOS ? token : '',
           Platform.isAndroid ? lang : '',
@@ -100,7 +100,7 @@ class NotificationSetup {
         ?.createNotificationChannel(channel);
   }
 
-  Future onSelectNotification(String payload) async {
+  Future onSelectNotification(String? payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
       await _onLaunchMessage(jsonDecode(payload));
@@ -108,16 +108,16 @@ class NotificationSetup {
   }
 
   Future onDidReceiveLocalNotification(
-    int id,
-    String title,
-    String body,
-    String payload,
+    int? id,
+    String? title,
+    String? body,
+    String? payload,
   ) async {
     showDialog(
-      context: Preload.navigatorKey.currentContext,
+      context: Preload.navigatorKey!.currentContext!,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
+        title: Text(title!),
+        content: Text(body!),
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -159,7 +159,7 @@ class NotificationSetup {
         if (target == 1) {
           final product = await productRepository.getProduct(id);
           Navigator.pushNamed(
-            Preload.navigatorKey.currentContext,
+            Preload.navigatorKey!.currentContext!,
             Routes.product,
             arguments: product,
           );
@@ -169,12 +169,12 @@ class NotificationSetup {
             ProductListArguments arguments = ProductListArguments(
               category: category,
               subCategory: [],
-              brand: BrandEntity(),
+              brand: null,
               selectedSubCategoryIndex: 0,
               isFromBrand: false,
             );
             Navigator.pushNamed(
-              Preload.navigatorKey.currentContext,
+              Preload.navigatorKey!.currentContext!,
               Routes.productList,
               arguments: arguments,
             );
@@ -183,14 +183,14 @@ class NotificationSetup {
           final brand = await brandRepository.getBrand(id, lang);
           if (brand != null) {
             ProductListArguments arguments = ProductListArguments(
-              category: CategoryEntity(),
+              category: null,
               subCategory: [],
               brand: brand,
               selectedSubCategoryIndex: 0,
               isFromBrand: true,
             );
             Navigator.pushNamed(
-              Preload.navigatorKey.currentContext,
+              Preload.navigatorKey!.currentContext!,
               Routes.productList,
               arguments: arguments,
             );

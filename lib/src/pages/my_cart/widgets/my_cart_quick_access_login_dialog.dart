@@ -27,6 +27,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 import 'package:markaa/src/config/config.dart';
@@ -42,9 +43,9 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final Function prepareDetails;
 
   MyCartQuickAccessLoginDialog({
-    this.cartId,
-    this.isCheckout,
-    this.prepareDetails,
+    required this.cartId,
+    required this.isCheckout,
+    required this.prepareDetails,
   });
 
   @override
@@ -58,16 +59,16 @@ class _MyCartQuickAccessLoginDialogState
   final WishlistRepository wishlistRepo = WishlistRepository();
   final SettingRepository settingRepo = SettingRepository();
 
-  AuthChangeNotifier authChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
+  HomeChangeNotifier? homeChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   @override
   void initState() {
@@ -88,16 +89,16 @@ class _MyCartQuickAccessLoginDialogState
   void _onLoginSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      await localRepo.setToken(user.token);
-      await myCartChangeNotifier.getCartId();
-      await myCartChangeNotifier.transferCartItems();
-      await myCartChangeNotifier.getCartItems(lang);
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
+      await localRepo.setToken(user!.token);
+      await myCartChangeNotifier!.getCartId();
+      await myCartChangeNotifier!.transferCartItems();
+      await myCartChangeNotifier!.getCartItems(lang);
+      await wishlistChangeNotifier!.getWishlistItems(user!.token, lang);
+      await orderChangeNotifier!.loadOrderHistories(user!.token, lang);
+      addressChangeNotifier!.initialize();
+      await addressChangeNotifier!.loadAddresses(user!.token);
       await settingRepo.updateFcmDeviceToken(
-        user.token,
+        user!.token,
         Platform.isAndroid ? deviceToken : '',
         Platform.isIOS ? deviceToken : '',
         Platform.isAndroid ? lang : '',
@@ -106,9 +107,9 @@ class _MyCartQuickAccessLoginDialogState
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer();
-    progressService.hideProgress();
-    markaaAppChangeNotifier.rebuild();
+    homeChangeNotifier!.loadRecentlyViewedCustomer();
+    progressService!.hideProgress();
+    markaaAppChangeNotifier!.rebuild();
     Navigator.pop(context);
   }
 
@@ -230,7 +231,7 @@ class _MyCartQuickAccessLoginDialogState
                   adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
                   Adjust.trackEvent(adjustEvent);
 
-                  await myCartChangeNotifier.getCartItems(
+                  await myCartChangeNotifier!.getCartItems(
                       lang, _onProcess, _onReloadItemSuccess, _onFailure);
                 },
               ),
@@ -276,16 +277,16 @@ class _MyCartQuickAccessLoginDialogState
   }
 
   void _onReloadItemSuccess() {
-    progressService.hideProgress();
-    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
-    if (myCartChangeNotifier.cartItemCount == 0) {
-      flushBarService.showErrorDialog('cart_empty_error'.tr());
+    progressService!.hideProgress();
+    List<String> keys = myCartChangeNotifier!.cartItemsMap.keys.toList();
+    if (myCartChangeNotifier!.cartItemCount == 0) {
+      flushBarService!.showErrorDialog('cart_empty_error'.tr());
       return;
     }
-    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
-      if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showErrorDialog(
-          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+    for (int i = 0; i < myCartChangeNotifier!.cartItemCount; i++) {
+      if (myCartChangeNotifier!.cartItemsMap[keys[i]]!.availableCount == 0) {
+        flushBarService!.showErrorDialog(
+          '${myCartChangeNotifier!.cartItemsMap[keys[i]]!.product.name}' +
               'out_stock_items_error'.tr(),
         );
         return;
@@ -296,12 +297,12 @@ class _MyCartQuickAccessLoginDialogState
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onFailure(String message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
   }
 
   void _onLogin() async {
@@ -326,12 +327,12 @@ class _MyCartQuickAccessLoginDialogState
         _loginWithFacebook(result);
         break;
       case FacebookLoginStatus.cancelledByUser:
-        flushBarService.showErrorDialog('Canceled by User');
+        flushBarService!.showErrorDialog('Canceled by User');
         break;
       case FacebookLoginStatus.error:
         print('/// Facebook Login Error ///');
         print(result.errorMessage);
-        flushBarService.showErrorDialog(result.errorMessage);
+        flushBarService!.showErrorDialog(result.errorMessage);
         break;
     }
   }
@@ -344,7 +345,7 @@ class _MyCartQuickAccessLoginDialogState
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier.loginWithSocial(
+      authChangeNotifier!.loginWithSocial(
           email, firstName, lastName, 'Facebook Sign', lang,
           onProcess: _onProcess,
           onSuccess: _onLoginSuccess,
@@ -361,10 +362,10 @@ class _MyCartQuickAccessLoginDialogState
       final googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
         String email = googleAccount.email;
-        String displayName = googleAccount.displayName;
+        String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier.loginWithSocial(
+        authChangeNotifier!.loginWithSocial(
             email, firstName, lastName, 'Google Sign', lang,
             onProcess: _onProcess,
             onSuccess: _onLoginSuccess,
@@ -383,27 +384,22 @@ class _MyCartQuickAccessLoginDialogState
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      String email = credential.email;
-      String firstName = credential.givenName;
-      String lastName = credential.familyName;
-      String appleId = credential.userIdentifier;
+      String? email = credential.email;
+      String firstName = credential.givenName!;
+      String lastName = credential.familyName!;
+      String appleId = credential.userIdentifier!;
       if (email == null) {
         final faker = Faker();
         String fakeEmail = faker.internet.freeEmail();
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier.loginWithSocial(
-        email,
-        firstName,
-        lastName,
-        'apple',
-        lang,
-        appleId: appleId,
-        onProcess: _onProcess,
-        onSuccess: _onLoginSuccess,
-        onFailure: _onFailure,
-      );
+      authChangeNotifier!.loginWithSocial(
+          email, firstName, lastName, 'apple', lang,
+          appleId: appleId,
+          onProcess: _onProcess,
+          onSuccess: _onLoginSuccess,
+          onFailure: _onFailure);
     } catch (error) {
       print(error);
     }

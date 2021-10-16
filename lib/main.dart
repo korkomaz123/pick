@@ -99,13 +99,13 @@ initOneSignalPlatform() {
   OneSignal.shared
       .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
     // Will be called whenever a notification is opened/button pressed.
-    String launchUrl = result.notification.launchUrl;
+    String launchUrl = result.notification.launchUrl!;
     print('LAUNCH URL >>>> $launchUrl');
     DynamicLinkService().dynamicLinkHandler(Uri.parse(launchUrl));
   });
 
   OneSignal.shared.setInAppMessageClickedHandler((action) {
-    String actionId = action.clickName;
+    String actionId = action.clickName!;
     DynamicLinkService().dynamicLinkHandler(Uri.parse(actionId));
   });
 

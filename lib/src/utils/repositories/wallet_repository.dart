@@ -7,7 +7,7 @@ class WalletRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<String> createWalletCart() async {
+  Future<String?> createWalletCart() async {
     String url = EndPoints.createWalletCart;
     final result = await Api.getMethod(url);
 

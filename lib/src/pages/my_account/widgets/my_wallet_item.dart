@@ -56,7 +56,7 @@ class _MyWalletItemState extends State<MyWalletItem> {
             Row(
               children: [
                 Text(
-                  NumericService.roundString(user.balance, 3),
+                  NumericService.roundString(user!.balance, 3),
                   style: mediumTextStyle.copyWith(
                     fontSize: 20.sp,
                     color: primaryColor,

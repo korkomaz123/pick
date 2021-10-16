@@ -15,7 +15,7 @@ import 'order_payment_method.dart';
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
 
-  OrderCard({this.order});
+  OrderCard({required this.order});
 
   @override
   _OrderCardState createState() => _OrderCardState();
@@ -31,12 +31,10 @@ class _OrderCardState extends State<OrderCard> {
   }
 
   void _checkOrderItems() {
-    if (widget?.order?.cartItems != null) {
-      for (int i = 0; i < widget.order.cartItems.length; i++) {
-        if (widget.order.cartItems[i].product.stockQty != null && widget.order.cartItems[i].product.stockQty > 0) {
-          isStock = true;
-          break;
-        }
+    for (int i = 0; i < widget.order.cartItems.length; i++) {
+      if (widget.order.cartItems[i].product.stockQty! > 0) {
+        isStock = true;
+        break;
       }
     }
     setState(() {});
@@ -245,21 +243,23 @@ class _OrderCardState extends State<OrderCard> {
                 SizedBox(width: 5.w),
                 MaterialButton(
                   elevation: 0,
-                  onPressed: !isStock //|| widget.order.status == OrderStatusEnum.canceled
-                      ? () => null
-                      : () => Navigator.pushNamed(
-                            context,
-                            Routes.reOrder,
-                            arguments: widget.order,
-                          ),
+                  onPressed:
+                      !isStock //|| widget.order.status == OrderStatusEnum.canceled
+                          ? () => null
+                          : () => Navigator.pushNamed(
+                                context,
+                                Routes.reOrder,
+                                arguments: widget.order,
+                              ),
                   minWidth: 150.w,
                   height: 45.h,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: !isStock //||widget.order.status == OrderStatusEnum.canceled
-                      ? greyColor
-                      : primaryColor,
+                  color:
+                      !isStock //||widget.order.status == OrderStatusEnum.canceled
+                          ? greyColor
+                          : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

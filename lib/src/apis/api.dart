@@ -13,26 +13,30 @@ class Api {
 
   static Future<dynamic> getMethod(
     String url, {
-    Map<String, dynamic> data,
-    Map<String, dynamic> headers,
-    Map<String, dynamic> extra,
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
   }) async {
     _dioInit();
+
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     print(requestUrl);
-    final response = await _dio.get(requestUrl,
-        options: Options(headers: headers ?? _getHeader(), extra: extra));
+
+    final response = await _dio.get(
+      requestUrl,
+      options: Options(headers: headers ?? _getHeader(), extra: extra),
+    );
     return response.data;
   }
 
   static Future<dynamic> postMethod(
     String url, {
-    Map<String, dynamic> data,
-    Map<String, String> headers,
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
   }) async {
     print(url);
     print(data);
-    if (!data.containsKey('lang')) data['lang'] = Preload.language;
+    if (!data!.containsKey('lang')) data['lang'] = Preload.language;
 
     final response = await _dio.post(
       url,

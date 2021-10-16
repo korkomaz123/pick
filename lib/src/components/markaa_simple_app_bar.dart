@@ -18,7 +18,7 @@ class MarkaaSimpleAppBar extends StatefulWidget {
   final bool isCenter;
 
   MarkaaSimpleAppBar({
-    @required this.scaffoldKey,
+    required this.scaffoldKey,
     this.isCartPage = false,
     this.isCenter = true,
   });
@@ -28,25 +28,25 @@ class MarkaaSimpleAppBar extends StatefulWidget {
 }
 
 class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
-  double logoWidth;
+  double? logoWidth;
 
-  double logoHeight;
+  double? logoHeight;
 
-  double pageTitleSize;
+  double? pageTitleSize;
 
-  double pageSubtitleSize;
+  double? pageSubtitleSize;
 
-  double pageDescSize;
+  double? pageDescSize;
 
-  double pagePriceSize;
+  double? pagePriceSize;
 
-  double pageTagSize;
+  double? pageTagSize;
 
-  double pageIconSize;
+  double? pageIconSize;
 
-  double shoppingCartIconWidth;
+  double? shoppingCartIconWidth;
 
-  double shoppingCartIconHeight;
+  double? shoppingCartIconHeight;
 
   TextEditingController _searchController = TextEditingController();
 
@@ -82,7 +82,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                         size: pageIconSize,
                       ),
                       onPressed: () {
-                        widget.scaffoldKey.currentState.openDrawer();
+                        widget.scaffoldKey.currentState!.openDrawer();
                       },
                     ),
                     InkWell(
@@ -96,7 +96,9 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
+                      onPressed: () => widget.isCartPage
+                          ? null
+                          : Navigator.pushNamed(context, Routes.myCart),
                       icon: Center(
                         child: Consumer<MyCartChangeNotifier>(
                           builder: (_, model, __) {
@@ -112,7 +114,9 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                               showBadge: model.cartItemCount > 0,
                               toAnimate: false,
                               animationDuration: Duration.zero,
-                              position: lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
+                              position: lang == 'ar'
+                                  ? BadgePosition.topStart(start: -8.w)
+                                  : BadgePosition.topEnd(end: -8.w),
                               child: Container(
                                 width: 25.w,
                                 height: 25.h,

@@ -17,18 +17,18 @@ class PaymentMethodList extends StatefulWidget {
   final String value;
   final SheetController controller;
 
-  PaymentMethodList({this.value, this.controller});
+  PaymentMethodList({required this.value, required this.controller});
 
   @override
   _PaymentMethodListState createState() => _PaymentMethodListState();
 }
 
 class _PaymentMethodListState extends State<PaymentMethodList> {
-  FlushBarService _flushBarService;
+  FlushBarService? _flushBarService;
   var details;
-  String value;
+  String? value;
 
-  bool get outOfBalance => double.parse(details['totalPrice']) > user.balance;
+  bool get outOfBalance => double.parse(details['totalPrice']) > user!.balance;
 
   @override
   void initState() {
@@ -68,15 +68,13 @@ class _PaymentMethodListState extends State<PaymentMethodList> {
             Column(
               children: List.generate(paymentMethods.length, (index) {
                 int idx = paymentMethods.length - index - 1;
-                if ((user?.token == null ||
-                        user?.token != null && user.balance <= 0) &&
-                    paymentMethods[idx].id == 'wallet') {
+                if (user!.balance <= 0 && paymentMethods[idx].id == 'wallet') {
                   return Container();
                 }
                 return PaymentMethodCard(
                   method: paymentMethods[idx],
-                  onChange: _onChangeMethod,
-                  value: value,
+                  onActiveChange: _onChangeMethod,
+                  value: value!,
                   cardToken: null,
                   onAuthorizedSuccess: (token) {
                     Navigator.pop(
@@ -93,17 +91,17 @@ class _PaymentMethodListState extends State<PaymentMethodList> {
     );
   }
 
-  _onChangeMethod(String val) async {
+  void _onChangeMethod(String? val) async {
     value = val;
     if (value == 'wallet' && outOfBalance) {
-      final result = await _flushBarService.showConfirmDialog(
+      final result = await _flushBarService!.showConfirmDialog(
         title: 'sorry',
         message: 'not_enough_balance',
         yesButtonText: 'add_button_title',
         noButtonText: 'cancel_button_title',
       );
       if (result != null) {
-        double amount = double.parse(details['subTotalPrice']) - user.balance;
+        double amount = double.parse(details['subTotalPrice']) - user!.balance;
         double value = NumericService.roundDouble(amount, 3);
         await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
         setState(() {});
@@ -112,7 +110,7 @@ class _PaymentMethodListState extends State<PaymentMethodList> {
       Navigator.pop(context, {'method': value, 'cardToken': null});
     } else {
       setState(() {});
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         await widget.controller.expand();
       });
     }

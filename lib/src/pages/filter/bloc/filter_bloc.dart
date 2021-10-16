@@ -31,8 +31,8 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
   }
 
   Stream<FilterState> _mapFilterAttributesLoadedToState(
-    String categoryId,
-    String brandId,
+    String? categoryId,
+    String? brandId,
     String lang,
   ) async* {
     yield FilterAttributesLoadedInProcess();
@@ -45,7 +45,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         yield FilterAttributesLoadedSuccess(availableFilters: cacheData);
       }
       final result = await _filterRepository.getFilterAttributes(
-          categoryId, brandId, lang);
+          categoryId!, brandId!, lang);
       if (result['code'] == 'SUCCESS') {
         final availableFilters =
             result['filter']['availablefilter'] as Map<String, dynamic>;

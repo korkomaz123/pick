@@ -5,10 +5,10 @@ class MarkaaSelectOption extends StatefulWidget {
   final List items;
 
   /// value of selected item
-  final String value;
+  final String? value;
 
   /// values of selected item multiple
-  final List values;
+  final List? values;
 
   /// width of each item
   final double itemWidth;
@@ -56,34 +56,25 @@ class MarkaaSelectOption extends StatefulWidget {
   final bool listStyle;
 
   MarkaaSelectOption({
-    this.items,
+    required this.items,
     this.value,
     this.values,
-    this.itemWidth,
-    this.itemHeight,
+    required this.itemWidth,
+    required this.itemHeight,
     this.itemSpace = 10,
     this.titleSize = 12,
     this.radius = 0,
-    this.selectedColor,
-    this.unSelectedColor,
-    this.selectedTitleColor,
-    this.unSelectedTitleColor,
-    this.selectedBorderColor,
-    this.unSelectedBorderColor,
+    required this.selectedColor,
+    required this.unSelectedColor,
+    required this.selectedTitleColor,
+    required this.unSelectedTitleColor,
+    required this.selectedBorderColor,
+    required this.unSelectedBorderColor,
     this.centerItem = true,
     this.isVertical = false,
-    this.onTap,
+    required this.onTap,
     this.listStyle = false,
-  })  : assert(items != null),
-        assert(itemWidth != null),
-        assert(itemHeight != null),
-        assert(selectedColor != null),
-        assert(unSelectedColor != null),
-        assert(selectedTitleColor != null),
-        assert(unSelectedTitleColor != null),
-        assert(selectedBorderColor != null),
-        assert(unSelectedBorderColor != null),
-        assert(onTap != null);
+  });
 
   @override
   _MarkaaSelectOptionState createState() => _MarkaaSelectOptionState();
@@ -106,7 +97,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                   onPressed: () => widget.onTap(widget.items[index].toString()),
                   color: widget.value == widget.items[index].toString() ||
                           (widget.values != null &&
-                              widget.values
+                              widget.values!
                                   .contains(widget.items[index].toString()))
                       ? widget.selectedColor
                       : widget.unSelectedColor,
@@ -117,7 +108,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                     side: BorderSide(
                       color: widget.value == widget.items[index].toString() ||
                               (widget.values != null &&
-                                  widget.values
+                                  widget.values!
                                       .contains(widget.items[index].toString()))
                           ? widget.selectedBorderColor
                           : widget.unSelectedBorderColor,
@@ -130,7 +121,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                       style: TextStyle(
                         color: widget.value == widget.items[index].toString() ||
                                 (widget.values != null &&
-                                    widget.values.contains(
+                                    widget.values!.contains(
                                         widget.items[index].toString()))
                             ? widget.selectedTitleColor
                             : widget.unSelectedTitleColor,
@@ -155,7 +146,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                   onPressed: () => widget.onTap(widget.items[index].toString()),
                   color: widget.value == widget.items[index].toString() ||
                           (widget.values != null &&
-                              widget.values
+                              widget.values!
                                   .contains(widget.items[index].toString()))
                       ? widget.selectedColor
                       : widget.unSelectedColor,
@@ -166,7 +157,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                     side: BorderSide(
                       color: widget.value == widget.items[index].toString() ||
                               (widget.values != null &&
-                                  widget.values
+                                  widget.values!
                                       .contains(widget.items[index].toString()))
                           ? widget.selectedBorderColor
                           : widget.unSelectedBorderColor,
@@ -179,7 +170,7 @@ class _MarkaaSelectOptionState extends State<MarkaaSelectOption> {
                       style: TextStyle(
                         color: widget.value == widget.items[index].toString() ||
                                 (widget.values != null &&
-                                    widget.values.contains(
+                                    widget.values!.contains(
                                         widget.items[index].toString()))
                             ? widget.selectedTitleColor
                             : widget.unSelectedTitleColor,

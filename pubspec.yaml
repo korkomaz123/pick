@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.8.0+40
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   adjust_sdk: ^4.28.0
@@ -19,7 +19,6 @@ dependencies:
   carousel_slider: ^4.0.0
   cloud_firestore: ^2.5.2
   connectivity: ^3.0.3
-  cool_alert: ^1.1.0
   cupertino_back_gesture: ^0.1.0
   cupertino_icons: ^1.0.2
   device_info: ^2.0.0
@@ -33,7 +32,6 @@ dependencies:
   firebase_dynamic_links: ^2.0.2
   firebase_messaging: ^10.0.0
   firebase_storage: ^10.0.3
-  flushbar: ^1.10.4
   flutter:
     sdk: flutter
   flutter_bloc: ^7.0.0

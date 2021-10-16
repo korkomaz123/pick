@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ProductImage extends StatefulWidget {
   final List<dynamic> images;
 
-  ProductImage({this.images});
+  ProductImage({required this.images});
 
   @override
   _ProductImageState createState() => _ProductImageState();
@@ -121,8 +122,8 @@ class _ProductImageState extends State<ProductImage> {
     setState(() {
       activeIndex = newIndex;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Scrollable.ensureVisible(dataKey.currentContext);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(dataKey.currentContext!);
     });
   }
 }

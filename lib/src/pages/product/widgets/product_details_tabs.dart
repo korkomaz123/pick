@@ -13,7 +13,7 @@ import 'product_review.dart';
 class ProductDetailsTabs extends StatefulWidget {
   final ProductEntity productEntity;
   final ProductChangeNotifier model;
-  ProductDetailsTabs({this.productEntity, this.model});
+  ProductDetailsTabs({required this.productEntity, required this.model});
 
   @override
   _ProductDetailsTabsState createState() => _ProductDetailsTabsState();
@@ -21,10 +21,11 @@ class ProductDetailsTabs extends StatefulWidget {
 
 class _ProductDetailsTabsState extends State<ProductDetailsTabs>
     with TickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
+
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -32,7 +33,7 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
   void initState() {
     _tabController = TabController(
         length: 3, vsync: this, initialIndex: _tabController?.index ?? 0);
-    _tabController.addListener(() {
+    _tabController!.addListener(() {
       setState(() {});
     });
     super.initState();
@@ -63,12 +64,12 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
           ),
           Column(
             children: [
-              if (_tabController.index == 1) ...[
-                if (widget.productEntity?.specification == null)
+              if (_tabController!.index == 1) ...[
+                if (widget.productEntity.specification == null)
                   Container()
                 else
                   Column(
-                    children: widget.productEntity.specification
+                    children: widget.productEntity.specification!
                         .map(
                           (e) => Row(
                             children: [
@@ -83,7 +84,7 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
                                   ),
                                   color: greyColor.withOpacity(0.1),
                                   child: Text(
-                                    e.label,
+                                    e.label!,
                                     style: mediumTextStyle.copyWith(
                                       color: primaryColor,
                                     ),
@@ -106,7 +107,7 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
                                                 e.value, 3) +
                                             " " +
                                             'currency'.tr()
-                                        : e.value,
+                                        : e.value!,
                                     style: mediumTextStyle,
                                   ),
                                 ),
@@ -117,7 +118,7 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
                         .toList(),
                   ),
               ],
-              if (_tabController.index == 2)
+              if (_tabController!.index == 2)
                 ProductReview(product: widget.productEntity),
               ProductMoreAbout(productEntity: widget.productEntity),
             ],

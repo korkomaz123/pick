@@ -1,8 +1,8 @@
 class RegionEntity {
-  final String regionId;
-  final String countryId;
-  final String defaultName;
-  final String name;
+  final String? regionId;
+  final String? countryId;
+  final String? defaultName;
+  final String? name;
 
   RegionEntity({
     this.regionId,

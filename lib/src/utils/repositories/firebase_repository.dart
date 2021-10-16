@@ -89,14 +89,14 @@ class FirebaseRepository {
 
   // load stream collection base on provided search criteria
   Stream<QuerySnapshot> loadCollectionStream({
-    String path,
-    String searchKey,
-    String searchValue,
-    String searchArrayKey,
-    String searchArrayValue,
-    bool noOrdered,
+    String? path,
+    String? searchKey,
+    String? searchValue,
+    String? searchArrayKey,
+    String? searchArrayValue,
+    bool? noOrdered,
   }) {
-    final CollectionReference colRef = _firestoreClient.collection(path);
+    final CollectionReference colRef = _firestoreClient.collection(path!);
     if (searchKey != null && searchValue != null) {
       if (noOrdered != null && !!noOrdered) {
         return colRef.where(searchKey, isEqualTo: searchValue).snapshots();
@@ -123,18 +123,18 @@ class FirebaseRepository {
   /// key: field name, opt: the operator for query, value: expected value for search
   /// If you want to ignore search params, just set value to []
   Stream<QuerySnapshot> loadCollectionStreamCustom([
-    String path,
-    List<Map<String, dynamic>> conditions,
-    List<Map<String, dynamic>> orders,
+    String? path,
+    List<Map<String, dynamic>>? conditions,
+    List<Map<String, dynamic>>? orders,
   ]) {
-    final CollectionReference colRef = _firestoreClient.collection(path);
+    final CollectionReference colRef = _firestoreClient.collection(path!);
     Query query = colRef;
-    if (conditions.isNotEmpty) {
+    if (conditions!.isNotEmpty) {
       for (var i = 0; i < conditions.length; i++) {
         query = queryWhere(query, conditions[i]);
       }
     }
-    if (orders.isNotEmpty) {
+    if (orders!.isNotEmpty) {
       for (var i = 0; i < orders.length; i++) {
         query = query.orderBy(
           orders[i]['field'],
@@ -158,49 +158,40 @@ class FirebaseRepository {
           condition['key'],
           isEqualTo: condition['value'],
         );
-        break;
       case '<':
         return query.where(
           condition['key'],
           isLessThan: condition['value'],
         );
-        break;
       case '<=':
         return query.where(
           condition['key'],
           isLessThanOrEqualTo: condition['value'],
         );
-        break;
       case '>':
         return query.where(
           condition['key'],
           isGreaterThan: condition['value'],
         );
-        break;
       case '>=':
         return query.where(
           condition['key'],
           isGreaterThanOrEqualTo: condition['value'],
         );
-        break;
       case 'in':
         return query.where(
           condition['key'],
           arrayContains: condition['value'],
         );
-        break;
       case 'isNull':
         return query.where(condition['key'], isNull: true);
-        break;
       case 'isNotNull':
         return query.where(condition['key'], isNull: false);
-        break;
       case 'contains':
         return query.where(
           condition['key'],
           arrayContains: condition['value'],
         );
-        break;
       default:
         return query.where(
           condition['key'],
@@ -220,11 +211,11 @@ class FirebaseRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<QuerySnapshot> loadCollectionCustom([
-    String path,
-    List<Map<String, dynamic>> wheres,
-    List<Map<String, dynamic>> orders,
+    String? path,
+    List<Map<String, dynamic>>? wheres,
+    List<Map<String, dynamic>>? orders,
   ]) {
-    final CollectionReference colRef = _firestoreClient.collection(path);
+    final CollectionReference colRef = _firestoreClient.collection(path!);
     Query query = colRef;
     if (wheres != null) {
       for (var i = 0; i < wheres.length; i++) {
@@ -247,7 +238,7 @@ class FirebaseRepository {
   //////////////////////////////////////////////////////////////////////////////
   Stream<Map<String, dynamic>> loadDocStream(String path) {
     final docRef = _firestoreClient.doc(path);
-    return docRef.snapshots().asyncMap((doc) => doc.data());
+    return docRef.snapshots().asyncMap((doc) => doc.data()!);
   }
 
   /// method [loadCollectionPaginate]
@@ -260,13 +251,13 @@ class FirebaseRepository {
   /// @return QuerySnapshot
   ///
   Future<QuerySnapshot> loadCollectionPaginate([
-    String path,
-    List<Map<String, dynamic>> wheres,
-    List<Map<String, dynamic>> orders,
-    DocumentSnapshot lastDoc,
-    int length,
+    String? path,
+    List<Map<String, dynamic>>? wheres,
+    List<Map<String, dynamic>>? orders,
+    DocumentSnapshot? lastDoc,
+    int? length,
   ]) {
-    final CollectionReference colRef = _firestoreClient.collection(path);
+    final CollectionReference colRef = _firestoreClient.collection(path!);
     Query query = colRef;
 
     /// [where] query

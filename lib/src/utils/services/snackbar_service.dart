@@ -7,16 +7,16 @@ class SnackBarService {
   final BuildContext context;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  SnackBarService({this.context, this.scaffoldKey});
+  SnackBarService({required this.context, required this.scaffoldKey});
 
   void showDefaultSnackBar(String message) {
-    ScaffoldMessenger.of(Preload.navigatorKey.currentContext)
+    ScaffoldMessenger.of(Preload.navigatorKey!.currentContext!)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   void showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(Preload.navigatorKey.currentContext)
+    ScaffoldMessenger.of(Preload.navigatorKey!.currentContext!)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
         content: Text(message),
@@ -25,7 +25,7 @@ class SnackBarService {
   }
 
   void showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(Preload.navigatorKey.currentContext).showSnackBar(
+    ScaffoldMessenger.of(Preload.navigatorKey!.currentContext!).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: succeedColor,

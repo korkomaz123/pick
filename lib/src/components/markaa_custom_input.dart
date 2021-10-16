@@ -12,17 +12,17 @@ class MarkaaCustomInput extends StatelessWidget {
   final TextInputType inputType;
   final Function validator;
   final bool readOnly;
-  final Function onTap;
-  final int maxLength;
+  final void Function()? onTap;
+  final int? maxLength;
 
   MarkaaCustomInput({
-    @required this.controller,
-    @required this.width,
-    @required this.padding,
-    @required this.fontSize,
-    @required this.hint,
-    @required this.inputType,
-    @required this.validator,
+    required this.controller,
+    required this.width,
+    required this.padding,
+    required this.fontSize,
+    required this.hint,
+    required this.inputType,
+    required this.validator,
     this.readOnly = false,
     this.onTap,
     this.maxLength,
@@ -42,9 +42,9 @@ class MarkaaCustomInput extends StatelessWidget {
         maxLength: maxLength,
         buildCounter: (
           BuildContext context, {
-          int currentLength,
-          int maxLength,
-          bool isFocused,
+          int? currentLength,
+          int? maxLength,
+          bool? isFocused,
         }) =>
             null,
         decoration: InputDecoration(

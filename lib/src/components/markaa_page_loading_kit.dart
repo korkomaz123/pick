@@ -31,7 +31,7 @@ class CircleLoadingSpinner extends StatefulWidget {
 
 class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -65,7 +65,7 @@ class BounceLoadingSpinner extends StatefulWidget {
 
 class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -78,7 +78,7 @@ class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -98,7 +98,7 @@ class PulseLoadingSpinner extends StatefulWidget {
 
 class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -111,7 +111,7 @@ class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -131,7 +131,7 @@ class WaveLoadingSpinner extends StatefulWidget {
 
 class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -144,7 +144,7 @@ class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -165,7 +165,7 @@ class RippleLoadingSpinner extends StatefulWidget {
 
 class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -178,7 +178,7 @@ class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -198,7 +198,7 @@ class DualRingSpinner extends StatefulWidget {
 
 class _DualRingSpinnerState extends State<DualRingSpinner>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -211,7 +211,7 @@ class _DualRingSpinnerState extends State<DualRingSpinner>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -233,7 +233,7 @@ class SpinningLinesBar extends StatefulWidget {
 
 class _SpinningLinesBarState extends State<SpinningLinesBar>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -246,7 +246,7 @@ class _SpinningLinesBarState extends State<SpinningLinesBar>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -268,7 +268,7 @@ class ThreeBounceLoadingBar extends StatefulWidget {
 
 class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -281,7 +281,7 @@ class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 

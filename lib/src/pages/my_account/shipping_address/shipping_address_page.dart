@@ -34,19 +34,19 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
 
   final _refreshController = RefreshController(initialRefresh: false);
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
-  List<AddressEntity> shippingAddresses;
-  int selectedIndex;
+  List<AddressEntity>? shippingAddresses;
+  int? selectedIndex;
   bool isCheckout = false;
 
-  AddressChangeNotifier model;
+  AddressChangeNotifier? model;
 
   @override
   void initState() {
     super.initState();
-    isCheckout = widget?.isCheckout != null ? widget.isCheckout : false;
+    isCheckout = widget.isCheckout;
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -55,11 +55,11 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRefresh() async {
-    model.initialize();
-    await model.loadAddresses(
-      user.token,
-      () => _refreshController.refreshCompleted(),
-      () => _refreshController.refreshFailed(),
+    model!.initialize();
+    await model!.loadAddresses(
+      user!.token,
+      _refreshController.refreshCompleted,
+      _refreshController.refreshFailed,
     );
   }
 
@@ -118,7 +118,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             child: Consumer<AddressChangeNotifier>(
               builder: (_, notifier, ___) {
                 model = notifier;
-                if (model.keys.isEmpty) {
+                if (model!.keys!.isEmpty) {
                   return NoAvailableData(
                     message: 'no_saved_addresses'.tr(),
                   );
@@ -126,8 +126,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   return SingleChildScrollView(
                     child: Column(
                       children: List.generate(
-                        model.keys.length,
-                        (index) => _buildAddressCard(model.keys[index]),
+                        model!.keys!.length,
+                        (index) => _buildAddressCard(model!.keys![index]),
                       )..add(SizedBox(height: 60.h)),
                     ),
                   );
@@ -173,7 +173,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   Widget _buildAddressCard(String key) {
-    final address = model.addressesMap[key];
+    final address = model!.addressesMap![key];
     return InkWell(
       onTap: () => _onUpdate(key),
       child: Container(
@@ -200,7 +200,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      address.street,
+                      address!.street,
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 18.sp,
@@ -225,7 +225,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'phone_number_hint'.tr() + ': ' + address.phoneNumber,
+                      'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: 14.sp,
@@ -239,10 +239,10 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               top: 0,
               left: 0,
               child: Radio(
-                value: address.addressId,
+                value: address.addressId!,
                 groupValue: model?.defaultAddress?.addressId ?? '',
                 activeColor: primaryColor,
-                onChanged: (value) => _onUpdate(value),
+                onChanged: _onUpdate,
               ),
             ),
             Positioned(
@@ -272,41 +272,41 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRemove(String key) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'remove_shipping_address_subtitle');
+    final result = await flushBarService!
+        .showConfirmDialog(message: 'remove_shipping_address_subtitle');
     if (result != null) {
-      await model.deleteAddress(
-          user.token, key, _onProcess, _onSuccess, _onFailure);
+      await model!
+          .deleteAddress(user!.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
-  void _onUpdate(String key) async {
-    final address = model.addressesMap[key];
-    address.defaultBillingAddress = 1;
+  void _onUpdate(String? key) async {
+    final address = model!.addressesMap![key];
+    address!.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await model.updateAddress(user.token, address,
+    await model!.updateAddress(user!.token, address,
         onProcess: _onProcess,
         onSuccess: _onUpdateSuccess,
         onFailure: _onFailure);
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
   }
 
   void _onUpdateSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     if (isCheckout) {
       Navigator.pop(context);
     }
   }
 
   void _onFailure(String error) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(error);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(error);
   }
 }

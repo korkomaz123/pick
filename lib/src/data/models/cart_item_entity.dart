@@ -5,22 +5,22 @@ import 'package:markaa/src/utils/services/string_service.dart';
 class CartItemEntity {
   final ProductModel product;
   int itemCount;
-  int itemCountCanceled;
-  int itemCountReturned;
-  int returnedStatus;
+  int? itemCountCanceled;
+  int? itemCountReturned;
+  int? returnedStatus;
   int availableCount;
   String itemId;
   double rowPrice;
 
   CartItemEntity({
-    this.product,
-    this.itemCount,
+    required this.product,
+    required this.itemCount,
     this.itemCountCanceled,
     this.itemCountReturned,
     this.returnedStatus,
-    this.availableCount,
-    this.itemId,
-    this.rowPrice,
+    required this.availableCount,
+    required this.itemId,
+    required this.rowPrice,
   });
 
   CartItemEntity.fromJson(Map<String, dynamic> json)

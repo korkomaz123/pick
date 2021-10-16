@@ -62,15 +62,13 @@ class _AboutUsPageState extends State<AboutUsPage> {
           children: [
             Padding(
               padding: EdgeInsets.all(15.w),
-              child: FutureBuilder(
+              child: FutureBuilder<dynamic>(
                 future: SettingRepository().getAboutUs(lang),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Html(data: snapshot.data['data']['html']);
                   } else {
-                    return Center(
-                      child: PulseLoadingSpinner(),
-                    );
+                    return Center(child: PulseLoadingSpinner());
                   }
                 },
               ),

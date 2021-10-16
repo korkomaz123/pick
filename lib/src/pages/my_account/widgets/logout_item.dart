@@ -23,25 +23,25 @@ class LogoutItem extends StatefulWidget {
   final SnackBarService snackBarService;
   final ProgressService progressService;
 
-  LogoutItem({this.snackBarService, this.progressService});
+  LogoutItem({required this.snackBarService, required this.progressService});
 
   @override
   _LogoutItemState createState() => _LogoutItemState();
 }
 
 class _LogoutItemState extends State<LogoutItem> {
-  SnackBarService snackBarService;
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  SnackBarService? snackBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
 
-  AuthChangeNotifier authChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  HomeChangeNotifier? homeChangeNotifier;
 
   @override
   void initState() {
@@ -95,10 +95,10 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logout() async {
-    final result = await flushBarService.showConfirmDialog(
+    final result = await flushBarService?.showConfirmDialog(
         message: 'logout_confirm_dialog_text');
     if (result != null) {
-      authChangeNotifier.logout(
+      authChangeNotifier?.logout(
         onProcess: _onProcess,
         onSuccess: _onSuccess,
         onFailure: _onFailure,
@@ -107,27 +107,27 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   _onProcess() {
-    progressService.showProgress();
+    progressService?.showProgress();
   }
 
   _onFailure(message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService?.hideProgress();
+    flushBarService?.showErrorDialog(message);
   }
 
   void _onSuccess() async {
     await localRepo.setToken('');
-    await settingRepo.updateFcmDeviceToken(user.token, '', '', lang, lang);
+    await settingRepo.updateFcmDeviceToken(user!.token, '', '', lang, lang);
     user = null;
 
-    orderChangeNotifier.initializeOrders();
-    wishlistChangeNotifier.initialize();
-    myCartChangeNotifier.initialize();
-    await myCartChangeNotifier.getCartId();
-    await myCartChangeNotifier.getCartItems(lang);
-    homeChangeNotifier.loadRecentlyViewedGuest();
+    orderChangeNotifier!.initializeOrders();
+    wishlistChangeNotifier!.initialize();
+    myCartChangeNotifier!.initialize();
+    await myCartChangeNotifier!.getCartId();
+    await myCartChangeNotifier!.getCartItems(lang);
+    homeChangeNotifier!.loadRecentlyViewedGuest();
 
-    progressService.hideProgress();
+    progressService!.hideProgress();
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,

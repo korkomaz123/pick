@@ -8,15 +8,12 @@ class WalletChangeNotifier extends ChangeNotifier {
   final walletRepository = WalletRepository();
   final cartRepository = MyCartRepository();
 
-  String walletCartId;
+  String? walletCartId;
+  String? amount;
 
-  String amount;
-
-  List<BankAccountEntity> banksList;
-
-  BankAccountEntity selectedBank;
-
-  List<TransactionEntity> transactionsList;
+  List<BankAccountEntity>? banksList;
+  List<TransactionEntity>? transactionsList;
+  BankAccountEntity? selectedBank;
 
   void init() {
     print('clear wallet cart');
@@ -26,118 +23,114 @@ class WalletChangeNotifier extends ChangeNotifier {
   }
 
   void createWalletCart({
-    String amount,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? amount,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     print('create wallet cart: $walletCartId');
     if (onProcess != null) onProcess();
 
     try {
-      if (walletCartId != null && walletCartId.isNotEmpty) {
+      if (walletCartId!.isNotEmpty) {
         if (this.amount == amount) {
-          if (onSuccess != null) onSuccess();
+          onSuccess!();
         } else {
-          final result = await cartRepository.clearCartItems(walletCartId);
+          final result = await cartRepository.clearCartItems(walletCartId!);
           if (result['code'] == 'SUCCESS') {
-            if (onSuccess != null) onSuccess();
+            onSuccess!();
           } else {
-            if (onFailure != null) onFailure();
+            onFailure!();
           }
         }
       } else {
         walletCartId = await walletRepository.createWalletCart();
-        if (walletCartId == null || walletCartId.isEmpty) {
-          if (onFailure != null) onFailure('Error');
+        if (walletCartId!.isEmpty) {
+          onFailure!('Error');
         } else {
-          if (onSuccess != null) onSuccess();
+          onSuccess!();
         }
       }
     } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
+      onFailure!('connection_error');
     }
     notifyListeners();
   }
 
   void addMoneyToWallet({
-    String amount,
-    String lang,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? amount,
+    String? lang,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
-
+    onProcess!();
     if (this.amount == amount) {
-      if (onSuccess != null) onSuccess();
+      onSuccess!();
     } else {
-      final result =
-          await walletRepository.addMoneyToWallet(walletCartId, amount, lang);
-      print(result);
+      final result = await walletRepository.addMoneyToWallet(
+          walletCartId!, amount!, lang!);
 
       if (result['code'] == 'SUCCESS') {
         this.amount = amount;
-        if (onSuccess != null) onSuccess();
+        onSuccess!();
       } else {
-        if (onFailure != null) onFailure();
+        onFailure!();
       }
     }
     notifyListeners();
   }
 
   void transferMoneyToBank({
-    String token,
-    String amount,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? token,
+    String? amount,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
-    Map<String, dynamic> bankDetails = selectedBank.toJson();
+    Map<String, dynamic> bankDetails = selectedBank!.toJson();
     String walletNote = '';
     final result = await walletRepository.transferMoneyToBank(
-        token, amount, bankDetails, walletNote);
+        token!, amount!, bankDetails, walletNote);
 
     if (result['code'] == 'SUCCESS') {
-      if (onSuccess != null) onSuccess();
+      onSuccess!();
     } else {
-      if (onFailure != null) onFailure(result['errorMessage']);
+      onFailure!(result['errorMessage']);
     }
   }
 
   void transferMoney({
-    String token,
-    String amount,
-    String lang,
-    String description,
-    String email,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? token,
+    String? amount,
+    String? lang,
+    String? description,
+    String? email,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     final result = await walletRepository.transferMoney(
-        token, amount, lang, description, email);
-    print(result);
+        token!, amount!, lang!, description!, email!);
     if (result['code'] == 'SUCCESS') {
-      if (onSuccess != null) onSuccess();
+      onSuccess!();
     } else {
-      if (onFailure != null) onFailure(result['errorMessage']);
+      onFailure!(result['errorMessage']);
     }
   }
 
-  void getTransactionHistory({String token}) async {
+  void getTransactionHistory({String? token}) async {
     final result =
-        await walletRepository.getTransactionHistory(token, Preload.language);
-
+        await walletRepository.getTransactionHistory(token!, Preload.language);
     if (result['code'] == 'SUCCESS') {
       transactionsList = [];
       List<dynamic> list = result['data'];
       for (var item in list) {
-        transactionsList.add(TransactionEntity.fromJson(item));
+        transactionsList!.add(TransactionEntity.fromJson(item));
       }
     } else {
       transactionsList = [];

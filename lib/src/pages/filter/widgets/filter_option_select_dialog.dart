@@ -14,10 +14,10 @@ class FilterOptionSelectDialog extends StatefulWidget {
   final List<dynamic> values;
 
   FilterOptionSelectDialog({
-    this.title,
-    this.code,
-    this.options,
-    this.values,
+    required this.title,
+    required this.code,
+    required this.options,
+    required this.values,
   });
 
   @override
@@ -26,12 +26,12 @@ class FilterOptionSelectDialog extends StatefulWidget {
 }
 
 class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
-  String title;
-  String code;
-  List<dynamic> options;
-  List<dynamic> values;
+  String? title;
+  String? code;
+  List<dynamic>? options;
+  List<dynamic>? values;
   TextEditingController searchController = TextEditingController();
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
     code = widget.code;
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     searchController.addListener(() {
-      markaaAppChangeNotifier.rebuild();
+      markaaAppChangeNotifier!.rebuild();
     });
     options = widget.options.map((option) => option).toList();
     values = widget.values.map((value) => value).toList();
@@ -135,17 +135,17 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
   Widget _buildOptionsList() {
     return Expanded(
       child: ListView.separated(
-        itemCount: options.length,
+        itemCount: options!.length,
         itemBuilder: (context, index) {
-          dynamic value = options[index]['value'];
-          dynamic title = options[index]['display'];
-          int selIdx = values.indexOf(value);
+          dynamic value = options![index]['value'];
+          dynamic title = options![index]['display'];
+          int selIdx = values!.indexOf(value);
           bool isSelected = selIdx >= 0;
           String query = searchController.text.toLowerCase();
           String item = title.toString().toLowerCase();
           if (item.contains(query)) {
             return InkWell(
-              onTap: () => _onSelectItem(selIdx, options[index]),
+              onTap: () => _onSelectItem(selIdx, options![index]),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 30.w),
                 padding: EdgeInsets.symmetric(vertical: 5.h),
@@ -161,7 +161,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                             margin: EdgeInsets.only(right: 10.w),
                             decoration: BoxDecoration(
                               color: _getColorFromHex(
-                                  options[index]['color_code']),
+                                  options![index]['color_code']),
                               shape: BoxShape.circle,
                             ),
                           )
@@ -191,10 +191,10 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
           }
         },
         separatorBuilder: (context, index) {
-          dynamic title = options[index]['display'];
+          dynamic title = options![index]['display'];
           String query = searchController.text.toLowerCase();
           String item = title.toString().toLowerCase();
-          if (index < options.length - 1) {
+          if (index < options!.length - 1) {
             if (item.contains(query)) {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -240,15 +240,15 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
 
   void _onSelectItem(int selIdx, Map<String, dynamic> item) {
     if (selIdx >= 0) {
-      values.removeAt(selIdx);
+      values!.removeAt(selIdx);
     } else {
-      values.add(item['value']);
+      values!.add(item['value']);
     }
-    markaaAppChangeNotifier.rebuild();
+    markaaAppChangeNotifier!.rebuild();
   }
 
   void _onClear() {
-    values.clear();
-    markaaAppChangeNotifier.rebuild();
+    values!.clear();
+    markaaAppChangeNotifier!.rebuild();
   }
 }

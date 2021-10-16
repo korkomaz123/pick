@@ -36,42 +36,43 @@ class ProductListView extends StatefulWidget {
   final double pos;
 
   ProductListView({
-    this.subCategories,
-    this.activeIndex,
-    this.scaffoldKey,
-    this.isFilter,
-    this.isFromBrand,
-    this.brand,
-    this.onChangeTab,
-    this.scrollController,
-    this.viewMode,
-    this.sortByItem,
-    this.filterValues,
-    this.pos,
+    required this.subCategories,
+    required this.activeIndex,
+    required this.scaffoldKey,
+    required this.isFilter,
+    required this.isFromBrand,
+    required this.brand,
+    required this.onChangeTab,
+    required this.scrollController,
+    required this.viewMode,
+    required this.sortByItem,
+    required this.filterValues,
+    required this.pos,
   });
 
   @override
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
-  GlobalKey<ScaffoldState> scaffoldKey;
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  ProductChangeNotifier productChangeNotifier;
-  ScrollChangeNotifier scrollChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  FilterBloc filterBloc;
+class _ProductListViewState extends State<ProductListView>
+    with TickerProviderStateMixin {
+  GlobalKey<ScaffoldState>? scaffoldKey;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
+  ProductChangeNotifier? productChangeNotifier;
+  ScrollChangeNotifier? scrollChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  FilterBloc? filterBloc;
 
-  List<CategoryEntity> subCategories;
-  BrandEntity brand;
+  List<CategoryEntity>? subCategories;
+  BrandEntity? brand;
 
   int page = 1;
   int currentProduct = 0;
 
-  bool isFromBrand;
+  bool? isFromBrand;
 
-  TabController tabController;
+  TabController? tabController;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -89,11 +90,11 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
     filterBloc = context.read<FilterBloc>();
 
     tabController = TabController(
-      length: subCategories.length,
+      length: subCategories!.length,
       initialIndex: widget.activeIndex,
       vsync: this,
     );
-    tabController.addListener(() => widget.onChangeTab(tabController.index));
+    tabController!.addListener(() => widget.onChangeTab(tabController!.index));
     scrollController.addListener(_onScroll);
 
     _initLoadProducts();
@@ -101,7 +102,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   @override
   void dispose() {
-    tabController.dispose();
+    tabController!.dispose();
     scrollController.dispose();
     super.dispose();
   }
@@ -110,91 +111,92 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
     double maxScroll = scrollController.position.maxScrollExtent;
     double currentScroll = scrollController.position.pixels;
 
-    scrollChangeNotifier.controlBrandBar(currentScroll);
+    scrollChangeNotifier!.controlBrandBar(currentScroll);
 
     currentProduct = ((currentScroll ~/ 280.h).floor() * 2) + 4;
-    markaaAppChangeNotifier.rebuild();
+    markaaAppChangeNotifier!.rebuild();
 
-    if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
+    if (!productChangeNotifier!.isReachedMax &&
+        (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
 
-  String _generateKey([CategoryEntity category]) {
-    String key;
+  String? _generateKey([CategoryEntity? category]) {
+    String? key;
     if (widget.viewMode == ProductViewModeEnum.category) {
-      key = category.id;
+      key = category!.id;
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      key = brand.optionId + '_' + category.id;
+      key = brand!.optionId + '_' + category!.id;
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      key = '${widget.sortByItem}_${brand.optionId ?? ''}_${category.id ?? ''}';
+      key = '${widget.sortByItem}_${brand!.optionId}_${category!.id}';
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      key = 'filter_${brand.optionId ?? ''}_${category.id ?? 'all'}';
+      key = 'filter_${brand!.optionId}_${category!.id}';
     }
     return key;
   }
 
   void _initLoadProducts() async {
-    String key = _generateKey(subCategories[widget.activeIndex]);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    String key = _generateKey(subCategories![widget.activeIndex])!;
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.viewMode == ProductViewModeEnum.filter) {
-        await productChangeNotifier.initialLoadFilteredProducts(
+        await productChangeNotifier!.initialLoadFilteredProducts(
           key,
-          brand.optionId,
-          subCategories[widget.activeIndex].id,
+          brand!.optionId,
+          subCategories![widget.activeIndex].id,
           widget.filterValues,
           lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.category) {
-        await productChangeNotifier.initialLoadCategoryProducts(
+        await productChangeNotifier!.initialLoadCategoryProducts(
           key,
-          subCategories[widget.activeIndex].id,
+          subCategories![widget.activeIndex].id,
           lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.brand) {
-        await productChangeNotifier.initialLoadBrandProducts(
+        await productChangeNotifier!.initialLoadBrandProducts(
           key,
-          brand.optionId,
-          subCategories[widget.activeIndex].id,
+          brand!.optionId,
+          subCategories![widget.activeIndex].id,
           lang,
         );
       }
-      filterBloc.add(FilterAttributesLoaded(
-        categoryId: subCategories[widget.activeIndex].id == 'all' ? null : subCategories[widget.activeIndex].id,
-        brandId: brand.optionId,
+      filterBloc!.add(FilterAttributesLoaded(
+        categoryId: subCategories![widget.activeIndex].id,
+        brandId: brand!.optionId,
         lang: lang,
       ));
     });
   }
 
   Future<void> _onRefresh() async {
-    String key = _generateKey(subCategories[tabController.index]);
+    String key = _generateKey(subCategories![tabController!.index])!;
     if (widget.viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier.refreshCategoryProducts(
+      await productChangeNotifier!.refreshCategoryProducts(
         key,
-        subCategories[tabController.index].id,
+        subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier.refreshBrandProducts(
+      await productChangeNotifier!.refreshBrandProducts(
         key,
-        brand.optionId,
-        subCategories[tabController.index].id,
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      await productChangeNotifier.refreshSortedProducts(
+      await productChangeNotifier!.refreshSortedProducts(
         key,
-        brand.optionId ?? '',
-        (subCategories[tabController.index].id ?? ''),
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         widget.sortByItem,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      await productChangeNotifier.refreshFilteredProducts(
+      await productChangeNotifier!.refreshFilteredProducts(
         key,
-        brand.optionId,
-        subCategories[tabController.index].id,
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         widget.filterValues,
         lang,
       );
@@ -202,40 +204,40 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   void _onLoadMore() async {
-    String key = _generateKey(subCategories[tabController.index]);
-    page = productChangeNotifier.pages[key];
+    String key = _generateKey(subCategories![tabController!.index])!;
+    page = productChangeNotifier!.pages[key]!;
     page += 1;
 
     if (widget.viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier.loadMoreCategoryProducts(
+      await productChangeNotifier!.loadMoreCategoryProducts(
         key,
         page,
-        subCategories[tabController.index].id,
+        subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier.loadMoreBrandProducts(
+      await productChangeNotifier!.loadMoreBrandProducts(
         key,
         page,
-        brand.optionId ?? '',
-        subCategories[tabController.index].id,
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      await productChangeNotifier.loadMoreSortedProducts(
+      await productChangeNotifier!.loadMoreSortedProducts(
         key,
         page,
-        brand.optionId,
-        subCategories[tabController.index].id,
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         widget.sortByItem,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      await productChangeNotifier.loadMoreFilteredProducts(
+      await productChangeNotifier!.loadMoreFilteredProducts(
         key,
         page,
-        brand.optionId,
-        subCategories[tabController.index].id,
+        brand!.optionId,
+        subCategories![tabController!.index].id,
         widget.filterValues,
         lang,
       );
@@ -252,30 +254,34 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    tabController.index = widget.activeIndex;
+    tabController!.index = widget.activeIndex;
     return Stack(
       children: [
         Column(
           children: [
-            if (subCategories.length > 1) ...[_buildCategoryTabBar()],
+            if (subCategories!.length > 1) ...[_buildCategoryTabBar()],
             Expanded(
               child: TabBarView(
                 controller: tabController,
-                children: subCategories.map((cat) {
+                children: subCategories!.map((cat) {
                   return Consumer<ProductChangeNotifier>(
                     builder: (ctx, notifier, _) {
-                      String index = _generateKey(cat);
-                      if (!productChangeNotifier.data.containsKey(index) || productChangeNotifier.data[index] == null) {
+                      String index = _generateKey(cat)!;
+                      if (!productChangeNotifier!.data!.containsKey(index) ||
+                          productChangeNotifier!.data![index] == null) {
                         return Center(child: PulseLoadingSpinner());
-                      } else if (productChangeNotifier.data[index].isEmpty) {
+                      } else if (productChangeNotifier!.data![index]!.isEmpty) {
                         return ProductNoAvailable();
                       } else {
                         return Column(
                           children: [
                             Expanded(
-                              child: _buildPList(productChangeNotifier.data[index]),
+                              child: _buildPList(
+                                  productChangeNotifier!.data![index]!),
                             ),
-                            if (productChangeNotifier.isLoading) ...[Center(child: ThreeBounceLoadingBar())],
+                            if (productChangeNotifier!.isLoading) ...[
+                              Center(child: ThreeBounceLoadingBar())
+                            ],
                           ],
                         );
                       }
@@ -311,14 +317,16 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         labelColor: Colors.white,
         isScrollable: true,
         tabs: List.generate(
-          subCategories.length,
+          subCategories!.length,
           (index) {
             return Tab(
               child: Text(
-                index == 0 ? 'all'.tr() : subCategories[index].name,
+                index == 0 ? 'all'.tr() : subCategories![index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: 14.sp,
-                  color: tabController.index == index ? Colors.white : Colors.black,
+                  color: tabController!.index == index
+                      ? Colors.white
+                      : Colors.black,
                 ),
               ),
             );
@@ -393,7 +401,8 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   ],
                 ],
               ),
-              if (productChangeNotifier.isReachedMax && (pIndex + 1 >= products.length)) ...[
+              if (productChangeNotifier!.isReachedMax &&
+                  (pIndex + 1 >= products.length)) ...[
                 Container(
                   width: 375.w,
                   alignment: Alignment.center,
@@ -414,7 +423,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   Widget _buildArrowButton() {
-    String key = _generateKey(subCategories[tabController.index]);
+    String key = _generateKey(subCategories![tabController!.index])!;
     return AnimatedPositioned(
       left: 120.w,
       right: 120.w,
@@ -438,9 +447,9 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                 size: 20.sp,
                 color: Colors.white70,
               ),
-              if (productChangeNotifier.totalProducts[key] != null) ...[
+              if (productChangeNotifier!.totalProducts[key] != null) ...[
                 Text(
-                  '${int.parse(productChangeNotifier.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
+                  '${int.parse(productChangeNotifier!.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier!.totalProducts[key]} / ${productChangeNotifier!.totalProducts[key] ?? ''}',
                   style: TextStyle(color: Colors.white70),
                 )
               ],

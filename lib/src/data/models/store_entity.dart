@@ -1,10 +1,10 @@
 import 'package:markaa/src/data/models/index.dart';
 
 class StoreEntity {
-  final String id;
-  final String name;
-  final String imageUrl;
-  final List<ProductEntity> products;
+  final String? id;
+  final String? name;
+  final String? imageUrl;
+  final List<ProductEntity>? products;
 
   StoreEntity({this.id, this.name, this.products, this.imageUrl});
 

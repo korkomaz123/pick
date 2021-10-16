@@ -28,7 +28,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:string_validator/string_validator.dart';
 
 class MyWalletCheckoutPage extends StatefulWidget {
-  final OrderEntity reorder;
+  final OrderEntity? reorder;
 
   MyWalletCheckoutPage({this.reorder});
 
@@ -41,26 +41,26 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   TextEditingController noteController = TextEditingController();
 
   String payment = 'knet';
-  String cardToken;
+  String? cardToken;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
-  WalletChangeNotifier walletChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  WalletChangeNotifier? walletChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
   _loadData() async {
     if (paymentMethods.isEmpty) {
       paymentMethods = await checkoutRepo.getPaymentMethod();
     }
     if (widget.reorder != null) {
-      payment = widget.reorder.paymentMethod.id;
+      payment = widget.reorder!.paymentMethod.id;
     }
     setState(() {});
   }
@@ -69,7 +69,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   void initState() {
     super.initState();
     if (widget.reorder != null) {
-      payment = widget.reorder.paymentMethod.id;
+      payment = widget.reorder!.paymentMethod.id;
     }
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -84,12 +84,12 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onFailure(String error) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(error);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(error);
   }
 
   @override
@@ -139,9 +139,9 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
                       paymentMethods[idx].id == 'knet') {
                     return PaymentMethodCard(
                       method: paymentMethods[idx],
-                      onChange: (value) {
-                        payment = value;
-                        markaaAppChangeNotifier.rebuild();
+                      onActiveChange: (value) {
+                        payment = value!;
+                        markaaAppChangeNotifier!.rebuild();
                       },
                       value: payment,
                       cardToken: cardToken,
@@ -210,19 +210,19 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
 
   void _onPlaceOrder() async {
     Map<String, dynamic> data = {};
-    data['token'] = user.token;
+    data['token'] = user!.token;
     data['lang'] = Preload.language;
     data['shipping'] = '';
     data['paymentMethod'] = payment;
-    data['cartId'] = walletChangeNotifier.walletCartId;
+    data['cartId'] = walletChangeNotifier!.walletCartId;
     data['orderDetails'] = {};
-    data['orderDetails']['totalPrice'] = walletChangeNotifier.amount;
-    data['price'] = walletChangeNotifier.amount;
+    data['orderDetails']['totalPrice'] = walletChangeNotifier!.amount;
+    data['price'] = walletChangeNotifier!.amount;
     data['orderAddress'] = jsonEncode(emptyAddress);
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
-        flushBarService.showErrorDialog('fill_card_details_error'.tr());
+        flushBarService!.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
       data['tap_token'] = cardToken;
@@ -232,7 +232,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(data, lang,
+    await orderChangeNotifier!.submitOrder(data, lang,
         onProcess: _onProcess,
         onSuccess: _onOrderSubmittedSuccess,
         onFailure: _onFailure,
@@ -240,7 +240,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
   }
 
   void _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    progressService.hideProgress();
+    progressService!.hideProgress();
 
     if (isURL(payUrl)) {
       /// payment method is knet or tap, go to payment webview page
@@ -251,7 +251,7 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
+      await orderChangeNotifier!.cancelFullOrder(order,
           onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }

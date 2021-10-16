@@ -35,25 +35,26 @@ import 'env.dart';
 class Preload {
   static String baseUrl = "";
   static String imagesUrl = "";
-  static String languageCode;
+  static String? languageCode;
 
-  static String get language => EasyLocalization.of(navigatorKey.currentContext)
-      .locale
-      .languageCode
-      .toLowerCase();
+  static String get language =>
+      EasyLocalization.of(navigatorKey!.currentContext!)!
+          .locale
+          .languageCode
+          .toLowerCase();
   static set language(String val) => setLanguage(val: val);
 
-  static setLanguage({String val}) {
-    val != null && val.isNotEmpty
+  static setLanguage({String? val}) {
+    val!.isNotEmpty
         ? languageCode = val
-        : languageCode = EasyLocalization.of(navigatorKey.currentContext)
+        : languageCode = EasyLocalization.of(navigatorKey!.currentContext!)!
             .locale
             .languageCode
             .toLowerCase();
-    lang = languageCode;
+    lang = languageCode!;
   }
 
-  static final navigatorKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
 
   static final homeChangeNotifier = HomeChangeNotifier();
   static final myCartChangeNotifier = MyCartChangeNotifier();
@@ -69,11 +70,11 @@ class Preload {
     print('CHECKING THE APP VERSION');
     final versionEntity = await appRepo.checkAppVersion(
       Platform.isAndroid,
-      languageCode,
+      languageCode!,
     );
     if (versionEntity.updateMandatory) {
       Navigator.pushReplacementNamed(
-        navigatorKey.currentContext,
+        navigatorKey!.currentContext!,
         Routes.update,
         arguments: versionEntity.storeLink,
       );
@@ -102,9 +103,9 @@ class Preload {
     });
   }
 
-  static Future<UserEntity> get currentUser => _getCurrentUser();
+  static Future<UserEntity?> get currentUser => _getCurrentUser()!;
 
-  static Future<UserEntity> _getCurrentUser() async {
+  static Future<UserEntity?>? _getCurrentUser() async {
     String token = await localRepo.getToken();
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
@@ -113,12 +114,11 @@ class Preload {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         user = UserEntity.fromJson(result['data']['customer']);
-        return user;
       } else {
         await localRepo.removeToken();
       }
     }
-    return null;
+    return user;
   }
 
   static appOpen() async {
@@ -137,18 +137,16 @@ class Preload {
 
       await _getCurrentUser();
 
-      if (user?.token != null) {
-        navigatorKey.currentContext
-            .read<WishlistChangeNotifier>()
-            .getWishlistItems(user.token, lang);
-        navigatorKey.currentContext
-            .read<OrderChangeNotifier>()
-            .loadOrderHistories(user.token, lang);
-        navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
-        navigatorKey.currentContext
-            .read<AddressChangeNotifier>()
-            .loadAddresses(user.token);
-      }
+      navigatorKey!.currentContext!
+          .read<WishlistChangeNotifier>()
+          .getWishlistItems(user!.token, lang);
+      navigatorKey!.currentContext!
+          .read<OrderChangeNotifier>()
+          .loadOrderHistories(user!.token, lang);
+      navigatorKey!.currentContext!.read<AddressChangeNotifier>().initialize();
+      navigatorKey!.currentContext!
+          .read<AddressChangeNotifier>()
+          .loadAddresses(user!.token);
       homeChangeNotifier.getHomeCategories();
     }
   }
@@ -162,126 +160,57 @@ class Preload {
 
     config.attributionCallback = (AdjustAttribution attributionChangedData) {
       print('[Adjust]: Attribution changed!');
-
-      if (attributionChangedData.trackerToken != null) {
-        print(
-            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
-      }
-
-      if (attributionChangedData.trackerName != null) {
-        print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
-      }
-      if (attributionChangedData.campaign != null) {
-        print('[Adjust]: Campaign: ' + attributionChangedData.campaign);
-      }
-      if (attributionChangedData.network != null) {
-        print('[Adjust]: Network: ' + attributionChangedData.network);
-      }
-      if (attributionChangedData.creative != null) {
-        print('[Adjust]: Creative: ' + attributionChangedData.creative);
-      }
-      if (attributionChangedData.adgroup != null) {
-        print('[Adjust]: Adgroup: ' + attributionChangedData.adgroup);
-      }
-      if (attributionChangedData.clickLabel != null) {
-        print('[Adjust]: Click label: ' + attributionChangedData.clickLabel);
-      }
-      if (attributionChangedData.adid != null) {
-        print('[Adjust]: Adid: ' + attributionChangedData.adid);
-      }
+      print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken!);
+      print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName!);
+      print('[Adjust]: Campaign: ' + attributionChangedData.campaign!);
+      print('[Adjust]: Network: ' + attributionChangedData.network!);
+      print('[Adjust]: Creative: ' + attributionChangedData.creative!);
+      print('[Adjust]: Adgroup: ' + attributionChangedData.adgroup!);
+      print('[Adjust]: Click label: ' + attributionChangedData.clickLabel!);
+      print('[Adjust]: Adid: ' + attributionChangedData.adid!);
     };
 
     config.sessionSuccessCallback = (AdjustSessionSuccess sessionSuccessData) {
       print('[Adjust]: Session tracking success!');
-
-      if (sessionSuccessData.message != null) {
-        print('[Adjust]: Message: ' + sessionSuccessData.message);
-      }
-      if (sessionSuccessData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + sessionSuccessData.timestamp);
-      }
-      if (sessionSuccessData.adid != null) {
-        print('[Adjust]: Adid: ' + sessionSuccessData.adid);
-      }
-      if (sessionSuccessData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + sessionSuccessData.jsonResponse);
-      }
+      print('[Adjust]: Message: ' + sessionSuccessData.message!);
+      print('[Adjust]: Timestamp: ' + sessionSuccessData.timestamp!);
+      print('[Adjust]: Adid: ' + sessionSuccessData.adid!);
+      print('[Adjust]: JSON response: ' + sessionSuccessData.jsonResponse!);
     };
 
     config.sessionFailureCallback = (AdjustSessionFailure sessionFailureData) {
       print('[Adjust]: Session tracking failure!');
-
-      if (sessionFailureData.message != null) {
-        print('[Adjust]: Message: ' + sessionFailureData.message);
-      }
-      if (sessionFailureData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + sessionFailureData.timestamp);
-      }
-      if (sessionFailureData.adid != null) {
-        print('[Adjust]: Adid: ' + sessionFailureData.adid);
-      }
-      if (sessionFailureData.willRetry != null) {
-        print(
-            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
-      }
-
-      if (sessionFailureData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
-      }
+      print('[Adjust]: Message: ' + sessionFailureData.message!);
+      print('[Adjust]: Timestamp: ' + sessionFailureData.timestamp!);
+      print('[Adjust]: Adid: ' + sessionFailureData.adid!);
+      print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+      print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse!);
     };
 
     config.eventSuccessCallback = (AdjustEventSuccess eventSuccessData) {
       print('[Adjust]: Event tracking success!');
-
-      if (eventSuccessData.eventToken != null) {
-        print('[Adjust]: Event token: ' + eventSuccessData.eventToken);
-      }
-      if (eventSuccessData.message != null) {
-        print('[Adjust]: Message: ' + eventSuccessData.message);
-      }
-      if (eventSuccessData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + eventSuccessData.timestamp);
-      }
-      if (eventSuccessData.adid != null) {
-        print('[Adjust]: Adid: ' + eventSuccessData.adid);
-      }
-      if (eventSuccessData.callbackId != null) {
-        print('[Adjust]: Callback ID: ' + eventSuccessData.callbackId);
-      }
-      if (eventSuccessData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + eventSuccessData.jsonResponse);
-      }
+      print('[Adjust]: Event token: ' + eventSuccessData.eventToken!);
+      print('[Adjust]: Message: ' + eventSuccessData.message!);
+      print('[Adjust]: Timestamp: ' + eventSuccessData.timestamp!);
+      print('[Adjust]: Adid: ' + eventSuccessData.adid!);
+      print('[Adjust]: Callback ID: ' + eventSuccessData.callbackId!);
+      print('[Adjust]: JSON response: ' + eventSuccessData.jsonResponse!);
     };
 
     config.eventFailureCallback = (AdjustEventFailure eventFailureData) {
       print('[Adjust]: Event tracking failure!');
-
-      if (eventFailureData.eventToken != null) {
-        print('[Adjust]: Event token: ' + eventFailureData.eventToken);
-      }
-      if (eventFailureData.message != null) {
-        print('[Adjust]: Message: ' + eventFailureData.message);
-      }
-      if (eventFailureData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + eventFailureData.timestamp);
-      }
-      if (eventFailureData.adid != null) {
-        print('[Adjust]: Adid: ' + eventFailureData.adid);
-      }
-      if (eventFailureData.callbackId != null) {
-        print('[Adjust]: Callback ID: ' + eventFailureData.callbackId);
-      }
-      if (eventFailureData.willRetry != null) {
-        print('[Adjust]: Will retry: ' + eventFailureData.willRetry.toString());
-      }
-      if (eventFailureData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + eventFailureData.jsonResponse);
-      }
+      print('[Adjust]: Event token: ' + eventFailureData.eventToken!);
+      print('[Adjust]: Message: ' + eventFailureData.message!);
+      print('[Adjust]: Timestamp: ' + eventFailureData.timestamp!);
+      print('[Adjust]: Adid: ' + eventFailureData.adid!);
+      print('[Adjust]: Callback ID: ' + eventFailureData.callbackId!);
+      print('[Adjust]: Will retry: ${eventFailureData.willRetry!}');
+      print('[Adjust]: JSON response: ' + eventFailureData.jsonResponse!);
     };
 
     config.launchDeferredDeeplink = true;
-    config.deferredDeeplinkCallback = (String uri) {
-      print('[Adjust]: Received deferred deeplink: ' + uri);
+    config.deferredDeeplinkCallback = (String? uri) {
+      print('[Adjust]: Received deferred deeplink: ' + uri!);
     };
 
     // Add session callback parameters.
@@ -309,15 +238,13 @@ class Preload {
   static bool chatInitiated = false;
   static Future startSupportChat() async {
     dynamic kmUser, conversationObject = {'appId': ChatSupport.appKey};
-    if (user != null) {
-      kmUser = {
-        'userId': user.customerId,
-        'displayName': user.firstName + " " + user.lastName,
-        'contactNumber': user.phoneNumber,
-        'email': user.email,
-      };
-      conversationObject['kmUser'] = jsonEncode(kmUser);
-    }
+    kmUser = {
+      'userId': user!.customerId,
+      'displayName': user!.firstName + " " + user!.lastName,
+      'contactNumber': user!.phoneNumber,
+      'email': user!.email,
+    };
+    conversationObject['kmUser'] = jsonEncode(kmUser);
     dynamic clientConversationId =
         await KommunicateFlutterPlugin.buildConversation(conversationObject);
     print("Conversation builder success : " + clientConversationId.toString());

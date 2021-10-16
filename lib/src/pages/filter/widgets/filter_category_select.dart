@@ -14,11 +14,11 @@ class FilterCategorySelect extends StatelessWidget {
   final Function onTap;
 
   FilterCategorySelect({
-    this.items,
-    this.values,
-    this.itemWidth,
-    this.itemHeight,
-    this.onTap,
+    required this.items,
+    required this.values,
+    required this.itemWidth,
+    required this.itemHeight,
+    required this.onTap,
   });
 
   @override

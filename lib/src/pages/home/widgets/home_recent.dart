@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class HomeRecent extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeRecent({@required this.homeChangeNotifier});
+  HomeRecent({required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {

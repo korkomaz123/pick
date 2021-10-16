@@ -12,14 +12,14 @@ class ProductRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<ProductModel> getProduct(String productId) async {
+  Future<ProductModel?> getProduct(String productId) async {
     String url = EndPoints.getProduct;
     final params = {'productId': productId, 'lang': Preload.language};
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       return ProductModel.fromJson(result['product']);
     }
-    return ProductModel();
+    return null;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ class ProductRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getHomeRecentlyViewedGuestProducts(
-    List<String> ids,
+    List<String?> ids,
     String lang,
   ) async {
     String url = EndPoints.getViewedGuestProducts;
@@ -79,7 +79,7 @@ class ProductRepository {
     for (int i = 0; i < (page == length - 1 ? rest : 20); i++) {
       int index = page * 20 + i;
       if (ids[index] != null) {
-        viewedIds.add(int.parse(ids[index]));
+        viewedIds.add(int.parse(ids[index]!));
       } else {
         break;
       }
@@ -127,7 +127,7 @@ class ProductRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> sortProducts(
-    String categoryId,
+    String? categoryId,
     String brandId,
     String sortItem,
     String lang,
@@ -156,9 +156,19 @@ class ProductRepository {
     String url = EndPoints.getBrandProducts;
     Map<String, dynamic> params = {};
     if (categoryId != 'all') {
-      params = {'brandId': brandId, 'categoryId': categoryId, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': categoryId,
+        'lang': lang,
+        'page': '$page'
+      };
     } else {
-      params = {'brandId': brandId, 'categoryId': null, 'lang': lang, 'page': '$page'};
+      params = {
+        'brandId': brandId,
+        'categoryId': null,
+        'lang': lang,
+        'page': '$page'
+      };
     }
     return await Api.getMethod(url, data: params);
   }
@@ -215,13 +225,18 @@ class ProductRepository {
       List<BrandEntity> brands = [];
       if (result['samebranditems'] != null)
         for (int i = 0; i < result['samebranditems'].length; i++) {
-          sameBrandProducts.add(ProductModel.fromJson(result['samebranditems'][i]));
+          sameBrandProducts
+              .add(ProductModel.fromJson(result['samebranditems'][i]));
         }
       if (result['brands'] != null && result['brands'].isNotEmpty)
         result['brands'].forEach((key, obj) {
           brands.add(BrandEntity.fromJson(obj));
         });
-      return {"sameBrandProducts": sameBrandProducts, "brands": brands, "category": result['categories'][0]};
+      return {
+        "sameBrandProducts": sameBrandProducts,
+        "brands": brands,
+        "category": result['categories'][0]
+      };
     } else {
       return {};
     }
@@ -294,7 +309,7 @@ class ProductRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> filterProducts(
-    String categoryId,
+    String? categoryId,
     String brandId,
     Map<String, dynamic> filterValues,
     String lang,
@@ -307,7 +322,8 @@ class ProductRepository {
       'selectedBrandId': brandId.toString(),
       'lang': lang,
       'categoryIds': json.encode(filterValues['selectedCategories']),
-      'priceRanges': json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
+      'priceRanges':
+          json.encode([filterValues['minPrice'], filterValues['maxPrice']]),
       'filter': json.encode(filterValues['selectedValues']),
       'page': page.toString(),
     };

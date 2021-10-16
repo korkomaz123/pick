@@ -18,7 +18,7 @@ import 'widgets/my_wallet_details_form.dart';
 import 'widgets/my_wallet_details_transactions.dart';
 
 class MyWalletDetailsPage extends StatefulWidget {
-  final double amount;
+  final double? amount;
 
   MyWalletDetailsPage({this.amount});
 
@@ -41,8 +41,8 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
     _onLoadUser();
     _controller.addListener(_onScroll);
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _scaffoldKey.currentState
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _scaffoldKey.currentState!
           .showBottomSheet((context) => _buildBottomSheet());
     });
   }
@@ -55,10 +55,10 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
   _onScroll() {
     if (prevDirection != _controller.position.userScrollDirection) {
       if (prevDirection == ScrollDirection.forward) {
-        _scaffoldKey.currentState
+        _scaffoldKey.currentState!
             .showBottomSheet((context) => SizedBox.shrink());
       } else if (prevDirection == ScrollDirection.reverse) {
-        _scaffoldKey.currentState
+        _scaffoldKey.currentState!
             .showBottomSheet((context) => _buildBottomSheet());
       }
     }

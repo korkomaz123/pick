@@ -6,7 +6,7 @@ import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 class ProgressService {
   final BuildContext context;
 
-  ProgressService({this.context});
+  ProgressService({required this.context});
 
   void showProgress([double opacity = 0.01]) async {
     await showDialog(

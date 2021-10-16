@@ -11,7 +11,7 @@ class MyWalletDetailsHeader extends StatelessWidget
     implements PreferredSizeWidget {
   final bool fromCheckout;
 
-  MyWalletDetailsHeader({this.fromCheckout});
+  MyWalletDetailsHeader({required this.fromCheckout});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class MyWalletDetailsHeader extends StatelessWidget
         child: Column(
           children: [
             Text(
-              '${NumericService.roundString(user.balance, 3)} (${'kwd'.tr()})',
+              '${NumericService.roundString(user!.balance, 3)} (${'kwd'.tr()})',
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
                 fontSize: 23.sp,

@@ -1,22 +1,22 @@
 class BrandEntity {
-  final String entityId;
-  final String attributeId;
+  final String? entityId;
+  final String? attributeId;
   final String optionId;
-  final String attributeCode;
+  final String? attributeCode;
   final String brandLabel;
-  final String sortOrder;
-  final String brandThumbnail;
-  final String brandImage;
-  final String url;
-  final int productsCount;
-  final int percentage;
+  final String? sortOrder;
+  final String? brandThumbnail;
+  final String? brandImage;
+  final String? url;
+  final int? productsCount;
+  final int? percentage;
 
   BrandEntity({
     this.entityId,
     this.attributeId,
-    this.optionId,
+    required this.optionId,
     this.attributeCode,
-    this.brandLabel,
+    required this.brandLabel,
     this.sortOrder,
     this.brandThumbnail,
     this.brandImage,

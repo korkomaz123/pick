@@ -14,11 +14,11 @@ class GlobalProvider extends ChangeNotifier {
   List<PaymentMethodEntity> paymentMethods = [];
 
   changeLanguage(String val, {fromSplash = false}) {
-    BuildContext _context = Preload.navigatorKey.currentContext;
+    BuildContext _context = Preload.navigatorKey!.currentContext!;
     String _current = currentLanguage;
     if (_current != val) {
-      final enLocale = EasyLocalization.of(_context).supportedLocales.first;
-      final arLocale = EasyLocalization.of(_context).supportedLocales.last;
+      final enLocale = EasyLocalization.of(_context)!.supportedLocales.first;
+      final arLocale = EasyLocalization.of(_context)!.supportedLocales.last;
 
       _current == 'ar'
           ? _context.setLocale(enLocale)
@@ -33,22 +33,22 @@ class GlobalProvider extends ChangeNotifier {
           ? MarkaaNotificationChannels.enChannel
           : MarkaaNotificationChannels.arChannel);
     }
-    fetchCategories();
+    getSideMenus();
   }
 
   GlobalProvider() {
-    fetchCategories();
+    getSideMenus();
   }
 
-  fetchCategories() async {
+  getSideMenus() async {
     String _lang = currentLanguage;
-    if (sideMenus[_lang].length == 0)
+    if (sideMenus[_lang]!.isEmpty)
       sideMenus[_lang] = await CategoryRepository().getMenuCategories(_lang);
     notifyListeners();
   }
 
   String activeMenu = '';
-  int activeIndex;
+  int? activeIndex;
   displaySubmenu(CategoryMenuEntity menu, int index) {
     if (activeMenu == menu.id) {
       activeMenu = '';
@@ -60,7 +60,7 @@ class GlobalProvider extends ChangeNotifier {
   }
 
   String get currentLanguage =>
-      EasyLocalization.of(Preload.navigatorKey.currentContext)
+      EasyLocalization.of(Preload.navigatorKey!.currentContext!)!
           .locale
           .languageCode
           .toLowerCase();

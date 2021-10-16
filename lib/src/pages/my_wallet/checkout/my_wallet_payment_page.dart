@@ -1,13 +1,8 @@
-// import 'dart:convert';
-
-// import 'package:adjust_sdk/adjust.dart';
-// import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-// import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -22,7 +17,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class MyWalletPaymentPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  MyWalletPaymentPage({this.params});
+  MyWalletPaymentPage({required this.params});
 
   @override
   _MyWalletPaymentPageState createState() => _MyWalletPaymentPageState();
@@ -30,18 +25,18 @@ class MyWalletPaymentPage extends StatefulWidget {
 
 class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
     with WidgetsBindingObserver {
-  WebViewController webViewController;
+  WebViewController? webViewController;
 
-  OrderChangeNotifier orderChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
 
-  String url;
-  OrderEntity order;
-  OrderEntity reorder;
+  String? url;
+  OrderEntity? order;
+  OrderEntity? reorder;
 
   bool isLoading = true;
 
@@ -59,11 +54,11 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onBack() async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'payment_abort_dialog_text');
+    final result = await flushBarService!
+        .showConfirmDialog(message: 'payment_abort_dialog_text');
     if (result != null) {
       /// cancel the order
-      await orderChangeNotifier.cancelFullOrder(order,
+      await orderChangeNotifier!.cancelFullOrder(order!,
           onProcess: _onCancelProcess,
           onSuccess: _onCanceledSuccess,
           onFailure: _onCanceledFailure);
@@ -71,11 +66,11 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onCancelProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onCanceledSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.myWallet,
@@ -83,7 +78,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onCanceledFailure(String message) {
-    progressService.hideProgress();
+    progressService!.hideProgress();
   }
 
   @override
@@ -149,7 +144,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user?.token != null) {
-            orderChangeNotifier.removeOrder(order);
+            orderChangeNotifier!.removeOrder(order!);
           }
 
           Navigator.pushNamed(
@@ -159,14 +154,14 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
           );
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
-          if (user?.token != null) {
-            order.status = OrderStatusEnum.processing;
-            orderChangeNotifier.updateOrder(order);
+          if (user != null) {
+            order!.status = OrderStatusEnum.processing;
+            orderChangeNotifier!.updateOrder(order!);
           }
           Navigator.pushNamed(
             context,
             Routes.myWalletSuccess,
-            arguments: order.orderNo,
+            arguments: order!.orderNo,
           );
         }
       }

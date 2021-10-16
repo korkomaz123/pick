@@ -7,7 +7,7 @@ class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<CategoryEntity> getCategory(String id, String lang) async {
+  Future<CategoryEntity?> getCategory(String id, String lang) async {
     String url = EndPoints.getCategory;
     final params = {'categoryId': id, 'lang': lang};
     final result = await Api.getMethod(url, data: params);
@@ -31,7 +31,8 @@ class CategoryRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> getSummerCollection(String lang) async {
-    final result = await Api.getMethod(EndPoints.getsummercollection, data: {'lang': lang});
+    final result = await Api.getMethod(EndPoints.getsummercollection,
+        data: {'lang': lang});
     return result;
   }
 

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -16,9 +15,9 @@ class AmazingProductCard extends StatelessWidget {
   final ProductModel product;
 
   AmazingProductCard({
-    @required this.cardSize,
-    @required this.contentSize,
-    @required this.product,
+    required this.cardSize,
+    required this.contentSize,
+    required this.product,
   });
 
   @override
@@ -88,10 +87,10 @@ class AmazingProductCard extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            if (product?.brandEntity?.optionId != null) {
+                            if (product.brandEntity?.optionId != null) {
                               ProductListArguments arguments =
                                   ProductListArguments(
-                                category: CategoryEntity(),
+                                category: null,
                                 subCategory: [],
                                 brand: product.brandEntity,
                                 selectedSubCategoryIndex: 0,
@@ -105,7 +104,7 @@ class AmazingProductCard extends StatelessWidget {
                             }
                           },
                           child: Text(
-                            product?.brandEntity?.brandLabel ?? '',
+                            product.brandEntity!.brandLabel,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: mediumTextStyle.copyWith(
@@ -129,9 +128,7 @@ class AmazingProductCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      product.price != null
-                          ? (product.price + ' ' + 'currency'.tr())
-                          : '',
+                      product.price + ' ' + 'currency'.tr(),
                       style: mediumTextStyle.copyWith(
                         fontSize: 16.sp,
                         color: Colors.white,

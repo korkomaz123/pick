@@ -20,9 +20,9 @@ class MyWalletPaymentSuccessPage extends StatefulWidget {
 
 class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
     with WidgetsBindingObserver {
-  AuthChangeNotifier _authChangeNotifier;
-  WalletChangeNotifier _walletChangeNotifier;
-  String amount;
+  AuthChangeNotifier? _authChangeNotifier;
+  WalletChangeNotifier? _walletChangeNotifier;
+  String? amount;
 
   @override
   void initState() {
@@ -30,10 +30,10 @@ class _MyWalletPaymentSuccessPageState extends State<MyWalletPaymentSuccessPage>
     _authChangeNotifier = context.read<AuthChangeNotifier>();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
 
-    user.balance += double.parse(_walletChangeNotifier.amount);
-    amount = _walletChangeNotifier.amount;
-    _walletChangeNotifier.init();
-    _authChangeNotifier.updateUserEntity(user);
+    user!.balance += double.parse(_walletChangeNotifier!.amount!);
+    amount = _walletChangeNotifier!.amount;
+    _walletChangeNotifier!.init();
+    _authChangeNotifier!.updateUserEntity(user);
 
     setState(() {});
   }

@@ -8,7 +8,7 @@ class FilterCustomOption extends StatefulWidget {
   final dynamic value;
 
   /// values of selected item multiple
-  final List<dynamic> values;
+  final List<dynamic>? values;
 
   /// width of each item
   final double itemWidth;
@@ -56,34 +56,25 @@ class FilterCustomOption extends StatefulWidget {
   final bool listStyle;
 
   FilterCustomOption({
-    this.items,
+    required this.items,
     this.value,
     this.values,
-    this.itemWidth,
-    this.itemHeight,
+    required this.itemWidth,
+    required this.itemHeight,
     this.itemSpace = 10,
     this.titleSize = 12,
     this.radius = 0,
-    this.selectedColor,
-    this.unSelectedColor,
-    this.selectedTitleColor,
-    this.unSelectedTitleColor,
-    this.selectedBorderColor,
-    this.unSelectedBorderColor,
+    required this.selectedColor,
+    required this.unSelectedColor,
+    required this.selectedTitleColor,
+    required this.unSelectedTitleColor,
+    required this.selectedBorderColor,
+    required this.unSelectedBorderColor,
     this.centerItem = true,
     this.isVertical = false,
-    this.onTap,
+    required this.onTap,
     this.listStyle = false,
-  })  : assert(items != null),
-        assert(itemWidth != null),
-        assert(itemHeight != null),
-        assert(selectedColor != null),
-        assert(unSelectedColor != null),
-        assert(selectedTitleColor != null),
-        assert(unSelectedTitleColor != null),
-        assert(selectedBorderColor != null),
-        assert(unSelectedBorderColor != null),
-        assert(onTap != null);
+  });
 
   @override
   _FilterCustomOptionState createState() => _FilterCustomOptionState();
@@ -120,7 +111,7 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
   Widget _buildItem(int index) {
     bool isSingleSelected = widget.value == widget.items[index]['value'];
     bool isMultiSelected =
-        widget.values.indexOf(widget.items[index]['value']) >= 0;
+        widget.values!.indexOf(widget.items[index]['value']) >= 0;
     bool isSelected = isSingleSelected || isMultiSelected;
     return Container(
       width: widget.itemWidth,

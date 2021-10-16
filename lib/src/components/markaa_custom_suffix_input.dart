@@ -13,17 +13,17 @@ class MarkaaCustomSuffixInput extends StatelessWidget {
   final Function validator;
   final Widget suffixIcon;
   final bool readOnly;
-  final Function onTap;
+  final void Function()? onTap;
 
   MarkaaCustomSuffixInput({
-    @required this.controller,
-    @required this.width,
-    @required this.padding,
-    @required this.fontSize,
-    @required this.hint,
-    @required this.inputType,
-    @required this.validator,
-    @required this.suffixIcon,
+    required this.controller,
+    required this.width,
+    required this.padding,
+    required this.fontSize,
+    required this.hint,
+    required this.inputType,
+    required this.validator,
+    required this.suffixIcon,
     this.readOnly = false,
     this.onTap,
   });

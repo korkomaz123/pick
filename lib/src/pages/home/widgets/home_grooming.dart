@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_card.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -18,7 +18,8 @@ import '../../../../preload.dart';
 
 class HomeGrooming extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeGrooming({@required this.homeChangeNotifier});
+
+  HomeGrooming({required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class HomeGrooming extends StatelessWidget {
         children: [
           Expanded(
             child: AutoSizeText(
-              homeChangeNotifier.groomingTitle ?? '',
+              homeChangeNotifier.groomingTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
                 fontSize: 26.sp,
@@ -79,12 +80,12 @@ class HomeGrooming extends StatelessWidget {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeChangeNotifier.groomingCategory,
                   subCategory: [],
-                  brand: BrandEntity(),
+                  brand: null,
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Preload.navigatorKey.currentContext,
+                  Preload.navigatorKey!.currentContext!,
                   Routes.productList,
                   arguments: arguments,
                 );
@@ -106,23 +107,21 @@ class HomeGrooming extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (context, index) => InkWell(
           onTap: () {
-            if (categories[index]?.id != null) {
-              final arguments = ProductListArguments(
-                category: categories[index],
-                brand: BrandEntity(),
-                subCategory: [],
-                selectedSubCategoryIndex: 0,
-                isFromBrand: false,
-              );
-              Navigator.pushNamed(
-                Preload.navigatorKey.currentContext,
-                Routes.productList,
-                arguments: arguments,
-              );
-            }
+            final arguments = ProductListArguments(
+              category: categories[index],
+              brand: null,
+              subCategory: [],
+              selectedSubCategoryIndex: 0,
+              isFromBrand: false,
+            );
+            Navigator.pushNamed(
+              Preload.navigatorKey!.currentContext!,
+              Routes.productList,
+              arguments: arguments,
+            );
           },
           child: CachedNetworkImage(
-            imageUrl: categories[index].imageUrl,
+            imageUrl: categories[index].imageUrl!,
             fit: BoxFit.fill,
             errorWidget: (context, url, error) =>
                 Center(child: Icon(Icons.image, size: 20)),

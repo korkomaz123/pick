@@ -14,13 +14,16 @@ class AlarmList extends StatefulWidget {
 }
 
 class _AlarmListState extends State<AlarmList> {
-  Future<dynamic> future;
+  Future<dynamic>? future;
 
   @override
   void initState() {
     super.initState();
-    future = Api.getMethod(EndPoints.getAlarmItems,
-        data: {"lang": lang, "email": user.email}, extra: {"refresh": true});
+    future = Api.getMethod(
+      EndPoints.getAlarmItems,
+      data: {"lang": lang, "email": user!.email},
+      extra: {"refresh": true},
+    );
     setState(() {});
   }
 
@@ -46,20 +49,20 @@ class _AlarmListState extends State<AlarmList> {
               ),
             ),
             Spacer(),
-            FutureBuilder(
+            FutureBuilder<dynamic>(
               future: future,
-              builder: (context, snapshot) => snapshot.connectionState !=
-                          ConnectionState.waiting &&
-                      snapshot.hasData
-                  ? Text(
-                      'items'.tr().replaceFirst(
-                          '0', '${snapshot.data['items'].length.toString()}'),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 16.sp,
-                        color: primaryColor,
-                      ),
-                    )
-                  : Container(),
+              builder: (context, snapshot) =>
+                  snapshot.connectionState != ConnectionState.waiting &&
+                          snapshot.hasData
+                      ? Text(
+                          'items'.tr().replaceFirst(
+                              '0', '${snapshot.data['items'].length}'),
+                          style: mediumTextStyle.copyWith(
+                            fontSize: 16.sp,
+                            color: primaryColor,
+                          ),
+                        )
+                      : Container(),
             ),
             Icon(
               Icons.arrow_forward_ios,

@@ -35,7 +35,7 @@ class _SplashPageState extends State<SplashPage> {
       if (await Preload.checkAppVersion() != true) {
         if (!isNew) {
           Preload.loadAssetData();
-          Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
+          Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
             Routes.home,
             (route) => false,
           );
@@ -46,7 +46,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _onLang(String val) async {
     /// Set the language on the backend side
-    Preload.navigatorKey.currentContext
+    Preload.navigatorKey!.currentContext!
         .read<GlobalProvider>()
         .changeLanguage(val, fromSplash: true);
 
@@ -61,7 +61,7 @@ class _SplashPageState extends State<SplashPage> {
     /// Start Loading Assets
     await Preload.appOpen();
     Preload.loadAssetData();
-    Preload.navigatorKey.currentState.pushNamedAndRemoveUntil(
+    Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
       Routes.home,
       (route) => false,
     );

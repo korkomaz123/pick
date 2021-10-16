@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class NoAvailableData extends StatelessWidget {
   final String message;
 
-  NoAvailableData({this.message});
+  NoAvailableData({required this.message});
 
   @override
   Widget build(BuildContext context) {

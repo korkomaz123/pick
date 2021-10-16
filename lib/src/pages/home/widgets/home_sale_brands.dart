@@ -14,7 +14,8 @@ import 'package:markaa/src/theme/theme.dart';
 class HomeSaleBrands extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeSaleBrands({this.homeChangeNotifier});
+  HomeSaleBrands({required this.homeChangeNotifier});
+
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.saleBrands.isNotEmpty) {
@@ -59,14 +60,14 @@ class HomeSaleBrands extends StatelessWidget {
     return InkWell(
       onTap: () {
         final arguments = ProductListArguments(
-          category: CategoryEntity(),
+          category: null,
           brand: homeChangeNotifier.saleBrands[itemIndex],
           subCategory: [],
           selectedSubCategoryIndex: 0,
           isFromBrand: true,
         );
         Navigator.pushNamed(
-          Preload.navigatorKey.currentContext,
+          Preload.navigatorKey!.currentContext!,
           Routes.productList,
           arguments: arguments,
         );
@@ -89,7 +90,8 @@ class HomeSaleBrands extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.sp),
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandImage,
+                  imageUrl:
+                      homeChangeNotifier.saleBrands[itemIndex].brandImage!,
                   width: 110.w,
                   height: 110.w,
                   progressIndicatorBuilder: (_, __, ___) {
@@ -97,7 +99,7 @@ class HomeSaleBrands extends StatelessWidget {
                       width: 110.w,
                       height: 110.w,
                       imageUrl: homeChangeNotifier
-                          .saleBrands[itemIndex].brandThumbnail,
+                          .saleBrands[itemIndex].brandThumbnail!,
                     );
                   },
                 ),

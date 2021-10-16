@@ -6,19 +6,20 @@ import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeProductsCarousel extends StatefulWidget {
-  final List<ProductModel> products;
+  final List<ProductModel>? products;
   final bool isVerticalCard;
   final Function onAddToCartFailure;
 
   HomeProductsCarousel({
     this.products,
     this.isVerticalCard = true,
-    @required this.onAddToCartFailure,
+    required this.onAddToCartFailure,
   });
 
   @override
@@ -27,7 +28,7 @@ class HomeProductsCarousel extends StatefulWidget {
 
 class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
   int activeIndex = 0;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -44,21 +45,21 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
             width: designWidth.w,
             height: !widget.isVerticalCard ? 200.h : 320.h,
             child: Swiper(
-              itemCount: widget.products.length,
+              itemCount: widget.products!.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
               autoplayDelay: 5000,
               onIndexChanged: (value) {
                 activeIndex = value;
-                markaaAppChangeNotifier.rebuild();
+                markaaAppChangeNotifier!.rebuild();
               },
               itemBuilder: (context, index) {
                 if (widget.isVerticalCard) {
                   return ProductVCard(
                     cardWidth: 355.w,
                     cardHeight: 300.h,
-                    product: widget.products[index],
+                    product: widget.products![index],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -69,7 +70,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                   return ProductHCard(
                     cardWidth: 355.w,
                     cardHeight: 180.h,
-                    product: widget.products[index],
+                    product: widget.products![index],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
@@ -88,7 +89,7 @@ class _HomeProductsCarouselState extends State<HomeProductsCarousel> {
                 builder: (_, __, ___) {
                   return SmoothIndicator(
                     offset: (activeIndex / 2).floor().toDouble(),
-                    count: (widget.products.length / 2).ceil(),
+                    count: (widget.products!.length / 2).ceil(),
                     axisDirection: Axis.horizontal,
                     effect: SlideEffect(
                       spacing: 8.0,

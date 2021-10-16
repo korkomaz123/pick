@@ -47,14 +47,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool agreeTerms = false;
 
-  AuthChangeNotifier authChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
+  HomeChangeNotifier? homeChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
 
   final LocalStorageRepository localRepo = LocalStorageRepository();
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   @override
   void initState() {
@@ -71,11 +71,11 @@ class _SignUpPageState extends State<SignUpPage> {
     Adjust.trackEvent(adjustEvent);
     user = loggedInUser;
     await localRepo.setToken(loggedInUser.token);
-    await myCartChangeNotifier.getCartId();
-    await myCartChangeNotifier.transferCartItems();
-    await myCartChangeNotifier.getCartItems(lang);
-    homeChangeNotifier.loadRecentlyViewedCustomer();
-    progressService.hideProgress();
+    await myCartChangeNotifier!.getCartId();
+    await myCartChangeNotifier!.transferCartItems();
+    await myCartChangeNotifier!.getCartItems(lang);
+    homeChangeNotifier!.loadRecentlyViewedCustomer();
+    progressService!.hideProgress();
     Navigator.pop(context);
     if (!widget.isFromCheckout) {
       Navigator.pop(context);
@@ -172,7 +172,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (value.trim().indexOf(' ') == -1) {
             return 'full_name_issue'.tr();
@@ -202,9 +202,9 @@ class _SignUpPageState extends State<SignUpPage> {
         maxLength: 9,
         buildCounter: (
           BuildContext context, {
-          int currentLength,
-          int maxLength,
-          bool isFocused,
+          int? currentLength,
+          int? maxLength,
+          bool? isFocused,
         }) =>
             null,
         decoration: InputDecoration(
@@ -234,7 +234,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (!isLength(value, 8, 9)) {
             return 'invalid_length_phone_number'.tr();
@@ -287,7 +287,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_email'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -302,9 +302,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildPassword() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: TextFormField(
         controller: passwordController,
         style: mediumTextStyle.copyWith(
@@ -345,7 +343,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_password'.tr();
           } else if (!isLength(value, 6)) {
             return 'short_length_password'.tr();
@@ -442,12 +440,12 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _onSignUp() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       if (agreeTerms) {
         String fullName = fullNameController.text;
         String firstName = fullName.split(' ')[0];
         String lastName = fullName.split(' ')[1];
-        authChangeNotifier.signUp(
+        authChangeNotifier!.signUp(
           firstName,
           lastName,
           phoneNumberController.text,
@@ -458,18 +456,18 @@ class _SignUpPageState extends State<SignUpPage> {
           onFailure: _onFailure,
         );
       } else {
-        flushBarService.showErrorDialog('ask_agree_privacy_policy'.tr());
+        flushBarService!.showErrorDialog('ask_agree_privacy_policy'.tr());
       }
     }
   }
 
   _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   _onFailure(message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
   }
 
   void _onPrivacyPolicy() async {
@@ -477,7 +475,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+      flushBarService!.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 }

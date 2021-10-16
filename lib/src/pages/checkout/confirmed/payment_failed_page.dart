@@ -17,7 +17,7 @@ import 'package:markaa/src/routes/routes.dart';
 class PaymentFailedPage extends StatefulWidget {
   final bool isReorder;
 
-  PaymentFailedPage({@required this.isReorder});
+  PaymentFailedPage({required this.isReorder});
 
   @override
   _PaymentFailedPageState createState() => _PaymentFailedPageState();
@@ -26,7 +26,7 @@ class PaymentFailedPage extends StatefulWidget {
 class _PaymentFailedPageState extends State<PaymentFailedPage> {
   TextEditingController noteController = TextEditingController();
 
-  MyCartChangeNotifier _cartProvider;
+  MyCartChangeNotifier? _cartProvider;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
 
     if (!widget.isReorder) {
       _cartProvider = context.read<MyCartChangeNotifier>();
-      _cartProvider.activateCart().then((value) {
+      _cartProvider!.activateCart().then((value) {
         print('CART ACTIVATED: $value');
       });
     }

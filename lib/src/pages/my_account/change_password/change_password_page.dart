@@ -28,9 +28,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  SettingBloc settingBloc;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
+  SettingBloc? settingBloc;
 
   @override
   void initState() {
@@ -49,15 +49,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is PasswordUpdatedInProcess) {
-            progressService.showProgress();
+            progressService!.showProgress();
           }
           if (state is PasswordUpdatedSuccess) {
-            progressService.hideProgress();
+            progressService!.hideProgress();
             _showSuccessDialog();
           }
           if (state is PasswordUpdatedFailure) {
-            progressService.hideProgress();
-            flushBarService.showErrorDialog(state.message);
+            progressService!.hideProgress();
+            flushBarService!.showErrorDialog(state.message);
           }
         },
         builder: (context, state) {
@@ -130,7 +130,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         fillColor: Colors.grey.shade300,
         bordered: false,
         obsecureText: true,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (value) => value!.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -152,7 +152,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         fillColor: Colors.grey.shade300,
         bordered: false,
         obsecureText: true,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (value) => value!.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -175,7 +175,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         bordered: false,
         obsecureText: true,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (value != newPasswordController.text) {
             return 'match_error'.tr();
@@ -203,9 +203,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   void _onSave() {
-    if (formKey.currentState.validate()) {
-      settingBloc.add(PasswordUpdated(
-        token: user.token,
+    if (formKey.currentState!.validate()) {
+      settingBloc!.add(PasswordUpdated(
+        token: user!.token,
         oldPassword: oldPasswordController.text,
         newPassword: newPasswordController.text,
       ));

@@ -18,14 +18,14 @@ class SearchFilterOption extends StatefulWidget {
   final Function onSelectGender;
 
   SearchFilterOption({
-    this.categories,
-    this.brands,
-    this.genders,
-    this.selectedCategories,
-    this.selectedBrands,
-    this.onSelectCategory,
-    this.onSelectBrand,
-    this.onSelectGender,
+    required this.categories,
+    required this.brands,
+    required this.genders,
+    required this.selectedCategories,
+    required this.selectedBrands,
+    required this.onSelectCategory,
+    required this.onSelectBrand,
+    required this.onSelectGender,
   });
 
   @override
@@ -33,9 +33,9 @@ class SearchFilterOption extends StatefulWidget {
 }
 
 class _SearchFilterOptionState extends State<SearchFilterOption> {
-  List<dynamic> categories;
-  List<dynamic> brands;
-  List<dynamic> genders;
+  List<dynamic>? categories;
+  List<dynamic>? brands;
+  List<dynamic>? genders;
 
   @override
   void initState() {
@@ -83,7 +83,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   child: FadeInAnimation(
                     child: SearchBasicSelect(
                       width: double.infinity,
-                      options: categories,
+                      options: categories!,
                       values: widget.selectedCategories,
                       onSelectItem: (value) => widget.onSelectCategory(value),
                     ),
@@ -115,7 +115,7 @@ class _SearchFilterOptionState extends State<SearchFilterOption> {
                   child: FadeInAnimation(
                     child: SearchBasicSelect(
                       width: double.infinity,
-                      options: brands,
+                      options: brands!,
                       values: widget.selectedBrands,
                       onSelectItem: (value) => widget.onSelectBrand(value),
                     ),

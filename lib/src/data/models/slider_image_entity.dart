@@ -1,28 +1,28 @@
 import 'brand_entity.dart';
 
 class SliderImageEntity {
-  final String bannerId;
-  final String bannerTitle;
-  final String bannerDescription;
+  final String? bannerId;
+  final String? bannerTitle;
+  final String? bannerDescription;
   final String bannerImage;
-  final String bannerVideo;
-  final String bannerYoutube;
-  final String bannerVideoAutoPlay;
-  final String startDate;
-  final String endDate;
-  final String labelButtonText;
-  final String position;
-  final String isActive;
-  final String categoryId;
-  final String categoryName;
-  final BrandEntity brand;
-  final String productId;
+  final String? bannerVideo;
+  final String? bannerYoutube;
+  final String? bannerVideoAutoPlay;
+  final String? startDate;
+  final String? endDate;
+  final String? labelButtonText;
+  final String? position;
+  final String? isActive;
+  final String? categoryId;
+  final String? categoryName;
+  final BrandEntity? brand;
+  final String? productId;
 
   SliderImageEntity({
     this.bannerId,
     this.bannerTitle,
     this.bannerDescription,
-    this.bannerImage,
+    required this.bannerImage,
     this.bannerVideo,
     this.bannerYoutube,
     this.bannerVideoAutoPlay,

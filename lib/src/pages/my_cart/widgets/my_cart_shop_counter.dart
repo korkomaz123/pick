@@ -15,8 +15,8 @@ class MyCartShopCounter extends StatefulWidget {
   final bool isDefaultValue;
 
   MyCartShopCounter({
-    @required this.cartItem,
-    @required this.cartId,
+    required this.cartItem,
+    required this.cartId,
     this.isDefaultValue = true,
   });
 
@@ -25,8 +25,8 @@ class MyCartShopCounter extends StatefulWidget {
 }
 
 class _MyCartShopCounterState extends State<MyCartShopCounter> {
-  MyCartChangeNotifier myCartChangeNotifier;
-  FlushBarService flushBarService;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  FlushBarService? flushBarService;
 
   @override
   void initState() {
@@ -133,15 +133,13 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
 
   void _onChangeQty(bool isIncreament, MarkaaAppChangeNotifier model) async {
     if (model.activeUpdateCart) {
-      // model.changeUpdateCartStatus(false);
       int qty = widget.cartItem.itemCount + (isIncreament ? 1 : -1);
-      await myCartChangeNotifier.updateCartItem(
-          widget.cartItem, qty, _onFailure);
-      // model.changeUpdateCartStatus(true);
+      await myCartChangeNotifier!
+          .updateCartItem(widget.cartItem, qty, _onFailure);
     }
   }
 
   void _onFailure(String message) {
-    flushBarService.showErrorDialog(message);
+    flushBarService!.showErrorDialog(message);
   }
 }

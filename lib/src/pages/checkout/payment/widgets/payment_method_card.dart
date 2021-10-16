@@ -14,15 +14,17 @@ import 'payment_card_form.dart';
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethodEntity method;
   final String value;
-  final Function onChange;
-  final String cardToken;
-  final Function onAuthorizedSuccess;
+  final void Function(String?)? onActiveChange;
+  final void Function()? onInActiveChange;
+  final String? cardToken;
+  final Function? onAuthorizedSuccess;
   final bool isActive;
 
   PaymentMethodCard({
-    @required this.method,
-    @required this.value,
-    this.onChange,
+    required this.method,
+    required this.value,
+    this.onActiveChange,
+    this.onInActiveChange,
     this.cardToken,
     this.onAuthorizedSuccess,
     this.isActive = true,
@@ -44,7 +46,7 @@ class PaymentMethodCard extends StatelessWidget {
             child: RadioListTile(
               value: method.id,
               groupValue: value,
-              onChanged: onChange,
+              onChanged: onActiveChange,
               activeColor: primaryColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +119,7 @@ class PaymentMethodCard extends StatelessWidget {
                                 fontSize: 10.sp, color: primaryColor),
                           ),
                           Text(
-                            '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
+                            '${NumericService.roundString(user!.balance, 3)} ${'currency'.tr()}',
                             style: mediumTextStyle.copyWith(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
@@ -136,7 +138,7 @@ class PaymentMethodCard extends StatelessWidget {
               width: double.infinity,
               height: 300.h,
               child: PaymentCardForm(
-                onAuthorizedSuccess: onAuthorizedSuccess,
+                onAuthorizedSuccess: onAuthorizedSuccess!,
               ),
             ),
           ]
@@ -228,7 +230,7 @@ class PaymentMethodCard extends StatelessWidget {
                                   fontSize: 10.sp, color: primaryColor),
                             ),
                             Text(
-                              '${NumericService.roundString(user.balance, 3)} ${'currency'.tr()}',
+                              '${NumericService.roundString(user!.balance, 3)} ${'currency'.tr()}',
                               style: mediumTextStyle.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w700,
@@ -243,7 +245,7 @@ class PaymentMethodCard extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: onChange,
+              onPressed: onInActiveChange,
               child: Text(
                 'change_button_title'.tr(),
                 style: mediumTextStyle.copyWith(

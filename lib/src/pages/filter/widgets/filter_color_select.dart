@@ -10,12 +10,12 @@ class FilterColorSelect extends StatelessWidget {
   final Function onTap;
 
   FilterColorSelect({
-    this.items,
-    this.values,
-    this.colors,
-    this.itemWidth,
-    this.itemHeight,
-    this.onTap,
+    required this.items,
+    required this.values,
+    required this.colors,
+    required this.itemWidth,
+    required this.itemHeight,
+    required this.onTap,
   });
 
   Color _getColorFromHex(String hexColor) {

@@ -14,7 +14,7 @@ class NotificationSettingChangedInProcess extends SettingState {}
 class NotificationSettingChangedSuccess extends SettingState {
   final bool status;
 
-  NotificationSettingChangedSuccess({this.status});
+  NotificationSettingChangedSuccess({required this.status});
 
   @override
   List<Object> get props => [status];
@@ -23,7 +23,7 @@ class NotificationSettingChangedSuccess extends SettingState {
 class NotificationSettingChangedFailure extends SettingState {
   final String message;
 
-  NotificationSettingChangedFailure({this.message});
+  NotificationSettingChangedFailure({required this.message});
 
   @override
   List<Object> get props => [message];
@@ -36,7 +36,7 @@ class ContactUsSubmittedSuccess extends SettingState {}
 class ContactUsSubmittedFailure extends SettingState {
   final String message;
 
-  ContactUsSubmittedFailure({this.message});
+  ContactUsSubmittedFailure({required this.message});
 
   @override
   List<Object> get props => [message];
@@ -49,7 +49,7 @@ class PasswordUpdatedSuccess extends SettingState {}
 class PasswordUpdatedFailure extends SettingState {
   final String message;
 
-  PasswordUpdatedFailure({this.message});
+  PasswordUpdatedFailure({required this.message});
 
   @override
   List<Object> get props => [message];

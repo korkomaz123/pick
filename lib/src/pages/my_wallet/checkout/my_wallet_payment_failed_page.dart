@@ -18,13 +18,13 @@ class MyWalletPaymentFailedPage extends StatefulWidget {
 
 class _MyWalletPaymentFailedPageState extends State<MyWalletPaymentFailedPage>
     with WidgetsBindingObserver {
-  WalletChangeNotifier _walletChangeNotifier;
+  WalletChangeNotifier? _walletChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
-    _walletChangeNotifier.init();
+    _walletChangeNotifier!.init();
   }
 
   @override

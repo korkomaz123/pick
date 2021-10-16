@@ -21,7 +21,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class CheckoutPaymentPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  CheckoutPaymentPage({this.params});
+  CheckoutPaymentPage({required this.params});
 
   @override
   _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
@@ -29,19 +29,19 @@ class CheckoutPaymentPage extends StatefulWidget {
 
 class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     with WidgetsBindingObserver {
-  WebViewController webViewController;
+  WebViewController? webViewController;
 
-  OrderChangeNotifier orderChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
 
-  String url;
-  OrderEntity order;
-  OrderEntity reorder;
+  String? url;
+  OrderEntity? order;
+  OrderEntity? reorder;
 
   bool isLoading = true;
 
@@ -65,14 +65,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   }
 
   void _onBack() async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'payment_abort_dialog_text');
+    final result = await flushBarService!
+        .showConfirmDialog(message: 'payment_abort_dialog_text');
     if (result != null) {
       /// activate the current shopping cart
-      await myCartChangeNotifier.activateCart();
+      await myCartChangeNotifier!.activateCart();
 
       /// cancel the order
-      await orderChangeNotifier.cancelFullOrder(order,
+      await orderChangeNotifier!.cancelFullOrder(order!,
           onProcess: _onCancelProcess,
           onSuccess: _onCanceledSuccess,
           onFailure: _onCanceledFailure);
@@ -80,16 +80,16 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   }
 
   void _onCancelProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onCanceledSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     Navigator.pop(context);
   }
 
   void _onCanceledFailure(String message) {
-    progressService.hideProgress();
+    progressService!.hideProgress();
   }
 
   @override
@@ -155,7 +155,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user?.token != null) {
-            orderChangeNotifier.removeOrder(order);
+            orderChangeNotifier!.removeOrder(order!);
           }
 
           if (reorder != null) {
@@ -174,8 +174,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
           if (user?.token != null) {
-            order.status = OrderStatusEnum.processing;
-            orderChangeNotifier.updateOrder(order);
+            order!.status = OrderStatusEnum.processing;
+            orderChangeNotifier!.updateOrder(order!);
           }
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -192,13 +192,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   Future<void> _onSuccessPayment() async {
     if (reorder != null) {
-      myCartChangeNotifier.initializeReorderCart();
+      myCartChangeNotifier!.initializeReorderCart();
     } else {
-      myCartChangeNotifier.initialize();
+      myCartChangeNotifier!.initialize();
       if (user?.token == null) {
         await localStorageRepo.removeItem('cartId');
       }
-      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier!.getCartId();
     }
     final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);

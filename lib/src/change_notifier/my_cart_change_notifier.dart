@@ -72,7 +72,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Map<String, CartItemEntity> reorderCartItemsMap = {};
 
   /// the type of coupon code
-  String type;
+  String? type;
 
   /// coupon apply status
   bool isApplying = false;
@@ -84,7 +84,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (condition.attribute == 'price' ||
           condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
-          price = StringService.roundDouble(item.product.beforePrice, 3);
+          price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
           if (item.product.price == item.product.beforePrice)
             price = 0;
@@ -104,17 +104,17 @@ class MyCartChangeNotifier extends ChangeNotifier {
             : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         cartConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity.optionId == condition.value
-            : item.product.brandEntity.optionId != condition.value;
+            ? item.product.brandEntity!.optionId == condition.value
+            : item.product.brandEntity!.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         cartConditionMatched = condition.operator == '=='
             ? values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value))
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value))
             : !values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value));
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value));
       }
     }
     bool productConditionMatched = true;
@@ -122,7 +122,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (condition.attribute == 'price' ||
           condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
-          price = StringService.roundDouble(item.product.beforePrice, 3);
+          price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
           if (item.product.price == item.product.beforePrice)
             price = 0;
@@ -142,17 +142,17 @@ class MyCartChangeNotifier extends ChangeNotifier {
             : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity.optionId == condition.value
-            : item.product.brandEntity.optionId != condition.value;
+            ? item.product.brandEntity!.optionId == condition.value
+            : item.product.brandEntity!.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         productConditionMatched = condition.operator == '=='
             ? values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value))
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value))
             : !values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value));
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value));
       }
     }
     bool isOkay = (cartConditionMatched == isOkayCartCondition) &&
@@ -194,9 +194,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> getCartItems(
     String lang, [
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   ]) async {
     final data = {'action': 'getCartItems'};
     cartItemCount = 0;
@@ -227,7 +227,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         isOkayCartCondition = result['isCartConditionOkay'];
         isOkayProductCondition = result['isProductConditionOkay'];
         cartItemCount = result['items'].length;
-        for (var item in result['items']) {
+        for (CartItemEntity item in result['items']) {
           cartItemsMap[item.itemId] = item;
           cartTotalPrice += item.rowPrice;
           cartTotalCount += item.itemCount;
@@ -289,10 +289,10 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> removeCartItem(String key, Function onFailure) async {
     final data = {'action': 'removeCartItem', 'productId': key};
     final item = cartItemsMap[key];
-    cartTotalPrice -= cartItemsMap[key].rowPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(item);
+    cartTotalPrice -= cartItemsMap[key]!.rowPrice;
+    cartDiscountedTotalPrice -= getDiscountedPrice(item!);
     cartItemCount -= 1;
-    cartTotalCount -= cartItemsMap[key].itemCount;
+    cartTotalCount -= cartItemsMap[key]!.itemCount;
     cartItemsMap.remove(key);
     notifyListeners();
 
@@ -333,11 +333,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
     int qty,
     String lang,
     Map<String, dynamic> options, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
     if (cartId.isEmpty) {
       await getCartId();
       await getCartItems(lang);
@@ -355,7 +355,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
-        CartItemEntity oldItem = cartItemsMap[newItem.itemId];
+        CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
         if (cartItemsMap.containsKey(newItem.itemId)) {
           cartTotalPrice -= oldItem.rowPrice;
           cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
@@ -366,15 +366,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalPrice += newItem.rowPrice;
         cartDiscountedTotalPrice += getDiscountedPrice(newItem);
         cartItemsMap[newItem.itemId] = newItem;
-        if (onSuccess != null) onSuccess();
+        onSuccess!();
         notifyListeners();
       } else {
-        onFailure(result['errorMessage']);
+        onFailure!(result['errorMessage']);
         reportCartIssue(result, data);
       }
     } catch (e) {
       print(e.toString());
-      onFailure('connection_error');
+      onFailure!('connection_error');
       reportCartIssue(e.toString(), data);
     }
   }
@@ -394,11 +394,11 @@ class MyCartChangeNotifier extends ChangeNotifier {
         StringService.roundDouble(item.product.price, 3) * updatedQty;
     cartTotalCount += updatedQty;
     cartTotalPrice += updatedPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]);
-    cartItemsMap[item.itemId].itemCount = qty;
-    cartItemsMap[item.itemId].rowPrice =
+    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
+    cartItemsMap[item.itemId]!.itemCount = qty;
+    cartItemsMap[item.itemId]!.rowPrice =
         StringService.roundDouble(item.product.price, 3) * qty;
-    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]);
+    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
     notifyListeners();
 
     try {
@@ -409,12 +409,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
         cartDiscountedTotalPrice -=
-            getDiscountedPrice(cartItemsMap[item.itemId]);
-        cartItemsMap[item.itemId].itemCount = item.itemCount;
-        cartItemsMap[item.itemId].rowPrice =
+            getDiscountedPrice(cartItemsMap[item.itemId]!);
+        cartItemsMap[item.itemId]!.itemCount = item.itemCount;
+        cartItemsMap[item.itemId]!.rowPrice =
             StringService.roundDouble(item.product.price, 3) * item.itemCount;
         cartDiscountedTotalPrice +=
-            getDiscountedPrice(cartItemsMap[item.itemId]);
+            getDiscountedPrice(cartItemsMap[item.itemId]!);
         notifyListeners();
 
         await getCartItems(lang);
@@ -424,11 +424,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
       onFailure('connection_error');
       cartTotalCount -= updatedQty;
       cartTotalPrice -= updatedPrice;
-      cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]);
-      cartItemsMap[item.itemId].itemCount = item.itemCount;
-      cartItemsMap[item.itemId].rowPrice =
+      cartDiscountedTotalPrice -=
+          getDiscountedPrice(cartItemsMap[item.itemId]!);
+      cartItemsMap[item.itemId]!.itemCount = item.itemCount;
+      cartItemsMap[item.itemId]!.rowPrice =
           StringService.roundDouble(item.product.price, 3) * item.itemCount;
-      cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]);
+      cartDiscountedTotalPrice +=
+          getDiscountedPrice(cartItemsMap[item.itemId]!);
       notifyListeners();
       if (processStatus != ProcessStatus.process) {
         await getCartItems(lang);
@@ -440,7 +442,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> getCartId() async {
     try {
       if (user?.token != null) {
-        cartId = await myCartRepository.getShoppingCart(user.token);
+        cartId = await myCartRepository.getShoppingCart(user!.token);
       } else {
         if (await localStorageRepository.existItem('cartId')) {
           cartId = await localStorageRepository.getCartId();
@@ -472,17 +474,17 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> getReorderCartItems(
     String lang, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
+    onProcess!();
 
     final result = await myCartRepository.getCartItems(reorderCartId, lang);
 
     if (result['code'] == 'SUCCESS') {
       reorderCartItemCount = result['items'].length;
-      for (var item in result['items']) {
+      for (CartItemEntity item in result['items']) {
         reorderCartItemsMap[item.itemId] = item;
         reorderCartTotalPrice += item.rowPrice;
         reorderCartTotalCount += item.itemCount;
@@ -498,9 +500,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> removeReorderCartItem(String key) async {
-    reorderCartTotalPrice -= reorderCartItemsMap[key].rowPrice;
+    reorderCartTotalPrice -= reorderCartItemsMap[key]!.rowPrice;
     reorderCartItemCount -= 1;
-    reorderCartTotalCount -= reorderCartItemsMap[key].itemCount;
+    reorderCartTotalCount -= reorderCartItemsMap[key]!.itemCount;
     reorderCartItemsMap.remove(key);
     notifyListeners();
     await myCartRepository.deleteCartItem(reorderCartId, key);
@@ -509,18 +511,16 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> getReorderCartId(
     String orderId,
     String lang, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
-    if (onProcess != null) onProcess();
-
+    onProcess!();
     try {
       reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
-
-      if (onSuccess != null) onSuccess();
+      onSuccess!();
     } catch (e) {
-      if (onFailure != null) onFailure();
+      onFailure!();
     }
   }
 
@@ -560,7 +560,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   void resetDiscountPrice() {
     cartDiscountedTotalPrice = 0;
     for (var key in cartItemsMap.keys.toList()) {
-      final item = cartItemsMap[key];
+      final item = cartItemsMap[key]!;
       cartDiscountedTotalPrice += getDiscountedPrice(item);
     }
   }
@@ -663,7 +663,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final reportData = {
       'result': result,
       'collectData': data,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user?.token != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -682,7 +682,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final resultData = {
       'result': result,
       'chargeId': chargeId,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user?.token != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {

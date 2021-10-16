@@ -10,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -32,13 +31,13 @@ class ProductVCard extends StatefulWidget {
   final bool isShare;
   final bool isLine;
   final bool isMinor;
-  final Function onTap;
-  final Function onAddToCartFailure;
+  final Function? onTap;
+  final Function? onAddToCartFailure;
 
   ProductVCard({
-    this.cardWidth,
-    this.cardHeight,
-    this.product,
+    required this.cardWidth,
+    required this.cardHeight,
+    required this.product,
     this.isShoppingCart = false,
     this.isWishlist = false,
     this.isShare = false,
@@ -54,20 +53,19 @@ class ProductVCard extends StatefulWidget {
 
 class _ProductVCardState extends State<ProductVCard>
     with TickerProviderStateMixin {
-  bool _isWishlist;
+  bool? _isWishlist;
 
-  AnimationController _addToCartController;
-  Animation<double> _addToCartScaleAnimation;
-  AnimationController _addToWishlistController;
-  Animation<double> _addToWishlistScaleAnimation;
+  AnimationController? _addToCartController;
+  Animation<double>? _addToCartScaleAnimation;
+  AnimationController? _addToWishlistController;
+  Animation<double>? _addToWishlistScaleAnimation;
 
-  MyCartChangeNotifier _myCartChangeNotifier;
+  MyCartChangeNotifier? _myCartChangeNotifier;
 
-  FlushBarService _flushBarService;
-  ProgressService _progressService;
+  FlushBarService? _flushBarService;
+  ProgressService? _progressService;
 
-  bool get outOfStock =>
-      !(widget.product.stockQty != null && widget.product.stockQty > 0);
+  bool get outOfStock => !(widget.product.stockQty! > 0);
 
   @override
   void initState() {
@@ -95,7 +93,7 @@ class _ProductVCardState extends State<ProductVCard>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _addToCartController,
+      parent: _addToCartController!,
       curve: Curves.easeIn,
     ));
 
@@ -109,49 +107,42 @@ class _ProductVCardState extends State<ProductVCard>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _addToWishlistController,
+      parent: _addToWishlistController!,
       curve: Curves.easeIn,
     ));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget?.product?.productId != null) {
-      return InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            Routes.product,
-            arguments: widget.product,
-          );
-          if (widget.onTap != null) widget.onTap();
-        },
-        child: Container(
-          width: widget.cardWidth,
-          height: widget.cardHeight,
-          child: Stack(
-            children: [
-              _buildProductCard(),
-              if (widget.product.discount > 0) ...[
-                if (Preload.language == 'en') ...[
-                  Positioned(top: 0, left: 0, child: _buildDiscount()),
-                ] else ...[
-                  Positioned(top: 0, right: 0, child: _buildDiscount()),
-                ],
-              ],
-              if (widget.product.isDeal) ...[_buildDealValueLabel()],
-              _buildToolbar(),
-              _buildOutofStock(),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Container(
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.product,
+          arguments: widget.product,
+        );
+        widget.onTap!();
+      },
+      child: Container(
         width: widget.cardWidth,
         height: widget.cardHeight,
-      );
-    }
+        child: Stack(
+          children: [
+            _buildProductCard(),
+            if (widget.product.discount! > 0) ...[
+              if (Preload.language == 'en') ...[
+                Positioned(top: 0, left: 0, child: _buildDiscount()),
+              ] else ...[
+                Positioned(top: 0, right: 0, child: _buildDiscount()),
+              ],
+            ],
+            if (widget.product.isDeal!) ...[_buildDealValueLabel()],
+            _buildToolbar(),
+            _buildOutofStock(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildProductCard() {
@@ -178,9 +169,9 @@ class _ProductVCardState extends State<ProductVCard>
               children: [
                 InkWell(
                   onTap: () {
-                    if (widget?.product?.brandEntity?.optionId != null) {
+                    if (widget.product.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
-                        category: CategoryEntity(),
+                        category: null,
                         subCategory: [],
                         brand: widget.product.brandEntity,
                         selectedSubCategoryIndex: 0,
@@ -194,7 +185,7 @@ class _ProductVCardState extends State<ProductVCard>
                     }
                   },
                   child: Text(
-                    widget?.product?.brandEntity?.brandLabel ?? '',
+                    widget.product.brandEntity!.brandLabel,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 14.sp,
@@ -223,19 +214,17 @@ class _ProductVCardState extends State<ProductVCard>
                       child: Row(
                         children: [
                           Text(
-                            widget.product.price != null
-                                ? (widget.product.price + ' ' + 'currency'.tr())
-                                : '',
+                            (widget.product.price + ' ' + 'currency'.tr()),
                             style: mediumTextStyle.copyWith(
                               fontSize: widget.isMinor ? 12.sp : 14.sp,
                               color: greyColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (widget.product.discount > 0) ...[
+                          if (widget.product.discount! > 0) ...[
                             SizedBox(width: widget.isMinor ? 4.w : 10.w),
                             Text(
-                              widget.product.beforePrice +
+                              widget.product.beforePrice! +
                                   ' ' +
                                   'currency'.tr(),
                               style: mediumTextStyle.copyWith(
@@ -263,7 +252,7 @@ class _ProductVCardState extends State<ProductVCard>
                                 }
                               },
                               child: ScaleTransition(
-                                scale: _addToCartScaleAnimation,
+                                scale: _addToCartScaleAnimation!,
                                 child: Container(
                                   width: widget.isMinor ? 26.w : 32.w,
                                   height: widget.isMinor ? 26.w : 32.w,
@@ -358,17 +347,17 @@ class _ProductVCardState extends State<ProductVCard>
                     _onWishlist();
                   } else {
                     Navigator.pushNamed(
-                      Preload.navigatorKey.currentContext,
+                      Preload.navigatorKey!.currentContext!,
                       Routes.signIn,
                     );
                   }
                 },
                 child: ScaleTransition(
-                  scale: _addToWishlistScaleAnimation,
+                  scale: _addToWishlistScaleAnimation!,
                   child: Container(
-                    width: _isWishlist ? 22.w : 25.w,
-                    height: _isWishlist ? 22.w : 25.w,
-                    child: _isWishlist
+                    width: _isWishlist! ? 22.w : 25.w,
+                    height: _isWishlist! ? 22.w : 25.w,
+                    child: _isWishlist!
                         ? SvgPicture.asset(wishlistedIcon)
                         : SvgPicture.asset(favoriteIcon),
                   ),
@@ -408,66 +397,66 @@ class _ProductVCardState extends State<ProductVCard>
   void _onAddProductToCart() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(
-        Preload.navigatorKey.currentContext,
+        Preload.navigatorKey!.currentContext!,
         Routes.product,
         arguments: widget.product,
       );
     } else {
-      _addToCartController.repeat(reverse: true);
+      _addToCartController!.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
-        _addToCartController.stop(canceled: true);
+        _addToCartController!.stop(canceled: true);
         timer.cancel();
       });
 
-      if (widget.product.stockQty != null && widget.product.stockQty > 0) {
-        await _myCartChangeNotifier.addProductToCart(
+      if (widget.product.stockQty! > 0) {
+        await _myCartChangeNotifier!.addProductToCart(
             widget.product, 1, lang, {},
             onProcess: _onAdding,
             onSuccess: _onAddSuccess,
             onFailure: _onAddFailure);
       } else {
-        _flushBarService.showErrorDialog(
-            'out_of_stock_error'.tr(), "no_qty.svg");
+        _flushBarService!
+            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
 
   _onAdding() {
-    _progressService.addingProductProgress();
+    _progressService!.addingProductProgress();
   }
 
   void _onAddSuccess() {
-    _progressService.hideProgress();
+    _progressService!.hideProgress();
     ActionHandler.addedItemToCartSuccess(context, widget.product);
   }
 
   _onAddFailure(String message) {
-    _progressService.hideProgress();
-    _flushBarService.showErrorDialog(message, "no_qty.svg");
-    widget.onAddToCartFailure();
+    _progressService!.hideProgress();
+    _flushBarService!.showErrorDialog(message, "no_qty.svg");
+    widget.onAddToCartFailure!();
   }
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
       Navigator.pushNamed(
-        Preload.navigatorKey.currentContext,
+        Preload.navigatorKey!.currentContext!,
         Routes.product,
         arguments: widget.product,
       );
     } else {
-      _addToWishlistController.repeat(reverse: true);
+      _addToWishlistController!.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
-        _addToWishlistController.stop(canceled: true);
+        _addToWishlistController!.stop(canceled: true);
         timer.cancel();
       });
-      if (_isWishlist) {
-        await Preload.navigatorKey.currentContext
+      if (_isWishlist!) {
+        await Preload.navigatorKey!.currentContext!
             .read<WishlistChangeNotifier>()
-            .removeItemFromWishlist(user.token, widget.product);
+            .removeItemFromWishlist(user!.token, widget.product);
       } else {
-        await Preload.navigatorKey.currentContext
+        await Preload.navigatorKey!.currentContext!
             .read<WishlistChangeNotifier>()
-            .addItemToWishlist(user.token, widget.product, 1, {});
+            .addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }
@@ -476,7 +465,7 @@ class _ProductVCardState extends State<ProductVCard>
 class DealClipPath extends CustomClipper<Path> {
   final String lang;
 
-  DealClipPath({this.lang});
+  DealClipPath({required this.lang});
 
   @override
   Path getClip(Size size) {

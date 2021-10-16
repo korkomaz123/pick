@@ -17,10 +17,7 @@ class MyCartCouponCode extends StatefulWidget {
   final String cartId;
   final Function onSignIn;
 
-  MyCartCouponCode({
-    this.cartId,
-    this.onSignIn,
-  });
+  MyCartCouponCode({required this.cartId, required this.onSignIn});
 
   @override
   _MyCartCouponCodeState createState() => _MyCartCouponCodeState();
@@ -32,18 +29,18 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
   TextEditingController couponCodeController = TextEditingController();
   FocusNode couponNode = FocusNode();
 
-  MyCartChangeNotifier myCartChangeNotifier;
-  FlushBarService flushBarService;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  FlushBarService? flushBarService;
 
   @override
   void initState() {
     super.initState();
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    couponCodeController.text = myCartChangeNotifier.couponCode;
+    couponCodeController.text = myCartChangeNotifier!.couponCode;
 
-    myCartChangeNotifier.addListener(() {
-      couponCodeController.text = myCartChangeNotifier.couponCode;
+    myCartChangeNotifier!.addListener(() {
+      couponCodeController.text = myCartChangeNotifier!.couponCode;
     });
   }
 
@@ -81,7 +78,7 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     hintText: 'my_cart_coupon_code_hint'.tr(),
                   ),
                   validator: (value) {
-                    if (value.trim().isEmpty) return 'required_field'.tr();
+                    if (value!.trim().isEmpty) return 'required_field'.tr();
                     return null;
                   },
                   readOnly: model.couponCode.isNotEmpty,
@@ -111,16 +108,16 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
                     buttonColor: greyLightColor,
                     borderColor: Colors.transparent,
                     onPressed: () {
-                      if (_couponFormKey.currentState.validate()) {
+                      if (_couponFormKey.currentState!.validate()) {
                         couponNode.unfocus();
                         if (user?.token != null) {
                           if (model.couponCode.isNotEmpty) {
                             couponCodeController.clear();
-                            model.cancelCouponCode(flushBarService);
+                            model.cancelCouponCode(flushBarService!);
                           } else {
                             model.applyCouponCode(
                               couponCodeController.text.trim(),
-                              flushBarService,
+                              flushBarService!,
                             );
                           }
                         } else {

@@ -1,11 +1,11 @@
 class SummerCollectionEntity {
-  final String brandLogo;
-  final String brandLabel;
-  final String categoryName;
-  final String categoryId;
-  final String brandId;
-  final String productId;
-  final String imageUrl;
+  final String? brandLogo;
+  final String? brandLabel;
+  final String? categoryName;
+  final String? categoryId;
+  final String? brandId;
+  final String? productId;
+  final String? imageUrl;
 
   SummerCollectionEntity({
     this.categoryId,

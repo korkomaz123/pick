@@ -38,9 +38,9 @@ import 'widgets/payment_method_list.dart';
 import 'widgets/payment_summary.dart';
 
 class CheckoutPage extends StatefulWidget {
-  final OrderEntity reorder;
+  final OrderEntity? reorder;
 
-  CheckoutPage({this.reorder});
+  CheckoutPage({required this.reorder});
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -54,25 +54,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
   SheetController sheetController = SheetController();
 
   String payment = 'knet';
-  String cardToken;
+  String? cardToken;
   var details;
   bool deliverAsGift = false;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
-  AuthChangeNotifier authChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
   bool get requireAddress =>
-      user?.token != null && addressChangeNotifier.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier.guestAddress == null;
+      user?.token != null && addressChangeNotifier!.defaultAddress == null ||
+      user?.token == null && addressChangeNotifier!.guestAddress == null;
 
   void _loadAssetData() async {
     try {
@@ -83,7 +83,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
       print(paymentMethods.length);
       if (widget.reorder != null) {
-        payment = widget.reorder.paymentMethod.id;
+        payment = widget.reorder!.paymentMethod.id;
       }
       setState(() {});
     } catch (e) {
@@ -116,12 +116,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onFailure(String error) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(error);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(error);
   }
 
   @override
@@ -171,7 +171,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             return PaymentMethodCard(
                               method: paymentMethods[idx],
                               value: payment,
-                              onChange: _onChangeMethod,
+                              onInActiveChange: _onChangeMethod,
                               isActive: false,
                             );
                           }),
@@ -277,7 +277,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  _onChangeMethod() async {
+  void _onChangeMethod() async {
     final result = await showSlidingBottomSheet(
       context,
       builder: (_) {
@@ -305,7 +305,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       var data = result as Map<String, dynamic>;
       payment = data['method'];
       cardToken = data['cardToken'];
-      markaaAppChangeNotifier.rebuild();
+      markaaAppChangeNotifier!.rebuild();
     }
   }
 
@@ -348,21 +348,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
       if (cardToken == null) {
-        flushBarService.showErrorDialog('fill_card_details_error'.tr());
+        flushBarService!.showErrorDialog('fill_card_details_error'.tr());
         return;
       }
       orderDetails['tap_token'] = cardToken;
     }
     if (requireAddress) {
-      flushBarService.showErrorDialog('checkout_address_error'.tr());
+      flushBarService!.showErrorDialog('checkout_address_error'.tr());
       return;
     }
 
     var address;
     if (user?.token != null)
-      address = addressChangeNotifier.defaultAddress.toJson();
+      address = addressChangeNotifier!.defaultAddress!.toJson();
     else
-      address = addressChangeNotifier.guestAddress.toJson();
+      address = addressChangeNotifier!.guestAddress!.toJson();
     address['postcode'] = address['post_code'];
     address['save_in_address_book'] = '0';
     address['region'] = address['region_id'];
@@ -372,20 +372,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
     Adjust.trackEvent(adjustEvent);
 
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier.submitOrder(orderDetails, lang,
+    await orderChangeNotifier!.submitOrder(orderDetails, lang,
         onProcess: _onProcess,
         onSuccess: _onOrderSubmittedSuccess,
         onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    progressService.hideProgress();
+    progressService!.hideProgress();
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);
       if (payment == 'wallet') {
-        user.balance -= double.parse(order.totalPrice);
-        authChangeNotifier.updateUserEntity(user);
+        user!.balance -= double.parse(order.totalPrice);
+        authChangeNotifier!.updateUserEntity(user);
       }
 
       /// payment method is equal to cod, go to success page directly
@@ -404,7 +404,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
     } else {
       /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier.cancelFullOrder(order,
+      await orderChangeNotifier!.cancelFullOrder(order,
           onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
@@ -419,13 +419,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Future _onSuccessOrder(OrderEntity order) async {
     if (widget.reorder != null) {
-      myCartChangeNotifier.initializeReorderCart();
+      myCartChangeNotifier!.initializeReorderCart();
     } else {
-      myCartChangeNotifier.initialize();
+      myCartChangeNotifier!.initialize();
       if (user?.token == null) {
         await localStorageRepo.removeItem('cartId');
       }
-      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier!.getCartId();
     }
     double price = double.parse(order.totalPrice);
 

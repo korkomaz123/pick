@@ -33,7 +33,7 @@ class WishlistRepository {
     String action,
     int qty,
     Map<String, dynamic> options, [
-    String itemId,
+    String? itemId,
   ]) async {
     final url = EndPoints.changeSaveForLaterItem;
     final params = {
@@ -43,7 +43,7 @@ class WishlistRepository {
       'action': action,
       'qty': qty.toString(),
       'option': jsonEncode(options),
-      'itemId': itemId ?? '',
+      'itemId': itemId!,
     };
     print(params);
     return await Api.postMethod(url, data: params);

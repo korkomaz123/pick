@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/celebrity_card.dart';
@@ -15,7 +16,7 @@ import '../../../../preload.dart';
 class HomeCelebrity extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeCelebrity({@required this.homeChangeNotifier});
+  HomeCelebrity({required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class HomeCelebrity extends StatelessWidget {
         children: [
           Expanded(
             child: AutoSizeText(
-              homeChangeNotifier.celebrityTitle ?? '',
+              homeChangeNotifier.celebrityTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
                 fontSize: 26.sp,
@@ -68,9 +69,11 @@ class HomeCelebrity extends StatelessWidget {
               borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
-                Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.celebritiesList, arguments: {
-                  'title': homeChangeNotifier.celebrityTitle ?? '',
-                });
+                Navigator.pushNamed(
+                  Preload.navigatorKey!.currentContext!,
+                  Routes.celebritiesList,
+                  arguments: {'title': homeChangeNotifier.celebrityTitle},
+                );
               },
             ),
           ),

@@ -16,7 +16,7 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 class CheckoutConfirmedPage extends StatefulWidget {
   final OrderEntity order;
 
-  CheckoutConfirmedPage({this.order});
+  CheckoutConfirmedPage({required this.order});
 
   @override
   _CheckoutConfirmedPageState createState() => _CheckoutConfirmedPageState();

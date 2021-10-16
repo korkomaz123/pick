@@ -22,6 +22,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -57,15 +58,15 @@ class _SignInPageState extends State<SignInPage> {
 
   bool isShowPass = false;
 
-  AuthChangeNotifier authChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
+  HomeChangeNotifier? homeChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
+  OrderChangeNotifier? orderChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   final LocalStorageRepository localRepo = LocalStorageRepository();
   final WishlistRepository wishlistRepo = WishlistRepository();
@@ -91,7 +92,7 @@ class _SignInPageState extends State<SignInPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService.showErrorDialog('can_not_launch_url'.tr());
+      flushBarService!.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 
@@ -167,7 +168,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: 15.sp,
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_email'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -219,7 +220,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: 15.sp,
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_password'.tr();
           } else if (!isLength(value, 5)) {
             return 'short_length_password'.tr();
@@ -399,32 +400,32 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   _onLoginProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   Future _onLoginSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      SlackChannels.send('new login [${user.email}][${user.toJson()}]',
+      SlackChannels.send('new login [${user!.email}][${user!.toJson()}]',
           SlackChannels.logAppUsers);
-      await localRepo.setToken(user.token);
+      await localRepo.setToken(user!.token);
 
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
+      await orderChangeNotifier!.loadOrderHistories(user!.token, lang);
 
-      await myCartChangeNotifier.getCartId();
-      await myCartChangeNotifier.transferCartItems();
-      await myCartChangeNotifier.getCartItems(lang);
+      await myCartChangeNotifier!.getCartId();
+      await myCartChangeNotifier!.transferCartItems();
+      await myCartChangeNotifier!.getCartItems(lang);
 
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
+      await wishlistChangeNotifier!.getWishlistItems(user!.token, lang);
 
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
+      addressChangeNotifier!.initialize();
+      await addressChangeNotifier!.loadAddresses(user!.token);
       NotificationSetup().updateFcmDeviceToken();
     } catch (e) {
       print(e.toString());
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer();
-    progressService.hideProgress();
+    homeChangeNotifier!.loadRecentlyViewedCustomer();
+    progressService!.hideProgress();
     if (Navigator.of(context).canPop()) {
       Navigator.pop(context);
     } else {
@@ -433,13 +434,13 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   _onLoginFailure(message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
   }
 
   _signIn() {
-    if (_formKey.currentState.validate()) {
-      authChangeNotifier.login(
+    if (_formKey.currentState!.validate()) {
+      authChangeNotifier!.login(
         emailController.text,
         passwordController.text,
         onProcess: _onLoginProcess,
@@ -475,7 +476,7 @@ class _SignInPageState extends State<SignInPage> {
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier.loginWithSocial(
+      authChangeNotifier!.loginWithSocial(
           email, firstName, lastName, 'Facebook Sign', lang,
           onProcess: _onLoginProcess,
           onSuccess: _onLoginSuccess,
@@ -492,10 +493,10 @@ class _SignInPageState extends State<SignInPage> {
       final googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
         String email = googleAccount.email;
-        String displayName = googleAccount.displayName;
+        String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier.loginWithSocial(
+        authChangeNotifier!.loginWithSocial(
             email, firstName, lastName, 'Google Sign', lang,
             onProcess: _onLoginProcess,
             onSuccess: _onLoginSuccess,
@@ -514,17 +515,17 @@ class _SignInPageState extends State<SignInPage> {
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      String email = credential.email;
-      String appleId = credential.userIdentifier;
-      String firstName = credential.givenName;
-      String lastName = credential.familyName;
+      String? email = credential.email;
+      String appleId = credential.userIdentifier!;
+      String firstName = credential.givenName!;
+      String lastName = credential.familyName!;
       if (email == null) {
         final faker = Faker();
         String fakeEmail = faker.internet.freeEmail();
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier.loginWithSocial(
+      authChangeNotifier!.loginWithSocial(
           email, firstName, lastName, 'apple', lang,
           appleId: appleId,
           onProcess: _onLoginProcess,

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
 class CustomScrollPhysics extends ScrollPhysics {
-  const CustomScrollPhysics({ScrollPhysics parent}) : super(parent: parent);
+  const CustomScrollPhysics({ScrollPhysics? parent}) : super(parent: parent);
 
   @override
-  CustomScrollPhysics applyTo(ScrollPhysics ancestor) {
+  CustomScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return CustomScrollPhysics(parent: buildParent(ancestor));
   }
 
-
   @override
-  Simulation createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+    ScrollMetrics position,
+    double velocity,
+  ) {
     final tolerance = this.tolerance;
     if ((velocity.abs() < tolerance.velocity) ||
         (velocity > 0.0 && position.pixels >= position.maxScrollExtent) ||
@@ -21,7 +22,7 @@ class CustomScrollPhysics extends ScrollPhysics {
     return ClampingScrollSimulation(
       position: position.pixels,
       velocity: velocity,
-      friction: 0.1,    // <--- HERE
+      friction: 0.1, // <--- HERE
       tolerance: tolerance,
     );
   }

@@ -15,7 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MarkaaBottomBar extends StatelessWidget {
   final BottomEnum activeItem;
 
-  MarkaaBottomBar({this.activeItem});
+  MarkaaBottomBar({required this.activeItem});
 
   @override
   Widget build(BuildContext context) {

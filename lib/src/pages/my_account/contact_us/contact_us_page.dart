@@ -31,9 +31,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
-  SettingBloc settingBloc;
-  ProgressService progressService;
-  SnackBarService snackBarService;
+  SettingBloc? settingBloc;
+  ProgressService? progressService;
+  SnackBarService? snackBarService;
 
   @override
   void initState() {
@@ -44,9 +44,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    firstNameController.text = user?.firstName;
-    emailController.text = user?.email;
-    phoneNumberController.text = user?.phoneNumber;
+    firstNameController.text = user!.firstName;
+    emailController.text = user!.email;
+    phoneNumberController.text = user!.phoneNumber!;
   }
 
   @override
@@ -59,14 +59,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
       body: BlocConsumer<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is ContactUsSubmittedInProcess) {
-            progressService.showProgress();
+            progressService!.showProgress();
           }
           if (state is ContactUsSubmittedFailure) {
-            progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            progressService!.hideProgress();
+            snackBarService!.showErrorSnackBar(state.message);
           }
           if (state is ContactUsSubmittedSuccess) {
-            progressService.hideProgress();
+            progressService!.hideProgress();
             Navigator.pushReplacementNamed(context, Routes.contactUsSuccess);
           }
         },
@@ -143,7 +143,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           hintText: 'first_name'.tr(),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           }
           return null;
@@ -173,13 +173,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
         maxLength: 9,
         buildCounter: (
           BuildContext context, {
-          int currentLength,
-          int maxLength,
-          bool isFocused,
+          int? currentLength,
+          int? maxLength,
+          bool? isFocused,
         }) =>
             null,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (!isLength(value, 8, 9)) {
             return 'invalid_length_phone_number'.tr();
@@ -209,7 +209,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           hintText: 'email_hint'.tr(),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -267,7 +267,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           }
           return null;
@@ -318,8 +318,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
   void _onSubmit() {
-    if (formKey.currentState.validate()) {
-      settingBloc.add(ContactUsSubmitted(
+    if (formKey.currentState!.validate()) {
+      settingBloc!.add(ContactUsSubmitted(
         name: firstNameController.text,
         phone: phoneNumberController.text,
         email: emailController.text,

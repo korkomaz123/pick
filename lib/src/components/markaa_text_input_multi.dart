@@ -10,22 +10,22 @@ class MarkaaTextInputMulti extends StatelessWidget {
   final double fontSize;
   final String hint;
   final TextInputType inputType;
-  final Function validator;
+  final String? Function(String?)? validator;
   final bool readOnly;
-  final Function onTap;
-  final int maxLine;
+  final void Function()? onTap;
+  final int? maxLine;
   final Color borderColor;
   final double borderRadius;
   final Color fillColor;
 
   MarkaaTextInputMulti({
-    @required this.controller,
-    @required this.width,
-    @required this.padding,
-    @required this.fontSize,
-    @required this.hint,
-    @required this.inputType,
-    @required this.validator,
+    required this.controller,
+    required this.width,
+    required this.padding,
+    required this.fontSize,
+    required this.hint,
+    required this.inputType,
+    required this.validator,
     this.readOnly = false,
     this.onTap,
     this.maxLine,
@@ -74,7 +74,7 @@ class MarkaaTextInputMulti extends StatelessWidget {
           filled: true,
           fillColor: fillColor,
         ),
-        validator: (value) => validator(value),
+        validator: validator,
         keyboardType: TextInputType.multiline,
         textInputAction: TextInputAction.newline,
         readOnly: readOnly,

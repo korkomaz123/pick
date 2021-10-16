@@ -16,7 +16,7 @@ import 'package:markaa/src/theme/theme.dart';
 class MarkaaCartAddedSuccessDialog extends StatefulWidget {
   final ProductModel product;
 
-  MarkaaCartAddedSuccessDialog({@required this.product});
+  MarkaaCartAddedSuccessDialog({required this.product});
 
   @override
   _MarkaaCartAddedSuccessDialogState createState() =>

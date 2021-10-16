@@ -73,18 +73,18 @@ class OrderRepository {
     List<Map<String, dynamic>> items,
     String additionalInfo,
     String reason,
-    Uint8List product,
-    String imageName,
+    Uint8List? product,
+    String? imageName,
   ) async {
     String url = EndPoints.cancelOrder;
     final params = {
-      'token': user.token,
+      'token': user!.token,
       'orderId': orderId,
       'items': json.encode(items),
       'reason': reason,
-      'imageName': imageName ?? '',
+      'imageName': imageName!,
       'lang': lang,
-      'imageForProduct': imageName != null ? base64Encode(product) : '',
+      'imageForProduct': base64Encode(product!),
     };
     // print(params);
     return await Api.postMethod(url, data: params);
@@ -99,8 +99,8 @@ class OrderRepository {
     List<Map<String, dynamic>> items,
     String additionalInfo,
     String reason,
-    Uint8List product,
-    String imageName,
+    Uint8List? product,
+    String? imageName,
   ) async {
     String url = EndPoints.returnOrder;
     final params = {
@@ -108,9 +108,9 @@ class OrderRepository {
       'orderId': orderId,
       'items': json.encode(items),
       'reason': reason,
-      'imageName': imageName ?? '',
+      'imageName': imageName!,
       'lang': lang,
-      'imageForProduct': imageName != null ? base64Encode(product) : '',
+      'imageForProduct': base64Encode(product!),
     };
     print(params);
     return await Api.postMethod(url, data: params);

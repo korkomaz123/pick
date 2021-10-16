@@ -10,11 +10,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WishlistProductCard extends StatelessWidget {
   final ProductModel product;
-  final Function onRemoveWishlist;
-  final Function onAddToCart;
+  final void Function()? onRemoveWishlist;
+  final void Function()? onAddToCart;
 
   WishlistProductCard({
-    this.product,
+    required this.product,
     this.onRemoveWishlist,
     this.onAddToCart,
   });
@@ -63,7 +63,7 @@ class WishlistProductCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      product.shortDescription,
+                      product.shortDescription!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -79,7 +79,7 @@ class WishlistProductCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10.h),
-                    if (product.stockQty != null && product.stockQty > 0) ...[
+                    if (product.stockQty! > 0) ...[
                       Container(
                         width: 130.w,
                         child: MarkaaTextButton(

@@ -12,6 +12,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,7 +25,8 @@ import 'package:provider/provider.dart';
 class ProductSameBrandProducts extends StatefulWidget {
   final ProductModel product;
   final ProductChangeNotifier model;
-  ProductSameBrandProducts({this.product, this.model});
+
+  ProductSameBrandProducts({required this.product, required this.model});
 
   @override
   _ProductSameBrandProductsState createState() =>
@@ -33,17 +35,19 @@ class ProductSameBrandProducts extends StatefulWidget {
 
 class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
     with TickerProviderStateMixin {
-  AnimationController _favoriteController;
-  Animation<double> _favoriteScaleAnimation;
+  AnimationController? _favoriteController;
+  Animation<double>? _favoriteScaleAnimation;
   int activeIndex = 0;
-  FlushBarService flushBarService;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  List<ProductModel> get sameBrandProducts => widget.model.sameBrandProductsMap[widget.product.productId];
+  FlushBarService? flushBarService;
+  WishlistChangeNotifier? wishlistChangeNotifier;
+  List<ProductModel> get sameBrandProducts =>
+      widget.model.sameBrandProductsMap[widget.product.productId]!;
 
   @override
   void initState() {
     super.initState();
-    wishlistChangeNotifier = Preload.navigatorKey.currentContext.read<WishlistChangeNotifier>();
+    wishlistChangeNotifier =
+        Preload.navigatorKey!.currentContext!.read<WishlistChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     _favoriteController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -54,30 +58,35 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _favoriteController,
+      parent: _favoriteController!,
       curve: Curves.easeIn,
     ));
   }
 
   DynamicLinkService dynamicLinkService = DynamicLinkService();
   _onShareProduct() async {
-    Uri shareLink = await dynamicLinkService.productSharableLink(sameBrandProducts[activeIndex]);
-    Share.share(shareLink.toString(), subject: sameBrandProducts[activeIndex].name);
+    Uri shareLink = await dynamicLinkService
+        .productSharableLink(sameBrandProducts[activeIndex]);
+    Share.share(shareLink.toString(),
+        subject: sameBrandProducts[activeIndex].name);
   }
 
   void _onWishlist() async {
     if (widget.product.typeId == 'configurable') {
-      Navigator.pushNamed(context, Routes.product, arguments: sameBrandProducts[activeIndex]);
+      Navigator.pushNamed(context, Routes.product,
+          arguments: sameBrandProducts[activeIndex]);
     } else {
-      _favoriteController.repeat(reverse: true);
+      _favoriteController!.repeat(reverse: true);
       Timer.periodic(Duration(milliseconds: 600), (timer) {
-        _favoriteController.stop(canceled: true);
+        _favoriteController!.stop(canceled: true);
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier.removeItemFromWishlist(user.token, sameBrandProducts[activeIndex]);
+        wishlistChangeNotifier!.removeItemFromWishlist(
+            user!.token, sameBrandProducts[activeIndex]);
       } else {
-        wishlistChangeNotifier.addItemToWishlist(user.token, sameBrandProducts[activeIndex], 1, {});
+        wishlistChangeNotifier!.addItemToWishlist(
+            user!.token, sameBrandProducts[activeIndex], 1, {});
       }
     }
   }
@@ -85,20 +94,21 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
     final variant = sameBrandProducts[activeIndex];
-    final wishlistItems = wishlistChangeNotifier.wishlistItemsMap;
+    final wishlistItems = wishlistChangeNotifier!.wishlistItemsMap;
 
     bool favorite = false;
     if (sameBrandProducts[activeIndex].typeId == 'configurable') {
-      favorite = wishlistItems.containsKey(variant?.productId ?? '');
+      favorite = wishlistItems.containsKey(variant.productId);
     } else {
-      favorite = wishlistItems.containsKey(sameBrandProducts[activeIndex].productId);
+      favorite =
+          wishlistItems.containsKey(sameBrandProducts[activeIndex].productId);
     }
     return favorite;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (sameBrandProducts != null && sameBrandProducts.isNotEmpty) {
+    if (sameBrandProducts.isNotEmpty) {
       return Container(
         width: 375.w,
         color: Colors.white,
@@ -128,12 +138,11 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
                 Consumer<WishlistChangeNotifier>(
                   builder: (_, model, __) {
                     return InkWell(
-                      onTap: () =>
-                      user != null
+                      onTap: () => user != null
                           ? _onWishlist()
                           : Navigator.pushNamed(context, Routes.signIn),
                       child: ScaleTransition(
-                        scale: _favoriteScaleAnimation,
+                        scale: _favoriteScaleAnimation!,
                         child: Container(
                           width: 24.w,
                           height: 24.h,
@@ -165,7 +174,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
             width: 375.w,
             height: 150.h,
             child: Swiper(
-              itemCount: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              itemCount:
+                  sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -190,7 +200,8 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
             right: Preload.language == 'en' ? 0 : 0.8 * 375.w,
             child: SmoothIndicator(
               offset: activeIndex.toDouble(),
-              count: sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
+              count:
+                  sameBrandProducts.length > 10 ? 10 : sameBrandProducts.length,
               axisDirection: Axis.horizontal,
               effect: SlideEffect(
                 spacing: 5.w,

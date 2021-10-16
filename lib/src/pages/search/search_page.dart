@@ -32,14 +32,14 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
-  TabController tabController;
+  TabController? tabController;
 
-  Future<List<dynamic>> futureGenders;
-  Future<List<dynamic>> futureCategories;
-  Future<List<dynamic>> futureBrands;
+  Future<List<dynamic>>? futureGenders;
+  Future<List<dynamic>>? futureCategories;
+  Future<List<dynamic>>? futureBrands;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   dynamic selectedCategory;
   dynamic selectedBrand;
@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage>
   List<dynamic> selectedBrandNames = [];
   List<dynamic> searchHistory = [];
 
-  String filterData;
+  String? filterData;
   bool isFiltering = false;
   FocusNode searchNode = FocusNode();
 
@@ -60,9 +60,9 @@ class _SearchPageState extends State<SearchPage>
   LocalStorageRepository localStorageRepository = LocalStorageRepository();
   SearchRepository searchRepository = SearchRepository();
 
-  SuggestionChangeNotifier suggestionChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
+  SuggestionChangeNotifier? suggestionChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  HomeChangeNotifier? homeChangeNotifier;
 
   @override
   void initState() {
@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage>
     homeChangeNotifier = context.read<HomeChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
 
-    homeChangeNotifier.getBrandsList('brand');
+    homeChangeNotifier?.getBrandsList('brand');
 
     futureCategories = searchRepository.getCategoryOptions(lang);
     futureBrands = searchRepository.getBrandOptions(lang);
@@ -86,8 +86,8 @@ class _SearchPageState extends State<SearchPage>
 
     _getSearchHistories();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      suggestionChangeNotifier.initializeSuggestion(false);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      suggestionChangeNotifier!.initializeSuggestion(false);
       searchNode.requestFocus();
     });
   }
@@ -97,11 +97,11 @@ class _SearchPageState extends State<SearchPage>
       String query = searchController.text;
       await suggestionChangeNotifier?.getSuggestions(query, lang);
       await suggestionChangeNotifier?.searchProducts(query, lang, [], []);
-      markaaAppChangeNotifier.rebuild();
+      markaaAppChangeNotifier!.rebuild();
     } else {
-      if (suggestionChangeNotifier.suggestions.isNotEmpty) {
-        suggestionChangeNotifier.initializeSuggestion(true);
-        markaaAppChangeNotifier.rebuild();
+      if (suggestionChangeNotifier!.suggestions.isNotEmpty) {
+        suggestionChangeNotifier!.initializeSuggestion(true);
+        markaaAppChangeNotifier!.rebuild();
       }
     }
   }
@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage>
     bool isExist = await localStorageRepository.existItem('search_history');
     searchHistory =
         isExist ? await localStorageRepository.getItem('search_history') : [];
-    markaaAppChangeNotifier.rebuild();
+    markaaAppChangeNotifier!.rebuild();
   }
 
   void _saveSearchHistory() async {
@@ -120,13 +120,13 @@ class _SearchPageState extends State<SearchPage>
     }
     searchHistory.add(searchController.text);
     await localStorageRepository.setItem('search_history', searchHistory);
-    markaaAppChangeNotifier.rebuild();
+    markaaAppChangeNotifier!.rebuild();
   }
 
   void _clearSearchHistory() async {
     searchHistory.clear();
     await localStorageRepository.setItem('search_history', searchHistory);
-    markaaAppChangeNotifier.rebuild();
+    markaaAppChangeNotifier!.rebuild();
   }
 
   @override
@@ -169,7 +169,7 @@ class _SearchPageState extends State<SearchPage>
                         Column(
                           children: [
                             _buildTabbar(),
-                            if (tabController.index == 0) ...[
+                            if (tabController!.index == 0) ...[
                               if (!searchNode.hasFocus) ...[_buildItemResult()]
                             ] else ...[
                               _buildBrandResult()
@@ -186,9 +186,9 @@ class _SearchPageState extends State<SearchPage>
                 ),
                 Consumer<SuggestionChangeNotifier>(
                   builder: (_, __, ___) {
-                    if (tabController.index == 0 &&
+                    if (tabController!.index == 0 &&
                         searchNode.hasFocus &&
-                        suggestionChangeNotifier.suggestions.isNotEmpty) {
+                        suggestionChangeNotifier!.suggestions.isNotEmpty) {
                       return _buildSuggestion();
                     }
                     return SizedBox.shrink();
@@ -201,7 +201,7 @@ class _SearchPageState extends State<SearchPage>
       ),
       bottomNavigationBar: Consumer<MarkaaAppChangeNotifier>(
         builder: (_, __, ___) {
-          if (tabController.index == 0) {
+          if (tabController!.index == 0) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
@@ -240,11 +240,11 @@ class _SearchPageState extends State<SearchPage>
           fontWeight: FontWeight.w700,
         ),
         onTap: (index) {
-          tabController.index = index;
+          tabController!.index = index;
           if (searchNode.hasFocus) {
             searchNode.unfocus();
           }
-          markaaAppChangeNotifier.rebuild();
+          markaaAppChangeNotifier!.rebuild();
         },
         tabs: [
           Padding(
@@ -255,8 +255,9 @@ class _SearchPageState extends State<SearchPage>
                   'search_items_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color:
-                        tabController.index == 0 ? primaryColor : greyDarkColor,
+                    color: tabController!.index == 0
+                        ? primaryColor
+                        : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -267,15 +268,14 @@ class _SearchPageState extends State<SearchPage>
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: tabController.index == 0
+                      color: tabController!.index == 0
                           ? primaryColor
                           : greyDarkColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      suggestionChangeNotifier?.searchedProducts?.length
-                              ?.toString() ??
-                          '0',
+                      suggestionChangeNotifier!.searchedProducts!.length
+                          .toString(),
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
                         color: Colors.white,
@@ -294,8 +294,9 @@ class _SearchPageState extends State<SearchPage>
                   'search_brands_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color:
-                        tabController.index == 1 ? primaryColor : greyDarkColor,
+                    color: tabController!.index == 1
+                        ? primaryColor
+                        : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -308,7 +309,7 @@ class _SearchPageState extends State<SearchPage>
                       String brandLabel =
                           brand.brandLabel.toString().toLowerCase();
                       if ((!isEmpty && brandLabel.contains(searchText)) &&
-                          brand.productsCount > 0) {
+                          brand.productsCount! > 0) {
                         count += 1;
                       }
                     }
@@ -318,7 +319,7 @@ class _SearchPageState extends State<SearchPage>
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: tabController.index == 1
+                        color: tabController!.index == 1
                             ? primaryColor
                             : greyDarkColor,
                         borderRadius: BorderRadius.circular(4),
@@ -351,7 +352,7 @@ class _SearchPageState extends State<SearchPage>
         child: Container(
           padding: EdgeInsets.all(10.w),
           color: Colors.white,
-          child: tabController.index == 0
+          child: tabController!.index == 0
               ? _buildProductsSuggestion()
               : _buildBrandsSuggestion(),
         ),
@@ -409,7 +410,7 @@ class _SearchPageState extends State<SearchPage>
               String brandLabel =
                   brands[index].brandLabel.toString().toLowerCase();
               if ((!isEmpty && brandLabel.contains(searchText)) &&
-                  brands[index].productsCount > 0) {
+                  brands[index].productsCount! > 0) {
                 rIndex += 1;
                 return Column(
                   children: [
@@ -424,7 +425,7 @@ class _SearchPageState extends State<SearchPage>
                     InkWell(
                       onTap: () {
                         ProductListArguments arguments = ProductListArguments(
-                          category: CategoryEntity(),
+                          category: null,
                           subCategory: [],
                           brand: brands[index],
                           selectedSubCategoryIndex: 0,
@@ -450,7 +451,7 @@ class _SearchPageState extends State<SearchPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CachedNetworkImage(
-                                imageUrl: brands[index].brandThumbnail),
+                                imageUrl: brands[index].brandThumbnail!),
                             Text(
                               brands[index].brandLabel,
                               style: mediumTextStyle.copyWith(
@@ -535,13 +536,11 @@ class _SearchPageState extends State<SearchPage>
       ),
       child: Consumer<SuggestionChangeNotifier>(
         builder: (_, __, ___) {
-          if (suggestionChangeNotifier.searchedProducts == null) {
+          if (suggestionChangeNotifier!.searchedProducts == null) {
             return PulseLoadingSpinner();
-          } else if (suggestionChangeNotifier.searchedProducts.isEmpty) {
+          } else if (suggestionChangeNotifier!.searchedProducts!.isEmpty) {
             return Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 100.h,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 100.h),
               child: NoAvailableData(
                 message: 'no_products_searched'.tr(),
               ),
@@ -549,7 +548,7 @@ class _SearchPageState extends State<SearchPage>
           }
           return Column(
             children: List.generate(
-              suggestionChangeNotifier.searchedProducts.length,
+              suggestionChangeNotifier!.searchedProducts!.length,
               (index) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,15 +558,16 @@ class _SearchPageState extends State<SearchPage>
                         context,
                         Routes.product,
                         arguments:
-                            suggestionChangeNotifier.searchedProducts[index],
+                            suggestionChangeNotifier!.searchedProducts![index],
                       ),
                       child: SearchProductCard(
                         product:
-                            suggestionChangeNotifier.searchedProducts[index],
+                            suggestionChangeNotifier!.searchedProducts![index],
                       ),
                     ),
                     index <
-                            (suggestionChangeNotifier.searchedProducts.length -
+                            (suggestionChangeNotifier!
+                                    .searchedProducts!.length -
                                 1)
                         ? Divider(color: greyColor, thickness: 0.5)
                         : SizedBox.shrink(),
@@ -596,7 +596,7 @@ class _SearchPageState extends State<SearchPage>
                 String brandLabel =
                     brands[index].brandLabel.toString().toLowerCase();
                 if ((!isEmpty && brandLabel.contains(searchText)) &&
-                    brands[index].productsCount > 0) {
+                    brands[index].productsCount! > 0) {
                   rIndex += 1;
                   return Column(
                     children: [
@@ -609,7 +609,7 @@ class _SearchPageState extends State<SearchPage>
                       InkWell(
                         onTap: () {
                           ProductListArguments arguments = ProductListArguments(
-                            category: CategoryEntity(),
+                            category: null,
                             subCategory: [],
                             brand: brands[index],
                             selectedSubCategoryIndex: 0,
@@ -631,10 +631,10 @@ class _SearchPageState extends State<SearchPage>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CachedNetworkImage(
-                                imageUrl: brands[index].brandImage,
+                                imageUrl: brands[index].brandImage!,
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return CachedNetworkImage(
-                                    imageUrl: brands[index].brandThumbnail,
+                                    imageUrl: brands[index].brandThumbnail!,
                                   );
                                 },
                               ),
@@ -719,7 +719,7 @@ class _SearchPageState extends State<SearchPage>
               selectedCategories = [];
               selectedBrands = [];
               selectedBrandNames = [];
-              markaaAppChangeNotifier.rebuild();
+              markaaAppChangeNotifier!.rebuild();
               _searchProducts();
             },
             child: Text(
@@ -736,12 +736,12 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget _buildFilterOptions() {
-    return FutureBuilder(
+    return FutureBuilder<dynamic>(
       future: futureCategories,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           List<dynamic> categories = snapshot.data;
-          return FutureBuilder(
+          return FutureBuilder<dynamic>(
             future: futureBrands,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
@@ -756,6 +756,7 @@ class _SearchPageState extends State<SearchPage>
                       selectedBrands: selectedBrands,
                       onSelectCategory: (value) => _onSelectCategory(value),
                       onSelectBrand: (value) => _onSelectBrand(value),
+                      onSelectGender: (value) => null,
                     );
                   },
                 );
@@ -900,9 +901,9 @@ class _SearchPageState extends State<SearchPage>
 
   void _searchProducts() {
     _saveSearchHistory();
-    markaaAppChangeNotifier.rebuild();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      suggestionChangeNotifier.searchProducts(
+    markaaAppChangeNotifier!.rebuild();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      suggestionChangeNotifier!.searchProducts(
         searchController.text,
         lang,
         selectedCategories,

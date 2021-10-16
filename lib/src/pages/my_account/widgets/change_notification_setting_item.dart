@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChangeNotificationSettingItem extends StatefulWidget {
   final SnackBarService snackBarService;
 
-  ChangeNotificationSettingItem({this.snackBarService});
+  ChangeNotificationSettingItem({required this.snackBarService});
 
   @override
   _ChangeNotificationSettingItemState createState() =>
@@ -25,9 +25,9 @@ class ChangeNotificationSettingItem extends StatefulWidget {
 
 class _ChangeNotificationSettingItemState
     extends State<ChangeNotificationSettingItem> {
-  SettingBloc settingBloc;
-  SnackBarService snackBarService;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  SettingBloc? settingBloc;
+  SnackBarService? snackBarService;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
 
   @override
   void initState() {
@@ -77,8 +77,8 @@ class _ChangeNotificationSettingItemState
   }
 
   void _onChangeNotification(bool value, MarkaaAppChangeNotifier model) {
-    settingBloc.add(NotificationSettingChanged(
-      token: user.token,
+    settingBloc!.add(NotificationSettingChanged(
+      token: user!.token,
       isActive: value,
     ));
     isNotification = !isNotification;

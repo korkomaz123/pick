@@ -28,10 +28,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
-  AuthChangeNotifier authChangeNotifier;
+  AuthChangeNotifier? authChangeNotifier;
 
   @override
   void initState() {
@@ -140,7 +140,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_email'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -208,8 +208,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   _onGetNewPassword() {
-    if (_formKey.currentState.validate()) {
-      authChangeNotifier.requestNewPassword(
+    if (_formKey.currentState!.validate()) {
+      authChangeNotifier!.requestNewPassword(
         emailController.text,
         onProcess: _onProcess,
         onSuccess: _onSuccess,
@@ -219,16 +219,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   _onFailure(message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
   }
 
   Future _onSuccess() async {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     await showDialog(
       context: context,
       builder: (context) {

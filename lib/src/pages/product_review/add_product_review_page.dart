@@ -17,7 +17,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 class AddProductReviewPage extends StatefulWidget {
   final ProductEntity product;
 
-  AddProductReviewPage({this.product});
+  AddProductReviewPage({required this.product});
 
   @override
   _AddProductReviewPageState createState() => _AddProductReviewPageState();
@@ -29,9 +29,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController commentController = TextEditingController();
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  ProductReviewChangeNotifier model;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
+  ProductReviewChangeNotifier? model;
 
   @override
   void initState() {
@@ -176,7 +176,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 bordered: true,
                 borderColor: greyColor,
                 validator: (value) =>
-                    value.isEmpty ? 'required_field'.tr() : null,
+                    value!.isEmpty ? 'required_field'.tr() : null,
                 maxLines: 6,
               ),
             ),
@@ -199,9 +199,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   }
 
   void _onAddReview() {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       if (rate > 0) {
-        model.addReview(
+        model!.addReview(
           widget.product.productId,
           titleController.text,
           commentController.text,
@@ -213,22 +213,22 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           _onFailure,
         );
       } else {
-        flushBarService.showErrorDialog('rating_required'.tr());
+        flushBarService!.showErrorDialog('rating_required'.tr());
       }
     }
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     Navigator.pop(context);
   }
 
   void _onFailure() {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog('failed'.tr());
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog('failed'.tr());
   }
 }

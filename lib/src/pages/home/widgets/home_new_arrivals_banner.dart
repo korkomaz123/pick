@@ -1,9 +1,9 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -18,7 +18,8 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeNewArrivalsBanner({@required this.homeChangeNotifier});
+
+  HomeNewArrivalsBanner({required this.homeChangeNotifier});
 
   @override
   _HomeNewArrivalsBannerState createState() => _HomeNewArrivalsBannerState();
@@ -68,7 +69,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                       borderColor: primaryColor,
                       borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
-                      onPressed: () => _onLink(context, banner),
+                      onPressed: () => _onLink(context, banner!),
                     ),
                   ),
                 ],
@@ -137,10 +138,10 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
     if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: banner.categoryId,
-          name: banner.categoryName,
+          id: banner.categoryId!,
+          name: banner.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
@@ -150,9 +151,9 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.brand?.optionId != null) {
+    } else if (banner.brand != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
@@ -163,8 +164,8 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.productId != null) {
-      final product = await productRepository.getProduct(banner.productId);
+    } else if (banner.productId != null) {
+      final product = await productRepository.getProduct(banner.productId!);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,

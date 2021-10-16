@@ -5,7 +5,6 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -32,11 +31,11 @@ class _CategoryListPageState extends State<CategoryListPage>
     with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  String category;
-  int activeIndex;
+  String? category;
+  int? activeIndex;
   List<CategoryEntity> categories = [];
-  CategoryChangeNotifier categoryChangeNotifier;
-  ProgressService progressService;
+  CategoryChangeNotifier? categoryChangeNotifier;
+  ProgressService? progressService;
 
   @override
   void initState() {
@@ -118,8 +117,8 @@ class _CategoryListPageState extends State<CategoryListPage>
             activeIndex = -1;
           }
         });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Scrollable.ensureVisible(dataKey.currentContext);
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          Scrollable.ensureVisible(dataKey.currentContext!);
         });
       },
       child: Container(
@@ -128,7 +127,7 @@ class _CategoryListPageState extends State<CategoryListPage>
         child: Stack(
           children: [
             CachedNetworkImage(
-              imageUrl: category.imageUrl,
+              imageUrl: category.imageUrl!,
               imageBuilder: (context, imageProvider) => Container(
                 width: 375.w,
                 height: 128.h,
@@ -185,7 +184,7 @@ class _CategoryListPageState extends State<CategoryListPage>
                     ProductListArguments arguments = ProductListArguments(
                       category: category,
                       subCategory: [],
-                      brand: BrandEntity(),
+                      brand: null,
                       selectedSubCategoryIndex: 0,
                       isFromBrand: false,
                     );
@@ -225,7 +224,7 @@ class _CategoryListPageState extends State<CategoryListPage>
           ),
           Column(
             children: List.generate(
-              category.subCategories.length,
+              category.subCategories!.length,
               (index) => AnimationConfiguration.staggeredList(
                 position: (index + 1),
                 duration: Duration(milliseconds: 375),
@@ -239,7 +238,7 @@ class _CategoryListPageState extends State<CategoryListPage>
                         ProductListArguments arguments = ProductListArguments(
                           category: category,
                           subCategory: [],
-                          brand: BrandEntity(),
+                          brand: null,
                           selectedSubCategoryIndex: index + 1,
                           isFromBrand: false,
                         );
@@ -261,7 +260,7 @@ class _CategoryListPageState extends State<CategoryListPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              category.subCategories[index].name,
+                              category.subCategories![index].name,
                               style: mediumTextStyle.copyWith(
                                 color: greyColor,
                                 fontSize: 18.sp,

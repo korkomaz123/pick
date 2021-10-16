@@ -6,22 +6,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 class PaymentCardForm extends StatefulWidget {
   final Function onAuthorizedSuccess;
 
-  PaymentCardForm({@required this.onAuthorizedSuccess});
+  PaymentCardForm({required this.onAuthorizedSuccess});
 
   @override
   _PaymentCardFormState createState() => _PaymentCardFormState();
 }
 
 class _PaymentCardFormState extends State<PaymentCardForm> {
-  WebViewController webViewController;
-  final url = EndPoints.gatewayform;
-
+  WebViewController? webViewController;
+  String url = EndPoints.gatewayform;
   bool isLoading = true;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ class AppleSignAlertDialog extends StatelessWidget {
   final String title;
   final String description;
 
-  AppleSignAlertDialog({this.title, this.description});
+  AppleSignAlertDialog({required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {

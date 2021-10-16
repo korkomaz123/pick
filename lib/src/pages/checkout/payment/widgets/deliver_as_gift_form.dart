@@ -13,7 +13,7 @@ import 'package:markaa/src/theme/theme.dart';
 class DeliverAsGiftForm extends StatefulWidget {
   final OrderChangeNotifier orderChangeNotifier;
 
-  DeliverAsGiftForm({this.orderChangeNotifier});
+  DeliverAsGiftForm({required this.orderChangeNotifier});
 
   @override
   _DeliverAsGiftFormState createState() => _DeliverAsGiftFormState();
@@ -92,7 +92,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                 fillColor: greyLightColor,
                 keyboardType: TextInputType.text,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'required_field'.tr();
                   }
                   return null;
@@ -113,7 +113,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                 fillColor: greyLightColor,
                 keyboardType: TextInputType.text,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'required_field'.tr();
                   }
                   return null;
@@ -132,7 +132,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                 fillColor: greyLightColor,
                 maxLine: 5,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'required_field'.tr();
                   }
                   return null;
@@ -160,7 +160,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
   }
 
   _onDone() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       Navigator.pop(context, {
         'deliver_as_gift': '1',
         'sender': _senderController.text,

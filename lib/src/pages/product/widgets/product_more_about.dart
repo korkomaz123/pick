@@ -8,7 +8,7 @@ import 'package:markaa/src/theme/styles.dart';
 class ProductMoreAbout extends StatelessWidget {
   final ProductEntity productEntity;
 
-  ProductMoreAbout({this.productEntity});
+  ProductMoreAbout({required this.productEntity});
 
   @override
   Widget build(BuildContext context) {

@@ -4,8 +4,8 @@ class MessageEntity {
   final String content;
 
   MessageEntity({
-    this.time,
-    this.title,
-    this.content,
+    required this.time,
+    required this.title,
+    required this.content,
   });
 }

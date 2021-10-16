@@ -1,10 +1,10 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/preload.dart';
 import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -18,7 +18,7 @@ import 'home_products_carousel.dart';
 class HomeNewArrivals extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeNewArrivals({@required this.homeChangeNotifier});
+  HomeNewArrivals({required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class HomeNewArrivals extends StatelessWidget {
         children: [
           Expanded(
             child: AutoSizeText(
-              homeChangeNotifier.newArrivalsTitle ?? '',
+              homeChangeNotifier.newArrivalsTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
                 fontSize: 26.sp,
@@ -77,7 +77,7 @@ class HomeNewArrivals extends StatelessWidget {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeCategories[1],
                   subCategory: homeCategories[1].subCategories,
-                  brand: BrandEntity(),
+                  brand: null,
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );

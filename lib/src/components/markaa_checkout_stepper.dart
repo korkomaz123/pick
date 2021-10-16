@@ -6,8 +6,11 @@ class MarkaaCheckoutStepper extends StatefulWidget {
   final int totalSteps;
   final int currentStep;
 
-  MarkaaCheckoutStepper({this.items, this.totalSteps, this.currentStep = 0})
-      : assert(totalSteps == items.length);
+  MarkaaCheckoutStepper({
+    required this.items,
+    required this.totalSteps,
+    this.currentStep = 0,
+  }) : assert(totalSteps == items.length);
 
   @override
   _MarkaaCheckoutStepperState createState() => _MarkaaCheckoutStepperState();

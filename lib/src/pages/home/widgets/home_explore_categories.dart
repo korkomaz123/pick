@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
@@ -10,6 +11,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -18,7 +20,8 @@ import 'home_category_card.dart';
 
 class HomeExploreCategories extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeExploreCategories({@required this.homeChangeNotifier});
+
+  HomeExploreCategories({required this.homeChangeNotifier});
 
   @override
   _HomeExploreCategoriesState createState() => _HomeExploreCategoriesState();

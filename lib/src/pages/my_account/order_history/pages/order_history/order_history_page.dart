@@ -24,9 +24,9 @@ class OrderHistoryPage extends StatefulWidget {
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  ProgressService progressService;
-  SnackBarService snackBarService;
-  OrderChangeNotifier orderChangeNotifier;
+  ProgressService? progressService;
+  SnackBarService? snackBarService;
+  OrderChangeNotifier? orderChangeNotifier;
   RefreshController refreshController = RefreshController();
 
   @override
@@ -41,8 +41,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   }
 
   void _onRefresh() async {
-    await orderChangeNotifier.loadOrderHistories(
-      user.token,
+    await orderChangeNotifier!.loadOrderHistories(
+      user!.token,
       lang,
       () {
         refreshController.refreshCompleted();
@@ -98,7 +98,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ),
                       child: Column(
                         children: model.keys.map((key) {
-                          return OrderCard(order: model.ordersMap[key]);
+                          return OrderCard(order: model.ordersMap[key]!);
                         }).toList(),
                       ),
                     ),

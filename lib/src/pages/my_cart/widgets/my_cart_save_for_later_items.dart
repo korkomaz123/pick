@@ -19,10 +19,10 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/theme/icons.dart';
 
 class MyCartSaveForLaterItems extends StatefulWidget {
-  final ProgressService progressService;
-  final FlushBarService flushBarService;
-  final MyCartChangeNotifier myCartChangeNotifier;
-  final WishlistChangeNotifier wishlistChangeNotifier;
+  final ProgressService? progressService;
+  final FlushBarService? flushBarService;
+  final MyCartChangeNotifier? myCartChangeNotifier;
+  final WishlistChangeNotifier? wishlistChangeNotifier;
 
   MyCartSaveForLaterItems({
     this.progressService,
@@ -37,7 +37,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
-  FlushBarService _flushBarService;
+  FlushBarService? _flushBarService;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                         model.wishlistItemsCount,
                         (index) {
                           final item = model.wishlistItemsMap[keys[index]];
-                          return _buildItem(item);
+                          return _buildItem(item!);
                         },
                       ),
                     ),
@@ -188,18 +188,18 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   void _onRemoveItem(ProductModel item) async {
-    final result = await widget.flushBarService.showConfirmDialog(
+    final result = await widget.flushBarService!.showConfirmDialog(
         message: 'my_cart_save_later_remove_item_dialog_text');
     if (result != null) {
-      await widget.wishlistChangeNotifier
-          .removeItemFromWishlist(user.token, item);
+      await widget.wishlistChangeNotifier!
+          .removeItemFromWishlist(user!.token, item);
     }
   }
 
   void _onPutInCart(ProductModel item) async {
-    widget.wishlistChangeNotifier.removeItemFromWishlist(user.token, item);
-    widget.myCartChangeNotifier.addProductToCart(
-        item, item.qtySaveForLater, lang, {},
+    widget.wishlistChangeNotifier!.removeItemFromWishlist(user!.token, item);
+    widget.myCartChangeNotifier!.addProductToCart(
+        item, item.qtySaveForLater!, lang, {},
         onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
   }
 
@@ -209,6 +209,6 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   _onAddFailure(String message) {
-    _flushBarService.showErrorDialog(message, "no_qty.svg");
+    _flushBarService!.showErrorDialog(message, "no_qty.svg");
   }
 }

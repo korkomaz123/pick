@@ -7,11 +7,12 @@ import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class CategoryChangeNotifier extends ChangeNotifier {
-  final LocalStorageRepository localStorageRepository = LocalStorageRepository();
+  final LocalStorageRepository localStorageRepository =
+      LocalStorageRepository();
   final CategoryRepository categoryRepository = CategoryRepository();
   final BrandRepository brandRepository = BrandRepository();
 
-  List<CategoryEntity> subCategories;
+  List<CategoryEntity>? subCategories;
   bool isLoading = false;
 
   void initialSubCategories() {
@@ -37,7 +38,8 @@ class CategoryChangeNotifier extends ChangeNotifier {
         isLoading = false;
         notifyListeners();
       }
-      final result = await categoryRepository.getSubCategories(categoryId, lang);
+      final result =
+          await categoryRepository.getSubCategories(categoryId, lang);
       if (result['code'] == 'SUCCESS') {
         await localStorageRepository.setItem(key, result['categories']);
         if (!isCached) {
@@ -114,7 +116,8 @@ class CategoryChangeNotifier extends ChangeNotifier {
     notifyListeners();
     try {
       // String key = 'brand-subCat-celebrites-$lang';
-      final result = await Api.getMethod(EndPoints.getAllCelebrities, data: {'lang': lang});
+      final result = await Api.getMethod(EndPoints.getAllCelebrities,
+          data: {'lang': lang});
       if (result['code'] == 'SUCCESS') {
         allCelebritiesList = result['celebrities'];
         isLoading = false;

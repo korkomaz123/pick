@@ -6,7 +6,6 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -27,7 +26,7 @@ class _BrandListPageState extends State<BrandListPage> {
   final _alphabetKey = GlobalKey();
   final _itemKey = GlobalKey();
 
-  HomeChangeNotifier _homeChangeNotifier;
+  HomeChangeNotifier? _homeChangeNotifier;
   ScrollController _brandListScrollController = ScrollController();
 
   List<String> alphabetList = ['all'.tr()];
@@ -46,14 +45,14 @@ class _BrandListPageState extends State<BrandListPage> {
     }
 
     _homeChangeNotifier = context.read<HomeChangeNotifier>();
-    _loadingData = _homeChangeNotifier.getBrandsList('brand');
+    _loadingData = _homeChangeNotifier!.getBrandsList('brand');
 
-    _homeChangeNotifier.addListener(() {
-      if (_homeChangeNotifier.sortedBrandList.isNotEmpty) {
-        for (var item in _homeChangeNotifier.sortedBrandList) {
+    _homeChangeNotifier!.addListener(() {
+      if (_homeChangeNotifier!.sortedBrandList.isNotEmpty) {
+        for (var item in _homeChangeNotifier!.sortedBrandList) {
           String char = item.brandLabel.substring(0, 1).toUpperCase();
           if (nameCharList.indexOf(char) < 0) {
-            int idx = _homeChangeNotifier.sortedBrandList.indexOf(item);
+            int idx = _homeChangeNotifier!.sortedBrandList.indexOf(item);
             brandIndexMap[char] = idx;
             nameCharList.add(char);
           }
@@ -64,12 +63,7 @@ class _BrandListPageState extends State<BrandListPage> {
     });
   }
 
-  // void _onRefresh(HomeChangeNotifier model) async {
-  //   await model.getBrandsList('brand');
-  //   _refreshController.refreshCompleted();
-  // }
-
-  Future _loadingData;
+  Future? _loadingData;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,9 +99,9 @@ class _BrandListPageState extends State<BrandListPage> {
                   key: index == keyIndex ? _alphabetKey : null,
                   onTap: () {
                     selectedIndex = index;
-                    if (nameIndex >= 0) brandIndex = brandIndexMap[value];
+                    if (nameIndex >= 0) brandIndex = brandIndexMap[value]!;
                     setState(() {});
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
                       if (selectedIndex == 0) {
                         _brandListScrollController.animateTo(
                           0,
@@ -116,7 +110,7 @@ class _BrandListPageState extends State<BrandListPage> {
                         );
                       } else {
                         // Scrollable.ensureVisible(_alphabetKey.currentContext);
-                        Scrollable.ensureVisible(_itemKey.currentContext);
+                        Scrollable.ensureVisible(_itemKey.currentContext!);
                       }
                     });
                   },
@@ -125,7 +119,8 @@ class _BrandListPageState extends State<BrandListPage> {
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color: index == selectedIndex ? primaryColor : Colors.white,
+                      color:
+                          index == selectedIndex ? primaryColor : Colors.white,
                       borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
@@ -135,7 +130,9 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex ? primaryColor : Colors.white,
+                        color: index != selectedIndex
+                            ? primaryColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -153,31 +150,14 @@ class _BrandListPageState extends State<BrandListPage> {
                   ),
                 );
               }
-              // return Expanded(
-              //   child: InViewNotifierList(
-              //     itemCount: _homeChangeNotifier.sortedBrandList.length,
-              //     builder: (context, index) {
-              //       return InViewNotifierWidget(
-              //         builder: (context, isInView, child) {
-              //           return child;
-              //         },
-              //         child: _buildBrandCard(_homeChangeNotifier, index),
-              //       );
-              //     },
-              //     isInViewPortCondition:
-              //         (deltaTop, deltaBottom, viewPortDimension) {
-              //       return true;
-              //     },
-              //   ),
-              // );
               return Expanded(
                 child: SingleChildScrollView(
                   controller: _brandListScrollController,
                   child: Column(
                     children: List.generate(
-                      _homeChangeNotifier.sortedBrandList.length,
+                      _homeChangeNotifier!.sortedBrandList.length,
                       (index) {
-                        return _buildBrandCard(_homeChangeNotifier, index);
+                        return _buildBrandCard(_homeChangeNotifier!, index);
                       },
                     ),
                   ),
@@ -254,7 +234,7 @@ class _BrandListPageState extends State<BrandListPage> {
       key: brandIndex == index ? _itemKey : null,
       onTap: () {
         ProductListArguments arguments = ProductListArguments(
-          category: CategoryEntity(),
+          category: null,
           subCategory: [],
           brand: _homeChangeNotifier.sortedBrandList[index],
           selectedSubCategoryIndex: 0,
@@ -272,12 +252,12 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage,
-              // placeholder: (context, url) => Container(),
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage!,
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail,
+                  imageUrl: _homeChangeNotifier
+                      .sortedBrandList[index].brandThumbnail!,
                 );
               },
             ),

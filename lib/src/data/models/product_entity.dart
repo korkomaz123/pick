@@ -15,55 +15,55 @@ class ProductEntity {
   final bool inStock;
   final String metaKeyword;
   final String description;
-  final String fullDescription;
-  final String shortDescription;
+  final String? fullDescription;
+  final String? shortDescription;
   final String name;
-  final String metaDescription;
+  final String? metaDescription;
   final String price;
-  final String beforePrice;
+  final String? beforePrice;
   final int discount;
   final String imageUrl;
-  final String hasOptions;
-  final String addCartUrl;
+  final String? hasOptions;
+  final String? addCartUrl;
   final String productId;
-  final List<dynamic> gallery;
-  final List<ReviewEntity> reviews;
-  final BrandEntity brandEntity;
+  final List<dynamic>? gallery;
+  final List<ReviewEntity>? reviews;
+  final BrandEntity? brandEntity;
   final int stockQty;
-  final Map<String, dynamic> configurable;
-  final List<ProductModel> variants;
-  final List<Specification> specification;
+  final Map<String, dynamic>? configurable;
+  final List<ProductModel>? variants;
+  final List<Specification>? specification;
   final bool isDeal;
-  final List<dynamic> categories;
-  final List<dynamic> subCategories;
-  final List<dynamic> parentCategories;
+  final List<dynamic>? categories;
+  final List<dynamic>? subCategories;
+  final List<dynamic>? parentCategories;
 
   ProductEntity({
-    this.entityId,
+    required this.entityId,
     this.specification,
-    this.typeId,
-    this.sku,
-    this.inStock,
-    this.metaKeyword,
-    this.description,
+    required this.typeId,
+    required this.sku,
+    required this.inStock,
+    required this.metaKeyword,
+    required this.description,
     this.fullDescription,
     this.shortDescription,
-    this.name,
+    required this.name,
     this.metaDescription,
-    this.price,
+    required this.price,
     this.beforePrice,
-    this.discount,
-    this.imageUrl,
+    required this.discount,
+    required this.imageUrl,
     this.hasOptions,
     this.addCartUrl,
-    this.productId,
+    required this.productId,
     this.gallery,
     this.reviews,
     this.brandEntity,
-    this.stockQty,
+    required this.stockQty,
     this.configurable,
     this.variants,
-    this.isDeal,
+    required this.isDeal,
     this.categories,
     this.subCategories,
     this.parentCategories,
@@ -143,9 +143,7 @@ class ProductEntity {
         metaDescription = json['meta_description'],
         price = json['special_price'] != null
             ? StringService.roundString(json['special_price'], 3)
-            : json['price'] != null
-                ? StringService.roundString(json['price'], 3)
-                : null,
+            : StringService.roundString(json['price'], 3),
         beforePrice = json['price'] != null
             ? StringService.roundString(json['price'], 3)
             : null,
@@ -178,9 +176,10 @@ class ProductEntity {
         parentCategories = json['parentcategories'];
 
   static List<Specification> _getSpecifications(
-      Map<String, dynamic> _specification) {
+    Map<String, dynamic>? _specification,
+  ) {
     List<Specification> _list = [];
-    if (_specification != null && _specification.length > 0) {
+    if (_specification!.length > 0) {
       _specification.forEach((key, element) {
         _list.add(Specification.fromJson(element));
       });
@@ -188,7 +187,7 @@ class ProductEntity {
     return _list;
   }
 
-  static List<ProductModel> _getVariants(List<dynamic> list) {
+  static List<ProductModel> _getVariants(List<dynamic>? list) {
     List<ProductModel> variants = [];
     if (list != null) {
       for (var item in list) {
@@ -200,22 +199,22 @@ class ProductEntity {
 
   ProductEntity.fromProduct(ProductModel product)
       : entityId = product.entityId,
-        typeId = product.typeId,
-        sku = product.sku ?? "",
-        inStock = product.stockQty != null && product.stockQty > 0 ? true : false,
-        metaKeyword = product.metaKeyword ?? "",
-        description = product.description ?? '',
-        fullDescription = product.description ?? '',
-        shortDescription = product.shortDescription ?? '',
-        name = product.name ?? "",
-        metaDescription = product.metaDescription ?? "",
-        price = product.price ?? "",
-        beforePrice = product.beforePrice ?? "",
-        discount = product.discount ?? "",
-        imageUrl = product.imageUrl ?? "",
-        hasOptions = product.hasOptions ?? "",
-        addCartUrl = product.addCartUrl ?? "",
-        productId = product.productId ?? "",
+        typeId = product.typeId!,
+        sku = product.sku!,
+        inStock = product.stockQty! > 0 ? true : false,
+        metaKeyword = product.metaKeyword!,
+        description = product.description!,
+        fullDescription = product.description!,
+        shortDescription = product.shortDescription!,
+        name = product.name,
+        metaDescription = product.metaDescription,
+        price = product.price,
+        beforePrice = product.beforePrice!,
+        discount = product.discount!,
+        imageUrl = product.imageUrl,
+        hasOptions = product.hasOptions,
+        addCartUrl = product.addCartUrl,
+        productId = product.productId,
         gallery = [product.imageUrl],
         stockQty = product.stockQty ?? 0,
         brandEntity = product.brandEntity,
@@ -223,16 +222,14 @@ class ProductEntity {
         specification = null,
         configurable = null,
         variants = _getVariants(null),
-        isDeal = product.isDeal,
+        isDeal = product.isDeal!,
         categories = <String>[],
         subCategories = <String>[],
         parentCategories = <String>[];
 
-  static int _getDiscount(String afterPriceString, String beforePriceString) {
-    double afterPrice =
-        afterPriceString != null ? double.parse(afterPriceString) : 0;
-    double beforePrice =
-        beforePriceString != null ? double.parse(beforePriceString) : 0;
+  static int _getDiscount(String? afterPriceString, String? beforePriceString) {
+    double afterPrice = double.parse(afterPriceString!);
+    double beforePrice = double.parse(beforePriceString!);
     if (beforePrice == 0) {
       return 0;
     }
@@ -242,12 +239,12 @@ class ProductEntity {
   Future requestPriceAlarm(
     String type,
     String productId, {
-    Map<String, dynamic> data,
+    Map<String, dynamic>? data,
   }) async {
     if (data == null) data = {};
     data['type'] = type;
     data['productId'] = productId;
-    data['email'] = user.email;
+    data['email'] = user!.email;
     await Api.getMethod(
       EndPoints.requestPriceAlarm,
       data: data,

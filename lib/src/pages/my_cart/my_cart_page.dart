@@ -50,23 +50,23 @@ class _MyCartPageState extends State<MyCartPage>
   String cartId = '';
   double totalPrice = 0;
 
-  String shippingMethodId;
-  double serviceFees;
+  String? shippingMethodId;
+  double? serviceFees;
 
-  ProgressService progressService;
-  SnackBarService snackBarService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  SnackBarService? snackBarService;
+  FlushBarService? flushBarService;
 
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
 
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
   _determineShippingMethod() {
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount <=
-          myCartChangeNotifier.cartDiscountedTotalPrice) {
+      if (shippingMethod.minOrderAmount! <=
+          myCartChangeNotifier!.cartDiscountedTotalPrice) {
         shippingMethodId = shippingMethod.id;
         serviceFees = shippingMethod.serviceFees;
       } else {
@@ -81,8 +81,8 @@ class _MyCartPageState extends State<MyCartPage>
     }
     _determineShippingMethod();
 
-    if (myCartChangeNotifier.cartItemCount == 0)
-      await myCartChangeNotifier.getCartItems(lang);
+    if (myCartChangeNotifier!.cartItemCount == 0)
+      await myCartChangeNotifier!.getCartItems(lang);
   }
 
   @override
@@ -125,7 +125,7 @@ class _MyCartPageState extends State<MyCartPage>
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await myCartChangeNotifier.getCartItems(lang);
+          await myCartChangeNotifier!.getCartItems(lang);
         },
         color: primaryColor,
         backgroundColor: Colors.white,
@@ -205,9 +205,8 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst(
+                    '0', '${myCartChangeNotifier!.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: 13.sp,
@@ -221,7 +220,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildCartItems() {
-    final keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    final keys = myCartChangeNotifier!.cartItemsMap.keys.toList();
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -243,18 +242,18 @@ class _MyCartPageState extends State<MyCartPage>
                       children: [
                         MyCartItem(
                           cartItem:
-                              myCartChangeNotifier.cartItemsMap[keys[index]],
-                          discount: myCartChangeNotifier.discount,
-                          type: myCartChangeNotifier.type,
+                              myCartChangeNotifier!.cartItemsMap[keys[index]]!,
+                          discount: myCartChangeNotifier!.discount,
+                          type: myCartChangeNotifier!.type,
                           cartId: cartId,
                           onRemoveCartItem: () =>
                               _onRemoveCartItem(keys[index]),
                           onSaveForLaterItem: () =>
                               _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
-                          myCartChangeNotifier: myCartChangeNotifier,
+                          myCartChangeNotifier: myCartChangeNotifier!,
                         ),
-                        index < (myCartChangeNotifier.cartItemCount - 1)
+                        index < (myCartChangeNotifier!.cartItemCount - 1)
                             ? Divider(color: greyColor, thickness: 0.5)
                             : SizedBox.shrink(),
                       ],
@@ -270,11 +269,11 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   Widget _buildTotalPrice() {
-    double subTotal = myCartChangeNotifier.cartTotalPrice;
-    double discount = myCartChangeNotifier.type == 'fixed'
-        ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
+    double subTotal = myCartChangeNotifier!.cartTotalPrice;
+    double discount = myCartChangeNotifier!.type == 'fixed'
+        ? myCartChangeNotifier!.discount
+        : myCartChangeNotifier!.cartTotalPrice -
+            myCartChangeNotifier!.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,
@@ -304,9 +303,8 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst(
+                    '0', '${myCartChangeNotifier!.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: 13.sp,
@@ -403,18 +401,18 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onRemoveCartItem(String key) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'my_cart_remove_item_dialog_text');
+    final result = await flushBarService!
+        .showConfirmDialog(message: 'my_cart_remove_item_dialog_text');
     if (result != null) {
-      await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
+      await myCartChangeNotifier!.removeCartItem(key, _onRemoveFailure);
     }
   }
 
   void _onSaveForLaterItem(String key) {
-    final product = myCartChangeNotifier.cartItemsMap[key].product;
-    final count = myCartChangeNotifier.cartItemsMap[key].itemCount;
-    myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
-    wishlistChangeNotifier.addItemToWishlist(user.token, product, count, {});
+    final product = myCartChangeNotifier!.cartItemsMap[key]!.product;
+    final count = myCartChangeNotifier!.cartItemsMap[key]!.itemCount;
+    myCartChangeNotifier!.removeCartItem(key, _onRemoveFailure);
+    wishlistChangeNotifier!.addItemToWishlist(user!.token, product, count, {});
   }
 
   void _onSignIn(bool checkout) async {
@@ -445,22 +443,22 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(
-        lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    await myCartChangeNotifier!
+        .getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
 
   void _onReloadItemSuccess() {
-    progressService.hideProgress();
-    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
+    progressService!.hideProgress();
+    List<String> keys = myCartChangeNotifier!.cartItemsMap.keys.toList();
 
-    if (myCartChangeNotifier.cartItemCount == 0) {
-      flushBarService.showErrorDialog('cart_empty_error'.tr());
+    if (myCartChangeNotifier!.cartItemCount == 0) {
+      flushBarService!.showErrorDialog('cart_empty_error'.tr());
       return;
     }
-    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
-      if (myCartChangeNotifier.cartItemsMap[keys[i]].availableCount == 0) {
-        flushBarService.showErrorDialog(
-          '${myCartChangeNotifier.cartItemsMap[keys[i]].product.name}' +
+    for (int i = 0; i < myCartChangeNotifier!.cartItemCount; i++) {
+      if (myCartChangeNotifier!.cartItemsMap[keys[i]]!.availableCount == 0) {
+        flushBarService!.showErrorDialog(
+          '${myCartChangeNotifier!.cartItemsMap[keys[i]]!.product.name}' +
               'out_stock_items_error'.tr(),
         );
         return;
@@ -482,22 +480,22 @@ class _MyCartPageState extends State<MyCartPage>
 
     orderDetails = {};
     orderDetails['shipping'] = shippingMethodId;
-    orderDetails['cartId'] = myCartChangeNotifier.cartId;
+    orderDetails['cartId'] = myCartChangeNotifier!.cartId;
     if (user?.token != null) {
-      orderDetails['token'] = user.token;
+      orderDetails['token'] = user!.token;
     }
 
     double totalPrice = .0;
     double subtotalPrice = .0;
     double discount = .0;
 
-    discount = myCartChangeNotifier.type == 'fixed'
-        ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
-    subtotalPrice = myCartChangeNotifier.cartTotalPrice;
+    discount = myCartChangeNotifier!.type == 'fixed'
+        ? myCartChangeNotifier!.discount
+        : myCartChangeNotifier!.cartTotalPrice -
+            myCartChangeNotifier!.cartDiscountedTotalPrice;
+    subtotalPrice = myCartChangeNotifier!.cartTotalPrice;
 
-    totalPrice = subtotalPrice + serviceFees - discount;
+    totalPrice = subtotalPrice + serviceFees! - discount;
 
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['discount'] =
@@ -507,19 +505,19 @@ class _MyCartPageState extends State<MyCartPage>
     orderDetails['orderDetails']['subTotalPrice'] =
         NumericService.roundString(subtotalPrice, 3);
     orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(serviceFees, 3);
+        NumericService.roundString(serviceFees!, 3);
   }
 
   void _onRemoveFailure(String message) {
-    flushBarService.showErrorDialog(message);
+    flushBarService!.showErrorDialog(message);
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onFailure(String message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message, "no_qty.svg");
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message, "no_qty.svg");
   }
 }

@@ -4,15 +4,13 @@ import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:markaa/src/utils/repositories/profile_repository.dart';
-import 'package:meta/meta.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc({@required ProfileRepository profileRepository})
-      : assert(profileRepository != null),
-        _profileRepository = profileRepository,
+  ProfileBloc({required ProfileRepository profileRepository})
+      : _profileRepository = profileRepository,
         super(ProfileInitial());
 
   final ProfileRepository _profileRepository;

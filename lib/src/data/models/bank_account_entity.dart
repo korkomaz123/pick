@@ -1,8 +1,8 @@
 class BankAccountEntity {
-  final String title;
-  final String bank;
-  final String name;
-  final String iBan;
+  final String? title;
+  final String? bank;
+  final String? name;
+  final String? iBan;
 
   BankAccountEntity({
     this.title,

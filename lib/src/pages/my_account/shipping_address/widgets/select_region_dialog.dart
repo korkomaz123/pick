@@ -11,7 +11,7 @@ import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 class SelectRegionDialog extends StatefulWidget {
   final String value;
 
-  SelectRegionDialog({this.value});
+  SelectRegionDialog({required this.value});
 
   @override
   _SelectRegionDialogState createState() => _SelectRegionDialogState();
@@ -122,7 +122,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            region.defaultName,
+                            region.defaultName!,
                             style: mediumTextStyle.copyWith(
                               fontSize: 16.sp,
                               color: isSelected ? primaryColor : greyDarkColor,

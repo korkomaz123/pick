@@ -1,21 +1,21 @@
 class UserEntity {
   final String token;
   final String customerId;
+  final String email;
   String firstName;
   String lastName;
-  String phoneNumber;
-  final String email;
-  String profileUrl;
+  String? phoneNumber;
+  String? profileUrl;
   double balance;
 
   UserEntity({
-    this.token,
-    this.customerId,
-    this.firstName,
-    this.lastName,
-    this.email,
+    required this.token,
+    required this.customerId,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
     this.profileUrl,
-    this.balance,
+    required this.balance,
   });
 
   UserEntity.fromJson(Map<String, dynamic> json)

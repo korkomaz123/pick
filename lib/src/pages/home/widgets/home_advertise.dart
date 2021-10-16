@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +19,7 @@ import 'package:markaa/src/routes/routes.dart';
 class HomeAdvertise extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeAdvertise({@required this.homeChangeNotifier});
+  HomeAdvertise({required this.homeChangeNotifier});
 
   @override
   _HomeAdvertiseState createState() => _HomeAdvertiseState();
@@ -33,7 +33,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.skinCareViewAll != null) {
-      SliderImageEntity banner = widget.homeChangeNotifier.skinCareViewAll;
+      SliderImageEntity banner = widget.homeChangeNotifier.skinCareViewAll!;
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -131,10 +131,10 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
     if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: banner.categoryId,
-          name: banner.categoryName,
+          id: banner.categoryId!,
+          name: banner.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
@@ -144,9 +144,9 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.brand?.optionId != null) {
+    } else if (banner.brand != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
@@ -157,8 +157,8 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.productId != null) {
-      final product = await productRepository.getProduct(banner.productId);
+    } else if (banner.productId != null) {
+      final product = await productRepository.getProduct(banner.productId!);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,

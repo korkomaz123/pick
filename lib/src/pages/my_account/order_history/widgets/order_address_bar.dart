@@ -8,7 +8,7 @@ import 'package:markaa/src/theme/theme.dart';
 class OrderAddressBar extends StatelessWidget {
   final AddressEntity address;
 
-  OrderAddressBar({@required this.address});
+  OrderAddressBar({required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class OrderAddressBar extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
           Text(
-            'phone_number_hint'.tr() + ': ' + address.phoneNumber,
+            'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,

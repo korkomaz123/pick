@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class NotificationMessageDetailsPage extends StatefulWidget {
   final MessageEntity message;
 
-  NotificationMessageDetailsPage({this.message});
+  NotificationMessageDetailsPage({required this.message});
 
   @override
   _NotificationMessageDetailsPageState createState() =>

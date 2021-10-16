@@ -25,26 +25,23 @@ class PaymentAddress extends StatefulWidget {
 }
 
 class _PaymentAddressState extends State<PaymentAddress> {
-  AddressChangeNotifier addressChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
-  FlushBarService flushBarService;
-  ProgressService progressService;
+  FlushBarService? flushBarService;
+  ProgressService? progressService;
 
   final dataKey = GlobalKey();
 
   _loadData() async {
     if (user?.token == null) {
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadGuestAddress();
+      addressChangeNotifier!.initialize();
+      await addressChangeNotifier!.loadGuestAddress();
     } else if (user?.token != null &&
-        (addressChangeNotifier.addressesMap == null ||
-            addressChangeNotifier.addressesMap.isEmpty)) {
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
+        (addressChangeNotifier!.addressesMap == null ||
+            addressChangeNotifier!.addressesMap!.isEmpty)) {
+      addressChangeNotifier!.initialize();
+      await addressChangeNotifier!.loadAddresses(user!.token);
     }
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Scrollable.ensureVisible(dataKey.currentContext);
-    // });
   }
 
   @override
@@ -67,7 +64,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
           padding: EdgeInsets.symmetric(vertical: 5.h),
           child: Column(
             children: [
-              if (model.keys.isNotEmpty || model.guestAddress != null) ...[
+              if (model.keys!.isNotEmpty || model.guestAddress != null) ...[
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Row(
@@ -112,9 +109,9 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: List.generate(
-                        model.keys.length,
+                        model.keys!.length,
                         (index) {
-                          String key = model.keys[index];
+                          String key = model.keys![index];
                           return _buildAddressCard(key);
                         },
                       ),
@@ -176,12 +173,12 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   Widget _buildAddressCard(String key) {
-    final address = addressChangeNotifier.addressesMap[key];
-    final defaultAddress = addressChangeNotifier.defaultAddress;
+    final address = addressChangeNotifier!.addressesMap![key];
+    final defaultAddress = addressChangeNotifier!.defaultAddress;
     return InkWell(
       onTap: () => _onUpdateAddress(key),
       child: Container(
-        key: address.addressId == defaultAddress?.addressId ? dataKey : null,
+        key: address!.addressId == defaultAddress?.addressId ? dataKey : null,
         width: 300.w,
         margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
         decoration: BoxDecoration(
@@ -223,7 +220,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'phone_number_hint'.tr() + ': ' + address.phoneNumber,
+                      'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
                       style: mediumTextStyle.copyWith(
                         color: greyDarkColor,
                         fontSize: 12.sp,
@@ -237,11 +234,10 @@ class _PaymentAddressState extends State<PaymentAddress> {
               top: 0,
               left: 0,
               child: Radio(
-                value: address.addressId,
-                groupValue:
-                    addressChangeNotifier?.defaultAddress?.addressId ?? '',
+                value: address.addressId!,
+                groupValue: addressChangeNotifier!.defaultAddress!.addressId,
                 activeColor: primaryColor,
-                onChanged: (value) => _onUpdateAddress(value),
+                onChanged: _onUpdateAddress,
               ),
             ),
             Positioned(
@@ -259,7 +255,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   Widget _buildGuestAddressCard() {
-    final address = addressChangeNotifier.guestAddress;
+    final address = addressChangeNotifier!.guestAddress;
     return Container(
       width: 355.w,
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -278,7 +274,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    address.street,
+                    address!.street,
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 14.sp,
@@ -287,10 +283,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    'Block No.${address.company}, ' +
-                        address.city +
-                        ', ' +
-                        address.country,
+                    'Block No.${address.company}, ${address.city}, ${address.country}',
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
                       fontSize: 12.sp,
@@ -298,7 +291,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    'phone_number_hint'.tr() + ': ' + address.phoneNumber,
+                    'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
                     style: mediumTextStyle.copyWith(
                       color: greyDarkColor,
                       fontSize: 12.sp,
@@ -321,11 +314,11 @@ class _PaymentAddressState extends State<PaymentAddress> {
     );
   }
 
-  void _onUpdateAddress(String key) async {
-    final address = addressChangeNotifier.addressesMap[key];
-    address.defaultBillingAddress = 1;
+  void _onUpdateAddress(String? key) async {
+    final address = addressChangeNotifier!.addressesMap![key];
+    address!.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await addressChangeNotifier.updateAddress(user.token, address,
+    await addressChangeNotifier!.updateAddress(user!.token, address,
         onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
   }
 
@@ -393,7 +386,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
           builder: (context, state) {
             return AddressForm(
               params: {
-                'address': addressChangeNotifier.guestAddress,
+                'address': addressChangeNotifier!.guestAddress,
               },
             );
           },
@@ -403,15 +396,15 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   _onSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
   }
 
   _onFailure(String message) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(message);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
   }
 }

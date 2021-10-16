@@ -42,13 +42,13 @@ class MarkaaInputField extends StatelessWidget {
   final bool readOnly;
 
   /// ontap function on input
-  final Function onTap;
+  final void Function()? onTap;
 
   /// the trigger event on complete the editing
-  final Function onEditingComplete;
+  final void Function()? onEditingComplete;
 
   /// the tirgger event on submitted the field value
-  final Function onFieldSubmitted;
+  final void Function(String)? onFieldSubmitted;
 
   /// text input action
   final TextInputAction textInputAction;
@@ -57,7 +57,7 @@ class MarkaaInputField extends StatelessWidget {
   final TextInputType keyboardType;
 
   /// Focus Node
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
   /// space
   final double space;
@@ -66,32 +66,32 @@ class MarkaaInputField extends StatelessWidget {
   final bool obsecureText;
 
   /// validator function
-  final Function validator;
+  final String? Function(String?)? validator;
 
   /// maxLines
-  final int maxLines;
+  final int? maxLines;
 
-  final int maxLength;
+  final int? maxLength;
 
-  final Color focusedColor;
+  final Color? focusedColor;
 
   final bool bordered;
 
   final Color fillColor;
 
   MarkaaInputField({
-    @required this.width,
-    @required this.controller,
+    required this.width,
+    required this.controller,
     this.borderColor = Colors.transparent,
-    @required this.radius,
-    @required this.fontSize,
-    @required this.fontColor,
+    required this.radius,
+    required this.fontSize,
+    required this.fontColor,
     this.hint = '',
     this.hintColor = Colors.grey,
     this.hintSize = 0,
-    @required this.label,
-    @required this.labelColor,
-    @required this.labelSize,
+    required this.label,
+    required this.labelColor,
+    required this.labelSize,
     this.readOnly = false,
     this.onTap,
     this.onEditingComplete,
@@ -185,7 +185,7 @@ class MarkaaInputField extends StatelessWidget {
                             ),
                             borderSide: BorderSide(
                               color: focusedColor != null
-                                  ? focusedColor
+                                  ? focusedColor!
                                   : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
@@ -227,9 +227,9 @@ class MarkaaInputField extends StatelessWidget {
                   maxLength: maxLength,
                   buildCounter: (
                     BuildContext context, {
-                    int currentLength,
-                    int maxLength,
-                    bool isFocused,
+                    int? currentLength,
+                    int? maxLength,
+                    bool? isFocused,
                   }) =>
                       null,
                   decoration: InputDecoration(
@@ -280,7 +280,7 @@ class MarkaaInputField extends StatelessWidget {
                             ),
                             borderSide: BorderSide(
                               color: focusedColor != null
-                                  ? focusedColor
+                                  ? focusedColor!
                                   : Color(0xFF82B1FF),
                               width: 0.8,
                               style: BorderStyle.solid,
