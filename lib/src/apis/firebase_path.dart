@@ -13,4 +13,10 @@ class FirebasePath {
       '$ENV/results/date/payment_results';
   static const String ORDER_RESULT_COLL_PATH =
       '$ENV/results/date/order_results';
+  static const String CANCELED_ORDER_RESULT_COLL_PATH =
+      '$ENV/results/date/canceled_order_results';
+  static const String PAYMENT_FAILED_ORDER_RESULT_COLL_PATH =
+      '$ENV/results/date/payment_failed_order_results';
+  static const String PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH =
+      '$ENV/results/date/payment_success_order_results';
 }

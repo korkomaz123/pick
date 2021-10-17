@@ -72,55 +72,6 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
-    return <String, dynamic>{
-      'version.securityPatch': build.version.securityPatch,
-      'version.sdkInt': build.version.sdkInt,
-      'version.release': build.version.release,
-      'version.previewSdkInt': build.version.previewSdkInt,
-      'version.incremental': build.version.incremental,
-      'version.codename': build.version.codename,
-      'version.baseOS': build.version.baseOS,
-      'board': build.board,
-      'bootloader': build.bootloader,
-      'brand': build.brand,
-      'device': build.device,
-      'display': build.display,
-      'fingerprint': build.fingerprint,
-      'hardware': build.hardware,
-      'host': build.host,
-      'id': build.id,
-      'manufacturer': build.manufacturer,
-      'model': build.model,
-      'product': build.product,
-      'supported32BitAbis': build.supported32BitAbis,
-      'supported64BitAbis': build.supported64BitAbis,
-      'supportedAbis': build.supportedAbis,
-      'tags': build.tags,
-      'type': build.type,
-      'isPhysicalDevice': build.isPhysicalDevice,
-      'androidId': build.androidId,
-      'systemFeatures': build.systemFeatures,
-    };
-  }
-
-  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
-    return <String, dynamic>{
-      'name': data.name,
-      'systemName': data.systemName,
-      'systemVersion': data.systemVersion,
-      'model': data.model,
-      'localizedModel': data.localizedModel,
-      'identifierForVendor': data.identifierForVendor,
-      'isPhysicalDevice': data.isPhysicalDevice,
-      'utsname.sysname:': data.utsname.sysname,
-      'utsname.nodename:': data.utsname.nodename,
-      'utsname.release:': data.utsname.release,
-      'utsname.version:': data.utsname.version,
-      'utsname.machine:': data.utsname.machine,
-    };
-  }
-
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
     String lang, {
@@ -130,40 +81,14 @@ class OrderChangeNotifier extends ChangeNotifier {
     bool isWallet = false,
   }) async {
     if (onProcess != null) onProcess();
+    var result;
     try {
-      try {
-        Map<String, dynamic> deviceData = <String, dynamic>{};
-        final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
-        orderDetails['appInfo'] = {
-          'appName': _packageInfo.appName,
-          'packageName': _packageInfo.packageName,
-          'version': _packageInfo.version,
-          'buildNumber': _packageInfo.buildNumber,
-          'buildSignature': _packageInfo.buildSignature,
-        };
-        final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-        if (Platform.isAndroid) {
-          deviceData =
-              _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        } else if (Platform.isIOS) {
-          deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-        }
-        orderDetails['deviceInfo'] = deviceData;
-      } catch (e) {}
-
       String isVirtual = isWallet ? '1' : '0';
-
-      final result =
-          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
-      submitOrderResult(result, orderDetails);
+      result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
 
       if (result['code'] == 'SUCCESS') {
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
-
-        SlackChannels.send(
-          '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',
-          SlackChannels.logAddOrder,
-        );
+        submitOrderResult(result, newOrder);
         if (orderDetails['token'] != null &&
             orderDetails['token'] != '' &&
             !isWallet) {
@@ -173,20 +98,17 @@ class OrderChangeNotifier extends ChangeNotifier {
           setKeys();
           notifyListeners();
         }
-
         onSuccess(result['payurl'], newOrder);
       } else {
-        SlackChannels.send(
-          'new Order [${result['code']}] : ${result['errorMessage']}',
-          SlackChannels.logAddOrder,
-        );
-
         onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
       onFailure('connection_error');
-      reportOrderIssue(e.toString(), orderDetails);
+      reportOrderIssue(
+        {'code': 'Catch Error: $e', 'errorMessage': result},
+        orderDetails,
+      );
     }
   }
 
@@ -207,6 +129,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
           ordersMap.remove(order.orderId);
         }
+        submitCanceledOrderResult(order);
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
@@ -296,11 +219,84 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
+    return <String, dynamic>{
+      'version.securityPatch': build.version.securityPatch,
+      'version.sdkInt': build.version.sdkInt,
+      'version.release': build.version.release,
+      'version.previewSdkInt': build.version.previewSdkInt,
+      'version.incremental': build.version.incremental,
+      'version.codename': build.version.codename,
+      'version.baseOS': build.version.baseOS,
+      'board': build.board,
+      'bootloader': build.bootloader,
+      'brand': build.brand,
+      'device': build.device,
+      'display': build.display,
+      'fingerprint': build.fingerprint,
+      'hardware': build.hardware,
+      'host': build.host,
+      'id': build.id,
+      'manufacturer': build.manufacturer,
+      'model': build.model,
+      'product': build.product,
+      'supported32BitAbis': build.supported32BitAbis,
+      'supported64BitAbis': build.supported64BitAbis,
+      'supportedAbis': build.supportedAbis,
+      'tags': build.tags,
+      'type': build.type,
+      'isPhysicalDevice': build.isPhysicalDevice,
+      'androidId': build.androidId,
+      'systemFeatures': build.systemFeatures,
+    };
+  }
+
+  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
+    return <String, dynamic>{
+      'name': data.name,
+      'systemName': data.systemName,
+      'systemVersion': data.systemVersion,
+      'model': data.model,
+      'localizedModel': data.localizedModel,
+      'identifierForVendor': data.identifierForVendor,
+      'isPhysicalDevice': data.isPhysicalDevice,
+      'utsname.sysname:': data.utsname.sysname,
+      'utsname.nodename:': data.utsname.nodename,
+      'utsname.release:': data.utsname.release,
+      'utsname.version:': data.utsname.version,
+      'utsname.machine:': data.utsname.machine,
+    };
+  }
+
+  Future<dynamic> addDeviceInfo(dynamic details) async {
+    Map<String, dynamic> deviceData = <String, dynamic>{};
+    final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
+    orderDetails['appInfo'] = {
+      'appName': _packageInfo.appName,
+      'packageName': _packageInfo.packageName,
+      'version': _packageInfo.version,
+      'buildNumber': _packageInfo.buildNumber,
+      'buildSignature': _packageInfo.buildSignature,
+    };
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+    } else if (Platform.isIOS) {
+      deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+    }
+    details['deviceInfo'] = deviceData;
+    return details;
+  }
+
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
+    SlackChannels.send(
+      'Error Order [${result['code']}] : ${result['errorMessage']}',
+      SlackChannels.logOrderError,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
-      'orderDetails': orderDetails,
+      'orderDetails': await addDeviceInfo(orderDetails),
       'customer': user?.token != null ? user.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
@@ -315,11 +311,15 @@ class OrderChangeNotifier extends ChangeNotifier {
     await firebaseRepository.addToCollection(reportData, path);
   }
 
-  void submitOrderResult(dynamic result, dynamic orderDetails) async {
+  void submitOrderResult(dynamic result, OrderEntity newOrder) async {
+    SlackChannels.send(
+      '''new Order [${newOrder.orderId}] => [orderNo : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logAddOrder,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
-      'orderDetails': orderDetails,
+      'orderDetails': await addDeviceInfo(orderDetails),
       'customer': user?.token != null ? user.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
@@ -331,6 +331,76 @@ class OrderChangeNotifier extends ChangeNotifier {
       'lang': lang
     };
     final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.addToCollection(resultData, path);
+  }
+
+  void submitCanceledOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logCanceledByUserOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'orderNo': order.orderNo,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path =
+        FirebasePath.CANCELED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.addToCollection(resultData, path);
+  }
+
+  void submitPaymentFailedOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logPaymentFailedOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.PAYMENT_FAILED_ORDER_RESULT_COLL_PATH
+        .replaceFirst('date', date);
+    await firebaseRepository.addToCollection(resultData, path);
+  }
+
+  void submitPaymentSuccessOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logPaymentSuccessOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'customer': user?.token != null ? user.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH
+        .replaceFirst('date', date);
     await firebaseRepository.addToCollection(resultData, path);
   }
 }
