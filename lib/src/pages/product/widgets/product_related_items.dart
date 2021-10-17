@@ -18,7 +18,7 @@ class ProductRelatedItems extends StatefulWidget {
 
 class _ProductRelatedItemsState extends State<ProductRelatedItems> {
   List<ProductModel> get relatedItems =>
-      widget.model.relatedItemsMap[widget.productId]!;
+      widget.model.relatedItemsMap[widget.productId] ?? [];
 
   @override
   Widget build(BuildContext context) {

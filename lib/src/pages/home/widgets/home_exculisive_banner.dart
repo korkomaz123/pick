@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -11,6 +10,8 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'home_loading_widget.dart';
 
 class HomeExculisiveBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -84,7 +85,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
                     }
                   },
                   child: CachedNetworkImage(
-                    imageUrl: banner.bannerImage,
+                    imageUrl: banner.bannerImage ?? '',
                     errorWidget: (context, url, error) =>
                         Center(child: Icon(Icons.image, size: 20)),
                   ),
@@ -115,7 +116,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
         ],
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 }

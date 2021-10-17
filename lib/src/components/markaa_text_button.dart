@@ -44,7 +44,7 @@ class MarkaaTextButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (image!.isNotEmpty) ...[
+          if (image != null) ...[
             Padding(
               padding: EdgeInsets.all(8.w),
               child: SvgPicture.asset(

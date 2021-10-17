@@ -29,7 +29,7 @@ class CategoryEntity {
 
   static List<CategoryEntity> _getSubCategories(List<dynamic>? subCategories) {
     List<CategoryEntity> categories = [];
-    if (subCategories!.isNotEmpty) {
+    if (subCategories != null && subCategories.isNotEmpty) {
       for (int i = 0; i < subCategories.length; i++) {
         categories.add(CategoryEntity.fromJson(subCategories[i]));
       }

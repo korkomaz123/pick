@@ -50,7 +50,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       }
       setKeys();
       notifyListeners();
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     }
   }
 
@@ -127,7 +127,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function? onFailure,
     bool isWallet = false,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       try {
         Map<String, dynamic> deviceData = <String, dynamic>{};
@@ -172,18 +172,18 @@ class OrderChangeNotifier extends ChangeNotifier {
           notifyListeners();
         }
 
-        onSuccess!(result['payurl'], newOrder);
+        if (onSuccess != null) onSuccess(result['payurl'], newOrder);
       } else {
         SlackChannels.send(
           'new Order [${result['code']}] : ${result['errorMessage']}',
           SlackChannels.logAddOrder,
         );
 
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
       reportOrderIssue(e.toString(), orderDetails);
     }
   }
@@ -194,7 +194,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       final orderId = order.orderId;
       final result =
@@ -205,12 +205,12 @@ class OrderChangeNotifier extends ChangeNotifier {
           ordersMap.remove(order.orderId);
         }
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -225,7 +225,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       final result = await orderRepository.cancelOrder(
           orderId, items, additionalInfo, reason, product, imageName);
@@ -233,12 +233,12 @@ class OrderChangeNotifier extends ChangeNotifier {
         final canceledOrder = OrderEntity.fromJson(result['order']);
         ordersMap[orderId] = canceledOrder;
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -277,18 +277,18 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
 
     try {
       final result = await orderRepository.sendAsGift(
           token!, sender!, receiver!, message!);
       if (result['code'] == 'SUCCESS') {
-        onSuccess!(result['gift_message_id']);
+        if (onSuccess != null) onSuccess(result['gift_message_id']);
       } else {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 

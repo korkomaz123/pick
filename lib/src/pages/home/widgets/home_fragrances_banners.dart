@@ -1,5 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,10 +12,10 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeFragrancesBanners extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -28,28 +26,24 @@ class HomeFragrancesBanners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        if (model.fragrancesBanners.isNotEmpty ||
-            model.fragrancesBannersTitle.isNotEmpty) {
-          return Container(
-            width: designWidth.w,
-            child: Column(
-              children: [
-                if (model.fragrancesBanners.isNotEmpty) ...[
-                  _buildBanners(model.fragrancesBanners)
-                ],
-                if (model.fragrancesBannersTitle.isNotEmpty) ...[
-                  SizedBox(height: 10.h),
-                  _buildTitle(model.fragrancesBannersTitle, context)
-                ],
-              ],
-            ),
-          );
-        }
-        return Container();
-      },
-    );
+    if (homeChangeNotifier.fragrancesBanners.isNotEmpty ||
+        homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) {
+      return Container(
+        width: designWidth.w,
+        child: Column(
+          children: [
+            if (homeChangeNotifier.fragrancesBanners.isNotEmpty) ...[
+              _buildBanners(homeChangeNotifier.fragrancesBanners)
+            ],
+            if (homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) ...[
+              SizedBox(height: 10.h),
+              _buildTitle(homeChangeNotifier.fragrancesBannersTitle, context)
+            ],
+          ],
+        ),
+      );
+    }
+    return HomeLoadingWidget();
   }
 
   Widget _buildTitle(String title, BuildContext context) {
@@ -64,7 +58,7 @@ class HomeFragrancesBanners extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
+            child: Text(
               title,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
@@ -157,7 +151,7 @@ class HomeFragrancesBanners extends StatelessWidget {
                 }
               },
               child: CachedNetworkImage(
-                imageUrl: banner.bannerImage,
+                imageUrl: banner.bannerImage ?? '',
                 errorWidget: (context, url, error) =>
                     Center(child: Icon(Icons.image, size: 20)),
               ),

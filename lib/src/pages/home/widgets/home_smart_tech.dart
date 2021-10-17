@@ -16,6 +16,7 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeSmartTech extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -47,7 +48,7 @@ class HomeSmartTech extends StatelessWidget {
         ),
       );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
@@ -99,7 +100,7 @@ class HomeSmartTech extends StatelessWidget {
               }
             },
             child: CachedNetworkImage(
-              imageUrl: banner.bannerImage,
+              imageUrl: banner.bannerImage ?? '',
               errorWidget: (context, url, error) => Center(
                 child: Icon(Icons.image, size: 20),
               ),

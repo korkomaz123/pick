@@ -1,18 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'home_loading_widget.dart';
 
 class HomeHeaderCarousel extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -30,26 +29,19 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.sliderImages.isEmpty) {
-      return Container(
-        width: double.infinity,
-        height: designWidth.w * 579 / 1125,
-        color: Colors.white,
-        child: Center(child: PulseLoadingSpinner()),
-      );
+      return HomeLoadingWidget();
     }
-    return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-      return Container(
-        width: double.infinity,
-        height: designWidth.w * 579 / 1125,
-        color: Colors.white,
-        child: Stack(
-          children: [
-            _buildImageSlider(),
-            _buildIndicator(),
-          ],
-        ),
-      );
-    });
+    return Container(
+      width: double.infinity,
+      height: designWidth.w * 579 / 1125,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          _buildImageSlider(),
+          _buildIndicator(),
+        ],
+      ),
+    );
   }
 
   Widget _buildImageSlider() {
@@ -105,7 +97,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           child: CachedNetworkImage(
             width: designWidth.w,
             height: designWidth.w * 579 / 1125,
-            imageUrl: banner.bannerImage,
+            imageUrl: banner.bannerImage ?? '',
             fit: BoxFit.fill,
             errorWidget: (context, url, error) =>
                 Center(child: Icon(Icons.image, size: 20)),

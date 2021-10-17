@@ -66,7 +66,7 @@ class _ProductListPageState extends State<ProductListPage> {
     brand = arguments!.brand;
     activeSubcategoryIndex = arguments!.selectedSubCategoryIndex;
     isFromBrand = arguments!.isFromBrand;
-    subCategories = [category!];
+    subCategories = category != null ? [category!] : [];
 
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
@@ -133,12 +133,12 @@ class _ProductListPageState extends State<ProductListPage> {
                         bottom: 0,
                         duration: Duration(milliseconds: 500),
                         child: ProductListView(
-                          subCategories: subCategories!,
-                          activeIndex: activeSubcategoryIndex!,
+                          subCategories: subCategories ?? [],
+                          activeIndex: activeSubcategoryIndex ?? 0,
                           scaffoldKey: scaffoldKey,
-                          isFromBrand: isFromBrand!,
-                          isFilter: isFilter!,
-                          brand: brand!,
+                          isFromBrand: isFromBrand ?? false,
+                          isFilter: isFilter ?? false,
+                          brand: brand,
                           onChangeTab: (index) => _onChangeTab(index),
                           scrollController: scrollController,
                           viewMode: viewMode!,

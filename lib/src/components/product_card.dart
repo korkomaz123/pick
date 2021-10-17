@@ -180,7 +180,7 @@ class _ProductCardState extends State<ProductCard>
                 if (widget.isLine) ...[Divider(color: greyColor)],
                 InkWell(
                   onTap: () {
-                    if (widget.product.brandEntity?.optionId != null) {
+                    if (widget.product.brandEntity != null) {
                       ProductListArguments arguments = ProductListArguments(
                         category: null,
                         subCategory: [],
@@ -196,7 +196,7 @@ class _ProductCardState extends State<ProductCard>
                     }
                   },
                   child: Text(
-                    widget.product.brandEntity!.brandLabel,
+                    widget.product.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 10.sp,

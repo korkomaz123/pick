@@ -337,7 +337,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     if (cartId.isEmpty) {
       await getCartId();
       await getCartItems(lang);
@@ -366,15 +366,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalPrice += newItem.rowPrice;
         cartDiscountedTotalPrice += getDiscountedPrice(newItem);
         cartItemsMap[newItem.itemId] = newItem;
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
         notifyListeners();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
         reportCartIssue(result, data);
       }
     } catch (e) {
       print(e.toString());
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
       reportCartIssue(e.toString(), data);
     }
   }
@@ -478,7 +478,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
 
     final result = await myCartRepository.getCartItems(reorderCartId, lang);
 
@@ -515,12 +515,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     } catch (e) {
-      onFailure!();
+      if (onFailure != null) onFailure();
     }
   }
 

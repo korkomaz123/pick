@@ -27,7 +27,7 @@ class ProductListView extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool isFromBrand;
   final bool isFilter;
-  final BrandEntity brand;
+  final BrandEntity? brand;
   final Function onChangeTab;
   final ScrollController scrollController;
   final ProductViewModeEnum viewMode;
@@ -163,7 +163,7 @@ class _ProductListViewState extends State<ProductListView>
       }
       filterBloc!.add(FilterAttributesLoaded(
         categoryId: subCategories![widget.activeIndex].id,
-        brandId: brand!.optionId,
+        brandId: brand?.optionId ?? '',
         lang: lang,
       ));
     });

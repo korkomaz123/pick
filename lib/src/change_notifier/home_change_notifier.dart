@@ -61,7 +61,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME SLIDER IMAGE LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -101,9 +101,8 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME BESTDEALS LOADING ERROR: $e');
     }
-    // await getHomeCategories();
     notifyListeners();
   }
 
@@ -130,7 +129,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         onSuccess(popupItem);
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME POPUP LOADING ERROR: $e');
     }
   }
 
@@ -143,7 +142,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         megaBanner = null;
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME MEGA BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -168,7 +167,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         sunglassesBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME NEW ARRIVALS BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -194,7 +193,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME NEW ARRIVALS LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -212,7 +211,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME EXCULISIVE BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -240,7 +239,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME ORIENTAL PRODUCTS LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -265,8 +264,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         faceCareBanners = [];
       }
     } catch (e) {
-      print('Face Care');
-      print(e.toString());
+      print('HOME FACECARE LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -285,7 +283,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME FRAGRANCES BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -311,7 +309,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME PERFUMES LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -343,7 +341,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         bestWatchesBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME BEST WATCHES LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -366,7 +364,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         celebrityItems = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME CELEBRITY LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -391,26 +389,25 @@ class HomeChangeNotifier extends ChangeNotifier {
         skinCareBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME ADS LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
+  List<ProductModel>? recentlyViewedProducts;
+  Future updateRecentlyViewedProduct(int index) async {
+    String productId = recentlyViewedProducts![index].productId;
+    final product = await productRepository.getProduct(productId);
+    recentlyViewedProducts![index] = product!;
+    notifyListeners();
+  }
+
   Future getViewedProducts() async {
-    await Preload.currentUser;
     if (user?.token != null) {
       await loadRecentlyViewedCustomer();
     } else {
       await loadRecentlyViewedGuest();
     }
-  }
-
-  List<ProductModel> recentlyViewedProducts = [];
-  Future updateRecentlyViewedProduct(int index) async {
-    String productId = recentlyViewedProducts[index].productId;
-    final product = await productRepository.getProduct(productId);
-    recentlyViewedProducts[index] = product!;
-    notifyListeners();
   }
 
   Future loadRecentlyViewedGuest() async {
@@ -419,14 +416,15 @@ class HomeChangeNotifier extends ChangeNotifier {
       final result = await productRepository.getHomeRecentlyViewedGuestProducts(
           ids, Preload.language);
       if (result['code'] == 'SUCCESS') {
-        recentlyViewedProducts.clear();
+        recentlyViewedProducts = [];
         for (int i = 0; i < result['items'].length; i++) {
-          recentlyViewedProducts.add(ProductModel.fromJson(result['items'][i]));
+          recentlyViewedProducts!
+              .add(ProductModel.fromJson(result['items'][i]));
         }
       }
     } catch (e) {
-      print('error guest');
-      print(e.toString());
+      recentlyViewedProducts = null;
+      print('GUEST RECENT VIEWED PRODUCTS LOADING ERROR: $e');
     }
 
     notifyListeners();
@@ -437,15 +435,15 @@ class HomeChangeNotifier extends ChangeNotifier {
       final result = await productRepository
           .getHomeRecentlyViewedCustomerProducts(user!.token, Preload.language);
       if (result['code'] == 'SUCCESS') {
-        recentlyViewedProducts.clear();
+        recentlyViewedProducts = [];
         for (int i = 0; i < result['products'].length; i++) {
-          recentlyViewedProducts
+          recentlyViewedProducts!
               .add(ProductModel.fromJson(result['products'][i]));
         }
       }
     } catch (e) {
-      print('error customer');
-      print(e.toString());
+      recentlyViewedProducts = null;
+      print('CUSTOMER RECENT VIEWED PRODUCTS LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -470,7 +468,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME GROOMING LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -496,7 +494,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME SMART TECH LOADING ERROR: $e');
     }
     notifyListeners();
   }

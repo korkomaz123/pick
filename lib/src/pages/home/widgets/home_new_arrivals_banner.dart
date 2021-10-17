@@ -1,5 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -14,6 +12,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+
+import 'home_loading_widget.dart';
 // import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
@@ -50,7 +50,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: AutoSizeText(
+                    child: Text(
                       widget.homeChangeNotifier.sunglassesTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -99,7 +99,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                                   ? 375.w
                                   : 340.w) *
                               (897 / 1096),
-                          imageUrl: item.bannerImage,
+                          imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
                               Center(child: Icon(Icons.image, size: 20)),
@@ -130,7 +130,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         ),
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 

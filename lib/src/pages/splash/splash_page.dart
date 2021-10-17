@@ -1,5 +1,4 @@
 import 'package:markaa/preload.dart';
-import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -8,8 +7,6 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashPage extends StatefulWidget {
@@ -20,47 +17,38 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   final LocalStorageRepository localRepo = LocalStorageRepository();
 
-  bool isNew = false;
+  bool _firstOpen = false;
 
   @override
   void initState() {
     super.initState();
+    _onPrepareAppData();
+  }
 
-    Future.delayed(Duration.zero, () async {
-      isNew = !(await localRepo.existItem('usage'));
-      setState(() {});
-    });
+  Future _onPrepareAppData() async {
+    /// LOGIN TO FIREBASE
+    Preload.firebaseLogin();
 
-    Future.delayed(Duration(milliseconds: 1000), () async {
-      if (await Preload.checkAppVersion() != true) {
-        if (!isNew) {
-          Preload.loadAssetData();
-          Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
-            Routes.home,
-            (route) => false,
-          );
-        }
-      }
-    });
+    /// CHECK USER OPEN THE APP FIRST TIME
+    _firstOpen = !(await localRepo.existItem('usage'));
+    setState(() {});
+
+    /// CHECK THE UPGRADABLE STATUS: MANDATORY OR NOT
+    bool isUpgradeRequired = await Preload.checkAppVersion();
+    if (!isUpgradeRequired && !_firstOpen) {
+      Preload.setLanguage();
+      Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
+        Routes.home,
+        (route) => false,
+      );
+    }
   }
 
   void _onLang(String val) async {
-    /// Set the language on the backend side
-    Preload.navigatorKey!.currentContext!
-        .read<GlobalProvider>()
-        .changeLanguage(val, fromSplash: true);
-
-    /// Set language on onesignal
-    OneSignal.shared.sendTag('lang', val).then((result) {
-      print('ONESIGNAL >>> SENT THE LANG TAG SUCCESS');
-    });
-
     /// Set first time opening passed
     await localRepo.setItem('usage', 'markaa');
+    Preload.setLanguage(val: val);
 
-    /// Start Loading Assets
-    await Preload.appOpen();
-    Preload.loadAssetData();
     Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
       Routes.home,
       (route) => false,
@@ -84,7 +72,7 @@ class _SplashPageState extends State<SplashPage> {
                 child: SvgPicture.asset(vLogoIcon, height: 130.h),
               ),
             ),
-            if (isNew) ...[
+            if (_firstOpen) ...[
               Positioned(
                 bottom: 141.h,
                 left: 0,

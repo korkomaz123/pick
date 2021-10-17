@@ -1,5 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -13,9 +11,10 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'home_loading_widget.dart';
 
 class HomeDiscoverStores extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -44,7 +43,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         ),
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 
@@ -55,7 +54,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
+            child: Text(
               'brands_title'.tr(),
               maxLines: 1,
               style: mediumTextStyle.copyWith(

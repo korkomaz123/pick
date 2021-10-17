@@ -9,7 +9,10 @@ class AppRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [CHECK APP VERSION BETWEEN STORE & LOCAL VERSION]
   //////////////////////////////////////////////////////////////////////////////
-  Future<VersionEntity> checkAppVersion(bool isAndroid, String lang) async {
+  Future<VersionEntity> checkAppVersion(
+    bool isAndroid, [
+    String lang = 'en',
+  ]) async {
     final path = FirebasePath.APP_VERSION_DOC_PATH;
     final doc = await firebaseRepository.loadDoc(path);
     final data = doc.data() as Map<String, dynamic>;
@@ -17,11 +20,17 @@ class AppRepository {
     int iOSStoreVersion = data['ios'];
     int androidMinVersion = data['androidMinVersion'];
     int iOSMinVersion = data['iosMinVersion'];
-    String newVersionString = isAndroid ? data['androidVersionString'] : data['iosVersionString'];
+    String newVersionString =
+        isAndroid ? data['androidVersionString'] : data['iosVersionString'];
     String title = lang == 'en' ? data['dialogTitleEn'] : data['dialogTitleAr'];
-    String content = lang == 'en' ? data['dialogContentEn'] : data['dialogContentAr'];
-    bool canUpdate = isAndroid ? androidStoreVersion > MarkaaVersion.androidVersion : iOSStoreVersion > MarkaaVersion.iOSVersion;
-    bool updateMandatory = isAndroid ? androidMinVersion > MarkaaVersion.androidVersion : iOSMinVersion > MarkaaVersion.iOSVersion;
+    String content =
+        lang == 'en' ? data['dialogContentEn'] : data['dialogContentAr'];
+    bool canUpdate = isAndroid
+        ? androidStoreVersion > MarkaaVersion.androidVersion
+        : iOSStoreVersion > MarkaaVersion.iOSVersion;
+    bool updateMandatory = isAndroid
+        ? androidMinVersion > MarkaaVersion.androidVersion
+        : iOSMinVersion > MarkaaVersion.iOSVersion;
     String storeLink = isAndroid ? data['playStoreLink'] : data['appStoreLink'];
     final versionEntity = VersionEntity(
       canUpdate: canUpdate,

@@ -25,7 +25,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
   Future<Image> get cachedImage => _loadPrecachedImage();
 
   Future<Image> _loadPrecachedImage() async {
-    Image image = Image.network(widget.item.bannerImage);
+    Image image = Image.network(widget.item.bannerImage ?? '');
     await precacheImage(image.image, context);
     return image;
   }

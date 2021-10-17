@@ -17,7 +17,7 @@ class ProductMoreAbout extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         margin: EdgeInsets.only(top: 10.h),
         child: Html(
-          data: """${productEntity.fullDescription}""",
+          data: """${productEntity.fullDescription ?? ''}""",
           style: {
             "p": Style.fromTextStyle(mediumTextStyle.copyWith(fontSize: 14.sp)),
             "span":

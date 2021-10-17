@@ -34,25 +34,25 @@ class WalletChangeNotifier extends ChangeNotifier {
     try {
       if (walletCartId!.isNotEmpty) {
         if (this.amount == amount) {
-          onSuccess!();
+          if (onSuccess != null) onSuccess();
         } else {
           final result = await cartRepository.clearCartItems(walletCartId!);
           if (result['code'] == 'SUCCESS') {
-            onSuccess!();
+            if (onSuccess != null) onSuccess();
           } else {
-            onFailure!();
+            if (onFailure != null) onFailure();
           }
         }
       } else {
         walletCartId = await walletRepository.createWalletCart();
         if (walletCartId!.isEmpty) {
-          onFailure!('Error');
+          if (onFailure != null) onFailure('Error');
         } else {
-          onSuccess!();
+          if (onSuccess != null) onSuccess();
         }
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
     notifyListeners();
   }
@@ -64,18 +64,18 @@ class WalletChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     if (this.amount == amount) {
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     } else {
       final result = await walletRepository.addMoneyToWallet(
           walletCartId!, amount!, lang!);
 
       if (result['code'] == 'SUCCESS') {
         this.amount = amount;
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!();
+        if (onFailure != null) onFailure();
       }
     }
     notifyListeners();
@@ -88,7 +88,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
 
     Map<String, dynamic> bankDetails = selectedBank!.toJson();
     String walletNote = '';
@@ -96,9 +96,9 @@ class WalletChangeNotifier extends ChangeNotifier {
         token!, amount!, bankDetails, walletNote);
 
     if (result['code'] == 'SUCCESS') {
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     } else {
-      onFailure!(result['errorMessage']);
+      if (onFailure != null) onFailure(result['errorMessage']);
     }
   }
 
@@ -112,14 +112,14 @@ class WalletChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
 
     final result = await walletRepository.transferMoney(
         token!, amount!, lang!, description!, email!);
     if (result['code'] == 'SUCCESS') {
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     } else {
-      onFailure!(result['errorMessage']);
+      if (onFailure != null) onFailure(result['errorMessage']);
     }
   }
 

@@ -121,7 +121,7 @@ class _ProductVCardState extends State<ProductVCard>
           Routes.product,
           arguments: widget.product,
         );
-        widget.onTap!();
+        if (widget.onTap != null) widget.onTap!();
       },
       child: Container(
         width: widget.cardWidth,
@@ -169,7 +169,7 @@ class _ProductVCardState extends State<ProductVCard>
               children: [
                 InkWell(
                   onTap: () {
-                    if (widget.product.brandEntity?.optionId != null) {
+                    if (widget.product.brandEntity != null) {
                       ProductListArguments arguments = ProductListArguments(
                         category: null,
                         subCategory: [],
@@ -185,7 +185,7 @@ class _ProductVCardState extends State<ProductVCard>
                     }
                   },
                   child: Text(
-                    widget.product.brandEntity!.brandLabel,
+                    widget.product.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 14.sp,

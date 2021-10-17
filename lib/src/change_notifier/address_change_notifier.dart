@@ -35,14 +35,14 @@ class AddressChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       await localStorageRepository.setItem('guest_address', data);
       guestAddress = AddressEntity.fromJson(data);
       notifyListeners();
-      onSuccess!();
+      if (onSuccess != null) onSuccess();
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -70,13 +70,13 @@ class AddressChangeNotifier extends ChangeNotifier {
         keys = addressesMap!.keys.toList();
         keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!();
+        if (onFailure != null) onFailure();
       }
     } catch (e) {
       print(e.toString());
-      onFailure!();
+      if (onFailure != null) onFailure();
     }
   }
 
@@ -87,7 +87,7 @@ class AddressChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.addAddress(token, newAddress);
       if (result['code'] == 'SUCCESS') {
@@ -99,12 +99,12 @@ class AddressChangeNotifier extends ChangeNotifier {
         keys = addressesMap!.keys.toList();
         keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -124,12 +124,12 @@ class AddressChangeNotifier extends ChangeNotifier {
           defaultAddress = address;
         }
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
@@ -140,7 +140,7 @@ class AddressChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   ) async {
-    onProcess!();
+    if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.deleteAddress(token, addressId);
       if (result['code'] == 'SUCCESS') {
@@ -152,12 +152,12 @@ class AddressChangeNotifier extends ChangeNotifier {
         keys = addressesMap!.keys.toList();
         keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        onSuccess!();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure!(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure!('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 }

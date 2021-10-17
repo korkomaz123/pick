@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -56,41 +55,19 @@ class MarkaaApp extends StatefulWidget {
 
 class _MarkaaAppState extends State<MarkaaApp> {
   final categoryRepository = CategoryRepository();
-
   final productRepository = ProductRepository();
-
   final brandRepository = BrandRepository();
-
   final localStorageRepository = LocalStorageRepository();
-
   final wishlistRepository = WishlistRepository();
-
   final shippingAddressRepository = ShippingAddressRepository();
-
   final orderRepository = OrderRepository();
-
   final profileRepository = ProfileRepository();
-
   final searchRepository = SearchRepository();
-
   final checkoutRepository = CheckoutRepository();
-
   final firebaseRepository = FirebaseRepository();
-
-  _loadData() async {
-    Timer(Duration(seconds: 1), () async {
-      bool isExist = await LocalStorageRepository().existItem('usage');
-      String token = await Preload.localRepo.getToken();
-      if (isExist) {
-        await Preload.appOpen();
-      }
-      print("token ====> $token");
-    });
-  }
 
   @override
   void initState() {
-    _loadData();
     super.initState();
   }
 
@@ -98,7 +75,6 @@ class _MarkaaAppState extends State<MarkaaApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => GlobalProvider()),
         ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
         ChangeNotifierProvider(create: (_) => AuthChangeNotifier()),
         ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
@@ -167,19 +143,15 @@ class _MarkaaAppState extends State<MarkaaApp> {
               stream: Connectivity().onConnectivityChanged,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data == ConnectivityResult.mobile ||
-                      snapshot.data == ConnectivityResult.wifi) {
-                    return FutureBuilder<void>(
-                      future: Preload.checkAppVersion(),
-                      builder: (context, snapshot) {
-                        return child!;
-                      },
-                    );
+                  if (snapshot.data != null &&
+                      (snapshot.data == ConnectivityResult.mobile ||
+                          snapshot.data == ConnectivityResult.wifi)) {
+                    return child ?? Container();
                   } else {
                     return NoNetworkAccessPage();
                   }
                 }
-                return child!;
+                return child ?? Container();
               },
             );
           },

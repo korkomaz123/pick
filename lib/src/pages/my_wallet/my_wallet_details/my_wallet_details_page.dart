@@ -3,10 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_wallet/gift/send_gift_page.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -38,18 +36,12 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
   void initState() {
     super.initState();
 
-    _onLoadUser();
     _controller.addListener(_onScroll);
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _scaffoldKey.currentState!
           .showBottomSheet((context) => _buildBottomSheet());
     });
-  }
-
-  _onLoadUser() async {
-    user = await Preload.currentUser;
-    setState(() {});
   }
 
   _onScroll() {

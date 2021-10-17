@@ -1,8 +1,5 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/preload.dart';
@@ -18,6 +15,8 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+
+import 'home_loading_widget.dart';
 
 class HomeBestWatches extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -35,21 +34,19 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
 
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.bestWatchesViewAll != null) {
-      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-        return Container(
-          width: designWidth.w,
-          color: Colors.white,
-          margin: EdgeInsets.only(bottom: 10.h),
-          child: Column(
-            children: [
-              _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
-              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-            ],
-          ),
-        );
-      });
+      return Container(
+        width: designWidth.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
+            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
+          ],
+        ),
+      );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
@@ -61,7 +58,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: AutoSizeText(
+                child: Text(
                   widget.homeChangeNotifier.bestWatchesTitle,
                   maxLines: 1,
                   style: mediumTextStyle.copyWith(
@@ -89,7 +86,6 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          // physics: CustomScrollPhysics(),
           child: Row(
             children: banners.map((item) {
               int index = banners.indexOf(item);
@@ -101,7 +97,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                       width: banners.length == 1 ? 375.w : 340.w,
                       height:
                           (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
-                      imageUrl: item.bannerImage,
+                      imageUrl: item.bannerImage ?? '',
                       fit: BoxFit.fitHeight,
                       errorWidget: (context, url, error) =>
                           Center(child: Icon(Icons.image, size: 20)),

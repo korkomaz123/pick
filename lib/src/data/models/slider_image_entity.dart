@@ -4,7 +4,7 @@ class SliderImageEntity {
   final String? bannerId;
   final String? bannerTitle;
   final String? bannerDescription;
-  final String bannerImage;
+  final String? bannerImage;
   final String? bannerVideo;
   final String? bannerYoutube;
   final String? bannerVideoAutoPlay;
@@ -22,7 +22,7 @@ class SliderImageEntity {
     this.bannerId,
     this.bannerTitle,
     this.bannerDescription,
-    required this.bannerImage,
+    this.bannerImage,
     this.bannerVideo,
     this.bannerYoutube,
     this.bannerVideoAutoPlay,

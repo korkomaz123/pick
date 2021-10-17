@@ -19,7 +19,8 @@ class TopBrandsInCategory extends StatefulWidget {
 }
 
 class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
-  List<BrandEntity> get brands => widget.model.brandsMap[widget.productId]!;
+  List<BrandEntity> get brands =>
+      widget.model.brandsMap[widget.productId] ?? [];
   dynamic get category => widget.model.categoryMap[widget.productId];
 
   @override

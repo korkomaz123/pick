@@ -11,6 +11,8 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
+import 'home_loading_widget.dart';
+
 class HomeSaleBrands extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
@@ -53,7 +55,7 @@ class HomeSaleBrands extends StatelessWidget {
         ),
       );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   Widget _buildSaleBrandCard(int itemIndex) {

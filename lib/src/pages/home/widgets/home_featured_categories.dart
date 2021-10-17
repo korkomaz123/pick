@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeFeaturedCategories extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -22,7 +22,7 @@ class HomeFeaturedCategories extends StatelessWidget {
       color: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: homeChangeNotifier.featuredCategories.isEmpty
-          ? Center(child: PulseLoadingSpinner())
+          ? HomeLoadingWidget()
           : SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(

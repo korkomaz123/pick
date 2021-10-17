@@ -124,6 +124,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         await _myCartChangeNotifier!.getCartId();
         await _myCartChangeNotifier!.getCartItems(Preload.language);
       },
+      onFailure: () async {
+        await _myCartChangeNotifier!.getCartId();
+        await _myCartChangeNotifier!.getCartItems(Preload.language);
+      },
     );
     _productChangeNotifier!.initialize();
     _scrollController.addListener(_onScroll);
@@ -172,52 +176,58 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             notification.disallowGlow();
             return true;
           },
-          child: RefreshIndicator(
-            onRefresh: () async {
-              _loadHomePage();
-            },
-            color: primaryColor,
-            child: Column(
-              children: [
-                MarkaaSimpleAppBar(scaffoldKey: scaffoldKey),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: Column(
-                      children: [
-                        HomeHeaderCarousel(
-                          homeChangeNotifier: _homeProvider!,
+          child: Consumer<HomeChangeNotifier>(
+            builder: (_, __, ___) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  _loadHomePage();
+                },
+                color: primaryColor,
+                child: Column(
+                  children: [
+                    MarkaaSimpleAppBar(scaffoldKey: scaffoldKey),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          children: [
+                            HomeHeaderCarousel(
+                              homeChangeNotifier: _homeProvider!,
+                            ),
+                            HomeFeaturedCategories(
+                              homeChangeNotifier: _homeProvider!,
+                            ),
+                            HomeMegaBanner(homeChangeNotifier: _homeProvider!),
+                            HomeBestDeals(homeChangeNotifier: _homeProvider!),
+                            HomeCelebrity(homeChangeNotifier: _homeProvider!),
+                            HomeGrooming(homeChangeNotifier: _homeProvider!),
+                            HomeBestDealsBanner(
+                                homeChangeNotifier: _homeProvider!),
+                            HomeSaleBrands(homeChangeNotifier: _homeProvider!),
+                            HomeNewArrivals(homeChangeNotifier: _homeProvider!),
+                            HomeOrientalFragrances(
+                                homeChangeNotifier: _homeProvider!),
+                            HomeNewArrivalsBanner(
+                                homeChangeNotifier: _homeProvider!),
+                            HomeFragrancesBanners(
+                                homeChangeNotifier: _homeProvider!),
+                            HomePerfumes(homeChangeNotifier: _homeProvider!),
+                            HomeBestWatches(homeChangeNotifier: _homeProvider!),
+                            HomeAdvertise(homeChangeNotifier: _homeProvider!),
+                            HomeExploreCategories(
+                                homeChangeNotifier: _homeProvider!),
+                            HomeDiscoverStores(
+                                homeChangeNotifier: _homeProvider!),
+                            HomeSmartTech(homeChangeNotifier: _homeProvider!),
+                            HomeRecent(homeChangeNotifier: _homeProvider!),
+                          ],
                         ),
-                        HomeFeaturedCategories(
-                          homeChangeNotifier: _homeProvider!,
-                        ),
-                        HomeMegaBanner(homeChangeNotifier: _homeProvider!),
-                        HomeBestDeals(homeChangeNotifier: _homeProvider!),
-                        HomeCelebrity(homeChangeNotifier: _homeProvider!),
-                        HomeGrooming(homeChangeNotifier: _homeProvider!),
-                        HomeBestDealsBanner(homeChangeNotifier: _homeProvider!),
-                        HomeSaleBrands(homeChangeNotifier: _homeProvider!),
-                        HomeNewArrivals(homeChangeNotifier: _homeProvider!),
-                        HomeOrientalFragrances(
-                            homeChangeNotifier: _homeProvider!),
-                        HomeNewArrivalsBanner(
-                            homeChangeNotifier: _homeProvider!),
-                        HomeFragrancesBanners(
-                            homeChangeNotifier: _homeProvider!),
-                        HomePerfumes(homeChangeNotifier: _homeProvider!),
-                        HomeBestWatches(homeChangeNotifier: _homeProvider!),
-                        HomeAdvertise(homeChangeNotifier: _homeProvider!),
-                        HomeExploreCategories(
-                            homeChangeNotifier: _homeProvider!),
-                        HomeDiscoverStores(homeChangeNotifier: _homeProvider!),
-                        HomeSmartTech(homeChangeNotifier: _homeProvider!),
-                        HomeRecent(homeChangeNotifier: _homeProvider!),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
         bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),

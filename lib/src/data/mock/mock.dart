@@ -5,6 +5,7 @@ List<CategoryEntity> homeCategories = [];
 List<RegionEntity> regions = [];
 List<ShippingMethodEntity> shippingMethods = [];
 List<PaymentMethodEntity> paymentMethods = [];
+Map<String, List<CategoryMenuEntity>> sideMenus = {'en': [], 'ar': []};
 
 Map<String, dynamic> orderDetails = {};
 

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -76,7 +75,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   void _loadAssetData() async {
     try {
-      user = await Preload.currentUser;
       print(paymentMethods.length);
       if (paymentMethods.isEmpty) {
         paymentMethods = await checkoutRepo.getPaymentMethod();

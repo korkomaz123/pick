@@ -1,7 +1,4 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/preload.dart';
-import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -13,6 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'home_loading_widget.dart';
 import 'home_products_carousel.dart';
 
 class HomeNewArrivals extends StatelessWidget {
@@ -23,26 +21,24 @@ class HomeNewArrivals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.newArrivalsProducts.isNotEmpty) {
-      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-        return Container(
-          height: 240.h,
-          padding: EdgeInsets.all(8.w),
-          margin: EdgeInsets.only(bottom: 10.h),
-          color: Colors.white,
-          child: Column(
-            children: [
-              _buildHeadline(context),
-              HomeProductsCarousel(
-                products: homeChangeNotifier.newArrivalsProducts,
-                isVerticalCard: false,
-                onAddToCartFailure: homeChangeNotifier.updateNewArrivalsProduct,
-              ),
-            ],
-          ),
-        );
-      });
+      return Container(
+        height: 240.h,
+        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.only(bottom: 10.h),
+        color: Colors.white,
+        child: Column(
+          children: [
+            _buildHeadline(context),
+            HomeProductsCarousel(
+              products: homeChangeNotifier.newArrivalsProducts,
+              isVerticalCard: false,
+              onAddToCartFailure: homeChangeNotifier.updateNewArrivalsProduct,
+            ),
+          ],
+        ),
+      );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 
@@ -53,7 +49,7 @@ class HomeNewArrivals extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
+            child: Text(
               homeChangeNotifier.newArrivalsTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(

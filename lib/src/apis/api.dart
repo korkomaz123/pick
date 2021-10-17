@@ -101,6 +101,10 @@ class CacheInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     print('onError: $err');
+    var response = _cache[err.requestOptions.uri];
+    if (response != null) {
+      return handler.resolve(response);
+    }
     super.onError(err, handler);
   }
 }

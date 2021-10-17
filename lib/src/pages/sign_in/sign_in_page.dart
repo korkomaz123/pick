@@ -22,8 +22,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -450,27 +449,30 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future _onFacebookSign() async {
-    final facebookLogin = FacebookLogin();
-    await facebookLogin.logOut();
-    final result = await facebookLogin.logIn(['email']);
+  void _onFacebookSign() async {
+    final facebookAuth = FacebookAuth.instance;
+    final result = await facebookAuth.login();
+    if (result.status == LoginStatus.operationInProgress) return;
     switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        _loginWithFacebook(result);
+      case LoginStatus.success:
+        _loadFacebookAccount(result);
         break;
-      case FacebookLoginStatus.cancelledByUser:
-        print('/// Canceled By User ///');
+      case LoginStatus.cancelled:
+        flushBarService!.showErrorDialog('FACEBOOK LOGIN: CANCELED');
         break;
-      case FacebookLoginStatus.error:
-        print('/// Facebook Login Error ///');
-        print(result.errorMessage);
+      case LoginStatus.failed:
+        print('FACEBOOK LOGIN: FAILED: ${result.message!}');
+        flushBarService!.showErrorDialog(result.message!);
         break;
+      default:
+        print('FACEBOOK LOGIN: UNKNOWN STATUS');
+        flushBarService!.showErrorDialog('Login failed, try again later.');
     }
   }
 
-  Future _loginWithFacebook(FacebookLoginResult result) async {
+  void _loadFacebookAccount(LoginResult result) async {
     try {
-      final token = result.accessToken.token;
+      final token = result.accessToken!.token;
       final profile = await Api.getMethod(
           'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
@@ -482,7 +484,7 @@ class _SignInPageState extends State<SignInPage> {
           onSuccess: _onLoginSuccess,
           onFailure: _onLoginFailure);
     } catch (e) {
-      print('/// LOGIN WITH FACEBOOK ERROR: $e ///');
+      print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
   }
 

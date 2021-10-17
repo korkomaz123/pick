@@ -6,14 +6,14 @@ import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
+
+import 'home_loading_widget.dart';
 // import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeAdvertise extends StatefulWidget {
@@ -45,7 +45,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: AutoSizeText(
+                    child: Text(
                       widget.homeChangeNotifier.skinCareTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -93,7 +93,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                                   ? 375.w
                                   : 340.w) *
                               (897 / 1096),
-                          imageUrl: item.bannerImage,
+                          imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
                               Center(child: Icon(Icons.image, size: 20)),
@@ -124,7 +124,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         ),
       );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   _onLink(BuildContext context, SliderImageEntity banner) async {

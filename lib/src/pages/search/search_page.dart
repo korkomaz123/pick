@@ -261,28 +261,29 @@ class _SearchPageState extends State<SearchPage>
                   ),
                 ),
                 SizedBox(width: 4.w),
-                Consumer<SuggestionChangeNotifier>(builder: (_, __, ___) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: tabController!.index == 0
-                          ? primaryColor
-                          : greyDarkColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      suggestionChangeNotifier!.searchedProducts!.length
-                          .toString(),
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 12.sp,
-                        color: Colors.white,
+                Consumer<SuggestionChangeNotifier>(
+                  builder: (_, __, ___) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
                       ),
-                    ),
-                  );
-                }),
+                      decoration: BoxDecoration(
+                        color: tabController!.index == 0
+                            ? primaryColor
+                            : greyDarkColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${suggestionChangeNotifier?.searchedProducts?.length ?? 0}',
+                        style: mediumTextStyle.copyWith(
+                          fontSize: 12.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

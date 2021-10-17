@@ -27,8 +27,7 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -320,26 +319,29 @@ class _MyCartQuickAccessLoginDialogState
   }
 
   void _onFacebookSign() async {
-    final facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logIn(['email']);
+    final facebookAuth = FacebookAuth.instance;
+    final result = await facebookAuth.login();
+    if (result.status == LoginStatus.operationInProgress) return;
     switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        _loginWithFacebook(result);
+      case LoginStatus.success:
+        _loadFacebookAccount(result);
         break;
-      case FacebookLoginStatus.cancelledByUser:
-        flushBarService!.showErrorDialog('Canceled by User');
+      case LoginStatus.cancelled:
+        flushBarService!.showErrorDialog('FACEBOOK LOGIN: CANCELED');
         break;
-      case FacebookLoginStatus.error:
-        print('/// Facebook Login Error ///');
-        print(result.errorMessage);
-        flushBarService!.showErrorDialog(result.errorMessage);
+      case LoginStatus.failed:
+        print('FACEBOOK LOGIN: FAILED: ${result.message!}');
+        flushBarService!.showErrorDialog(result.message!);
         break;
+      default:
+        print('FACEBOOK LOGIN: UNKNOWN STATUS');
+        flushBarService!.showErrorDialog('Login failed, try again later.');
     }
   }
 
-  void _loginWithFacebook(FacebookLoginResult result) async {
+  void _loadFacebookAccount(LoginResult result) async {
     try {
-      final token = result.accessToken.token;
+      final token = result.accessToken!.token;
       final profile = await Api.getMethod(
           'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
@@ -351,8 +353,7 @@ class _MyCartQuickAccessLoginDialogState
           onSuccess: _onLoginSuccess,
           onFailure: _onFailure);
     } catch (e) {
-      print('/// _loginWithFacebook Error ///');
-      print(e.toString());
+      print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
   }
 

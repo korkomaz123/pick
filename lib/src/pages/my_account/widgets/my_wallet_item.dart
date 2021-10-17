@@ -1,4 +1,3 @@
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -19,12 +18,6 @@ class _MyWalletItemState extends State<MyWalletItem> {
   @override
   void initState() {
     super.initState();
-    _onLoadUser();
-  }
-
-  _onLoadUser() async {
-    user = await Preload.currentUser;
-    if (mounted) setState(() {});
   }
 
   @override

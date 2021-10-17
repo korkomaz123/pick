@@ -1,6 +1,5 @@
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
-import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -89,20 +88,15 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       child: Column(
         children: [
           _buildMenuHeader(),
-          Expanded(
-            child: Consumer<GlobalProvider>(
-              builder: (_, _globalProvider, __) {
-                String lang = _globalProvider.currentLanguage;
-                if (_globalProvider.sideMenus[lang]!.length == 0) {
-                  return Center(child: PulseLoadingSpinner());
-                } else {
-                  return SingleChildScrollView(
-                    child: _buildMenuItems(_globalProvider),
-                  );
-                }
-              },
-            ),
-          ),
+          if (sideMenus[lang]!.length == 0) ...[
+            Expanded(child: Center(child: PulseLoadingSpinner()))
+          ] else ...[
+            Expanded(
+              child: SingleChildScrollView(
+                child: _buildMenuItems(),
+              ),
+            )
+          ],
           ListTile(
             leading: Icon(Icons.privacy_tip),
             onTap: _onPrivacyPolicy,
@@ -238,25 +232,22 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     );
   }
 
-  Widget _buildMenuItems(GlobalProvider _globalProvider) {
-    String lang = _globalProvider.currentLanguage;
+  Widget _buildMenuItems() {
     return Container(
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
-        children: _globalProvider.sideMenus[lang]!.map((menu) {
-          int index = _globalProvider.sideMenus[lang]!.indexOf(menu);
+        children: sideMenus[lang]!.map((menu) {
+          int index = sideMenus[lang]!.indexOf(menu);
           return Column(
-            key: _globalProvider.activeIndex == index ? dataKey : null,
+            key: activeIndex == index ? dataKey : null,
             children: [
-              _buildParentMenu(_globalProvider, index),
+              _buildParentMenu(menu, activeIndex == index, index),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Divider(color: Colors.grey.shade400, height: 1.h),
               ),
-              if (_globalProvider.activeMenu == menu.id) ...[
-                _buildSubmenu(menu)
-              ],
+              if (activeIndex == index) ...[_buildSubmenu(menu)],
             ],
           );
         }).toList(),
@@ -264,12 +255,12 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     );
   }
 
-  Widget _buildParentMenu(GlobalProvider _globalProvider, int index) {
-    CategoryMenuEntity menu =
-        _globalProvider.sideMenus[_globalProvider.currentLanguage]![index];
+  Widget _buildParentMenu(CategoryMenuEntity menu, bool isActive, int index) {
     return InkWell(
-      onTap: () => menu.subMenu!.isNotEmpty
-          ? _globalProvider.displaySubmenu(menu, index)
+      onTap: () => menu.subMenu!.isNotEmpty && !isActive
+          ? setState(() {
+              activeIndex = index;
+            })
           : _viewCategory(menu, 0),
       child: Container(
         width: double.infinity,
@@ -302,9 +293,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
             ),
             if (menu.subMenu!.isNotEmpty) ...[
               Icon(
-                _globalProvider.activeMenu == menu.id
-                    ? Icons.arrow_drop_down
-                    : Icons.arrow_right,
+                isActive ? Icons.arrow_drop_down : Icons.arrow_right,
                 size: 25.sp,
                 color: greyDarkColor,
               )

@@ -205,7 +205,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
                       }
                     },
                     child: Text(
-                      widget.product.brandEntity!.brandLabel,
+                      widget.product.brandEntity?.brandLabel ?? '',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 14.sp,

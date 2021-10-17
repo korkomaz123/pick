@@ -1,5 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +13,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeGrooming extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
@@ -45,7 +44,7 @@ class HomeGrooming extends StatelessWidget {
         ),
       );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   Widget _buildHeadline() {
@@ -56,7 +55,7 @@ class HomeGrooming extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
+            child: Text(
               homeChangeNotifier.groomingTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(

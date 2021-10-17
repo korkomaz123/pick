@@ -87,7 +87,7 @@ class AmazingProductCard extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            if (product.brandEntity?.optionId != null) {
+                            if (product.brandEntity != null) {
                               ProductListArguments arguments =
                                   ProductListArguments(
                                 category: null,
@@ -104,7 +104,7 @@ class AmazingProductCard extends StatelessWidget {
                             }
                           },
                           child: Text(
-                            product.brandEntity!.brandLabel,
+                            product.brandEntity?.brandLabel ?? '',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: mediumTextStyle.copyWith(

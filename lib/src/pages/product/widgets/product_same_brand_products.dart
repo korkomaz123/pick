@@ -12,8 +12,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
@@ -41,7 +40,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
   FlushBarService? flushBarService;
   WishlistChangeNotifier? wishlistChangeNotifier;
   List<ProductModel> get sameBrandProducts =>
-      widget.model.sameBrandProductsMap[widget.product.productId]!;
+      widget.model.sameBrandProductsMap[widget.product.productId] ?? [];
 
   @override
   void initState() {

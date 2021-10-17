@@ -23,8 +23,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -69,10 +68,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   Future preloadImages() async {
     List<dynamic> urls = widget.model.selectedVariant != null
-        ? widget.model.selectedVariant!.gallery!
-        : details.gallery!;
+        ? widget.model.selectedVariant?.gallery ?? []
+        : details.gallery ?? [];
     for (var url in urls) {
-      await DefaultCacheManager().downloadFile(url);
+      if (url != null) {
+        await DefaultCacheManager().downloadFile(url);
+      }
     }
   }
 
@@ -102,7 +103,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool get discounted => _checkDiscounted();
   bool _checkDiscounted() {
     final variant = widget.model.selectedVariant;
-    return details.discount > 0 || variant!.discount! > 0;
+    return details.discount > 0 || (variant?.discount ?? 0) > 0;
   }
 
   bool get isValidUrl => _checkUrlValidation();
@@ -543,7 +544,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     );
                   },
                   child: Text(
-                    details.brandEntity!.brandLabel,
+                    details.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: Preload.language == 'en' ? 16.sp : 18.sp,
@@ -551,7 +552,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              // if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
               _buildProductPrice(),
             ],
           ),

@@ -1,3 +1,4 @@
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
@@ -65,8 +66,8 @@ class CategoryRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<List<CategoryMenuEntity>> getMenuCategories(String lang) async {
-    final params = {'lang': lang};
+  Future<List<CategoryMenuEntity>> getMenuCategories() async {
+    final params = {'lang': Preload.language};
     String url = EndPoints.getSideMenus;
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {

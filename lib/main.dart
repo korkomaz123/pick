@@ -11,7 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
-import 'slack.dart';
+// import 'slack.dart';
 import 'src/routes/routes.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
 import 'src/utils/services/dynamic_link_service.dart';
@@ -31,15 +31,15 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;
-  ErrorWidget.builder = ((FlutterErrorDetails e) {
-    int _errorLength = e.stack.toString().length;
-    SlackChannels.send('''${e.exceptionAsString()}
-     ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
-        SlackChannels.logAppErrors);
-    return Center(
-      child: Text("Something went wrong"),
-    );
-  });
+  // ErrorWidget.builder = ((FlutterErrorDetails e) {
+  //   int _errorLength = e.stack.toString().length;
+  //   SlackChannels.send('''${e.exceptionAsString()}
+  //    ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+  //       SlackChannels.logAppErrors);
+  //   return Center(
+  //     child: Text("Something went wrong"),
+  //   );
+  // });
 
   if (USE_FIRESTORE_EMULATOR)
     FirebaseFirestore.instance.settings = const Settings(

@@ -118,7 +118,9 @@ class _CategoryListPageState extends State<CategoryListPage>
           }
         });
         WidgetsBinding.instance!.addPostFrameCallback((_) {
-          Scrollable.ensureVisible(dataKey.currentContext!);
+          if (dataKey.currentContext != null) {
+            Scrollable.ensureVisible(dataKey.currentContext!);
+          }
         });
       },
       child: Container(
