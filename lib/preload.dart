@@ -133,12 +133,6 @@ class Preload {
         .catchError((error) {
       print('GET REGION LIST TIMEOUT ERROR: $error');
     });
-    categoryRepository
-        .getMenuCategories()
-        .then((result) => sideMenus[languageCode!])
-        .catchError((error) {
-      print('GET SIDEMENUS TIMEOUT ERROR: $error');
-    });
   }
 
   static loadCustomerData() async {

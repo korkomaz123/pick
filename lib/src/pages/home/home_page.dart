@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future _loadHomePage() async {
     _homeProvider!.loadPopup(_onShowPopup);
-
+    _homeProvider!.getSideMenu();
     Future.wait([
       _homeProvider!.loadSliderImages(),
       _homeProvider!.getFeaturedCategoriesList(),

@@ -407,7 +407,7 @@ class _ProductListPageState extends State<ProductListPage> {
       } else {
         await productChangeNotifier!.initialLoadSortedProducts(
           key,
-          brand!.optionId,
+          brand?.optionId ?? '',
           subCategories![activeSubcategoryIndex!].id,
           sortByItem!,
           lang,
@@ -432,11 +432,11 @@ class _ProductListPageState extends State<ProductListPage> {
     if (viewMode == ProductViewModeEnum.category) {
       key = category!.id;
     } else if (viewMode == ProductViewModeEnum.brand) {
-      key = brand!.optionId + '_' + category!.id;
+      key = '${brand!.optionId}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.sort) {
-      key = '${sortByItem}_${brand!.optionId}_${category!.id}';
+      key = '${sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.filter) {
-      key = 'filter_${brand!.optionId}_${category!.id}';
+      key = 'filter_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     }
     return key;
   }

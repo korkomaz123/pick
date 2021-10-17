@@ -88,15 +88,17 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       child: Column(
         children: [
           _buildMenuHeader(),
-          if (sideMenus[lang]!.length == 0) ...[
-            Expanded(child: Center(child: PulseLoadingSpinner()))
-          ] else ...[
-            Expanded(
-              child: SingleChildScrollView(
-                child: _buildMenuItems(),
-              ),
-            )
-          ],
+          Expanded(
+            child: Consumer<HomeChangeNotifier>(
+              builder: (_, model, __) {
+                if (model.sideMenus[lang]!.length == 0) {
+                  return Center(child: PulseLoadingSpinner());
+                } else {
+                  return SingleChildScrollView(child: _buildMenuItems());
+                }
+              },
+            ),
+          ),
           ListTile(
             leading: Icon(Icons.privacy_tip),
             onTap: _onPrivacyPolicy,
@@ -237,8 +239,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
-        children: sideMenus[lang]!.map((menu) {
-          int index = sideMenus[lang]!.indexOf(menu);
+        children: homeChangeNotifier!.sideMenus[lang]!.map((menu) {
+          int index = homeChangeNotifier!.sideMenus[lang]!.indexOf(menu);
           return Column(
             key: activeIndex == index ? dataKey : null,
             children: [

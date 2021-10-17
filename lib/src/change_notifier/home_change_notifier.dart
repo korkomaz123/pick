@@ -6,6 +6,7 @@ import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
@@ -543,5 +544,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     saleBrands = result['list'];
     saleBrandsTitle = result['title'];
     notifyListeners();
+  }
+
+  Map<String, List<CategoryMenuEntity>> sideMenus = {'en': [], 'ar': []};
+  Future getSideMenu() async {
+    categoryRepository.getMenuCategories().then((result) {
+      sideMenus[Preload.languageCode!] = result;
+      notifyListeners();
+    }).catchError((error) {
+      print('GET SIDEMENUS TIMEOUT ERROR: $error');
+    });
   }
 }

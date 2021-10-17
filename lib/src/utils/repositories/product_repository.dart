@@ -154,22 +154,12 @@ class ProductRepository {
     int page,
   ) async {
     String url = EndPoints.getBrandProducts;
-    Map<String, dynamic> params = {};
-    if (categoryId != 'all') {
-      params = {
-        'brandId': brandId,
-        'categoryId': categoryId,
-        'lang': lang,
-        'page': '$page'
-      };
-    } else {
-      params = {
-        'brandId': brandId,
-        'categoryId': null,
-        'lang': lang,
-        'page': '$page'
-      };
-    }
+    Map<String, dynamic> params = {
+      'brandId': brandId,
+      'categoryId': categoryId == 'all' ? null : categoryId,
+      'lang': lang,
+      'page': '$page'
+    };
     return await Api.getMethod(url, data: params);
   }
 
