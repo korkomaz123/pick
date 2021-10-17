@@ -366,6 +366,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'orderId': order.orderId,
+      'orderNo': order.orderNo,
       'customer': user?.token != null ? user.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
@@ -389,6 +390,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'orderId': order.orderId,
+      'orderNo': order.orderNo,
       'customer': user?.token != null ? user.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
