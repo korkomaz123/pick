@@ -331,7 +331,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       'lang': lang
     };
     final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
+    await firebaseRepository.setDoc('$path/${newOrder.orderNo}', resultData);
   }
 
   void submitCanceledOrderResult(OrderEntity order) async {
@@ -355,7 +355,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     };
     final path =
         FirebasePath.CANCELED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
   void submitPaymentFailedOrderResult(OrderEntity order) async {
@@ -379,7 +379,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     };
     final path = FirebasePath.PAYMENT_FAILED_ORDER_RESULT_COLL_PATH
         .replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
   void submitPaymentSuccessOrderResult(OrderEntity order) async {
@@ -403,6 +403,6 @@ class OrderChangeNotifier extends ChangeNotifier {
     };
     final path = FirebasePath.PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH
         .replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 }
