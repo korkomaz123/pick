@@ -81,7 +81,7 @@ dependencies:
   webview_flutter: ^2.0.13
   zoom_widget: ^0.2.1
   top_sliding_sheet:
-    path: plugins/top_sliding_sheet
+    path: plugins/top_sliding_sheet-1.0.0
 
 dependency_overrides:
   intl: ^0.17.0

@@ -1226,7 +1226,7 @@ packages:
   top_sliding_sheet:
     dependency: "direct main"
     description:
-      path: "plugins/top_sliding_sheet"
+      path: "plugins/top_sliding_sheet-1.0.0"
       relative: true
     source: path
     version: "0.5.1-dev+2"
