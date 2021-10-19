@@ -58,7 +58,7 @@ class _BrandListPageState extends State<BrandListPage> {
           }
         }
         print(nameCharList);
-        setState(() {});
+        if (mounted) setState(() {});
       }
     });
   }
@@ -252,12 +252,24 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage!,
+              key: ValueKey(
+                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? ''),
+              cacheKey:
+                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? '',
+              imageUrl:
+                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? '',
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
+                  key: ValueKey(_homeChangeNotifier
+                          .sortedBrandList[index].brandThumbnail ??
+                      ''),
+                  cacheKey: _homeChangeNotifier
+                          .sortedBrandList[index].brandThumbnail ??
+                      '',
                   imageUrl: _homeChangeNotifier
-                      .sortedBrandList[index].brandThumbnail!,
+                          .sortedBrandList[index].brandThumbnail ??
+                      '',
                 );
               },
             ),

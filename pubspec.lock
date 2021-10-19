@@ -1125,13 +1125,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.0"
-  sliding_up_panel:
-    dependency: "direct main"
-    description:
-      name: sliding_up_panel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0+1"
   smooth_page_indicator:
     dependency: "direct main"
     description:
@@ -1230,6 +1223,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.0"
+  top_sliding_sheet:
+    dependency: "direct main"
+    description:
+      path: "plugins/top_sliding_sheet"
+      relative: true
+    source: path
+    version: "0.5.1-dev+2"
   tuple:
     dependency: transitive
     description:

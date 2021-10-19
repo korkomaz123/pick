@@ -101,6 +101,8 @@ class _AlarmListPageState extends State<AlarmListPage> {
                         _goDetails(context, _items[i]['productdetail']);
                       },
                       child: CachedNetworkImage(
+                        key: ValueKey(_items[i]['productdetail']['image_url']),
+                        cacheKey: _items[i]['productdetail']['image_url'],
                         imageUrl: _items[i]['productdetail']['image_url'],
                         width: 90.w,
                         height: 80.h,

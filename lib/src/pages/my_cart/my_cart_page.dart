@@ -223,10 +223,7 @@ class _MyCartPageState extends State<MyCartPage>
     final keys = myCartChangeNotifier!.cartItemsMap.keys.toList();
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       child: AnimationLimiter(
         child: Column(
           children: List.generate(
@@ -481,7 +478,7 @@ class _MyCartPageState extends State<MyCartPage>
     orderDetails = {};
     orderDetails['shipping'] = shippingMethodId;
     orderDetails['cartId'] = myCartChangeNotifier!.cartId;
-    if (user?.token != null) {
+    if (user != null) {
       orderDetails['token'] = user!.token;
     }
 
@@ -495,7 +492,7 @@ class _MyCartPageState extends State<MyCartPage>
             myCartChangeNotifier!.cartDiscountedTotalPrice;
     subtotalPrice = myCartChangeNotifier!.cartTotalPrice;
 
-    totalPrice = subtotalPrice + serviceFees! - discount;
+    totalPrice = subtotalPrice + (serviceFees ?? 0) - discount;
 
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['discount'] =

@@ -163,6 +163,8 @@ class _ProductCardState extends State<ProductCard>
         children: [
           Container(
             child: CachedNetworkImage(
+              key: ValueKey(widget.product.imageUrl),
+              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth,
               height: widget.cardWidth,

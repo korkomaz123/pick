@@ -38,6 +38,8 @@ class WishlistProductCard extends StatelessWidget {
                 ),
               ),
               CachedNetworkImage(
+                key: ValueKey(product.imageUrl),
+                cacheKey: product.imageUrl,
                 imageUrl: product.imageUrl,
                 width: 114.w,
                 height: 140.h,

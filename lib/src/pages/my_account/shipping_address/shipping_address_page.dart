@@ -1,5 +1,6 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -118,7 +119,9 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             child: Consumer<AddressChangeNotifier>(
               builder: (_, notifier, ___) {
                 model = notifier;
-                if (model!.keys!.isEmpty) {
+                if (model?.keys == null) {
+                  return Center(child: PulseLoadingSpinner());
+                } else if (model!.keys!.isEmpty) {
                   return NoAvailableData(
                     message: 'no_saved_addresses'.tr(),
                   );

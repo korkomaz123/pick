@@ -22,6 +22,8 @@ class MarkaaReviewProductCard extends StatelessWidget {
       child: Row(
         children: [
           CachedNetworkImage(
+            key: ValueKey(cartItem.product.imageUrl),
+            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.h,
             height: 120.h,

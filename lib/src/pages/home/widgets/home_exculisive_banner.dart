@@ -27,7 +27,8 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.exculisiveBanners!.isNotEmpty) {
+    if (widget.homeChangeNotifier.exculisiveBanners != null &&
+        widget.homeChangeNotifier.exculisiveBanners!.isNotEmpty) {
       return Column(
         children: [
           Container(
@@ -85,6 +86,8 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
                     }
                   },
                   child: CachedNetworkImage(
+                    key: ValueKey(banner.bannerImage ?? ''),
+                    cacheKey: banner.bannerImage ?? '',
                     imageUrl: banner.bannerImage ?? '',
                     errorWidget: (context, url, error) =>
                         Center(child: Icon(Icons.image, size: 20)),

@@ -8,7 +8,7 @@ class HomeLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 360.h,
+      height: 260.h,
       padding: EdgeInsets.all(8.w),
       margin: EdgeInsets.only(bottom: 10.h),
       color: Colors.white,

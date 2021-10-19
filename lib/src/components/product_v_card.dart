@@ -154,6 +154,8 @@ class _ProductVCardState extends State<ProductVCard>
       child: Column(
         children: [
           CachedNetworkImage(
+            key: ValueKey(widget.product.imageUrl),
+            cacheKey: widget.product.imageUrl,
             imageUrl: widget.product.imageUrl,
             width: widget.cardWidth,
             height: widget.cardHeight * 0.63,

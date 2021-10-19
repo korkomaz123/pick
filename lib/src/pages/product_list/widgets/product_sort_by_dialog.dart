@@ -6,6 +6,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductSortByDialog extends StatelessWidget {
+  final String value;
+
+  ProductSortByDialog({required this.value});
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -59,6 +63,9 @@ class ProductSortByDialog extends StatelessWidget {
                             style: mediumTextStyle.copyWith(
                               color: primaryColor,
                               fontSize: 16.sp,
+                              fontWeight: sortByList[index] == value
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
                             ),
                           ),
                         ),

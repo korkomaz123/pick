@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/env.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
@@ -70,6 +71,147 @@ class OrderChangeNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> submitOrder(
+    Map<String, dynamic> orderDetails,
+    String lang, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    var result;
+    try {
+      String isVirtual = '0';
+      result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
+
+      if (result['code'] == 'SUCCESS') {
+        await submitOrderResult(result, orderDetails);
+        final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
+        if (user != null) {
+          ordersMap[newOrder.orderId] = newOrder;
+          await loadOrderHistories(user!.token, lang);
+          setKeys();
+          notifyListeners();
+        }
+        if (onSuccess != null) onSuccess(result['payurl'], newOrder);
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+        reportOrderIssue(result, orderDetails);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure('connection_error');
+      reportOrderIssue(
+        {'code': 'Catch Error $e', 'errorMessage': result},
+        orderDetails,
+      );
+    }
+  }
+
+  Future<void> cancelFullOrder(
+    OrderEntity order, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      final result = await orderRepository.cancelOrderById(
+          order.orderId, Preload.language);
+
+      if (result['code'] == 'SUCCESS') {
+        if (user?.token != null && ordersMap.containsKey(order.orderId)) {
+          ordersMap.remove(order.orderId);
+        }
+        submitCanceledOrderResult(order);
+        notifyListeners();
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure('connection_error');
+    }
+  }
+
+  Future<void> cancelOrder(
+    String orderId,
+    List<Map<String, dynamic>> items,
+    String additionalInfo,
+    String reason,
+    Uint8List product,
+    String imageName, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      final result = await orderRepository.cancelOrder(
+          orderId, items, additionalInfo, reason, product, imageName);
+
+      if (result['code'] == 'SUCCESS') {
+        final canceledOrder = OrderEntity.fromJson(result['order']);
+        ordersMap[orderId] = canceledOrder;
+        notifyListeners();
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure('connection_error');
+    }
+  }
+
+  Future<void> returnOrder(
+    String token,
+    String orderId,
+    List<Map<String, dynamic>> items,
+    String additionalInfo,
+    String reason,
+    Uint8List product,
+    String imageName, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      final result = await orderRepository.returnOrder(
+          token, orderId, items, additionalInfo, reason, product, imageName);
+      if (result['code'] == 'SUCCESS') {
+        if (onSuccess != null) onSuccess();
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure('connection_error');
+    }
+  }
+
+  Future<void> sendAsGift({
+    String? token,
+    String? sender,
+    String? receiver,
+    String? message,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+
+    try {
+      final result = await orderRepository.sendAsGift(
+          token!, sender!, receiver!, message!);
+      if (result['code'] == 'SUCCESS') {
+        if (onSuccess != null) onSuccess(result['gift_message_id']);
+      } else {
+        if (onFailure != null) onFailure(result['errorMessage']);
+      }
+    } catch (e) {
+      if (onFailure != null) onFailure('connection_error');
+    }
+  }
+
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
     return <String, dynamic>{
       'version.securityPatch': build.version.securityPatch,
@@ -119,185 +261,36 @@ class OrderChangeNotifier extends ChangeNotifier {
     };
   }
 
-  Future<void> submitOrder(
-    Map<String, dynamic> orderDetails,
-    String lang, {
-    Function? onProcess,
-    Function? onSuccess,
-    Function? onFailure,
-    bool isWallet = false,
-  }) async {
-    if (onProcess != null) onProcess();
-    try {
-      try {
-        Map<String, dynamic> deviceData = <String, dynamic>{};
-        final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
-        orderDetails['appInfo'] = {
-          'appName': _packageInfo.appName,
-          'packageName': _packageInfo.packageName,
-          'version': _packageInfo.version,
-          'buildNumber': _packageInfo.buildNumber,
-          'buildSignature': _packageInfo.buildSignature,
-        };
-        final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-        if (Platform.isAndroid) {
-          deviceData =
-              _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        } else if (Platform.isIOS) {
-          deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-        }
-        orderDetails['deviceInfo'] = deviceData;
-      } catch (e) {}
-
-      String isVirtual = isWallet ? '1' : '0';
-
-      final result =
-          await orderRepository.placeOrder(orderDetails, lang, isVirtual);
-      submitOrderResult(result, orderDetails);
-
-      if (result['code'] == 'SUCCESS') {
-        final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
-
-        SlackChannels.send(
-          '''new Order [${result['code']}] [${newOrder.status.toString()}] => [id : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}=>${user?.customerId ?? 'guest'}]''',
-          SlackChannels.logAddOrder,
-        );
-        if (orderDetails['token'] != null &&
-            orderDetails['token'] != '' &&
-            !isWallet) {
-          ordersMap[newOrder.orderId] = newOrder;
-
-          await loadOrderHistories(user!.token, lang);
-          setKeys();
-          notifyListeners();
-        }
-
-        if (onSuccess != null) onSuccess(result['payurl'], newOrder);
-      } else {
-        SlackChannels.send(
-          'new Order [${result['code']}] : ${result['errorMessage']}',
-          SlackChannels.logAddOrder,
-        );
-
-        if (onFailure != null) onFailure(result['errorMessage']);
-        reportOrderIssue(result, orderDetails);
-      }
-    } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
-      reportOrderIssue(e.toString(), orderDetails);
+  Future<dynamic> addDeviceInfo(dynamic details) async {
+    Map<String, dynamic> deviceData = <String, dynamic>{};
+    final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
+    orderDetails['appInfo'] = {
+      'appName': _packageInfo.appName,
+      'packageName': _packageInfo.packageName,
+      'version': _packageInfo.version,
+      'buildNumber': _packageInfo.buildNumber,
+      'buildSignature': _packageInfo.buildSignature,
+    };
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+    } else if (Platform.isIOS) {
+      deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
     }
-  }
-
-  Future<void> cancelFullOrder(
-    OrderEntity order, {
-    Function? onProcess,
-    Function? onSuccess,
-    Function? onFailure,
-  }) async {
-    if (onProcess != null) onProcess();
-    try {
-      final orderId = order.orderId;
-      final result =
-          await orderRepository.cancelOrderById(orderId, Preload.language);
-
-      if (result['code'] == 'SUCCESS') {
-        if (user?.token != null && ordersMap.containsKey(order.orderId)) {
-          ordersMap.remove(order.orderId);
-        }
-        notifyListeners();
-        if (onSuccess != null) onSuccess();
-      } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
-      }
-    } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
-    }
-  }
-
-  Future<void> cancelOrder(
-    String orderId,
-    List<Map<String, dynamic>> items,
-    String additionalInfo,
-    String reason,
-    Uint8List product,
-    String imageName, {
-    Function? onProcess,
-    Function? onSuccess,
-    Function? onFailure,
-  }) async {
-    if (onProcess != null) onProcess();
-    try {
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
-      if (result['code'] == 'SUCCESS') {
-        final canceledOrder = OrderEntity.fromJson(result['order']);
-        ordersMap[orderId] = canceledOrder;
-        notifyListeners();
-        if (onSuccess != null) onSuccess();
-      } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
-      }
-    } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
-    }
-  }
-
-  Future<void> returnOrder(
-    String token,
-    String orderId,
-    List<Map<String, dynamic>> items,
-    String additionalInfo,
-    String reason,
-    Uint8List product,
-    String imageName,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
-    try {
-      final result = await orderRepository.returnOrder(
-          token, orderId, items, additionalInfo, reason, product, imageName);
-      if (result['code'] == 'SUCCESS') {
-        onSuccess();
-      } else {
-        onFailure(result['errorMessage']);
-      }
-    } catch (e) {
-      onFailure('connection_error');
-    }
-  }
-
-  Future<void> sendAsGift({
-    String? token,
-    String? sender,
-    String? receiver,
-    String? message,
-    Function? onProcess,
-    Function? onSuccess,
-    Function? onFailure,
-  }) async {
-    if (onProcess != null) onProcess();
-
-    try {
-      final result = await orderRepository.sendAsGift(
-          token!, sender!, receiver!, message!);
-      if (result['code'] == 'SUCCESS') {
-        if (onSuccess != null) onSuccess(result['gift_message_id']);
-      } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
-      }
-    } catch (e) {
-      if (onFailure != null) onFailure('connection_error');
-    }
+    details['deviceInfo'] = deviceData;
+    return details;
   }
 
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
+    SlackChannels.send(
+      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}]',
+      SlackChannels.logOrderError,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
-      'orderDetails': orderDetails,
-      'customer': user?.token != null ? user!.toJson() : 'guest',
+      'orderDetails': await addDeviceInfo(orderDetails),
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -311,12 +304,16 @@ class OrderChangeNotifier extends ChangeNotifier {
     await firebaseRepository.addToCollection(reportData, path);
   }
 
-  void submitOrderResult(dynamic result, dynamic orderDetails) async {
+  Future submitOrderResult(dynamic result, dynamic orderDetails) async {
+    SlackChannels.send(
+      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logAddOrder,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
-      'orderDetails': orderDetails,
-      'customer': user?.token != null ? user!.toJson() : 'guest',
+      'orderDetails': await addDeviceInfo(orderDetails),
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -327,6 +324,79 @@ class OrderChangeNotifier extends ChangeNotifier {
       'lang': lang
     };
     final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
+    return await firebaseRepository.setDoc(
+        '$path/${result['orderNo']}', resultData);
+  }
+
+  void submitCanceledOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logCanceledByUserOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'orderNo': order.orderNo,
+      'customer': user != null ? user!.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path =
+        FirebasePath.CANCELED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
+  }
+
+  void submitPaymentFailedOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logPaymentFailedOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'orderNo': order.orderNo,
+      'customer': user != null ? user!.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.PAYMENT_FAILED_ORDER_RESULT_COLL_PATH
+        .replaceFirst('date', date);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
+  }
+
+  void submitPaymentSuccessOrderResult(OrderEntity order) async {
+    SlackChannels.send(
+      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      SlackChannels.logPaymentSuccessOrder,
+    );
+    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
+    final resultData = {
+      'orderId': order.orderId,
+      'orderNo': order.orderNo,
+      'customer': user != null ? user!.toJson() : 'guest',
+      'createdAt':
+          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {
+        'android': MarkaaVersion.androidVersion,
+        'iOS': MarkaaVersion.iOSVersion
+      },
+      'platform': Platform.isAndroid ? 'Android' : 'IOS',
+      'lang': lang
+    };
+    final path = FirebasePath.PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH
+        .replaceFirst('date', date);
+    await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 }

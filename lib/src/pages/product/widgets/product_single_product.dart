@@ -288,11 +288,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 arguments: details.gallery,
               ),
               child: CachedNetworkImage(
-                imageUrl: details.gallery![0],
+                key: ValueKey(details.gallery?[0] ?? ''),
+                cacheKey: details.gallery?[0] ?? '',
+                imageUrl: details.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
                 progressIndicatorBuilder: (_, __, ___) {
                   return CachedNetworkImage(
+                    key: ValueKey(details.imageUrl),
+                    cacheKey: details.imageUrl,
                     imageUrl: details.imageUrl,
                     width: designWidth.w,
                     height: 420.h,
@@ -323,12 +327,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       arguments: details.gallery,
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: details.gallery![index],
+                      key: ValueKey(details.gallery?[index] ?? ''),
+                      cacheKey: details.gallery?[index] ?? '',
+                      imageUrl: details.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {
                         if (index == 0) {
                           return CachedNetworkImage(
+                            key: ValueKey(details.imageUrl),
+                            cacheKey: details.imageUrl,
                             imageUrl: details.imageUrl,
                             width: designWidth.w,
                             height: 420.h,
@@ -389,15 +397,18 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       height: 460.h,
       child: Stack(
         children: [
-          if (widget.model.selectedVariant!.gallery!.length == 1) ...[
+          if (widget.model.selectedVariant != null &&
+              widget.model.selectedVariant!.gallery!.length == 1) ...[
             InkWell(
               onTap: () => Navigator.pushNamed(
                 context,
                 Routes.viewFullImage,
-                arguments: widget.model.selectedVariant!.gallery,
+                arguments: widget.model.selectedVariant?.gallery ?? [],
               ),
               child: CachedNetworkImage(
-                imageUrl: widget.model.selectedVariant!.gallery![0],
+                key: ValueKey(widget.model.selectedVariant?.gallery?[0] ?? ''),
+                cacheKey: widget.model.selectedVariant?.gallery?[0] ?? '',
+                imageUrl: widget.model.selectedVariant?.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
                 progressIndicatorBuilder: (_, __, ___) {
@@ -430,10 +441,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     onTap: () => Navigator.pushNamed(
                       context,
                       Routes.viewFullImage,
-                      arguments: widget.model.selectedVariant!.gallery,
+                      arguments: widget.model.selectedVariant?.gallery ?? [],
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: widget.model.selectedVariant!.gallery![index],
+                      key: ValueKey(
+                          widget.model.selectedVariant?.gallery?[index] ?? ''),
+                      cacheKey:
+                          widget.model.selectedVariant?.gallery?[index] ?? '',
+                      imageUrl:
+                          widget.model.selectedVariant?.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {

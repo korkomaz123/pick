@@ -166,9 +166,11 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user!.profileUrl!.isNotEmpty
-                      ? CachedNetworkImageProvider(user!.profileUrl!)
-                          as ImageProvider<Object>
+                  image: user?.profileUrl != null && user?.profileUrl != ''
+                      ? CachedNetworkImageProvider(
+                          user!.profileUrl!,
+                          cacheKey: user!.profileUrl!,
+                        ) as ImageProvider<Object>
                       : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),

@@ -9,9 +9,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class SelectRegionDialog extends StatefulWidget {
-  final String value;
+  final String? value;
 
-  SelectRegionDialog({required this.value});
+  SelectRegionDialog({this.value});
 
   @override
   _SelectRegionDialogState createState() => _SelectRegionDialogState();

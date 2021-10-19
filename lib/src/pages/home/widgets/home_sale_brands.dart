@@ -92,16 +92,28 @@ class HomeSaleBrands extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.sp),
                 ),
                 child: CachedNetworkImage(
+                  key: ValueKey(
+                      homeChangeNotifier.saleBrands[itemIndex].brandImage ??
+                          ''),
+                  cacheKey:
+                      homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
                   imageUrl:
-                      homeChangeNotifier.saleBrands[itemIndex].brandImage!,
+                      homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
                   width: 110.w,
                   height: 110.w,
                   progressIndicatorBuilder: (_, __, ___) {
                     return CachedNetworkImage(
+                      key: ValueKey(homeChangeNotifier
+                              .saleBrands[itemIndex].brandThumbnail ??
+                          ''),
+                      cacheKey: homeChangeNotifier
+                              .saleBrands[itemIndex].brandThumbnail ??
+                          '',
                       width: 110.w,
                       height: 110.w,
                       imageUrl: homeChangeNotifier
-                          .saleBrands[itemIndex].brandThumbnail!,
+                              .saleBrands[itemIndex].brandThumbnail ??
+                          '',
                     );
                   },
                 ),

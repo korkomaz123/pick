@@ -175,6 +175,8 @@ class _ProductHCardState extends State<ProductHCard>
               left: lang == 'ar' ? 5.w : 0,
             ),
             child: CachedNetworkImage(
+              key: ValueKey(widget.product.imageUrl),
+              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth * 0.34,
               height: widget.cardHeight,

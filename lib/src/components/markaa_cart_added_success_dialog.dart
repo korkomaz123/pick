@@ -66,7 +66,7 @@ class _MarkaaCartAddedSuccessDialogState
                 ),
                 SizedBox(width: 5.w),
                 Consumer<MyCartChangeNotifier>(
-                  builder: (_, model, ___) {
+                  builder: (_, model, __) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

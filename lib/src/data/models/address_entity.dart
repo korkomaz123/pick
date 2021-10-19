@@ -31,7 +31,7 @@ class AddressEntity {
     required this.city,
     required this.street,
     this.company,
-    required this.postCode,
+    this.postCode,
     this.phoneNumber,
     this.defaultBillingAddress,
     this.defaultShippingAddress,

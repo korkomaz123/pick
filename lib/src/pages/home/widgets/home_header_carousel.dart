@@ -95,6 +95,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             }
           },
           child: CachedNetworkImage(
+            key: ValueKey(banner.bannerImage ?? ''),
+            cacheKey: banner.bannerImage ?? '',
             width: designWidth.w,
             height: designWidth.w * 579 / 1125,
             imageUrl: banner.bannerImage ?? '',

@@ -71,10 +71,13 @@ class HomeMegaBanner extends StatelessWidget {
           color: Colors.white,
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: CachedNetworkImage(
+            key: ValueKey(homeChangeNotifier.megaBanner?.bannerImage ?? ''),
+            cacheKey: homeChangeNotifier.megaBanner?.bannerImage ?? '',
             imageUrl: homeChangeNotifier.megaBanner?.bannerImage ?? '',
             fit: BoxFit.fill,
-            errorWidget: (context, url, error) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (context, url, error) => Center(
+              child: Icon(Icons.image, size: 20),
+            ),
           ),
         ),
       );

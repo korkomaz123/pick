@@ -120,7 +120,9 @@ class HomeGrooming extends StatelessWidget {
             );
           },
           child: CachedNetworkImage(
-            imageUrl: categories[index].imageUrl!,
+            key: ValueKey(categories[index].imageUrl ?? ''),
+            cacheKey: categories[index].imageUrl ?? '',
+            imageUrl: categories[index].imageUrl ?? '',
             fit: BoxFit.fill,
             errorWidget: (context, url, error) =>
                 Center(child: Icon(Icons.image, size: 20)),

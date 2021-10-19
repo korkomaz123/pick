@@ -25,22 +25,20 @@ class PaymentAddress extends StatefulWidget {
 }
 
 class _PaymentAddressState extends State<PaymentAddress> {
-  AddressChangeNotifier? addressChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
-  FlushBarService? flushBarService;
-  ProgressService? progressService;
+  late FlushBarService flushBarService;
+  late ProgressService progressService;
 
   final dataKey = GlobalKey();
 
   _loadData() async {
-    if (user?.token == null) {
-      addressChangeNotifier!.initialize();
-      await addressChangeNotifier!.loadGuestAddress();
-    } else if (user?.token != null &&
-        (addressChangeNotifier!.addressesMap == null ||
-            addressChangeNotifier!.addressesMap!.isEmpty)) {
-      addressChangeNotifier!.initialize();
-      await addressChangeNotifier!.loadAddresses(user!.token);
+    if (user == null) {
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadGuestAddress();
+    } else if (user != null && addressChangeNotifier.addressesMap == null) {
+      addressChangeNotifier.initialize();
+      await addressChangeNotifier.loadAddresses(user!.token);
     }
   }
 
@@ -173,8 +171,8 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   Widget _buildAddressCard(String key) {
-    final address = addressChangeNotifier!.addressesMap![key];
-    final defaultAddress = addressChangeNotifier!.defaultAddress;
+    final address = addressChangeNotifier.addressesMap![key];
+    final defaultAddress = addressChangeNotifier.defaultAddress;
     return InkWell(
       onTap: () => _onUpdateAddress(key),
       child: Container(
@@ -235,7 +233,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
               left: 0,
               child: Radio(
                 value: address.addressId!,
-                groupValue: addressChangeNotifier!.defaultAddress!.addressId,
+                groupValue: addressChangeNotifier.defaultAddress!.addressId,
                 activeColor: primaryColor,
                 onChanged: _onUpdateAddress,
               ),
@@ -255,7 +253,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   Widget _buildGuestAddressCard() {
-    final address = addressChangeNotifier!.guestAddress;
+    final address = addressChangeNotifier.guestAddress;
     return Container(
       width: 355.w,
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -315,10 +313,10 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   void _onUpdateAddress(String? key) async {
-    final address = addressChangeNotifier!.addressesMap![key];
+    final address = addressChangeNotifier.addressesMap![key];
     address!.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await addressChangeNotifier!.updateAddress(user!.token, address,
+    await addressChangeNotifier.updateAddress(user!.token, address,
         onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
   }
 
@@ -386,7 +384,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
           builder: (context, state) {
             return AddressForm(
               params: {
-                'address': addressChangeNotifier!.guestAddress,
+                'address': addressChangeNotifier.guestAddress,
               },
             );
           },
@@ -396,15 +394,15 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   _onSuccess() {
-    progressService!.hideProgress();
+    progressService.hideProgress();
   }
 
   _onFailure(String message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 }

@@ -104,17 +104,28 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
             bottom: 0.h,
             left: 0.w,
             right: 0.w,
-            child: Consumer<SummerCollectionNotifier>(builder: (_, model, __) {
-              return _summerCollectionNotifier.categories.isEmpty
-                  ? Center(child: PulseLoadingSpinner())
-                  : GridView.count(
-                      crossAxisCount: 2,
-                      children: _summerCollectionNotifier.categories
-                          .map((e) => InkWell(
-                              onTap: () => _goToPage(e),
-                              child: CachedNetworkImage(imageUrl: e.imageUrl!)))
-                          .toList());
-            }),
+            child: Consumer<SummerCollectionNotifier>(
+              builder: (_, model, __) {
+                if (_summerCollectionNotifier.categories.isEmpty)
+                  return Center(child: PulseLoadingSpinner());
+                else
+                  return GridView.count(
+                    crossAxisCount: 2,
+                    children: _summerCollectionNotifier.categories
+                        .map(
+                          (e) => InkWell(
+                            onTap: () => _goToPage(e),
+                            child: CachedNetworkImage(
+                              key: ValueKey(e.imageUrl ?? ''),
+                              cacheKey: e.imageUrl ?? '',
+                              imageUrl: e.imageUrl ?? '',
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  );
+              },
+            ),
           )
         ],
       ),

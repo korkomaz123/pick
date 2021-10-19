@@ -179,8 +179,10 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
             if (_info['profile_picture'] != null)
               CircleAvatar(
                 backgroundColor: Colors.grey,
-                backgroundImage:
-                    CachedNetworkImageProvider(_info['profile_picture']),
+                backgroundImage: CachedNetworkImageProvider(
+                  _info['profile_picture'],
+                  cacheKey: _info['profile_picture'],
+                ),
                 radius: 50,
               ),
             Spacer(),

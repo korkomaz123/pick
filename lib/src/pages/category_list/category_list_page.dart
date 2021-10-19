@@ -129,7 +129,9 @@ class _CategoryListPageState extends State<CategoryListPage>
         child: Stack(
           children: [
             CachedNetworkImage(
-              imageUrl: category.imageUrl!,
+              key: ValueKey(category.imageUrl ?? ''),
+              cacheKey: category.imageUrl ?? '',
+              imageUrl: category.imageUrl ?? '',
               imageBuilder: (context, imageProvider) => Container(
                 width: 375.w,
                 height: 128.h,

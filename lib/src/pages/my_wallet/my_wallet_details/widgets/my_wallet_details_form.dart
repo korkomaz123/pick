@@ -27,11 +27,11 @@ class MyWalletDetailsForm extends StatefulWidget {
 class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   final _amountController = TextEditingController();
 
-  MarkaaAppChangeNotifier? _markaaAppChangeNotifier;
-  WalletChangeNotifier? _walletChangeNotifier;
+  late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  late WalletChangeNotifier _walletChangeNotifier;
 
-  ProgressService? _progressService;
-  FlushBarService? _flushBarService;
+  late ProgressService _progressService;
+  late FlushBarService _flushBarService;
 
   bool isValidAmount = false;
 
@@ -55,12 +55,12 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     String value = _amountController.text;
     if (value.isNotEmpty &&
         (isInt(value) || isFloat(value)) &&
-        (double.parse(value) >= widget.amount!)) {
+        (double.parse(value) >= (widget.amount ?? 0))) {
       isValidAmount = true;
     } else {
       isValidAmount = false;
     }
-    _markaaAppChangeNotifier!.rebuild();
+    _markaaAppChangeNotifier.rebuild();
   }
 
   @override
@@ -175,9 +175,9 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
       if (double.parse(_amountController.text) > 300) {
         String title = 'top_up_failed_title'.tr();
         String message = 'top_up_failed_message'.tr().replaceFirst('#', '300');
-        _flushBarService!.showErrorCustomDialog(title, message);
+        _flushBarService.showErrorCustomDialog(title, message);
       } else {
-        _walletChangeNotifier!.createWalletCart(
+        _walletChangeNotifier.createWalletCart(
           amount: _amountController.text,
           onProcess: _onCreatingWalletCart,
           onSuccess: _onCreatedWalletCartSuccess,
@@ -188,16 +188,16 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   }
 
   void _onCreatingWalletCart() {
-    _progressService!.showProgress();
+    _progressService.showProgress();
   }
 
   void _onCreatedWalletCartFailure(String message) {
-    _progressService!.hideProgress();
-    _flushBarService!.showErrorDialog(message);
+    _progressService.hideProgress();
+    _flushBarService.showErrorDialog(message);
   }
 
   void _onCreatedWalletCartSuccess() {
-    _walletChangeNotifier!.addMoneyToWallet(
+    _walletChangeNotifier.addMoneyToWallet(
       amount: _amountController.text,
       lang: Preload.language,
       onSuccess: _onAddedMoneySuccess,
@@ -206,7 +206,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   }
 
   void _onAddedMoneySuccess() {
-    _progressService!.hideProgress();
+    _progressService.hideProgress();
     showSlidingBottomSheet(
       context,
       builder: (_) {
@@ -230,7 +230,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   }
 
   void _onAddedMoneyFailure() {
-    _progressService!.hideProgress();
-    _flushBarService!.showErrorDialog('added_money_wallet_failed'.tr());
+    _progressService.hideProgress();
+    _flushBarService.showErrorDialog('added_money_wallet_failed'.tr());
   }
 }

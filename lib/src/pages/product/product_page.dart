@@ -43,9 +43,9 @@ import 'widgets/product_review_total.dart';
 import 'widgets/top_brands_in_category.dart';
 
 class ProductPage extends StatefulWidget {
-  final Object arguments;
+  final ProductModel product;
 
-  ProductPage({required this.arguments});
+  ProductPage({required this.product});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -92,7 +92,7 @@ class _ProductPageState extends State<ProductPage>
   @override
   void initState() {
     super.initState();
-    product = widget.arguments as ProductModel;
+    product = widget.product;
     productId = product!.productId;
 
     productChangeNotifier = context.read<ProductChangeNotifier>();

@@ -93,16 +93,16 @@ class _EditAddressPageState extends State<EditAddressPage> {
       lastNameController.text = addressParam!.lastName!;
       fullNameController.text =
           firstNameController.text + " " + lastNameController.text;
-      emailController.text = addressParam!.email!;
-      titleController.text = addressParam!.title!;
+      emailController.text = addressParam?.email ?? '';
+      titleController.text = addressParam?.title ?? '';
       countryController.text = addressParam!.country;
-      countryId = addressParam?.countryId;
+      countryId = addressParam!.countryId;
       stateController.text = addressParam!.region;
-      regionId = addressParam?.regionId;
+      regionId = addressParam!.regionId;
       cityController.text = addressParam!.city;
       companyController.text = addressParam!.company!;
       streetController.text = addressParam!.street;
-      postCodeController.text = addressParam!.postCode!;
+      postCodeController.text = addressParam!.postCode ?? '';
       phoneNumberController.text = addressParam!.phoneNumber!;
     } else {
       countryId = 'KW';
@@ -300,7 +300,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return SelectRegionDialog(value: regionId!);
+        return SelectRegionDialog(value: regionId);
       },
     );
     if (result != null) {

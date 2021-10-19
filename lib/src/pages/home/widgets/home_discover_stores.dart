@@ -126,14 +126,18 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     );
                   },
                   child: CachedNetworkImage(
-                    imageUrl: brand.brandImage!,
+                    key: ValueKey(brand.brandImage),
+                    cacheKey: brand.brandImage,
+                    imageUrl: brand.brandImage ?? '',
                     width: designWidth.w,
                     height: 200.h,
                     fit: BoxFit.fitHeight,
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     progressIndicatorBuilder: (_, __, ___) {
                       return CachedNetworkImage(
-                        imageUrl: brand.brandThumbnail!,
+                        key: ValueKey(brand.brandThumbnail ?? ''),
+                        cacheKey: brand.brandThumbnail ?? '',
+                        imageUrl: brand.brandThumbnail ?? '',
                         width: designWidth.w,
                         height: 200.h,
                         fit: BoxFit.fitHeight,

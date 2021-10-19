@@ -126,7 +126,7 @@ class RouteGenerator {
         );
       case Routes.product:
         return CupertinoPageRoute(
-          builder: (context) => ProductPage(arguments: params!),
+          builder: (context) => ProductPage(product: params! as ProductModel),
           settings: RouteSettings(name: Routes.product),
         );
       case Routes.myCart:
@@ -147,7 +147,7 @@ class RouteGenerator {
 
       case Routes.checkout:
         return CupertinoPageRoute(
-          builder: (context) => CheckoutPage(reorder: params as OrderEntity),
+          builder: (context) => CheckoutPage(reorder: params as OrderEntity?),
           settings: RouteSettings(name: Routes.checkout),
         );
       case Routes.checkoutPayment:
@@ -227,13 +227,14 @@ class RouteGenerator {
         );
       case Routes.shippingAddress:
         return CupertinoPageRoute(
-          builder: (context) => ShippingAddressPage(isCheckout: params as bool),
+          builder: (context) =>
+              ShippingAddressPage(isCheckout: (params ?? false) as bool),
           settings: RouteSettings(name: Routes.shippingAddress),
         );
       case Routes.editAddress:
         return CupertinoPageRoute(
           builder: (context) =>
-              EditAddressPage(params: params as Map<String, dynamic>),
+              EditAddressPage(params: params as Map<String, dynamic>?),
           settings: RouteSettings(name: Routes.editAddress),
         );
       case Routes.viewOrder:
@@ -287,12 +288,12 @@ class RouteGenerator {
         );
       case Routes.myWallet:
         return CupertinoPageRoute(
-          builder: (_) => MyWalletDetailsPage(amount: params as double),
+          builder: (_) => MyWalletDetailsPage(amount: params as double?),
           settings: RouteSettings(name: Routes.myWallet),
         );
       case Routes.myWalletCheckout:
         return CupertinoPageRoute(
-          builder: (_) => MyWalletCheckoutPage(reorder: params as OrderEntity),
+          builder: (_) => MyWalletCheckoutPage(),
           settings: settings,
         );
       case Routes.myWalletPayment:

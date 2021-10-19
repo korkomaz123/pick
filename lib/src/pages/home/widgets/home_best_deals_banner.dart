@@ -88,6 +88,8 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
+                          key: ValueKey(item.bannerImage ?? ''),
+                          cacheKey: item.bannerImage ?? '',
                           width: faceCareBanners.length == 1 ? 375.w : 340.w,
                           height:
                               (faceCareBanners.length == 1 ? 375.w : 340.w) *

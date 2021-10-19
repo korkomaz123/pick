@@ -53,7 +53,7 @@ class NotificationSetup {
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
-      _onLaunchMessage(message!.data);
+      _onLaunchMessage(message?.data ?? {});
     });
 
     await firebaseMessaging.unsubscribeFromTopic(Preload.language == 'en'
@@ -150,55 +150,59 @@ class NotificationSetup {
   //   );
   // }
 
-  Future<dynamic> _onLaunchMessage(Map<String, dynamic> message) async {
+  Future<dynamic> _onLaunchMessage(Map<String, dynamic>? message) async {
     try {
-      Map<dynamic, dynamic> data = message;
-      int target = int.parse(data['target']);
-      if (target != 0) {
-        String id = data['id'];
-        if (target == 1) {
-          final product = await productRepository.getProduct(id);
-          Navigator.pushNamed(
-            Preload.navigatorKey!.currentContext!,
-            Routes.product,
-            arguments: product,
-          );
-        } else if (target == 2) {
-          final category = await categoryRepository.getCategory(id, lang);
-          if (category != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: category,
-              subCategory: [],
-              brand: null,
-              selectedSubCategoryIndex: 0,
-              isFromBrand: false,
-            );
+      if (message != null) {
+        Map<dynamic, dynamic> data = message;
+        int target = int.parse(data['target']);
+        if (target != 0) {
+          String id = data['id'];
+          if (target == 1) {
+            final product = await productRepository.getProduct(id);
             Navigator.pushNamed(
               Preload.navigatorKey!.currentContext!,
-              Routes.productList,
-              arguments: arguments,
+              Routes.product,
+              arguments: product,
             );
-          }
-        } else if (target == 3) {
-          final brand = await brandRepository.getBrand(id, lang);
-          if (brand != null) {
-            ProductListArguments arguments = ProductListArguments(
-              category: null,
-              subCategory: [],
-              brand: brand,
-              selectedSubCategoryIndex: 0,
-              isFromBrand: true,
-            );
-            Navigator.pushNamed(
-              Preload.navigatorKey!.currentContext!,
-              Routes.productList,
-              arguments: arguments,
-            );
+          } else if (target == 2) {
+            final category = await categoryRepository.getCategory(id, lang);
+            if (category != null) {
+              ProductListArguments arguments = ProductListArguments(
+                category: category,
+                subCategory: [],
+                brand: null,
+                selectedSubCategoryIndex: 0,
+                isFromBrand: false,
+              );
+              Navigator.pushNamed(
+                Preload.navigatorKey!.currentContext!,
+                Routes.productList,
+                arguments: arguments,
+              );
+            }
+          } else if (target == 3) {
+            final brand = await brandRepository.getBrand(id, lang);
+            if (brand != null) {
+              ProductListArguments arguments = ProductListArguments(
+                category: null,
+                subCategory: [],
+                brand: brand,
+                selectedSubCategoryIndex: 0,
+                isFromBrand: true,
+              );
+              Navigator.pushNamed(
+                Preload.navigatorKey!.currentContext!,
+                Routes.productList,
+                arguments: arguments,
+              );
+            }
           }
         }
+      } else {
+        print('RECEIVED WITH NULL DATA FROM FCM NOTIFICATION');
       }
     } catch (e) {
-      print('catch error $e');
+      print('LAUNCH MESSAGE HANDLER CATCH ERROR: $e');
     }
   }
 }

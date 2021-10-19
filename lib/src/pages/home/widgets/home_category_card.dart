@@ -37,7 +37,10 @@ class HomeCategoryCard extends StatelessWidget {
         height: 249.h,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: CachedNetworkImageProvider(category.imageUrl!),
+            image: CachedNetworkImageProvider(
+              category.imageUrl ?? '',
+              cacheKey: category.imageUrl ?? '',
+            ),
             fit: BoxFit.cover,
           ),
         ),

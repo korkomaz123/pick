@@ -83,22 +83,17 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                     widget.homeChangeNotifier.sunglassesBanners.map((item) {
                   int index =
                       widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
+                  bool single =
+                      widget.homeChangeNotifier.sunglassesBanners.length == 1;
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.sunglassesBanners
-                                      .length ==
-                                  1
-                              ? 375.w
-                              : 340.w,
-                          height: (widget.homeChangeNotifier.sunglassesBanners
-                                          .length ==
-                                      1
-                                  ? 375.w
-                                  : 340.w) *
-                              (897 / 1096),
+                          key: ValueKey(item.bannerImage ?? ''),
+                          cacheKey: item.bannerImage ?? '',
+                          width: single ? 375.w : 340.w,
+                          height: (single ? 375.w : 340.w) * (897 / 1096),
                           imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>

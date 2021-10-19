@@ -43,9 +43,9 @@ class _ProductListPageState extends State<ProductListPage> {
   ProductListArguments? arguments;
   CategoryEntity? category;
   List<CategoryEntity>? subCategories;
-  String? sortByItem;
+  late String sortByItem;
   BrandEntity? brand;
-  int? activeSubcategoryIndex;
+  late int activeSubcategoryIndex;
   bool? isFromBrand;
   bool? isFilter;
   FilterBloc? filterBloc;
@@ -60,7 +60,7 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     super.initState();
-    sortByItem = '';
+    sortByItem = 'default';
     arguments = widget.arguments;
     category = arguments!.category;
     brand = arguments!.brand;
@@ -119,7 +119,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   subCategories = [category!];
                 }
                 subCategories!.addAll(model.subCategories!);
-                if (subCategories!.length > activeSubcategoryIndex!) {
+                if (subCategories!.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
                       double extra =
@@ -134,7 +134,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         duration: Duration(milliseconds: 500),
                         child: ProductListView(
                           subCategories: subCategories ?? [],
-                          activeIndex: activeSubcategoryIndex ?? 0,
+                          activeIndex: activeSubcategoryIndex,
                           scaffoldKey: scaffoldKey,
                           isFromBrand: isFromBrand ?? false,
                           isFilter: isFilter ?? false,
@@ -142,7 +142,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           onChangeTab: (index) => _onChangeTab(index),
                           scrollController: scrollController,
                           viewMode: viewMode!,
-                          sortByItem: sortByItem!,
+                          sortByItem: sortByItem,
                           filterValues: filterValues,
                           pos: pos,
                         ),
@@ -253,13 +253,17 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              imageUrl: brand!.brandImage!,
+              key: ValueKey(brand?.brandImage ?? ''),
+              cacheKey: brand?.brandImage ?? '',
+              imageUrl: brand?.brandImage ?? '',
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl: brand!.brandThumbnail!,
+                  key: ValueKey(brand?.brandThumbnail ?? ''),
+                  cacheKey: brand?.brandThumbnail ?? '',
+                  imageUrl: brand?.brandThumbnail ?? '',
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
@@ -278,8 +282,8 @@ class _ProductListPageState extends State<ProductListPage> {
       useSafeArea: false,
       builder: (context) {
         return FilterPage(
-          categoryId: subCategories![activeSubcategoryIndex!].id,
-          brandId: brand!.optionId,
+          categoryId: subCategories?[activeSubcategoryIndex].id ?? 'all',
+          brandId: brand?.optionId ?? '',
           minPrice: filterValues.containsKey('minPrice')
               ? filterValues['minPrice']
               : null,
@@ -307,11 +311,11 @@ class _ProductListPageState extends State<ProductListPage> {
       setState(() {});
       WidgetsBinding.instance!.addPostFrameCallback((_) async {
         scrollChangeNotifier!.initialize();
-        String key = _generateKey(subCategories![activeSubcategoryIndex!])!;
+        String key = _generateKey(subCategories![activeSubcategoryIndex]);
         await productChangeNotifier!.initialLoadFilteredProducts(
           key,
-          brand!.optionId,
-          subCategories![activeSubcategoryIndex!].id,
+          brand?.optionId ?? '',
+          subCategories?[activeSubcategoryIndex].id ?? 'all',
           filterValues,
           lang,
         );
@@ -331,13 +335,13 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
         duration: Duration(milliseconds: 300),
         builder: (context, state) {
-          return ProductSortByDialog();
+          return ProductSortByDialog(value: sortByItem);
         },
       );
     });
     if (result != null && sortByItem != result) {
       sortByItem = result;
-      if (sortByItem == 'default' || sortByItem!.isEmpty) {
+      if (sortByItem == 'default' || sortByItem.isEmpty) {
         if (isFromBrand!) {
           viewMode = ProductViewModeEnum.brand;
         } else {
@@ -349,26 +353,26 @@ class _ProductListPageState extends State<ProductListPage> {
       setState(() {});
       WidgetsBinding.instance!.addPostFrameCallback((_) async {
         scrollChangeNotifier!.initialize();
-        String key = _generateKey(subCategories![activeSubcategoryIndex!])!;
+        String key = _generateKey(subCategories![activeSubcategoryIndex]);
         if (viewMode == ProductViewModeEnum.category) {
           await productChangeNotifier!.initialLoadCategoryProducts(
             key,
-            subCategories![activeSubcategoryIndex!].id,
+            subCategories![activeSubcategoryIndex].id,
             lang,
           );
         } else if (viewMode == ProductViewModeEnum.brand) {
           await productChangeNotifier!.initialLoadBrandProducts(
             key,
             brand!.optionId,
-            subCategories![activeSubcategoryIndex!].id,
+            subCategories?[activeSubcategoryIndex].id ?? 'all',
             lang,
           );
         } else {
           await productChangeNotifier!.initialLoadSortedProducts(
             key,
-            brand!.optionId,
-            subCategories![activeSubcategoryIndex!].id,
-            sortByItem!,
+            brand?.optionId ?? '',
+            subCategories?[activeSubcategoryIndex].id ?? 'all',
+            sortByItem,
             lang,
           );
         }
@@ -390,7 +394,7 @@ class _ProductListPageState extends State<ProductListPage> {
     setState(() {});
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       scrollChangeNotifier!.initialize();
-      String key = _generateKey(subCategories![index])!;
+      String key = _generateKey(subCategories![index]);
       if (viewMode == ProductViewModeEnum.category) {
         await productChangeNotifier!.initialLoadCategoryProducts(
           key,
@@ -408,15 +412,15 @@ class _ProductListPageState extends State<ProductListPage> {
         await productChangeNotifier!.initialLoadSortedProducts(
           key,
           brand?.optionId ?? '',
-          subCategories![activeSubcategoryIndex!].id,
-          sortByItem!,
+          subCategories![activeSubcategoryIndex].id,
+          sortByItem,
           lang,
         );
       }
       filterValues = {};
       filterBloc!.add(FilterAttributesLoaded(
         categoryId: subCategories![index].id,
-        brandId: brand!.optionId,
+        brandId: brand?.optionId ?? '',
         lang: lang,
       ));
     });
@@ -427,12 +431,12 @@ class _ProductListPageState extends State<ProductListPage> {
     scrollChangeNotifier!.controlBrandBar(pos);
   }
 
-  String? _generateKey([CategoryEntity? category]) {
-    String? key;
+  String _generateKey([CategoryEntity? category]) {
+    late String key;
     if (viewMode == ProductViewModeEnum.category) {
-      key = category!.id;
+      key = '${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.brand) {
-      key = '${brand!.optionId}_${category?.id ?? 'all'}';
+      key = '${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.sort) {
       key = '${sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.filter) {

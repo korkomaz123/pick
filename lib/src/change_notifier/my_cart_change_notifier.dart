@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/config/constants.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -355,8 +354,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
       if (result['code'] == 'SUCCESS') {
         CartItemEntity newItem = result['item'];
-        CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
         if (cartItemsMap.containsKey(newItem.itemId)) {
+          CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
           cartTotalPrice -= oldItem.rowPrice;
           cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
         } else {
@@ -373,7 +372,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reportCartIssue(result, data);
       }
     } catch (e) {
-      print(e.toString());
+      print('ADD ITEM TO CART CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
       reportCartIssue(e.toString(), data);
     }
@@ -610,53 +609,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> checkChargeStatus(
-    String chargeId,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
-    try {
-      final result = await checkoutRepository.checkPaymentStatus(chargeId);
-      submitPaymentResult(result, chargeId);
-      if (result['status'] == 'CAPTURED') {
-        onSuccess();
-      } else {
-        onFailure(result['response']['message']);
-      }
-    } catch (e) {
-      onFailure('connection_error');
-    }
-  }
-
-  Future<void> refundPayment(
-    Map<String, dynamic> data,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    try {
-      final result = await checkoutRepository.refundPayment(data);
-      if (result['status'] == REFUND_PENDING ||
-          result['status'] == REFUND_REFUNDED) {
-        onSuccess();
-      } else if (result['status'] == REFUND_IN_PROGRESS) {
-        final result1 =
-            await checkoutRepository.checkRefundStatus(result['id']);
-        if (result1['status'] == REFUND_PENDING ||
-            result1['status'] == REFUND_REFUNDED) {
-          onSuccess();
-        } else {
-          onFailure(result1['response']['message']);
-        }
-      } else {
-        onFailure(result['response']['message']);
-      }
-    } catch (e) {
-      onFailure('connection_error');
-    }
-  }
-
   void reportCartIssue(dynamic result, dynamic data) async {
     data['cartId'] = cartId;
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -675,25 +627,5 @@ class MyCartChangeNotifier extends ChangeNotifier {
     };
     final path = FirebasePath.CART_ISSUE_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.addToCollection(reportData, path);
-  }
-
-  void submitPaymentResult(dynamic result, String chargeId) async {
-    final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
-    final resultData = {
-      'result': result,
-      'chargeId': chargeId,
-      'customer': user?.token != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion,
-      },
-      'platform': Platform.isAndroid ? 'Android' : 'IOS',
-      'lang': lang
-    };
-    final path =
-        FirebasePath.PAYMENT_RESULT_COLL_PATH.replaceFirst('date', date);
-    await firebaseRepository.addToCollection(resultData, path);
   }
 }

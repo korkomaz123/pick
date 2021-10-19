@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Markaa-App",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Markaa-App (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "top_sliding_sheet",
+            "cwd": "plugins\\top_sliding_sheet",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "top_sliding_sheet (profile mode)",
+            "cwd": "plugins\\top_sliding_sheet",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        }
+    ]
+}

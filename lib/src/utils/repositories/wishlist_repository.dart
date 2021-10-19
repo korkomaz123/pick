@@ -43,7 +43,7 @@ class WishlistRepository {
       'action': action,
       'qty': qty.toString(),
       'option': jsonEncode(options),
-      'itemId': itemId!,
+      'itemId': itemId ?? '',
     };
     print(params);
     return await Api.postMethod(url, data: params);

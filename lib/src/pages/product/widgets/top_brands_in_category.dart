@@ -60,10 +60,12 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
                               arguments: arguments);
                         },
                         child: CachedNetworkImage(
-                          imageUrl: e.brandThumbnail!,
+                          key: ValueKey(e.brandThumbnail ?? ''),
+                          cacheKey: e.brandThumbnail ?? '',
+                          imageUrl: e.brandThumbnail ?? '',
                           placeholder: (context, url) => Container(),
                           errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
+                              Center(child: Icon(Icons.error)),
                           width: 120.w,
                           height: 60.h,
                           fit: BoxFit.fitHeight,

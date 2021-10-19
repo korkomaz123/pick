@@ -47,8 +47,10 @@ class _ProductImageState extends State<ProductImage> {
                 itemBuilder: (context, index) {
                   return PhotoView(
                     backgroundDecoration: BoxDecoration(color: Colors.white),
-                    imageProvider:
-                        CachedNetworkImageProvider(images[activeIndex]),
+                    imageProvider: CachedNetworkImageProvider(
+                      images[activeIndex],
+                      cacheKey: images[activeIndex],
+                    ),
                     loadingBuilder: (context, downloadProgress) => Center(
                       child: CupertinoActivityIndicator(),
                     ),
@@ -95,7 +97,10 @@ class _ProductImageState extends State<ProductImage> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             image: DecorationImage(
-                              image: CachedNetworkImageProvider(images[index]),
+                              image: CachedNetworkImageProvider(
+                                images[index],
+                                cacheKey: images[index],
+                              ),
                             ),
                             border: Border.all(
                               color: activeIndex == index

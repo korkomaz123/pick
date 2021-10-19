@@ -55,7 +55,10 @@ class AmazingProductCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
-                      image: CachedNetworkImageProvider(product.imageUrl),
+                      image: CachedNetworkImageProvider(
+                        product.imageUrl,
+                        cacheKey: product.imageUrl,
+                      ),
                       fit: BoxFit.fitHeight,
                     ),
                     borderRadius: BorderRadius.circular(20.sp),

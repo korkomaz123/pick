@@ -148,6 +148,8 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
             ],
           ),
           CachedNetworkImage(
+            key: ValueKey(item.imageUrl),
+            cacheKey: item.imageUrl,
             imageUrl: item.imageUrl,
             width: 140.w,
             height: 160.h,

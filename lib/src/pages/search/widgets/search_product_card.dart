@@ -19,6 +19,8 @@ class SearchProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CachedNetworkImage(
+            key: ValueKey(product.imageUrl),
+            cacheKey: product.imageUrl,
             imageUrl: product.imageUrl,
             width: 50.w,
             height: 50.h,

@@ -452,7 +452,10 @@ class _SearchPageState extends State<SearchPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CachedNetworkImage(
-                                imageUrl: brands[index].brandThumbnail!),
+                              key: ValueKey(brands[index].brandThumbnail ?? ''),
+                              cacheKey: brands[index].brandThumbnail ?? '',
+                              imageUrl: brands[index].brandThumbnail ?? '',
+                            ),
                             Text(
                               brands[index].brandLabel,
                               style: mediumTextStyle.copyWith(
@@ -632,10 +635,17 @@ class _SearchPageState extends State<SearchPage>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CachedNetworkImage(
-                                imageUrl: brands[index].brandImage!,
+                                key: ValueKey(brands[index].brandImage ?? ''),
+                                cacheKey: brands[index].brandImage ?? '',
+                                imageUrl: brands[index].brandImage ?? '',
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return CachedNetworkImage(
-                                    imageUrl: brands[index].brandThumbnail!,
+                                    key: ValueKey(
+                                        brands[index].brandThumbnail ?? ''),
+                                    cacheKey:
+                                        brands[index].brandThumbnail ?? '',
+                                    imageUrl:
+                                        brands[index].brandThumbnail ?? '',
                                   );
                                 },
                               ),

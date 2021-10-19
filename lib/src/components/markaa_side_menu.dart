@@ -140,6 +140,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 width: 60.w,
                 height: 60.w,
                 child: CachedNetworkImage(
+                  key: ValueKey(user?.profileUrl ?? ''),
+                  cacheKey: user?.profileUrl ?? '',
                   imageUrl: user?.profileUrl ?? '',
                   imageBuilder: (_, _imageProvider) {
                     return Container(
@@ -275,9 +277,11 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
               children: [
                 if (menu.iconUrl!.isNotEmpty) ...[
                   CachedNetworkImage(
+                    key: ValueKey(menu.iconUrl ?? ''),
+                    cacheKey: menu.iconUrl ?? '',
                     width: 25.w,
                     height: 25.w,
-                    imageUrl: menu.iconUrl!,
+                    imageUrl: menu.iconUrl ?? '',
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) =>
                         Center(child: Icon(Icons.image, size: 20)),

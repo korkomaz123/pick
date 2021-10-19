@@ -41,15 +41,16 @@ class CelebrityCard extends StatelessWidget {
     return Container(
       width: cardWidth,
       height: cardHeight,
-      // padding: EdgeInsets.symmetric(horizontal: 8.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.grey.shade200,
         image: DecorationImage(
-            image: CachedNetworkImageProvider(
-              _image(),
-            ),
-            fit: BoxFit.cover),
+          image: CachedNetworkImageProvider(
+            _image(),
+            cacheKey: _image(),
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

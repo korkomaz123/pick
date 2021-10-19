@@ -122,28 +122,29 @@ class _ProductListViewState extends State<ProductListView>
     }
   }
 
-  String? _generateKey([CategoryEntity? category]) {
-    String? key;
+  String _generateKey([CategoryEntity? category]) {
+    late String key;
     if (widget.viewMode == ProductViewModeEnum.category) {
-      key = category!.id;
+      key = '${category?.id ?? 'all'}';
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      key = brand!.optionId + '_' + category!.id;
+      key = '${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      key = '${widget.sortByItem}_${brand!.optionId}_${category!.id}';
+      key =
+          '${widget.sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      key = 'filter_${brand!.optionId}_${category!.id}';
+      key = 'filter_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     }
     return key;
   }
 
   void _initLoadProducts() async {
-    String key = _generateKey(subCategories![widget.activeIndex])!;
+    String key = _generateKey(subCategories![widget.activeIndex]);
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.viewMode == ProductViewModeEnum.filter) {
         await productChangeNotifier!.initialLoadFilteredProducts(
           key,
-          brand!.optionId,
-          subCategories![widget.activeIndex].id,
+          brand?.optionId ?? '',
+          subCategories?[widget.activeIndex].id ?? 'all',
           widget.filterValues,
           lang,
         );
@@ -157,12 +158,12 @@ class _ProductListViewState extends State<ProductListView>
         await productChangeNotifier!.initialLoadBrandProducts(
           key,
           brand!.optionId,
-          subCategories![widget.activeIndex].id,
+          subCategories?[widget.activeIndex].id ?? '',
           lang,
         );
       }
       filterBloc!.add(FilterAttributesLoaded(
-        categoryId: subCategories![widget.activeIndex].id,
+        categoryId: subCategories?[widget.activeIndex].id ?? 'all',
         brandId: brand?.optionId ?? '',
         lang: lang,
       ));
@@ -170,7 +171,7 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Future<void> _onRefresh() async {
-    String key = _generateKey(subCategories![tabController!.index])!;
+    String key = _generateKey(subCategories![tabController!.index]);
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier!.refreshCategoryProducts(
         key,
@@ -181,22 +182,22 @@ class _ProductListViewState extends State<ProductListView>
       await productChangeNotifier!.refreshBrandProducts(
         key,
         brand!.optionId,
-        subCategories![tabController!.index].id,
+        subCategories?[tabController!.index].id ?? 'all',
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier!.refreshSortedProducts(
         key,
-        brand!.optionId,
-        subCategories![tabController!.index].id,
+        brand?.optionId ?? '',
+        subCategories?[tabController!.index].id ?? 'all',
         widget.sortByItem,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       await productChangeNotifier!.refreshFilteredProducts(
         key,
-        brand!.optionId,
-        subCategories![tabController!.index].id,
+        brand?.optionId ?? '',
+        subCategories?[tabController!.index].id ?? 'all',
         widget.filterValues,
         lang,
       );
@@ -204,8 +205,8 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   void _onLoadMore() async {
-    String key = _generateKey(subCategories![tabController!.index])!;
-    page = productChangeNotifier!.pages[key]!;
+    String key = _generateKey(subCategories![tabController!.index]);
+    page = productChangeNotifier!.pages[key] ?? 1;
     page += 1;
 
     if (widget.viewMode == ProductViewModeEnum.category) {
@@ -220,15 +221,15 @@ class _ProductListViewState extends State<ProductListView>
         key,
         page,
         brand!.optionId,
-        subCategories![tabController!.index].id,
+        subCategories?[tabController!.index].id ?? 'all',
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier!.loadMoreSortedProducts(
         key,
         page,
-        brand!.optionId,
-        subCategories![tabController!.index].id,
+        brand?.optionId ?? '',
+        subCategories?[tabController!.index].id ?? 'all',
         widget.sortByItem,
         lang,
       );
@@ -236,8 +237,8 @@ class _ProductListViewState extends State<ProductListView>
       await productChangeNotifier!.loadMoreFilteredProducts(
         key,
         page,
-        brand!.optionId,
-        subCategories![tabController!.index].id,
+        brand?.optionId ?? '',
+        subCategories?[tabController!.index].id ?? 'all',
         widget.filterValues,
         lang,
       );
@@ -266,7 +267,7 @@ class _ProductListViewState extends State<ProductListView>
                 children: subCategories!.map((cat) {
                   return Consumer<ProductChangeNotifier>(
                     builder: (ctx, notifier, _) {
-                      String index = _generateKey(cat)!;
+                      String index = _generateKey(cat);
                       if (!productChangeNotifier!.data!.containsKey(index) ||
                           productChangeNotifier!.data![index] == null) {
                         return Center(child: PulseLoadingSpinner());
@@ -423,7 +424,7 @@ class _ProductListViewState extends State<ProductListView>
   }
 
   Widget _buildArrowButton() {
-    String key = _generateKey(subCategories![tabController!.index])!;
+    String key = _generateKey(subCategories![tabController!.index]);
     return AnimatedPositioned(
       left: 120.w,
       right: 120.w,

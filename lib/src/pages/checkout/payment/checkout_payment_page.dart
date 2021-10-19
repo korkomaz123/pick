@@ -157,7 +157,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           if (user?.token != null) {
             orderChangeNotifier!.removeOrder(order!);
           }
-
+          orderChangeNotifier!.submitPaymentFailedOrderResult(order!);
           if (reorder != null) {
             Navigator.popAndPushNamed(
               context,
@@ -177,6 +177,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
             order!.status = OrderStatusEnum.processing;
             orderChangeNotifier!.updateOrder(order!);
           }
+          orderChangeNotifier!.submitPaymentSuccessOrderResult(order!);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.checkoutConfirmed,

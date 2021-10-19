@@ -94,6 +94,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   InkWell(
                     onTap: () => _onLink(item),
                     child: CachedNetworkImage(
+                      key: ValueKey(item.bannerImage ?? ''),
+                      cacheKey: item.bannerImage ?? '',
                       width: banners.length == 1 ? 375.w : 340.w,
                       height:
                           (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
+import 'package:markaa/src/utils/services/progress_service.dart';
 
 class SearchAddressView extends StatefulWidget {
   final PlaceChangeNotifier placeChangeNotifier;
@@ -29,7 +30,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   String? formLocation;
   String? toLocation;
   List<FormattedAddressEntity> formattedAddresses = [];
-  FlushBarService? flushBarService;
+  late FlushBarService flushBarService;
+  late ProgressService progressService;
 
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -40,8 +42,9 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   @override
   void initState() {
     super.initState();
-    formLocation = widget.placeChangeNotifier.formLocation!.name;
+    formLocation = widget.placeChangeNotifier.formLocation?.name ?? '';
     flushBarService = FlushBarService(context: context);
+    progressService = ProgressService(context: context);
   }
 
   @override
@@ -92,9 +95,9 @@ class _SearchAddressViewState extends State<SearchAddressView> {
           ),
           controller: TextEditingController.fromValue(
             TextEditingValue(
-              text: toLocation!,
+              text: toLocation ?? '',
               selection: TextSelection.collapsed(
-                offset: toLocation!.length,
+                offset: toLocation?.length ?? 0,
               ),
             ),
           ),
@@ -120,7 +123,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       color: Colors.white,
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: widget.placeChangeNotifier.listPlace!.length,
+        itemCount: widget.placeChangeNotifier.listPlace?.length ?? 0,
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(
@@ -225,25 +228,33 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     bool serviceEnabled;
     LocationPermission permission;
 
+    progressService.showProgress();
+
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      flushBarService!.showErrorDialog('Location services are disabled.');
+      progressService.hideProgress();
+      flushBarService.showErrorDialog('Location services are disabled.');
+      return;
     }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      flushBarService!.showErrorDialog(
+      progressService.hideProgress();
+      flushBarService.showErrorDialog(
         'Location permissions are permantly denied, we cannot request permissions.',
       );
+      return;
     }
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        flushBarService!.showErrorDialog(
+        progressService.hideProgress();
+        flushBarService.showErrorDialog(
           'Location permissions are denied (actual value: $permission).',
         );
+        return;
       }
     }
     Position position = await Geolocator.getCurrentPosition(
@@ -256,10 +267,13 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       target: LatLng(position.latitude, position.longitude),
       zoom: 14,
     );
-    _updatePosition(myPosition);
+    _updatePosition(myPosition, () => progressService.hideProgress());
   }
 
-  void _updatePosition(CameraPosition newPosition) async {
+  void _updatePosition(
+    CameraPosition newPosition, [
+    void Function()? onFoundMyLocation,
+  ]) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(newPosition));
     double lat = newPosition.target.latitude;
@@ -304,16 +318,23 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       }
     }
     searchNode.unfocus();
+    if (onFoundMyLocation != null) onFoundMyLocation();
     setState(() {});
   }
 
   void _onSelectAddress(FormattedAddressEntity address) {
+    print(address.country);
+    print(address.countryCode);
+    print(address.state);
+    print(address.city);
+    print(address.street);
+    print(address.postalCode);
     AddressEntity addressEntity = AddressEntity(
-      country: address.country!,
-      countryId: address.countryCode!,
-      region: address.state!,
-      city: address.city!,
-      street: address.street!,
+      country: address.country ?? '',
+      countryId: address.countryCode ?? '',
+      region: address.state ?? '',
+      city: address.city ?? '',
+      street: address.street ?? '',
       postCode: address.postalCode,
     );
     Navigator.pop(context, addressEntity);

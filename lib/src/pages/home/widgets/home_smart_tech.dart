@@ -100,6 +100,8 @@ class HomeSmartTech extends StatelessWidget {
               }
             },
             child: CachedNetworkImage(
+              key: ValueKey(banner.bannerImage ?? ''),
+              cacheKey: banner.bannerImage ?? '',
               imageUrl: banner.bannerImage ?? '',
               errorWidget: (context, url, error) => Center(
                 child: Icon(Icons.image, size: 20),
