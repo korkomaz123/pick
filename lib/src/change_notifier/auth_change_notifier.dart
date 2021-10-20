@@ -29,6 +29,8 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure();
       }
       notifyListeners();
+    } else {
+      if (onFailure != null) onFailure();
     }
   }
 

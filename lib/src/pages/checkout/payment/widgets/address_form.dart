@@ -310,7 +310,7 @@ class _AddressFormState extends State<AddressForm> {
     final result = await showDialog(
       context: context,
       builder: (context) {
-        return SelectRegionDialog(value: regionId!);
+        return SelectRegionDialog(value: regionId);
       },
     );
     if (result != null) {
