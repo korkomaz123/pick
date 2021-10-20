@@ -1,9 +1,10 @@
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,13 +49,17 @@ class _MyWalletItemState extends State<MyWalletItem> {
             ),
             Row(
               children: [
-                Text(
-                  NumericService.roundString(user!.balance, 3),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 20.sp,
-                    color: primaryColor,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Consumer<AuthChangeNotifier>(
+                  builder: (_, model, __) {
+                    return Text(
+                      NumericService.roundString(model.currentUser!.balance, 3),
+                      style: mediumTextStyle.copyWith(
+                        fontSize: 20.sp,
+                        color: primaryColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(width: 2.w),
                 Text(

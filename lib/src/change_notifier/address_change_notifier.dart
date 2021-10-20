@@ -75,7 +75,7 @@ class AddressChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure();
       }
     } catch (e) {
-      print(e.toString());
+      print('LOAD ADDRESS CATCH ERROR: $e');
       if (onFailure != null) onFailure();
     }
   }

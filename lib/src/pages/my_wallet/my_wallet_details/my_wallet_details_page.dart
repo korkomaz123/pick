@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/pages/my_wallet/gift/send_gift_page.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -27,21 +26,19 @@ class MyWalletDetailsPage extends StatefulWidget {
 class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
     with WidgetsBindingObserver {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   ScrollController _controller = ScrollController();
-
   ScrollDirection prevDirection = ScrollDirection.forward;
 
   @override
   void initState() {
     super.initState();
-
-    _controller.addListener(_onScroll);
-
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      _scaffoldKey.currentState!
-          .showBottomSheet((context) => _buildBottomSheet());
-    });
+    if (widget.amount == null) {
+      _controller.addListener(_onScroll);
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _scaffoldKey.currentState!
+            .showBottomSheet((context) => _buildBottomSheet());
+      });
+    }
   }
 
   _onScroll() {
@@ -59,27 +56,19 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        String router =
-            widget.amount != null ? Routes.checkout : Routes.account;
-        Navigator.popUntil(context, (route) => route.settings.name == router);
-        return true;
-      },
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
-        body: Column(
-          children: [
-            MyWalletDetailsForm(amount: widget.amount),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: _controller,
-                child: MyWalletDetailsTransactions(),
-              ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
+      body: Column(
+        children: [
+          MyWalletDetailsForm(amount: widget.amount),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _controller,
+              child: MyWalletDetailsTransactions(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -60,7 +60,9 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     } else {
       isValidAmount = false;
     }
-    _markaaAppChangeNotifier.rebuild();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _markaaAppChangeNotifier.rebuild();
+    });
   }
 
   @override
@@ -222,7 +224,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
           minHeight: designHeight.h - 100.h,
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MyWalletCheckoutPage();
+            return MyWalletCheckoutPage(fromCheckout: widget.amount != null);
           },
         );
       },

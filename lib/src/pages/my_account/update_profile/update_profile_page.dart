@@ -60,7 +60,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     );
     profileBloc = context.read<ProfileBloc>();
     fullNameController.text = user!.firstName + ' ' + user!.lastName;
-    phoneNumberController.text = user!.phoneNumber!;
+    phoneNumberController.text = user?.phoneNumber ?? '';
     emailController.text = user!.email;
   }
 

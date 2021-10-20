@@ -31,7 +31,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
 
   String? url;
   dynamic walletResult;
-
+  bool? fromCheckout;
   bool isLoading = true;
 
   @override
@@ -44,6 +44,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
 
     url = widget.params['url'];
     walletResult = widget.params['walletResult'];
+    fromCheckout = widget.params['fromCheckout'];
   }
 
   void _onBack() async {
@@ -64,10 +65,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
 
   void _onCanceledSuccess() {
     progressService.hideProgress();
-    Navigator.popUntil(
-      context,
-      (route) => route.settings.name == Routes.myWallet,
-    );
+    Navigator.pop(context);
   }
 
   void _onCanceledFailure(String message) {
@@ -76,52 +74,47 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 25.sp,
-              color: greyColor,
-            ),
-            onPressed: _onBack,
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 25.sp,
+            color: greyColor,
           ),
-          title: Text(
-            'payment_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 23.sp,
-            ),
+          onPressed: _onBack,
+        ),
+        title: Text(
+          'payment_title'.tr(),
+          style: mediumTextStyle.copyWith(
+            color: greyDarkColor,
+            fontSize: 23.sp,
           ),
         ),
-        body: Stack(
-          children: [
-            WebView(
-              initialUrl: url,
-              javascriptMode: JavascriptMode.unrestricted,
-              onWebViewCreated: (controller) {
-                webViewController = controller;
-              },
-              navigationDelegate: (action) {
-                _onPageLoaded(action.url);
-                return NavigationDecision.navigate;
-              },
-              onPageFinished: (_) {
-                if (isLoading) {
-                  isLoading = false;
-                  setState(() {});
-                }
-              },
-            ),
-            if (isLoading) ...[Center(child: PulseLoadingSpinner())],
-          ],
-        ),
+      ),
+      body: Stack(
+        children: [
+          WebView(
+            initialUrl: url,
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              webViewController = controller;
+            },
+            navigationDelegate: (action) {
+              _onPageLoaded(action.url);
+              return NavigationDecision.navigate;
+            },
+            onPageFinished: (_) {
+              if (isLoading) {
+                isLoading = false;
+                setState(() {});
+              }
+            },
+          ),
+          if (isLoading) ...[Center(child: PulseLoadingSpinner())],
+        ],
       ),
     );
   }
@@ -135,24 +128,27 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
       print('PARAMS>>> $params');
 
       if (params.containsKey('result')) {
+        String destination = fromCheckout! ? Routes.checkout : Routes.account;
         if (params['result'] == 'failed') {
           walletChangeNotifier.submitPaymentFailedWalletResult(walletResult);
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.myWalletFailed,
+            (route) => route.settings.name == destination,
             arguments: false,
           );
         } else if (params['result'] == 'success') {
           walletChangeNotifier.submitPaymentSuccessWalletResult(walletResult);
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.myWalletSuccess,
+            (route) => route.settings.name == destination,
             arguments: walletResult['orderNo'],
           );
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('REDIRECTING WALLET PAYMENT WEBVIEW PAGE CATCH ERROR: $e');
     }
   }
 }

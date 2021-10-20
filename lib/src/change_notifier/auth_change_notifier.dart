@@ -72,7 +72,7 @@ class AuthChangeNotifier extends ChangeNotifier {
 
     try {
       final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang, appleId!);
+          email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
@@ -84,6 +84,7 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      print('LOGIN WITH SOCIAL CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
     }
   }

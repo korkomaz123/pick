@@ -421,7 +421,8 @@ class _SignInPageState extends State<SignInPage> {
       await addressChangeNotifier!.loadAddresses(user!.token);
       NotificationSetup().updateFcmDeviceToken();
     } catch (e) {
-      print(e.toString());
+      print(
+          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
     }
     homeChangeNotifier!.loadRecentlyViewedCustomer();
     progressService!.hideProgress();

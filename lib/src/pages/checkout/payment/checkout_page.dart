@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
@@ -16,7 +17,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/checkout_repository.dart';
@@ -32,7 +32,6 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
 import 'widgets/payment_address.dart';
-import 'widgets/payment_method_card.dart';
 import 'widgets/payment_method_list.dart';
 import 'widgets/payment_summary.dart';
 
@@ -55,33 +54,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String payment = 'knet';
   String? cardToken;
   var details;
-  bool deliverAsGift = false;
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
+
+  late AuthChangeNotifier authChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
-  AuthChangeNotifier? authChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
-  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
-  OrderChangeNotifier? orderChangeNotifier;
-  AddressChangeNotifier? addressChangeNotifier;
-
-  bool get requireAddress =>
-      user?.token != null && addressChangeNotifier!.defaultAddress == null ||
-      user?.token == null && addressChangeNotifier!.guestAddress == null;
+  bool get emptyAddress =>
+      user != null && addressChangeNotifier.defaultAddress == null ||
+      user == null && addressChangeNotifier.guestAddress == null;
 
   void _loadAssetData() async {
     try {
-      print(paymentMethods.length);
       if (paymentMethods.isEmpty) {
         paymentMethods = await checkoutRepo.getPaymentMethod();
       }
-      print(paymentMethods.length);
       if (widget.reorder != null) {
         payment = widget.reorder!.paymentMethod.id;
+        if (payment == 'wallet' && outOfBalance) payment = 'knet';
       }
       setState(() {});
     } catch (e) {
@@ -114,12 +111,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   void _onFailure(String error) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(error);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(error);
   }
 
   @override
@@ -141,42 +138,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PaymentAddress(),
-                // _buildDeliverAsGift(),
                 if (paymentMethods.isEmpty) ...[
-                  Center(
-                    child: PulseLoadingSpinner(),
-                  ),
+                  Center(child: PulseLoadingSpinner()),
                 ] else ...[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'order_payment_method'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Column(
-                          children:
-                              List.generate(paymentMethods.length, (index) {
-                            int idx = paymentMethods.length - index - 1;
-                            if (paymentMethods[idx].id != payment) {
-                              return Container();
-                            }
-                            return PaymentMethodCard(
-                              method: paymentMethods[idx],
-                              value: payment,
-                              onInActiveChange: _onChangeMethod,
-                              isActive: false,
-                            );
-                          }),
-                        ),
-                        SizedBox(height: 20.h),
-                      ],
-                    ),
+                  PaymentMethodList(
+                    value: payment,
+                    onChangeMethod: _onChangeMethod,
                   ),
                 ],
                 PaymentSummary(details: details),
@@ -191,54 +158,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       bottomSheet: _buildPlacePaymentButton(),
     );
   }
-
-  // Widget _buildDeliverAsGift() {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding: EdgeInsets.symmetric(vertical: 30.h),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Row(
-  //           children: [
-  //             SvgPicture.asset(giftIcon),
-  //             SizedBox(width: 10.w),
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   'deliver_as_gift'.tr(),
-  //                   style: mediumTextStyle.copyWith(
-  //                     color: primaryColor,
-  //                     fontSize: 14.sp,
-  //                   ),
-  //                 ),
-  //                 Text(
-  //                   'special_reopen_special_message'.tr(),
-  //                   style: mediumTextStyle.copyWith(
-  //                     fontSize: 12.sp,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //         Transform.scale(
-  //           scale: 0.8,
-  //           child: CupertinoSwitch(
-  //             value: deliverAsGift,
-  //             onChanged: (value) async {
-  //               deliverAsGift = value;
-  //               markaaAppChangeNotifier.rebuild();
-  //               if (deliverAsGift) await _onSendAsGift();
-  //             },
-  //             activeColor: primaryColor,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildNote() {
     return Padding(
@@ -275,118 +194,74 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  void _onChangeMethod() async {
-    final result = await showSlidingBottomSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          controller: sheetController,
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 10.sp,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return PaymentMethodList(
-              value: payment,
-              controller: sheetController,
-            );
-          },
+  bool get outOfBalance => double.parse(details['totalPrice']) > user!.balance;
+  void _onChangeMethod(String? val) async {
+    if (val != null) {
+      if (val == 'wallet' && outOfBalance) {
+        final result = await flushBarService.showConfirmDialog(
+          title: 'sorry',
+          message: 'not_enough_balance',
+          yesButtonText: 'add_button_title',
+          noButtonText: 'cancel_button_title',
         );
-      },
-    );
-    if (result != null) {
-      var data = result as Map<String, dynamic>;
-      payment = data['method'];
-      cardToken = data['cardToken'];
-      markaaAppChangeNotifier!.rebuild();
+        if (result != null) {
+          var amount = double.parse(details['subTotalPrice']) - user!.balance;
+          double value = amount.ceilToDouble() + 1;
+          await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
+          if (!outOfBalance) {
+            payment = val;
+          }
+        }
+      } else {
+        payment = val;
+        markaaAppChangeNotifier.rebuild();
+      }
     }
   }
-
-  // Future _onSendAsGift() async {
-  //   final result = await showSlidingBottomSheet(
-  //     context,
-  //     builder: (_) {
-  //       return SlidingSheetDialog(
-  //         color: Colors.white,
-  //         elevation: 2,
-  //         cornerRadius: 10.sp,
-  //         snapSpec: const SnapSpec(
-  //           snap: true,
-  //           snappings: [1],
-  //           positioning: SnapPositioning.relativeToSheetHeight,
-  //         ),
-  //         duration: Duration(milliseconds: 500),
-  //         builder: (context, state) {
-  //           return DeliverAsGiftForm();
-  //         },
-  //       );
-  //     },
-  //   );
-  //   if (result != null) {
-  //     orderDetails['deliver_as_gift'] = result;
-  //   } else {
-  //     deliverAsGift = false;
-  //     orderDetails['deliver_as_gift'] = {
-  //       'deliver_as_gift': '0',
-  //       'sender': '',
-  //       'receiver': '',
-  //       'message': '',
-  //     };
-  //     markaaAppChangeNotifier.rebuild();
-  //   }
-  // }
 
   _onPlaceOrder() async {
     orderDetails['paymentMethod'] = payment;
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
-      if (cardToken == null) {
-        flushBarService!.showErrorDialog('fill_card_details_error'.tr());
-        return;
-      }
+      cardToken =
+          (await Navigator.pushNamed(context, Routes.creditCard) as String?);
+      if (cardToken == null) return;
       orderDetails['tap_token'] = cardToken;
     }
-    if (requireAddress) {
-      flushBarService!.showErrorDialog('checkout_address_error'.tr());
+    if (emptyAddress) {
+      flushBarService.showErrorDialog('checkout_address_error'.tr());
       return;
     }
 
     var address;
-    if (user?.token != null)
-      address = addressChangeNotifier!.defaultAddress!.toJson();
-    else
-      address = addressChangeNotifier!.guestAddress!.toJson();
+    if (user != null) {
+      address = addressChangeNotifier.defaultAddress!.toJson();
+    } else {
+      address = addressChangeNotifier.guestAddress!.toJson();
+    }
     address['postcode'] = address['post_code'];
     address['save_in_address_book'] = '0';
     address['region'] = address['region_id'];
     orderDetails['orderAddress'] = jsonEncode(address);
 
-    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
-    Adjust.trackEvent(adjustEvent);
-
     /// submit the order, after call this api, the status will be pending till payment be processed
-    await orderChangeNotifier!.submitOrder(orderDetails, lang,
+    await orderChangeNotifier.submitOrder(orderDetails, lang,
         onProcess: _onProcess,
         onSuccess: _onOrderSubmittedSuccess,
         onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
-    progressService!.hideProgress();
+    AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.placePayment);
+    Adjust.trackEvent(adjustEvent);
+    progressService.hideProgress();
 
     if (payment == 'cashondelivery' || payment == 'wallet') {
       _onSuccessOrder(order);
       if (payment == 'wallet') {
         user!.balance -= double.parse(order.totalPrice);
-        authChangeNotifier!.updateUserEntity(user);
+        authChangeNotifier.updateUserEntity(user);
       }
-
-      /// payment method is equal to cod, go to success page directly
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.checkoutConfirmed,
@@ -394,15 +269,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
         arguments: order,
       );
     } else if (isURL(payUrl)) {
-      /// payment method is knet or tap, go to payment webview page
       Navigator.pushNamed(
         context,
         Routes.checkoutPayment,
         arguments: {'url': payUrl, 'order': order, 'reorder': widget.reorder},
       );
     } else {
-      /// if the payurl is invalid redirect to payment failed page
-      await orderChangeNotifier!.cancelFullOrder(order,
+      await orderChangeNotifier.cancelFullOrder(order,
           onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
@@ -417,16 +290,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Future _onSuccessOrder(OrderEntity order) async {
     if (widget.reorder != null) {
-      myCartChangeNotifier!.initializeReorderCart();
+      myCartChangeNotifier.initializeReorderCart();
     } else {
-      myCartChangeNotifier!.initialize();
-      if (user?.token == null) {
+      myCartChangeNotifier.initialize();
+      if (user == null) {
         await localStorageRepo.removeItem('cartId');
       }
-      await myCartChangeNotifier!.getCartId();
+      await myCartChangeNotifier.getCartId();
     }
     double price = double.parse(order.totalPrice);
-
     AdjustEvent adjustEvent = AdjustEvent(AdjustSDKConfig.completePurchase);
     adjustEvent.setRevenue(price, 'KWD');
     Adjust.trackEvent(adjustEvent);

@@ -25,7 +25,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
       print(regions.length);
       setState(() {});
     } catch (e) {
-      print(e.toString());
+      print('LOADING REGIONS ON REGION DIALOG CATCH ERROR: $e');
     }
   }
 

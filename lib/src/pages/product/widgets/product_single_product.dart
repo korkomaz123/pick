@@ -689,8 +689,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           SizedBox(width: 10.w),
           Text(
-            (widget.model.selectedVariant!.beforePrice ??
-                    details.beforePrice!) +
+            (widget.model.selectedVariant?.beforePrice ??
+                    details.beforePrice ??
+                    '') +
                 ' ' +
                 'currency'.tr(),
             style: mediumTextStyle.copyWith(

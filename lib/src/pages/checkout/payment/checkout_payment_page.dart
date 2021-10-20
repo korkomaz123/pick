@@ -154,9 +154,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
-          if (user?.token != null) {
-            orderChangeNotifier!.removeOrder(order!);
-          }
+          if (user != null) orderChangeNotifier!.removeOrder(order!);
           orderChangeNotifier!.submitPaymentFailedOrderResult(order!);
           if (reorder != null) {
             Navigator.popAndPushNamed(
@@ -173,7 +171,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           }
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
-          if (user?.token != null) {
+          if (user != null) {
             order!.status = OrderStatusEnum.processing;
             orderChangeNotifier!.updateOrder(order!);
           }
@@ -187,7 +185,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('REDIRECTING ON ORDER PAYMENT PAGE CATCH ERROR: $e');
     }
   }
 
@@ -196,9 +194,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       myCartChangeNotifier!.initializeReorderCart();
     } else {
       myCartChangeNotifier!.initialize();
-      if (user?.token == null) {
-        await localStorageRepo.removeItem('cartId');
-      }
+      if (user == null) await localStorageRepo.removeItem('cartId');
       await myCartChangeNotifier!.getCartId();
     }
     final priceDetails = orderDetails['orderDetails'];

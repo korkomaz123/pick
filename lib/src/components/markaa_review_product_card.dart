@@ -52,7 +52,7 @@ class MarkaaReviewProductCard extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    cartItem.product.brandEntity!.brandLabel,
+                    cartItem.product.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 12.sp,

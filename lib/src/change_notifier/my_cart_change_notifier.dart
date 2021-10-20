@@ -246,7 +246,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      print('GET CART ITEMS CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
       reportCartIssue(e.toString(), data);
       notifyListeners();
@@ -452,7 +452,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      print('GET SHOPPING CART ID CATCH ERROR: $e');
     }
   }
 
@@ -529,7 +529,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     reorderCartTotalCount = 0;
     reorderCartTotalPrice = .0;
     reorderCartItemsMap = {};
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> applyCouponCode(

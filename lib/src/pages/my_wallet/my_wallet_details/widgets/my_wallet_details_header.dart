@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 
 class MyWalletDetailsHeader extends StatelessWidget
     implements PreferredSizeWidget {
@@ -34,13 +35,17 @@ class MyWalletDetailsHeader extends StatelessWidget
         preferredSize: Size.fromHeight(60.h),
         child: Column(
           children: [
-            Text(
-              '${NumericService.roundString(user!.balance, 3)} (${'kwd'.tr()})',
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: 23.sp,
-                fontWeight: FontWeight.w900,
-              ),
+            Consumer<AuthChangeNotifier>(
+              builder: (_, model, __) {
+                return Text(
+                  '${NumericService.roundString(model.currentUser!.balance, 3)} (${'kwd'.tr()})',
+                  style: mediumTextStyle.copyWith(
+                    color: primaryColor,
+                    fontSize: 23.sp,
+                    fontWeight: FontWeight.w900,
+                  ),
+                );
+              },
             ),
             Text(
               'wallet_balance'.tr(),

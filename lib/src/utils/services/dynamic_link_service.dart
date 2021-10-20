@@ -56,14 +56,16 @@ class DynamicLinkService {
     try {
       FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData? dynamicLink) async {
-          final Uri deepLink = dynamicLink!.link;
-          if (deepLink.queryParameters.containsKey('id')) {
-            dynamicLinkHandler(deepLink);
+          if (dynamicLink != null) {
+            final Uri deepLink = dynamicLink.link;
+            if (deepLink.queryParameters.containsKey('id')) {
+              dynamicLinkHandler(deepLink);
+            }
           }
         },
       );
     } catch (e) {
-      print(e.toString());
+      print('REDIREVE DYNAMIC LINK CATCH ERROR: $e');
     }
   }
 
@@ -71,12 +73,14 @@ class DynamicLinkService {
     try {
       PendingDynamicLinkData? dynamicLink =
           await FirebaseDynamicLinks.instance.getInitialLink();
-      final Uri deepLink = dynamicLink!.link;
-      if (deepLink.queryParameters.containsKey('id')) {
-        dynamicLinkHandler(deepLink);
+      if (dynamicLink != null) {
+        final Uri deepLink = dynamicLink.link;
+        if (deepLink.queryParameters.containsKey('id')) {
+          dynamicLinkHandler(deepLink);
+        }
       }
     } catch (e) {
-      print(e.toString());
+      print('INITIAL DYNAMIC LINK CATCH ERROR: $e');
     }
   }
 

@@ -75,7 +75,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         yield ProfileInformationUpdatedFailure(message: result['errorMessage']);
       }
     } catch (e) {
-      print(e.toString());
+      print('PROFILE INFORMATION UPDATE BLOC CATCH ERROR: $e');
       yield ProfileInformationUpdatedFailure(message: e.toString());
     }
   }

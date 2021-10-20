@@ -119,7 +119,7 @@ class ProductRepository {
         data: {'token': token, 'productId': productId, 'lang': lang},
       );
     } catch (e) {
-      print(e.toString());
+      print('UPDATE RECENTLY VIEWED PRODUCT FOR CUSTOMER CATCH ERROR: $e');
     }
   }
 

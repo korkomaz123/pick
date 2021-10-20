@@ -104,7 +104,8 @@ class _MyCartQuickAccessLoginDialogState
         Platform.isIOS ? lang : '',
       );
     } catch (e) {
-      print(e.toString());
+      print(
+          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON QUICK ACCESS LOGIN PAGE $e');
     }
     homeChangeNotifier!.loadRecentlyViewedCustomer();
     progressService!.hideProgress();
@@ -372,8 +373,8 @@ class _MyCartQuickAccessLoginDialogState
             onSuccess: _onLoginSuccess,
             onFailure: _onFailure);
       }
-    } catch (error) {
-      print(error);
+    } catch (e) {
+      print('GOOGLE LOGIN CATCH ERROR: $e');
     }
   }
 
@@ -401,8 +402,8 @@ class _MyCartQuickAccessLoginDialogState
           onProcess: _onProcess,
           onSuccess: _onLoginSuccess,
           onFailure: _onFailure);
-    } catch (error) {
-      print(error);
+    } catch (e) {
+      print('LOGIN WITH APPLE CATCH ERROR: $e');
     }
   }
 }
