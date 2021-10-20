@@ -166,7 +166,7 @@ class _MyCartPageState extends State<MyCartPage>
                   }
                 },
               ),
-              if (user?.token != null) ...[
+              if (user != null) ...[
                 MyCartSaveForLaterItems(
                   progressService: progressService,
                   flushBarService: flushBarService,

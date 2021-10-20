@@ -63,8 +63,7 @@ class _MyCartItemState extends State<MyCartItem> {
   @override
   Widget build(BuildContext context) {
     double price = StringService.roundDouble(widget.cartItem.product.price, 3);
-    double discountPrice = context
-        .watch<MyCartChangeNotifier>()
+    double discountPrice = widget.myCartChangeNotifier
         .getDiscountedPrice(widget.cartItem, isRowPrice: false);
     bool discounted = price > discountPrice;
     return Stack(

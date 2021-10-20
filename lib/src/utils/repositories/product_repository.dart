@@ -299,7 +299,7 @@ class ProductRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> filterProducts(
-    String? categoryId,
+    String categoryId,
     String brandId,
     Map<String, dynamic> filterValues,
     String lang,
@@ -308,8 +308,8 @@ class ProductRepository {
     String url = EndPoints.filterProducts;
     filterValues['selectedValues']['gender'] = filterValues['selectedGenders'];
     final params = {
-      'selectedCategoryId': categoryId.toString(),
-      'selectedBrandId': brandId.toString(),
+      'selectedCategoryId': categoryId == 'all' ? null : categoryId,
+      'selectedBrandId': brandId == '' ? null : brandId,
       'lang': lang,
       'categoryIds': json.encode(filterValues['selectedCategories']),
       'priceRanges':

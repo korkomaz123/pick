@@ -363,12 +363,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final result = await productRepository.filterProducts(
-      categoryId == 'all' ? null : categoryId,
-      brandId,
-      filterValues,
-      lang,
-      page,
-    );
+        categoryId, brandId, filterValues, lang, page);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> productList = result['products'];
       if (!data!.containsKey(key) || data![key] == null) {

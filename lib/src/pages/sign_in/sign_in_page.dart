@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:markaa/env.dart';
 import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
@@ -27,8 +28,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/utils/repositories/setting_repository.dart';
-import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -57,19 +56,17 @@ class _SignInPageState extends State<SignInPage> {
 
   bool isShowPass = false;
 
-  AuthChangeNotifier? authChangeNotifier;
-  HomeChangeNotifier? homeChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
-  WishlistChangeNotifier? wishlistChangeNotifier;
-  OrderChangeNotifier? orderChangeNotifier;
-  AddressChangeNotifier? addressChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late WishlistChangeNotifier wishlistChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
-  final LocalStorageRepository localRepo = LocalStorageRepository();
-  final WishlistRepository wishlistRepo = WishlistRepository();
-  final SettingRepository settingRepo = SettingRepository();
+  final LocalStorageRepository localRepository = LocalStorageRepository();
 
   @override
   void initState() {
@@ -91,7 +88,7 @@ class _SignInPageState extends State<SignInPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService!.showErrorDialog('can_not_launch_url'.tr());
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 
@@ -399,33 +396,33 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   _onLoginProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   Future _onLoginSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      SlackChannels.send('new login [${user!.email}][${user!.toJson()}]',
-          SlackChannels.logAppUsers);
-      await localRepo.setToken(user!.token);
-
-      await orderChangeNotifier!.loadOrderHistories(user!.token, lang);
-
-      await myCartChangeNotifier!.getCartId();
-      await myCartChangeNotifier!.transferCartItems();
-      await myCartChangeNotifier!.getCartItems(lang);
-
-      await wishlistChangeNotifier!.getWishlistItems(user!.token, lang);
-
-      addressChangeNotifier!.initialize();
-      await addressChangeNotifier!.loadAddresses(user!.token);
-      NotificationSetup().updateFcmDeviceToken();
+      SlackChannels.send(
+        '$dev CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        SlackChannels.logAppUsers,
+      );
+      addressChangeNotifier.initialize();
+      Future.wait([
+        localRepository.setToken(user!.token),
+        orderChangeNotifier.loadOrderHistories(user!.token, lang),
+        myCartChangeNotifier.getCartId(),
+        myCartChangeNotifier.transferCartItems(),
+        myCartChangeNotifier.getCartItems(lang),
+        wishlistChangeNotifier.getWishlistItems(user!.token, lang),
+        addressChangeNotifier.loadAddresses(user!.token),
+        homeChangeNotifier.loadRecentlyViewedCustomer(),
+        NotificationSetup().updateFcmDeviceToken(),
+      ]);
     } catch (e) {
       print(
           'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
     }
-    homeChangeNotifier!.loadRecentlyViewedCustomer();
-    progressService!.hideProgress();
+    progressService.hideProgress();
     if (Navigator.of(context).canPop()) {
       Navigator.pop(context);
     } else {
@@ -434,13 +431,13 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   _onLoginFailure(message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   _signIn() {
     if (_formKey.currentState!.validate()) {
-      authChangeNotifier!.login(
+      authChangeNotifier.login(
         emailController.text,
         passwordController.text,
         onProcess: _onLoginProcess,
@@ -459,15 +456,15 @@ class _SignInPageState extends State<SignInPage> {
         _loadFacebookAccount(result);
         break;
       case LoginStatus.cancelled:
-        flushBarService!.showErrorDialog('FACEBOOK LOGIN: CANCELED');
+        flushBarService.showErrorDialog('FACEBOOK LOGIN: CANCELED');
         break;
       case LoginStatus.failed:
         print('FACEBOOK LOGIN: FAILED: ${result.message!}');
-        flushBarService!.showErrorDialog(result.message!);
+        flushBarService.showErrorDialog(result.message!);
         break;
       default:
         print('FACEBOOK LOGIN: UNKNOWN STATUS');
-        flushBarService!.showErrorDialog('Login failed, try again later.');
+        flushBarService.showErrorDialog('Login failed, try again later.');
     }
   }
 
@@ -479,7 +476,7 @@ class _SignInPageState extends State<SignInPage> {
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier!.loginWithSocial(
+      authChangeNotifier.loginWithSocial(
           email, firstName, lastName, 'Facebook Sign', lang,
           onProcess: _onLoginProcess,
           onSuccess: _onLoginSuccess,
@@ -499,7 +496,7 @@ class _SignInPageState extends State<SignInPage> {
         String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier!.loginWithSocial(
+        authChangeNotifier.loginWithSocial(
             email, firstName, lastName, 'Google Sign', lang,
             onProcess: _onLoginProcess,
             onSuccess: _onLoginSuccess,
@@ -528,7 +525,7 @@ class _SignInPageState extends State<SignInPage> {
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier!.loginWithSocial(
+      authChangeNotifier.loginWithSocial(
           email, firstName, lastName, 'apple', lang,
           appleId: appleId,
           onProcess: _onLoginProcess,

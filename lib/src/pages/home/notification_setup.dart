@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/preload.dart';
-import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -38,12 +37,9 @@ class NotificationSetup {
   }
 
   void _configureMessaging() async {
-    final message = await FirebaseMessaging.instance.getInitialMessage();
-    if (message != null) _onLaunchMessage(message.data);
     await firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true, badge: true, sound: true);
     NotificationSettings settings = await firebaseMessaging.requestPermission();
-
     print('User granted permission: ${settings.authorizationStatus}');
 
     // FirebaseMessaging.onMessage.listen(_onForegroundMessage);
@@ -55,29 +51,20 @@ class NotificationSetup {
         .then((RemoteMessage? message) {
       _onLaunchMessage(message?.data ?? {});
     });
-
-    await firebaseMessaging.unsubscribeFromTopic(Preload.language == 'en'
-        ? MarkaaNotificationChannels.arChannel
-        : MarkaaNotificationChannels.enChannel);
-    await firebaseMessaging.subscribeToTopic(Preload.language == 'en'
-        ? MarkaaNotificationChannels.enChannel
-        : MarkaaNotificationChannels.arChannel);
-    updateFcmDeviceToken();
+    await updateFcmDeviceToken();
   }
 
-  void updateFcmDeviceToken() async {
-    firebaseMessaging.getToken().then((String? token) async {
-      deviceToken = token!;
-      if (user?.token != null) {
-        await settingRepository.updateFcmDeviceToken(
-          user!.token,
-          Platform.isAndroid ? token : '',
-          Platform.isIOS ? token : '',
-          Platform.isAndroid ? lang : '',
-          Platform.isIOS ? lang : '',
-        );
-      }
-    });
+  Future updateFcmDeviceToken() async {
+    String? deviceToken = await firebaseMessaging.getToken();
+    if (user != null) {
+      await settingRepository.updateFcmDeviceToken(
+        user!.token,
+        Platform.isAndroid ? deviceToken ?? '' : '',
+        Platform.isIOS ? deviceToken ?? '' : '',
+        Platform.isAndroid ? lang : '',
+        Platform.isIOS ? lang : '',
+      );
+    }
   }
 
   void _initializeLocalNotification() async {
@@ -102,7 +89,7 @@ class NotificationSetup {
 
   Future onSelectNotification(String? payload) async {
     if (payload != null) {
-      debugPrint('notification payload: ' + payload);
+      debugPrint('FCM NOTIFICATION PAYLOAD: ' + payload);
       await _onLaunchMessage(jsonDecode(payload));
     }
   }

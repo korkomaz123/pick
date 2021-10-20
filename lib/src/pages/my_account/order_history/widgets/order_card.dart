@@ -203,9 +203,7 @@ class _OrderCardState extends State<OrderCard> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -243,23 +241,19 @@ class _OrderCardState extends State<OrderCard> {
                 SizedBox(width: 5.w),
                 MaterialButton(
                   elevation: 0,
-                  onPressed:
-                      !isStock //|| widget.order.status == OrderStatusEnum.canceled
-                          ? () => null
-                          : () => Navigator.pushNamed(
-                                context,
-                                Routes.reOrder,
-                                arguments: widget.order,
-                              ),
+                  onPressed: !isStock
+                      ? () => null
+                      : () => Navigator.pushNamed(
+                            context,
+                            Routes.reOrder,
+                            arguments: widget.order,
+                          ),
                   minWidth: 150.w,
                   height: 45.h,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color:
-                      !isStock //||widget.order.status == OrderStatusEnum.canceled
-                          ? greyColor
-                          : primaryColor,
+                  color: !isStock ? greyColor : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

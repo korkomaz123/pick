@@ -47,14 +47,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool agreeTerms = false;
 
-  AuthChangeNotifier? authChangeNotifier;
-  HomeChangeNotifier? homeChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
 
-  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final LocalStorageRepository localRepository = LocalStorageRepository();
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   @override
   void initState() {
@@ -66,20 +66,22 @@ class _SignUpPageState extends State<SignUpPage> {
     flushBarService = FlushBarService(context: context);
   }
 
-  void _onLoginSuccess(UserEntity loggedInUser) async {
+  void _onSignUpSuccess(UserEntity newUser) async {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.register);
     Adjust.trackEvent(adjustEvent);
-    user = loggedInUser;
-    await localRepo.setToken(loggedInUser.token);
-    await myCartChangeNotifier!.getCartId();
-    await myCartChangeNotifier!.transferCartItems();
-    await myCartChangeNotifier!.getCartItems(lang);
-    homeChangeNotifier!.loadRecentlyViewedCustomer();
-    progressService!.hideProgress();
+    user = newUser;
+
+    Future.wait([
+      localRepository.setToken(newUser.token),
+      myCartChangeNotifier.getCartId(),
+      myCartChangeNotifier.transferCartItems(),
+      myCartChangeNotifier.getCartItems(lang),
+      homeChangeNotifier.loadRecentlyViewedCustomer(),
+    ]);
+
+    progressService.hideProgress();
     Navigator.pop(context);
-    if (!widget.isFromCheckout) {
-      Navigator.pop(context);
-    }
+    if (!widget.isFromCheckout) Navigator.pop(context);
   }
 
   @override
@@ -445,29 +447,29 @@ class _SignUpPageState extends State<SignUpPage> {
         String fullName = fullNameController.text;
         String firstName = fullName.split(' ')[0];
         String lastName = fullName.split(' ')[1];
-        authChangeNotifier!.signUp(
+        authChangeNotifier.signUp(
           firstName,
           lastName,
           phoneNumberController.text,
           emailController.text,
           passwordController.text,
           onProcess: _onProcess,
-          onSuccess: _onLoginSuccess,
+          onSuccess: _onSignUpSuccess,
           onFailure: _onFailure,
         );
       } else {
-        flushBarService!.showErrorDialog('ask_agree_privacy_policy'.tr());
+        flushBarService.showErrorDialog('ask_agree_privacy_policy'.tr());
       }
     }
   }
 
   _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   _onFailure(message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   void _onPrivacyPolicy() async {
@@ -475,7 +477,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService!.showErrorDialog('can_not_launch_url'.tr());
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 }

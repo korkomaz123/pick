@@ -121,12 +121,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       onSuccess: (data) async {
         user = data;
         NotificationSetup().init();
-        await _myCartChangeNotifier!.getCartId();
-        await _myCartChangeNotifier!.getCartItems(Preload.language);
+        Future.wait([
+          _myCartChangeNotifier!.getCartId(),
+          _myCartChangeNotifier!.getCartItems(Preload.language),
+        ]);
       },
       onFailure: () async {
-        await _myCartChangeNotifier!.getCartId();
-        await _myCartChangeNotifier!.getCartItems(Preload.language);
+        Future.wait([
+          _myCartChangeNotifier!.getCartId(),
+          _myCartChangeNotifier!.getCartItems(Preload.language),
+        ]);
       },
     );
     _productChangeNotifier!.initialize();
@@ -162,7 +166,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    Preload.setLanguage();
     return WillPopScope(
       onWillPop: () async {
         exit(0);

@@ -15,8 +15,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final LocalStorageRepository localRepo = LocalStorageRepository();
-
+  final localRepository = LocalStorageRepository();
   bool _firstOpen = false;
 
   @override
@@ -30,7 +29,7 @@ class _SplashPageState extends State<SplashPage> {
     Preload.firebaseLogin();
 
     /// CHECK USER OPEN THE APP FIRST TIME
-    _firstOpen = !(await localRepo.existItem('usage'));
+    _firstOpen = !(await localRepository.existItem('usage'));
     setState(() {});
 
     /// CHECK THE UPGRADABLE STATUS: MANDATORY OR NOT
@@ -46,7 +45,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _onLang(String val) async {
     /// Set first time opening passed
-    await localRepo.setItem('usage', 'markaa');
+    await localRepository.setItem('usage', 'markaa');
     Preload.setLanguage(val: val);
 
     Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(

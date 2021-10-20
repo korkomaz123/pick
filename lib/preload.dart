@@ -51,7 +51,6 @@ class Preload {
     } else {
       lang = languageCode = language;
     }
-
     final enLocale = EasyLocalization.of(navigatorKey!.currentContext!)!
         .supportedLocales
         .first;
@@ -137,16 +136,14 @@ class Preload {
 
   static loadCustomerData() async {
     if (user != null) {
-      navigatorKey!.currentContext!
-          .read<WishlistChangeNotifier>()
-          .getWishlistItems(user!.token, lang);
-      navigatorKey!.currentContext!
-          .read<OrderChangeNotifier>()
-          .loadOrderHistories(user!.token, lang);
-      navigatorKey!.currentContext!.read<AddressChangeNotifier>().initialize();
-      navigatorKey!.currentContext!
-          .read<AddressChangeNotifier>()
-          .loadAddresses(user!.token);
+      BuildContext context = navigatorKey!.currentContext!;
+      String token = user!.token;
+      context.read<AddressChangeNotifier>().initialize();
+      Future.wait([
+        context.read<WishlistChangeNotifier>().getWishlistItems(token, lang),
+        context.read<OrderChangeNotifier>().loadOrderHistories(token, lang),
+        context.read<AddressChangeNotifier>().loadAddresses(token),
+      ]);
     }
   }
 
