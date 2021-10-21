@@ -357,11 +357,11 @@ class _AddressFormState extends State<AddressForm> {
         phoneNumber: phoneNumberController.text,
         company: companyController.text,
         email: emailController.text,
-        defaultBillingAddress: addressParam!.defaultBillingAddress,
-        defaultShippingAddress: addressParam!.defaultShippingAddress,
+        defaultBillingAddress: addressParam?.defaultBillingAddress ?? 1,
+        defaultShippingAddress: addressParam?.defaultShippingAddress ?? 1,
         addressId: addressParam?.addressId ?? '',
       );
-      if (user?.token != null) {
+      if (user != null) {
         if (isNew!) {
           await model!.addAddress(user!.token, address,
               onProcess: _onProcess,

@@ -30,9 +30,8 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
     super.initState();
     OneSignal.shared.getTags().then((tags) {
       if (tags.containsKey('amount_spent')) {
-        double orderPrice =
-            StringService.roundDouble(widget.order.totalPrice, 3);
-        double value =
+        var orderPrice = StringService.roundDouble(widget.order.totalPrice, 3);
+        var value =
             StringService.roundDouble(tags['amount_spent'].toString(), 3);
         OneSignal.shared.sendTag('amount_sent', value + orderPrice);
       }
@@ -98,25 +97,27 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                   ),
                 ),
               ),
-              if (user?.token != null) ...[_buildShowAllMyOrderedButton()],
-              Text(
-                'checkout_ordered_success_account_title'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 17.sp,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Padding(
-                padding: EdgeInsets.only(left: 8.w),
-                child: Text(
-                  'checkout_ordered_success_account_text'.tr(),
+              if (user != null) ...[
+                _buildShowAllMyOrderedButton(),
+                Text(
+                  'checkout_ordered_success_account_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     color: greyColor,
-                    fontSize: 14.sp,
+                    fontSize: 17.sp,
                   ),
                 ),
-              ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.w),
+                  child: Text(
+                    'checkout_ordered_success_account_text'.tr(),
+                    style: mediumTextStyle.copyWith(
+                      color: greyColor,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+              ],
               _buildBackToShopButton(),
             ],
           ),

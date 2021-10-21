@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/config/config.dart';
 
 class Api {
   static Dio _dio = Dio();
@@ -37,6 +38,8 @@ class Api {
     print(url);
     print(data);
     if (!data!.containsKey('lang')) data['lang'] = Preload.language;
+    data['androidVersion'] = MarkaaVersion.androidVersion;
+    data['iOSVersion'] = MarkaaVersion.iOSVersion;
 
     final response = await _dio.post(
       url,

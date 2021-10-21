@@ -35,7 +35,7 @@ class OrderRepository {
     String lang,
     String isVirtual,
   ) async {
-    String url = EndPoints.submitOrder;
+    String url = EndPoints.placeOrder;
     Map<String, dynamic> data =
         orderDetails.map((key, value) => MapEntry(key, value));
     data['orderDetails'] = jsonEncode(orderDetails['orderDetails']);

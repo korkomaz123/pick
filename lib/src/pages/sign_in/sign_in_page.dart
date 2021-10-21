@@ -403,7 +403,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       user = loggedInUser;
       SlackChannels.send(
-        '$dev CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
