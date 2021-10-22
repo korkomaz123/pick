@@ -38,8 +38,8 @@ class Api {
     print(url);
     print(data);
     if (!data!.containsKey('lang')) data['lang'] = Preload.language;
-    data['androidVersion'] = MarkaaVersion.androidVersion;
-    data['iOSVersion'] = MarkaaVersion.iOSVersion;
+    data['androidVersion'] = MarkaaVersion.androidVersion.toString();
+    data['iOSVersion'] = MarkaaVersion.iOSVersion.toString();
 
     final response = await _dio.post(
       url,

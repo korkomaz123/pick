@@ -28,7 +28,7 @@ class ViewOrderPage extends StatefulWidget {
 
 class _ViewOrderPageState extends State<ViewOrderPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  OrderEntity? order;
+  late OrderEntity order;
   String icon = '';
   Color? color;
   String status = '';
@@ -39,7 +39,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   void initState() {
     super.initState();
     order = widget.order;
-    switch (order!.status) {
+    switch (order.status) {
       case OrderStatusEnum.canceled:
         icon = cancelledIcon;
         color = greyDarkColor;
@@ -65,6 +65,21 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = darkColor;
         status = 'returned'.tr();
         break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;
@@ -75,8 +90,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   }
 
   void _checkOrderItems() {
-    for (int i = 0; i < order!.cartItems.length; i++) {
-      if (order!.cartItems[i].product.stockQty! > 0) {
+    for (int i = 0; i < order.cartItems.length; i++) {
+      if (order.cartItems[i].product.stockQty! > 0) {
         isStock = true;
         break;
       }
@@ -151,15 +166,15 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
                 _buildDiscount(),
               ],
               _buildTotal(),
-              OrderAddressBar(address: order!.address),
-              if (isStock && order!.status != OrderStatusEnum.canceled) ...[
+              OrderAddressBar(address: order.address),
+              if (isStock && order.status != OrderStatusEnum.canceled) ...[
                 _buildReorderButton()
               ],
               // if (order.status == OrderStatusEnum.pending ||
               //     order.status == OrderStatusEnum.order_approval_pending) ...[
               //   _buildCancelOrderButton()
               // ],
-              if (order!.status == OrderStatusEnum.complete) ...[
+              if (order.status == OrderStatusEnum.complete) ...[
                 _buildReturnOrderButton()
               ]
             ],
@@ -181,7 +196,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'order_order_no'.tr() + ' #${order!.orderNo}',
+            'order_order_no'.tr() + ' #${order.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -210,7 +225,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           Text(
-            order!.orderDate,
+            order.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -252,17 +267,17 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Widget _buildOrderItems() {
     return Column(
       children: List.generate(
-        order!.cartItems.length,
+        order.cartItems.length,
         (index) {
           return Column(
             children: [
               OrderItemCard(
-                order: order!,
-                cartItem: order!.cartItems[index],
-                canceled: order!.cartItems[index].itemCountCanceled! > 0,
-                returned: order!.cartItems[index].itemCountReturned! > 0,
+                order: order,
+                cartItem: order.cartItems[index],
+                canceled: order.cartItems[index].itemCountCanceled! > 0,
+                returned: order.cartItems[index].itemCountReturned! > 0,
               ),
-              if (index < (order!.cartItems.length - 1)) ...[
+              if (index < (order.cartItems.length - 1)) ...[
                 Divider(color: greyColor, thickness: 0.5)
               ],
             ],
@@ -289,7 +304,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
             ),
           ),
           OrderPaymentMethod(
-            paymentMethod: order!.paymentMethod.id,
+            paymentMethod: order.paymentMethod.id,
           ),
         ],
       ),
@@ -298,8 +313,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   Widget _buildSubtotal() {
     String subtotal = '0.000';
-    if (order!.status != OrderStatusEnum.canceled) {
-      subtotal = order!.subtotalPrice;
+    if (order.status != OrderStatusEnum.canceled) {
+      subtotal = order.subtotalPrice;
     }
     return Container(
       width: double.infinity,
@@ -331,8 +346,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   Widget _buildShippingCost() {
     double fees = .0;
-    if (order!.status != OrderStatusEnum.canceled) {
-      fees = order!.shippingMethod.serviceFees;
+    if (order.status != OrderStatusEnum.canceled) {
+      fees = order.shippingMethod.serviceFees;
     }
     return Container(
       width: double.infinity,
@@ -395,8 +410,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   Widget _buildTotal() {
     String totalPrice = '0.000';
-    if (order!.status != OrderStatusEnum.canceled) {
-      totalPrice = order!.totalPrice;
+    if (order.status != OrderStatusEnum.canceled) {
+      totalPrice = order.totalPrice;
     }
     return Container(
       width: double.infinity,

@@ -71,6 +71,21 @@ class _OrderCardState extends State<OrderCard> {
         color = darkColor;
         status = 'returned'.tr();
         break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;

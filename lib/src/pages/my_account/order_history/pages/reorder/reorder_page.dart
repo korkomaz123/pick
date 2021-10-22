@@ -130,6 +130,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
   void _getOrderStatus() {
     order = widget.order;
     switch (order!.status) {
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = greyDarkColor;
+        status = 'order_cancelled'.tr();
+        break;
       case OrderStatusEnum.pending:
         icon = pendingIcon;
         color = dangerColor;
@@ -144,6 +149,26 @@ class _ReOrderPageState extends State<ReOrderPage> {
         icon = deliveredIcon;
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
+        break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
+        break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
         break;
       default:
         icon = pendingIcon;

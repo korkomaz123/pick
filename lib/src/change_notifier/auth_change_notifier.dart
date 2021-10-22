@@ -75,6 +75,7 @@ class AuthChangeNotifier extends ChangeNotifier {
     try {
       final result = await _signInRepository.socialLogin(
           email, firstName, lastName, loginType, lang, appleId);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];

@@ -15,10 +15,12 @@ enum OrderStatusEnum {
   paypal_canceled_reversal,
   paypal_reversed,
   pending,
-  pending_payment,
   pending_paypal,
   processing,
   new_pending,
+  pending_payment,
+  canceled_payment,
+  failed_payment
 }
 enum ProductViewModeEnum { category, brand, filter, sort, celebrity }
 enum ProcessStatus { none, process, done, failed }

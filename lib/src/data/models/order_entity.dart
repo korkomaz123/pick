@@ -59,9 +59,10 @@ class OrderEntity {
         orderNo = json['increment_id'],
         orderDate = _covertLocalTime(json['created_at_timestamp']),
         status = EnumToString.fromString(
-          OrderStatusEnum.values,
-          json['status'],
-        )!,
+              OrderStatusEnum.values,
+              json['status'],
+            ) ??
+            OrderStatusEnum.new_pending,
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
             ? '0.000'
