@@ -440,7 +440,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
 
   Future<void> getCartId() async {
     try {
-      if (user?.token != null) {
+      if (user != null) {
         cartId = await myCartRepository.getShoppingCart(user!.token);
       } else {
         if (await localStorageRepository.existItem('cartId')) {

@@ -317,8 +317,6 @@ class ProductRepository {
       'filter': json.encode(filterValues['selectedValues']),
       'page': page.toString(),
     };
-    print(url);
-    print(params);
     return await Api.postMethod(url, data: params);
   }
 }
