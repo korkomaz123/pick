@@ -365,6 +365,12 @@ class ProductChangeNotifier extends ChangeNotifier {
     final result = await productRepository.filterProducts(
         categoryId, brandId, filterValues, lang, page);
     if (result['code'] == 'SUCCESS') {
+      print('key ==== > $key');
+      if (result['currentpage'] != null) currentpage[key] = page.toString();
+      if (result['totalpage'] != null)
+        totalPages[key] = result['totalpage'].toString();
+      if (result['totalproducts'] != null)
+        totalProducts[key] = result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
       if (!data!.containsKey(key) || data![key] == null) {
         data![key] = [];

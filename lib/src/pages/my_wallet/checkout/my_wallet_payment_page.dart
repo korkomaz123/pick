@@ -37,6 +37,7 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
@@ -45,6 +46,22 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
     url = widget.params['url'];
     walletResult = widget.params['walletResult'];
     fromCheckout = widget.params['fromCheckout'];
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      walletChangeNotifier.cancelWalletPayment(walletResult);
+    } else if (state == AppLifecycleState.resumed) {
+      Navigator.pop(context);
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 
   void _onBack() async {

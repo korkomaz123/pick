@@ -62,42 +62,62 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  HomeChangeNotifier? _homeProvider;
-  MarkaaAppChangeNotifier? _markaaAppChangeNotifier;
-  ProductChangeNotifier? _productChangeNotifier;
-  MyCartChangeNotifier? _myCartChangeNotifier;
-  AuthChangeNotifier? _authChangeNotifier;
+  late HomeChangeNotifier _homeProvider;
+  late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  late ProductChangeNotifier _productChangeNotifier;
+  late MyCartChangeNotifier _myCartChangeNotifier;
+  late AuthChangeNotifier _authChangeNotifier;
 
-  OneSignalCommunicator? _oneSignalCommunicator;
+  late OneSignalCommunicator _oneSignalCommunicator;
   DynamicLinkService _dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
   ScrollDirection _prevDirection = ScrollDirection.forward;
 
   Future _loadHomePage() async {
-    _homeProvider!.loadPopup(_onShowPopup);
-    _homeProvider!.getSideMenu();
+    _homeProvider.loadPopup(_onShowPopup);
+    _homeProvider.getSideMenu();
     Future.wait([
-      _homeProvider!.loadSliderImages(),
-      _homeProvider!.getFeaturedCategoriesList(),
-      _homeProvider!.loadMegaBanner(),
-      _homeProvider!.loadBestDeals(),
-      _homeProvider!.loadFaceCare(),
-      _homeProvider!.getBrandsOnSale(),
-      _homeProvider!.loadNewArrivals(),
-      _homeProvider!.loadExculisiveBanner(),
-      _homeProvider!.loadOrientalProducts(),
-      _homeProvider!.loadNewArrivalsBanner(),
-      _homeProvider!.loadFragrancesBanner(),
-      _homeProvider!.loadPerfumes(),
-      _homeProvider!.loadBestWatches(),
-      _homeProvider!.gethomecelebrity(),
-      _homeProvider!.loadGrooming(),
-      _homeProvider!.loadAds(),
-      _homeProvider!.loadSmartTech(),
-      _homeProvider!.getCategoriesList(),
-      _homeProvider!.getBrandsList('home'),
-      _homeProvider!.getViewedProducts(),
+      _homeProvider.loadSliderImages(),
+      _homeProvider.getFeaturedCategoriesList(),
+      _homeProvider.loadMegaBanner(),
+      _homeProvider.loadBestDeals(),
+      _homeProvider.loadFaceCare(),
+      _homeProvider.getBrandsOnSale(),
+      _homeProvider.loadNewArrivals(),
+      _homeProvider.loadExculisiveBanner(),
+      _homeProvider.loadOrientalProducts(),
+      _homeProvider.loadNewArrivalsBanner(),
+      _homeProvider.loadFragrancesBanner(),
+      _homeProvider.loadPerfumes(),
+      _homeProvider.loadBestWatches(),
+      _homeProvider.gethomecelebrity(),
+      _homeProvider.loadGrooming(),
+      _homeProvider.loadAds(),
+      _homeProvider.loadSmartTech(),
+      _homeProvider.getCategoriesList(),
+      _homeProvider.getBrandsList('home'),
+      _homeProvider.getViewedProducts(),
     ]);
+  }
+
+  void _onScroll() {
+    if (_prevDirection != _scrollController.position.userScrollDirection) {
+      if (_prevDirection == ScrollDirection.forward) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(false);
+      } else if (_prevDirection == ScrollDirection.reverse) {
+        _markaaAppChangeNotifier.changeSearchBarStatus(true);
+      }
+    }
+    _prevDirection = _scrollController.position.userScrollDirection;
+  }
+
+  void _onShowPopup(SliderImageEntity popupItem) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return HomePopupDialog(item: popupItem);
+      },
+    );
   }
 
   @override
@@ -113,27 +133,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _homeProvider = context.read<HomeChangeNotifier>();
     _oneSignalCommunicator = OneSignalCommunicator(context: context);
 
-    _oneSignalCommunicator!.subscribeToChangeNotifiers();
+    _oneSignalCommunicator.subscribeToChangeNotifiers();
     _dynamicLinkService.initialDynamicLink();
     _dynamicLinkService.retrieveDynamicLink();
 
-    _authChangeNotifier!.getCurrentUser(
+    _authChangeNotifier.getCurrentUser(
       onSuccess: (data) async {
         user = data;
         NotificationSetup().init();
         Future.wait([
-          _myCartChangeNotifier!.getCartId(),
-          _myCartChangeNotifier!.getCartItems(Preload.language),
+          _myCartChangeNotifier.getCartId(),
+          _myCartChangeNotifier.getCartItems(Preload.language),
         ]);
       },
       onFailure: () async {
         Future.wait([
-          _myCartChangeNotifier!.getCartId(),
-          _myCartChangeNotifier!.getCartItems(Preload.language),
+          _myCartChangeNotifier.getCartId(),
+          _myCartChangeNotifier.getCartItems(Preload.language),
         ]);
       },
     );
-    _productChangeNotifier!.initialize();
+    _productChangeNotifier.initialize();
     _scrollController.addListener(_onScroll);
     _loadHomePage();
   }
@@ -142,26 +162,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
-  }
-
-  _onScroll() {
-    if (_prevDirection != _scrollController.position.userScrollDirection) {
-      if (_prevDirection == ScrollDirection.forward) {
-        _markaaAppChangeNotifier!.changeSearchBarStatus(false);
-      } else if (_prevDirection == ScrollDirection.reverse) {
-        _markaaAppChangeNotifier!.changeSearchBarStatus(true);
-      }
-    }
-    _prevDirection = _scrollController.position.userScrollDirection;
-  }
-
-  void _onShowPopup(SliderImageEntity popupItem) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return HomePopupDialog(item: popupItem);
-      },
-    );
   }
 
   @override
@@ -195,34 +195,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         child: Column(
                           children: [
                             HomeHeaderCarousel(
-                              homeChangeNotifier: _homeProvider!,
+                              homeChangeNotifier: _homeProvider,
                             ),
                             HomeFeaturedCategories(
-                              homeChangeNotifier: _homeProvider!,
+                              homeChangeNotifier: _homeProvider,
                             ),
-                            HomeMegaBanner(homeChangeNotifier: _homeProvider!),
-                            HomeBestDeals(homeChangeNotifier: _homeProvider!),
-                            HomeCelebrity(homeChangeNotifier: _homeProvider!),
-                            HomeGrooming(homeChangeNotifier: _homeProvider!),
+                            HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                            HomeBestDeals(homeChangeNotifier: _homeProvider),
+                            HomeCelebrity(homeChangeNotifier: _homeProvider),
+                            HomeGrooming(homeChangeNotifier: _homeProvider),
                             HomeBestDealsBanner(
-                                homeChangeNotifier: _homeProvider!),
-                            HomeSaleBrands(homeChangeNotifier: _homeProvider!),
-                            HomeNewArrivals(homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
+                            HomeSaleBrands(homeChangeNotifier: _homeProvider),
+                            HomeNewArrivals(homeChangeNotifier: _homeProvider),
                             HomeOrientalFragrances(
-                                homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
                             HomeNewArrivalsBanner(
-                                homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
                             HomeFragrancesBanners(
-                                homeChangeNotifier: _homeProvider!),
-                            HomePerfumes(homeChangeNotifier: _homeProvider!),
-                            HomeBestWatches(homeChangeNotifier: _homeProvider!),
-                            HomeAdvertise(homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
+                            HomePerfumes(homeChangeNotifier: _homeProvider),
+                            HomeBestWatches(homeChangeNotifier: _homeProvider),
+                            HomeAdvertise(homeChangeNotifier: _homeProvider),
                             HomeExploreCategories(
-                                homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
                             HomeDiscoverStores(
-                                homeChangeNotifier: _homeProvider!),
-                            HomeSmartTech(homeChangeNotifier: _homeProvider!),
-                            HomeRecent(homeChangeNotifier: _homeProvider!),
+                                homeChangeNotifier: _homeProvider),
+                            HomeSmartTech(homeChangeNotifier: _homeProvider),
+                            HomeRecent(homeChangeNotifier: _homeProvider),
                           ],
                         ),
                       ),

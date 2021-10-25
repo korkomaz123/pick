@@ -308,8 +308,8 @@ class ProductRepository {
     String url = EndPoints.filterProducts;
     filterValues['selectedValues']['gender'] = filterValues['selectedGenders'];
     final params = {
-      'selectedCategoryId': categoryId == 'all' ? null : categoryId,
-      'selectedBrandId': brandId == '' ? null : brandId,
+      'selectedCategoryId': categoryId,
+      'selectedBrandId': brandId == '' ? 'all' : brandId,
       'lang': lang,
       'categoryIds': json.encode(filterValues['selectedCategories']),
       'priceRanges':

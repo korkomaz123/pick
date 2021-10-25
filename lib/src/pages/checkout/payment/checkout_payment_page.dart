@@ -31,11 +31,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     with WidgetsBindingObserver {
   WebViewController? webViewController;
 
-  OrderChangeNotifier? orderChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
 
@@ -48,6 +48,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
@@ -61,18 +62,29 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      orderChangeNotifier.cancelFullOrder(order!);
+    } else if (state == AppLifecycleState.resumed) {
+      Navigator.pop(context);
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
   void _onBack() async {
-    final result = await flushBarService!
-        .showConfirmDialog(message: 'payment_abort_dialog_text');
+    final result = await flushBarService.showConfirmDialog(
+        message: 'payment_abort_dialog_text');
     if (result != null) {
       /// activate the current shopping cart
-      await myCartChangeNotifier!.activateCart();
+      await myCartChangeNotifier.activateCart();
 
       /// cancel the order
-      await orderChangeNotifier!.cancelFullOrder(order!,
+      await orderChangeNotifier.cancelFullOrder(order!,
           onProcess: _onCancelProcess,
           onSuccess: _onCanceledSuccess,
           onFailure: _onCanceledFailure);
@@ -80,16 +92,16 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   }
 
   void _onCancelProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   void _onCanceledSuccess() {
-    progressService!.hideProgress();
+    progressService.hideProgress();
     Navigator.pop(context);
   }
 
   void _onCanceledFailure(String message) {
-    progressService!.hideProgress();
+    progressService.hideProgress();
   }
 
   @override
@@ -154,8 +166,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
-          if (user != null) orderChangeNotifier!.removeOrder(order!);
-          orderChangeNotifier!.submitPaymentFailedOrderResult(order!);
+          if (user != null) orderChangeNotifier.removeOrder(order!);
+          orderChangeNotifier.submitPaymentFailedOrderResult(order!);
           if (reorder != null) {
             Navigator.popAndPushNamed(
               context,
@@ -173,9 +185,9 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           _onSuccessPayment();
           if (user != null) {
             order!.status = OrderStatusEnum.processing;
-            orderChangeNotifier!.updateOrder(order!);
+            orderChangeNotifier.updateOrder(order!);
           }
-          orderChangeNotifier!.submitPaymentSuccessOrderResult(order!);
+          orderChangeNotifier.submitPaymentSuccessOrderResult(order!);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.checkoutConfirmed,
@@ -191,11 +203,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   Future<void> _onSuccessPayment() async {
     if (reorder != null) {
-      myCartChangeNotifier!.initializeReorderCart();
+      myCartChangeNotifier.initializeReorderCart();
     } else {
-      myCartChangeNotifier!.initialize();
+      myCartChangeNotifier.initialize();
       if (user == null) await localStorageRepo.removeItem('cartId');
-      await myCartChangeNotifier!.getCartId();
+      await myCartChangeNotifier.getCartId();
     }
     final priceDetails = orderDetails['orderDetails'];
     double price = double.parse(priceDetails['totalPrice']);
