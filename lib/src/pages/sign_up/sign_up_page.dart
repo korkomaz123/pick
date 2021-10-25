@@ -71,13 +71,13 @@ class _SignUpPageState extends State<SignUpPage> {
     Adjust.trackEvent(adjustEvent);
     user = newUser;
 
-    Future.wait([
-      localRepository.setToken(newUser.token),
-      myCartChangeNotifier.getCartId(),
-      myCartChangeNotifier.transferCartItems(),
-      myCartChangeNotifier.getCartItems(lang),
-      homeChangeNotifier.loadRecentlyViewedCustomer(),
-    ]);
+    // Future.wait([
+    await localRepository.setToken(newUser.token);
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.transferCartItems();
+    await myCartChangeNotifier.getCartItems(lang);
+    await homeChangeNotifier.loadRecentlyViewedCustomer();
+    // ]);
 
     progressService.hideProgress();
     Navigator.pop(context);

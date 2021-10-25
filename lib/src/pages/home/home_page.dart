@@ -141,16 +141,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       onSuccess: (data) async {
         user = data;
         NotificationSetup().init();
-        Future.wait([
-          _myCartChangeNotifier.getCartId(),
-          _myCartChangeNotifier.getCartItems(Preload.language),
-        ]);
+        // Future.wait([
+        await _myCartChangeNotifier.getCartId();
+        await _myCartChangeNotifier.getCartItems(Preload.language);
+        // ]);
       },
       onFailure: () async {
-        Future.wait([
-          _myCartChangeNotifier.getCartId(),
-          _myCartChangeNotifier.getCartItems(Preload.language),
-        ]);
+        // Future.wait([
+        await _myCartChangeNotifier.getCartId();
+        await _myCartChangeNotifier.getCartItems(Preload.language);
+        // ]);
       },
     );
     _productChangeNotifier.initialize();

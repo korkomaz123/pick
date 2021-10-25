@@ -407,17 +407,17 @@ class _SignInPageState extends State<SignInPage> {
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
-      Future.wait([
-        localRepository.setToken(user!.token),
-        orderChangeNotifier.loadOrderHistories(user!.token, lang),
-        myCartChangeNotifier.getCartId(),
-        myCartChangeNotifier.transferCartItems(),
-        myCartChangeNotifier.getCartItems(lang),
-        wishlistChangeNotifier.getWishlistItems(user!.token, lang),
-        addressChangeNotifier.loadAddresses(user!.token),
-        homeChangeNotifier.loadRecentlyViewedCustomer(),
-        NotificationSetup().updateFcmDeviceToken(),
-      ]);
+      // Future.wait([
+      await localRepository.setToken(user!.token);
+      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
+      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier.transferCartItems();
+      await myCartChangeNotifier.getCartItems(lang);
+      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
+      await addressChangeNotifier.loadAddresses(user!.token);
+      await homeChangeNotifier.loadRecentlyViewedCustomer();
+      await NotificationSetup().updateFcmDeviceToken();
+      // ]);
     } catch (e) {
       print(
           'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');

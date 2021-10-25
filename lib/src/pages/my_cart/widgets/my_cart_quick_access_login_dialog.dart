@@ -93,23 +93,23 @@ class _MyCartQuickAccessLoginDialogState
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
-      Future.wait([
-        localRepository.setToken(user!.token),
-        myCartChangeNotifier.getCartId(),
-        myCartChangeNotifier.transferCartItems(),
-        myCartChangeNotifier.getCartItems(lang),
-        wishlistChangeNotifier.getWishlistItems(user!.token, lang),
-        orderChangeNotifier.loadOrderHistories(user!.token, lang),
-        addressChangeNotifier.loadAddresses(user!.token),
-        homeChangeNotifier.loadRecentlyViewedCustomer(),
-        settingRepository.updateFcmDeviceToken(
-          user!.token,
-          Platform.isAndroid ? deviceToken : '',
-          Platform.isIOS ? deviceToken : '',
-          Platform.isAndroid ? lang : '',
-          Platform.isIOS ? lang : '',
-        ),
-      ]);
+      // Future.wait([
+      await localRepository.setToken(user!.token);
+      await myCartChangeNotifier.getCartId();
+      await myCartChangeNotifier.transferCartItems();
+      await myCartChangeNotifier.getCartItems(lang);
+      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
+      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
+      await addressChangeNotifier.loadAddresses(user!.token);
+      await homeChangeNotifier.loadRecentlyViewedCustomer();
+      await settingRepository.updateFcmDeviceToken(
+        user!.token,
+        Platform.isAndroid ? deviceToken : '',
+        Platform.isIOS ? deviceToken : '',
+        Platform.isAndroid ? lang : '',
+        Platform.isIOS ? lang : '',
+      );
+      // ]);
     } catch (e) {
       print(
           'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON QUICK ACCESS LOGIN PAGE $e');
