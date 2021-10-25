@@ -44,6 +44,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   OrderEntity? reorder;
 
   bool isLoading = true;
+  bool isProgress = true;
 
   @override
   void initState() {
@@ -77,6 +78,10 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
   }
 
   void _onBack() async {
+    if (isProgress) {
+      flushBarService.showErrorDialog('Please try again later.');
+      return;
+    }
     final result = await flushBarService.showConfirmDialog(
         message: 'payment_abort_dialog_text');
     if (result != null) {
@@ -141,6 +146,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
               navigationDelegate: (action) {
                 _onPageLoaded(action.url);
                 return NavigationDecision.navigate;
+              },
+              onProgress: (progress) {
+                if (progress < 100) {
+                  isProgress = true;
+                } else {
+                  isProgress = false;
+                }
               },
               onPageFinished: (_) {
                 if (isLoading) {

@@ -147,9 +147,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// brand products list loading...
@@ -224,9 +224,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// sorted products list loading...
@@ -307,9 +307,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// filter products
@@ -385,9 +385,9 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// select option in configurable product

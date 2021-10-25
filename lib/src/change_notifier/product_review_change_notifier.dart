@@ -23,18 +23,19 @@ class ProductReviewChangeNotifier extends ChangeNotifier {
     String detail,
     String rate,
     String token,
-    String username,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
-    final isSuccess = await productRepository.addReview(productId, title, detail, rate, token, username);
+    String username, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    final isSuccess = await productRepository.addReview(
+        productId, title, detail, rate, token, username);
     if (isSuccess) {
-      onSuccess();
+      if (onSuccess != null) onSuccess();
       getProductReviews(productId);
     } else {
-      onFailure();
+      if (onFailure != null) onFailure();
     }
   }
 }

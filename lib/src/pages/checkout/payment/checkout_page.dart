@@ -205,7 +205,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           noButtonText: 'cancel_button_title',
         );
         if (result != null) {
-          var amount = double.parse(details['subTotalPrice']) - user!.balance;
+          var amount = double.parse(details['totalPrice']) - user!.balance;
           double value = amount.ceilToDouble() + 1;
           await Navigator.pushNamed(context, Routes.myWallet, arguments: value);
           if (!outOfBalance) {

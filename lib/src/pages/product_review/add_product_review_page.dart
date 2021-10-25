@@ -122,7 +122,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 setState(() {});
               },
             ),
-            if (user?.token == null) ...[
+            if (user == null) ...[
               Container(
                 width: 375.w,
                 padding: EdgeInsets.symmetric(
@@ -208,9 +208,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           int.parse(rate.toStringAsFixed(0)).toString(),
           user?.token ?? '',
           usernameController.text,
-          _onProcess,
-          _onSuccess,
-          _onFailure,
+          onProcess: _onProcess,
+          onSuccess: _onSuccess,
+          onFailure: _onFailure,
         );
       } else {
         flushBarService!.showErrorDialog('rating_required'.tr());
