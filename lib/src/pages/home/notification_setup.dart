@@ -43,9 +43,9 @@ class NotificationSetup {
     NotificationSettings settings = await firebaseMessaging.requestPermission();
     print('User granted permission: ${settings.authorizationStatus}');
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _onForegroundMessage(message);
-    });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   _onForegroundMessage(message);
+    // });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _onLaunchMessage(message.data);
     });
@@ -121,24 +121,24 @@ class NotificationSetup {
     );
   }
 
-  Future<void> _onForegroundMessage(RemoteMessage message) async {
-    print('on foreground notification');
-    print(message.data);
-    await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message.data['title'],
-      message.data['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      payload: jsonEncode(message.data),
-    );
-  }
+  // Future<void> _onForegroundMessage(RemoteMessage message) async {
+  //   print('on foreground notification');
+  //   print(message.data);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     message.hashCode,
+  //     message.data['title'],
+  //     message.data['body'],
+  //     NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //       ),
+  //       iOS: IOSNotificationDetails(),
+  //     ),
+  //     payload: jsonEncode(message.data),
+  //   );
+  // }
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic>? message) async {
     try {
