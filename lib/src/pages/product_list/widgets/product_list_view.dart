@@ -1,6 +1,7 @@
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
+import 'package:markaa/src/components/markaa_loading_widget.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -270,7 +271,7 @@ class _ProductListViewState extends State<ProductListView>
                       String index = _generateKey(cat);
                       if (!productChangeNotifier!.data!.containsKey(index) ||
                           productChangeNotifier!.data![index] == null) {
-                        return Center(child: PulseLoadingSpinner());
+                        return MarkaaLoadingWidget(child: ProductNoAvailable());
                       } else if (productChangeNotifier!.data![index]!.isEmpty) {
                         return ProductNoAvailable();
                       } else {

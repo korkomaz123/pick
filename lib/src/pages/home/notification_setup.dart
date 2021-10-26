@@ -14,6 +14,7 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -42,7 +43,9 @@ class NotificationSetup {
     NotificationSettings settings = await firebaseMessaging.requestPermission();
     print('User granted permission: ${settings.authorizationStatus}');
 
-    // FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _onForegroundMessage(message);
+    });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _onLaunchMessage(message.data);
     });
@@ -51,7 +54,7 @@ class NotificationSetup {
         .then((RemoteMessage? message) {
       _onLaunchMessage(message?.data ?? {});
     });
-    await updateFcmDeviceToken();
+    if (user != null) await updateFcmDeviceToken();
   }
 
   Future updateFcmDeviceToken() async {
@@ -118,28 +121,30 @@ class NotificationSetup {
     );
   }
 
-  // Future<void> _onForegroundMessage(RemoteMessage message) async {
-  //   print('on foreground notification');
-  //   print(message.data);
-  //   await flutterLocalNotificationsPlugin.show(
-  //     message.hashCode,
-  //     message.data['title'],
-  //     message.data['body'],
-  //     NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //         channel.id,
-  //         channel.name,
-  //         channel.description,
-  //       ),
-  //       iOS: IOSNotificationDetails(),
-  //     ),
-  //     payload: jsonEncode(message.data),
-  //   );
-  // }
+  Future<void> _onForegroundMessage(RemoteMessage message) async {
+    print('on foreground notification');
+    print(message.data);
+    await flutterLocalNotificationsPlugin.show(
+      message.hashCode,
+      message.data['title'],
+      message.data['body'],
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+        ),
+        iOS: IOSNotificationDetails(),
+      ),
+      payload: jsonEncode(message.data),
+    );
+  }
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic>? message) async {
     try {
       if (message != null) {
+        FlushBarService(context: Preload.navigatorKey!.currentContext!)
+            .showErrorDialog(jsonEncode(message));
         Map<dynamic, dynamic> data = message;
         int target = int.parse(data['target']);
         if (target != 0) {

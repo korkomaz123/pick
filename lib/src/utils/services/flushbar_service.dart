@@ -147,4 +147,41 @@ class FlushBarService {
       ),
     );
   }
+
+  Future showSuccessDialog(String message, [String? image]) async {
+    return await showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Column(
+          children: [
+            if (image != null) ...[
+              SvgPicture.asset("lib/public/images/$image"),
+              SizedBox(width: 10.w),
+            ],
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  message.tr(),
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "close".tr(),
+              style: mediumTextStyle.copyWith(
+                color: primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

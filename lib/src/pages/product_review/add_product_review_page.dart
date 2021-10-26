@@ -213,7 +213,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
           onFailure: _onFailure,
         );
       } else {
-        flushBarService!.showErrorDialog('rating_required'.tr());
+        flushBarService!.showErrorDialog('rating_required');
       }
     }
   }
@@ -222,8 +222,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
     progressService!.showProgress();
   }
 
-  void _onSuccess() {
+  void _onSuccess() async {
     progressService!.hideProgress();
+    await flushBarService!.showSuccessDialog('added_review_success');
     Navigator.pop(context);
   }
 

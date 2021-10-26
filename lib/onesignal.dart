@@ -32,7 +32,7 @@ class OneSignalNotification {
     });
 
     OneSignal.shared.setInAppMessageClickedHandler((action) {
-      String launchUrl = action.clickUrl ?? '';
+      String launchUrl = action.clickName ?? '';
       print('LAUNCH URL >>>> $launchUrl');
       DynamicLinkService().expandShortUrl(launchUrl).then((redirectUri) {
         DynamicLinkService().dynamicLinkHandler(redirectUri);

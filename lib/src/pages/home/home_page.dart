@@ -145,6 +145,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         await _myCartChangeNotifier.getCartItems(Preload.language);
       },
       onFailure: () async {
+        NotificationSetup().init();
         await _myCartChangeNotifier.getCartId();
         await _myCartChangeNotifier.getCartItems(Preload.language);
       },
