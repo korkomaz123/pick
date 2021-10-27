@@ -12,7 +12,6 @@
          FlutterApplication and put your custom class here. -->
     <application
         tools:replace="android:label"
-        android:name=".MainActivity"
         android:label="markaa"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true">
