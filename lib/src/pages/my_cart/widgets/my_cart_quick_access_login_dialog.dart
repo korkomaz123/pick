@@ -290,10 +290,20 @@ class _MyCartQuickAccessLoginDialogState
       return;
     }
     for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
-      if (myCartChangeNotifier.cartItemsMap[keys[i]]!.availableCount == 0) {
+      var item = myCartChangeNotifier.cartItemsMap[keys[i]]!;
+      if (item.availableCount == 0) {
         flushBarService.showErrorDialog(
-          '${myCartChangeNotifier.cartItemsMap[keys[i]]!.product.name}' +
-              'out_stock_items_error'.tr(),
+          '${item.product.name}' + 'out_stock_items_error'.tr(),
+          'no_qty.svg',
+        );
+        return;
+      }
+      if (item.itemCount > item.availableCount) {
+        flushBarService.showErrorDialog(
+          'inventory_qty_exceed_error'
+              .tr()
+              .replaceFirst('A', item.product.name),
+          'no_qty.svg',
         );
         return;
       }
