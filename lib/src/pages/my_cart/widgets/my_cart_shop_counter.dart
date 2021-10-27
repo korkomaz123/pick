@@ -93,7 +93,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
             ),
             InkWell(
               onTap: () =>
-                  widget.cartItem.itemCount == widget.cartItem.availableCount
+                  widget.cartItem.itemCount >= widget.cartItem.availableCount
                       ? null
                       : _onChangeQty(true, model),
               child: Container(
@@ -103,7 +103,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(
-                    color: widget.cartItem.itemCount ==
+                    color: widget.cartItem.itemCount >=
                             widget.cartItem.availableCount
                         ? Colors.grey.shade400
                         : greyColor,
@@ -118,7 +118,7 @@ class _MyCartShopCounterState extends State<MyCartShopCounter> {
                 child: Icon(
                   Icons.add,
                   size: 18.sp,
-                  color: widget.cartItem.itemCount ==
+                  color: widget.cartItem.itemCount >=
                           widget.cartItem.availableCount
                       ? Colors.grey.shade400
                       : primaryColor,
