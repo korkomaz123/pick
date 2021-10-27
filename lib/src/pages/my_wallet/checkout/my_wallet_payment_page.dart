@@ -49,16 +49,6 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      walletChangeNotifier.cancelWalletPayment(walletResult);
-    } else if (state == AppLifecycleState.resumed) {
-      Navigator.pop(context);
-    }
-    super.didChangeAppLifecycleState(state);
-  }
-
-  @override
   void dispose() {
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
@@ -91,47 +81,52 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 25.sp,
-            color: greyColor,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 25.sp,
+              color: greyColor,
+            ),
+            onPressed: _onBack,
           ),
-          onPressed: _onBack,
+          title: Text(
+            'payment_title'.tr(),
+            style: mediumTextStyle.copyWith(
+              color: greyDarkColor,
+              fontSize: 23.sp,
+            ),
+          ),
         ),
-        title: Text(
-          'payment_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: greyDarkColor,
-            fontSize: 23.sp,
-          ),
+        body: Stack(
+          children: [
+            WebView(
+              initialUrl: url,
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              navigationDelegate: (action) {
+                _onPageLoaded(action.url);
+                return NavigationDecision.navigate;
+              },
+              onPageFinished: (_) {
+                if (isLoading) {
+                  isLoading = false;
+                  setState(() {});
+                }
+              },
+            ),
+            if (isLoading) ...[Center(child: PulseLoadingSpinner())],
+          ],
         ),
-      ),
-      body: Stack(
-        children: [
-          WebView(
-            initialUrl: url,
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
-            navigationDelegate: (action) {
-              _onPageLoaded(action.url);
-              return NavigationDecision.navigate;
-            },
-            onPageFinished: (_) {
-              if (isLoading) {
-                isLoading = false;
-                setState(() {});
-              }
-            },
-          ),
-          if (isLoading) ...[Center(child: PulseLoadingSpinner())],
-        ],
       ),
     );
   }

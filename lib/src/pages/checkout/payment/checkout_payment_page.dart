@@ -67,16 +67,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      orderChangeNotifier.cancelFullOrder(order!);
-    } else if (state == AppLifecycleState.resumed) {
-      Navigator.pop(context);
-    }
-    super.didChangeAppLifecycleState(state);
-  }
-
   void _onBack() async {
     if (isProgress) {
       flushBarService.showErrorDialog('Please try again later.');
