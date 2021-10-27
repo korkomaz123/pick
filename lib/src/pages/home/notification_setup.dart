@@ -40,7 +40,15 @@ class NotificationSetup {
   void _configureMessaging() async {
     await firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true, badge: true, sound: true);
-    NotificationSettings settings = await firebaseMessaging.requestPermission();
+    NotificationSettings settings = await firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
     print('User granted permission: ${settings.authorizationStatus}');
 
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
