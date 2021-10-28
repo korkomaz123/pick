@@ -36,11 +36,16 @@ class NotificationSetup {
     print('User granted permission: ${settings.authorizationStatus}');
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      FlushBarService(context: Preload.navigatorKey!.currentContext!)
+          .showErrorDialog('onMessageOpenedApp: ${jsonEncode(message.data)}');
       _onLaunchMessage(message.data);
     });
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
+      FlushBarService(context: Preload.navigatorKey!.currentContext!)
+          .showErrorDialog(
+              'getInitialMessage: ${jsonEncode(message?.data ?? {})}');
       if (message != null) _onLaunchMessage(message.data);
     });
     if (user != null) await updateFcmDeviceToken();
@@ -60,8 +65,6 @@ class NotificationSetup {
   }
 
   Future<dynamic> _onLaunchMessage(Map<String, dynamic> data) async {
-    FlushBarService(context: Preload.navigatorKey!.currentContext!)
-        .showErrorDialog(jsonEncode(data));
     try {
       int target = int.parse(data['target']);
       if (target != 0) {
