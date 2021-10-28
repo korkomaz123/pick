@@ -655,12 +655,6 @@ DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
-  - Firebase/Analytics
-  - Firebase/Auth
-  - Firebase/Core
-  - Firebase/DynamicLinks
-  - Firebase/Firestore
-  - Firebase/Messaging
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -885,6 +879,6 @@ SPEC CHECKSUMS:
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter_wkwebview: 44aa025fbcf6730d808f1e0d86a5af5ac25fa8de
 
-PODFILE CHECKSUM: d7cac411678ef3bd652d50dab1b7b1ba17199adb
+PODFILE CHECKSUM: 2de072383a4329a15363653ebae7d6cb23cb4f33
 
 COCOAPODS: 1.11.2
