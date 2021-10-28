@@ -10,12 +10,12 @@ project 'Runner', {
   'Release' => :release,
 }
 
-# pod 'Firebase/Analytics'
-# pod 'Firebase/Core'
-# pod 'Firebase/Auth'
-# pod 'Firebase/Messaging'
-# pod 'Firebase/Firestore'
-# pod 'Firebase/DynamicLinks'
+pod 'Firebase/Analytics'
+pod 'Firebase/Core'
+pod 'Firebase/Auth'
+pod 'Firebase/Messaging'
+pod 'Firebase/Firestore'
+pod 'Firebase/DynamicLinks'
 
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
