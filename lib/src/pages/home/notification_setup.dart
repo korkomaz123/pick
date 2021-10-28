@@ -14,6 +14,13 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 
+Future<void> _onBackgroundMessageHandler(RemoteMessage message) async {
+  FlushBarService(context: Preload.navigatorKey!.currentContext!)
+      .showErrorDialog(
+          'onBackgroundMessageHandler: ${jsonEncode(message.data)}');
+  NotificationSetup().onLaunchMessageHandler(message.data);
+}
+
 class NotificationSetup {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   final SettingRepository settingRepository = SettingRepository();
@@ -35,18 +42,27 @@ class NotificationSetup {
     );
     print('User granted permission: ${settings.authorizationStatus}');
 
+    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessageHandler);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      FlushBarService(context: Preload.navigatorKey!.currentContext!)
+          .showErrorDialog('onForgroundMessage: ${jsonEncode(message.data)}');
+      onLaunchMessageHandler(message.data);
+    });
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       FlushBarService(context: Preload.navigatorKey!.currentContext!)
           .showErrorDialog('onMessageOpenedApp: ${jsonEncode(message.data)}');
-      _onLaunchMessage(message.data);
+      onLaunchMessageHandler(message.data);
     });
+
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
       FlushBarService(context: Preload.navigatorKey!.currentContext!)
           .showErrorDialog(
               'getInitialMessage: ${jsonEncode(message?.data ?? {})}');
-      if (message != null) _onLaunchMessage(message.data);
+      if (message != null) onLaunchMessageHandler(message.data);
     });
     if (user != null) await updateFcmDeviceToken();
   }
@@ -64,7 +80,7 @@ class NotificationSetup {
     }
   }
 
-  Future<dynamic> _onLaunchMessage(Map<String, dynamic> data) async {
+  Future<dynamic> onLaunchMessageHandler(Map<String, dynamic> data) async {
     try {
       int target = int.parse(data['target']);
       if (target != 0) {
