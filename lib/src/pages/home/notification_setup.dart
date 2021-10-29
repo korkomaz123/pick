@@ -16,6 +16,8 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 Future<void> _onBackgroundMessageHandler(RemoteMessage message) async {
   FlushBarService(context: Preload.navigatorKey!.currentContext!)
+      .showErrorDialog('onBackgroundMessageHandler has been fired');
+  FlushBarService(context: Preload.navigatorKey!.currentContext!)
       .showErrorDialog(
           'onBackgroundMessageHandler: ${jsonEncode(message.data)}');
   NotificationSetup().onLaunchMessageHandler(message.data);
@@ -46,11 +48,15 @@ class NotificationSetup {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       FlushBarService(context: Preload.navigatorKey!.currentContext!)
+          .showErrorDialog('onForgroundMessage has been fired');
+      FlushBarService(context: Preload.navigatorKey!.currentContext!)
           .showErrorDialog('onForgroundMessage: ${jsonEncode(message.data)}');
       onLaunchMessageHandler(message.data);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      FlushBarService(context: Preload.navigatorKey!.currentContext!)
+          .showErrorDialog('onMessageOpenedApp has been fired');
       FlushBarService(context: Preload.navigatorKey!.currentContext!)
           .showErrorDialog('onMessageOpenedApp: ${jsonEncode(message.data)}');
       onLaunchMessageHandler(message.data);

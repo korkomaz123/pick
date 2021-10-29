@@ -1,3 +1,5 @@
+import 'package:markaa/env.dart';
+
 const double designWidth = 375;
 const double designHeight = 812;
 const String apiKey = 'AIzaSyAdBFtlOPsyAnZa0HMOWZ869QNGSqm-vV0';
@@ -64,8 +66,8 @@ class AdjustSDKConfig {
 }
 
 class MarkaaNotificationChannels {
-  static const String enChannel = 'markaa-all-en';
-  static const String arChannel = 'markaa-all-ar';
+  static const String enChannel = dev ? 'markaa-all-en-dev' : 'markaa-all-en';
+  static const String arChannel = dev ? 'markaa-all-ar-dev' : 'markaa-all-ar';
 }
 
 class SmartLookConfig {
