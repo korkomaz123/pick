@@ -58,8 +58,8 @@
 	<string>215227360272455</string>
 	<key>FacebookDisplayName</key>
 	<string>Markaa App</string>
-	<!-- <key>FirebaseAppDelegateProxyEnabled</key>
-	<false/> -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

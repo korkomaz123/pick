@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,14 +11,8 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
-import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 Future<void> _onBackgroundMessageHandler(RemoteMessage message) async {
-  FlushBarService(context: Preload.navigatorKey!.currentContext!)
-      .showErrorDialog('onBackgroundMessageHandler has been fired');
-  FlushBarService(context: Preload.navigatorKey!.currentContext!)
-      .showErrorDialog(
-          'onBackgroundMessageHandler: ${jsonEncode(message.data)}');
   NotificationSetup().onLaunchMessageHandler(message.data);
 }
 
@@ -47,27 +40,16 @@ class NotificationSetup {
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessageHandler);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      FlushBarService(context: Preload.navigatorKey!.currentContext!)
-          .showErrorDialog('onForgroundMessage has been fired');
-      FlushBarService(context: Preload.navigatorKey!.currentContext!)
-          .showErrorDialog('onForgroundMessage: ${jsonEncode(message.data)}');
       onLaunchMessageHandler(message.data);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      FlushBarService(context: Preload.navigatorKey!.currentContext!)
-          .showErrorDialog('onMessageOpenedApp has been fired');
-      FlushBarService(context: Preload.navigatorKey!.currentContext!)
-          .showErrorDialog('onMessageOpenedApp: ${jsonEncode(message.data)}');
       onLaunchMessageHandler(message.data);
     });
 
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
-      FlushBarService(context: Preload.navigatorKey!.currentContext!)
-          .showErrorDialog(
-              'getInitialMessage: ${jsonEncode(message?.data ?? {})}');
       if (message != null) onLaunchMessageHandler(message.data);
     });
     if (user != null) await updateFcmDeviceToken();
