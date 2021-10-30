@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,10 +12,7 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
-
-Future<void> _onBackgroundMessageHandler(RemoteMessage message) async {
-  NotificationSetup().onLaunchMessageHandler(message.data);
-}
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class NotificationSetup {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -36,12 +34,6 @@ class NotificationSetup {
       sound: true,
     );
     print('User granted permission: ${settings.authorizationStatus}');
-
-    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessageHandler);
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      onLaunchMessageHandler(message.data);
-    });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       onLaunchMessageHandler(message.data);
@@ -69,6 +61,8 @@ class NotificationSetup {
   }
 
   Future<dynamic> onLaunchMessageHandler(Map<String, dynamic> data) async {
+    FlushBarService(context: Preload.navigatorKey!.currentContext!)
+        .showErrorDialog('onLaunchMessage: ${jsonEncode(data)}');
     try {
       int target = int.parse(data['target']);
       if (target != 0) {
