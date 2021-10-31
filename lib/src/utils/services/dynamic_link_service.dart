@@ -1,6 +1,5 @@
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:markaa/preload.dart';
@@ -10,7 +9,6 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
 
 import 'flushbar_service.dart';
