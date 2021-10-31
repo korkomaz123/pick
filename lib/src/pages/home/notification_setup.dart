@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,7 +11,6 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
-import 'package:markaa/src/utils/services/flushbar_service.dart';
 
 class NotificationSetup {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -61,8 +59,6 @@ class NotificationSetup {
   }
 
   Future<dynamic> onLaunchMessageHandler(Map<String, dynamic> data) async {
-    FlushBarService(context: Preload.navigatorKey!.currentContext!)
-        .showErrorDialog('onLaunchMessage: ${jsonEncode(data)}');
     try {
       int target = int.parse(data['target']);
       if (target != 0) {
