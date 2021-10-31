@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:markaa/src/utils/services/onesignal_communicator.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'notification_setup.dart';
@@ -125,6 +126,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
     Preload.setupAdjustSDK();
+    OneSignal.shared.sendTag('lang', Preload.language).then((result) {
+      print('ONESIGNAL >>> SENT THE LANG TAG SUCCESS');
+    });
 
     _authChangeNotifier = context.read<AuthChangeNotifier>();
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
