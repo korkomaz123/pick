@@ -44,9 +44,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
       context: context,
       scaffoldKey: scaffoldKey,
     );
-    firstNameController.text = user!.firstName;
-    emailController.text = user!.email;
-    phoneNumberController.text = user!.phoneNumber!;
+    firstNameController.text = user?.firstName ?? '';
+    emailController.text = user?.email ?? '';
+    phoneNumberController.text = user?.phoneNumber ?? '';
   }
 
   @override

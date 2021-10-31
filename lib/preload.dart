@@ -234,12 +234,14 @@ class Preload {
   static bool chatInitiated = false;
   static Future startSupportChat() async {
     dynamic kmUser, conversationObject = {'appId': ChatSupport.appKey};
-    kmUser = {
-      'userId': user!.customerId,
-      'displayName': user!.firstName + " " + user!.lastName,
-      'contactNumber': user!.phoneNumber,
-      'email': user!.email,
-    };
+    if (user != null) {
+      kmUser = {
+        'userId': user!.customerId,
+        'displayName': user!.firstName + " " + user!.lastName,
+        'contactNumber': user!.phoneNumber,
+        'email': user!.email,
+      };
+    }
     conversationObject['kmUser'] = jsonEncode(kmUser);
     dynamic clientConversationId =
         await KommunicateFlutterPlugin.buildConversation(conversationObject);
