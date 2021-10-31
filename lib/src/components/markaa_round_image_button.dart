@@ -16,17 +16,17 @@ class MarkaaRoundImageButton extends StatelessWidget {
   final double height;
 
   /// on tap function
-  final Function onTap;
+  final void Function()? onTap;
 
   /// shadow
   final bool isShadow;
 
   MarkaaRoundImageButton({
-    @required this.radius,
-    @required this.color,
-    @required this.child,
-    @required this.width,
-    @required this.height,
+    required this.radius,
+    required this.color,
+    required this.child,
+    required this.width,
+    required this.height,
     this.onTap,
     this.isShadow = true,
   });

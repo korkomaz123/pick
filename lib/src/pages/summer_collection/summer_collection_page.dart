@@ -22,7 +22,7 @@ import '../../../preload.dart';
 class SummerCollectionPage extends StatefulWidget {
   final ProductListArguments arguments;
 
-  SummerCollectionPage({this.arguments});
+  SummerCollectionPage({required this.arguments});
 
   @override
   _SummerCollectionPageState createState() => _SummerCollectionPageState();
@@ -32,7 +32,8 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final SummerCollectionNotifier _summerCollectionNotifier =
-      Preload.navigatorKey.currentContext.read<SummerCollectionNotifier>();
+      Preload.navigatorKey!.currentContext!.read<SummerCollectionNotifier>();
+
   @override
   void initState() {
     _summerCollectionNotifier.getSummerCollection();
@@ -43,26 +44,26 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
     if (item.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: item.categoryId,
-          name: item.categoryName,
+          id: item.categoryId!,
+          name: item.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
       );
       Navigator.pushNamed(
-        Preload.navigatorKey.currentContext,
+        Preload.navigatorKey!.currentContext!,
         Routes.productList,
         arguments: arguments,
       );
     } else if (item.brandId != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: BrandEntity(
-          brandLabel: item.brandLabel,
+          brandLabel: item.brandLabel!,
           entityId: item.brandId,
-          optionId: item.brandId,
+          optionId: item.brandId!,
           brandThumbnail: item.brandLogo,
           brandImage: item.brandLogo,
         ),
@@ -71,14 +72,14 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
         isFromBrand: true,
       );
       Navigator.pushNamed(
-        Preload.navigatorKey.currentContext,
+        Preload.navigatorKey!.currentContext!,
         Routes.productList,
         arguments: arguments,
       );
     } else if (item.productId != null) {
-      final product = await ProductRepository().getProduct(item.productId);
+      final product = await ProductRepository().getProduct(item.productId!);
       Navigator.pushNamed(
-        Preload.navigatorKey.currentContext,
+        Preload.navigatorKey!.currentContext!,
         Routes.product,
         arguments: product,
       );
@@ -103,17 +104,28 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
             bottom: 0.h,
             left: 0.w,
             right: 0.w,
-            child: Consumer<SummerCollectionNotifier>(builder: (_, model, __) {
-              return _summerCollectionNotifier.categories.isEmpty
-                  ? Center(child: PulseLoadingSpinner())
-                  : GridView.count(
-                      crossAxisCount: 2,
-                      children: _summerCollectionNotifier.categories
-                          .map((e) => InkWell(
-                              onTap: () => _goToPage(e),
-                              child: CachedNetworkImage(imageUrl: e.imageUrl)))
-                          .toList());
-            }),
+            child: Consumer<SummerCollectionNotifier>(
+              builder: (_, model, __) {
+                if (_summerCollectionNotifier.categories.isEmpty)
+                  return Center(child: PulseLoadingSpinner());
+                else
+                  return GridView.count(
+                    crossAxisCount: 2,
+                    children: _summerCollectionNotifier.categories
+                        .map(
+                          (e) => InkWell(
+                            onTap: () => _goToPage(e),
+                            child: CachedNetworkImage(
+                              key: ValueKey(e.imageUrl ?? ''),
+                              cacheKey: e.imageUrl ?? '',
+                              imageUrl: e.imageUrl ?? '',
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  );
+              },
+            ),
           )
         ],
       ),

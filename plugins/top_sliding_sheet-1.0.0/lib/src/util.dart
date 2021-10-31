@@ -16,9 +16,9 @@ double toPrecision(double value, [int precision = 3]) {
 
 class Invisible extends StatelessWidget {
   final bool invisible;
-  final Widget child;
+  final Widget? child;
   const Invisible({
-    Key key,
+    Key? key,
     this.invisible = false,
     this.child,
   }) : super(key: key);
@@ -32,7 +32,7 @@ class Invisible extends StatelessWidget {
       maintainSize: true,
       maintainState: true,
       maintainAnimation: true,
-      child: child,
+      child: child!,
     );
   }
 }

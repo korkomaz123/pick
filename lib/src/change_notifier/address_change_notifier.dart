@@ -7,11 +7,11 @@ class AddressChangeNotifier extends ChangeNotifier {
   ShippingAddressRepository addressRepository = ShippingAddressRepository();
   LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
-  Map<String, AddressEntity> addressesMap;
-  AddressEntity defaultAddress;
-  List<String> keys;
+  Map<String, AddressEntity>? addressesMap;
+  AddressEntity? defaultAddress;
+  List<String>? keys;
 
-  AddressEntity guestAddress;
+  AddressEntity? guestAddress;
 
   void initialize() {
     addressesMap = {};
@@ -31,9 +31,9 @@ class AddressChangeNotifier extends ChangeNotifier {
 
   Future<void> updateGuestAddress(
     Map<String, dynamic> data, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
@@ -53,8 +53,8 @@ class AddressChangeNotifier extends ChangeNotifier {
 
   Future<void> loadAddresses(
     String token, [
-    Function onSuccess,
-    Function onFailure,
+    Function? onSuccess,
+    Function? onFailure,
   ]) async {
     try {
       final result = await addressRepository.getAddresses(token);
@@ -62,48 +62,42 @@ class AddressChangeNotifier extends ChangeNotifier {
         List<dynamic> shippingAddressesList = result['addresses'];
         for (int i = 0; i < shippingAddressesList.length; i++) {
           final address = AddressEntity.fromJson(shippingAddressesList[i]);
-          addressesMap[address.addressId] = address;
+          addressesMap![address.addressId!] = address;
           if (address.defaultShippingAddress == 1) {
             defaultAddress = address;
           }
         }
-        keys = addressesMap.keys.toList();
-        keys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        keys = addressesMap!.keys.toList();
+        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        if (onSuccess != null) {
-          onSuccess();
-        }
+        if (onSuccess != null) onSuccess();
       } else {
-        if (onFailure != null) {
-          onFailure();
-        }
+        if (onFailure != null) onFailure();
       }
     } catch (e) {
-      print(e.toString());
-      if (onFailure != null) {
-        onFailure();
-      }
+      print('LOAD ADDRESS CATCH ERROR: $e');
+      if (onFailure != null) onFailure();
     }
   }
 
   Future<void> addAddress(
     String token,
     AddressEntity newAddress, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.addAddress(token, newAddress);
       if (result['code'] == 'SUCCESS') {
         newAddress.addressId = result['address'];
-        addressesMap[newAddress.addressId] = newAddress;
+        addressesMap![newAddress.addressId!] = newAddress;
         if (newAddress.defaultShippingAddress == 1) {
           defaultAddress = newAddress;
         }
-        keys = addressesMap.keys.toList();
-        keys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        keys = addressesMap!.keys.toList();
+        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
@@ -117,15 +111,15 @@ class AddressChangeNotifier extends ChangeNotifier {
   Future<void> updateAddress(
     String token,
     AddressEntity address, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.updateAddress(token, address);
       if (result['code'] == 'SUCCESS') {
-        addressesMap[address.addressId] = address;
+        addressesMap![address.addressId!] = address;
         if (address.defaultShippingAddress == 1) {
           defaultAddress = address;
         }
@@ -142,28 +136,28 @@ class AddressChangeNotifier extends ChangeNotifier {
   Future<void> deleteAddress(
     String token,
     String addressId,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   ) async {
-    onProcess();
+    if (onProcess != null) onProcess();
     try {
       final result = await addressRepository.deleteAddress(token, addressId);
       if (result['code'] == 'SUCCESS') {
-        final address = addressesMap[addressId];
-        addressesMap.remove(addressId);
-        if (address.defaultShippingAddress == 1) {
+        final address = addressesMap![addressId];
+        addressesMap!.remove(addressId);
+        if (address!.defaultShippingAddress == 1) {
           defaultAddress = null;
         }
-        keys = addressesMap.keys.toList();
-        keys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        keys = addressesMap!.keys.toList();
+        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 }

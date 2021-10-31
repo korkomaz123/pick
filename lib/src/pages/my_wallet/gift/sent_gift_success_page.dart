@@ -10,23 +10,13 @@ import 'package:markaa/src/theme/theme.dart';
 class SentGiftSuccessPage extends StatefulWidget {
   final String amount;
 
-  SentGiftSuccessPage({this.amount});
+  SentGiftSuccessPage({required this.amount});
 
   @override
   _SentGiftSuccessPageState createState() => _SentGiftSuccessPageState();
 }
 
 class _SentGiftSuccessPageState extends State<SentGiftSuccessPage> {
-  String amount;
-
-  @override
-  void initState() {
-    super.initState();
-
-    amount = widget.amount;
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +52,7 @@ class _SentGiftSuccessPageState extends State<SentGiftSuccessPage> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: amount ?? '',
+                    text: widget.amount,
                     style: mediumTextStyle.copyWith(
                       fontSize: 55.sp,
                       fontWeight: FontWeight.w700,

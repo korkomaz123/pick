@@ -26,7 +26,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CancelOrderPage extends StatefulWidget {
   final OrderEntity order;
 
-  CancelOrderPage({this.order});
+  CancelOrderPage({required this.order});
 
   @override
   _CancelOrderPageState createState() => _CancelOrderPageState();
@@ -34,14 +34,14 @@ class CancelOrderPage extends StatefulWidget {
 
 class _CancelOrderPageState extends State<CancelOrderPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  FlushBarService flushBarService;
-  OrderEntity order;
+  FlushBarService? flushBarService;
+  OrderEntity? order;
   String icon = '';
-  Color color;
+  Color? color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
   Map<String, dynamic> cancelItemsMap = {};
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
   double subtotalPrice = .0;
@@ -56,11 +56,16 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     flushBarService = FlushBarService(context: context);
     order = widget.order;
-    subtotalPrice = double.parse(order.subtotalPrice);
-    totalPrice = double.parse(order.totalPrice);
-    serviceFees = order.shippingMethod.serviceFees;
+    subtotalPrice = double.parse(order!.subtotalPrice);
+    totalPrice = double.parse(order!.totalPrice);
+    serviceFees = order!.shippingMethod.serviceFees;
     discount = subtotalPrice + serviceFees - totalPrice;
-    switch (order.status) {
+    switch (order!.status) {
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = greyDarkColor;
+        status = 'order_cancelled'.tr();
+        break;
       case OrderStatusEnum.pending:
         icon = pendingIcon;
         color = dangerColor;
@@ -76,6 +81,26 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
+        break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;
@@ -85,13 +110,13 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   }
 
   void _setPaymentWidget() {
-    if (order.paymentMethod.title == 'Visa Card') {
+    if (order!.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
         width: 35.w,
         height: 20.h,
       );
-    } else if (order.paymentMethod.title == 'KNet') {
+    } else if (order!.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
         width: 35.w,
@@ -105,7 +130,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       shippingMethods = await checkoutRepo.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount <= subtotalPrice - discount) {
+      if (shippingMethod.minOrderAmount! <= (subtotalPrice - discount)) {
         double differ = shippingMethod.serviceFees - serviceFees;
         serviceFees = shippingMethod.serviceFees;
         totalPrice += differ;
@@ -216,7 +241,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'order_order_no'.tr() + ' #${order.orderNo}',
+            'order_order_no'.tr() + ' #${order!.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -245,7 +270,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           Text(
-            order.orderDate,
+            order!.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -287,25 +312,25 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildOrderItems() {
     return Column(
       children: List.generate(
-        order.cartItems.length,
+        order!.cartItems.length,
         (index) {
-          String key = order.cartItems[index].product.productId.toString();
+          String key = order!.cartItems[index].product.productId.toString();
           bool isSelected = cancelItemsMap.containsKey(key);
-          int availableCount = order.cartItems[index].availableCount;
-          if (availableCount == null || availableCount == 0) {
-            order.cartItems[index].availableCount =
-                order.cartItems[index].itemCount;
+          int availableCount = order!.cartItems[index].availableCount;
+          if (availableCount == 0) {
+            order!.cartItems[index].availableCount =
+                order!.cartItems[index].itemCount;
           }
-          if (order.cartItems[index].itemCount > 0) {
+          if (order!.cartItems[index].itemCount > 0) {
             return Column(
               children: [
                 Stack(
                   children: [
-                    _buildProductCard(order.cartItems[index], index),
+                    _buildProductCard(order!.cartItems[index], index),
                     _buildCheckButton(isSelected, key, index),
                   ],
                 ),
-                if (index < (order.cartItems.length - 1)) ...[
+                if (index < (order!.cartItems.length - 1)) ...[
                   Divider(color: greyColor, thickness: 0.5)
                 ],
               ],
@@ -322,7 +347,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     String productId = cartItem.product.productId.toString();
     bool isDefaultValue = cancelItemsMap.containsKey(productId);
     double discountedPrice =
-        order.getDiscountedPrice(cartItem, isRowPrice: false);
+        order!.getDiscountedPrice(cartItem, isRowPrice: false);
     return Container(
       width: 375.w,
       padding: EdgeInsets.symmetric(
@@ -332,6 +357,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       child: Row(
         children: [
           CachedNetworkImage(
+            key: ValueKey(cartItem.product.imageUrl),
+            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.w,
             height: 120.h,
@@ -343,13 +370,13 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  cartItem.product.name ?? '',
+                  cartItem.product.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: mediumTextStyle.copyWith(fontSize: 16.sp),
                 ),
                 Text(
-                  cartItem.product.shortDescription,
+                  cartItem.product.shortDescription!,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: mediumTextStyle.copyWith(fontSize: 12.sp),
@@ -410,22 +437,22 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
           double discountedRowPrice =
-              order.getDiscountedPrice(order.cartItems[index]);
+              order!.getDiscountedPrice(order!.cartItems[index]);
           if (isSelected) {
             canceledPrice -= discountedRowPrice;
             cancelItemsMap.remove(key);
-            subtotalPrice += order.cartItems[index].rowPrice;
+            subtotalPrice += order!.cartItems[index].rowPrice;
             totalPrice += discountedRowPrice;
-            discount += (order.cartItems[index].rowPrice - discountedRowPrice);
+            discount += (order!.cartItems[index].rowPrice - discountedRowPrice);
           } else {
             canceledPrice += discountedRowPrice;
-            cancelItemsMap[key] = order.cartItems[index].itemCount;
-            subtotalPrice -= order.cartItems[index].rowPrice;
+            cancelItemsMap[key] = order!.cartItems[index].itemCount;
+            subtotalPrice -= order!.cartItems[index].rowPrice;
             totalPrice -= discountedRowPrice;
-            discount -= (order.cartItems[index].rowPrice - discountedRowPrice);
+            discount -= (order!.cartItems[index].rowPrice - discountedRowPrice);
           }
           _getShippingMethods();
-          markaaAppChangeNotifier.rebuild();
+          markaaAppChangeNotifier!.rebuild();
         },
       ),
     );
@@ -448,7 +475,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
             ),
           ),
           OrderPaymentMethod(
-            paymentMethod: order.paymentMethod.id,
+            paymentMethod: order!.paymentMethod.id,
           ),
         ],
       ),
@@ -629,33 +656,33 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       context: context,
       builder: (context) {
         return QtyDropdownDialog(
-          cartItem: order.cartItems[index],
+          cartItem: order!.cartItems[index],
         );
       },
     );
     if (result != null) {
-      final key = order.cartItems[index].product.productId;
+      final key = order!.cartItems[index].product.productId;
       final count = result as int;
-      order.cartItems[index].itemCount = count;
+      order!.cartItems[index].itemCount = count;
 
       int updatedCount = 0;
       if (!cancelItemsMap.containsKey(key)) {
         updatedCount = count;
       } else {
-        updatedCount = count - order.cartItems[index].itemCount;
+        updatedCount = count - order!.cartItems[index].itemCount;
       }
-      double discountedUpdatePrice =
-          order.getDiscountedPrice(order.cartItems[index], isRowPrice: false) *
-              updatedCount;
+      double discountedUpdatePrice = order!
+              .getDiscountedPrice(order!.cartItems[index], isRowPrice: false) *
+          updatedCount;
       double updatePrice =
-          double.parse(order.cartItems[index].product.price) * updatedCount;
+          double.parse(order!.cartItems[index].product.price) * updatedCount;
       canceledPrice += discountedUpdatePrice;
       subtotalPrice -= updatePrice;
       totalPrice -= discountedUpdatePrice;
       discount -= (updatePrice - discountedUpdatePrice);
       cancelItemsMap[key] = count;
       _getShippingMethods();
-      markaaAppChangeNotifier.rebuild();
+      markaaAppChangeNotifier!.rebuild();
     }
   }
 
@@ -666,7 +693,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       Navigator.pushNamed(context, Routes.cancelOrderInfo, arguments: params);
     } else {
       String message = 'cancel_order_no_selected_item'.tr();
-      flushBarService.showErrorDialog(message);
+      flushBarService!.showErrorDialog(message);
     }
   }
 }

@@ -27,11 +27,12 @@ class AlarmListPage extends StatefulWidget {
 class _AlarmListPageState extends State<AlarmListPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  ProgressService progressService;
+  ProgressService? progressService;
+
   @override
   void initState() {
     _getAlarmITems = Api.getMethod(EndPoints.getAlarmItems,
-        data: {"lang": lang, "email": user.email}, extra: {"refresh": true});
+        data: {"lang": lang, "email": user?.email}, extra: {"refresh": true});
     progressService = ProgressService(context: context);
     super.initState();
   }
@@ -73,17 +74,17 @@ class _AlarmListPageState extends State<AlarmListPage> {
   }
 
   List<dynamic> _items = [];
-  Future _getAlarmITems;
+  Future? _getAlarmITems;
   Widget _buildAboutUsView() {
     return Expanded(
-      child: FutureBuilder(
+      child: FutureBuilder<dynamic>(
         future: _getAlarmITems,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (!snapshot.hasData ||
                 snapshot.data == null ||
-                snapshot.data['items'] == null ||
-                snapshot.data['items'].isEmpty)
+                snapshot.data!['items'] == null ||
+                snapshot.data!['items'].isEmpty)
               return NoAvailableData(message: 'no_items_in_list');
             _items = snapshot.data['items'];
             return ListView.separated(
@@ -96,14 +97,18 @@ class _AlarmListPageState extends State<AlarmListPage> {
                 child: Row(
                   children: [
                     InkWell(
-                        onTap: () {
-                          _goDetails(context, _items[i]['productdetail']);
-                        },
-                        child: CachedNetworkImage(
-                            imageUrl: _items[i]['productdetail']['image_url'],
-                            width: 90.w,
-                            height: 80.h,
-                            fit: BoxFit.fitHeight)),
+                      onTap: () {
+                        _goDetails(context, _items[i]['productdetail']);
+                      },
+                      child: CachedNetworkImage(
+                        key: ValueKey(_items[i]['productdetail']['image_url']),
+                        cacheKey: _items[i]['productdetail']['image_url'],
+                        imageUrl: _items[i]['productdetail']['image_url'],
+                        width: 90.w,
+                        height: 80.h,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
                     Expanded(
                       child: InkWell(
                         onTap: () {
@@ -156,7 +161,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
                                 "lib/public/icons/trash-icon.svg",
                                 color: Colors.black),
                             onTap: () async {
-                              progressService.showProgress();
+                              progressService!.showProgress();
                               ProductEntity _productEntity =
                                   ProductEntity.fromJson(
                                       _items[i]['productdetail']);
@@ -177,7 +182,7 @@ class _AlarmListPageState extends State<AlarmListPage> {
                                     'remove', _productEntity.productId,
                                     data: {"priceItem_Id": _items[i]['id']});
                               }
-                              progressService.hideProgress();
+                              progressService!.hideProgress();
                               _items.removeAt(i);
                               setState(() {});
                             }),

@@ -7,22 +7,22 @@ class ReviewEntity {
   final String title;
   final String detail;
   final String nickname;
-  final String customerId;
+  final String? customerId;
   final String entityCode;
   final double ratingValue;
 
   ReviewEntity({
-    this.reviewId,
-    this.createdAt,
-    this.entityId,
-    this.detailId,
-    this.entityPkValue,
-    this.title,
-    this.detail,
-    this.nickname,
+    required this.reviewId,
+    required this.createdAt,
+    required this.entityId,
+    required this.detailId,
+    required this.entityPkValue,
+    required this.title,
+    required this.detail,
+    required this.nickname,
     this.customerId,
-    this.entityCode,
-    this.ratingValue,
+    required this.entityCode,
+    required this.ratingValue,
   });
 
   ReviewEntity.fromJson(Map<String, dynamic> json)

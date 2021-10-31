@@ -12,7 +12,11 @@ class ProfileImageUpdated extends ProfileEvent {
   final Uint8List image;
   final String name;
 
-  ProfileImageUpdated({this.token, this.image, this.name});
+  ProfileImageUpdated({
+    required this.token,
+    required this.image,
+    required this.name,
+  });
 
   @override
   List<Object> get props => [token, image, name];
@@ -26,11 +30,11 @@ class ProfileInformationUpdated extends ProfileEvent {
   final String email;
 
   ProfileInformationUpdated({
-    this.token,
-    this.firstName,
-    this.lastName,
-    this.phoneNumber,
-    this.email,
+    required this.token,
+    required this.firstName,
+    required this.lastName,
+    required this.phoneNumber,
+    required this.email,
   });
 
   @override

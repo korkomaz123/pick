@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SearchProductCard extends StatelessWidget {
   final ProductModel product;
 
-  SearchProductCard({this.product});
+  SearchProductCard({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,8 @@ class SearchProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CachedNetworkImage(
+            key: ValueKey(product.imageUrl),
+            cacheKey: product.imageUrl,
             imageUrl: product.imageUrl,
             width: 50.w,
             height: 50.h,

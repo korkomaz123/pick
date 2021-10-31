@@ -177,6 +177,9 @@
     "order_on_progress": "In Progress",
     "order_delivered": "Delivered",
     "order_cancelled": "Canceled",
+    "pending_payment": "Payment Pending",
+    "failed_payment": "Payment Failed",
+    "canceled_payment": "Payment Canceled",
     "my_orders": "My Orders",
     "message_title": "Message",
     "message_hint": "Please write your message",
@@ -255,12 +258,13 @@
     "cancel_order_image_required": "Please take an image for product",
     "success": "Success",
     "failed": "Failed",
-    "out_of_stock_error": "This product qty not available",
+    "out_of_stock_error": "This product qty is not available",
     "required_options": "Please choose the options",
     "reorder_items_error": "This reorder can not be processed without any available items",
     "rating_required": "Please rate to review",
     "item_canceled": "Item Canceled",
-    "out_stock_items_error": "Some items are out of stock",
+    "out_stock_items_error": "is out of stock. Please remove it from your cart.",
+    "inventory_qty_exceed_error": "A's quantity has exceeded the quantity available in its current inventory. Adjust the current added amount.",
     "markaa_team_title": "Markaa Team",
     "apple_sign_description": "When you log into markaa app using Apple Sign In, we need to access to your Apple ID(Email) to identify you. Before continue, please make sure you choose share email option.",
     "apple_sign_failure": "We can not identify you at this time. To continue please follow this steps. Go to your device settings; Settings > Apple ID, iCloud, iTunes & App Store > Password & Security > Apps Using Your Apple ID, tap on your app and tap Stop Using Apple ID. After done success, you can sign in with your apple account again.",
@@ -394,5 +398,6 @@
     "coupon_apply_notice": "This item doesn't include the coupons Offer.",
     "cart_empty_error": "Sorry! There is no items in your cart.",
     "coupon": "Discount Coupon",
-    "connection_error": "Oops! Connection is poor, please try again later."
+    "connection_error": "Oops! Connection is poor, please try again later.",
+    "added_review_success": "Thank You! Your review has been submitted success."
 }

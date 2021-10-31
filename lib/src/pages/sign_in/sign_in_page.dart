@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:markaa/env.dart';
 import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
@@ -22,13 +23,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/utils/repositories/setting_repository.dart';
-import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -57,19 +56,17 @@ class _SignInPageState extends State<SignInPage> {
 
   bool isShowPass = false;
 
-  AuthChangeNotifier authChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
-  WishlistChangeNotifier wishlistChangeNotifier;
-  OrderChangeNotifier orderChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late WishlistChangeNotifier wishlistChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
-  final LocalStorageRepository localRepo = LocalStorageRepository();
-  final WishlistRepository wishlistRepo = WishlistRepository();
-  final SettingRepository settingRepo = SettingRepository();
+  final LocalStorageRepository localRepository = LocalStorageRepository();
 
   @override
   void initState() {
@@ -167,7 +164,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: 15.sp,
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_email'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -219,7 +216,7 @@ class _SignInPageState extends State<SignInPage> {
           fontSize: 15.sp,
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_password'.tr();
           } else if (!isLength(value, 5)) {
             return 'short_length_password'.tr();
@@ -405,25 +402,26 @@ class _SignInPageState extends State<SignInPage> {
   Future _onLoginSuccess(UserEntity loggedInUser) async {
     try {
       user = loggedInUser;
-      SlackChannels.send('new login [${user.email}][${user.toJson()}]',
-          SlackChannels.logAppUsers);
-      await localRepo.setToken(user.token);
-
-      await orderChangeNotifier.loadOrderHistories(user.token, lang);
-
+      SlackChannels.send(
+        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        SlackChannels.logAppUsers,
+      );
+      addressChangeNotifier.initialize();
+      // Future.wait([
+      await localRepository.setToken(user!.token);
+      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
-
-      await wishlistChangeNotifier.getWishlistItems(user.token, lang);
-
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user.token);
-      NotificationSetup().updateFcmDeviceToken();
+      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
+      await addressChangeNotifier.loadAddresses(user!.token);
+      await homeChangeNotifier.loadRecentlyViewedCustomer();
+      await NotificationSetup().updateFcmDeviceToken();
+      // ]);
     } catch (e) {
-      print(e.toString());
+      print(
+          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
     }
-    homeChangeNotifier.loadRecentlyViewedCustomer();
     progressService.hideProgress();
     if (Navigator.of(context).canPop()) {
       Navigator.pop(context);
@@ -438,7 +436,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   _signIn() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       authChangeNotifier.login(
         emailController.text,
         passwordController.text,
@@ -449,27 +447,30 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future _onFacebookSign() async {
-    final facebookLogin = FacebookLogin();
-    await facebookLogin.logOut();
-    final result = await facebookLogin.logIn(['email']);
+  void _onFacebookSign() async {
+    final facebookAuth = FacebookAuth.instance;
+    final result = await facebookAuth.login();
+    if (result.status == LoginStatus.operationInProgress) return;
     switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        _loginWithFacebook(result);
+      case LoginStatus.success:
+        _loadFacebookAccount(result);
         break;
-      case FacebookLoginStatus.cancelledByUser:
-        print('/// Canceled By User ///');
+      case LoginStatus.cancelled:
+        flushBarService.showErrorDialog('FACEBOOK LOGIN: CANCELED');
         break;
-      case FacebookLoginStatus.error:
-        print('/// Facebook Login Error ///');
-        print(result.errorMessage);
+      case LoginStatus.failed:
+        print('FACEBOOK LOGIN: FAILED: ${result.message!}');
+        flushBarService.showErrorDialog(result.message!);
         break;
+      default:
+        print('FACEBOOK LOGIN: UNKNOWN STATUS');
+        flushBarService.showErrorDialog('Login failed, try again later.');
     }
   }
 
-  Future _loginWithFacebook(FacebookLoginResult result) async {
+  void _loadFacebookAccount(LoginResult result) async {
     try {
-      final token = result.accessToken.token;
+      final token = result.accessToken!.token;
       final profile = await Api.getMethod(
           'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
       String firstName = profile['first_name'];
@@ -481,7 +482,7 @@ class _SignInPageState extends State<SignInPage> {
           onSuccess: _onLoginSuccess,
           onFailure: _onLoginFailure);
     } catch (e) {
-      print('/// LOGIN WITH FACEBOOK ERROR: $e ///');
+      print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
   }
 
@@ -492,7 +493,7 @@ class _SignInPageState extends State<SignInPage> {
       final googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
         String email = googleAccount.email;
-        String displayName = googleAccount.displayName;
+        String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
         authChangeNotifier.loginWithSocial(
@@ -514,10 +515,10 @@ class _SignInPageState extends State<SignInPage> {
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      String email = credential.email;
-      String appleId = credential.userIdentifier;
-      String firstName = credential.givenName;
-      String lastName = credential.familyName;
+      String? email = credential.email;
+      String appleId = credential.userIdentifier!;
+      String firstName = credential.givenName!;
+      String lastName = credential.familyName!;
       if (email == null) {
         final faker = Faker();
         String fakeEmail = faker.internet.freeEmail();

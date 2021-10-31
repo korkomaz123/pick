@@ -1,13 +1,13 @@
 class CategoryEntity {
   final String id;
   final String name;
-  final String description;
-  final String imageUrl;
-  final List<CategoryEntity> subCategories;
+  final String? description;
+  final String? imageUrl;
+  final List<CategoryEntity>? subCategories;
 
   CategoryEntity({
-    this.id,
-    this.name,
+    required this.id,
+    required this.name,
     this.description,
     this.imageUrl,
     this.subCategories,
@@ -27,7 +27,7 @@ class CategoryEntity {
             'category_image': imageUrl,
       };
 
-  static List<CategoryEntity> _getSubCategories(List<dynamic> subCategories) {
+  static List<CategoryEntity> _getSubCategories(List<dynamic>? subCategories) {
     List<CategoryEntity> categories = [];
     if (subCategories != null && subCategories.isNotEmpty) {
       for (int i = 0; i < subCategories.length; i++) {

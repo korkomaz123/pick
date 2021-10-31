@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 
 class ImageCustomPickerService {
   ImageCustomPickerService({
-    @required this.context,
-    @required this.backgroundColor,
-    @required this.titleColor,
-    @required this.video,
+    required this.context,
+    required this.backgroundColor,
+    required this.titleColor,
+    required this.video,
     this.galleryTitle = 'From Gallery',
     this.cameraTitle = 'From Camera',
   });
@@ -21,7 +20,7 @@ class ImageCustomPickerService {
   final String galleryTitle;
   final String cameraTitle;
 
-  Future<File> getImageWithDialog() async {
+  Future<File?> getImageWithDialog() async {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     var result = await showDialog(
@@ -36,15 +35,15 @@ class ImageCustomPickerService {
     if (result == null) {
       return null;
     }
-    XFile file;
+    XFile? file;
     try {
       if (result.toString() == 'gallery') {
         file = await ImagePicker().pickImage(source: ImageSource.gallery);
       } else {
         file = await ImagePicker().pickImage(source: ImageSource.camera);
       }
-      File croppedFile = await ImageCropper.cropImage(
-        sourcePath: file.path,
+      File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: file!.path,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
@@ -72,9 +71,9 @@ class ImageCustomPickerService {
     }
   }
 
-  Widget _buildPickSourceDialog({double width, double height}) {
+  Widget _buildPickSourceDialog({double? width, double? height}) {
     return Container(
-      margin: EdgeInsets.only(top: height * 0.8),
+      margin: EdgeInsets.only(top: height! * 0.8),
       color: backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,7 +81,7 @@ class ImageCustomPickerService {
           InkWell(
             onTap: () => Navigator.pop(context, 'gallery'),
             child: Container(
-              width: width * 0.9,
+              width: width! * 0.9,
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: Row(
                 children: <Widget>[

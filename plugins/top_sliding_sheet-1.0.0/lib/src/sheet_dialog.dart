@@ -11,11 +11,11 @@ part of 'sheet.dart';
 ///
 /// The `resizeToAvoidBottomInset` parameter can be used to avoid the keyboard from obscuring
 /// the content bottom sheet.
-Future<T> showSlidingTopSheet<T>(
+Future<T?> showSlidingTopSheet<T>(
   BuildContext context, {
-  @required SlidingSheetDialog Function(BuildContext context) builder,
-  Widget Function(BuildContext context, SlidingSheet sheet) parentBuilder,
-  RouteSettings routeSettings,
+  required SlidingSheetDialog Function(BuildContext context) builder,
+  Widget Function(BuildContext context, SlidingSheet sheet)? parentBuilder,
+  RouteSettings? routeSettings,
   bool useRootNavigator = false,
   bool resizeToAvoidBottomInset = true,
 }) {
@@ -116,10 +116,10 @@ class SlidingSheetDialog {
   final SheetBuilder builder;
 
   /// {@macro sliding_sheet.headerBuilder}
-  final SheetBuilder headerBuilder;
+  final SheetBuilder? headerBuilder;
 
   /// {@macro sliding_sheet.footerBuilder}
-  final SheetBuilder footerBuilder;
+  final SheetBuilder? footerBuilder;
 
   /// {@macro sliding_sheet.snapSpec}
   final SnapSpec snapSpec;
@@ -128,7 +128,7 @@ class SlidingSheetDialog {
   final Duration duration;
 
   /// {@macro sliding_sheet.color}
-  final Color color;
+  final Color? color;
 
   /// {@macro sliding_sheet.backdropColor}
   final Color backdropColor;
@@ -140,32 +140,32 @@ class SlidingSheetDialog {
   final double elevation;
 
   /// {@macro sliding_sheet.padding}
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// {@macro sliding_sheet.avoidStatusBar}
   final bool avoidStatusBar;
 
   /// {@macro sliding_sheet.margin}
-  final EdgeInsets margin;
+  final EdgeInsets? margin;
 
   /// {@macro sliding_sheet.border}
-  final Border border;
+  final Border? border;
 
   /// {@macro sliding_sheet.cornerRadius}
   final double cornerRadius;
 
   /// {@macro sliding_sheet.cornerRadiusOnFullscreen}
-  final double cornerRadiusOnFullscreen;
+  final double? cornerRadiusOnFullscreen;
 
   /// If true, the sheet will be dismissed the backdrop
   /// was tapped.
   final bool dismissOnBackdropTap;
 
   /// {@macro sliding_sheet.listener}
-  final SheetListener listener;
+  final SheetListener? listener;
 
   /// {@macro sliding_sheet.controller}
-  final SheetController controller;
+  final SheetController? controller;
 
   /// {@macro sliding_sheet.scrollSpec}
   final ScrollSpec scrollSpec;
@@ -174,13 +174,13 @@ class SlidingSheetDialog {
   final double maxWidth;
 
   /// {@macro sliding_sheet.minHeight}
-  final double minHeight;
+  final double? minHeight;
 
   /// {@macro sliding_sheet.isDismissable}
   final bool isDismissable;
 
   /// {@macro sliding_sheet.onDismissPrevented}
-  final OnDismissPreventedCallback onDismissPrevented;
+  final OnDismissPreventedCallback? onDismissPrevented;
 
   /// {@macro sliding_sheet.isBackDropInteractable}
   final bool isBackdropInteractable;
@@ -199,14 +199,14 @@ class SlidingSheetDialog {
 
   /// Creates a wrapper class to show a [SlidingSheet] as a bottom sheet dialog.
   const SlidingSheetDialog({
-    @required this.builder,
+    required this.builder,
     this.headerBuilder,
     this.footerBuilder,
     this.snapSpec = const SnapSpec(),
     this.duration = const Duration(milliseconds: 800),
     this.color,
     this.backdropColor = Colors.black54,
-    this.shadowColor,
+    required this.shadowColor,
     this.elevation = 0.0,
     this.padding,
     this.avoidStatusBar = false,
@@ -236,9 +236,9 @@ class _SlidingSheetRoute<T> extends PageRoute<T> {
       builder;
   final Duration duration;
   _SlidingSheetRoute({
-    @required this.builder,
-    @required this.duration,
-    RouteSettings settings,
+    required this.builder,
+    required this.duration,
+    RouteSettings? settings,
   }) : super(
           settings: settings,
           fullscreenDialog: false,
@@ -251,10 +251,10 @@ class _SlidingSheetRoute<T> extends PageRoute<T> {
   bool get barrierDismissible => false;
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   bool get maintainState => true;

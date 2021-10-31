@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class WishlistItem extends StatefulWidget {
   final SnackBarService snackBarService;
 
-  WishlistItem({this.snackBarService});
+  WishlistItem({required this.snackBarService});
 
   @override
   _WishlistItemState createState() => _WishlistItemState();

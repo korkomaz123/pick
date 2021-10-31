@@ -5,25 +5,25 @@ import 'package:flutter/material.dart';
 
 class MarkaaTextButton extends StatelessWidget {
   final String title;
-  final String image;
+  final String? image;
   final double titleSize;
   final Color titleColor;
   final Color buttonColor;
   final Color borderColor;
-  final Function onPressed;
+  final void Function()? onPressed;
   final double radius;
   final double elevation;
   final double borderWidth;
   final bool isBold;
 
   MarkaaTextButton({
-    @required this.title,
+    required this.title,
     this.image,
-    @required this.titleSize,
-    @required this.titleColor,
-    @required this.buttonColor,
-    @required this.borderColor,
-    @required this.onPressed,
+    required this.titleSize,
+    required this.titleColor,
+    required this.buttonColor,
+    required this.borderColor,
+    this.onPressed,
     this.elevation = 0,
     this.radius = 10,
     this.borderWidth = 1,
@@ -44,7 +44,7 @@ class MarkaaTextButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (image != null && image.isNotEmpty) ...[
+          if (image != null) ...[
             Padding(
               padding: EdgeInsets.all(8.w),
               child: SvgPicture.asset(

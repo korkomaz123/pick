@@ -5,16 +5,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class PlaceChangeNotifier with ChangeNotifier {
-  StreamController<PlaceEntity> locationController = StreamController<PlaceEntity>.broadcast();
-  PlaceEntity locationSelect;
-  PlaceEntity formLocation;
-  List<PlaceEntity> listPlace;
+  StreamController<PlaceEntity> locationController =
+      StreamController<PlaceEntity>.broadcast();
+  PlaceEntity? locationSelect;
+  PlaceEntity? formLocation;
+  List<PlaceEntity>? listPlace;
 
   Stream get placeStream => locationController.stream;
 
-  Future<List<PlaceEntity>> search(String query) async {
+  Future<List<PlaceEntity>?> search(String query) async {
     String url =
-        "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=KW&query=" + Uri.encodeQueryComponent(query);
+        "https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&language=en&region=KW&query=" +
+            Uri.encodeQueryComponent(query);
     Response response = await Dio().get(url);
     listPlace = PlaceEntity.parseLocationList(response.data);
     notifyListeners();
@@ -25,13 +27,13 @@ class PlaceChangeNotifier with ChangeNotifier {
     locationController.sink.add(location);
   }
 
-  Future<void> selectLocation(PlaceEntity location) async {
+  Future<PlaceEntity?> selectLocation(PlaceEntity location) async {
     notifyListeners();
     locationSelect = location;
     return locationSelect;
   }
 
-  Future<void> getCurrentLocation(PlaceEntity location) async {
+  Future<PlaceEntity?> getCurrentLocation(PlaceEntity location) async {
     notifyListeners();
     formLocation = location;
     return formLocation;

@@ -20,16 +20,17 @@ import '../../../../preload.dart';
 
 class ProductReviewTotal extends StatefulWidget {
   final ProductEntity product;
-  final Function onReviews;
-  final Function onFirstReview;
+  final void Function()? onReviews;
+  final void Function()? onFirstReview;
   final ProgressService progressService;
   final ProductChangeNotifier model;
-  ProductReviewTotal(
-      {this.product,
-      this.onReviews,
-      this.onFirstReview,
-      this.model,
-      this.progressService});
+  ProductReviewTotal({
+    required this.product,
+    this.onReviews,
+    this.onFirstReview,
+    required this.model,
+    required this.progressService,
+  });
 
   @override
   _ProductReviewTotalState createState() => _ProductReviewTotalState();
@@ -37,13 +38,14 @@ class ProductReviewTotal extends StatefulWidget {
 
 class _ProductReviewTotalState extends State<ProductReviewTotal> {
   double average = 0;
-  ProductReviewChangeNotifier model;
   String _alarmActive = '';
+  ProductReviewChangeNotifier? model;
+
   @override
   void initState() {
     super.initState();
     model = context.read<ProductReviewChangeNotifier>();
-    model.getProductReviews(widget.product.productId);
+    model!.getProductReviews(widget.product.productId);
   }
 
   @override
@@ -61,18 +63,15 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
               padding: EdgeInsets.symmetric(vertical: 10.w),
               child: Consumer<ProductReviewChangeNotifier>(
                 builder: (_, __, ___) {
-                  // if (model.reviews.isEmpty) {
-                  //   return _buildFirstReview();
-                  // } else {
                   double total = 0;
-                  for (int i = 0; i < model.reviews.length; i++) {
-                    total += model.reviews[i].ratingValue;
+                  for (int i = 0; i < model!.reviews.length; i++) {
+                    total += model!.reviews[i].ratingValue;
                   }
                   if (total > 0)
-                    average = total / model.reviews.length;
+                    average = total / model!.reviews.length;
                   else
                     average = 0;
-                  return _buildTotalReview(model);
+                  return _buildTotalReview(model!);
                   // }
                 },
               ),
@@ -101,9 +100,11 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
             child: InkWell(
               onTap: () async {
                 if (isStock && _alarmActive.isEmpty) {
-                  if (user == null || user.email == null) {
+                  if (user == null) {
                     Navigator.pushNamed(
-                        Preload.navigatorKey.currentContext, Routes.signIn);
+                      Preload.navigatorKey!.currentContext!,
+                      Routes.signIn,
+                    );
                     return;
                   }
                   widget.progressService.showProgress();
@@ -184,9 +185,9 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
     final variant = widget.model.selectedVariant;
 
     if (variant != null) {
-      return variant.stockQty != null && variant.stockQty > 0;
+      return variant.stockQty! > 0;
     }
-    return widget.product.stockQty != null && widget.product.stockQty > 0;
+    return widget.product.stockQty > 0;
   }
 
   Widget _buildTotalReview(ProductReviewChangeNotifier model) {

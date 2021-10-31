@@ -6,10 +6,10 @@ class VersionEntity {
   String storeLink;
 
   VersionEntity({
-    this.canUpdate,
-    this.updateMandatory,
-    this.dialogTitle,
-    this.dialogContent,
-    this.storeLink,
+    required this.canUpdate,
+    required this.updateMandatory,
+    required this.dialogTitle,
+    required this.dialogContent,
+    required this.storeLink,
   });
 }

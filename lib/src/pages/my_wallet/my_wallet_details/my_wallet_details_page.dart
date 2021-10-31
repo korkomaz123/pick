@@ -3,12 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/pages/my_wallet/gift/send_gift_page.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -18,7 +15,7 @@ import 'widgets/my_wallet_details_form.dart';
 import 'widgets/my_wallet_details_transactions.dart';
 
 class MyWalletDetailsPage extends StatefulWidget {
-  final double amount;
+  final double? amount;
 
   MyWalletDetailsPage({this.amount});
 
@@ -29,36 +26,28 @@ class MyWalletDetailsPage extends StatefulWidget {
 class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
     with WidgetsBindingObserver {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   ScrollController _controller = ScrollController();
-
   ScrollDirection prevDirection = ScrollDirection.forward;
 
   @override
   void initState() {
     super.initState();
-
-    _onLoadUser();
-    _controller.addListener(_onScroll);
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _scaffoldKey.currentState
-          .showBottomSheet((context) => _buildBottomSheet());
-    });
-  }
-
-  _onLoadUser() async {
-    user = await Preload.currentUser;
-    setState(() {});
+    if (widget.amount == null) {
+      _controller.addListener(_onScroll);
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _scaffoldKey.currentState!
+            .showBottomSheet((context) => _buildBottomSheet());
+      });
+    }
   }
 
   _onScroll() {
     if (prevDirection != _controller.position.userScrollDirection) {
       if (prevDirection == ScrollDirection.forward) {
-        _scaffoldKey.currentState
+        _scaffoldKey.currentState!
             .showBottomSheet((context) => SizedBox.shrink());
       } else if (prevDirection == ScrollDirection.reverse) {
-        _scaffoldKey.currentState
+        _scaffoldKey.currentState!
             .showBottomSheet((context) => _buildBottomSheet());
       }
     }
@@ -67,27 +56,19 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        String router =
-            widget.amount != null ? Routes.checkout : Routes.account;
-        Navigator.popUntil(context, (route) => route.settings.name == router);
-        return true;
-      },
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
-        body: Column(
-          children: [
-            MyWalletDetailsForm(amount: widget.amount),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: _controller,
-                child: MyWalletDetailsTransactions(),
-              ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
+      body: Column(
+        children: [
+          MyWalletDetailsForm(amount: widget.amount),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _controller,
+              child: MyWalletDetailsTransactions(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

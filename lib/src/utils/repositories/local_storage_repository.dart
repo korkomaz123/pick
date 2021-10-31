@@ -7,28 +7,28 @@ class LocalStorageRepository {
 
   Future<List<String>> getWishlistIds() async {
     List<String> wishlists = (await prefs).containsKey('wishlist')
-        ? (await prefs).getStringList('wishlist')
+        ? (await prefs).getStringList('wishlist')!
         : [];
     return wishlists;
   }
 
   Future<List<String>> getRecentlyViewedIds() async {
     List<String> recentlyViews = (await prefs).containsKey('recently-viewed')
-        ? (await prefs).getStringList('recently-viewed')
+        ? (await prefs).getStringList('recently-viewed')!
         : [];
     return recentlyViews;
   }
 
   Future<String> getToken() async {
     String token = (await prefs).containsKey('token')
-        ? (await prefs).getString('token')
+        ? (await prefs).getString('token')!
         : '';
     return token;
   }
 
   Future<String> getCartId() async {
     String cartId = (await prefs).containsKey('cartId')
-        ? (await prefs).getString('cartId')
+        ? (await prefs).getString('cartId')!
         : '';
     return cartId;
   }
@@ -83,14 +83,14 @@ class LocalStorageRepository {
   }
 
   Future<dynamic> getItem(String key) async {
-    return json.decode((await prefs).getString(key));
+    return json.decode((await prefs).getString(key)!);
   }
 
-  Future<void> setItem(String key, dynamic data) async {
+  Future<bool> setItem(String key, dynamic data) async {
     return await (await prefs).setString(key, json.encode(data));
   }
 
-  Future<void> removeItem(String key) async {
+  Future<bool> removeItem(String key) async {
     return await (await prefs).remove(key);
   }
 }

@@ -30,7 +30,7 @@ import 'widgets/product_list_view.dart';
 class ProductListPage extends StatefulWidget {
   final ProductListArguments arguments;
 
-  ProductListPage({this.arguments});
+  ProductListPage({required this.arguments});
 
   @override
   _ProductListPageState createState() => _ProductListPageState();
@@ -39,34 +39,34 @@ class ProductListPage extends StatefulWidget {
 class _ProductListPageState extends State<ProductListPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
-  TabController tabController;
-  ProductListArguments arguments;
-  CategoryEntity category;
-  List<CategoryEntity> subCategories;
-  String sortByItem;
-  BrandEntity brand;
-  int activeSubcategoryIndex;
-  bool isFromBrand;
-  bool isFilter;
-  FilterBloc filterBloc;
-  ProgressService progressService;
+  TabController? tabController;
+  ProductListArguments? arguments;
+  CategoryEntity? category;
+  List<CategoryEntity>? subCategories;
+  late String sortByItem;
+  BrandEntity? brand;
+  late int activeSubcategoryIndex;
+  bool? isFromBrand;
+  bool? isFilter;
+  FilterBloc? filterBloc;
+  ProgressService? progressService;
   double scrollPosition = 0;
-  ScrollChangeNotifier scrollChangeNotifier;
-  ProductChangeNotifier productChangeNotifier;
-  CategoryChangeNotifier categoryChangeNotifier;
-  ProductViewModeEnum viewMode;
+  ScrollChangeNotifier? scrollChangeNotifier;
+  ProductChangeNotifier? productChangeNotifier;
+  CategoryChangeNotifier? categoryChangeNotifier;
+  ProductViewModeEnum? viewMode;
   Map<String, dynamic> filterValues = {};
 
   @override
   void initState() {
     super.initState();
-    sortByItem = '';
+    sortByItem = 'default';
     arguments = widget.arguments;
-    category = arguments.category;
-    brand = arguments.brand;
-    activeSubcategoryIndex = arguments.selectedSubCategoryIndex;
-    isFromBrand = arguments.isFromBrand;
-    subCategories = [category];
+    category = arguments!.category;
+    brand = arguments!.brand;
+    activeSubcategoryIndex = arguments!.selectedSubCategoryIndex;
+    isFromBrand = arguments!.isFromBrand;
+    subCategories = category != null ? [category!] : [];
 
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
@@ -74,19 +74,19 @@ class _ProductListPageState extends State<ProductListPage> {
 
     filterBloc = context.read<FilterBloc>();
 
-    categoryChangeNotifier.initialSubCategories();
+    categoryChangeNotifier!.initialSubCategories();
 
-    if (isFromBrand) {
+    if (isFromBrand!) {
       viewMode = ProductViewModeEnum.brand;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        scrollChangeNotifier.initialize();
-        categoryChangeNotifier.getBrandSubCategories(brand.optionId, lang);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        scrollChangeNotifier!.initialize();
+        categoryChangeNotifier!.getBrandSubCategories(brand!.optionId, lang);
       });
     } else {
       viewMode = ProductViewModeEnum.category;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        scrollChangeNotifier.initialize();
-        categoryChangeNotifier.getSubCategories(category.id, lang);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        scrollChangeNotifier!.initialize();
+        categoryChangeNotifier!.getSubCategories(category!.id, lang);
       });
     }
     progressService = ProgressService(context: context);
@@ -106,40 +106,42 @@ class _ProductListPageState extends State<ProductListPage> {
       drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
-          if (isFromBrand) ...[_buildBrandBar()],
+          if (isFromBrand!) ...[_buildBrandBar()],
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
               if (!model.isLoading) {
                 if (model.subCategories == null) {
                   return Container();
                 }
-                if (isFromBrand) {
-                  subCategories = [CategoryEntity(id: 'all')];
+                if (isFromBrand!) {
+                  subCategories = [CategoryEntity(id: 'all', name: 'all'.tr())];
                 } else {
-                  subCategories = [category];
+                  subCategories = [category!];
                 }
-                subCategories.addAll(model.subCategories);
-                if (subCategories.length > activeSubcategoryIndex) {
+                subCategories!.addAll(model.subCategories!);
+                if (subCategories!.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
-                      double extra = scrollChangeNotifier.showBrandBar ? 0 : 75;
-                      double pos = !scrollChangeNotifier.showScrollBar ? 40 : 0;
+                      double extra =
+                          scrollChangeNotifier!.showBrandBar ? 0 : 75;
+                      double pos =
+                          !scrollChangeNotifier!.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
-                        top: isFromBrand ? 120.h - extra : 45.h,
+                        top: isFromBrand! ? 120.h - extra : 45.h,
                         left: 0,
                         right: 0,
                         bottom: 0,
                         duration: Duration(milliseconds: 500),
                         child: ProductListView(
-                          subCategories: subCategories,
+                          subCategories: subCategories ?? [],
                           activeIndex: activeSubcategoryIndex,
                           scaffoldKey: scaffoldKey,
-                          isFromBrand: isFromBrand,
-                          isFilter: isFilter,
+                          isFromBrand: isFromBrand ?? false,
+                          isFilter: isFilter ?? false,
                           brand: brand,
                           onChangeTab: (index) => _onChangeTab(index),
                           scrollController: scrollController,
-                          viewMode: viewMode,
+                          viewMode: viewMode!,
                           sortByItem: sortByItem,
                           filterValues: filterValues,
                           pos: pos,
@@ -159,7 +161,7 @@ class _ProductListPageState extends State<ProductListPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
-        activeItem: isFromBrand ? BottomEnum.store : BottomEnum.category,
+        activeItem: isFromBrand! ? BottomEnum.store : BottomEnum.category,
       ),
     );
   }
@@ -174,11 +176,7 @@ class _ProductListPageState extends State<ProductListPage> {
         height: 40.h,
         color: primarySwatchColor,
         alignment: Alignment.center,
-        padding: EdgeInsets.only(
-          left: 10.w,
-          right: 10.w,
-          bottom: 10.h,
-        ),
+        padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
@@ -222,11 +220,11 @@ class _ProductListPageState extends State<ProductListPage> {
             Align(
               alignment: Alignment.center,
               child: Text(
-                isFromBrand
-                    ? brand.brandLabel
-                    : ['41', '42', '43'].contains(category.id)
-                        ? category.name.tr()
-                        : category.name,
+                isFromBrand!
+                    ? brand!.brandLabel
+                    : ['41', '42', '43'].contains(category!.id)
+                        ? category!.name.tr()
+                        : category!.name,
                 style: mediumTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: 17.sp,
@@ -242,7 +240,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildBrandBar() {
     return Consumer<ScrollChangeNotifier>(
       builder: (ctx, notifier, child) {
-        double extra = scrollChangeNotifier.showBrandBar ? 0 : 40;
+        double extra = scrollChangeNotifier!.showBrandBar ? 0 : 40;
         return AnimatedPositioned(
           top: 40.h - extra,
           left: 0,
@@ -255,13 +253,17 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              imageUrl: brand.brandImage,
+              key: ValueKey(brand?.brandImage ?? ''),
+              cacheKey: brand?.brandImage ?? '',
+              imageUrl: brand?.brandImage ?? '',
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  imageUrl: brand.brandThumbnail,
+                  key: ValueKey(brand?.brandThumbnail ?? ''),
+                  cacheKey: brand?.brandThumbnail ?? '',
+                  imageUrl: brand?.brandThumbnail ?? '',
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
@@ -280,8 +282,8 @@ class _ProductListPageState extends State<ProductListPage> {
       useSafeArea: false,
       builder: (context) {
         return FilterPage(
-          categoryId: subCategories[activeSubcategoryIndex].id,
-          brandId: brand.optionId,
+          categoryId: subCategories?[activeSubcategoryIndex].id ?? 'all',
+          brandId: brand?.optionId ?? '',
           minPrice: filterValues.containsKey('minPrice')
               ? filterValues['minPrice']
               : null,
@@ -307,13 +309,13 @@ class _ProductListPageState extends State<ProductListPage> {
         activeSubcategoryIndex = 0;
       }
       setState(() {});
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        scrollChangeNotifier.initialize();
-        String key = _generateKey(subCategories[activeSubcategoryIndex]);
-        await productChangeNotifier.initialLoadFilteredProducts(
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        scrollChangeNotifier!.initialize();
+        String key = _generateKey(subCategories![activeSubcategoryIndex]);
+        await productChangeNotifier!.initialLoadFilteredProducts(
           key,
-          brand.optionId,
-          subCategories[activeSubcategoryIndex].id,
+          brand?.optionId ?? '',
+          subCategories?[activeSubcategoryIndex].id ?? 'all',
           filterValues,
           lang,
         );
@@ -333,14 +335,14 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
         duration: Duration(milliseconds: 300),
         builder: (context, state) {
-          return ProductSortByDialog();
+          return ProductSortByDialog(value: sortByItem);
         },
       );
     });
     if (result != null && sortByItem != result) {
       sortByItem = result;
       if (sortByItem == 'default' || sortByItem.isEmpty) {
-        if (isFromBrand) {
+        if (isFromBrand!) {
           viewMode = ProductViewModeEnum.brand;
         } else {
           viewMode = ProductViewModeEnum.category;
@@ -349,27 +351,27 @@ class _ProductListPageState extends State<ProductListPage> {
         viewMode = ProductViewModeEnum.sort;
       }
       setState(() {});
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        scrollChangeNotifier.initialize();
-        String key = _generateKey(subCategories[activeSubcategoryIndex]);
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        scrollChangeNotifier!.initialize();
+        String key = _generateKey(subCategories![activeSubcategoryIndex]);
         if (viewMode == ProductViewModeEnum.category) {
-          await productChangeNotifier.initialLoadCategoryProducts(
+          await productChangeNotifier!.initialLoadCategoryProducts(
             key,
-            subCategories[activeSubcategoryIndex].id,
+            subCategories![activeSubcategoryIndex].id,
             lang,
           );
         } else if (viewMode == ProductViewModeEnum.brand) {
-          await productChangeNotifier.initialLoadBrandProducts(
+          await productChangeNotifier!.initialLoadBrandProducts(
             key,
-            brand.optionId,
-            subCategories[activeSubcategoryIndex].id,
+            brand!.optionId,
+            subCategories?[activeSubcategoryIndex].id ?? 'all',
             lang,
           );
         } else {
-          await productChangeNotifier.initialLoadSortedProducts(
+          await productChangeNotifier!.initialLoadSortedProducts(
             key,
-            brand.optionId ?? '',
-            subCategories[activeSubcategoryIndex].id,
+            brand?.optionId ?? '',
+            subCategories?[activeSubcategoryIndex].id ?? 'all',
             sortByItem,
             lang,
           );
@@ -381,7 +383,7 @@ class _ProductListPageState extends State<ProductListPage> {
   void _onChangeTab(int index) async {
     activeSubcategoryIndex = index;
     if (sortByItem == 'default') {
-      if (isFromBrand) {
+      if (isFromBrand!) {
         viewMode = ProductViewModeEnum.brand;
       } else {
         viewMode = ProductViewModeEnum.category;
@@ -390,36 +392,35 @@ class _ProductListPageState extends State<ProductListPage> {
       viewMode = ProductViewModeEnum.sort;
     }
     setState(() {});
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      scrollChangeNotifier.initialize();
-      String key = _generateKey(subCategories[index]);
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      scrollChangeNotifier!.initialize();
+      String key = _generateKey(subCategories![index]);
       if (viewMode == ProductViewModeEnum.category) {
-        await productChangeNotifier.initialLoadCategoryProducts(
+        await productChangeNotifier!.initialLoadCategoryProducts(
           key,
-          subCategories[index].id,
+          subCategories![index].id,
           lang,
         );
       } else if (viewMode == ProductViewModeEnum.brand) {
-        await productChangeNotifier.initialLoadBrandProducts(
+        await productChangeNotifier!.initialLoadBrandProducts(
           key,
-          brand.optionId,
-          subCategories[index].id,
+          brand!.optionId,
+          subCategories![index].id,
           lang,
         );
       } else {
-        await productChangeNotifier.initialLoadSortedProducts(
+        await productChangeNotifier!.initialLoadSortedProducts(
           key,
-          brand.optionId ?? '',
-          subCategories[activeSubcategoryIndex].id,
+          brand?.optionId ?? '',
+          subCategories![activeSubcategoryIndex].id,
           sortByItem,
           lang,
         );
       }
       filterValues = {};
-      filterBloc.add(FilterAttributesLoaded(
-        categoryId:
-            subCategories[index].id == 'all' ? null : subCategories[index].id,
-        brandId: brand.optionId,
+      filterBloc!.add(FilterAttributesLoaded(
+        categoryId: subCategories![index].id,
+        brandId: brand?.optionId ?? '',
         lang: lang,
       ));
     });
@@ -427,19 +428,19 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onScrolling() {
     double pos = scrollController.position.pixels;
-    scrollChangeNotifier.controlBrandBar(pos);
+    scrollChangeNotifier!.controlBrandBar(pos);
   }
 
-  String _generateKey([CategoryEntity category]) {
-    String key;
+  String _generateKey([CategoryEntity? category]) {
+    late String key;
     if (viewMode == ProductViewModeEnum.category) {
-      key = category.id;
+      key = '${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.brand) {
-      key = brand.optionId + '_' + category.id;
+      key = '${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.sort) {
-      key = '${sortByItem}_${brand.optionId ?? ''}_${category.id ?? ''}';
+      key = '${sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (viewMode == ProductViewModeEnum.filter) {
-      key = 'filter_${brand.optionId ?? ''}_${category.id ?? 'all'}';
+      key = 'filter_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     }
     return key;
   }

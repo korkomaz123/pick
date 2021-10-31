@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MarkaaReviewProductCard extends StatelessWidget {
   final CartItemEntity cartItem;
 
-  MarkaaReviewProductCard({this.cartItem});
+  MarkaaReviewProductCard({required this.cartItem});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +22,8 @@ class MarkaaReviewProductCard extends StatelessWidget {
       child: Row(
         children: [
           CachedNetworkImage(
+            key: ValueKey(cartItem.product.imageUrl),
+            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.h,
             height: 120.h,
@@ -34,9 +36,9 @@ class MarkaaReviewProductCard extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    if (cartItem?.product?.brandEntity?.optionId != null) {
+                    if (cartItem.product.brandEntity?.optionId != null) {
                       ProductListArguments arguments = ProductListArguments(
-                        category: CategoryEntity(),
+                        category: null,
                         subCategory: [],
                         brand: cartItem.product.brandEntity,
                         selectedSubCategoryIndex: 0,
@@ -50,7 +52,7 @@ class MarkaaReviewProductCard extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    cartItem?.product?.brandEntity?.brandLabel ?? '',
+                    cartItem.product.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: 12.sp,
@@ -66,7 +68,7 @@ class MarkaaReviewProductCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  cartItem.product.shortDescription,
+                  cartItem.product.shortDescription!,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: mediumTextStyle.copyWith(
@@ -93,22 +95,6 @@ class MarkaaReviewProductCard extends StatelessWidget {
                             color: primaryColor,
                           ),
                         ),
-                        // if (cartItem.product.price !=
-                        //     cartItem.product.beforePrice) ...[
-                        //   SizedBox(width: 5.w),
-                        //   Text(
-                        //     cartItem.product.beforePrice +
-                        //         ' ' +
-                        //         'currency'.tr(),
-                        //     style: mediumTextStyle.copyWith(
-                        //       decorationStyle: TextDecorationStyle.solid,
-                        //       decoration: TextDecoration.lineThrough,
-                        //       decorationColor: dangerColor,
-                        //       fontSize: 12.sp,
-                        //       color: greyColor,
-                        //     ),
-                        //   ),
-                        // ]
                       ],
                     ),
                   ],

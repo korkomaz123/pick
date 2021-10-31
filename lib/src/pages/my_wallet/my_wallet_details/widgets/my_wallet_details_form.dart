@@ -16,7 +16,7 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
 class MyWalletDetailsForm extends StatefulWidget {
-  final double amount;
+  final double? amount;
 
   MyWalletDetailsForm({this.amount});
 
@@ -27,11 +27,11 @@ class MyWalletDetailsForm extends StatefulWidget {
 class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
   final _amountController = TextEditingController();
 
-  MarkaaAppChangeNotifier _markaaAppChangeNotifier;
-  WalletChangeNotifier _walletChangeNotifier;
+  late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
+  late WalletChangeNotifier _walletChangeNotifier;
 
-  ProgressService _progressService;
-  FlushBarService _flushBarService;
+  late ProgressService _progressService;
+  late FlushBarService _flushBarService;
 
   bool isValidAmount = false;
 
@@ -55,13 +55,14 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
     String value = _amountController.text;
     if (value.isNotEmpty &&
         (isInt(value) || isFloat(value)) &&
-        (widget.amount == null ||
-            (widget.amount != null && double.parse(value) >= widget.amount))) {
+        (double.parse(value) >= (widget.amount ?? 0))) {
       isValidAmount = true;
     } else {
       isValidAmount = false;
     }
-    _markaaAppChangeNotifier.rebuild();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _markaaAppChangeNotifier.rebuild();
+    });
   }
 
   @override
@@ -88,9 +89,9 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
                 maxLength: 3,
                 buildCounter: (
                   BuildContext context, {
-                  int currentLength,
-                  int maxLength,
-                  bool isFocused,
+                  int? currentLength,
+                  int? maxLength,
+                  bool? isFocused,
                 }) =>
                     null,
                 decoration: InputDecoration(
@@ -223,7 +224,7 @@ class _MyWalletDetailsFormState extends State<MyWalletDetailsForm> {
           minHeight: designHeight.h - 100.h,
           duration: Duration(milliseconds: 500),
           builder: (context, state) {
-            return MyWalletCheckoutPage();
+            return MyWalletCheckoutPage(fromCheckout: widget.amount != null);
           },
         );
       },

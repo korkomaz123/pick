@@ -6,15 +6,14 @@ import 'package:markaa/src/utils/repositories/sign_in_repository.dart';
 class AuthChangeNotifier extends ChangeNotifier {
   final _signInRepository = SignInRepository();
   final _localRepository = LocalStorageRepository();
-  UserEntity currentUser;
+  UserEntity? currentUser;
 
   Future getCurrentUser({
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-
     String token = await _localRepository.getToken();
     if (token.isNotEmpty) {
       SignInRepository signInRepo = SignInRepository();
@@ -23,24 +22,24 @@ class AuthChangeNotifier extends ChangeNotifier {
         result['data']['customer']['token'] = token;
         result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
         currentUser = UserEntity.fromJson(result['data']['customer']);
-
         if (onSuccess != null) onSuccess(currentUser);
       } else {
         currentUser = null;
         await _localRepository.removeToken();
-
         if (onFailure != null) onFailure();
       }
       notifyListeners();
+    } else {
+      if (onFailure != null) onFailure();
     }
   }
 
   Future login(
     String email,
     String password, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
@@ -66,16 +65,17 @@ class AuthChangeNotifier extends ChangeNotifier {
     String lastName,
     String loginType,
     String lang, {
-    String appleId,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? appleId,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
 
     try {
       final result = await _signInRepository.socialLogin(
           email, firstName, lastName, loginType, lang, appleId);
+      print(result);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
@@ -87,19 +87,20 @@ class AuthChangeNotifier extends ChangeNotifier {
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      print('LOGIN WITH SOCIAL CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
     }
   }
 
   Future logout({
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
 
     try {
-      await _signInRepository.logout(currentUser.token);
+      await _signInRepository.logout(currentUser!.token);
       currentUser = null;
 
       if (onSuccess != null) onSuccess();
@@ -115,9 +116,9 @@ class AuthChangeNotifier extends ChangeNotifier {
     String phoneNumber,
     String email,
     String password, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
 
@@ -140,9 +141,9 @@ class AuthChangeNotifier extends ChangeNotifier {
 
   Future requestNewPassword(
     String email, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
 

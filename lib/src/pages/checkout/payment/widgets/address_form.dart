@@ -25,7 +25,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:string_validator/string_validator.dart';
 
 class AddressForm extends StatefulWidget {
-  final Map<String, dynamic> params;
+  final Map<String, dynamic>? params;
 
   AddressForm({this.params});
 
@@ -34,18 +34,18 @@ class AddressForm extends StatefulWidget {
 }
 
 class _AddressFormState extends State<AddressForm> {
-  bool isNew;
+  bool? isNew;
 
-  String countryId;
-  String regionId;
+  String? countryId;
+  String? regionId;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
   ShippingAddressRepository shippingRepo = ShippingAddressRepository();
 
-  AddressChangeNotifier model;
-  AddressEntity addressParam;
+  AddressChangeNotifier? model;
+  AddressEntity? addressParam;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -70,8 +70,8 @@ class _AddressFormState extends State<AddressForm> {
     isNew = true;
 
     if (widget.params != null) {
-      if (widget.params.containsKey('address')) {
-        addressParam = widget.params['address'];
+      if (widget.params!.containsKey('address')) {
+        addressParam = widget.params!['address'];
       }
     }
     model = context.read<AddressChangeNotifier>();
@@ -82,30 +82,30 @@ class _AddressFormState extends State<AddressForm> {
 
   _initForm() {
     if (user?.token != null) {
-      firstNameController.text = user?.firstName;
-      lastNameController.text = user?.lastName;
-      fullNameController.text = user.firstName + " " + user.lastName;
-      emailController.text = user?.email;
-      phoneNumberController.text = user?.phoneNumber;
+      firstNameController.text = user!.firstName;
+      lastNameController.text = user!.lastName;
+      fullNameController.text = user!.firstName + " " + user!.lastName;
+      emailController.text = user!.email;
+      phoneNumberController.text = user!.phoneNumber!;
     }
 
     if (addressParam != null) {
       isNew = false;
-      firstNameController.text = addressParam?.firstName;
-      lastNameController.text = addressParam?.lastName;
+      firstNameController.text = addressParam!.firstName!;
+      lastNameController.text = addressParam!.lastName!;
       fullNameController.text =
-          addressParam.firstName + " " + addressParam.lastName;
-      emailController.text = addressParam?.email;
-      titleController.text = addressParam?.title ?? 'title';
-      countryController.text = addressParam?.country;
+          addressParam!.firstName! + " " + addressParam!.lastName!;
+      emailController.text = addressParam!.email!;
+      titleController.text = addressParam!.title!;
+      countryController.text = addressParam!.country;
       countryId = addressParam?.countryId;
-      stateController.text = addressParam?.region;
+      stateController.text = addressParam!.region;
       regionId = addressParam?.regionId;
-      cityController.text = addressParam?.city;
-      companyController.text = addressParam?.company;
-      streetController.text = addressParam?.street;
-      postCodeController.text = addressParam?.postCode;
-      phoneNumberController.text = addressParam?.phoneNumber;
+      cityController.text = addressParam!.city;
+      companyController.text = addressParam!.company!;
+      streetController.text = addressParam!.street;
+      postCodeController.text = addressParam!.postCode!;
+      phoneNumberController.text = addressParam!.phoneNumber!;
     } else {
       countryId = 'KW';
       countryController.text = 'Kuwait';
@@ -302,7 +302,7 @@ class _AddressFormState extends State<AddressForm> {
     FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
-      streetController.text = address.street ?? '';
+      streetController.text = address.street;
     }
   }
 
@@ -316,7 +316,7 @@ class _AddressFormState extends State<AddressForm> {
     if (result != null) {
       RegionEntity selectedRegion = result as RegionEntity;
       regionId = selectedRegion.regionId;
-      stateController.text = selectedRegion.defaultName;
+      stateController.text = selectedRegion.defaultName!;
       setState(() {});
     }
   }
@@ -338,15 +338,15 @@ class _AddressFormState extends State<AddressForm> {
   }
 
   void _onSave() async {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       String firstName = fullNameController.text.split(' ')[0];
       String lastName = fullNameController.text.split(' ')[1];
 
       AddressEntity address = AddressEntity(
         title: 'title',
         country: countryController.text,
-        countryId: countryId,
-        regionId: regionId,
+        countryId: countryId!,
+        regionId: regionId!,
         region: stateController.text,
         firstName: firstName,
         fullName: fullNameController.text,
@@ -357,28 +357,24 @@ class _AddressFormState extends State<AddressForm> {
         phoneNumber: phoneNumberController.text,
         company: companyController.text,
         email: emailController.text,
-        defaultBillingAddress: addressParam?.defaultBillingAddress != null
-            ? addressParam?.defaultBillingAddress
-            : 1,
-        defaultShippingAddress: addressParam?.defaultShippingAddress != null
-            ? addressParam?.defaultShippingAddress
-            : 1,
+        defaultBillingAddress: addressParam?.defaultBillingAddress ?? 1,
+        defaultShippingAddress: addressParam?.defaultShippingAddress ?? 1,
         addressId: addressParam?.addressId ?? '',
       );
-      if (user?.token != null) {
-        if (isNew) {
-          await model.addAddress(user.token, address,
+      if (user != null) {
+        if (isNew!) {
+          await model!.addAddress(user!.token, address,
               onProcess: _onProcess,
               onSuccess: _onSuccess,
               onFailure: _onFailure);
         } else {
-          await model.updateAddress(user.token, address,
+          await model!.updateAddress(user!.token, address,
               onProcess: _onProcess,
               onSuccess: _onSuccess,
               onFailure: _onFailure);
         }
       } else {
-        await model.updateGuestAddress(address.toJson(),
+        await model!.updateGuestAddress(address.toJson(),
             onProcess: _onProcess,
             onSuccess: _onSuccess,
             onFailure: _onFailure);
@@ -387,16 +383,16 @@ class _AddressFormState extends State<AddressForm> {
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     Navigator.pop(context);
   }
 
   void _onFailure(String error) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(error);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(error);
   }
 }

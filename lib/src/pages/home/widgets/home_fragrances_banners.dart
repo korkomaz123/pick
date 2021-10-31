@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
@@ -14,41 +12,38 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeFragrancesBanners extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeFragrancesBanners({@required this.homeChangeNotifier});
+
+  HomeFragrancesBanners({required this.homeChangeNotifier});
 
   final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeChangeNotifier>(
-      builder: (_, model, __) {
-        if (model.fragrancesBanners.isNotEmpty ||
-            model.fragrancesBannersTitle.isNotEmpty) {
-          return Container(
-            width: designWidth.w,
-            child: Column(
-              children: [
-                if (model.fragrancesBanners.isNotEmpty) ...[
-                  _buildBanners(model.fragrancesBanners)
-                ],
-                if (model.fragrancesBannersTitle.isNotEmpty) ...[
-                  SizedBox(height: 10.h),
-                  _buildTitle(model.fragrancesBannersTitle, context)
-                ],
-              ],
-            ),
-          );
-        }
-        return Container();
-      },
-    );
+    if (homeChangeNotifier.fragrancesBanners.isNotEmpty ||
+        homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) {
+      return Container(
+        width: designWidth.w,
+        child: Column(
+          children: [
+            if (homeChangeNotifier.fragrancesBanners.isNotEmpty) ...[
+              _buildBanners(homeChangeNotifier.fragrancesBanners)
+            ],
+            if (homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) ...[
+              SizedBox(height: 10.h),
+              _buildTitle(homeChangeNotifier.fragrancesBannersTitle, context)
+            ],
+          ],
+        ),
+      );
+    }
+    return HomeLoadingWidget();
   }
 
   Widget _buildTitle(String title, BuildContext context) {
@@ -63,7 +58,7 @@ class HomeFragrancesBanners extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
+            child: Text(
               title,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
@@ -86,7 +81,7 @@ class HomeFragrancesBanners extends StatelessWidget {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeCategories[2],
                   subCategory: homeCategories[2].subCategories,
-                  brand: BrandEntity(),
+                  brand: null,
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );
@@ -118,37 +113,37 @@ class HomeFragrancesBanners extends StatelessWidget {
                 if (banner.categoryId != null) {
                   final arguments = ProductListArguments(
                     category: CategoryEntity(
-                      id: banner.categoryId,
-                      name: banner.categoryName,
+                      id: banner.categoryId!,
+                      name: banner.categoryName!,
                     ),
-                    brand: BrandEntity(),
+                    brand: null,
                     subCategory: [],
                     selectedSubCategoryIndex: 0,
                     isFromBrand: false,
                   );
                   Navigator.pushNamed(
-                    Preload.navigatorKey.currentContext,
+                    Preload.navigatorKey!.currentContext!,
                     Routes.productList,
                     arguments: arguments,
                   );
-                } else if (banner?.brand?.optionId != null) {
+                } else if (banner.brand != null) {
                   final arguments = ProductListArguments(
-                    category: CategoryEntity(),
+                    category: null,
                     brand: banner.brand,
                     subCategory: [],
                     selectedSubCategoryIndex: 0,
                     isFromBrand: true,
                   );
                   Navigator.pushNamed(
-                    Preload.navigatorKey.currentContext,
+                    Preload.navigatorKey!.currentContext!,
                     Routes.productList,
                     arguments: arguments,
                   );
-                } else if (banner?.productId != null) {
+                } else if (banner.productId != null) {
                   final product =
-                      await productRepository.getProduct(banner.productId);
+                      await productRepository.getProduct(banner.productId!);
                   Navigator.pushNamedAndRemoveUntil(
-                    Preload.navigatorKey.currentContext,
+                    Preload.navigatorKey!.currentContext!,
                     Routes.product,
                     (route) => route.settings.name == Routes.home,
                     arguments: product,
@@ -156,7 +151,9 @@ class HomeFragrancesBanners extends StatelessWidget {
                 }
               },
               child: CachedNetworkImage(
-                imageUrl: banner.bannerImage,
+                key: ValueKey(banner.bannerImage ?? ''),
+                cacheKey: banner.bannerImage ?? '',
+                imageUrl: banner.bannerImage ?? '',
                 errorWidget: (context, url, error) =>
                     Center(child: Icon(Icons.image, size: 20)),
               ),

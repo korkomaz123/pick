@@ -13,12 +13,12 @@ import 'package:markaa/src/utils/services/flushbar_service.dart';
 class MyCartQtyHorizontalPicker extends StatefulWidget {
   final CartItemEntity cartItem;
   final String cartId;
-  final Function onChange;
+  final void Function()? onChange;
   final bool isDefaultValue;
 
   MyCartQtyHorizontalPicker({
-    this.cartItem,
-    this.cartId,
+    required this.cartItem,
+    required this.cartId,
     this.onChange,
     this.isDefaultValue = true,
   });
@@ -29,8 +29,8 @@ class MyCartQtyHorizontalPicker extends StatefulWidget {
 }
 
 class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
-  MyCartChangeNotifier myCartChangeNotifier;
-  FlushBarService flushBarService;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  FlushBarService? flushBarService;
 
   @override
   void initState() {
@@ -43,13 +43,10 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.cartItem.availableCount > 0
-          ? (widget.onChange ?? () => _onChangeQty())
-          : () => null,
+          ? widget.onChange ?? _onChangeQty
+          : null,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 6.w,
-          vertical: 5.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 5.h),
         decoration: BoxDecoration(
           color: widget.cartItem.availableCount > 0 ? primaryColor : greyColor,
           borderRadius: BorderRadius.circular(8),
@@ -87,28 +84,28 @@ class _MyCartQtyHorizontalPickerState extends State<MyCartQtyHorizontalPicker> {
       },
     );
     if (result != null) {
-      await myCartChangeNotifier.updateCartItem(
-          widget.cartItem, result, _onFailure);
+      await myCartChangeNotifier!
+          .updateCartItem(widget.cartItem, result, _onFailure);
     }
   }
 
   void _onFailure(String message) {
-    flushBarService.showErrorDialog(message);
+    flushBarService!.showErrorDialog(message);
   }
 }
 
 class QtyDropdownDialog extends StatefulWidget {
   final CartItemEntity cartItem;
 
-  QtyDropdownDialog({this.cartItem});
+  QtyDropdownDialog({required this.cartItem});
 
   @override
   _QtyDropdownDialogState createState() => _QtyDropdownDialogState();
 }
 
 class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
-  int availableCount;
-  String productId;
+  int? availableCount;
+  String? productId;
 
   @override
   void initState() {
@@ -149,7 +146,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: List.generate(
-                            availableCount,
+                            availableCount!,
                             (index) => _buildQtyItem(index),
                           ),
                         ),
@@ -186,10 +183,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
 
   Widget _buildQtyItem(int index) {
     return InkWell(
-      onTap: () => Navigator.pop(
-        context,
-        availableCount - index,
-      ),
+      onTap: () => Navigator.pop(context, availableCount! - index),
       child: Container(
         width: 45.h,
         height: 45.h,
@@ -201,7 +195,7 @@ class _QtyDropdownDialogState extends State<QtyDropdownDialog> {
         ),
         alignment: Alignment.center,
         child: Text(
-          (availableCount - index).toString(),
+          (availableCount! - index).toString(),
           textAlign: TextAlign.center,
           style: mediumTextStyle.copyWith(
             fontSize: 16.sp,

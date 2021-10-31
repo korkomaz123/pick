@@ -1,9 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -14,11 +12,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+
+import 'home_loading_widget.dart';
 // import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeNewArrivalsBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeNewArrivalsBanner({@required this.homeChangeNotifier});
+
+  HomeNewArrivalsBanner({required this.homeChangeNotifier});
 
   @override
   _HomeNewArrivalsBannerState createState() => _HomeNewArrivalsBannerState();
@@ -49,7 +50,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: AutoSizeText(
+                    child: Text(
                       widget.homeChangeNotifier.sunglassesTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -68,7 +69,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                       borderColor: primaryColor,
                       borderWidth: Preload.language == 'en' ? 1 : 0.5,
                       radius: 0,
-                      onPressed: () => _onLink(context, banner),
+                      onPressed: () => _onLink(context, banner!),
                     ),
                   ),
                 ],
@@ -82,23 +83,18 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                     widget.homeChangeNotifier.sunglassesBanners.map((item) {
                   int index =
                       widget.homeChangeNotifier.sunglassesBanners.indexOf(item);
+                  bool single =
+                      widget.homeChangeNotifier.sunglassesBanners.length == 1;
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.sunglassesBanners
-                                      .length ==
-                                  1
-                              ? 375.w
-                              : 340.w,
-                          height: (widget.homeChangeNotifier.sunglassesBanners
-                                          .length ==
-                                      1
-                                  ? 375.w
-                                  : 340.w) *
-                              (897 / 1096),
-                          imageUrl: item.bannerImage,
+                          key: ValueKey(item.bannerImage ?? ''),
+                          cacheKey: item.bannerImage ?? '',
+                          width: single ? 375.w : 340.w,
+                          height: (single ? 375.w : 340.w) * (897 / 1096),
+                          imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
                               Center(child: Icon(Icons.image, size: 20)),
@@ -129,7 +125,7 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         ),
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 
@@ -137,10 +133,10 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
     if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: banner.categoryId,
-          name: banner.categoryName,
+          id: banner.categoryId!,
+          name: banner.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
@@ -150,9 +146,9 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.brand?.optionId != null) {
+    } else if (banner.brand != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
@@ -163,8 +159,8 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.productId != null) {
-      final product = await productRepository.getProduct(banner.productId);
+    } else if (banner.productId != null) {
+      final product = await productRepository.getProduct(banner.productId!);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,

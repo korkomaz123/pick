@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaCheckoutAppBar extends StatefulWidget
     implements PreferredSizeWidget {
-  final int currentIndex;
+  final int? currentIndex;
 
   MarkaaCheckoutAppBar({this.currentIndex});
 
@@ -55,7 +55,7 @@ class _MarkaaCheckoutAppBarState extends State<MarkaaCheckoutAppBar> {
             ? SizedBox.shrink()
             : MarkaaCheckoutStepper(
                 totalSteps: steps.length,
-                currentStep: widget.currentIndex,
+                currentStep: widget.currentIndex!,
                 items: List.generate(
                   steps.length,
                   (index) {

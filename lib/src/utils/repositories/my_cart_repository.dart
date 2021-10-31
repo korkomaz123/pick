@@ -20,7 +20,7 @@ class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  Future<String> getShoppingCart([String token]) async {
+  Future<String> getShoppingCart([String? token]) async {
     String url = EndPoints.createCart;
     Map<String, dynamic> params = {};
     if (token != null) params['token'] = token;

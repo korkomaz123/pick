@@ -2,7 +2,7 @@ part of 'sheet.dart';
 
 class _SheetExtent {
   final bool isDialog;
-  final _SlidingSheetScrollController controller;
+  final _SlidingSheetScrollController? controller;
   List<double> snappings;
   double targetHeight = 0;
   double childHeight = 0;
@@ -11,9 +11,9 @@ class _SheetExtent {
   double availableHeight = 0;
   _SheetExtent(
     this.controller, {
-    @required this.isDialog,
-    @required this.snappings,
-    @required void Function(double) listener,
+    required this.isDialog,
+    required this.snappings,
+    required void Function(double) listener,
   }) {
     maxExtent = snappings.last.clamp(0.0, 1.0);
     minExtent = snappings.first.clamp(0.0, 1.0);
@@ -23,15 +23,15 @@ class _SheetExtent {
       );
   }
 
-  ValueNotifier<double> _currentExtent;
-  double get currentExtent => _currentExtent.value;
+  late final ValueNotifier<double?> _currentExtent;
+  double get currentExtent => _currentExtent.value!;
   set currentExtent(double value) =>
       _currentExtent.value = math.min(value, maxExtent);
 
   double get sheetHeight => childHeight + headerHeight + footerHeight;
 
-  double maxExtent;
-  double minExtent;
+  late double maxExtent;
+  late double minExtent;
   double get additionalMinExtent => isAtMin ? 0.0 : 0.1;
   double get additionalMaxExtent => isAtMax ? 0.0 : 0.1;
 
@@ -48,15 +48,15 @@ class _SheetExtent {
 
   double get scrollOffset {
     try {
-      return math.max(controller.offset, 0);
+      return math.max(controller!.offset, 0);
     } catch (e) {
       return 0;
     }
   }
 
   double get maxScrollExtent {
-    if (controller.hasClients) {
-      return controller.position.maxScrollExtent;
+    if (controller!.hasClients) {
+      return controller!.position.maxScrollExtent;
     } else {
       return 0.0;
     }
@@ -72,7 +72,7 @@ class _SlidingSheetScrollController extends ScrollController {
 
   SlidingSheet get widget => sheet.widget;
 
-  _SheetExtent get extent => sheet.extent;
+  _SheetExtent get extent => sheet.extent!;
   void Function(double) get onPop => sheet._pop;
   Duration get duration => sheet.widget.duration;
   SnapSpec get snapSpec => sheet.snapSpec;
@@ -85,15 +85,15 @@ class _SlidingSheetScrollController extends ScrollController {
   bool get animating => controller?.isAnimating == true;
   bool get inInteraction => inDrag || animating;
 
-  _SlidingSheetScrollPosition _currentPosition;
+  _SlidingSheetScrollPosition? _currentPosition;
 
-  AnimationController controller;
+  AnimationController? controller;
 
   TickerFuture snapToExtent(
     double snap,
     TickerProvider vsync, {
     double velocity = 0.0,
-    Duration duration,
+    Duration? duration,
     bool clamp = true,
   }) {
     _dispose();
@@ -110,23 +110,23 @@ class _SlidingSheetScrollController extends ScrollController {
 
     controller = AnimationController(duration: duration, vsync: vsync);
     final animation = CurvedAnimation(
-      parent: controller,
+      parent: controller!,
       curve: velocity.abs() > 300 ? Curves.easeOutCubic : Curves.ease,
     );
 
     final start = extent.currentExtent;
 
-    controller.addListener(() {
+    controller!.addListener(() {
       // Clamp the end snap on every tick because the size of the sheet
       // could have changed in the meantime (for instance, the user makes
       // some fancy animation while sliding).
       if (clamp) snap = snap.clamp(extent.minExtent, extent.maxExtent);
-      extent.currentExtent = lerpDouble(start, snap, animation.value);
+      extent.currentExtent = lerpDouble(start, snap, animation.value)!;
     });
 
-    return controller.forward()
+    return controller!.forward()
       ..whenComplete(() {
-        controller.dispose();
+        controller!.dispose();
 
         // Needed because otherwise the scrollController
         // thinks were still dragging.
@@ -159,7 +159,7 @@ class _SlidingSheetScrollController extends ScrollController {
 
   void stopAnyRunningSnapAnimation() {
     if (animating) {
-      controller.stop();
+      controller!.stop();
     }
   }
 
@@ -167,7 +167,7 @@ class _SlidingSheetScrollController extends ScrollController {
   _SlidingSheetScrollPosition createScrollPosition(
     ScrollPhysics physics,
     ScrollContext context,
-    ScrollPosition oldPosition,
+    ScrollPosition? oldPosition,
   ) {
     return _currentPosition = _SlidingSheetScrollPosition(
       this,
@@ -195,10 +195,10 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
   final _SlidingSheetScrollController scrollController;
   _SlidingSheetScrollPosition(
     this.scrollController, {
-    @required ScrollPhysics physics,
-    @required ScrollContext context,
-    ScrollPosition oldPosition,
-    String debugLabel,
+    required ScrollPhysics physics,
+    required ScrollContext context,
+    ScrollPosition? oldPosition,
+    String? debugLabel,
   }) : super(
           physics: physics,
           context: context,
@@ -206,7 +206,7 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
           debugLabel: debugLabel,
         );
 
-  VoidCallback _dragCancelCallback;
+  VoidCallback? _dragCancelCallback;
   bool isMovingUp = true;
   bool isMovingDown = false;
 
@@ -309,6 +309,7 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
     // There is an issue with the bouncing scroll physics that when the sheet doesn't cover the full extent
     // the bounce back of the simulation would be so fast to close the sheet again, although it was swiped
     // upwards. Here we soften the bounce back to prevent that from happening.
+    //
     if (isMovingDown &&
         !inDrag &&
         (scrollSpec.physics is BouncingScrollPhysics) &&
@@ -333,7 +334,7 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
     snap ? goSnapped(velocity) : goUnsnapped(velocity);
   }
 
-  void goSnapped(double velocity, {double snap}) {
+  void goSnapped(double velocity, {double? snap}) {
     velocity = velocity.abs();
     const flingThreshold = 1700;
 
@@ -356,7 +357,7 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
 
       // Find the next snap based on the velocity.
       double distance = double.maxFinite;
-      double targetSnap = snap;
+      double? targetSnap = snap;
 
       final slow = velocity < snapToNextThreshold;
       final target = !slow
@@ -389,13 +390,13 @@ class _SlidingSheetScrollPosition extends ScrollPositionWithSingleContext {
       if (targetSnap == null) findSnap(greaterThanCurrent: false);
 
       if (!isDismissable) {
-        targetSnap = math.max(minExtent, targetSnap);
+        targetSnap = math.max(minExtent, targetSnap!);
       }
 
       if (targetSnap == 0.0) {
         onPop(velocity);
       } else if (targetSnap != extent.currentExtent && currentExtent > 0) {
-        snapTo(targetSnap.clamp(minExtent, maxExtent));
+        snapTo(targetSnap!.clamp(minExtent, maxExtent));
       }
     }
   }

@@ -1,42 +1,37 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/celebrity_card.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../preload.dart';
+import 'home_loading_widget.dart';
 
 class HomeCelebrity extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeCelebrity({@required this.homeChangeNotifier});
+  HomeCelebrity({required this.homeChangeNotifier});
 
   @override
   Widget build(BuildContext context) {
     if (homeChangeNotifier.celebrityItems.isNotEmpty) {
-      return Consumer<HomeChangeNotifier>(
-        builder: (_, __, ___) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-            margin: EdgeInsets.only(bottom: 10.h),
-            color: Colors.white,
-            child: Column(
-              children: [
-                _buildHeadline(),
-                _buildProductsList(),
-              ],
-            ),
-          );
-        },
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+        margin: EdgeInsets.only(bottom: 10.h),
+        color: Colors.white,
+        child: Column(
+          children: [
+            _buildHeadline(),
+            _buildProductsList(),
+          ],
+        ),
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 
@@ -47,8 +42,8 @@ class HomeCelebrity extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
-              homeChangeNotifier.celebrityTitle ?? '',
+            child: Text(
+              homeChangeNotifier.celebrityTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
                 fontSize: 26.sp,
@@ -68,9 +63,11 @@ class HomeCelebrity extends StatelessWidget {
               borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
-                Navigator.pushNamed(Preload.navigatorKey.currentContext, Routes.celebritiesList, arguments: {
-                  'title': homeChangeNotifier.celebrityTitle ?? '',
-                });
+                Navigator.pushNamed(
+                  Preload.navigatorKey!.currentContext!,
+                  Routes.celebritiesList,
+                  arguments: {'title': homeChangeNotifier.celebrityTitle},
+                );
               },
             ),
           ),

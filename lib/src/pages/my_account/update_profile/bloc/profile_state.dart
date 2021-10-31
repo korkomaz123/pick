@@ -14,7 +14,7 @@ class ProfileImageUpdatedInProcess extends ProfileState {}
 class ProfileImageUpdatedSuccess extends ProfileState {
   final String url;
 
-  ProfileImageUpdatedSuccess({this.url});
+  ProfileImageUpdatedSuccess({required this.url});
 
   @override
   List<Object> get props => [url];
@@ -23,7 +23,7 @@ class ProfileImageUpdatedSuccess extends ProfileState {
 class ProfileImageUpdatedFailure extends ProfileState {
   final String message;
 
-  ProfileImageUpdatedFailure({this.message});
+  ProfileImageUpdatedFailure({required this.message});
 
   @override
   List<Object> get props => [message];
@@ -36,7 +36,7 @@ class ProfileInformationUpdatedSuccess extends ProfileState {}
 class ProfileInformationUpdatedFailure extends ProfileState {
   final String message;
 
-  ProfileInformationUpdatedFailure({this.message});
+  ProfileInformationUpdatedFailure({required this.message});
 
   @override
   List<Object> get props => [message];

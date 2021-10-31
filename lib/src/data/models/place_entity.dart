@@ -1,8 +1,8 @@
 class PlaceEntity {
-  String name;
-  String formattedAddress;
-  double lat;
-  double lng;
+  String? name;
+  String? formattedAddress;
+  double? lat;
+  double? lng;
 
   PlaceEntity({this.name, this.formattedAddress, this.lat, this.lng});
 

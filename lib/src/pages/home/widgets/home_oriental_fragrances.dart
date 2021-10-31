@@ -1,10 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -12,16 +9,16 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../preload.dart';
 import 'home_exculisive_banner.dart';
+import 'home_loading_widget.dart';
 
 class HomeOrientalFragrances extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeOrientalFragrances({@required this.homeChangeNotifier});
+  HomeOrientalFragrances({required this.homeChangeNotifier});
 
   Widget build(BuildContext context) {
     if (homeChangeNotifier.orientalProducts.isNotEmpty) {
@@ -33,22 +30,13 @@ class HomeOrientalFragrances extends StatelessWidget {
         child: Column(
           children: [
             _buildHeadline(),
-            FutureBuilder(
-              future: homeChangeNotifier.loadExculisiveBanner(),
-              builder: (_, snapShot) =>
-                  snapShot.connectionState == ConnectionState.waiting
-                      ? Center(child: PulseLoadingSpinner())
-                      : HomeExculisiveBanner(
-                          homeChangeNotifier: homeChangeNotifier),
-            ),
-            Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-              return _buildProductsList(homeChangeNotifier.orientalProducts);
-            }),
+            HomeExculisiveBanner(homeChangeNotifier: homeChangeNotifier),
+            _buildProductsList(homeChangeNotifier.orientalProducts),
           ],
         ),
       );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 
@@ -59,8 +47,8 @@ class HomeOrientalFragrances extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: AutoSizeText(
-              homeChangeNotifier.orientalTitle ?? '',
+            child: Text(
+              homeChangeNotifier.orientalTitle,
               maxLines: 1,
               style: mediumTextStyle.copyWith(
                 fontSize: 26.sp,
@@ -83,13 +71,13 @@ class HomeOrientalFragrances extends StatelessWidget {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeChangeNotifier.orientalCategory,
                   subCategory:
-                      homeChangeNotifier.orientalCategory.subCategories,
-                  brand: BrandEntity(),
+                      homeChangeNotifier.orientalCategory!.subCategories,
+                  brand: null,
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );
                 Navigator.pushNamed(
-                  Preload.navigatorKey.currentContext,
+                  Preload.navigatorKey!.currentContext!,
                   Routes.productList,
                   arguments: arguments,
                 );

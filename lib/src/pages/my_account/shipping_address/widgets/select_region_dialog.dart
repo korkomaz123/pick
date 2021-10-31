@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class SelectRegionDialog extends StatefulWidget {
-  final String value;
+  final String? value;
 
   SelectRegionDialog({this.value});
 
@@ -25,7 +25,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
       print(regions.length);
       setState(() {});
     } catch (e) {
-      print(e.toString());
+      print('LOADING REGIONS ON REGION DIALOG CATCH ERROR: $e');
     }
   }
 
@@ -122,7 +122,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            region.defaultName,
+                            region.defaultName!,
                             style: mediumTextStyle.copyWith(
                               fontSize: 16.sp,
                               color: isSelected ? primaryColor : greyDarkColor,

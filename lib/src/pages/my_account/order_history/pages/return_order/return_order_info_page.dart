@@ -21,7 +21,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ReturnOrderInfoPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  ReturnOrderInfoPage({this.params});
+  ReturnOrderInfoPage({required this.params});
 
   @override
   _ReturnOrderInfoPageState createState() => _ReturnOrderInfoPageState();
@@ -31,15 +31,15 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   TextEditingController additionalInfoController = TextEditingController();
-  ImageCustomPickerService imageCustomPickerService;
-  FlushBarService flushBarService;
-  ProgressService progressService;
-  OrderEntity order;
+  ImageCustomPickerService? imageCustomPickerService;
+  FlushBarService? flushBarService;
+  ProgressService? progressService;
+  OrderEntity? order;
   Map<String, dynamic> returnedItemsMap = {};
-  File file;
-  Uint8List imageData;
-  String name;
-  OrderChangeNotifier orderChangeNotifier;
+  File? file;
+  Uint8List? imageData;
+  String? name;
+  OrderChangeNotifier? orderChangeNotifier;
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onSuccess() {
@@ -69,8 +69,8 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   }
 
   void _onFailure(String error) {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog(error);
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(error);
   }
 
   @override
@@ -145,7 +145,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
         bordered: true,
         borderColor: Colors.grey,
         maxLines: 5,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (value) => value!.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -163,7 +163,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
               borderRadius: BorderRadius.circular(10.sp),
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
-                image: FileImage(file),
+                image: FileImage(file!),
                 fit: BoxFit.cover,
               ),
             )
@@ -228,17 +228,17 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   }
 
   void _onChangeImage() async {
-    File imageFile = await imageCustomPickerService.getImageWithDialog();
+    File? imageFile = await imageCustomPickerService!.getImageWithDialog();
     if (imageFile != null) {
       file = imageFile;
-      name = file.path.split('/').last;
-      imageData = file.readAsBytesSync();
+      name = file!.path.split('/').last;
+      imageData = file!.readAsBytesSync();
       setState(() {});
     }
   }
 
   void _onSubmit() {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       List<Map<String, dynamic>> items = [];
       List<String> keys = returnedItemsMap.keys.toList();
       items = keys.map((key) {
@@ -249,18 +249,17 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
           'resolutionId': 1,
         };
       }).toList();
-      orderChangeNotifier.returnOrder(
-        user.token,
-        order.orderId,
-        items,
-        additionalInfoController.text,
-        additionalInfoController.text,
-        imageData,
-        name,
-        _onProcess,
-        _onSuccess,
-        _onFailure,
-      );
+      orderChangeNotifier!.returnOrder(
+          user!.token,
+          order!.orderId,
+          items,
+          additionalInfoController.text,
+          additionalInfoController.text,
+          imageData!,
+          name!,
+          onProcess: _onProcess,
+          onSuccess: _onSuccess,
+          onFailure: _onFailure);
     }
   }
 }

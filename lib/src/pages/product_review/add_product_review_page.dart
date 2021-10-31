@@ -17,7 +17,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 class AddProductReviewPage extends StatefulWidget {
   final ProductEntity product;
 
-  AddProductReviewPage({this.product});
+  AddProductReviewPage({required this.product});
 
   @override
   _AddProductReviewPageState createState() => _AddProductReviewPageState();
@@ -29,9 +29,9 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController commentController = TextEditingController();
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  ProductReviewChangeNotifier model;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
+  ProductReviewChangeNotifier? model;
 
   @override
   void initState() {
@@ -122,7 +122,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 setState(() {});
               },
             ),
-            if (user?.token == null) ...[
+            if (user == null) ...[
               Container(
                 width: 375.w,
                 padding: EdgeInsets.symmetric(
@@ -176,7 +176,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 bordered: true,
                 borderColor: greyColor,
                 validator: (value) =>
-                    value.isEmpty ? 'required_field'.tr() : null,
+                    value!.isEmpty ? 'required_field'.tr() : null,
                 maxLines: 6,
               ),
             ),
@@ -199,36 +199,37 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
   }
 
   void _onAddReview() {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       if (rate > 0) {
-        model.addReview(
+        model!.addReview(
           widget.product.productId,
           titleController.text,
           commentController.text,
           int.parse(rate.toStringAsFixed(0)).toString(),
           user?.token ?? '',
           usernameController.text,
-          _onProcess,
-          _onSuccess,
-          _onFailure,
+          onProcess: _onProcess,
+          onSuccess: _onSuccess,
+          onFailure: _onFailure,
         );
       } else {
-        flushBarService.showErrorDialog('rating_required'.tr());
+        flushBarService!.showErrorDialog('rating_required');
       }
     }
   }
 
   void _onProcess() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
-  void _onSuccess() {
-    progressService.hideProgress();
+  void _onSuccess() async {
+    progressService!.hideProgress();
+    await flushBarService!.showSuccessDialog('added_review_success');
     Navigator.pop(context);
   }
 
   void _onFailure() {
-    progressService.hideProgress();
-    flushBarService.showErrorDialog('failed'.tr());
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog('failed'.tr());
   }
 }

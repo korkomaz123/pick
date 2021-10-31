@@ -20,7 +20,7 @@ import 'package:markaa/src/utils/services/numeric_service.dart';
 class ViewOrderPage extends StatefulWidget {
   final OrderEntity order;
 
-  ViewOrderPage({this.order});
+  ViewOrderPage({required this.order});
 
   @override
   _ViewOrderPageState createState() => _ViewOrderPageState();
@@ -28,9 +28,9 @@ class ViewOrderPage extends StatefulWidget {
 
 class _ViewOrderPageState extends State<ViewOrderPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  OrderEntity order;
+  late OrderEntity order;
   String icon = '';
-  Color color;
+  Color? color;
   String status = '';
   Widget paymentWidget = SizedBox.shrink();
   bool isStock = false;
@@ -65,6 +65,21 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         color = darkColor;
         status = 'returned'.tr();
         break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;
@@ -76,8 +91,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
 
   void _checkOrderItems() {
     for (int i = 0; i < order.cartItems.length; i++) {
-      if (order.cartItems[i].product.stockQty != null &&
-          order.cartItems[i].product.stockQty > 0) {
+      if (order.cartItems[i].product.stockQty! > 0) {
         isStock = true;
         break;
       }
@@ -260,8 +274,8 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               OrderItemCard(
                 order: order,
                 cartItem: order.cartItems[index],
-                canceled: order.cartItems[index].itemCountCanceled > 0,
-                returned: order.cartItems[index].itemCountReturned > 0,
+                canceled: order.cartItems[index].itemCountCanceled! > 0,
+                returned: order.cartItems[index].itemCountReturned! > 0,
               ),
               if (index < (order.cartItems.length - 1)) ...[
                 Divider(color: greyColor, thickness: 0.5)

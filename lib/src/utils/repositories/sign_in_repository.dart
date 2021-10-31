@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:markaa/src/apis/api.dart';
@@ -10,7 +9,7 @@ class SignInRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
-  String getFirebaseUser() {
+  String? getFirebaseUser() {
     final firebaseUser = _firebaseAuth.currentUser;
     return firebaseUser?.uid;
   }
@@ -19,10 +18,9 @@ class SignInRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<void> loginFirebase({
-    @required String email,
-    @required String password,
+    required String email,
+    required String password,
   }) async {
-    assert(email != null && password != null);
     await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
@@ -65,11 +63,11 @@ class SignInRepository {
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> socialLogin(
     String email,
-    String firstName,
-    String lastName,
+    String? firstName,
+    String? lastName,
     String loginType,
     String lang,
-    String appleId,
+    String? appleId,
   ) async {
     String url = EndPoints.socialLogin;
     final params = {

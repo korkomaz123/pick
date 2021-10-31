@@ -47,14 +47,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool agreeTerms = false;
 
-  AuthChangeNotifier authChangeNotifier;
-  HomeChangeNotifier homeChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
 
-  final LocalStorageRepository localRepo = LocalStorageRepository();
+  final LocalStorageRepository localRepository = LocalStorageRepository();
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   @override
   void initState() {
@@ -66,20 +66,22 @@ class _SignUpPageState extends State<SignUpPage> {
     flushBarService = FlushBarService(context: context);
   }
 
-  void _onLoginSuccess(UserEntity loggedInUser) async {
+  void _onSignUpSuccess(UserEntity newUser) async {
     AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.register);
     Adjust.trackEvent(adjustEvent);
-    user = loggedInUser;
-    await localRepo.setToken(loggedInUser.token);
+    user = newUser;
+
+    // Future.wait([
+    await localRepository.setToken(newUser.token);
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
-    homeChangeNotifier.loadRecentlyViewedCustomer();
+    await homeChangeNotifier.loadRecentlyViewedCustomer();
+    // ]);
+
     progressService.hideProgress();
     Navigator.pop(context);
-    if (!widget.isFromCheckout) {
-      Navigator.pop(context);
-    }
+    if (!widget.isFromCheckout) Navigator.pop(context);
   }
 
   @override
@@ -172,7 +174,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (value.trim().indexOf(' ') == -1) {
             return 'full_name_issue'.tr();
@@ -202,9 +204,9 @@ class _SignUpPageState extends State<SignUpPage> {
         maxLength: 9,
         buildCounter: (
           BuildContext context, {
-          int currentLength,
-          int maxLength,
-          bool isFocused,
+          int? currentLength,
+          int? maxLength,
+          bool? isFocused,
         }) =>
             null,
         decoration: InputDecoration(
@@ -234,7 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (!isLength(value, 8, 9)) {
             return 'invalid_length_phone_number'.tr();
@@ -287,7 +289,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_email'.tr();
           } else if (!isEmail(value)) {
             return 'invalid_email'.tr();
@@ -302,9 +304,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildPassword() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: TextFormField(
         controller: passwordController,
         style: mediumTextStyle.copyWith(
@@ -345,7 +345,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'required_password'.tr();
           } else if (!isLength(value, 6)) {
             return 'short_length_password'.tr();
@@ -442,7 +442,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _onSignUp() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       if (agreeTerms) {
         String fullName = fullNameController.text;
         String firstName = fullName.split(' ')[0];
@@ -454,7 +454,7 @@ class _SignUpPageState extends State<SignUpPage> {
           emailController.text,
           passwordController.text,
           onProcess: _onProcess,
-          onSuccess: _onLoginSuccess,
+          onSuccess: _onSignUpSuccess,
           onFailure: _onFailure,
         );
       } else {

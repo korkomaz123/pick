@@ -23,7 +23,7 @@ import 'package:string_validator/string_validator.dart';
 class SendGiftPage extends StatefulWidget {
   final bool fromCheckout;
 
-  SendGiftPage({this.fromCheckout});
+  SendGiftPage({required this.fromCheckout});
 
   @override
   _SendGiftPageState createState() => _SendGiftPageState();
@@ -35,10 +35,10 @@ class _SendGiftPageState extends State<SendGiftPage> {
 
   bool isValid = false;
 
-  AuthChangeNotifier _authChangeNotifier;
-  WalletChangeNotifier _walletChangeNotifier;
-  ProgressService _progressService;
-  FlushBarService _flushBarService;
+  AuthChangeNotifier? _authChangeNotifier;
+  WalletChangeNotifier? _walletChangeNotifier;
+  ProgressService? _progressService;
+  FlushBarService? _flushBarService;
 
   @override
   void initState() {
@@ -173,9 +173,9 @@ class _SendGiftPageState extends State<SendGiftPage> {
         maxLength: 3,
         buildCounter: (
           BuildContext context, {
-          int currentLength,
-          int maxLength,
-          bool isFocused,
+          int? currentLength,
+          int? maxLength,
+          bool? isFocused,
         }) =>
             null,
         decoration: InputDecoration(
@@ -242,16 +242,17 @@ class _SendGiftPageState extends State<SendGiftPage> {
   }
 
   _onTransferMoney() async {
-    if (StringService.roundDouble(_amountController.text, 3) <= user.balance) {
+    if (StringService.roundDouble(_amountController.text, 3) <= user!.balance) {
       String message = 'transfer_amount_confirm_message'
           .tr()
           .replaceFirst(
               '#', StringService.roundString(_amountController.text, 3))
           .replaceFirst('@', _emailController.text);
-      final result = await _flushBarService.showConfirmDialog(message: message);
+      final result =
+          await _flushBarService!.showConfirmDialog(message: message);
       if (result != null) {
-        _walletChangeNotifier.transferMoney(
-          token: user.token,
+        _walletChangeNotifier!.transferMoney(
+          token: user!.token,
           amount: _amountController.text,
           lang: Preload.language,
           description: 'gift',
@@ -262,20 +263,20 @@ class _SendGiftPageState extends State<SendGiftPage> {
         );
       }
     } else {
-      _flushBarService.showErrorDialog(
+      _flushBarService!.showErrorDialog(
         'not_enough_wallet'.tr(),
       );
     }
   }
 
   _onProcess() {
-    _progressService.showProgress();
+    _progressService!.showProgress();
   }
 
   _onSuccess() {
-    _progressService.hideProgress();
-    user.balance -= StringService.roundDouble(_amountController.text, 3);
-    _authChangeNotifier.updateUserEntity(user);
+    _progressService!.hideProgress();
+    user!.balance -= StringService.roundDouble(_amountController.text, 3);
+    _authChangeNotifier!.updateUserEntity(user);
 
     if (widget.fromCheckout) {
       Navigator.popUntil(
@@ -293,7 +294,7 @@ class _SendGiftPageState extends State<SendGiftPage> {
   }
 
   _onFailure(String message) {
-    _progressService.hideProgress();
-    _flushBarService.showErrorDialog(message);
+    _progressService!.hideProgress();
+    _flushBarService!.showErrorDialog(message);
   }
 }

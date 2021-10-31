@@ -12,7 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ProductReview extends StatelessWidget {
   final ProductEntity product;
 
-  ProductReview({this.product});
+  ProductReview({required this.product});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

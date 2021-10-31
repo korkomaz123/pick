@@ -12,7 +12,11 @@ class FilterAttributesLoaded extends FilterEvent {
   final String brandId;
   final String lang;
 
-  FilterAttributesLoaded({this.categoryId, this.brandId, this.lang});
+  FilterAttributesLoaded({
+    required this.categoryId,
+    required this.brandId,
+    required this.lang,
+  });
 
   @override
   List<Object> get props => [categoryId, brandId, lang];

@@ -64,7 +64,7 @@ class _TermsPageState extends State<TermsPage> {
           children: [
             Padding(
               padding: EdgeInsets.all(15.w),
-              child: FutureBuilder(
+              child: FutureBuilder<dynamic>(
                 future: SettingRepository().getTerms(lang),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {

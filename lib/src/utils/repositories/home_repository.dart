@@ -56,17 +56,22 @@ class HomeRepository {
     final result = await Api.getMethod(url, data: params);
     if (result['code'] == 'SUCCESS') {
       String title = result['title'];
-      SliderImageEntity viewAll;
+      var viewAll = SliderImageEntity.fromJson(result['view_all']);
       List<SliderImageEntity> banners = [];
       List<ProductModel> products = [];
-      viewAll = SliderImageEntity.fromJson(result['view_all']);
       for (var banner in result['image']) {
         banners.add(SliderImageEntity.fromJson(banner));
       }
       for (var product in result['product']) {
         products.add(ProductModel.fromJson(product));
       }
-      return {'code': 'SUCCESS', 'title': title, 'viewAll': viewAll, 'banners': banners, 'products': products};
+      return {
+        'code': 'SUCCESS',
+        'title': title,
+        'viewAll': viewAll,
+        'banners': banners,
+        'products': products
+      };
     } else {
       return {'code': 'ERROR'};
     }

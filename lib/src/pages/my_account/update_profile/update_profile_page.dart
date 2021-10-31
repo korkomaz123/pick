@@ -36,13 +36,13 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  File imageFile;
-  String name;
-  Uint8List image;
-  ImageCustomPickerService imageCustomPickerService;
-  ProgressService progressService;
-  SnackBarService snackBarService;
-  ProfileBloc profileBloc;
+  File? imageFile;
+  String? name;
+  Uint8List? image;
+  ImageCustomPickerService? imageCustomPickerService;
+  ProgressService? progressService;
+  SnackBarService? snackBarService;
+  ProfileBloc? profileBloc;
 
   @override
   void initState() {
@@ -59,9 +59,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       scaffoldKey: scaffoldKey,
     );
     profileBloc = context.read<ProfileBloc>();
-    fullNameController.text = user.firstName + ' ' + user.lastName;
-    phoneNumberController.text = user?.phoneNumber;
-    emailController.text = user?.email;
+    fullNameController.text = user!.firstName + ' ' + user!.lastName;
+    phoneNumberController.text = user?.phoneNumber ?? '';
+    emailController.text = user!.email;
   }
 
   @override
@@ -74,31 +74,31 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         listener: (context, state) {
           if (state is ProfileImageUpdatedInProcess ||
               state is ProfileInformationUpdatedInProcess) {
-            progressService.showProgress();
+            progressService!.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
-            progressService.hideProgress();
+            progressService!.hideProgress();
           }
           if (state is ProfileImageUpdatedFailure) {
-            progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            progressService!.hideProgress();
+            snackBarService!.showErrorSnackBar(state.message);
           }
           if (state is ProfileInformationUpdatedSuccess) {
-            progressService.hideProgress();
+            progressService!.hideProgress();
             String fullName = fullNameController.text;
-            user.firstName = fullName.split(' ')[0];
-            user.lastName = fullName.split(' ')[1];
-            user.phoneNumber = phoneNumberController.text;
+            user!.firstName = fullName.split(' ')[0];
+            user!.lastName = fullName.split(' ')[1];
+            user!.phoneNumber = phoneNumberController.text;
             _showSuccessDialog();
           }
           if (state is ProfileInformationUpdatedFailure) {
-            progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            progressService!.hideProgress();
+            snackBarService!.showErrorSnackBar(state.message);
           }
         },
         builder: (context, state) {
           if (state is ProfileImageUpdatedSuccess) {
-            user.profileUrl = state.url;
+            user!.profileUrl = state.url;
           }
           return Column(
             children: [
@@ -166,8 +166,11 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               height: 140.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: user.profileUrl.isNotEmpty
-                      ? CachedNetworkImageProvider(user.profileUrl)
+                  image: user?.profileUrl != null && user?.profileUrl != ''
+                      ? CachedNetworkImageProvider(
+                          user!.profileUrl!,
+                          cacheKey: user!.profileUrl!,
+                        ) as ImageProvider<Object>
                       : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,
                 ),
@@ -213,7 +216,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           ),
           SizedBox(width: 10.w),
           Text(
-            user.email,
+            user!.email,
             style: mediumTextStyle.copyWith(
               fontSize: 16.sp,
             ),
@@ -239,8 +242,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (String value) {
-          if (value.isEmpty) {
+        validator: (String? value) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (value.trim().indexOf(' ') == -1) {
             return 'full_name_issue'.tr();
@@ -268,8 +271,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         fillColor: Colors.grey.shade300,
         bordered: false,
         maxLength: 9,
-        validator: (value) {
-          if (value.isEmpty) {
+        validator: (String? value) {
+          if (value!.isEmpty) {
             return 'required_field'.tr();
           } else if (!isLength(value, 8, 9)) {
             return 'invalid_length_phone_number'.tr();
@@ -296,7 +299,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+        validator: (value) => value!.isEmpty ? 'required_field'.tr() : null,
       ),
     );
   }
@@ -320,23 +323,23 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   }
 
   void _onChangeImage() async {
-    imageFile = await imageCustomPickerService.getImageWithDialog();
+    imageFile = await imageCustomPickerService!.getImageWithDialog();
     if (imageFile != null) {
-      name = imageFile.path.split('/').last;
-      image = imageFile.readAsBytesSync();
-      profileBloc.add(ProfileImageUpdated(
-        token: user.token,
-        image: image,
-        name: name,
+      name = imageFile!.path.split('/').last;
+      image = imageFile!.readAsBytesSync();
+      profileBloc!.add(ProfileImageUpdated(
+        token: user!.token,
+        image: image!,
+        name: name!,
       ));
     }
   }
 
   void _onSave() {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       String fullName = fullNameController.text;
-      profileBloc.add(ProfileInformationUpdated(
-        token: user.token,
+      profileBloc!.add(ProfileInformationUpdated(
+        token: user!.token,
         firstName: fullName.split(' ')[0],
         lastName: fullName.split(' ')[0],
         phoneNumber: phoneNumberController.text,

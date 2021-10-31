@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 class UpdatePage extends StatefulWidget {
   final String storeLink;
 
-  UpdatePage({this.storeLink});
+  UpdatePage({required this.storeLink});
 
   @override
   _UpdatePageState createState() => _UpdatePageState();

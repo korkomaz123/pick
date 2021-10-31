@@ -11,17 +11,17 @@ class ProductChangeNotifier extends ChangeNotifier {
 
   bool isLoading = false;
   bool isReachedMax = false;
-  String brandId;
-  Map<String, List<ProductModel>> data = {};
+  String? brandId;
+  Map<String, List<ProductModel>?>? data;
   Map<String, int> pages = {};
-  ProductEntity productDetails;
+  ProductEntity? productDetails;
   Map<String, ProductEntity> productDetailsMap = {};
   Map<String, List<ProductModel>> sameBrandProductsMap = {};
   Map<String, List<BrandEntity>> brandsMap = {};
   Map<String, List<ProductModel>> relatedItemsMap = {};
   Map<String, dynamic> categoryMap = {};
   Map<String, dynamic> selectedOptions = {};
-  ProductModel selectedVariant;
+  ProductModel? selectedVariant;
   List<String> productIds = [];
 
   close() {
@@ -56,7 +56,7 @@ class ProductChangeNotifier extends ChangeNotifier {
       productDetails = productDetailsMap[product.productId];
     } else {
       productDetails = ProductEntity.fromProduct(product);
-      productDetailsMap[product.productId] = productDetails;
+      productDetailsMap[product.productId] = productDetails!;
     }
   }
 
@@ -79,7 +79,7 @@ class ProductChangeNotifier extends ChangeNotifier {
         relatedItems.add(ProductModel.fromJson(result['relateditems'][i]));
       }
     }
-    productDetailsMap[productId] = productDetails;
+    productDetailsMap[productId] = productDetails!;
     relatedItemsMap[productId] = relatedItems;
 
     notifyListeners();
@@ -92,7 +92,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     isReachedMax = false;
-    if (!data.containsKey(key)) {
+    if (!data!.containsKey(key)) {
       pages[key] = 1;
       await loadCategoryProducts(key, 1, categoryId, lang);
     } else {
@@ -117,7 +117,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
-    data[key] = <ProductModel>[];
+    data![key] = <ProductModel>[];
     pages[key] = 1;
     isReachedMax = false;
     await loadCategoryProducts(key, 1, categoryId, lang);
@@ -138,18 +138,18 @@ class ProductChangeNotifier extends ChangeNotifier {
         totalProducts[key] = result['totalproducts'].toString();
 
       List<dynamic> productList = result['products'];
-      if (!data.containsKey(key)) {
-        data[key] = [];
+      if (!data!.containsKey(key)) {
+        data![key] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        data[key].add(ProductModel.fromJson(productList[i]));
+        data![key]!.add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// brand products list loading...
@@ -160,7 +160,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     isReachedMax = false;
-    if (!data.containsKey(key)) {
+    if (!data!.containsKey(key)) {
       pages[key] = 1;
       await loadBrandProducts(key, 1, brandId, categoryId, lang);
     } else {
@@ -187,7 +187,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String categoryId,
     String lang,
   ) async {
-    data[key] = <ProductModel>[];
+    data![key] = <ProductModel>[];
     pages[key] = 1;
     isReachedMax = false;
     await loadBrandProducts(key, 1, brandId, categoryId, lang);
@@ -211,22 +211,22 @@ class ProductChangeNotifier extends ChangeNotifier {
         totalProducts[key] = result['totalproducts'].toString();
 
       List<dynamic> productList = result['products'];
-      if (!data.containsKey(key)) {
-        data[key] = [];
+      if (!data!.containsKey(key)) {
+        data![key] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        if (data[key]
+        if (data![key]!
                 .where((element) => element.sku == productList[i]['sku'])
                 .toList()
                 .length ==
-            0) data[key].add(ProductModel.fromJson(productList[i]));
+            0) data![key]!.add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// sorted products list loading...
@@ -238,7 +238,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     isReachedMax = false;
-    if (!data.containsKey(key)) {
+    if (!data!.containsKey(key)) {
       pages[key] = 1;
       await loadSortedProducts(key, 1, brandId, categoryId, sortItem, lang);
     } else {
@@ -267,7 +267,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String sortItem,
     String lang,
   ) async {
-    data[key] = <ProductModel>[];
+    data![key] = <ProductModel>[];
     pages[key] = 1;
     isReachedMax = false;
     await loadSortedProducts(key, 1, brandId, categoryId, sortItem, lang);
@@ -294,22 +294,22 @@ class ProductChangeNotifier extends ChangeNotifier {
       if (result['totalproducts'] != null)
         totalProducts[key] = result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
-      if (!data.containsKey(key)) {
-        data[key] = [];
+      if (!data!.containsKey(key)) {
+        data![key] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        if (data[key]
+        if (data![key]!
                 .where((element) => element.sku == productList[i]['sku'])
                 .toList()
                 .length ==
-            0) data[key].add(ProductModel.fromJson(productList[i]));
+            0) data![key]!.add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// filter products
@@ -321,7 +321,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     isReachedMax = false;
-    data[key] = null;
+    data![key] = null;
     pages[key] = 1;
     await loadFilteredProducts(key, 1, brandId, categoryId, filterValues, lang);
   }
@@ -348,7 +348,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     Map<String, dynamic> filterValues,
     String lang,
   ) async {
-    data[key] = <ProductModel>[];
+    data![key] = <ProductModel>[];
     pages[key] = 1;
     isReachedMax = false;
     await loadFilteredProducts(key, 1, brandId, categoryId, filterValues, lang);
@@ -363,30 +363,31 @@ class ProductChangeNotifier extends ChangeNotifier {
     String lang,
   ) async {
     final result = await productRepository.filterProducts(
-      categoryId == 'all' ? null : categoryId,
-      brandId,
-      filterValues,
-      lang,
-      page,
-    );
+        categoryId, brandId, filterValues, lang, page);
     if (result['code'] == 'SUCCESS') {
+      print('key ==== > $key');
+      if (result['currentpage'] != null) currentpage[key] = page.toString();
+      if (result['totalpage'] != null)
+        totalPages[key] = result['totalpage'].toString();
+      if (result['totalproducts'] != null)
+        totalProducts[key] = result['totalproducts'].toString();
       List<dynamic> productList = result['products'];
-      if (!data.containsKey(key) || data[key] == null) {
-        data[key] = [];
+      if (!data!.containsKey(key) || data![key] == null) {
+        data![key] = [];
       }
       for (int i = 0; i < productList.length; i++) {
-        if (data[key]
+        if (data![key]!
                 .where((element) => element.sku == productList[i]['sku'])
                 .toList()
                 .length ==
-            0) data[key].add(ProductModel.fromJson(productList[i]));
+            0) data![key]!.add(ProductModel.fromJson(productList[i]));
       }
       if (productList.length < 50 && page > 0) {
         isReachedMax = true;
       }
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   /// select option in configurable product
@@ -403,7 +404,7 @@ class ProductChangeNotifier extends ChangeNotifier {
     }
     selectedVariant = null;
 
-    for (var variant in productDetailsMap[productId].variants) {
+    for (var variant in productDetailsMap[productId]!.variants!) {
       if (mapEquals(selectedOptions, variant.options)) {
         selectedVariant = variant;
         break;
@@ -425,11 +426,11 @@ class ProductChangeNotifier extends ChangeNotifier {
 
     bool isAvailable = false;
 
-    for (var variant in productDetailsMap[productId].variants) {
+    for (var variant in productDetailsMap[productId]!.variants!) {
       bool selectable = true;
       for (var attributeId in options.keys.toList()) {
-        if (!variant.options.containsKey(attributeId) ||
-            variant.options[attributeId] != options[attributeId]) {
+        if (!variant.options!.containsKey(attributeId) ||
+            variant.options![attributeId] != options[attributeId]) {
           selectable = false;
           break;
         }

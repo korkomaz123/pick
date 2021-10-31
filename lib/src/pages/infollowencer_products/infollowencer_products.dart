@@ -22,12 +22,13 @@ class InfollowencerProductsPage extends StatefulWidget {
   InfollowencerProductsPage({this.arguments});
 
   @override
-  _InfollowencerProductsPageState createState() => _InfollowencerProductsPageState();
+  _InfollowencerProductsPageState createState() =>
+      _InfollowencerProductsPageState();
 }
 
 class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  ProductChangeNotifier productChangeNotifier;
+  ProductChangeNotifier? productChangeNotifier;
   Map<String, dynamic> filterValues = {};
 
   List<dynamic> items = [];
@@ -37,7 +38,8 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
     items = [];
     setState(() => isLoading = true);
     final result = await Api.getMethod(EndPoints.celebrityProducts,
-        data: {'lang': lang, 'customerId': widget.arguments['id'].toString()}, extra: {"refresh": true});
+        data: {'lang': lang, 'customerId': widget.arguments['id'].toString()},
+        extra: {"refresh": true});
     if (result['code'] == 'SUCCESS') {
       items = result['items'];
       _info = result['userinfo'];
@@ -177,7 +179,10 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
             if (_info['profile_picture'] != null)
               CircleAvatar(
                 backgroundColor: Colors.grey,
-                backgroundImage: CachedNetworkImageProvider(_info['profile_picture']),
+                backgroundImage: CachedNetworkImageProvider(
+                  _info['profile_picture'],
+                  cacheKey: _info['profile_picture'],
+                ),
                 radius: 50,
               ),
             Spacer(),
@@ -194,7 +199,8 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                     fontFamily: 'AvenirMedium',
                   ),
                 ),
-                if (_info['coupon'] != null && _info['coupon'].toString().isNotEmpty)
+                if (_info['coupon'] != null &&
+                    _info['coupon'].toString().isNotEmpty)
                   RichText(
                     text: TextSpan(
                       text: '${'coupon'.tr()} : ',

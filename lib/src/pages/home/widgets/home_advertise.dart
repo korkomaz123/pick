@@ -2,24 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/components/product_card.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/routes/routes.dart';
+
+import 'home_loading_widget.dart';
 // import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 
 class HomeAdvertise extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomeAdvertise({@required this.homeChangeNotifier});
+  HomeAdvertise({required this.homeChangeNotifier});
 
   @override
   _HomeAdvertiseState createState() => _HomeAdvertiseState();
@@ -33,7 +33,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.skinCareViewAll != null) {
-      SliderImageEntity banner = widget.homeChangeNotifier.skinCareViewAll;
+      SliderImageEntity banner = widget.homeChangeNotifier.skinCareViewAll!;
       return Container(
         color: Colors.white,
         margin: EdgeInsets.only(bottom: 10.h),
@@ -45,7 +45,7 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: AutoSizeText(
+                    child: Text(
                       widget.homeChangeNotifier.skinCareTitle,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -72,28 +72,22 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              // physics: CustomScrollPhysics(),
               child: Row(
                 children: widget.homeChangeNotifier.skinCareBanners.map((item) {
                   int index =
                       widget.homeChangeNotifier.skinCareBanners.indexOf(item);
+                  bool single =
+                      widget.homeChangeNotifier.skinCareBanners.length == 1;
                   return Row(
                     children: [
                       InkWell(
                         onTap: () => _onLink(context, item),
                         child: CachedNetworkImage(
-                          width: widget.homeChangeNotifier.skinCareBanners
-                                      .length ==
-                                  1
-                              ? 375.w
-                              : 340.w,
-                          height: (widget.homeChangeNotifier.skinCareBanners
-                                          .length ==
-                                      1
-                                  ? 375.w
-                                  : 340.w) *
-                              (897 / 1096),
-                          imageUrl: item.bannerImage,
+                          key: ValueKey(item.bannerImage ?? ''),
+                          cacheKey: item.bannerImage ?? '',
+                          width: single ? 375.w : 340.w,
+                          height: (single ? 375.w : 340.w) * (897 / 1096),
+                          imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) =>
                               Center(child: Icon(Icons.image, size: 20)),
@@ -124,17 +118,17 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         ),
       );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   _onLink(BuildContext context, SliderImageEntity banner) async {
     if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: banner.categoryId,
-          name: banner.categoryName,
+          id: banner.categoryId!,
+          name: banner.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
@@ -144,9 +138,9 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.brand?.optionId != null) {
+    } else if (banner.brand != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
@@ -157,8 +151,8 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.productId != null) {
-      final product = await productRepository.getProduct(banner.productId);
+    } else if (banner.productId != null) {
+      final product = await productRepository.getProduct(banner.productId!);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,

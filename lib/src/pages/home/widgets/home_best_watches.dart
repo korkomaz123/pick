@@ -1,14 +1,11 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -17,12 +14,14 @@ import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-// import 'package:markaa/src/utils/services/custom_scroll_physics.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
+
+import 'home_loading_widget.dart';
 
 class HomeBestWatches extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  HomeBestWatches({@required this.homeChangeNotifier});
+
+  HomeBestWatches({required this.homeChangeNotifier});
 
   @override
   _HomeBestWatchesState createState() => _HomeBestWatchesState();
@@ -35,21 +34,19 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
 
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.bestWatchesViewAll != null) {
-      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-        return Container(
-          width: designWidth.w,
-          color: Colors.white,
-          margin: EdgeInsets.only(bottom: 10.h),
-          child: Column(
-            children: [
-              _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
-              _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
-            ],
-          ),
-        );
-      });
+      return Container(
+        width: designWidth.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            _buildBanners(widget.homeChangeNotifier.bestWatchesBanners),
+            _buildProducts(widget.homeChangeNotifier.bestWatchesItems)
+          ],
+        ),
+      );
     }
-    return Container();
+    return HomeLoadingWidget();
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners) {
@@ -61,7 +58,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: AutoSizeText(
+                child: Text(
                   widget.homeChangeNotifier.bestWatchesTitle,
                   maxLines: 1,
                   style: mediumTextStyle.copyWith(
@@ -81,7 +78,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
                   onPressed: () =>
-                      _onLink(widget.homeChangeNotifier.bestWatchesViewAll),
+                      _onLink(widget.homeChangeNotifier.bestWatchesViewAll!),
                 ),
               ),
             ],
@@ -89,7 +86,6 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          // physics: CustomScrollPhysics(),
           child: Row(
             children: banners.map((item) {
               int index = banners.indexOf(item);
@@ -98,10 +94,12 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   InkWell(
                     onTap: () => _onLink(item),
                     child: CachedNetworkImage(
+                      key: ValueKey(item.bannerImage ?? ''),
+                      cacheKey: item.bannerImage ?? '',
                       width: banners.length == 1 ? 375.w : 340.w,
                       height:
                           (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
-                      imageUrl: item.bannerImage,
+                      imageUrl: item.bannerImage ?? '',
                       fit: BoxFit.fitHeight,
                       errorWidget: (context, url, error) =>
                           Center(child: Icon(Icons.image, size: 20)),
@@ -148,10 +146,10 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
     if (banner.categoryId != null) {
       final arguments = ProductListArguments(
         category: CategoryEntity(
-          id: banner.categoryId,
-          name: banner.categoryName,
+          id: banner.categoryId!,
+          name: banner.categoryName!,
         ),
-        brand: BrandEntity(),
+        brand: null,
         subCategory: [],
         selectedSubCategoryIndex: 0,
         isFromBrand: false,
@@ -161,9 +159,9 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.brand?.optionId != null) {
+    } else if (banner.brand != null) {
       final arguments = ProductListArguments(
-        category: CategoryEntity(),
+        category: null,
         brand: banner.brand,
         subCategory: [],
         selectedSubCategoryIndex: 0,
@@ -174,8 +172,8 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
         Routes.productList,
         arguments: arguments,
       );
-    } else if (banner?.productId != null) {
-      final product = await productRepository.getProduct(banner.productId);
+    } else if (banner.productId != null) {
+      final product = await productRepository.getProduct(banner.productId!);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.product,

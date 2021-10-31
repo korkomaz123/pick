@@ -50,6 +50,7 @@ class Routes {
   static const String checkoutReview = '/checkout-review';
   static const String checkout = '/checkout';
   static const String checkoutPayment = '/checkout-payment';
+  static const String creditCard = '/credit-card';
   static const String checkoutConfirmed = '/checkout-confirmed';
   static const String paymentFailed = '/payment-failed';
 
@@ -60,7 +61,8 @@ class Routes {
   static const String account = '/my-account';
   static const String updateProfile = '/update-profile';
   static const String notificationMessages = '/notification-messages';
-  static const String notificationMessageDetails = '/notification-message-details';
+  static const String notificationMessageDetails =
+      '/notification-message-details';
   static const String orderHistory = '/order-history';
   static const String alarmList = '/alarm-list';
   static const String terms = '/terms';

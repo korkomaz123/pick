@@ -28,7 +28,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ReOrderPage extends StatefulWidget {
   final OrderEntity order;
 
-  ReOrderPage({this.order});
+  ReOrderPage({required this.order});
 
   @override
   _ReOrderPageState createState() => _ReOrderPageState();
@@ -37,20 +37,20 @@ class ReOrderPage extends StatefulWidget {
 class _ReOrderPageState extends State<ReOrderPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  OrderEntity order;
-  ShippingMethodEntity shippingMethod;
+  OrderEntity? order;
+  ShippingMethodEntity? shippingMethod;
 
   String icon = '';
-  Color color;
+  Color? color;
   String status = '';
 
   Widget paymentWidget = SizedBox.shrink();
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
 
-  MyCartChangeNotifier myCartChangeNotifier;
-  AddressChangeNotifier addressChangeNotifier;
+  MyCartChangeNotifier? myCartChangeNotifier;
+  AddressChangeNotifier? addressChangeNotifier;
 
   CheckoutRepository checkoutRepo = CheckoutRepository();
 
@@ -64,19 +64,19 @@ class _ReOrderPageState extends State<ReOrderPage> {
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
-    if (!addressChangeNotifier.addressesMap
+    if (!addressChangeNotifier!.addressesMap!
         .containsKey(widget.order.address.addressId)) {
-      widget.order.address = addressChangeNotifier.defaultAddress;
+      widget.order.address = addressChangeNotifier!.defaultAddress!;
     }
     _getOrderStatus();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _getReorderCartItems();
     });
   }
 
   void _getReorderCartItems() {
-    myCartChangeNotifier.initializeReorderCart();
-    myCartChangeNotifier.getReorderCartId(
+    myCartChangeNotifier!.initializeReorderCart();
+    myCartChangeNotifier!.getReorderCartId(
       widget.order.orderId,
       lang,
       onProcess: _onLoading,
@@ -86,7 +86,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _onLoadedReorderCartId() {
-    myCartChangeNotifier.getReorderCartItems(
+    myCartChangeNotifier!.getReorderCartItems(
       lang,
       onSuccess: _onLoadedItemsSuccess,
       onFailure: _onFailure,
@@ -94,16 +94,16 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _onLoading() {
-    progressService.showProgress();
+    progressService!.showProgress();
   }
 
   void _onLoadedItemsSuccess() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
     _getShippingMethods();
   }
 
   void _onFailure() {
-    progressService.hideProgress();
+    progressService!.hideProgress();
   }
 
   void _getShippingMethods() async {
@@ -111,8 +111,8 @@ class _ReOrderPageState extends State<ReOrderPage> {
       shippingMethods = await checkoutRepo.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount <=
-          myCartChangeNotifier.reorderCartTotalPrice) {
+      if (shippingMethod.minOrderAmount! <=
+          myCartChangeNotifier!.reorderCartTotalPrice) {
         this.shippingMethod = shippingMethod;
       } else {
         break;
@@ -123,13 +123,18 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   @override
   void dispose() {
-    myCartChangeNotifier.initializeReorderCart();
+    myCartChangeNotifier!.initializeReorderCart();
     super.dispose();
   }
 
   void _getOrderStatus() {
     order = widget.order;
-    switch (order.status) {
+    switch (order!.status) {
+      case OrderStatusEnum.canceled:
+        icon = cancelledIcon;
+        color = greyDarkColor;
+        status = 'order_cancelled'.tr();
+        break;
       case OrderStatusEnum.pending:
         icon = pendingIcon;
         color = dangerColor;
@@ -145,6 +150,26 @@ class _ReOrderPageState extends State<ReOrderPage> {
         color = Color(0xFF32BEA6);
         status = 'order_delivered'.tr();
         break;
+      case OrderStatusEnum.closed:
+        icon = returnedIcon;
+        color = darkColor;
+        status = 'returned'.tr();
+        break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
+        break;
       default:
         icon = pendingIcon;
         color = dangerColor;
@@ -154,13 +179,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _setPaymentWidget() {
-    if (order.paymentMethod.title == 'Visa Card') {
+    if (order!.paymentMethod.title == 'Visa Card') {
       paymentWidget = Image.asset(
         visaImage,
         width: 35.w,
         height: 20.h,
       );
-    } else if (order.paymentMethod.title == 'KNet') {
+    } else if (order!.paymentMethod.title == 'KNet') {
       paymentWidget = Image.asset(
         knetImage,
         width: 35.w,
@@ -238,7 +263,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
               _buildSubtotal(),
               _buildShippingCost(),
               _buildTotal(),
-              OrderAddressBar(address: order.address),
+              OrderAddressBar(address: order!.address),
               _buildNextButton(),
             ],
           ),
@@ -259,7 +284,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'order_order_no'.tr() + ' #${order.orderNo}',
+            'order_order_no'.tr() + ' #${order!.orderNo}',
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -288,7 +313,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            order.orderDate,
+            order!.orderDate,
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -340,7 +365,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                   Stack(
                     children: [
                       MarkaaReviewProductCard(
-                        cartItem: model.reorderCartItemsMap[keys[index]],
+                        cartItem: model.reorderCartItemsMap[keys[index]]!,
                       ),
                       if (model.reorderCartItemCount > 1) ...[
                         Align(
@@ -382,7 +407,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           OrderPaymentMethod(
-            paymentMethod: order.paymentMethod.id,
+            paymentMethod: order!.paymentMethod.id,
           ),
         ],
       ),
@@ -438,9 +463,11 @@ class _ReOrderPageState extends State<ReOrderPage> {
             ),
           ),
           Text(
-            shippingMethod.serviceFees == 0
+            shippingMethod!.serviceFees == 0
                 ? 'free'.tr()
-                : 'currency'.tr() + ' ' + shippingMethod.serviceFees.toString(),
+                : 'currency'.tr() +
+                    ' ' +
+                    shippingMethod!.serviceFees.toString(),
             style: mediumTextStyle.copyWith(
               color: greyDarkColor,
               fontSize: 14.sp,
@@ -454,7 +481,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
       double totalPrice =
-          shippingMethod.serviceFees + model.reorderCartTotalPrice;
+          shippingMethod!.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -506,41 +533,41 @@ class _ReOrderPageState extends State<ReOrderPage> {
   }
 
   void _onDeleteOrderItem(String key) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'remove_reorder_item_subtitle');
+    final result = await flushBarService!
+        .showConfirmDialog(message: 'remove_reorder_item_subtitle');
     if (result != null) {
-      await myCartChangeNotifier.removeReorderCartItem(key);
+      await myCartChangeNotifier!.removeReorderCartItem(key);
       _getShippingMethods();
     }
   }
 
   void _onNext() {
-    if (myCartChangeNotifier.reorderCartItemCount > 0) {
-      if (addressChangeNotifier.addressesMap
+    if (myCartChangeNotifier!.reorderCartItemCount > 0) {
+      if (addressChangeNotifier!.addressesMap!
           .containsKey(widget.order.address.addressId)) {
-        addressChangeNotifier.setDefaultAddress(widget.order.address);
+        addressChangeNotifier!.setDefaultAddress(widget.order.address);
       }
 
       _prepareDetails();
 
       Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
-      flushBarService.showErrorDialog('reorder_items_error'.tr());
+      flushBarService!.showErrorDialog('reorder_items_error'.tr());
     }
   }
 
   _prepareDetails() {
     orderDetails = {};
-    orderDetails['shipping'] = shippingMethod.id;
-    orderDetails['cartId'] = myCartChangeNotifier.reorderCartId;
-    orderDetails['token'] = user.token;
+    orderDetails['shipping'] = shippingMethod!.id;
+    orderDetails['cartId'] = myCartChangeNotifier!.reorderCartId;
+    orderDetails['token'] = user!.token;
 
     double totalPrice = .0;
     double subtotalPrice = .0;
     double discount = .0;
 
-    subtotalPrice = myCartChangeNotifier.reorderCartTotalPrice;
-    totalPrice = subtotalPrice + shippingMethod.serviceFees;
+    subtotalPrice = myCartChangeNotifier!.reorderCartTotalPrice;
+    totalPrice = subtotalPrice + shippingMethod!.serviceFees;
 
     orderDetails['orderDetails'] = {};
     orderDetails['orderDetails']['discount'] =
@@ -550,6 +577,6 @@ class _ReOrderPageState extends State<ReOrderPage> {
     orderDetails['orderDetails']['subTotalPrice'] =
         NumericService.roundString(subtotalPrice, 3);
     orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(shippingMethod.serviceFees, 3);
+        NumericService.roundString(shippingMethod!.serviceFees, 3);
   }
 }

@@ -8,14 +8,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SelectCountryDialog extends StatefulWidget {
   final String value;
 
-  SelectCountryDialog({this.value});
+  SelectCountryDialog({required this.value});
 
   @override
   _SelectCountryDialogState createState() => _SelectCountryDialogState();
 }
 
 class _SelectCountryDialogState extends State<SelectCountryDialog> {
-  String value;
+  String? value;
   TextEditingController searchController = TextEditingController();
 
   @override

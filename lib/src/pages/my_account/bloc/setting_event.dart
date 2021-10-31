@@ -11,7 +11,7 @@ class NotificationSettingChanged extends SettingEvent {
   final String token;
   final bool isActive;
 
-  NotificationSettingChanged({this.token, this.isActive});
+  NotificationSettingChanged({required this.token, required this.isActive});
 
   @override
   List<Object> get props => [token, isActive];
@@ -24,10 +24,10 @@ class ContactUsSubmitted extends SettingEvent {
   final String comment;
 
   ContactUsSubmitted({
-    this.name,
-    this.phone,
-    this.email,
-    this.comment,
+    required this.name,
+    required this.phone,
+    required this.email,
+    required this.comment,
   });
 
   @override
@@ -39,7 +39,11 @@ class PasswordUpdated extends SettingEvent {
   final String oldPassword;
   final String newPassword;
 
-  PasswordUpdated({this.token, this.oldPassword, this.newPassword});
+  PasswordUpdated({
+    required this.token,
+    required this.oldPassword,
+    required this.newPassword,
+  });
 
   @override
   List<Object> get props => [token, oldPassword, newPassword];

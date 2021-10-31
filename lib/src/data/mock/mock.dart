@@ -85,7 +85,7 @@ MessageEntity message = MessageEntity(
 
 List<MessageEntity> messages = List.generate(20, (index) => message).toList();
 
-UserEntity user;
+UserEntity? user;
 String deviceToken = '';
 String lang = 'en';
 bool isNotification = true;

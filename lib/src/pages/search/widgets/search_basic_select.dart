@@ -10,10 +10,10 @@ class SearchBasicSelect extends StatefulWidget {
   final Function onSelectItem;
 
   SearchBasicSelect({
-    this.width,
-    this.options,
-    this.values,
-    this.onSelectItem,
+    required this.width,
+    required this.options,
+    required this.values,
+    required this.onSelectItem,
   });
 
   @override

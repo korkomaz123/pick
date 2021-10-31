@@ -9,7 +9,7 @@ class UpdateAvailableDialog extends StatefulWidget {
   final String title;
   final String content;
 
-  UpdateAvailableDialog({this.title, this.content});
+  UpdateAvailableDialog({required this.title, required this.content});
 
   @override
   _UpdateAvailableDialogState createState() => _UpdateAvailableDialogState();

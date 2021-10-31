@@ -6,6 +6,7 @@ import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
+import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
@@ -24,8 +25,8 @@ class HomeChangeNotifier extends ChangeNotifier {
   final localStorageRepository = LocalStorageRepository();
   final brandRepository = BrandRepository();
 
-  SliderImageEntity megaBanner;
-  String message;
+  SliderImageEntity? megaBanner;
+  String? message;
 
   changeLanguage() {
     print("changeLanguage");
@@ -61,14 +62,15 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME SLIDER IMAGE LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
   List<CategoryEntity> featuredCategories = [];
   Future getFeaturedCategoriesList() async {
-    final result = await categoryRepository.getFeaturedCategories(Preload.language);
+    final result =
+        await categoryRepository.getFeaturedCategories(Preload.language);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoryList = result['categories'];
       featuredCategories.clear();
@@ -84,13 +86,14 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future updateBestDealProduct(int index) async {
     String productId = bestDealsProducts[index].productId;
     final product = await productRepository.getProduct(productId);
-    bestDealsProducts[index] = product;
+    bestDealsProducts[index] = product!;
     notifyListeners();
   }
 
   Future loadBestDeals() async {
     try {
-      final result = await productRepository.getBestDealsProducts(Preload.language);
+      final result =
+          await productRepository.getBestDealsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         bestDealsTitle = result['title'];
         bestDealsProducts.clear();
@@ -99,15 +102,15 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME BESTDEALS LOADING ERROR: $e');
     }
-    // await getHomeCategories();
     notifyListeners();
   }
 
   Future getHomeCategories() async {
     final params = {'lang': Preload.language};
-    final result = await Api.getMethod(EndPoints.getHomeCategories, data: params);
+    final result =
+        await Api.getMethod(EndPoints.getHomeCategories, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoriesList = result['categories'];
       homeCategories.clear();
@@ -118,7 +121,7 @@ class HomeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  SliderImageEntity popupItem;
+  SliderImageEntity? popupItem;
   Future loadPopup(Function onSuccess) async {
     try {
       final result = await homeRepository.getPopupItem(Preload.language);
@@ -127,7 +130,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         onSuccess(popupItem);
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME POPUP LOADING ERROR: $e');
     }
   }
 
@@ -140,7 +143,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         megaBanner = null;
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME MEGA BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -148,10 +151,11 @@ class HomeChangeNotifier extends ChangeNotifier {
   String sunglassesTitle = '';
   List<SliderImageEntity> sunglassesBanners = [];
   List<ProductModel> sunglassesItems = [];
-  SliderImageEntity sunglassesViewAll;
+  SliderImageEntity? sunglassesViewAll;
   Future loadNewArrivalsBanner() async {
     try {
-      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection3);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection3);
       if (result['code'] == 'SUCCESS') {
         sunglassesTitle = result['title'];
         sunglassesViewAll = result['viewAll'];
@@ -164,7 +168,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         sunglassesBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME NEW ARRIVALS BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -174,13 +178,14 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future updateNewArrivalsProduct(int index) async {
     String productId = newArrivalsProducts[index].productId;
     final product = await productRepository.getProduct(productId);
-    newArrivalsProducts[index] = product;
+    newArrivalsProducts[index] = product!;
     notifyListeners();
   }
 
   Future loadNewArrivals() async {
     try {
-      final result = await productRepository.getNewArrivalsProducts(Preload.language);
+      final result =
+          await productRepository.getNewArrivalsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         newArrivalsTitle = result['title'];
         newArrivalsProducts.clear();
@@ -189,41 +194,43 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME NEW ARRIVALS LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
-  List<SliderImageEntity> exculisiveBanners;
+  List<SliderImageEntity>? exculisiveBanners;
   Future loadExculisiveBanner() async {
-    final result = await homeRepository.getHomeExculisiveBanner(Preload.language);
+    final result =
+        await homeRepository.getHomeExculisiveBanner(Preload.language);
     try {
       if (result['code'] == 'SUCCESS') {
         exculisiveBanners = [];
         List<dynamic> data = result['data'];
         for (var item in data) {
-          exculisiveBanners.add(SliderImageEntity.fromJson(item));
+          exculisiveBanners!.add(SliderImageEntity.fromJson(item));
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME EXCULISIVE BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
   List<ProductModel> orientalProducts = [];
-  CategoryEntity orientalCategory;
+  CategoryEntity? orientalCategory;
   String orientalTitle = '';
   Future updateOrientalProduct(int index) async {
     String productId = orientalProducts[index].productId;
     final product = await productRepository.getProduct(productId);
-    orientalProducts[index] = product;
+    orientalProducts[index] = product!;
     notifyListeners();
   }
 
   Future loadOrientalProducts() async {
     try {
-      final result = await productRepository.getOrientalProducts(Preload.language);
+      final result =
+          await productRepository.getOrientalProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         orientalTitle = result['title'];
         orientalCategory = CategoryEntity.fromJson(result['category']);
@@ -233,18 +240,19 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME ORIENTAL PRODUCTS LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
   String faceCareTitle = '';
-  SliderImageEntity faceCareViewAll;
+  SliderImageEntity? faceCareViewAll;
   List<ProductModel> faceCareProducts = [];
   List<SliderImageEntity> faceCareBanners = [];
   Future loadFaceCare() async {
     try {
-      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection1);
+      final result = await homeRepository.getHomeSection(
+          Preload.language, EndPoints.homeSection1);
       if (result['code'] == 'SUCCESS') {
         faceCareTitle = result['title'];
         faceCareViewAll = result['viewAll'];
@@ -257,8 +265,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         faceCareBanners = [];
       }
     } catch (e) {
-      print('Face Care');
-      print(e.toString());
+      print('HOME FACECARE LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -267,7 +274,8 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> fragrancesBanners = [];
   Future loadFragrancesBanner() async {
     try {
-      final result = await homeRepository.getHomeFragrancesBanners(Preload.language);
+      final result =
+          await homeRepository.getHomeFragrancesBanners(Preload.language);
       if (result['code'] == 'SUCCESS') {
         fragrancesBannersTitle = result['title'];
         fragrancesBanners.clear();
@@ -276,7 +284,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME FRAGRANCES BANNER LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -286,13 +294,14 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future updatePerfumesProduct(int index) async {
     String productId = perfumesProducts[index].productId;
     final product = await productRepository.getProduct(productId);
-    perfumesProducts[index] = product;
+    perfumesProducts[index] = product!;
     notifyListeners();
   }
 
   Future loadPerfumes() async {
     try {
-      final result = await productRepository.getPerfumesProducts(Preload.language);
+      final result =
+          await productRepository.getPerfumesProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         perfumesTitle = result['title'];
         perfumesProducts.clear();
@@ -301,7 +310,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME PERFUMES LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -309,11 +318,11 @@ class HomeChangeNotifier extends ChangeNotifier {
   String bestWatchesTitle = '';
   List<SliderImageEntity> bestWatchesBanners = [];
   List<ProductModel> bestWatchesItems = [];
-  SliderImageEntity bestWatchesViewAll;
+  SliderImageEntity? bestWatchesViewAll;
   Future updateBestWatchesProduct(int index) async {
     String productId = bestWatchesItems[index].productId;
     final product = await productRepository.getProduct(productId);
-    bestWatchesItems[index] = product;
+    bestWatchesItems[index] = product!;
     notifyListeners();
   }
 
@@ -333,7 +342,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         bestWatchesBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME BEST WATCHES LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -343,7 +352,8 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future gethomecelebrity() async {
     try {
       print('gethomecelebrity start');
-      final result = await homeRepository.gethomecelebrity(Preload.language, EndPoints.gethomecelebrity);
+      final result = await homeRepository.gethomecelebrity(
+          Preload.language, EndPoints.gethomecelebrity);
       print('celebri result');
       print(result);
       log('gethomecelebrity end');
@@ -355,7 +365,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         celebrityItems = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME CELEBRITY LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -363,7 +373,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> skinCareBanners = [];
   List<ProductModel> skinCareItems = [];
   String skinCareTitle = '';
-  SliderImageEntity skinCareViewAll;
+  SliderImageEntity? skinCareViewAll;
   Future loadAds() async {
     try {
       final result = await homeRepository.getHomeSection(
@@ -380,13 +390,20 @@ class HomeChangeNotifier extends ChangeNotifier {
         skinCareBanners = [];
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME ADS LOADING ERROR: $e');
     }
     notifyListeners();
   }
 
+  List<ProductModel>? recentlyViewedProducts;
+  Future updateRecentlyViewedProduct(int index) async {
+    String productId = recentlyViewedProducts![index].productId;
+    final product = await productRepository.getProduct(productId);
+    recentlyViewedProducts![index] = product!;
+    notifyListeners();
+  }
+
   Future getViewedProducts() async {
-    await Preload.currentUser;
     if (user?.token != null) {
       await loadRecentlyViewedCustomer();
     } else {
@@ -394,27 +411,21 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
-  List<ProductModel> recentlyViewedProducts = [];
-  Future updateRecentlyViewedProduct(int index) async {
-    String productId = recentlyViewedProducts[index].productId;
-    final product = await productRepository.getProduct(productId);
-    recentlyViewedProducts[index] = product;
-    notifyListeners();
-  }
-
   Future loadRecentlyViewedGuest() async {
     List<String> ids = await localStorageRepository.getRecentlyViewedIds();
     try {
-      final result = await productRepository.getHomeRecentlyViewedGuestProducts(ids, Preload.language);
+      final result = await productRepository.getHomeRecentlyViewedGuestProducts(
+          ids, Preload.language);
       if (result['code'] == 'SUCCESS') {
-        recentlyViewedProducts.clear();
+        recentlyViewedProducts = [];
         for (int i = 0; i < result['items'].length; i++) {
-          recentlyViewedProducts.add(ProductModel.fromJson(result['items'][i]));
+          recentlyViewedProducts!
+              .add(ProductModel.fromJson(result['items'][i]));
         }
       }
     } catch (e) {
-      print('error guest');
-      print(e.toString());
+      recentlyViewedProducts = null;
+      print('GUEST RECENT VIEWED PRODUCTS LOADING ERROR: $e');
     }
 
     notifyListeners();
@@ -422,16 +433,18 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadRecentlyViewedCustomer() async {
     try {
-      final result = await productRepository.getHomeRecentlyViewedCustomerProducts(user.token, Preload.language);
+      final result = await productRepository
+          .getHomeRecentlyViewedCustomerProducts(user!.token, Preload.language);
       if (result['code'] == 'SUCCESS') {
-        recentlyViewedProducts.clear();
+        recentlyViewedProducts = [];
         for (int i = 0; i < result['products'].length; i++) {
-          recentlyViewedProducts.add(ProductModel.fromJson(result['products'][i]));
+          recentlyViewedProducts!
+              .add(ProductModel.fromJson(result['products'][i]));
         }
       }
     } catch (e) {
-      print('error customer');
-      print(e.toString());
+      recentlyViewedProducts = null;
+      print('CUSTOMER RECENT VIEWED PRODUCTS LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -439,7 +452,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<ProductModel> groomingItems = [];
   List<CategoryEntity> groomingCategories = [];
   String groomingTitle = '';
-  CategoryEntity groomingCategory;
+  CategoryEntity? groomingCategory;
   Future loadGrooming() async {
     try {
       final result = await homeRepository.getHomeGrooming(Preload.language);
@@ -456,7 +469,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME GROOMING LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -465,7 +478,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> smartTechBanners = [];
   List<ProductModel> smartTechItems = [];
 
-  CategoryEntity smartTechCategory;
+  CategoryEntity? smartTechCategory;
   Future loadSmartTech() async {
     try {
       final result = await homeRepository.getHomeSmartTech(Preload.language);
@@ -482,7 +495,7 @@ class HomeChangeNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('HOME SMART TECH LOADING ERROR: $e');
     }
     notifyListeners();
   }
@@ -531,5 +544,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     saleBrands = result['list'];
     saleBrandsTitle = result['title'];
     notifyListeners();
+  }
+
+  Map<String, List<CategoryMenuEntity>> sideMenus = {'en': [], 'ar': []};
+  Future getSideMenu() async {
+    categoryRepository.getMenuCategories().then((result) {
+      sideMenus[Preload.languageCode!] = result;
+      notifyListeners();
+    }).catchError((error) {
+      print('GET SIDEMENUS TIMEOUT ERROR: $error');
+    });
   }
 }

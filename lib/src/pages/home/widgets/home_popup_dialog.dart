@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
@@ -13,7 +12,7 @@ import 'package:markaa/src/utils/repositories/product_repository.dart';
 class HomePopupDialog extends StatefulWidget {
   final SliderImageEntity item;
 
-  HomePopupDialog({this.item});
+  HomePopupDialog({required this.item});
 
   @override
   _HomePopupDialogState createState() => _HomePopupDialogState();
@@ -26,7 +25,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
   Future<Image> get cachedImage => _loadPrecachedImage();
 
   Future<Image> _loadPrecachedImage() async {
-    Image image = Image.network(widget.item.bannerImage);
+    Image image = Image.network(widget.item.bannerImage ?? '');
     await precacheImage(image.image, context);
     return image;
   }
@@ -55,10 +54,10 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                           if (widget.item.categoryId != null) {
                             final arguments = ProductListArguments(
                               category: CategoryEntity(
-                                id: widget.item.categoryId,
-                                name: widget.item.categoryName,
+                                id: widget.item.categoryId!,
+                                name: widget.item.categoryName!,
                               ),
-                              brand: BrandEntity(),
+                              brand: null,
                               subCategory: [],
                               selectedSubCategoryIndex: 0,
                               isFromBrand: false,
@@ -68,9 +67,9 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                               Routes.productList,
                               arguments: arguments,
                             );
-                          } else if (widget.item?.brand?.optionId != null) {
+                          } else if (widget.item.brand != null) {
                             final arguments = ProductListArguments(
-                              category: CategoryEntity(),
+                              category: null,
                               brand: widget.item.brand,
                               subCategory: [],
                               selectedSubCategoryIndex: 0,
@@ -81,9 +80,9 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                               Routes.productList,
                               arguments: arguments,
                             );
-                          } else if (widget.item?.productId != null) {
+                          } else if (widget.item.productId != null) {
                             final product = await productRepository
-                                .getProduct(widget.item.productId);
+                                .getProduct(widget.item.productId!);
                             Navigator.popAndPushNamed(
                               context,
                               Routes.product,

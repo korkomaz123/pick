@@ -4,7 +4,10 @@ import 'package:markaa/src/utils/repositories/brand_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 
 class BrandChangeNotifier extends ChangeNotifier {
-  BrandChangeNotifier({this.brandRepository, this.localStorageRepository});
+  BrandChangeNotifier({
+    required this.brandRepository,
+    required this.localStorageRepository,
+  });
 
   final BrandRepository brandRepository;
   final LocalStorageRepository localStorageRepository;

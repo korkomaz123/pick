@@ -15,7 +15,7 @@ import 'order_payment_method.dart';
 class OrderCard extends StatefulWidget {
   final OrderEntity order;
 
-  OrderCard({this.order});
+  OrderCard({required this.order});
 
   @override
   _OrderCardState createState() => _OrderCardState();
@@ -31,12 +31,10 @@ class _OrderCardState extends State<OrderCard> {
   }
 
   void _checkOrderItems() {
-    if (widget?.order?.cartItems != null) {
-      for (int i = 0; i < widget.order.cartItems.length; i++) {
-        if (widget.order.cartItems[i].product.stockQty != null && widget.order.cartItems[i].product.stockQty > 0) {
-          isStock = true;
-          break;
-        }
+    for (int i = 0; i < widget.order.cartItems.length; i++) {
+      if (widget.order.cartItems[i].product.stockQty! > 0) {
+        isStock = true;
+        break;
       }
     }
     setState(() {});
@@ -72,6 +70,21 @@ class _OrderCardState extends State<OrderCard> {
         icon = returnedIcon;
         color = darkColor;
         status = 'returned'.tr();
+        break;
+      case OrderStatusEnum.pending_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'pending_payment'.tr();
+        break;
+      case OrderStatusEnum.failed_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'failed_payment'.tr();
+        break;
+      case OrderStatusEnum.canceled_payment:
+        icon = pendingIcon;
+        color = dangerColor;
+        status = 'canceled_payment'.tr();
         break;
       default:
         icon = pendingIcon;
@@ -205,9 +218,7 @@ class _OrderCardState extends State<OrderCard> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -245,7 +256,7 @@ class _OrderCardState extends State<OrderCard> {
                 SizedBox(width: 5.w),
                 MaterialButton(
                   elevation: 0,
-                  onPressed: !isStock //|| widget.order.status == OrderStatusEnum.canceled
+                  onPressed: !isStock
                       ? () => null
                       : () => Navigator.pushNamed(
                             context,
@@ -257,9 +268,7 @@ class _OrderCardState extends State<OrderCard> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  color: !isStock //||widget.order.status == OrderStatusEnum.canceled
-                      ? greyColor
-                      : primaryColor,
+                  color: !isStock ? greyColor : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

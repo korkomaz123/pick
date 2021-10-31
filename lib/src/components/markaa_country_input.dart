@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MarkaaCountryInput extends StatelessWidget {
   final TextEditingController controller;
-  final String countryCode;
+  final String? countryCode;
   final double width;
   final double padding;
   final double fontSize;
@@ -13,17 +13,17 @@ class MarkaaCountryInput extends StatelessWidget {
   final TextInputType inputType;
   final Function validator;
   final bool readOnly;
-  final Function onTap;
+  final void Function()? onTap;
 
   MarkaaCountryInput({
-    @required this.controller,
-    @required this.countryCode,
-    @required this.width,
-    @required this.padding,
-    @required this.fontSize,
-    @required this.hint,
-    @required this.inputType,
-    @required this.validator,
+    required this.controller,
+    this.countryCode,
+    required this.width,
+    required this.padding,
+    required this.fontSize,
+    required this.hint,
+    required this.inputType,
+    required this.validator,
     this.readOnly = false,
     this.onTap,
   });
@@ -53,7 +53,7 @@ class MarkaaCountryInput extends StatelessWidget {
               ? Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: Image.asset(
-                    'lib/public/images/flags/${countryCode.toLowerCase()}.png',
+                    'lib/public/images/flags/${countryCode!.toLowerCase()}.png',
                     width: 30.w,
                   ),
                 )

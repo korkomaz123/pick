@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/config/config.dart';
 
 class Api {
   static Dio _dio = Dio();
@@ -13,26 +14,32 @@ class Api {
 
   static Future<dynamic> getMethod(
     String url, {
-    Map<String, dynamic> data,
-    Map<String, dynamic> headers,
-    Map<String, dynamic> extra,
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
   }) async {
     _dioInit();
+
     String requestUrl = data != null ? _getFullUrl(url, data) : url;
     print(requestUrl);
-    final response = await _dio.get(requestUrl,
-        options: Options(headers: headers ?? _getHeader(), extra: extra));
+
+    final response = await _dio.get(
+      requestUrl,
+      options: Options(headers: headers ?? _getHeader(), extra: extra),
+    );
     return response.data;
   }
 
   static Future<dynamic> postMethod(
     String url, {
-    Map<String, dynamic> data,
-    Map<String, String> headers,
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
   }) async {
     print(url);
     print(data);
-    if (!data.containsKey('lang')) data['lang'] = Preload.language;
+    if (!data!.containsKey('lang')) data['lang'] = Preload.language;
+    data['androidVersion'] = MarkaaVersion.androidVersion.toString();
+    data['iOSVersion'] = MarkaaVersion.iOSVersion.toString();
 
     final response = await _dio.post(
       url,
@@ -97,6 +104,10 @@ class CacheInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     print('onError: $err');
+    var response = _cache[err.requestOptions.uri];
+    if (response != null) {
+      return handler.resolve(response);
+    }
     super.onError(err, handler);
   }
 }

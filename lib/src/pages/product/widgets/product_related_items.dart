@@ -10,18 +10,19 @@ class ProductRelatedItems extends StatefulWidget {
   final String productId;
   final ProductChangeNotifier model;
 
-  ProductRelatedItems({this.productId, this.model});
+  ProductRelatedItems({required this.productId, required this.model});
 
   @override
   State<ProductRelatedItems> createState() => _ProductRelatedItemsState();
 }
 
 class _ProductRelatedItemsState extends State<ProductRelatedItems> {
-  List<ProductModel> get relatedItems => widget.model.relatedItemsMap[widget.productId];
+  List<ProductModel> get relatedItems =>
+      widget.model.relatedItemsMap[widget.productId] ?? [];
 
   @override
   Widget build(BuildContext context) {
-    if (relatedItems != null && relatedItems.isNotEmpty) {
+    if (relatedItems.isNotEmpty) {
       return Container(
         width: 375.w,
         padding: EdgeInsets.symmetric(

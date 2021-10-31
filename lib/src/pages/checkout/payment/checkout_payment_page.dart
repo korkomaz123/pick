@@ -21,7 +21,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class CheckoutPaymentPage extends StatefulWidget {
   final Map<String, dynamic> params;
 
-  CheckoutPaymentPage({this.params});
+  CheckoutPaymentPage({required this.params});
 
   @override
   _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
@@ -29,25 +29,27 @@ class CheckoutPaymentPage extends StatefulWidget {
 
 class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     with WidgetsBindingObserver {
-  WebViewController webViewController;
+  WebViewController? webViewController;
 
-  OrderChangeNotifier orderChangeNotifier;
-  MyCartChangeNotifier myCartChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
 
-  ProgressService progressService;
-  FlushBarService flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
 
-  String url;
-  OrderEntity order;
-  OrderEntity reorder;
+  String? url;
+  OrderEntity? order;
+  OrderEntity? reorder;
 
   bool isLoading = true;
+  bool isProgress = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
@@ -61,10 +63,15 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   void _onBack() async {
+    if (isProgress) {
+      flushBarService.showErrorDialog('Please try again later.');
+      return;
+    }
     final result = await flushBarService.showConfirmDialog(
         message: 'payment_abort_dialog_text');
     if (result != null) {
@@ -72,7 +79,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       await myCartChangeNotifier.activateCart();
 
       /// cancel the order
-      await orderChangeNotifier.cancelFullOrder(order,
+      await orderChangeNotifier.cancelFullOrder(order!,
           onProcess: _onCancelProcess,
           onSuccess: _onCanceledSuccess,
           onFailure: _onCanceledFailure);
@@ -130,6 +137,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
                 _onPageLoaded(action.url);
                 return NavigationDecision.navigate;
               },
+              onProgress: (progress) {
+                if (progress < 100) {
+                  isProgress = true;
+                } else {
+                  isProgress = false;
+                }
+              },
               onPageFinished: (_) {
                 if (isLoading) {
                   isLoading = false;
@@ -154,11 +168,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
-          if (user?.token != null) {
-            orderChangeNotifier.removeOrder(order);
-          }
-          orderChangeNotifier.submitPaymentFailedOrderResult(order);
-
+          if (user != null) orderChangeNotifier.removeOrder(order!);
+          orderChangeNotifier.submitPaymentFailedOrderResult(order!);
           if (reorder != null) {
             Navigator.popAndPushNamed(
               context,
@@ -174,11 +185,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           }
         } else if (params['result'] == 'success') {
           _onSuccessPayment();
-          if (user?.token != null) {
-            order.status = OrderStatusEnum.processing;
-            orderChangeNotifier.updateOrder(order);
+          if (user != null) {
+            order!.status = OrderStatusEnum.processing;
+            orderChangeNotifier.updateOrder(order!);
           }
-          orderChangeNotifier.submitPaymentSuccessOrderResult(order);
+          orderChangeNotifier.submitPaymentSuccessOrderResult(order!);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.checkoutConfirmed,
@@ -188,7 +199,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
         }
       }
     } catch (e) {
-      print(e.toString());
+      print('REDIRECTING ON ORDER PAYMENT PAGE CATCH ERROR: $e');
     }
   }
 
@@ -197,9 +208,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       myCartChangeNotifier.initializeReorderCart();
     } else {
       myCartChangeNotifier.initialize();
-      if (user?.token == null) {
-        await localStorageRepo.removeItem('cartId');
-      }
+      if (user == null) await localStorageRepo.removeItem('cartId');
       await myCartChangeNotifier.getCartId();
     }
     final priceDetails = orderDetails['orderDetails'];

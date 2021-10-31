@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -14,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class HomeCategoryCard extends StatelessWidget {
   final CategoryEntity category;
 
-  HomeCategoryCard({this.category});
+  HomeCategoryCard({required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class HomeCategoryCard extends StatelessWidget {
         ProductListArguments arguments = ProductListArguments(
           category: category,
           subCategory: [],
-          brand: BrandEntity(),
+          brand: null,
           selectedSubCategoryIndex: 0,
           isFromBrand: false,
         );
@@ -38,7 +37,10 @@ class HomeCategoryCard extends StatelessWidget {
         height: 249.h,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: CachedNetworkImageProvider(category.imageUrl),
+            image: CachedNetworkImageProvider(
+              category.imageUrl ?? '',
+              cacheKey: category.imageUrl ?? '',
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -85,7 +87,7 @@ class HomeCategoryCard extends StatelessWidget {
                   ProductListArguments arguments = ProductListArguments(
                     category: category,
                     subCategory: [],
-                    brand: BrandEntity(),
+                    brand: null,
                     selectedSubCategoryIndex: 0,
                     isFromBrand: false,
                   );

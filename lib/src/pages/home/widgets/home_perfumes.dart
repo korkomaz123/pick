@@ -3,15 +3,16 @@ import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'home_loading_widget.dart';
 
 class HomePerfumes extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
-  HomePerfumes({@required this.homeChangeNotifier});
+  HomePerfumes({required this.homeChangeNotifier});
 
   @override
   _HomePerfumesState createState() => _HomePerfumesState();
@@ -23,26 +24,24 @@ class _HomePerfumesState extends State<HomePerfumes> {
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.perfumesProducts.isNotEmpty &&
         widget.homeChangeNotifier.perfumesProducts.length > 4) {
-      return Consumer<HomeChangeNotifier>(builder: (_, __, ___) {
-        return Container(
-          width: designWidth.w,
-          color: Colors.white,
-          margin: EdgeInsets.only(bottom: 10.h),
-          child: Column(
-            children: [
-              _buildProductView(),
-              Divider(
-                height: 0.5.h,
-                thickness: 0.5.h,
-                color: greyColor.withOpacity(0.4),
-              ),
-              _buildIndicator(),
-            ],
-          ),
-        );
-      });
+      return Container(
+        width: designWidth.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(bottom: 10.h),
+        child: Column(
+          children: [
+            _buildProductView(),
+            Divider(
+              height: 0.5.h,
+              thickness: 0.5.h,
+              color: greyColor.withOpacity(0.4),
+            ),
+            _buildIndicator(),
+          ],
+        ),
+      );
     } else {
-      return Container();
+      return HomeLoadingWidget();
     }
   }
 

@@ -46,15 +46,15 @@ class _AccountPageState extends State<AccountPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool getNotification = true;
 
-  SnackBarService snackBarService;
-  ProgressService progressService;
+  SnackBarService? snackBarService;
+  ProgressService? progressService;
 
-  File imageFile;
-  String name;
-  Uint8List image;
-  ImageCustomPickerService imageCustomPickerService;
+  File? imageFile;
+  String? name;
+  Uint8List? image;
+  ImageCustomPickerService? imageCustomPickerService;
 
-  ProfileBloc profileBloc;
+  ProfileBloc? profileBloc;
 
   @override
   void initState() {
@@ -83,19 +83,19 @@ class _AccountPageState extends State<AccountPage> {
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileImageUpdatedInProcess) {
-            progressService.showProgress();
+            progressService?.showProgress();
           }
           if (state is ProfileImageUpdatedSuccess) {
-            progressService.hideProgress();
+            progressService?.hideProgress();
           }
           if (state is ProfileImageUpdatedFailure) {
-            progressService.hideProgress();
-            snackBarService.showErrorSnackBar(state.message);
+            progressService?.hideProgress();
+            snackBarService?.showErrorSnackBar(state.message);
           }
         },
         builder: (context, state) {
           if (state is ProfileImageUpdatedSuccess) {
-            user.profileUrl = state.url;
+            user!.profileUrl = state.url;
           }
           return Consumer<MarkaaAppChangeNotifier>(
             builder: (_, __, ___) {
@@ -132,6 +132,8 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 if (user != null) ...[
                   CachedNetworkImage(
+                    key: ValueKey(user?.profileUrl ?? ''),
+                    cacheKey: user?.profileUrl ?? '',
                     imageUrl: user?.profileUrl ?? '',
                     imageBuilder: (_, _imageProvider) {
                       return Container(
@@ -207,7 +209,7 @@ class _AccountPageState extends State<AccountPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.firstName,
+                          user!.firstName,
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
                             fontSize: 23.sp,
@@ -215,7 +217,7 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                         SizedBox(height: 6.h),
                         Text(
-                          user.lastName,
+                          user!.lastName,
                           style: mediumTextStyle.copyWith(
                             color: primaryColor,
                             fontSize: 23.sp,
@@ -282,7 +284,7 @@ class _AccountPageState extends State<AccountPage> {
       child: Column(
         children: [
           if (user != null) ...[
-            WishlistItem(snackBarService: snackBarService),
+            WishlistItem(snackBarService: snackBarService!),
             SizedBox(height: 5.h),
             OrderHistoryItem(),
             SizedBox(height: 5.h),
@@ -328,7 +330,7 @@ class _AccountPageState extends State<AccountPage> {
             _buildShippingAddress(),
             SizedBox(height: 5.h),
             ChangeNotificationSettingItem(
-              snackBarService: snackBarService,
+              snackBarService: snackBarService!,
             ),
             SizedBox(height: 5.h),
           ],
@@ -336,8 +338,8 @@ class _AccountPageState extends State<AccountPage> {
           SizedBox(height: 5.h),
           if (user != null) ...[
             LogoutItem(
-              snackBarService: snackBarService,
-              progressService: progressService,
+              snackBarService: snackBarService!,
+              progressService: progressService!,
             ),
             SizedBox(height: 5.h),
           ],
@@ -422,14 +424,14 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _onChangeImage() async {
-    imageFile = await imageCustomPickerService.getImageWithDialog();
+    imageFile = await imageCustomPickerService!.getImageWithDialog();
     if (imageFile != null) {
-      name = imageFile.path.split('/').last;
-      image = imageFile.readAsBytesSync();
-      profileBloc.add(ProfileImageUpdated(
-        token: user.token,
-        image: image,
-        name: name,
+      name = imageFile!.path.split('/').last;
+      image = imageFile!.readAsBytesSync();
+      profileBloc!.add(ProfileImageUpdated(
+        token: user!.token,
+        image: image!,
+        name: name!,
       ));
     }
   }

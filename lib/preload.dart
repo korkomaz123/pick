@@ -9,12 +9,14 @@ import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:markaa/src/utils/repositories/category_repository.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:kommunicate_flutter/kommunicate_flutter.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
-import 'package:markaa/src/change_notifier/global_provider.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
@@ -26,7 +28,6 @@ import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 import 'src/change_notifier/home_change_notifier.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
-import 'src/data/models/user_entity.dart';
 import 'src/utils/repositories/local_storage_repository.dart';
 import 'src/utils/repositories/sign_in_repository.dart';
 
@@ -35,45 +36,65 @@ import 'env.dart';
 class Preload {
   static String baseUrl = "";
   static String imagesUrl = "";
-  static String languageCode;
+  static String? languageCode;
 
-  static String get language => EasyLocalization.of(navigatorKey.currentContext)
-      .locale
-      .languageCode
-      .toLowerCase();
+  static String get language =>
+      EasyLocalization.of(navigatorKey!.currentContext!)!
+          .locale
+          .languageCode
+          .toLowerCase();
   static set language(String val) => setLanguage(val: val);
 
-  static setLanguage({String val}) {
-    val != null && val.isNotEmpty
-        ? languageCode = val
-        : languageCode = EasyLocalization.of(navigatorKey.currentContext)
-            .locale
-            .languageCode
-            .toLowerCase();
-    lang = languageCode;
+  static setLanguage({String? val}) {
+    if (val != null && val.isNotEmpty) {
+      lang = languageCode = val;
+    } else {
+      lang = languageCode = language;
+    }
+    final enLocale = EasyLocalization.of(navigatorKey!.currentContext!)!
+        .supportedLocales
+        .first;
+    final arLocale = EasyLocalization.of(navigatorKey!.currentContext!)!
+        .supportedLocales
+        .last;
+
+    if (lang == 'en') {
+      navigatorKey!.currentContext!.setLocale(enLocale);
+      FirebaseMessaging.instance
+          .unsubscribeFromTopic(MarkaaNotificationChannels.arChannel);
+      FirebaseMessaging.instance
+          .subscribeToTopic(MarkaaNotificationChannels.enChannel);
+    } else {
+      navigatorKey!.currentContext!.setLocale(arLocale);
+      FirebaseMessaging.instance
+          .unsubscribeFromTopic(MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance
+          .subscribeToTopic(MarkaaNotificationChannels.arChannel);
+    }
+    OneSignal.shared.sendTag('lang', lang);
+    loadAssetData();
+    loadCustomerData();
   }
 
-  static final navigatorKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
 
   static final homeChangeNotifier = HomeChangeNotifier();
   static final myCartChangeNotifier = MyCartChangeNotifier();
-  static final globalProvider = GlobalProvider();
 
-  static final checkoutRepo = CheckoutRepository();
-  static final shippingAddressRepo = ShippingAddressRepository();
-  static final signInRepo = SignInRepository();
-  static final localRepo = LocalStorageRepository();
-  static final appRepo = AppRepository();
+  static final categoryRepository = CategoryRepository();
+  static final checkoutRepository = CheckoutRepository();
+  static final shippingAddressRepository = ShippingAddressRepository();
+  static final signInRepository = SignInRepository();
+  static final localRepository = LocalStorageRepository();
+  static final appRepository = AppRepository();
 
   static Future<dynamic> checkAppVersion() async {
     print('CHECKING THE APP VERSION');
-    final versionEntity = await appRepo.checkAppVersion(
-      Platform.isAndroid,
-      languageCode,
-    );
+    final versionEntity =
+        await appRepository.checkAppVersion(Platform.isAndroid);
     if (versionEntity.updateMandatory) {
       Navigator.pushReplacementNamed(
-        navigatorKey.currentContext,
+        navigatorKey!.currentContext!,
         Routes.update,
         arguments: versionEntity.storeLink,
       );
@@ -81,20 +102,31 @@ class Preload {
     return versionEntity.updateMandatory;
   }
 
+  static firebaseLogin() async {
+    String? firebaseUserId = signInRepository.getFirebaseUser();
+    if (firebaseUserId == null) {
+      await signInRepository.loginFirebase(
+        email: MarkaaReporter.email,
+        password: MarkaaReporter.password,
+      );
+    }
+  }
+
   static loadAssetData() {
-    checkoutRepo
+    homeChangeNotifier.getHomeCategories();
+    checkoutRepository
         .getShippingMethod()
         .then((result) => shippingMethods = result)
         .catchError((error) {
       print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
     });
-    checkoutRepo
+    checkoutRepository
         .getPaymentMethod()
         .then((result) => paymentMethods = result)
         .catchError((error) {
       print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
     });
-    shippingAddressRepo
+    shippingAddressRepository
         .getRegions()
         .then((result) => regions = result)
         .catchError((error) {
@@ -102,54 +134,16 @@ class Preload {
     });
   }
 
-  static Future<UserEntity> get currentUser => _getCurrentUser();
-
-  static Future<UserEntity> _getCurrentUser() async {
-    String token = await localRepo.getToken();
-    if (token.isNotEmpty) {
-      SignInRepository signInRepo = SignInRepository();
-      final result = await signInRepo.getCurrentUser(token);
-      if (result['code'] == 'SUCCESS') {
-        result['data']['customer']['token'] = token;
-        result['data']['customer']['profileUrl'] = result['data']['profileUrl'];
-        user = UserEntity.fromJson(result['data']['customer']);
-        return user;
-      } else {
-        await localRepo.removeToken();
-      }
-    }
-    return null;
-  }
-
-  static appOpen() async {
-    bool isExist = await LocalStorageRepository().existItem('usage');
-    if (isExist) {
-      if (signInRepo.getFirebaseUser() == null) {
-        try {
-          await signInRepo.loginFirebase(
-            email: MarkaaReporter.email,
-            password: MarkaaReporter.password,
-          );
-        } catch (e) {
-          print('FIREBASE LOGIN ERROR: $e');
-        }
-      }
-
-      await _getCurrentUser();
-
-      if (user?.token != null) {
-        navigatorKey.currentContext
-            .read<WishlistChangeNotifier>()
-            .getWishlistItems(user.token, lang);
-        navigatorKey.currentContext
-            .read<OrderChangeNotifier>()
-            .loadOrderHistories(user.token, lang);
-        navigatorKey.currentContext.read<AddressChangeNotifier>().initialize();
-        navigatorKey.currentContext
-            .read<AddressChangeNotifier>()
-            .loadAddresses(user.token);
-      }
-      homeChangeNotifier.getHomeCategories();
+  static loadCustomerData() async {
+    if (user != null) {
+      BuildContext context = navigatorKey!.currentContext!;
+      String token = user!.token;
+      context.read<AddressChangeNotifier>().initialize();
+      Future.wait([
+        context.read<WishlistChangeNotifier>().getWishlistItems(token, lang),
+        context.read<OrderChangeNotifier>().loadOrderHistories(token, lang),
+        context.read<AddressChangeNotifier>().loadAddresses(token),
+      ]);
     }
   }
 
@@ -162,126 +156,57 @@ class Preload {
 
     config.attributionCallback = (AdjustAttribution attributionChangedData) {
       print('[Adjust]: Attribution changed!');
-
-      if (attributionChangedData.trackerToken != null) {
-        print(
-            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken);
-      }
-
-      if (attributionChangedData.trackerName != null) {
-        print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName);
-      }
-      if (attributionChangedData.campaign != null) {
-        print('[Adjust]: Campaign: ' + attributionChangedData.campaign);
-      }
-      if (attributionChangedData.network != null) {
-        print('[Adjust]: Network: ' + attributionChangedData.network);
-      }
-      if (attributionChangedData.creative != null) {
-        print('[Adjust]: Creative: ' + attributionChangedData.creative);
-      }
-      if (attributionChangedData.adgroup != null) {
-        print('[Adjust]: Adgroup: ' + attributionChangedData.adgroup);
-      }
-      if (attributionChangedData.clickLabel != null) {
-        print('[Adjust]: Click label: ' + attributionChangedData.clickLabel);
-      }
-      if (attributionChangedData.adid != null) {
-        print('[Adjust]: Adid: ' + attributionChangedData.adid);
-      }
+      print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken!);
+      print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName!);
+      print('[Adjust]: Campaign: ' + attributionChangedData.campaign!);
+      print('[Adjust]: Network: ' + attributionChangedData.network!);
+      print('[Adjust]: Creative: ' + attributionChangedData.creative!);
+      print('[Adjust]: Adgroup: ' + attributionChangedData.adgroup!);
+      print('[Adjust]: Click label: ' + attributionChangedData.clickLabel!);
+      print('[Adjust]: Adid: ' + attributionChangedData.adid!);
     };
 
     config.sessionSuccessCallback = (AdjustSessionSuccess sessionSuccessData) {
       print('[Adjust]: Session tracking success!');
-
-      if (sessionSuccessData.message != null) {
-        print('[Adjust]: Message: ' + sessionSuccessData.message);
-      }
-      if (sessionSuccessData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + sessionSuccessData.timestamp);
-      }
-      if (sessionSuccessData.adid != null) {
-        print('[Adjust]: Adid: ' + sessionSuccessData.adid);
-      }
-      if (sessionSuccessData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + sessionSuccessData.jsonResponse);
-      }
+      print('[Adjust]: Message: ' + sessionSuccessData.message!);
+      print('[Adjust]: Timestamp: ' + sessionSuccessData.timestamp!);
+      print('[Adjust]: Adid: ' + sessionSuccessData.adid!);
+      print('[Adjust]: JSON response: ' + sessionSuccessData.jsonResponse!);
     };
 
     config.sessionFailureCallback = (AdjustSessionFailure sessionFailureData) {
       print('[Adjust]: Session tracking failure!');
-
-      if (sessionFailureData.message != null) {
-        print('[Adjust]: Message: ' + sessionFailureData.message);
-      }
-      if (sessionFailureData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + sessionFailureData.timestamp);
-      }
-      if (sessionFailureData.adid != null) {
-        print('[Adjust]: Adid: ' + sessionFailureData.adid);
-      }
-      if (sessionFailureData.willRetry != null) {
-        print(
-            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
-      }
-
-      if (sessionFailureData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse);
-      }
+      print('[Adjust]: Message: ' + sessionFailureData.message!);
+      print('[Adjust]: Timestamp: ' + sessionFailureData.timestamp!);
+      print('[Adjust]: Adid: ' + sessionFailureData.adid!);
+      print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+      print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse!);
     };
 
     config.eventSuccessCallback = (AdjustEventSuccess eventSuccessData) {
       print('[Adjust]: Event tracking success!');
-
-      if (eventSuccessData.eventToken != null) {
-        print('[Adjust]: Event token: ' + eventSuccessData.eventToken);
-      }
-      if (eventSuccessData.message != null) {
-        print('[Adjust]: Message: ' + eventSuccessData.message);
-      }
-      if (eventSuccessData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + eventSuccessData.timestamp);
-      }
-      if (eventSuccessData.adid != null) {
-        print('[Adjust]: Adid: ' + eventSuccessData.adid);
-      }
-      if (eventSuccessData.callbackId != null) {
-        print('[Adjust]: Callback ID: ' + eventSuccessData.callbackId);
-      }
-      if (eventSuccessData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + eventSuccessData.jsonResponse);
-      }
+      print('[Adjust]: Event token: ' + eventSuccessData.eventToken!);
+      print('[Adjust]: Message: ' + eventSuccessData.message!);
+      print('[Adjust]: Timestamp: ' + eventSuccessData.timestamp!);
+      print('[Adjust]: Adid: ' + eventSuccessData.adid!);
+      print('[Adjust]: Callback ID: ' + eventSuccessData.callbackId!);
+      print('[Adjust]: JSON response: ' + eventSuccessData.jsonResponse!);
     };
 
     config.eventFailureCallback = (AdjustEventFailure eventFailureData) {
       print('[Adjust]: Event tracking failure!');
-
-      if (eventFailureData.eventToken != null) {
-        print('[Adjust]: Event token: ' + eventFailureData.eventToken);
-      }
-      if (eventFailureData.message != null) {
-        print('[Adjust]: Message: ' + eventFailureData.message);
-      }
-      if (eventFailureData.timestamp != null) {
-        print('[Adjust]: Timestamp: ' + eventFailureData.timestamp);
-      }
-      if (eventFailureData.adid != null) {
-        print('[Adjust]: Adid: ' + eventFailureData.adid);
-      }
-      if (eventFailureData.callbackId != null) {
-        print('[Adjust]: Callback ID: ' + eventFailureData.callbackId);
-      }
-      if (eventFailureData.willRetry != null) {
-        print('[Adjust]: Will retry: ' + eventFailureData.willRetry.toString());
-      }
-      if (eventFailureData.jsonResponse != null) {
-        print('[Adjust]: JSON response: ' + eventFailureData.jsonResponse);
-      }
+      print('[Adjust]: Event token: ' + eventFailureData.eventToken!);
+      print('[Adjust]: Message: ' + eventFailureData.message!);
+      print('[Adjust]: Timestamp: ' + eventFailureData.timestamp!);
+      print('[Adjust]: Adid: ' + eventFailureData.adid!);
+      print('[Adjust]: Callback ID: ' + eventFailureData.callbackId!);
+      print('[Adjust]: Will retry: ${eventFailureData.willRetry!}');
+      print('[Adjust]: JSON response: ' + eventFailureData.jsonResponse!);
     };
 
     config.launchDeferredDeeplink = true;
-    config.deferredDeeplinkCallback = (String uri) {
-      print('[Adjust]: Received deferred deeplink: ' + uri);
+    config.deferredDeeplinkCallback = (String? uri) {
+      print('[Adjust]: Received deferred deeplink: ' + uri!);
     };
 
     // Add session callback parameters.
@@ -309,15 +234,13 @@ class Preload {
   static bool chatInitiated = false;
   static Future startSupportChat() async {
     dynamic kmUser, conversationObject = {'appId': ChatSupport.appKey};
-    if (user != null) {
-      kmUser = {
-        'userId': user.customerId,
-        'displayName': user.firstName + " " + user.lastName,
-        'contactNumber': user.phoneNumber,
-        'email': user.email,
-      };
-      conversationObject['kmUser'] = jsonEncode(kmUser);
-    }
+    kmUser = {
+      'userId': user!.customerId,
+      'displayName': user!.firstName + " " + user!.lastName,
+      'contactNumber': user!.phoneNumber,
+      'email': user!.email,
+    };
+    conversationObject['kmUser'] = jsonEncode(kmUser);
     dynamic clientConversationId =
         await KommunicateFlutterPlugin.buildConversation(conversationObject);
     print("Conversation builder success : " + clientConversationId.toString());

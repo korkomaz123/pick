@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ProductReviewPage extends StatefulWidget {
   final ProductEntity product;
 
-  ProductReviewPage({this.product});
+  ProductReviewPage({required this.product});
 
   @override
   _ProductReviewPageState createState() => _ProductReviewPageState();
@@ -22,13 +22,13 @@ class ProductReviewPage extends StatefulWidget {
 
 class _ProductReviewPageState extends State<ProductReviewPage> {
   List<ReviewEntity> reviews = [];
-  ProductReviewChangeNotifier model;
+  ProductReviewChangeNotifier? model;
 
   @override
   void initState() {
     super.initState();
     model = context.read<ProductReviewChangeNotifier>();
-    model.getProductReviews(widget.product.productId);
+    model!.getProductReviews(widget.product.productId);
   }
 
   @override
@@ -70,7 +70,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
         child: Consumer<ProductReviewChangeNotifier>(
           builder: (_, __, ___) {
             return Column(
-              children: model.reviews
+              children: model!.reviews
                   .map((review) => _buildProductReview(review))
                   .toList(),
             );

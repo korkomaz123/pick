@@ -6,14 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SelectBlockListDialog extends StatefulWidget {
   final String value;
 
-  SelectBlockListDialog({this.value});
+  SelectBlockListDialog({required this.value});
 
   @override
   _SelectBlockListDialogState createState() => _SelectBlockListDialogState();
 }
 
 class _SelectBlockListDialogState extends State<SelectBlockListDialog> {
-  String value;
+  String? value;
 
   @override
   void initState() {

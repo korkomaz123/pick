@@ -16,7 +16,7 @@ class MarkaaAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isCenter;
 
   MarkaaAppBar({
-    @required this.scaffoldKey,
+    required this.scaffoldKey,
     this.isCartPage = false,
     this.isCenter = true,
   });
@@ -29,25 +29,25 @@ class MarkaaAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _MarkaaAppBarState extends State<MarkaaAppBar> {
-  double logoWidth;
+  double? logoWidth;
 
-  double logoHeight;
+  double? logoHeight;
 
-  double pageTitleSize;
+  double? pageTitleSize;
 
-  double pageSubtitleSize;
+  double? pageSubtitleSize;
 
-  double pageDescSize;
+  double? pageDescSize;
 
-  double pagePriceSize;
+  double? pagePriceSize;
 
-  double pageTagSize;
+  double? pageTagSize;
 
-  double pageIconSize;
+  double? pageIconSize;
 
-  double shoppingCartIconWidth;
+  double? shoppingCartIconWidth;
 
-  double shoppingCartIconHeight;
+  double? shoppingCartIconHeight;
 
   TextEditingController _searchController = TextEditingController();
 
@@ -80,7 +80,7 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       leading: IconButton(
         icon: Icon(Icons.menu, color: Colors.white, size: pageIconSize),
         onPressed: () {
-          widget.scaffoldKey.currentState.openDrawer();
+          widget.scaffoldKey.currentState!.openDrawer();
         },
       ),
       actions: [

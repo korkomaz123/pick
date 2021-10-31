@@ -11,7 +11,11 @@ class FilterRepository {
     String lang,
   ) async {
     String url = EndPoints.getFilterAttributes;
-    final params = {'categoryId': categoryId, 'brandId': brandId, 'lang': lang};
+    final params = {
+      'categoryId': categoryId == 'all' ? null : categoryId,
+      'brandId': brandId == '' ? null : brandId,
+      'lang': lang
+    };
     print(url);
     print(params);
     return await Api.getMethod(url, data: params);

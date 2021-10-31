@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:markaa/src/components/custom/src/sheet_listener_builder.dart';
 
 import 'sheet.dart';
+import 'sheet_listener_builder.dart';
 
 // ignore_for_file: public_member_api_docs
 
 class SheetContainer extends StatelessWidget {
-  final Duration duration;
+  final Duration? duration;
   final double borderRadius;
   final double elevation;
-  final Border border;
-  final BorderRadius customBorders;
-  final EdgeInsets margin;
+  final Border? border;
+  final BorderRadius? customBorders;
+  final EdgeInsets? margin;
   final EdgeInsets padding;
-  final Widget child;
+  final Widget? child;
   final Color color;
   final Color shadowColor;
-  final List<BoxShadow> boxShadows;
-  final AlignmentGeometry alignment;
-  final BoxConstraints constraints;
+  final List<BoxShadow>? boxShadows;
+  final AlignmentGeometry? alignment;
+  final BoxConstraints? constraints;
   const SheetContainer({
-    Key key,
+    Key? key,
     this.duration,
     this.borderRadius = 0.0,
     this.elevation = 0.0,
@@ -48,7 +48,7 @@ class SheetContainer extends StatelessWidget {
           (elevation > 0.0
               ? [
                   BoxShadow(
-                    color: shadowColor ?? Colors.black12,
+                    color: shadowColor,
                     blurRadius: elevation,
                     spreadRadius: 0,
                   )
@@ -69,7 +69,7 @@ class SheetContainer extends StatelessWidget {
       );
     } else {
       return AnimatedContainer(
-        duration: duration,
+        duration: duration ?? const Duration(milliseconds: 800),
         padding: padding,
         alignment: alignment,
         constraints: constraints,
@@ -86,11 +86,11 @@ class ElevatedContainer extends StatelessWidget {
   final bool Function(SheetState state) elevateWhen;
   final Widget child;
   const ElevatedContainer({
-    Key key,
-    @required this.shadowColor,
-    @required this.elevation,
-    @required this.elevateWhen,
-    @required this.child,
+    Key? key,
+    required this.shadowColor,
+    required this.elevation,
+    required this.elevateWhen,
+    required this.child,
   }) : super(key: key);
 
   @override

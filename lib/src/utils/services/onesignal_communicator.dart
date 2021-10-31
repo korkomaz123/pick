@@ -7,10 +7,10 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 class OneSignalCommunicator {
   final BuildContext context;
 
-  OneSignalCommunicator({@required this.context});
+  OneSignalCommunicator({required this.context});
 
-  MyCartChangeNotifier _cartProvider;
-  AuthChangeNotifier _authProvider;
+  MyCartChangeNotifier? _cartProvider;
+  AuthChangeNotifier? _authProvider;
 
   double _cartTotalPrice = 0;
   double _walletAmount = 0;
@@ -21,26 +21,26 @@ class OneSignalCommunicator {
     _cartProvider = context.read<MyCartChangeNotifier>();
     _authProvider = context.read<AuthChangeNotifier>();
 
-    _cartProvider.addListener(_onMyCartChanged);
-    _authProvider.addListener(_onAuthChanged);
+    _cartProvider!.addListener(_onMyCartChanged);
+    _authProvider!.addListener(_onAuthChanged);
   }
 
   _onMyCartChanged() {
     /// if cart total price has been changed, send total price to the onesignal
-    if (_cartTotalPrice != _cartProvider.cartTotalPrice) {
-      _cartTotalPrice = _cartProvider.cartTotalPrice;
+    if (_cartTotalPrice != _cartProvider!.cartTotalPrice) {
+      _cartTotalPrice = _cartProvider!.cartTotalPrice;
       OneSignal.shared.sendTag('cartTotalPrice', _cartTotalPrice);
     }
 
     /// if item added | removed, send new | previous item to the onesignal
-    List<String> keys = _cartProvider.cartItemsMap.keys.toList();
+    List<String> keys = _cartProvider!.cartItemsMap.keys.toList();
     if (_cartMapKeys.length != keys.length) {
       if (keys.isNotEmpty) {
         String key = keys[keys.length - 1];
-        final item = _cartProvider.cartItemsMap[key];
+        final item = _cartProvider!.cartItemsMap[key];
         OneSignal.shared.sendTags({
           'cart_update': DateTime.now().millisecondsSinceEpoch,
-          'product_name': item.product.name,
+          'product_name': item!.product.name,
           'product_image': item.product.imageUrl,
         });
       } else {

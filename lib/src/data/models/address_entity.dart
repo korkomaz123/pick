@@ -1,21 +1,21 @@
 class AddressEntity {
-  String title;
-  String firstName;
-  String lastName;
-  String fullName;
-  String email;
-  String addressId;
+  String? title;
+  String? firstName;
+  String? lastName;
+  String? fullName;
+  String? email;
+  String? addressId;
   String country;
   String countryId;
   String region;
-  String regionId;
+  String? regionId;
   String city;
   String street;
-  String company;
-  String postCode;
-  String phoneNumber;
-  int defaultBillingAddress;
-  int defaultShippingAddress;
+  String? company;
+  String? postCode;
+  String? phoneNumber;
+  int? defaultBillingAddress;
+  int? defaultShippingAddress;
 
   AddressEntity({
     this.title,
@@ -24,12 +24,12 @@ class AddressEntity {
     this.fullName,
     this.email,
     this.addressId,
-    this.country,
-    this.countryId,
-    this.region,
+    required this.country,
+    required this.countryId,
+    required this.region,
     this.regionId,
-    this.city,
-    this.street,
+    required this.city,
+    required this.street,
     this.company,
     this.postCode,
     this.phoneNumber,
@@ -61,12 +61,8 @@ class AddressEntity {
         'addressId': addressId ?? '',
         'customer_address_id': addressId ?? '',
         'prefix': title ?? '',
-        'firstname': fullName != null && fullName.isNotEmpty
-            ? fullName.split(' ')[0]
-            : firstName,
-        'lastname': fullName != null && fullName.isNotEmpty
-            ? fullName.split(' ')[1]
-            : lastName,
+        'firstname': fullName!.isNotEmpty ? fullName!.split(' ')[0] : firstName,
+        'lastname': fullName!.isNotEmpty ? fullName!.split(' ')[1] : lastName,
         'fullName': fullName,
         'country_name': country,
         'country_id': countryId,

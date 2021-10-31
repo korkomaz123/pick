@@ -1,11 +1,11 @@
 class FormattedAddressEntity {
-  final String country;
-  final String countryCode;
-  final String city;
-  final String state;
-  final String street;
-  final String postalCode;
-  final String formattedAddress;
+  final String? country;
+  final String? countryCode;
+  final String? city;
+  final String? state;
+  final String? street;
+  final String? postalCode;
+  final String? formattedAddress;
 
   FormattedAddressEntity({
     this.country,

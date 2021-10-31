@@ -14,7 +14,7 @@ class AwesomeLoader extends StatefulWidget {
   final Color innerColor;
   final double strokeWidth;
   final int duration;
-  final AwesomeLoaderController controller;
+  final AwesomeLoaderController? controller;
 
   @override
   _AwesomeLoaderState createState() => _AwesomeLoaderState();
@@ -22,17 +22,17 @@ class AwesomeLoader extends StatefulWidget {
 
 class _AwesomeLoaderState extends State<AwesomeLoader>
     with TickerProviderStateMixin {
-  Animation<double> outerAnimation;
-  Animation<double> innerAnimation;
-  AnimationController outerController;
-  AnimationController innerController;
+  Animation<double>? outerAnimation;
+  Animation<double>? innerAnimation;
+  AnimationController? outerController;
+  AnimationController? innerController;
 
 // controls the minimum size of the arc
   static const int minimumArcSize = 5;
 
   // final int durationPortion = 40;
 
-  Timer timer;
+  Timer? timer;
   static const int TIME_PORTION = 10; // 40 milliseconds for each increment
 
   /// ranges are from 0-100
@@ -56,7 +56,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
   int i = 1;
 
   // controls the smoothness of the arc animation
-  double arcIncrement;
+  double? arcIncrement;
 
   /// this swithc is controlled by start() and stop() functions
   /// it is used to wait till loader finishes full circle then stop
@@ -65,7 +65,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
   void initState() {
     super.initState();
     if (widget.controller != null) {
-      widget.controller._awesomeLoaderState = this;
+      widget.controller!._awesomeLoaderState = this;
     }
 
     // controls the smoothness of the arc animation
@@ -86,13 +86,13 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
 
     /// rotates three times per duration
     outerAnimation = Tween<double>(begin: 0, end: 3).animate(CurvedAnimation(
-        parent: outerController,
+        parent: outerController!,
         curve: const Interval(0.0, 1.0, curve: Curves.linear)));
 
     /// rotates three rotations per duration
     innerAnimation = Tween<double>(begin: 3.0, end: 0.0).animate(
         CurvedAnimation(
-            parent: innerController,
+            parent: innerController!,
             curve: const Interval(0.0, 1.0, curve: Curves.linear)));
 
     /// if there is no controller, start the loader immediatly
@@ -107,7 +107,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
       child: Stack(
         children: <Widget>[
           RotationTransition(
-            turns: outerAnimation,
+            turns: outerAnimation!,
             child: CustomPaint(
               //  /50 to return a range from  to 0-2
               painter: OuterArcPainter(widget.outerColor, startRectSize / 50.0,
@@ -119,7 +119,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
             ),
           ),
           RotationTransition(
-            turns: innerAnimation,
+            turns: innerAnimation!,
             child: CustomPaint(
               painter: InnerArcPainter(widget.innerColor, startRectSize / 50.0,
                   endRectSize / 50.0, widget.strokeWidth),
@@ -136,15 +136,15 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
 
   @override
   void dispose() {
-    outerController.dispose();
-    innerController.dispose();
+    outerController!.dispose();
+    innerController!.dispose();
     super.dispose();
   }
 
   void start() {
     isLoaderAskedToStop = false;
-    if (!outerController.isAnimating) outerController.repeat();
-    if (!innerController.isAnimating) innerController.repeat();
+    if (!outerController!.isAnimating) outerController!.repeat();
+    if (!innerController!.isAnimating) innerController!.repeat();
     _startRotation();
   }
 
@@ -154,22 +154,22 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
   }
 
   void stopNow() {
-    outerController.stop();
-    innerController.stop();
+    outerController!.stop();
+    innerController!.stop();
     _stopRotation();
   }
 
   _startRotation() {
-    if (timer != null && timer.isActive) timer.cancel();
+    if (timer != null && timer!.isActive) timer!.cancel();
     timer = Timer.periodic(Duration(milliseconds: TIME_PORTION), (Timer t) {
       if (this.mounted)
         setState(() {
           if (!reverseFlag) {
             if (!staticState) {
               /// modify size only if the staticState is FALSE
-              endRectSize = endRectSize + arcIncrement;
+              endRectSize = endRectSize + arcIncrement!;
             } else {
-              staticSizeCounter += arcIncrement;
+              staticSizeCounter += arcIncrement!;
               if (staticSizeCounter > staticStateInvisibleSize) {
                 staticSizeCounter = 0;
                 staticState = false;
@@ -187,10 +187,10 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
           } else {
             if (!staticState) {
               /// modify size only if the staticState is FALSE
-              startRectSize = startRectSize + arcIncrement;
-              endRectSize = endRectSize - arcIncrement;
+              startRectSize = startRectSize + arcIncrement!;
+              endRectSize = endRectSize - arcIncrement!;
             } else {
-              staticSizeCounter += arcIncrement;
+              staticSizeCounter += arcIncrement!;
               if (staticSizeCounter > staticStateInvisibleSize) {
                 staticSizeCounter = 0;
                 staticState = false;
@@ -207,7 +207,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
   }
 
   _stopRotation() {
-    timer.cancel();
+    timer!.cancel();
   }
 }
 
@@ -276,18 +276,16 @@ class InnerArcPainter extends CustomPainter {
 }
 
 class AwesomeLoaderController {
-  AwesomeLoaderController();
-
-  _AwesomeLoaderState _awesomeLoaderState;
+  _AwesomeLoaderState? _awesomeLoaderState;
   void stopWhenFull() {
-    _awesomeLoaderState.stopWhenFull();
+    _awesomeLoaderState!.stopWhenFull();
   }
 
   void start() {
-    _awesomeLoaderState.start();
+    _awesomeLoaderState!.start();
   }
 
   void stopNow() {
-    _awesomeLoaderState.stopNow();
+    _awesomeLoaderState!.stopNow();
   }
 }

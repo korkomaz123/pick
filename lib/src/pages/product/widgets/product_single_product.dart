@@ -23,7 +23,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share/share.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -37,9 +37,9 @@ class ProductSingleProduct extends StatefulWidget {
   final ProductChangeNotifier model;
 
   ProductSingleProduct({
-    @required this.product,
-    @required this.productDetails,
-    @required this.model,
+    required this.product,
+    required this.productDetails,
+    required this.model,
   });
 
   @override
@@ -51,58 +51,36 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool isMore = false;
   bool isFavorite = true;
 
-  int index;
+  int? index;
   int activeIndex = 0;
 
-  AnimationController _favoriteController;
-  Animation<double> _favoriteScaleAnimation;
+  AnimationController? _favoriteController;
+  Animation<double>? _favoriteScaleAnimation;
 
-  FlushBarService flushBarService;
+  FlushBarService? flushBarService;
   DynamicLinkService dynamicLinkService = DynamicLinkService();
 
-  WishlistChangeNotifier wishlistChangeNotifier;
-  MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  WishlistChangeNotifier? wishlistChangeNotifier;
+  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
 
   ProductEntity get details =>
-      widget.model.productDetailsMap[widget.product.productId];
+      widget.model.productDetailsMap[widget.product.productId]!;
 
-  // List<Image> get imagesList =>  loadImages();
-  // List<Image> loadImages() {
-  //   List<Image> list = [];
-  //   for (var url in details.gallery) {
-  //     int index = details.gallery.indexOf(url);
-  //     list.add(Image.network(url, width: 375.w, height: 420.h, loadingBuilder: (_, child, chunk) {
-  //       if (chunk != null) {
-  //         if (index == 0) {
-  //           return CachedNetworkImage(
-  //             imageUrl: details.imageUrl,
-  //             width: designWidth.w,
-  //             height: 420.h,
-  //           );
-  //         } else {
-  //           return Center(child: PulseLoadingSpinner());
-  //         }
-  //       } else {
-  //         return child;
-  //       }
-  //     }));
-  //     precacheImage(list[index].image, context);
-  //   }
-  //   return list;
-  // }
   Future preloadImages() async {
     List<dynamic> urls = widget.model.selectedVariant != null
-        ? widget.model.selectedVariant.gallery
-        : details.gallery;
+        ? widget.model.selectedVariant?.gallery ?? []
+        : details.gallery ?? [];
     for (var url in urls) {
-      await DefaultCacheManager().downloadFile(url);
+      if (url != null) {
+        await DefaultCacheManager().downloadFile(url);
+      }
     }
   }
 
   bool get isWishlist => _checkFavorite();
   bool _checkFavorite() {
     final variant = widget.model.selectedVariant;
-    final wishlistItems = wishlistChangeNotifier.wishlistItemsMap;
+    final wishlistItems = wishlistChangeNotifier!.wishlistItemsMap;
 
     bool favorite = false;
     if (details.typeId == 'configurable') {
@@ -116,43 +94,37 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   bool get isStock => _checkStockAvailability();
   bool _checkStockAvailability() {
     final variant = widget.model.selectedVariant;
-
     if (variant != null) {
-      return variant.stockQty != null && variant.stockQty > 0;
+      return variant.stockQty! > 0;
     }
-    return details.stockQty != null && details.stockQty > 0;
+    return details.stockQty > 0;
   }
 
   bool get discounted => _checkDiscounted();
   bool _checkDiscounted() {
     final variant = widget.model.selectedVariant;
-
-    return details.discount > 0 ||
-        variant?.discount != null && variant.discount > 0;
+    return details.discount > 0 || (variant?.discount ?? 0) > 0;
   }
 
   bool get isValidUrl => _checkUrlValidation();
   bool _checkUrlValidation() {
     final variant = widget.model.selectedVariant;
-
-    return variant?.imageUrl != null && variant.imageUrl.isNotEmpty;
+    return variant!.imageUrl.isNotEmpty;
   }
 
   int get discountValue => _getDiscountValue();
   int _getDiscountValue() {
     final variant = widget.model.selectedVariant;
-
-    return details.discount > 0 ? details.discount : variant.discount;
+    return details.discount > 0 ? details.discount : variant!.discount!;
   }
 
   int get availableCount => _getAvailableCount();
   int _getAvailableCount() {
     final variant = widget.model.selectedVariant;
-
     if (variant != null) {
       return variant.stockQty ?? 0;
     }
-    return details.stockQty ?? 0;
+    return details.stockQty;
   }
 
   @override
@@ -172,13 +144,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       begin: 1.0,
       end: 3.0,
     ).animate(CurvedAnimation(
-      parent: _favoriteController,
+      parent: _favoriteController!,
       curve: Curves.easeIn,
     ));
 
     widget.model.addListener(() {
       if (widget.model.selectedVariant != null) {
-        if (activeIndex >= widget.model.selectedVariant.gallery.length) {
+        if (activeIndex >= widget.model.selectedVariant!.gallery!.length) {
           activeIndex = 0;
           setState(() {});
         }
@@ -188,7 +160,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
 
   @override
   void dispose() {
-    _favoriteController.dispose();
+    _favoriteController!.dispose();
     super.dispose();
   }
 
@@ -205,7 +177,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               SizedBox(height: 20.h),
               Consumer<ProductChangeNotifier>(
                 builder: (_, model, ___) {
-                  if (model?.selectedVariant?.productId != null) {
+                  if (model.selectedVariant != null) {
                     return _buildVariantCarousel();
                   } else {
                     return _buildImageCarousel();
@@ -308,7 +280,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       height: 460.h,
       child: Stack(
         children: [
-          if (details.gallery.length == 1) ...[
+          if (details.gallery!.length == 1) ...[
             InkWell(
               onTap: () => Navigator.pushNamed(
                 context,
@@ -316,11 +288,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 arguments: details.gallery,
               ),
               child: CachedNetworkImage(
-                imageUrl: details.gallery[0],
+                key: ValueKey(details.gallery?[0] ?? ''),
+                cacheKey: details.gallery?[0] ?? '',
+                imageUrl: details.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
                 progressIndicatorBuilder: (_, __, ___) {
                   return CachedNetworkImage(
+                    key: ValueKey(details.imageUrl),
+                    cacheKey: details.imageUrl,
                     imageUrl: details.imageUrl,
                     width: designWidth.w,
                     height: 420.h,
@@ -333,7 +309,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               width: designWidth.w,
               height: 420.h,
               child: Swiper(
-                itemCount: details.gallery.length,
+                itemCount: details.gallery!.length,
                 autoplay: false,
                 curve: Curves.easeIn,
                 controller: _swiperController,
@@ -341,7 +317,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 autoplayDelay: 5000,
                 onIndexChanged: (value) {
                   activeIndex = value;
-                  markaaAppChangeNotifier.rebuild();
+                  markaaAppChangeNotifier!.rebuild();
                 },
                 itemBuilder: (context, index) {
                   return InkWell(
@@ -351,12 +327,16 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       arguments: details.gallery,
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: details.gallery[index],
+                      key: ValueKey(details.gallery?[index] ?? ''),
+                      cacheKey: details.gallery?[index] ?? '',
+                      imageUrl: details.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {
                         if (index == 0) {
                           return CachedNetworkImage(
+                            key: ValueKey(details.imageUrl),
+                            cacheKey: details.imageUrl,
                             imageUrl: details.imageUrl,
                             width: designWidth.w,
                             height: 420.h,
@@ -383,7 +363,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 builder: (_, __, ___) {
                   return SmoothIndicator(
                     offset: activeIndex.toDouble(),
-                    count: details.gallery.length,
+                    count: details.gallery!.length,
                     axisDirection: Axis.horizontal,
                     effect: SlideEffect(
                       spacing: 8.0,
@@ -417,15 +397,18 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
       height: 460.h,
       child: Stack(
         children: [
-          if (widget.model.selectedVariant.gallery.length == 1) ...[
+          if (widget.model.selectedVariant != null &&
+              widget.model.selectedVariant!.gallery!.length == 1) ...[
             InkWell(
               onTap: () => Navigator.pushNamed(
                 context,
                 Routes.viewFullImage,
-                arguments: widget.model.selectedVariant.gallery,
+                arguments: widget.model.selectedVariant?.gallery ?? [],
               ),
               child: CachedNetworkImage(
-                imageUrl: widget.model.selectedVariant.gallery[0],
+                key: ValueKey(widget.model.selectedVariant?.gallery?[0] ?? ''),
+                cacheKey: widget.model.selectedVariant?.gallery?[0] ?? '',
+                imageUrl: widget.model.selectedVariant?.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
                 progressIndicatorBuilder: (_, __, ___) {
@@ -442,7 +425,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               width: designWidth.w,
               height: 420.h,
               child: Swiper(
-                itemCount: widget.model.selectedVariant.gallery.length,
+                itemCount: widget.model.selectedVariant!.gallery!.length,
                 autoplay: false,
                 curve: Curves.easeIn,
                 controller: _swiperController,
@@ -458,10 +441,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     onTap: () => Navigator.pushNamed(
                       context,
                       Routes.viewFullImage,
-                      arguments: widget.model.selectedVariant.gallery,
+                      arguments: widget.model.selectedVariant?.gallery ?? [],
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: widget.model.selectedVariant.gallery[index],
+                      key: ValueKey(
+                          widget.model.selectedVariant?.gallery?[index] ?? ''),
+                      cacheKey:
+                          widget.model.selectedVariant?.gallery?[index] ?? '',
+                      imageUrl:
+                          widget.model.selectedVariant?.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
                       progressIndicatorBuilder: (_, __, ___) {
@@ -483,7 +471,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               padding: EdgeInsets.only(bottom: 10.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: widget.model.selectedVariant.gallery.length,
+                count: widget.model.selectedVariant!.gallery!.length,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,
@@ -527,7 +515,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     ? _onFavorite(widget.model)
                     : Navigator.pushNamed(context, Routes.signIn),
                 child: ScaleTransition(
-                  scale: _favoriteScaleAnimation,
+                  scale: _favoriteScaleAnimation!,
                   child: Container(
                     width: 28.w,
                     height: 28.h,
@@ -559,7 +547,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 child: InkWell(
                   onTap: () {
                     ProductListArguments arguments = ProductListArguments(
-                      category: CategoryEntity(),
+                      category: null,
                       subCategory: [],
                       brand: details.brandEntity,
                       selectedSubCategoryIndex: 0,
@@ -572,7 +560,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     );
                   },
                   child: Text(
-                    details?.brandEntity?.brandLabel ?? '',
+                    details.brandEntity?.brandLabel ?? '',
                     style: mediumTextStyle.copyWith(
                       color: primaryColor,
                       fontSize: Preload.language == 'en' ? 16.sp : 18.sp,
@@ -580,7 +568,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                   ),
                 ),
               ),
-              // if (details.typeId == 'configurable') ...[_buildProductPrice()] else ...[_buildStock()],
               _buildProductPrice(),
             ],
           ),
@@ -597,7 +584,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (details?.brandEntity != null) ...[
+        if (details.brandEntity != null) ...[
           Text(
             isStock
                 ? 'in_stock'.tr().toUpperCase()
@@ -702,7 +689,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
         if (discounted) ...[
           SizedBox(width: 10.w),
           Text(
-            (widget.model.selectedVariant?.beforePrice ?? details.beforePrice) +
+            (widget.model.selectedVariant?.beforePrice ??
+                    details.beforePrice ??
+                    '') +
                 ' ' +
                 'currency'.tr(),
             style: mediumTextStyle.copyWith(
@@ -719,11 +708,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              widget?.model?.selectedVariant?.price != null
-                  ? widget.model.selectedVariant.price
-                  : details.price != null
-                      ? details.price
-                      : '',
+              widget.model.selectedVariant != null
+                  ? widget.model.selectedVariant!.price
+                  : details.price,
               style: mediumTextStyle.copyWith(
                 fontSize: 18.sp,
                 color: greyColor,
@@ -731,16 +718,13 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
               ),
             ),
             SizedBox(width: 1.w),
-            if (details.price != null ||
-                widget?.model?.selectedVariant?.price != null) ...[
-              Text(
-                'currency'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: 12.sp,
-                  color: greyColor,
-                ),
-              )
-            ],
+            Text(
+              'currency'.tr(),
+              style: mediumTextStyle.copyWith(
+                fontSize: 12.sp,
+                color: greyColor,
+              ),
+            )
           ],
         ),
       ],
@@ -748,34 +732,39 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
   }
 
   _onFavorite(ProductChangeNotifier model) async {
-    if (model.productDetails.typeId == 'configurable' &&
+    if (model.productDetails!.typeId == 'configurable' &&
         model.selectedOptions.keys.toList().length !=
-            model.productDetails.configurable.keys.toList().length) {
-      flushBarService.showErrorDialog(
-          'required_options'.tr(), "select_option.svg");
+            model.productDetails!.configurable!.keys.toList().length) {
+      flushBarService!.showErrorDialog(
+        'required_options'.tr(),
+        "select_option.svg",
+      );
       return;
     }
-    if (model.productDetails.typeId == 'configurable' &&
-        (model?.selectedVariant?.stockQty == null ||
-            model.selectedVariant.stockQty == 0)) {
-      flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+    if (model.productDetails!.typeId == 'configurable' &&
+        (model.selectedVariant!.stockQty == 0)) {
+      flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
     _updateWishlist(model);
-    _favoriteController.repeat(reverse: true);
+    _favoriteController!.repeat(reverse: true);
     Timer.periodic(Duration(milliseconds: 600), (timer) {
-      _favoriteController.stop(canceled: true);
+      _favoriteController!.stop(canceled: true);
       timer.cancel();
     });
   }
 
   _updateWishlist(ProductChangeNotifier model) async {
     if (isWishlist) {
-      await wishlistChangeNotifier.removeItemFromWishlist(
-          user.token, widget.product, widget.model.selectedVariant);
+      await wishlistChangeNotifier!.removeItemFromWishlist(
+          user!.token, widget.product, widget.model.selectedVariant);
     } else {
-      await wishlistChangeNotifier.addItemToWishlist(user.token, widget.product,
-          1, model.selectedOptions, widget.model.selectedVariant);
+      await wishlistChangeNotifier!.addItemToWishlist(
+          user!.token,
+          widget.product,
+          1,
+          model.selectedOptions,
+          widget.model.selectedVariant);
     }
   }
 

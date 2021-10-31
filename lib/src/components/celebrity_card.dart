@@ -7,7 +7,12 @@ class CelebrityCard extends StatelessWidget {
   final double cardHeight;
   final Map<String, dynamic> celebrity;
 
-  CelebrityCard({this.cardWidth, this.cardHeight, this.celebrity});
+  CelebrityCard({
+    required this.cardWidth,
+    required this.cardHeight,
+    required this.celebrity,
+  });
+
   String _image() {
     return celebrity['image'] ?? celebrity['cover_picture'] ?? '';
   }
@@ -36,15 +41,16 @@ class CelebrityCard extends StatelessWidget {
     return Container(
       width: cardWidth,
       height: cardHeight,
-      // padding: EdgeInsets.symmetric(horizontal: 8.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.grey.shade200,
         image: DecorationImage(
-            image: CachedNetworkImageProvider(
-              _image(),
-            ),
-            fit: BoxFit.cover),
+          image: CachedNetworkImageProvider(
+            _image(),
+            cacheKey: _image(),
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

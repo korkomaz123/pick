@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:markaa/env.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
@@ -38,7 +39,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   Future<void> loadOrderHistories(
     String token,
     String lang, [
-    Function onSuccess,
+    Function? onSuccess,
   ]) async {
     final result = await orderRepository.getOrderHistory(token, lang);
     if (result['code'] == 'SUCCESS') {
@@ -50,9 +51,7 @@ class OrderChangeNotifier extends ChangeNotifier {
       }
       setKeys();
       notifyListeners();
-      if (onSuccess != null) {
-        onSuccess();
-      }
+      if (onSuccess != null) onSuccess();
     }
   }
 
@@ -75,38 +74,34 @@ class OrderChangeNotifier extends ChangeNotifier {
   Future<void> submitOrder(
     Map<String, dynamic> orderDetails,
     String lang, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-    bool isWallet = false,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     var result;
     try {
-      String isVirtual = isWallet ? '1' : '0';
+      String isVirtual = '0';
       result = await orderRepository.placeOrder(orderDetails, lang, isVirtual);
 
       if (result['code'] == 'SUCCESS') {
+        await submitOrderResult(result, orderDetails);
         final OrderEntity newOrder = OrderEntity.fromJson(result['order']);
-        submitOrderResult(result, newOrder);
-        if (orderDetails['token'] != null &&
-            orderDetails['token'] != '' &&
-            !isWallet) {
+        if (user != null) {
           ordersMap[newOrder.orderId] = newOrder;
-
-          await loadOrderHistories(user.token, lang);
+          await loadOrderHistories(user!.token, lang);
           setKeys();
           notifyListeners();
         }
-        onSuccess(result['payurl'], newOrder);
+        if (onSuccess != null) onSuccess(result['payurl'], newOrder);
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
         reportOrderIssue(result, orderDetails);
       }
     } catch (e) {
-      onFailure('connection_error');
+      if (onFailure != null) onFailure('connection_error');
       reportOrderIssue(
-        {'code': 'Catch Error: $e', 'errorMessage': result},
+        {'code': 'Catch Error $e', 'errorMessage': result},
         orderDetails,
       );
     }
@@ -114,16 +109,14 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   Future<void> cancelFullOrder(
     OrderEntity order, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final orderId = order.orderId;
-
-      final result =
-          await orderRepository.cancelOrderById(orderId, Preload.language);
+      final result = await orderRepository.cancelOrderById(
+          order.orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
@@ -147,9 +140,9 @@ class OrderChangeNotifier extends ChangeNotifier {
     String reason,
     Uint8List product,
     String imageName, {
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
     try {
@@ -176,39 +169,39 @@ class OrderChangeNotifier extends ChangeNotifier {
     String additionalInfo,
     String reason,
     Uint8List product,
-    String imageName,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
+    String imageName, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
     try {
       final result = await orderRepository.returnOrder(
           token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
-        onSuccess();
+        if (onSuccess != null) onSuccess();
       } else {
-        onFailure(result['errorMessage']);
+        if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
-      onFailure('connection_error');
+      if (onFailure != null) onFailure('connection_error');
     }
   }
 
   Future<void> sendAsGift({
-    String token,
-    String sender,
-    String receiver,
-    String message,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
+    String? token,
+    String? sender,
+    String? receiver,
+    String? message,
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
 
     try {
-      final result =
-          await orderRepository.sendAsGift(token, sender, receiver, message);
+      final result = await orderRepository.sendAsGift(
+          token!, sender!, receiver!, message!);
       if (result['code'] == 'SUCCESS') {
         if (onSuccess != null) onSuccess(result['gift_message_id']);
       } else {
@@ -290,14 +283,14 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      'Error Order [${result['code']}] : ${result['errorMessage']}',
+      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}]',
       SlackChannels.logOrderError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
       'orderDetails': await addDeviceInfo(orderDetails),
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -311,16 +304,16 @@ class OrderChangeNotifier extends ChangeNotifier {
     await firebaseRepository.addToCollection(reportData, path);
   }
 
-  void submitOrderResult(dynamic result, OrderEntity newOrder) async {
+  Future submitOrderResult(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      '''new Order [${newOrder.orderId}] => [orderNo : ${newOrder.orderNo}] [cart : ${newOrder.cartId}] [${newOrder.paymentMethod.title}]\r\n[totalPrice : ${newOrder.totalPrice}] [${user?.email ?? 'guest'}]''',
+      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user?.email ?? 'guest'}]''',
       SlackChannels.logAddOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
       'orderDetails': await addDeviceInfo(orderDetails),
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -331,19 +324,20 @@ class OrderChangeNotifier extends ChangeNotifier {
       'lang': lang
     };
     final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
-    await firebaseRepository.setDoc('$path/${newOrder.orderNo}', resultData);
+    return await firebaseRepository.setDoc(
+        '$path/${result['orderNo']}', resultData);
   }
 
   void submitCanceledOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
       SlackChannels.logCanceledByUserOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -360,14 +354,14 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitPaymentFailedOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
       SlackChannels.logPaymentFailedOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {
@@ -384,14 +378,14 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitPaymentSuccessOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''new Order [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.title}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
+      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}]''',
       SlackChannels.logPaymentSuccessOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
-      'customer': user?.token != null ? user.toJson() : 'guest',
+      'customer': user != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
       'appVersion': {

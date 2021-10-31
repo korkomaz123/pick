@@ -33,25 +33,25 @@ class OrderEntity {
   double discountPrice;
 
   OrderEntity({
-    this.orderId,
-    this.orderNo,
-    this.orderDate,
-    this.status,
-    this.totalQty,
-    this.totalPrice,
-    this.subtotalPrice,
-    this.discountAmount,
-    this.discountType,
-    this.paymentMethod,
-    this.shippingMethod,
-    this.cartId,
-    this.cartItems,
-    this.address,
-    this.productCondition,
-    this.cartCondition,
-    this.isCartConditionOkay,
-    this.isProductConditionOkay,
-    this.discountPrice,
+    required this.orderId,
+    required this.orderNo,
+    required this.orderDate,
+    required this.status,
+    required this.totalQty,
+    required this.totalPrice,
+    required this.subtotalPrice,
+    required this.discountAmount,
+    required this.discountType,
+    required this.paymentMethod,
+    required this.shippingMethod,
+    required this.cartId,
+    required this.cartItems,
+    required this.address,
+    required this.productCondition,
+    required this.cartCondition,
+    required this.isCartConditionOkay,
+    required this.isProductConditionOkay,
+    required this.discountPrice,
   });
 
   OrderEntity.fromJson(Map<String, dynamic> json)
@@ -59,9 +59,10 @@ class OrderEntity {
         orderNo = json['increment_id'],
         orderDate = _covertLocalTime(json['created_at_timestamp']),
         status = EnumToString.fromString(
-          OrderStatusEnum.values,
-          json['status'],
-        ),
+              OrderStatusEnum.values,
+              json['status'],
+            ) ??
+            OrderStatusEnum.new_pending,
         totalQty = json['total_qty_ordered'],
         totalPrice = json['status'] == 'canceled'
             ? '0.000'
@@ -84,9 +85,7 @@ class OrderEntity {
         ),
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
-        address = json.containsKey('shippingAddress')
-            ? AddressEntity.fromJson(json['shippingAddress'])
-            : AddressEntity(),
+        address = AddressEntity.fromJson(json['shippingAddress']),
         cartCondition =
             json.containsKey('cart_condition') && json['cart_condition'] != ''
                 ? _getCondition(json['cart_condition'])
@@ -112,7 +111,7 @@ class OrderEntity {
     return DateFormat('yyyy-MM-dd HH:mm:ss').format(convertedDateTime);
   }
 
-  static List<CartItemEntity> _getCartItems(List<dynamic> items) {
+  static List<CartItemEntity> _getCartItems(List<dynamic>? items) {
     List<CartItemEntity> list = [];
     if (items != null) {
       for (var item in items) {
@@ -159,7 +158,7 @@ class OrderEntity {
       if (condition.attribute == 'price' ||
           condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
-          price = StringService.roundDouble(item.product.beforePrice, 3);
+          price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
           if (item.product.price == item.product.beforePrice)
             price = 0;
@@ -179,17 +178,17 @@ class OrderEntity {
             : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         cartConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity.optionId == condition.value
-            : item.product.brandEntity.optionId != condition.value;
+            ? item.product.brandEntity!.optionId == condition.value
+            : item.product.brandEntity!.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         cartConditionMatched = condition.operator == '=='
             ? values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value))
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value))
             : !values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value));
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value));
       }
     }
     bool productConditionMatched = true;
@@ -197,7 +196,7 @@ class OrderEntity {
       if (condition.attribute == 'price' ||
           condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
-          price = StringService.roundDouble(item.product.beforePrice, 3);
+          price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
           if (item.product.price == item.product.beforePrice)
             price = 0;
@@ -217,17 +216,17 @@ class OrderEntity {
             : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity.optionId == condition.value
-            : item.product.brandEntity.optionId != condition.value;
+            ? item.product.brandEntity!.optionId == condition.value
+            : item.product.brandEntity!.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         productConditionMatched = condition.operator == '=='
             ? values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value))
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value))
             : !values.any((value) =>
-                item.product.categories.contains(value) ||
-                item.product.parentCategories.contains(value));
+                item.product.categories!.contains(value) ||
+                item.product.parentCategories!.contains(value));
       }
     }
     bool isOkay = (cartConditionMatched == isCartConditionOkay) &&

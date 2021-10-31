@@ -4,7 +4,7 @@ import 'package:markaa/src/utils/repositories/search_repository.dart';
 
 class SuggestionChangeNotifier extends ChangeNotifier {
   List<ProductModel> suggestions = [];
-  List<ProductModel> searchedProducts = [];
+  List<ProductModel>? searchedProducts;
 
   void initializeSuggestion(bool onlySuggestion) {
     suggestions = [];

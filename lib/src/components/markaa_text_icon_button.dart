@@ -9,20 +9,20 @@ class MarkaaTextIconButton extends StatelessWidget {
   final Color buttonColor;
   final Color borderColor;
   final Widget icon;
-  final Function onPressed;
+  final void Function()? onPressed;
   final double radius;
   final double elevation;
   final double borderWidth;
   final bool leading;
 
   MarkaaTextIconButton({
-    @required this.title,
-    @required this.titleSize,
-    @required this.titleColor,
-    @required this.buttonColor,
-    @required this.borderColor,
-    @required this.icon,
-    @required this.onPressed,
+    required this.title,
+    required this.titleSize,
+    required this.titleColor,
+    required this.buttonColor,
+    required this.borderColor,
+    required this.icon,
+    required this.onPressed,
     this.leading = true,
     this.elevation = 0,
     this.radius = 10,

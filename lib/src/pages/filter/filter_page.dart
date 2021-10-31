@@ -19,15 +19,15 @@ import 'widgets/filter_option_select_dialog.dart';
 class FilterPage extends StatefulWidget {
   final String categoryId;
   final String brandId;
-  final double minPrice;
-  final double maxPrice;
-  final List<String> selectedCategories;
-  final List<String> selectedGenders;
-  final Map<String, dynamic> selectedValues;
+  final double? minPrice;
+  final double? maxPrice;
+  final List<String>? selectedCategories;
+  final List<String>? selectedGenders;
+  final Map<String, dynamic>? selectedValues;
 
   FilterPage({
-    @required this.categoryId,
-    @required this.brandId,
+    required this.categoryId,
+    required this.brandId,
     this.minPrice,
     this.maxPrice,
     this.selectedCategories,
@@ -41,17 +41,17 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  double minPrice;
-  double maxPrice;
+  double? minPrice;
+  double? maxPrice;
   Map<String, dynamic> filters = {};
-  List<String> selectedCategories;
-  List<String> selectedGenders;
+  List<String>? selectedCategories;
+  List<String>? selectedGenders;
   List<dynamic> genderList = [];
   Map<String, dynamic> price = {};
-  Map<String, dynamic> selectedValues;
-  ProgressService progressService;
-  FlushBarService flushBarService;
-  MarkaaAppChangeNotifier model;
+  Map<String, dynamic>? selectedValues;
+  ProgressService? progressService;
+  FlushBarService? flushBarService;
+  MarkaaAppChangeNotifier? model;
 
   @override
   void initState() {
@@ -71,8 +71,8 @@ class _FilterPageState extends State<FilterPage> {
     for (int i = 0; i < keys.length; i++) {
       String code = availableFilters[keys[i]]['attribute_code'];
       if (!['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)) {
-        if (!selectedValues.containsKey(code)) {
-          selectedValues[code] = [];
+        if (!selectedValues!.containsKey(code)) {
+          selectedValues![code] = [];
         }
       }
     }
@@ -122,16 +122,12 @@ class _FilterPageState extends State<FilterPage> {
       body: SingleChildScrollView(
         child: BlocConsumer<FilterBloc, FilterState>(
           listener: (context, state) {
-            if (state is FilterAttributesLoadedInProcess) {
-              // progressService.showProgress();
-            }
+            if (state is FilterAttributesLoadedInProcess) {}
             if (state is FilterAttributesLoadedSuccess) {
-              // progressService.hideProgress();
               _setSelectedValues(state.availableFilters);
             }
             if (state is FilterAttributesLoadedFailure) {
-              // progressService.hideProgress();
-              flushBarService.showErrorDialog(state.message);
+              flushBarService!.showErrorDialog(state.message!);
             }
           },
           builder: (context, state) {
@@ -196,12 +192,12 @@ class _FilterPageState extends State<FilterPage> {
         ],
         itemWidth: 160.w,
         itemHeight: 40.h,
-        values: selectedCategories,
+        values: selectedCategories!,
         onTap: (value) {
-          if (selectedCategories.contains(value['value'])) {
-            selectedCategories.remove(value['value']);
+          if (selectedCategories!.contains(value['value'])) {
+            selectedCategories!.remove(value['value']);
           } else {
-            selectedCategories.add(value['value']);
+            selectedCategories!.add(value['value']);
           }
           setState(() {});
         },
@@ -228,10 +224,10 @@ class _FilterPageState extends State<FilterPage> {
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
-              '${minPrice.toStringAsFixed(0)} ' +
+              '${minPrice!.toStringAsFixed(0)} ' +
                   'currency'.tr() +
                   ' - ' +
-                  '${maxPrice.toStringAsFixed(0)} ' +
+                  '${maxPrice!.toStringAsFixed(0)} ' +
                   'currency'.tr(),
               style: mediumTextStyle.copyWith(
                 color: primaryColor,
@@ -241,7 +237,7 @@ class _FilterPageState extends State<FilterPage> {
             ),
           ),
           RangeSlider(
-            values: RangeValues(minPrice, maxPrice),
+            values: RangeValues(minPrice!, maxPrice!),
             onChanged: (RangeValues values) {
               minPrice = values.start;
               maxPrice = values.end;
@@ -277,12 +273,12 @@ class _FilterPageState extends State<FilterPage> {
           FilterBasicSelect(
             width: double.infinity,
             options: genderList,
-            values: selectedGenders,
+            values: selectedGenders!,
             onSelectItem: (value) {
-              if (selectedGenders.contains(value['value'])) {
-                selectedGenders.remove(value['value']);
+              if (selectedGenders!.contains(value['value'])) {
+                selectedGenders!.remove(value['value']);
               } else {
-                selectedGenders.add(value['value']);
+                selectedGenders!.add(value['value']);
               }
               setState(() {});
             },
@@ -312,9 +308,9 @@ class _FilterPageState extends State<FilterPage> {
                   width: 8.w,
                   height: 8.h,
                   decoration: BoxDecoration(
-                    color: !selectedValues
+                    color: !selectedValues!
                                 .containsKey(filterOption['attribute_code']) ||
-                            selectedValues[filterOption['attribute_code']]
+                            selectedValues![filterOption['attribute_code']]
                                 .isEmpty
                         ? Colors.white
                         : Colors.greenAccent,
@@ -373,19 +369,19 @@ class _FilterPageState extends State<FilterPage> {
           title: title,
           code: option['attribute_code'],
           options: option['values'] ?? [],
-          values: selectedValues[option['attribute_code']] ?? [],
+          values: selectedValues![option['attribute_code']] ?? [],
         );
       },
     );
     if (result != null) {
-      selectedValues[option['attribute_code']] = result;
-      model.rebuild();
+      selectedValues![option['attribute_code']] = result;
+      model!.rebuild();
     }
   }
 
   void _onResetAll() {
-    selectedCategories.clear();
-    selectedGenders.clear();
+    selectedCategories!.clear();
+    selectedGenders!.clear();
     selectedValues = {};
     minPrice = null;
     maxPrice = null;

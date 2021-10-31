@@ -31,7 +31,7 @@ class WishlistChangeNotifier extends ChangeNotifier {
     ProductModel product,
     int qty,
     Map<String, dynamic> options, [
-    ProductModel variant,
+    ProductModel? variant,
   ]) async {
     String productId;
     String parentId = '';
@@ -47,8 +47,8 @@ class WishlistChangeNotifier extends ChangeNotifier {
     }
     newItem.parentId = parentId;
     if (wishlistItemsMap.containsKey(productId)) {
-      ProductModel item = wishlistItemsMap[productId];
-      item.qtySaveForLater += qty;
+      ProductModel item = wishlistItemsMap[productId]!;
+      item.qtySaveForLater = item.qtySaveForLater! + qty;
       wishlistItemsMap[productId] = item;
     } else {
       newItem.qtySaveForLater = qty;
@@ -58,7 +58,8 @@ class WishlistChangeNotifier extends ChangeNotifier {
       count = 1;
     }
     notifyListeners();
-    final result = await wishlistRepository.changeSaveForLaterItem(token, product.productId, '', 'add', qty, options);
+    final result = await wishlistRepository.changeSaveForLaterItem(
+        token, product.productId, '', 'add', qty, options);
     if (result['code'] != 'SUCCESS') {
       wishlistItemsCount -= count;
       wishlistItemsMap.remove(productId);
@@ -69,7 +70,7 @@ class WishlistChangeNotifier extends ChangeNotifier {
   Future<void> removeItemFromWishlist(
     String token,
     ProductModel product, [
-    ProductModel variant,
+    ProductModel? variant,
   ]) async {
     String productId;
     String parentId = '';
@@ -78,12 +79,13 @@ class WishlistChangeNotifier extends ChangeNotifier {
       parentId = product.productId;
     } else {
       productId = product.productId;
-      parentId = product.parentId;
+      parentId = product.parentId!;
     }
     final item = wishlistItemsMap[productId];
     wishlistItemsMap.remove(productId);
     wishlistItemsCount -= 1;
     notifyListeners();
-    await wishlistRepository.changeSaveForLaterItem(token, productId, parentId, 'delete_new', item.qtySaveForLater, {}, item.wishlistItemId);
+    await wishlistRepository.changeSaveForLaterItem(token, productId, parentId,
+        'delete_new', item!.qtySaveForLater!, {}, item.wishlistItemId!);
   }
 }

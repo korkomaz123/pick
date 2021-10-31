@@ -23,15 +23,15 @@ class MyWalletDetailsTransactions extends StatefulWidget {
 
 class _MyWalletDetailsTransactionsState
     extends State<MyWalletDetailsTransactions> {
-  WalletChangeNotifier _walletChangeNotifier;
-  OrderChangeNotifier _orderChangeNotifier;
+  WalletChangeNotifier? _walletChangeNotifier;
+  OrderChangeNotifier? _orderChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     _orderChangeNotifier = context.read<OrderChangeNotifier>();
     _walletChangeNotifier = context.read<WalletChangeNotifier>();
-    _walletChangeNotifier.getTransactionHistory(token: user.token);
+    _walletChangeNotifier!.getTransactionHistory(token: user!.token);
   }
 
   @override
@@ -45,7 +45,7 @@ class _MyWalletDetailsTransactionsState
             return Center(
               child: PulseLoadingSpinner(),
             );
-          } else if (model.transactionsList.isEmpty) {
+          } else if (model.transactionsList!.isEmpty) {
             return Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -68,7 +68,7 @@ class _MyWalletDetailsTransactionsState
                 ),
               ),
               Column(
-                children: model.transactionsList.map((item) {
+                children: model.transactionsList!.map((item) {
                   if (item.type == TransactionType.admin_credit) {
                     return _buildAdminCreditCard(item);
                   } else if (item.type == TransactionType.admin_debit) {
@@ -451,7 +451,7 @@ class _MyWalletDetailsTransactionsState
                 onTap: () => Navigator.pushNamed(
                   context,
                   Routes.viewOrder,
-                  arguments: _orderChangeNotifier.ordersMap[item.orderId],
+                  arguments: _orderChangeNotifier!.ordersMap[item.orderId],
                 ),
                 child: Text(
                   '#${item.number}',
@@ -517,7 +517,7 @@ class _MyWalletDetailsTransactionsState
                 onTap: () => Navigator.pushNamed(
                   context,
                   Routes.viewOrder,
-                  arguments: _orderChangeNotifier.ordersMap[item.orderId],
+                  arguments: _orderChangeNotifier!.ordersMap[item.orderId],
                 ),
                 child: Text(
                   '#${item.number}',

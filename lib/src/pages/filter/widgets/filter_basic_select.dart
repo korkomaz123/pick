@@ -10,10 +10,10 @@ class FilterBasicSelect extends StatefulWidget {
   final Function onSelectItem;
 
   FilterBasicSelect({
-    this.width,
-    this.options,
-    this.values,
-    this.onSelectItem,
+    required this.width,
+    required this.options,
+    required this.values,
+    required this.onSelectItem,
   });
 
   @override

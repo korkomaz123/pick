@@ -1,12 +1,12 @@
 class CategoryMenuEntity {
   final String id;
   final String title;
-  final String iconUrl;
-  final List<CategoryMenuEntity> subMenu;
+  final String? iconUrl;
+  final List<CategoryMenuEntity>? subMenu;
 
   CategoryMenuEntity({
-    this.id,
-    this.title,
+    required this.id,
+    required this.title,
     this.iconUrl,
     this.subMenu,
   });

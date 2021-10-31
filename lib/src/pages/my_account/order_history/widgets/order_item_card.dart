@@ -14,8 +14,8 @@ class OrderItemCard extends StatelessWidget {
   final bool returned;
 
   OrderItemCard({
-    this.order,
-    this.cartItem,
+    required this.order,
+    required this.cartItem,
     this.canceled = false,
     this.returned = false,
   });
@@ -38,6 +38,8 @@ class OrderItemCard extends StatelessWidget {
           child: Row(
             children: [
               CachedNetworkImage(
+                key: ValueKey(cartItem.product.imageUrl),
+                cacheKey: cartItem.product.imageUrl,
                 imageUrl: cartItem.product.imageUrl,
                 width: 90.w,
                 height: 120.h,
@@ -49,7 +51,7 @@ class OrderItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cartItem.product.name ?? '',
+                      cartItem.product.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -57,7 +59,7 @@ class OrderItemCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      cartItem.product.shortDescription,
+                      cartItem.product.shortDescription!,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: mediumTextStyle.copyWith(

@@ -1,22 +1,22 @@
 import 'enum.dart';
 
 class TransactionEntity {
-  final String orderId;
-  final String number;
+  final String? orderId;
+  final String? number;
   final double amount;
   final String date;
   final TransactionType type;
-  final String paymentMethod;
+  final String? paymentMethod;
   final bool isIncome;
 
   TransactionEntity({
     this.orderId,
     this.number,
-    this.amount,
-    this.date,
-    this.type,
+    required this.amount,
+    required this.date,
+    required this.type,
     this.paymentMethod,
-    this.isIncome,
+    required this.isIncome,
   });
 
   TransactionEntity.fromJson(Map<String, dynamic> json)

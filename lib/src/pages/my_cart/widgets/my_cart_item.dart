@@ -20,23 +20,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCartItem extends StatefulWidget {
   final CartItemEntity cartItem;
-  final double discount;
-  final String type;
+  final double? discount;
+  final String? type;
   final String cartId;
-  final Function onRemoveCartItem;
-  final Function onSaveForLaterItem;
+  final void Function()? onRemoveCartItem;
+  final void Function()? onSaveForLaterItem;
   final Function onSignIn;
   final MyCartChangeNotifier myCartChangeNotifier;
 
   MyCartItem({
-    this.cartItem,
+    required this.cartItem,
     this.discount,
     this.type,
-    this.cartId,
+    required this.cartId,
     this.onRemoveCartItem,
     this.onSaveForLaterItem,
-    this.onSignIn,
-    this.myCartChangeNotifier,
+    required this.onSignIn,
+    required this.myCartChangeNotifier,
   });
 
   @override
@@ -44,7 +44,7 @@ class MyCartItem extends StatefulWidget {
 }
 
 class _MyCartItemState extends State<MyCartItem> {
-  JustTheController _tooltipController;
+  JustTheController? _tooltipController;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _MyCartItemState extends State<MyCartItem> {
 
   @override
   void dispose() {
-    _tooltipController.dispose();
+    _tooltipController!.dispose();
     super.dispose();
   }
 
@@ -63,8 +63,7 @@ class _MyCartItemState extends State<MyCartItem> {
   @override
   Widget build(BuildContext context) {
     double price = StringService.roundDouble(widget.cartItem.product.price, 3);
-    double discountPrice = context
-        .watch<MyCartChangeNotifier>()
+    double discountPrice = widget.myCartChangeNotifier
         .getDiscountedPrice(widget.cartItem, isRowPrice: false);
     bool discounted = price > discountPrice;
     return Stack(
@@ -87,6 +86,8 @@ class _MyCartItemState extends State<MyCartItem> {
                 ),
               ),
               CachedNetworkImage(
+                key: ValueKey(widget.cartItem.product.imageUrl),
+                cacheKey: widget.cartItem.product.imageUrl,
                 imageUrl: widget.cartItem.product.imageUrl,
                 width: 104.w,
                 height: 150.h,
@@ -103,24 +104,21 @@ class _MyCartItemState extends State<MyCartItem> {
                   children: [
                     InkWell(
                       onTap: () {
-                        if (widget.cartItem?.product?.brandEntity?.optionId !=
-                            null) {
-                          ProductListArguments arguments = ProductListArguments(
-                            category: CategoryEntity(),
-                            subCategory: [],
-                            brand: widget.cartItem.product.brandEntity,
-                            selectedSubCategoryIndex: 0,
-                            isFromBrand: true,
-                          );
-                          Navigator.pushNamed(
-                            context,
-                            Routes.productList,
-                            arguments: arguments,
-                          );
-                        }
+                        ProductListArguments arguments = ProductListArguments(
+                          category: null,
+                          subCategory: [],
+                          brand: widget.cartItem.product.brandEntity,
+                          selectedSubCategoryIndex: 0,
+                          isFromBrand: true,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productList,
+                          arguments: arguments,
+                        );
                       },
                       child: Text(
-                        widget.cartItem?.product?.brandEntity?.brandLabel ?? '',
+                        widget.cartItem.product.brandEntity?.brandLabel ?? '',
                         style: mediumTextStyle.copyWith(
                           color: primaryColor,
                           fontSize: 10.sp,
@@ -138,7 +136,7 @@ class _MyCartItemState extends State<MyCartItem> {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      widget.cartItem.product.shortDescription,
+                      widget.cartItem.product.shortDescription!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: mediumTextStyle.copyWith(
@@ -190,7 +188,7 @@ class _MyCartItemState extends State<MyCartItem> {
           ),
         ),
         if (widget.cartItem.availableCount == 0) ...[_buildOutOfStock()],
-        if (widget.discount > 0 && !discounted) ...[
+        if (widget.discount! > 0 && !discounted) ...[
           Align(
             alignment: Preload.language == 'en'
                 ? Alignment.topRight
@@ -200,10 +198,10 @@ class _MyCartItemState extends State<MyCartItem> {
               backgroundColor: dangerColor.withOpacity(0.9),
               child: InkWell(
                 onTap: () {
-                  if (_tooltipController.isShowing) {
-                    _tooltipController.hideTooltip();
+                  if (_tooltipController!.isShowing) {
+                    _tooltipController!.hideTooltip();
                   } else {
-                    _tooltipController.showTooltip();
+                    _tooltipController!.showTooltip();
                   }
                 },
                 child: SvgPicture.asset(errorOutlineIcon, color: dangerColor),
@@ -234,7 +232,7 @@ class _MyCartItemState extends State<MyCartItem> {
             onTap: () {
               if (user?.token != null) {
                 model.changeSaveForLaterStatus(false);
-                widget.onSaveForLaterItem();
+                widget.onSaveForLaterItem!();
                 model.changeSaveForLaterStatus(true);
               } else {
                 widget.onSignIn();

@@ -16,7 +16,7 @@ import 'package:markaa/src/theme/theme.dart';
 class MarkaaCartAddedSuccessDialog extends StatefulWidget {
   final ProductModel product;
 
-  MarkaaCartAddedSuccessDialog({@required this.product});
+  MarkaaCartAddedSuccessDialog({required this.product});
 
   @override
   _MarkaaCartAddedSuccessDialogState createState() =>
@@ -66,7 +66,7 @@ class _MarkaaCartAddedSuccessDialogState
                 ),
                 SizedBox(width: 5.w),
                 Consumer<MyCartChangeNotifier>(
-                  builder: (_, model, ___) {
+                  builder: (_, model, __) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

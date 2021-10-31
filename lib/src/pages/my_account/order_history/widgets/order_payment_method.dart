@@ -6,7 +6,7 @@ import 'package:markaa/src/theme/icons.dart';
 class OrderPaymentMethod extends StatelessWidget {
   final String paymentMethod;
 
-  OrderPaymentMethod({@required this.paymentMethod});
+  OrderPaymentMethod({required this.paymentMethod});
 
   @override
   Widget build(BuildContext context) {
