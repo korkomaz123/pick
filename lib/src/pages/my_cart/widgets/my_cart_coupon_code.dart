@@ -1,6 +1,6 @@
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
-import 'package:markaa/src/data/mock/mock.dart';
+// import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -29,18 +29,18 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
   TextEditingController couponCodeController = TextEditingController();
   FocusNode couponNode = FocusNode();
 
-  MyCartChangeNotifier? myCartChangeNotifier;
-  FlushBarService? flushBarService;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late FlushBarService flushBarService;
 
   @override
   void initState() {
     super.initState();
     flushBarService = FlushBarService(context: context);
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-    couponCodeController.text = myCartChangeNotifier!.couponCode;
+    couponCodeController.text = myCartChangeNotifier.couponCode;
 
-    myCartChangeNotifier!.addListener(() {
-      couponCodeController.text = myCartChangeNotifier!.couponCode;
+    myCartChangeNotifier.addListener(() {
+      couponCodeController.text = myCartChangeNotifier.couponCode;
     });
   }
 
@@ -50,87 +50,86 @@ class _MyCartCouponCodeState extends State<MyCartCouponCode> {
       key: _couponFormKey,
       child: Container(
         width: 375.w,
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 15.h,
-        ),
-        child: Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                width: 218.w,
-                child: TextFormField(
-                  controller: couponCodeController,
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 15.sp,
-                  ),
-                  focusNode: couponNode,
-                  decoration: InputDecoration(
-                    prefixIcon: Container(
-                      margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                      width: 20.w,
-                      height: 20.h,
-                      child: SvgPicture.asset(couponIcon),
-                    ),
-                    hintText: 'my_cart_coupon_code_hint'.tr(),
-                  ),
-                  validator: (value) {
-                    if (value!.trim().isEmpty) return 'required_field'.tr();
-                    return null;
-                  },
-                  readOnly: model.couponCode.isNotEmpty,
-                ),
-              ),
-              if (model.isApplying) ...[
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+        child: Consumer<MyCartChangeNotifier>(
+          builder: (_, model, __) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
                 Container(
-                  width: 120.w,
-                  height: 40.h,
-                  child: PulseLoadingSpinner(),
-                ),
-              ] else ...[
-                Container(
-                  width: 120.w,
-                  height: 40.h,
-                  child: MarkaaTextIconButton(
-                    title: model.couponCode.isNotEmpty
-                        ? 'cancel_button_title'.tr()
-                        : 'apply_button_title'.tr(),
-                    icon: Icon(
-                      Icons.check_circle_outline,
-                      size: 20.sp,
-                      color: primaryColor,
+                  width: 218.w,
+                  child: TextFormField(
+                    controller: couponCodeController,
+                    style: mediumTextStyle.copyWith(
+                      color: greyColor,
+                      fontSize: 15.sp,
                     ),
-                    titleSize: 15.sp,
-                    titleColor: primaryColor,
-                    buttonColor: greyLightColor,
-                    borderColor: Colors.transparent,
-                    onPressed: () {
-                      if (_couponFormKey.currentState!.validate()) {
-                        couponNode.unfocus();
-                        if (user?.token != null) {
+                    focusNode: couponNode,
+                    decoration: InputDecoration(
+                      prefixIcon: Container(
+                        margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                        width: 20.w,
+                        height: 20.h,
+                        child: SvgPicture.asset(couponIcon),
+                      ),
+                      hintText: 'my_cart_coupon_code_hint'.tr(),
+                    ),
+                    validator: (value) {
+                      if (value!.trim().isEmpty) return 'required_field'.tr();
+                      return null;
+                    },
+                    readOnly: model.couponCode.isNotEmpty,
+                  ),
+                ),
+                if (model.isApplying) ...[
+                  Container(
+                    width: 120.w,
+                    height: 40.h,
+                    child: PulseLoadingSpinner(),
+                  ),
+                ] else ...[
+                  Container(
+                    width: 120.w,
+                    height: 40.h,
+                    child: MarkaaTextIconButton(
+                      title: model.couponCode.isNotEmpty
+                          ? 'cancel_button_title'.tr()
+                          : 'apply_button_title'.tr(),
+                      icon: Icon(
+                        Icons.check_circle_outline,
+                        size: 20.sp,
+                        color: primaryColor,
+                      ),
+                      titleSize: 15.sp,
+                      titleColor: primaryColor,
+                      buttonColor: greyLightColor,
+                      borderColor: Colors.transparent,
+                      onPressed: () {
+                        if (_couponFormKey.currentState!.validate()) {
+                          couponNode.unfocus();
+                          // if (user?.token != null) {
                           if (model.couponCode.isNotEmpty) {
                             couponCodeController.clear();
-                            model.cancelCouponCode(flushBarService!);
+                            model.cancelCouponCode(flushBarService);
                           } else {
                             model.applyCouponCode(
                               couponCodeController.text.trim(),
-                              flushBarService!,
+                              flushBarService,
                             );
                           }
-                        } else {
-                          widget.onSignIn();
+                          // } else {
+                          //   widget.onSignIn();
+                          // }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
-          );
-        }),
+            );
+          },
+        ),
       ),
     );
   }

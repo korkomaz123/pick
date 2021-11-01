@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
 import 'package:markaa/src/data/models/product_entity.dart';
 import 'package:markaa/src/data/models/review_entity.dart';
+import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -29,14 +30,42 @@ class ProductReview extends StatelessWidget {
               ),
             );
           }
-          return Container(
-            color: greyColor.withOpacity(0.1),
-            margin: EdgeInsets.all(10.w),
-            width: double.infinity,
-            padding: EdgeInsets.all(10.w),
-            child: Center(
-              child: Text("no_reviews".tr(), style: mediumTextStyle),
-            ),
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.addProductReview,
+                    arguments: product,
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline,
+                      color: primaryColor,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 5.w),
+                    Text(
+                      'add_your_review'.tr(),
+                      style: mediumTextStyle.copyWith(fontSize: 14.sp),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                color: greyColor.withOpacity(0.1),
+                margin: EdgeInsets.all(10.w),
+                width: double.infinity,
+                padding: EdgeInsets.all(10.w),
+                child: Center(
+                  child: Text("no_reviews".tr(), style: mediumTextStyle),
+                ),
+              ),
+            ],
           );
         },
       ),
