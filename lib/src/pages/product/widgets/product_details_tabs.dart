@@ -64,7 +64,9 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
           ),
           Column(
             children: [
-              if (_tabController!.index == 1) ...[
+              if (_tabController!.index == 0) ...[
+                ProductMoreAbout(productEntity: widget.productEntity)
+              ] else if (_tabController!.index == 1) ...[
                 if (widget.productEntity.specification == null)
                   Container()
                 else
@@ -120,7 +122,6 @@ class _ProductDetailsTabsState extends State<ProductDetailsTabs>
               ],
               if (_tabController!.index == 2)
                 ProductReview(product: widget.productEntity),
-              ProductMoreAbout(productEntity: widget.productEntity),
             ],
           ),
         ],

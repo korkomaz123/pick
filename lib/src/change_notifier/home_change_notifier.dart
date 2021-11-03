@@ -24,8 +24,6 @@ class HomeChangeNotifier extends ChangeNotifier {
   final productRepository = ProductRepository();
   final localStorageRepository = LocalStorageRepository();
   final brandRepository = BrandRepository();
-
-  SliderImageEntity? megaBanner;
   String? message;
 
   changeLanguage() {
@@ -134,13 +132,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     }
   }
 
+  List<SliderImageEntity> megaBanners = [];
   Future loadMegaBanner() async {
     final result = await homeRepository.getHomeMegaBanner(Preload.language);
     try {
+      megaBanners.clear();
       if (result['code'] == 'SUCCESS') {
-        megaBanner = SliderImageEntity.fromJson(result['data'][0]);
-      } else {
-        megaBanner = null;
+        for (var bannerData in result['data']) {
+          megaBanners.add(SliderImageEntity.fromJson(bannerData));
+        }
       }
     } catch (e) {
       print('HOME MEGA BANNER LOADING ERROR: $e');

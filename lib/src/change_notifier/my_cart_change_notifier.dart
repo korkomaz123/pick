@@ -386,7 +386,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
     final data = {
       'action': 'updateCartItem',
       'itemid': item.itemId,
-      'qty': qty
+      'qty': qty,
+      'lang': lang,
     };
     int updatedQty = qty - item.itemCount;
     double updatedPrice =
@@ -416,7 +417,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
             getDiscountedPrice(cartItemsMap[item.itemId]!);
         notifyListeners();
 
-        await getCartItems(lang);
+        // await getCartItems(lang);
         reportCartIssue(result, data);
       }
     } catch (e) {
@@ -431,9 +432,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartDiscountedTotalPrice +=
           getDiscountedPrice(cartItemsMap[item.itemId]!);
       notifyListeners();
-      if (processStatus != ProcessStatus.process) {
-        await getCartItems(lang);
-      }
+      // if (processStatus != ProcessStatus.process) {
+      //   await getCartItems(lang);
+      // }
       reportCartIssue(e.toString(), data);
     }
   }

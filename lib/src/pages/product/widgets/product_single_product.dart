@@ -70,9 +70,11 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     List<dynamic> urls = widget.model.selectedVariant != null
         ? widget.model.selectedVariant?.gallery ?? []
         : details.gallery ?? [];
-    for (var url in urls) {
-      if (url != null) {
-        await DefaultCacheManager().downloadFile(url);
+    if (urls.isNotEmpty) {
+      for (var url in urls) {
+        if (url != null) {
+          await DefaultCacheManager().downloadFile(url);
+        }
       }
     }
   }
