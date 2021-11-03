@@ -2,17 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:markaa/preload.dart';
-import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
-import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_simple_app_bar.dart';
-import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -24,7 +20,6 @@ import 'package:markaa/src/utils/services/onesignal_communicator.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'notification_setup.dart';
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
 import 'widgets/home_best_deals_banner.dart';
@@ -46,15 +41,6 @@ import 'widgets/home_recent.dart';
 import 'widgets/home_sale_brands.dart';
 import 'widgets/home_smart_tech.dart';
 
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel', // id
-  'High Importance Notifications', // title
-  'This channel is used for important notifications.', // description
-  importance: Importance.max,
-);
-
-final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -66,8 +52,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late HomeChangeNotifier _homeProvider;
   late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
   late ProductChangeNotifier _productChangeNotifier;
-  late MyCartChangeNotifier _myCartChangeNotifier;
-  late AuthChangeNotifier _authChangeNotifier;
 
   late OneSignalCommunicator _oneSignalCommunicator;
   DynamicLinkService _dynamicLinkService = DynamicLinkService();
@@ -130,30 +114,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print('ONESIGNAL >>> SENT THE LANG TAG SUCCESS');
     });
 
-    _authChangeNotifier = context.read<AuthChangeNotifier>();
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     _productChangeNotifier = context.read<ProductChangeNotifier>();
-    _myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _oneSignalCommunicator = OneSignalCommunicator(context: context);
 
     _oneSignalCommunicator.subscribeToChangeNotifiers();
     _dynamicLinkService.initialDynamicLink();
     _dynamicLinkService.retrieveDynamicLink();
-
-    _authChangeNotifier.getCurrentUser(
-      onSuccess: (data) async {
-        user = data;
-        NotificationSetup().init();
-        await _myCartChangeNotifier.getCartId();
-        await _myCartChangeNotifier.getCartItems(Preload.language);
-      },
-      onFailure: () async {
-        NotificationSetup().init();
-        await _myCartChangeNotifier.getCartId();
-        await _myCartChangeNotifier.getCartItems(Preload.language);
-      },
-    );
     _productChangeNotifier.initialize();
     _scrollController.addListener(_onScroll);
     _loadHomePage();

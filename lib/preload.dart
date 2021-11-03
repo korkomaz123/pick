@@ -12,6 +12,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
+import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
@@ -135,16 +137,32 @@ class Preload {
   }
 
   static loadCustomerData() async {
-    if (user != null) {
-      BuildContext context = navigatorKey!.currentContext!;
-      String token = user!.token;
-      context.read<AddressChangeNotifier>().initialize();
-      Future.wait([
-        context.read<WishlistChangeNotifier>().getWishlistItems(token, lang),
-        context.read<OrderChangeNotifier>().loadOrderHistories(token, lang),
-        context.read<AddressChangeNotifier>().loadAddresses(token),
-      ]);
-    }
+    BuildContext context = navigatorKey!.currentContext!;
+    final _authProvider = context.read<AuthChangeNotifier>();
+    final _cartProvider = context.read<MyCartChangeNotifier>();
+    final _addressProvider = context.read<AddressChangeNotifier>();
+    final _wishlistProvider = context.read<WishlistChangeNotifier>();
+    final _orderProvider = context.read<OrderChangeNotifier>();
+
+    _authProvider.getCurrentUser(
+      onSuccess: (data) async {
+        user = data;
+        NotificationSetup().init();
+        _addressProvider.initialize();
+        await Future.wait([
+          _wishlistProvider.getWishlistItems(user!.token, lang),
+          _orderProvider.loadOrderHistories(user!.token, lang),
+          _addressProvider.loadAddresses(user!.token),
+        ]);
+        await _cartProvider.getCartId();
+        await _cartProvider.getCartItems(Preload.language);
+      },
+      onFailure: () async {
+        NotificationSetup().init();
+        await _cartProvider.getCartId();
+        await _cartProvider.getCartItems(Preload.language);
+      },
+    );
   }
 
   static setupAdjustSDK() async {

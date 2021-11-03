@@ -19,8 +19,10 @@ class _MarkaaLoadingWidgetState extends State<MarkaaLoadingWidget> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 5), (_) {
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      timer.cancel();
       isLoading = false;
+      if (!mounted) return;
       setState(() {});
     });
   }
