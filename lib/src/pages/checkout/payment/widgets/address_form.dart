@@ -34,17 +34,17 @@ class AddressForm extends StatefulWidget {
 }
 
 class _AddressFormState extends State<AddressForm> {
-  bool? isNew;
+  late bool isNew;
 
   String? countryId;
   String? regionId;
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   ShippingAddressRepository shippingRepo = ShippingAddressRepository();
 
-  AddressChangeNotifier? model;
+  late AddressChangeNotifier model;
   AddressEntity? addressParam;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -81,31 +81,34 @@ class _AddressFormState extends State<AddressForm> {
   }
 
   _initForm() {
-    if (user?.token != null) {
-      firstNameController.text = user!.firstName;
-      lastNameController.text = user!.lastName;
-      fullNameController.text = user!.firstName + " " + user!.lastName;
-      emailController.text = user!.email;
-      phoneNumberController.text = user!.phoneNumber!;
+    if (user != null) {
+      String firstName = user?.firstName ?? '';
+      String lastName = user?.lastName ?? '';
+      firstNameController.text = firstName;
+      lastNameController.text = lastName;
+      fullNameController.text = firstName + " " + lastName;
+      emailController.text = user?.email ?? '';
+      phoneNumberController.text = user?.phoneNumber ?? '';
     }
 
     if (addressParam != null) {
       isNew = false;
-      firstNameController.text = addressParam!.firstName!;
-      lastNameController.text = addressParam!.lastName!;
-      fullNameController.text =
-          addressParam!.firstName! + " " + addressParam!.lastName!;
-      emailController.text = addressParam!.email!;
-      titleController.text = addressParam!.title!;
-      countryController.text = addressParam!.country;
-      countryId = addressParam?.countryId;
-      stateController.text = addressParam!.region;
-      regionId = addressParam?.regionId;
-      cityController.text = addressParam!.city;
-      companyController.text = addressParam!.company!;
-      streetController.text = addressParam!.street;
-      postCodeController.text = addressParam!.postCode!;
-      phoneNumberController.text = addressParam!.phoneNumber!;
+      String firstName = addressParam?.firstName ?? '';
+      String lastName = addressParam?.lastName ?? '';
+      firstNameController.text = firstName;
+      lastNameController.text = lastName;
+      fullNameController.text = firstName + " " + lastName;
+      emailController.text = addressParam?.email ?? '';
+      titleController.text = addressParam?.title ?? '';
+      countryController.text = addressParam?.country ?? '';
+      countryId = addressParam?.countryId ?? '';
+      stateController.text = addressParam?.region ?? '';
+      regionId = addressParam?.regionId ?? '';
+      cityController.text = addressParam?.city ?? '';
+      companyController.text = addressParam?.company ?? '';
+      streetController.text = addressParam?.street ?? '';
+      postCodeController.text = addressParam?.postCode ?? '';
+      phoneNumberController.text = addressParam?.phoneNumber ?? '';
     } else {
       countryId = 'KW';
       countryController.text = 'Kuwait';
@@ -362,19 +365,19 @@ class _AddressFormState extends State<AddressForm> {
         addressId: addressParam?.addressId ?? '',
       );
       if (user != null) {
-        if (isNew!) {
-          await model!.addAddress(user!.token, address,
+        if (isNew) {
+          await model.addAddress(user!.token, address,
               onProcess: _onProcess,
               onSuccess: _onSuccess,
               onFailure: _onFailure);
         } else {
-          await model!.updateAddress(user!.token, address,
+          await model.updateAddress(user!.token, address,
               onProcess: _onProcess,
               onSuccess: _onSuccess,
               onFailure: _onFailure);
         }
       } else {
-        await model!.updateGuestAddress(address.toJson(),
+        await model.updateGuestAddress(address.toJson(),
             onProcess: _onProcess,
             onSuccess: _onSuccess,
             onFailure: _onFailure);
@@ -383,16 +386,16 @@ class _AddressFormState extends State<AddressForm> {
   }
 
   void _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   void _onSuccess() {
-    progressService!.hideProgress();
+    progressService.hideProgress();
     Navigator.pop(context);
   }
 
   void _onFailure(String error) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(error);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(error);
   }
 }
