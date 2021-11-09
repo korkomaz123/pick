@@ -58,6 +58,7 @@ class AmazingProductCard extends StatelessWidget {
                       image: CachedNetworkImageProvider(
                         product.imageUrl,
                         cacheKey: product.imageUrl,
+                        errorListener: () => print('IMAGE LOADING ERROR'),
                       ),
                       fit: BoxFit.fitHeight,
                     ),

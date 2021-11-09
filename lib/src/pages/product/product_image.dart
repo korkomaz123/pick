@@ -50,6 +50,7 @@ class _ProductImageState extends State<ProductImage> {
                     imageProvider: CachedNetworkImageProvider(
                       images[activeIndex],
                       cacheKey: images[activeIndex],
+                      errorListener: () => print('image loading error'),
                     ),
                     loadingBuilder: (context, downloadProgress) => Center(
                       child: CupertinoActivityIndicator(),
@@ -100,6 +101,8 @@ class _ProductImageState extends State<ProductImage> {
                               image: CachedNetworkImageProvider(
                                 images[index],
                                 cacheKey: images[index],
+                                errorListener: () =>
+                                    print('image loading error'),
                               ),
                             ),
                             border: Border.all(

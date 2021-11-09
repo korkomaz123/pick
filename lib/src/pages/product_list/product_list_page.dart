@@ -259,6 +259,8 @@ class _ProductListPageState extends State<ProductListPage> {
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
+              errorWidget: (_, __, ___) =>
+                  Center(child: Icon(Icons.image, size: 20)),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
                   key: ValueKey(brand?.brandThumbnail ?? ''),
@@ -267,6 +269,8 @@ class _ProductListPageState extends State<ProductListPage> {
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
+                  errorWidget: (_, __, ___) =>
+                      Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),

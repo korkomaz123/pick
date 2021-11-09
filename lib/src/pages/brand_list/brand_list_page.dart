@@ -270,6 +270,8 @@ class _BrandListPageState extends State<BrandListPage> {
                   imageUrl: _homeChangeNotifier
                           .sortedBrandList[index].brandThumbnail ??
                       '',
+                  errorWidget: (_, __, ___) =>
+                      Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),

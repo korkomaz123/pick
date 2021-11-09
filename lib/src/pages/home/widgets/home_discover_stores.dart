@@ -141,6 +141,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                         width: designWidth.w,
                         height: 200.h,
                         fit: BoxFit.fitHeight,
+                        errorWidget: (_, __, ___) =>
+                            Center(child: Icon(Icons.image, size: 20)),
                       );
                     },
                   ),

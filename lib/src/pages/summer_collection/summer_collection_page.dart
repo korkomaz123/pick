@@ -119,6 +119,8 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
                               key: ValueKey(e.imageUrl ?? ''),
                               cacheKey: e.imageUrl ?? '',
                               imageUrl: e.imageUrl ?? '',
+                              errorWidget: (_, __, ___) =>
+                                  Center(child: Icon(Icons.image, size: 20)),
                             ),
                           ),
                         )

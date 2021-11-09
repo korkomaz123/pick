@@ -283,7 +283,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                     height: 25.w,
                     imageUrl: menu.iconUrl ?? '',
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) =>
+                    errorWidget: (_, __, ___) =>
                         Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],

@@ -170,6 +170,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                       ? CachedNetworkImageProvider(
                           user!.profileUrl!,
                           cacheKey: user!.profileUrl!,
+                          errorListener: () => print('Image loading error'),
                         ) as ImageProvider<Object>
                       : AssetImage('lib/public/images/profile.png'),
                   fit: BoxFit.cover,

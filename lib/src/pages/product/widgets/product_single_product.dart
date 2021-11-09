@@ -295,6 +295,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 imageUrl: details.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
+                errorWidget: (_, __, ___) =>
+                    Center(child: Icon(Icons.image, size: 20)),
                 progressIndicatorBuilder: (_, __, ___) {
                   return CachedNetworkImage(
                     key: ValueKey(details.imageUrl),
@@ -302,6 +304,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                     imageUrl: details.imageUrl,
                     width: designWidth.w,
                     height: 420.h,
+                    errorWidget: (_, __, ___) =>
+                        Center(child: Icon(Icons.image, size: 20)),
                   );
                 },
               ),
@@ -334,6 +338,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                       imageUrl: details.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
+                      errorWidget: (_, __, ___) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                       progressIndicatorBuilder: (_, __, ___) {
                         if (index == 0) {
                           return CachedNetworkImage(
@@ -342,6 +348,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                             imageUrl: details.imageUrl,
                             width: designWidth.w,
                             height: 420.h,
+                            errorWidget: (_, __, ___) =>
+                                Center(child: Icon(Icons.image, size: 20)),
                           );
                         }
                         return Container(
@@ -413,6 +421,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                 imageUrl: widget.model.selectedVariant?.gallery?[0] ?? '',
                 width: designWidth.w,
                 height: 420.h,
+                errorWidget: (_, __, ___) =>
+                    Center(child: Icon(Icons.image, size: 20)),
                 progressIndicatorBuilder: (_, __, ___) {
                   return Container(
                     width: designWidth.w,
@@ -454,6 +464,8 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
                           widget.model.selectedVariant?.gallery?[index] ?? '',
                       width: designWidth.w,
                       height: 420.h,
+                      errorWidget: (_, __, ___) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                       progressIndicatorBuilder: (_, __, ___) {
                         return Container(
                           width: designWidth.w,
@@ -586,17 +598,15 @@ class _ProductSingleProductState extends State<ProductSingleProduct>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (details.brandEntity != null) ...[
-          Text(
-            isStock
-                ? 'in_stock'.tr().toUpperCase()
-                : 'out_stock'.tr().toUpperCase(),
-            style: mediumTextStyle.copyWith(
-              color: isStock ? succeedColor : dangerColor,
-              fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
-            ),
+        Text(
+          isStock
+              ? 'in_stock'.tr().toUpperCase()
+              : 'out_stock'.tr().toUpperCase(),
+          style: mediumTextStyle.copyWith(
+            color: isStock ? succeedColor : dangerColor,
+            fontSize: Preload.language == 'en' ? 14.sp : 18.sp,
           ),
-        ],
+        ),
         if (isStock && availableCount == 1) ...[
           Text(
             'stock_count'.tr().replaceFirst('#', '$availableCount'),

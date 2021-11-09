@@ -28,6 +28,8 @@ class MarkaaReviewProductCard extends StatelessWidget {
             width: 90.h,
             height: 120.h,
             fit: BoxFit.fitHeight,
+            errorWidget: (_, __, ___) =>
+                Center(child: Icon(Icons.image, size: 20)),
           ),
           SizedBox(width: 10.w),
           Expanded(

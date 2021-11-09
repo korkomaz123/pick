@@ -455,6 +455,8 @@ class _SearchPageState extends State<SearchPage>
                               key: ValueKey(brands[index].brandThumbnail ?? ''),
                               cacheKey: brands[index].brandThumbnail ?? '',
                               imageUrl: brands[index].brandThumbnail ?? '',
+                              errorWidget: (_, __, ___) =>
+                                  Center(child: Icon(Icons.image, size: 20)),
                             ),
                             Text(
                               brands[index].brandLabel,
@@ -638,6 +640,8 @@ class _SearchPageState extends State<SearchPage>
                                 key: ValueKey(brands[index].brandImage ?? ''),
                                 cacheKey: brands[index].brandImage ?? '',
                                 imageUrl: brands[index].brandImage ?? '',
+                                errorWidget: (_, __, ___) =>
+                                    Center(child: Icon(Icons.image, size: 20)),
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return CachedNetworkImage(
                                     key: ValueKey(
@@ -646,6 +650,8 @@ class _SearchPageState extends State<SearchPage>
                                         brands[index].brandThumbnail ?? '',
                                     imageUrl:
                                         brands[index].brandThumbnail ?? '',
+                                    errorWidget: (_, __, ___) => Center(
+                                        child: Icon(Icons.image, size: 20)),
                                   );
                                 },
                               ),

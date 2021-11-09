@@ -101,6 +101,8 @@ class HomeSaleBrands extends StatelessWidget {
                       homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
                   width: 110.w,
                   height: 110.w,
+                  errorWidget: (_, __, ___) =>
+                      Center(child: Icon(Icons.image, size: 20)),
                   progressIndicatorBuilder: (_, __, ___) {
                     return CachedNetworkImage(
                       key: ValueKey(homeChangeNotifier
@@ -114,6 +116,8 @@ class HomeSaleBrands extends StatelessWidget {
                       imageUrl: homeChangeNotifier
                               .saleBrands[itemIndex].brandThumbnail ??
                           '',
+                      errorWidget: (_, __, ___) =>
+                          Center(child: Icon(Icons.image, size: 20)),
                     );
                   },
                 ),
