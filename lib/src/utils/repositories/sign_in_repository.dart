@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
-import 'package:markaa/src/data/models/user_entity.dart';
 
 class SignInRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
