@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
+import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -17,9 +19,6 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
-import 'package:markaa/src/pages/my_account/update_profile/bloc/profile_bloc.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/brand_repository.dart';
@@ -32,7 +31,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:markaa/src/utils/repositories/order_repository.dart';
@@ -90,25 +88,8 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
         ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
         ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
-      ],
-      child: _buildMultiBlocProvider(context),
-    );
-  }
-
-  Widget _buildMultiBlocProvider(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => SettingBloc(),
-        ),
-        BlocProvider(
-          create: (context) => ProfileBloc(
-            profileRepository: profileRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (context) => FilterBloc(),
-        ),
+        ChangeNotifierProvider(create: (_) => AccountChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => FilterChangeNotifier()),
       ],
       child: _buildAppView(context),
     );

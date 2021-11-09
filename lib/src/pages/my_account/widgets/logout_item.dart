@@ -11,28 +11,21 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 
 class LogoutItem extends StatefulWidget {
-  final SnackBarService snackBarService;
-  final ProgressService progressService;
-
-  LogoutItem({required this.snackBarService, required this.progressService});
-
   @override
   _LogoutItemState createState() => _LogoutItemState();
 }
 
 class _LogoutItemState extends State<LogoutItem> {
-  SnackBarService? snackBarService;
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
@@ -46,8 +39,7 @@ class _LogoutItemState extends State<LogoutItem> {
   @override
   void initState() {
     super.initState();
-    snackBarService = widget.snackBarService;
-    progressService = widget.progressService;
+    progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
 
     authChangeNotifier = context.read<AuthChangeNotifier>();
@@ -77,9 +69,7 @@ class _LogoutItemState extends State<LogoutItem> {
                 SizedBox(width: 10.w),
                 Text(
                   'account_logout'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 16.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
                 ),
               ],
             ),
@@ -95,7 +85,7 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   void _logout() async {
-    final result = await flushBarService?.showConfirmDialog(
+    final result = await flushBarService.showConfirmDialog(
         message: 'logout_confirm_dialog_text');
     if (result != null) {
       authChangeNotifier?.logout(
@@ -107,12 +97,12 @@ class _LogoutItemState extends State<LogoutItem> {
   }
 
   _onProcess() {
-    progressService?.showProgress();
+    progressService.showProgress();
   }
 
   _onFailure(message) {
-    progressService?.hideProgress();
-    flushBarService?.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   void _onSuccess() async {
@@ -127,7 +117,7 @@ class _LogoutItemState extends State<LogoutItem> {
     await myCartChangeNotifier!.getCartItems(lang);
     homeChangeNotifier!.loadRecentlyViewedGuest();
 
-    progressService!.hideProgress();
+    progressService.hideProgress();
     Navigator.popUntil(
       context,
       (route) => route.settings.name == Routes.home,

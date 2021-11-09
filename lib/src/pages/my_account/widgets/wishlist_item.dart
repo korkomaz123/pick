@@ -4,17 +4,12 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WishlistItem extends StatefulWidget {
-  final SnackBarService snackBarService;
-
-  WishlistItem({required this.snackBarService});
-
   @override
   _WishlistItemState createState() => _WishlistItemState();
 }

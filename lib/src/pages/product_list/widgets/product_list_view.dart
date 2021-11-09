@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
@@ -9,7 +10,6 @@ import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/category_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -63,7 +63,7 @@ class _ProductListViewState extends State<ProductListView>
   ProductChangeNotifier? productChangeNotifier;
   ScrollChangeNotifier? scrollChangeNotifier;
   MarkaaAppChangeNotifier? markaaAppChangeNotifier;
-  FilterBloc? filterBloc;
+  late FilterChangeNotifier filterChangeNotifier;
 
   List<CategoryEntity>? subCategories;
   BrandEntity? brand;
@@ -88,7 +88,7 @@ class _ProductListViewState extends State<ProductListView>
     productChangeNotifier = context.read<ProductChangeNotifier>();
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
-    filterBloc = context.read<FilterBloc>();
+    filterChangeNotifier = context.read<FilterChangeNotifier>();
 
     tabController = TabController(
       length: subCategories!.length,
@@ -163,11 +163,11 @@ class _ProductListViewState extends State<ProductListView>
           lang,
         );
       }
-      filterBloc!.add(FilterAttributesLoaded(
-        categoryId: subCategories?[widget.activeIndex].id ?? 'all',
-        brandId: brand?.optionId ?? '',
-        lang: lang,
-      ));
+      filterChangeNotifier.loadFilterAttributes(
+        subCategories?[widget.activeIndex].id ?? 'all',
+        brand?.optionId ?? '',
+        lang,
+      );
     });
   }
 

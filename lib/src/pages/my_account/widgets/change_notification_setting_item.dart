@@ -1,23 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
+import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangeNotificationSettingItem extends StatefulWidget {
-  final SnackBarService snackBarService;
-
-  ChangeNotificationSettingItem({required this.snackBarService});
-
   @override
   _ChangeNotificationSettingItemState createState() =>
       _ChangeNotificationSettingItemState();
@@ -25,14 +20,12 @@ class ChangeNotificationSettingItem extends StatefulWidget {
 
 class _ChangeNotificationSettingItemState
     extends State<ChangeNotificationSettingItem> {
-  SettingBloc? settingBloc;
-  SnackBarService? snackBarService;
-  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  late MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  SettingRepository settingRepository = SettingRepository();
 
   @override
   void initState() {
     super.initState();
-    settingBloc = context.read<SettingBloc>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
   }
 
@@ -77,11 +70,8 @@ class _ChangeNotificationSettingItemState
   }
 
   void _onChangeNotification(bool value, MarkaaAppChangeNotifier model) {
-    settingBloc!.add(NotificationSettingChanged(
-      token: user!.token,
-      isActive: value,
-    ));
-    isNotification = !isNotification;
+    settingRepository.changeNotificationSetting(user!.token, value);
+    isNotification = value;
     model.rebuild();
   }
 }

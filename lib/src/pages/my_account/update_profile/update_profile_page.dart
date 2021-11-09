@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
@@ -13,16 +14,16 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:string_validator/string_validator.dart';
 
-import 'bloc/profile_bloc.dart';
 import 'widgets/update_profile_success_dialog.dart';
 
 class UpdateProfilePage extends StatefulWidget {
@@ -31,82 +32,51 @@ class UpdateProfilePage extends StatefulWidget {
 }
 
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
-  TextEditingController fullNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  File? imageFile;
-  String? name;
-  Uint8List? image;
-  ImageCustomPickerService? imageCustomPickerService;
-  ProgressService? progressService;
-  SnackBarService? snackBarService;
-  ProfileBloc? profileBloc;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  File? _imageFile;
+  String? _name;
+  Uint8List? _image;
+  late ImageCustomPickerService _imageCustomPickerService;
+  late ProgressService _progressService;
+  late FlushBarService _flushBarService;
+  late AccountChangeNotifier _accountChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    imageCustomPickerService = ImageCustomPickerService(
+    _accountChangeNotifier = context.read<AccountChangeNotifier>();
+    _imageCustomPickerService = ImageCustomPickerService(
       context: context,
       backgroundColor: Colors.white,
       titleColor: primaryColor,
       video: false,
     );
-    progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
-    profileBloc = context.read<ProfileBloc>();
-    fullNameController.text = user!.firstName + ' ' + user!.lastName;
-    phoneNumberController.text = user?.phoneNumber ?? '';
-    emailController.text = user!.email;
+    _progressService = ProgressService(context: context);
+    _flushBarService = FlushBarService(context: context);
+    _fullNameController.text = user!.firstName + ' ' + user!.lastName;
+    _phoneNumberController.text = user?.phoneNumber ?? '';
+    _emailController.text = user!.email;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
+      key: _scaffoldKey,
+      appBar: MarkaaAppBar(scaffoldKey: _scaffoldKey),
       drawer: MarkaaSideMenu(),
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess ||
-              state is ProfileInformationUpdatedInProcess) {
-            progressService!.showProgress();
-          }
-          if (state is ProfileImageUpdatedSuccess) {
-            progressService!.hideProgress();
-          }
-          if (state is ProfileImageUpdatedFailure) {
-            progressService!.hideProgress();
-            snackBarService!.showErrorSnackBar(state.message);
-          }
-          if (state is ProfileInformationUpdatedSuccess) {
-            progressService!.hideProgress();
-            String fullName = fullNameController.text;
-            user!.firstName = fullName.split(' ')[0];
-            user!.lastName = fullName.split(' ')[1];
-            user!.phoneNumber = phoneNumberController.text;
-            _showSuccessDialog();
-          }
-          if (state is ProfileInformationUpdatedFailure) {
-            progressService!.hideProgress();
-            snackBarService!.showErrorSnackBar(state.message);
-          }
-        },
-        builder: (context, state) {
-          if (state is ProfileImageUpdatedSuccess) {
-            user!.profileUrl = state.url;
-          }
+      body: Consumer<AccountChangeNotifier>(
+        builder: (_, __, ___) {
           return Column(
             children: [
               _buildAppBar(),
               Expanded(
                 child: SingleChildScrollView(
                   child: Form(
-                    key: formKey,
+                    key: _formKey,
                     child: Column(
                       children: [
                         _buildProfilePicture(),
@@ -204,10 +174,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget _buildEmail() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Row(
         children: [
           Container(
@@ -218,9 +185,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           SizedBox(width: 10.w),
           Text(
             user!.email,
-            style: mediumTextStyle.copyWith(
-              fontSize: 16.sp,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 16.sp),
           ),
         ],
       ),
@@ -233,7 +198,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
-        controller: fullNameController,
+        controller: _fullNameController,
         space: 4.h,
         radius: 4.sp,
         fontSize: 16.sp,
@@ -261,7 +226,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
-        controller: phoneNumberController,
+        controller: _phoneNumberController,
         space: 4.h,
         radius: 4.sp,
         fontSize: 16.sp,
@@ -290,7 +255,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       padding: EdgeInsets.symmetric(horizontal: 20.sp),
       child: MarkaaInputField(
         width: double.infinity,
-        controller: emailController,
+        controller: _emailController,
         space: 4.h,
         radius: 4.sp,
         fontSize: 16.sp,
@@ -324,37 +289,56 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   }
 
   void _onChangeImage() async {
-    imageFile = await imageCustomPickerService!.getImageWithDialog();
-    if (imageFile != null) {
-      name = imageFile!.path.split('/').last;
-      image = imageFile!.readAsBytesSync();
-      profileBloc!.add(ProfileImageUpdated(
-        token: user!.token,
-        image: image!,
-        name: name!,
-      ));
+    _imageFile = await _imageCustomPickerService.getImageWithDialog();
+    if (_imageFile != null) {
+      _name = _imageFile!.path.split('/').last;
+      _image = _imageFile!.readAsBytesSync();
+      _accountChangeNotifier.updateProfileImage(user!.token, _image!, _name!,
+          onProcess: _onProcess,
+          onSuccess: _onProfileImageUpdated,
+          onFailure: _onFailure);
     }
   }
 
   void _onSave() {
-    if (formKey.currentState!.validate()) {
-      String fullName = fullNameController.text;
-      profileBloc!.add(ProfileInformationUpdated(
-        token: user!.token,
-        firstName: fullName.split(' ')[0],
-        lastName: fullName.split(' ')[0],
-        phoneNumber: phoneNumberController.text,
-        email: emailController.text,
-      ));
+    if (_formKey.currentState!.validate()) {
+      String fullName = _fullNameController.text;
+      _accountChangeNotifier.updateProfileInfo(
+        user!.token,
+        fullName.split(' ')[0],
+        fullName.split(' ')[1],
+        _phoneNumberController.text,
+        _emailController.text,
+        onProcess: _onProcess,
+        onSuccess: _onProfileInfoUpdated,
+        onFailure: _onFailure,
+      );
     }
   }
 
-  void _showSuccessDialog() {
+  void _onProcess() {
+    _progressService.showProgress();
+  }
+
+  void _onFailure(String message) {
+    _progressService.hideProgress();
+    _flushBarService.showErrorDialog(message);
+  }
+
+  void _onProfileImageUpdated(String url) {
+    user!.profileUrl = url;
+    _progressService.hideProgress();
+  }
+
+  void _onProfileInfoUpdated() {
+    _progressService.hideProgress();
+    String fullName = _fullNameController.text;
+    user!.firstName = fullName.split(' ')[0];
+    user!.lastName = fullName.split(' ')[1];
+    user!.phoneNumber = _phoneNumberController.text;
     showDialog(
       context: context,
-      builder: (context) {
-        return UpdateProfileSuccessDialog();
-      },
+      builder: (context) => UpdateProfileSuccessDialog(),
     );
   }
 }
