@@ -24,19 +24,21 @@ class OneSignalNotification {
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       // Will be called whenever a notification is opened/button pressed.
-      String launchUrl = result.notification.launchUrl!;
-      print('LAUNCH URL >>>> $launchUrl');
-      DynamicLinkService().expandShortUrl(launchUrl).then((redirectUri) {
-        DynamicLinkService().dynamicLinkHandler(redirectUri);
-      });
+      if (result.notification.additionalData != null) {
+        String launchUrl = result.notification.additionalData?['launchUrl'];
+        DynamicLinkService().expandShortUrl(launchUrl).then((redirectUri) {
+          DynamicLinkService().dynamicLinkHandler(redirectUri);
+        });
+      }
     });
 
     OneSignal.shared.setInAppMessageClickedHandler((action) {
-      String launchUrl = action.clickName ?? '';
-      print('LAUNCH URL >>>> $launchUrl');
-      DynamicLinkService().expandShortUrl(launchUrl).then((redirectUri) {
-        DynamicLinkService().dynamicLinkHandler(redirectUri);
-      });
+      String? launchUrl = action.clickName;
+      if (launchUrl != null) {
+        DynamicLinkService().expandShortUrl(launchUrl).then((redirectUri) {
+          DynamicLinkService().dynamicLinkHandler(redirectUri);
+        });
+      }
     });
 
     OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
