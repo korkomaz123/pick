@@ -1,30 +1,7 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseRepository {
   final _firestoreClient = FirebaseFirestore.instance;
-  final _firestorageClient = FirebaseStorage.instance;
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
-  Future<dynamic> uploadMedia(File file, String path) async {
-    final UploadTask uploadTask =
-        _firestorageClient.ref().child(path).putFile(file);
-
-    final taskSnapshot = await uploadTask.whenComplete(() {});
-    return taskSnapshot.ref.getDownloadURL();
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  ///
-  //////////////////////////////////////////////////////////////////////////////
-  Future<void> deleteMedia(String url) async {
-    final Reference storageRef = _firestorageClient.refFromURL(url);
-    await storageRef.delete();
-  }
 
   //////////////////////////////////////////////////////////////////////////////
   ///
