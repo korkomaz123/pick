@@ -49,7 +49,7 @@ class _MyCartItemState extends State<MyCartItem> {
   @override
   void initState() {
     super.initState();
-    _tooltipController = JustTheController(value: ControllerState.empty());
+    _tooltipController = JustTheController(value: TooltipStatus.isHidden);
   }
 
   @override
@@ -198,7 +198,7 @@ class _MyCartItemState extends State<MyCartItem> {
               backgroundColor: dangerColor.withOpacity(0.9),
               child: InkWell(
                 onTap: () {
-                  if (_tooltipController!.isShowing) {
+                  if (_tooltipController!.value == TooltipStatus.isShowing) {
                     _tooltipController!.hideTooltip();
                   } else {
                     _tooltipController!.showTooltip();
