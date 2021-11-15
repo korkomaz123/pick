@@ -402,9 +402,6 @@ PODS:
   - Firebase/Messaging (8.9.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.9.0)
-  - Firebase/Storage (8.9.0):
-    - Firebase/CoreOnly
-    - FirebaseStorage (~> 8.9.0)
   - firebase_analytics (8.3.4):
     - Firebase/Analytics (= 8.9.0)
     - firebase_core
@@ -420,12 +417,8 @@ PODS:
     - Firebase/DynamicLinks (= 8.9.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (10.0.9):
+  - firebase_messaging (11.1.0):
     - Firebase/Messaging (= 8.9.0)
-    - firebase_core
-    - Flutter
-  - firebase_storage (10.1.0):
-    - Firebase/Storage (= 8.9.0)
     - firebase_core
     - Flutter
   - FirebaseAnalytics (8.9.1):
@@ -489,15 +482,10 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.6)
     - GoogleUtilities/UserDefaults (~> 7.6)
     - nanopb (~> 2.30908.0)
-  - FirebaseStorage (8.9.0):
-    - FirebaseCore (~> 8.0)
-    - GTMSessionFetcher/Core (~> 1.5)
   - Flutter (1.0.0)
   - flutter_facebook_auth (3.5.3):
     - FBSDKCoreKit (~> 12.0.2)
     - FBSDKLoginKit (~> 12.0.2)
-    - Flutter
-  - flutter_local_notifications (0.0.1):
     - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
@@ -606,14 +594,6 @@ PODS:
     - Flutter
     - Kommunicate (~> 6.3.0)
   - leveldb-library (1.22.1)
-  - libphonenumber (0.0.1):
-    - Flutter
-    - libPhoneNumber-iOS
-  - libPhoneNumber-iOS (0.9.15)
-  - libphonenumber_plugin (0.0.1):
-    - Flutter
-    - libphonenumber
-    - libPhoneNumber-iOS
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -628,6 +608,8 @@ PODS:
   - path_provider_ios (0.0.1):
     - Flutter
   - PromisesObjC (2.0.0)
+  - r_upgrade (0.0.1):
+    - Flutter
   - Reachability (3.2)
   - share (0.0.1):
     - Flutter
@@ -660,10 +642,8 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
-  - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
-  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
@@ -672,12 +652,11 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - kommunicate_flutter (from `.symlinks/plugins/kommunicate_flutter/ios`)
-  - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
-  - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - OneSignalXCFramework (< 4.0, >= 3.4.3)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - r_upgrade (from `.symlinks/plugins/r_upgrade/ios`)
   - share (from `.symlinks/plugins/share/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -708,7 +687,6 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseInstallations
     - FirebaseMessaging
-    - FirebaseStorage
     - FMDB
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -722,7 +700,6 @@ SPEC REPOS:
     - Kingfisher
     - Kommunicate
     - leveldb-library
-    - libPhoneNumber-iOS
     - nanopb
     - OneSignalXCFramework
     - PromisesObjC
@@ -751,14 +728,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_dynamic_links/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
-  firebase_storage:
-    :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
   flutter_facebook_auth:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
-  flutter_local_notifications:
-    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter:
@@ -775,16 +748,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_review/ios"
   kommunicate_flutter:
     :path: ".symlinks/plugins/kommunicate_flutter/ios"
-  libphonenumber:
-    :path: ".symlinks/plugins/libphonenumber/ios"
-  libphonenumber_plugin:
-    :path: ".symlinks/plugins/libphonenumber_plugin/ios"
   onesignal_flutter:
     :path: ".symlinks/plugins/onesignal_flutter/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
+  r_upgrade:
+    :path: ".symlinks/plugins/r_upgrade/ios"
   share:
     :path: ".symlinks/plugins/share/ios"
   shared_preferences:
@@ -823,8 +794,7 @@ SPEC CHECKSUMS:
   firebase_auth: 0d56cc4d105ff70d1547a7fcb10ee574ad05adf5
   firebase_core: f770e033e790657b3505f04be4cb24c482912f11
   firebase_dynamic_links: 16a1987f9099cc9b283f654f7dad72d1b5209dde
-  firebase_messaging: 1109f5449638254c47fb5904d24e11a4d7736c77
-  firebase_storage: a3bbe618ef41930ae31da8f4691d37e4ed84f14d
+  firebase_messaging: 0c8d1a1732487db7f332fb65232053e93201e2fb
   FirebaseAnalytics: 4ab446ce08a3fe52e8a4303dd997cf26276bf968
   FirebaseAuth: 2b78b2a32c07b3ecfa4970bdf1d3632b8304099b
   FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
@@ -833,10 +803,8 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 15ae9648476436efed698a909e44c4737498f9b4
   FirebaseInstallations: caa7c8e0d3e2345b8829d2fa9ca1b4dfbf2fcc85
   FirebaseMessaging: 82c4a48638f53f7b184f3cc9f6cd2cbe533ab316
-  FirebaseStorage: 452c98c31ccb40b819764bf3039426c4388d9939
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_facebook_auth: 5638a1a8cc23016ec6f72945ba879f4482870c69
-  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
   google_maps_flutter: abdb8dee6c52d4be36ad131ee6ebfacd14417c5a
@@ -858,15 +826,13 @@ SPEC CHECKSUMS:
   Kommunicate: b7e902088e632255c7d8062c754a2ac89dc692de
   kommunicate_flutter: 0d7a0b0f7d8df869e1df64e5e5838b02d9097200
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
-  libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
-  libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
-  libphonenumber_plugin: 7cf755ad1656145935d6c208173a476bd3f12898
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   onesignal_flutter: d63972959d66127e50f114ea8070ca540d79012a
   OneSignalXCFramework: cd6290d43d4f7dd0443d34e7be8b95996417644e
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  r_upgrade: 44d715c61914cce3d01ea225abffe894fd51c114
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
