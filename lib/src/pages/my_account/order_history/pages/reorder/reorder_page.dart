@@ -17,7 +17,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -52,7 +52,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   MyCartChangeNotifier? myCartChangeNotifier;
   AddressChangeNotifier? addressChangeNotifier;
 
-  CheckoutRepository checkoutRepo = CheckoutRepository();
+  AppRepository appRepository = AppRepository();
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _getShippingMethods() async {
     if (shippingMethods.isEmpty) {
-      shippingMethods = await checkoutRepo.getShippingMethod();
+      shippingMethods = await appRepository.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
       if (shippingMethod.minOrderAmount! <=

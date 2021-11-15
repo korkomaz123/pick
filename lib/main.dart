@@ -10,8 +10,8 @@ import 'package:markaa/onesignal.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:markaa/slack.dart';
 
-// import 'slack.dart';
 import 'src/routes/routes.dart';
 import 'src/pages/markaa_app/markaa_app.dart';
 
@@ -19,6 +19,11 @@ const bool USE_FIRESTORE_EMULATOR = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  ByteData data =
+      await PlatformAssetBundle().load('lib/public/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   /// Firebase initialize
   await Firebase.initializeApp();
@@ -31,10 +36,11 @@ void main() async {
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
-    // int _errorLength = e.stack.toString().length;
-    // SlackChannels.send('''${e.exceptionAsString()}
-    //  ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
-    //     SlackChannels.logAppErrors);
+    int _errorLength = e.stack.toString().length;
+    SlackChannels.send(
+      '''${e.exceptionAsString()} ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+      SlackChannels.logAppErrors,
+    );
     return Center(
       child: Text("Something went wrong"),
     );

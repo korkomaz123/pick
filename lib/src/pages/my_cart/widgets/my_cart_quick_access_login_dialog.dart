@@ -282,10 +282,10 @@ class _MyCartQuickAccessLoginDialogState
     );
   }
 
-  void _onReloadItemSuccess() {
+  void _onReloadItemSuccess(int count) {
     progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
-    if (myCartChangeNotifier.cartItemCount == 0) {
+    if (count == 0) {
       flushBarService.showErrorDialog('cart_empty_error'.tr());
       return;
     }

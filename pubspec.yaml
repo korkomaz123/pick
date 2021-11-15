@@ -103,6 +103,7 @@ flutter:
     - lib/public/icons/
     - lib/public/animations/
     - lib/public/launcher/
+    - lib/public/ca/
 
   fonts:
     - family: AvenirMedium

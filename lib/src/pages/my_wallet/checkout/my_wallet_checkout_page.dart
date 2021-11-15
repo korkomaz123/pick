@@ -12,7 +12,7 @@ import 'package:markaa/src/pages/checkout/payment/widgets/payment_method_card.da
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
@@ -43,11 +43,11 @@ class _MyWalletCheckoutPageState extends State<MyWalletCheckoutPage> {
 
   late WalletChangeNotifier walletChangeNotifier;
 
-  CheckoutRepository checkoutRepository = CheckoutRepository();
+  AppRepository appRepository = AppRepository();
 
   _loadData() async {
     if (paymentMethods.isEmpty) {
-      paymentMethods = await checkoutRepository.getPaymentMethod();
+      paymentMethods = await appRepository.getPaymentMethod();
     }
     setState(() {});
   }

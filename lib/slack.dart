@@ -17,6 +17,8 @@ class SlackChannels {
   static String logWalletPaymentFailed = 'B02HSKG416K/y6QsvnccAGfDYP7h626cuUa4';
   static String logWalletPaymentCanceled =
       'B02HSKGR9GX/eC942nChseQv2BDmViwhDGGO';
+  static String logAddressError = 'B02M2AZLW94/EIcjqC8KhY59X2ppxUjMDkG7';
+  static String logCartError = 'B02MB9WB0JG/C3NZR7gvYNZ5Hfpimxed16vJ';
 
   static send(String message, String channel) {
     //Makes request headers

@@ -1,3 +1,4 @@
+import 'package:markaa/src/data/models/delivery_rule_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 
 /// category list for home screen
@@ -5,7 +6,7 @@ List<CategoryEntity> homeCategories = [];
 List<RegionEntity> regions = [];
 List<ShippingMethodEntity> shippingMethods = [];
 List<PaymentMethodEntity> paymentMethods = [];
-
+DeliveryRuleEntity? deliveryRule;
 Map<String, dynamic> orderDetails = {};
 
 List<String> sortByList = [
