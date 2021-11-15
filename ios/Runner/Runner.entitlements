@@ -12,5 +12,9 @@
 	<array>
 		<string>applinks:markaa.page.link</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.markaa.shop.onesignal</string>
+	</array>
 </dict>
 </plist>

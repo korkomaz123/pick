@@ -6,12 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:markaa/onesignal.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:r_upgrade/r_upgrade.dart';
 
 // import 'slack.dart';
 import 'src/routes/routes.dart';
@@ -69,8 +67,6 @@ void main() async {
 
   final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
   print("UUID: $uuid");
-
-  OneSignalNotification.initOneSignalPlatform();
 
   runApp(
     EasyLocalization(
