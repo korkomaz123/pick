@@ -1,12 +1,8 @@
 import 'dart:convert';
 
-// import 'package:markaa/src/data/mock/regions.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
-import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
-
-import '../../../preload.dart';
 
 class ShippingAddressRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -59,20 +55,5 @@ class ShippingAddressRepository {
     };
 
     return await Api.postMethod(url, data: params);
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  /// [GET REGIONS LIST]
-  //////////////////////////////////////////////////////////////////////////////
-  Future<List<RegionEntity>> getRegions([
-    String countryCode = 'KW',
-  ]) async {
-    Map<String, dynamic> regionsList = await Api.getMethod(EndPoints.getRegions, data: {"lang": Preload.language, "country_code": countryCode});
-    //Map<String, dynamic> regionsList = Preload.language == 'en' ? enRegionsList : arRegionsList;
-    List<RegionEntity> _regionsObjs = [];
-    if (regionsList['code'] == 'SUCCESS') {
-      regionsList['regions'].forEach((region) => _regionsObjs.add(RegionEntity.fromJson(region)));
-    }
-    return _regionsObjs;
   }
 }

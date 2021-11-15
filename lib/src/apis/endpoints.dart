@@ -123,4 +123,5 @@ class EndPoints {
 
   static const String getAllCelebrities = '$baseUrl/getAllCelebrities';
   static const String celebrityProducts = '$baseUrl/getCelebrityPage';
+  static const String getDeliveryRules = '$baseUrl/getDeliveryRules';
 }

@@ -15,7 +15,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
@@ -35,17 +35,14 @@ class AddressForm extends StatefulWidget {
 
 class _AddressFormState extends State<AddressForm> {
   late bool isNew;
-
   String? countryId;
   String? regionId;
+  AddressEntity? addressParam;
 
   late ProgressService progressService;
   late FlushBarService flushBarService;
-
-  ShippingAddressRepository shippingRepo = ShippingAddressRepository();
-
   late AddressChangeNotifier model;
-  AddressEntity? addressParam;
+  AppRepository appRepository = AppRepository();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -337,7 +334,7 @@ class _AddressFormState extends State<AddressForm> {
   }
 
   void _onRetrieveRegions() async {
-    regions = await shippingRepo.getRegions(lang);
+    regions = await appRepository.getRegions(lang);
   }
 
   void _onSave() async {

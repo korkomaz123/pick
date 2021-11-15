@@ -1,4 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:markaa/env.dart';
+import 'package:markaa/slack.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
@@ -21,12 +27,19 @@ class AddressChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> loadGuestAddress() async {
-    final exist = await localStorageRepository.existItem('guest_address');
-    if (exist) {
-      final address = await localStorageRepository.getItem('guest_address');
-      guestAddress = AddressEntity.fromJson(address);
+    try {
+      final exist = await localStorageRepository.existItem('guest_address');
+      if (exist) {
+        final address = await localStorageRepository.getItem('guest_address');
+        guestAddress = AddressEntity.fromJson(address);
+      }
+      notifyListeners();
+    } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e',
+        SlackChannels.logAddressError,
+      );
     }
-    notifyListeners();
   }
 
   Future<void> updateGuestAddress(
@@ -42,6 +55,10 @@ class AddressChangeNotifier extends ChangeNotifier {
       notifyListeners();
       if (onSuccess != null) onSuccess();
     } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e \r\n [data] => ${data.toString()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
@@ -72,9 +89,17 @@ class AddressChangeNotifier extends ChangeNotifier {
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure();
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e',
+        SlackChannels.logAddressError,
+      );
       print('LOAD ADDRESS CATCH ERROR: $e');
       if (onFailure != null) onFailure();
     }
@@ -101,9 +126,17 @@ class AddressChangeNotifier extends ChangeNotifier {
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} \r\n [data] => ${newAddress.toJson()}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e \r\n [data] => ${newAddress.toJson()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
@@ -126,9 +159,17 @@ class AddressChangeNotifier extends ChangeNotifier {
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} \r\n [data] => ${address.toJson()}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e \r\n [data] => ${address.toJson()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
@@ -154,9 +195,17 @@ class AddressChangeNotifier extends ChangeNotifier {
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} [data] => $addressId',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e [data] => $addressId',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }

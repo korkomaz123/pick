@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/env.dart';
+import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
@@ -19,7 +20,6 @@ import 'package:markaa/src/utils/services/string_service.dart';
 class MyCartChangeNotifier extends ChangeNotifier {
   final myCartRepository = MyCartRepository();
   final localStorageRepository = LocalStorageRepository();
-  final checkoutRepository = CheckoutRepository();
   final firebaseRepository = FirebaseRepository();
 
   /// cart loading status
@@ -141,8 +141,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
             : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity!.optionId == condition.value
-            : item.product.brandEntity!.optionId != condition.value;
+            ? item.product.brandEntity?.optionId == condition.value
+            : item.product.brandEntity?.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         productConditionMatched = condition.operator == '=='
@@ -232,19 +232,19 @@ class MyCartChangeNotifier extends ChangeNotifier {
           cartTotalCount += item.itemCount;
           cartDiscountedTotalPrice += getDiscountedPrice(item);
         }
-
+        notifyListeners();
         processStatus = ProcessStatus.done;
         if (onSuccess != null) {
-          onSuccess();
+          onSuccess(cartItemCount);
         }
       } else {
+        notifyListeners();
         processStatus = ProcessStatus.failed;
         if (onFailure != null) {
           onFailure(result['errorMessage']);
           reportCartIssue(result, data);
         }
       }
-      notifyListeners();
     } catch (e) {
       print('GET CART ITEMS CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
@@ -416,8 +416,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartDiscountedTotalPrice +=
             getDiscountedPrice(cartItemsMap[item.itemId]!);
         notifyListeners();
-
-        // await getCartItems(lang);
         reportCartIssue(result, data);
       }
     } catch (e) {
@@ -432,9 +430,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartDiscountedTotalPrice +=
           getDiscountedPrice(cartItemsMap[item.itemId]!);
       notifyListeners();
-      // if (processStatus != ProcessStatus.process) {
-      //   await getCartItems(lang);
-      // }
       reportCartIssue(e.toString(), data);
     }
   }
@@ -593,25 +588,16 @@ class MyCartChangeNotifier extends ChangeNotifier {
     await myCartRepository.transferCart(viewerCartId, cartId);
   }
 
-  Future<void> generatePaymentUrl(
-    Map<String, dynamic> data,
-    String lang,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
-    try {
-      final result = await checkoutRepository.tapPaymentCheckout(data, lang);
-      print(result);
-      onSuccess(result['transaction']['url'], result['id']);
-    } catch (e) {
-      onFailure('connection_error');
-    }
-  }
-
   void reportCartIssue(dynamic result, dynamic data) async {
     data['cartId'] = cartId;
+    Map<String, dynamic> appVersion = {
+      'android': MarkaaVersion.androidVersion,
+      'iOS': MarkaaVersion.iOSVersion
+    };
+    SlackChannels.send(
+      '$env CART ERROR: ${result.toString()} \r\n ${data.toString()} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      SlackChannels.logCartError,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
@@ -619,10 +605,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       'customer': user?.token != null ? user!.toJson() : 'guest',
       'createdAt':
           DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'appVersion': appVersion,
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };

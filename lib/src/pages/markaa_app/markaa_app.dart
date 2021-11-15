@@ -22,11 +22,6 @@ import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/brand_repository.dart';
-import 'package:markaa/src/utils/repositories/category_repository.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
-import 'package:markaa/src/utils/repositories/firebase_repository.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,12 +29,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:markaa/src/utils/repositories/order_repository.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
-import 'package:markaa/src/utils/repositories/profile_repository.dart';
-import 'package:markaa/src/utils/repositories/search_repository.dart';
-import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
-import 'package:markaa/src/utils/repositories/wishlist_repository.dart';
 
 import '../../../onesignal.dart';
 import '../../../preload.dart';
@@ -54,18 +43,6 @@ class MarkaaApp extends StatefulWidget {
 }
 
 class _MarkaaAppState extends State<MarkaaApp> {
-  final categoryRepository = CategoryRepository();
-  final productRepository = ProductRepository();
-  final brandRepository = BrandRepository();
-  final localStorageRepository = LocalStorageRepository();
-  final wishlistRepository = WishlistRepository();
-  final shippingAddressRepository = ShippingAddressRepository();
-  final orderRepository = OrderRepository();
-  final profileRepository = ProfileRepository();
-  final searchRepository = SearchRepository();
-  final checkoutRepository = CheckoutRepository();
-  final firebaseRepository = FirebaseRepository();
-
   @override
   void initState() {
     super.initState();

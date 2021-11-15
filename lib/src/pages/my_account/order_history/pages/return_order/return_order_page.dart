@@ -16,7 +16,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +42,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
   Widget paymentWidget = SizedBox.shrink();
   Map<String, dynamic> returnItemsMap = {};
   MarkaaAppChangeNotifier? markaaAppChangeNotifier;
-  CheckoutRepository checkoutRepo = CheckoutRepository();
+  AppRepository appRepository = AppRepository();
 
   double subtotalPrice = .0;
   double totalPrice = .0;
@@ -127,7 +127,7 @@ class _ReturnOrderPageState extends State<ReturnOrderPage> {
 
   void _getShippingMethods() async {
     if (shippingMethods.isEmpty) {
-      shippingMethods = await checkoutRepo.getShippingMethod();
+      shippingMethods = await appRepository.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
       if (shippingMethod.minOrderAmount! <= subtotalPrice - discount) {
