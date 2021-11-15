@@ -49,7 +49,7 @@ class _MyCartItemState extends State<MyCartItem> {
   @override
   void initState() {
     super.initState();
-    _tooltipController = JustTheController(value: TooltipStatus.isHidden);
+    _tooltipController = JustTheController();
   }
 
   @override
@@ -63,8 +63,7 @@ class _MyCartItemState extends State<MyCartItem> {
   @override
   Widget build(BuildContext context) {
     double price = StringService.roundDouble(widget.cartItem.product.price, 3);
-    double discountPrice = widget.myCartChangeNotifier
-        .getDiscountedPrice(widget.cartItem, isRowPrice: false);
+    double discountPrice = widget.myCartChangeNotifier.getDiscountedPrice(widget.cartItem, isRowPrice: false);
     bool discounted = price > discountPrice;
     return Stack(
       children: [
@@ -147,9 +146,7 @@ class _MyCartItemState extends State<MyCartItem> {
                     Row(
                       children: [
                         Text(
-                          discountable
-                              ? '$discountPrice ${'currency'.tr()}'
-                              : '$price ${'currency'.tr()}',
+                          discountable ? '$discountPrice ${'currency'.tr()}' : '$price ${'currency'.tr()}',
                           style: mediumTextStyle.copyWith(
                             fontSize: 12.sp,
                             color: greyColor,
@@ -190,9 +187,7 @@ class _MyCartItemState extends State<MyCartItem> {
         if (widget.cartItem.availableCount == 0) ...[_buildOutOfStock()],
         if (widget.discount! > 0 && !discounted) ...[
           Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.topRight
-                : Alignment.topLeft,
+            alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
             child: JustTheTooltip(
               controller: _tooltipController,
               backgroundColor: dangerColor.withOpacity(0.9),
@@ -209,8 +204,7 @@ class _MyCartItemState extends State<MyCartItem> {
               content: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  'coupon_apply_notice'.tr().replaceFirst(
-                      '[code]', widget.myCartChangeNotifier.couponCode),
+                  'coupon_apply_notice'.tr().replaceFirst('[code]', widget.myCartChangeNotifier.couponCode),
                   style: mediumTextStyle.copyWith(
                     fontSize: 12.sp,
                     color: Colors.white,
