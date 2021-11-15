@@ -20,8 +20,7 @@ class NotificationSetup {
   final CategoryRepository categoryRepository = CategoryRepository();
 
   void init() async {
-    await firebaseMessaging.setForegroundNotificationPresentationOptions(
-        alert: true, badge: true, sound: true);
+    await firebaseMessaging.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
     NotificationSettings settings = await firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
@@ -32,14 +31,21 @@ class NotificationSetup {
       sound: true,
     );
     print('User granted permission: ${settings.authorizationStatus}');
-
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('onMessage >>>> ');
+      onLaunchMessageHandler(message.data);
+    });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('onMessageOpenedApp >>>> ');
       onLaunchMessageHandler(message.data);
     });
 
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+      print("Handling a background message: ${message.messageId}");
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      print('getInitialMessage >>>> ');
+
       if (message != null) onLaunchMessageHandler(message.data);
     });
     if (user != null) await updateFcmDeviceToken();
@@ -60,6 +66,7 @@ class NotificationSetup {
 
   Future<dynamic> onLaunchMessageHandler(Map<String, dynamic> data) async {
     try {
+      print('onLaunchMessageHandler');
       int target = int.parse(data['target']);
       if (target != 0) {
         String id = data['id'];
