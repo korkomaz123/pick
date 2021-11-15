@@ -6,30 +6,22 @@ class LocalStorageRepository {
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
   Future<List<String>> getWishlistIds() async {
-    List<String> wishlists = (await prefs).containsKey('wishlist')
-        ? (await prefs).getStringList('wishlist')!
-        : [];
+    List<String> wishlists = (await prefs).containsKey('wishlist') ? (await prefs).getStringList('wishlist')! : [];
     return wishlists;
   }
 
   Future<List<String>> getRecentlyViewedIds() async {
-    List<String> recentlyViews = (await prefs).containsKey('recently-viewed')
-        ? (await prefs).getStringList('recently-viewed')!
-        : [];
+    List<String> recentlyViews = (await prefs).containsKey('recently-viewed') ? (await prefs).getStringList('recently-viewed')! : [];
     return recentlyViews;
   }
 
   Future<String> getToken() async {
-    String token = (await prefs).containsKey('token')
-        ? (await prefs).getString('token')!
-        : '';
+    String token = (await prefs).containsKey('token') ? (await prefs).getString('token')! : '';
     return token;
   }
 
   Future<String> getCartId() async {
-    String cartId = (await prefs).containsKey('cartId')
-        ? (await prefs).getString('cartId')!
-        : '';
+    String cartId = (await prefs).containsKey('cartId') ? (await prefs).getString('cartId')! : '';
     return cartId;
   }
 
@@ -92,5 +84,17 @@ class LocalStorageRepository {
 
   Future<bool> removeItem(String key) async {
     return await (await prefs).remove(key);
+  }
+
+  Future<bool> clear() async {
+    return await (await prefs).clear();
+  }
+
+  Future<bool> addVersion(String version) async {
+    return await (await prefs).setString('version', version);
+  }
+
+  Future<String?> getVersion() async {
+    return (await prefs).getString('version');
   }
 }
