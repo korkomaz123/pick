@@ -73,6 +73,7 @@ dependencies:
   url_launcher: ^6.0.3
   webview_flutter: ^2.0.13
   zoom_widget: ^0.2.1
+  flutter_smartlook: ^3.0.3
 
 dependency_overrides:
   intl: ^0.17.0
