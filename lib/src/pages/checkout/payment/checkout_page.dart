@@ -225,8 +225,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     orderDetails['paymentMethod'] = payment;
     if (payment == 'tap') {
       /// if the method is tap, check credit card already authorized
-      cardToken =
-          (await Navigator.pushNamed(context, Routes.creditCard) as String?);
+      cardToken = (await Navigator.pushNamed(context, Routes.creditCard) as String?);
       if (cardToken == null) return;
       orderDetails['tap_token'] = cardToken;
     }
@@ -248,9 +247,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     /// submit the order, after call this api, the status will be pending till payment be processed
     await orderChangeNotifier.submitOrder(orderDetails, lang,
-        onProcess: _onProcess,
-        onSuccess: _onOrderSubmittedSuccess,
-        onFailure: _onFailure);
+        onProcess: _onProcess, onSuccess: _onOrderSubmittedSuccess, onFailure: _onFailure);
   }
 
   _onOrderSubmittedSuccess(String payUrl, OrderEntity order) async {
@@ -277,17 +274,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
         arguments: {'url': payUrl, 'order': order, 'reorder': widget.reorder},
       );
     } else {
-      await orderChangeNotifier.cancelFullOrder(order,
-          onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
+      await orderChangeNotifier.cancelFullOrder(order, onSuccess: _gotoFailedPage, onFailure: _gotoFailedPage);
     }
   }
 
   _gotoFailedPage() {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.paymentFailed,
-      (route) => route.settings.name == Routes.myCart,
-    );
+    if (widget.reorder != null) {
+      Navigator.pushNamed(context, Routes.paymentFailed, arguments: widget.reorder);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.paymentFailed,
+        (route) => route.settings.name == Routes.myCart,
+      );
+    }
   }
 
   Future _onSuccessOrder(OrderEntity order) async {

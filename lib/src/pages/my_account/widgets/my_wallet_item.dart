@@ -52,7 +52,7 @@ class _MyWalletItemState extends State<MyWalletItem> {
                 Consumer<AuthChangeNotifier>(
                   builder: (_, model, __) {
                     return Text(
-                      NumericService.roundString(model.currentUser!.balance, 3),
+                      NumericService.roundString(model.currentUser?.balance ?? 0, 3),
                       style: mediumTextStyle.copyWith(
                         fontSize: 20.sp,
                         color: primaryColor,

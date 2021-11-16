@@ -72,7 +72,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
                   ),
                 ),
               ),
-              _buildGoToShoppingCartButton(),
+              if (!widget.isReorder) ...[_buildGoToShoppingCartButton()],
               Container(
                 width: double.infinity,
                 child: Text(

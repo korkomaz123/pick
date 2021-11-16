@@ -82,8 +82,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     if (this.amount == amount) {
       if (onSuccess != null) onSuccess();
     } else {
-      final result = await walletRepository.addMoneyToWallet(
-          walletCartId!, amount!, lang!);
+      final result = await walletRepository.addMoneyToWallet(walletCartId!, amount!, lang!);
 
       if (result['code'] == 'SUCCESS') {
         this.amount = amount;
@@ -132,8 +131,7 @@ class WalletChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrderById(
-          walletResult['order']['entity_id'], Preload.language);
+      final result = await orderRepository.cancelOrderById(walletResult['order']['entity_id'], Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         submitCanceledWalletResult(walletResult);
@@ -158,8 +156,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
     Map<String, dynamic> bankDetails = selectedBank!.toJson();
     String walletNote = '';
-    final result = await walletRepository.transferMoneyToBank(
-        token!, amount!, bankDetails, walletNote);
+    final result = await walletRepository.transferMoneyToBank(token!, amount!, bankDetails, walletNote);
 
     if (result['code'] == 'SUCCESS') {
       if (onSuccess != null) onSuccess();
@@ -180,8 +177,7 @@ class WalletChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
 
-    final result = await walletRepository.transferMoney(
-        token!, amount!, lang!, description!, email!);
+    final result = await walletRepository.transferMoney(token!, amount!, lang!, description!, email!);
     if (result['code'] == 'SUCCESS') {
       if (onSuccess != null) onSuccess();
     } else {
@@ -190,8 +186,7 @@ class WalletChangeNotifier extends ChangeNotifier {
   }
 
   void getTransactionHistory({String? token}) async {
-    final result =
-        await walletRepository.getTransactionHistory(token!, Preload.language);
+    final result = await walletRepository.getTransactionHistory(token!, Preload.language);
     if (result['code'] == 'SUCCESS') {
       transactionsList = [];
       List<dynamic> list = result['data'];
@@ -275,7 +270,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   void reportWalletIssue(dynamic result, dynamic walletDetails) async {
     SlackChannels.send(
-      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']}',
+      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
       SlackChannels.logAddWalletError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -283,12 +278,8 @@ class WalletChangeNotifier extends ChangeNotifier {
       'result': result,
       'walletDetails': await addDeviceInfo(walletDetails),
       'customer': user!.toJson(),
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -301,7 +292,7 @@ class WalletChangeNotifier extends ChangeNotifier {
     Map<String, dynamic> walletDetails,
   ) async {
     SlackChannels.send(
-      '''$env New Wallet: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user!.email}]''',
+      '''$env New Wallet: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logAddWalletSuccess,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -309,86 +300,66 @@ class WalletChangeNotifier extends ChangeNotifier {
       'result': result,
       'walletDetails': await addDeviceInfo(walletDetails),
       'customer': user!.toJson(),
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path =
-        FirebasePath.WALLET_RESULT_COLL_PATH.replaceFirst('date', date);
+    final path = FirebasePath.WALLET_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
   void submitCanceledWalletResult(dynamic result) async {
     SlackChannels.send(
-      '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user!.email}]''',
+      '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logWalletPaymentCanceled,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
       'customer': user!.toJson(),
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path = FirebasePath.WALLET_CANCELED_RESULT_COLL_PATH
-        .replaceFirst('date', date);
+    final path = FirebasePath.WALLET_CANCELED_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
   void submitPaymentFailedWalletResult(dynamic result) async {
     SlackChannels.send(
-      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user!.email}]''',
+      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logWalletPaymentFailed,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
       'customer': user!.toJson(),
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path =
-        FirebasePath.WALLET_PAYMENT_FAILED_COLL_PATH.replaceFirst('date', date);
+    final path = FirebasePath.WALLET_PAYMENT_FAILED_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
   void submitPaymentSuccessWalletResult(dynamic result) async {
     SlackChannels.send(
-      '''$env Wallet Payment Success: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user!.email}]''',
+      '''$env Wallet Payment Success: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logWalletPaymentSuccess,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final resultData = {
       'result': result,
       'customer': user!.toJson(),
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path = FirebasePath.WALLET_PAYMENT_SUCCESS_COLL_PATH
-        .replaceFirst('date', date);
+    final path = FirebasePath.WALLET_PAYMENT_SUCCESS_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 }
