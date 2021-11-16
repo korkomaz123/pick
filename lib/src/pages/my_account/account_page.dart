@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -14,16 +14,14 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/image_custom_picker_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 
-import 'update_profile/bloc/profile_bloc.dart';
 import 'widgets/about_us_item.dart';
 import 'widgets/alarm_list.dart';
 import 'widgets/change_notification_setting_item.dart';
@@ -44,28 +42,22 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  bool getNotification = true;
+  File? _imageFile;
+  String? _name;
+  Uint8List? _image;
 
-  SnackBarService? snackBarService;
-  ProgressService? progressService;
-
-  File? imageFile;
-  String? name;
-  Uint8List? image;
-  ImageCustomPickerService? imageCustomPickerService;
-
-  ProfileBloc? profileBloc;
+  late FlushBarService _flushBarService;
+  late ProgressService _progressService;
+  late AccountChangeNotifier _accountChangeNotifier;
+  late ImageCustomPickerService _imageCustomPickerService;
 
   @override
   void initState() {
     super.initState();
-    profileBloc = context.read<ProfileBloc>();
-    progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
-    imageCustomPickerService = ImageCustomPickerService(
+    _accountChangeNotifier = context.read<AccountChangeNotifier>();
+    _progressService = ProgressService(context: context);
+    _flushBarService = FlushBarService(context: context);
+    _imageCustomPickerService = ImageCustomPickerService(
       context: context,
       backgroundColor: Colors.white,
       titleColor: primaryColor,
@@ -80,36 +72,17 @@ class _AccountPageState extends State<AccountPage> {
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
       drawerEnableOpenDragGesture: false,
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is ProfileImageUpdatedInProcess) {
-            progressService?.showProgress();
-          }
-          if (state is ProfileImageUpdatedSuccess) {
-            progressService?.hideProgress();
-          }
-          if (state is ProfileImageUpdatedFailure) {
-            progressService?.hideProgress();
-            snackBarService?.showErrorSnackBar(state.message);
-          }
-        },
-        builder: (context, state) {
-          if (state is ProfileImageUpdatedSuccess) {
-            user!.profileUrl = state.url;
-          }
-          return Consumer<MarkaaAppChangeNotifier>(
-            builder: (_, __, ___) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildAccountPicture(),
-                    Divider(color: greyColor, thickness: 0.5),
-                    _buildAccountProfile(),
-                    _buildAccountGeneralSetting(),
-                  ],
-                ),
-              );
-            },
+      body: Consumer<AccountChangeNotifier>(
+        builder: (_, __, ___) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildAccountPicture(),
+                Divider(color: greyColor, thickness: 0.5),
+                _buildAccountProfile(),
+                _buildAccountGeneralSetting(),
+              ],
+            ),
           );
         },
       ),
@@ -203,29 +176,25 @@ class _AccountPageState extends State<AccountPage> {
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: 30.w),
-                child: BlocBuilder<ProfileBloc, ProfileState>(
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user!.firstName,
-                          style: mediumTextStyle.copyWith(
-                            color: primaryColor,
-                            fontSize: 23.sp,
-                          ),
-                        ),
-                        SizedBox(height: 6.h),
-                        Text(
-                          user!.lastName,
-                          style: mediumTextStyle.copyWith(
-                            color: primaryColor,
-                            fontSize: 23.sp,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user!.firstName,
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: 23.sp,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      user!.lastName,
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: 23.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -233,41 +202,37 @@ class _AccountPageState extends State<AccountPage> {
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: 30.w),
-                child: BlocBuilder<ProfileBloc, ProfileState>(
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'welcome'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            color: primaryColor,
-                            fontSize: 26.sp,
-                          ),
-                        ),
-                        SizedBox(height: 6.h),
-                        InkWell(
-                          onTap: () => _login(),
-                          child: Container(
-                            padding: EdgeInsets.only(bottom: 10.h),
-                            width: double.infinity,
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(logoutIcon, height: 15.h),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  'login'.tr(),
-                                  style: mediumTextStyle.copyWith(
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'welcome'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: 26.sp,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    InkWell(
+                      onTap: () => _login(),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        width: double.infinity,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(logoutIcon, height: 15.h),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'login'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 16.sp,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -284,7 +249,7 @@ class _AccountPageState extends State<AccountPage> {
       child: Column(
         children: [
           if (user != null) ...[
-            WishlistItem(snackBarService: snackBarService!),
+            WishlistItem(),
             SizedBox(height: 5.h),
             OrderHistoryItem(),
             SizedBox(height: 5.h),
@@ -329,18 +294,13 @@ class _AccountPageState extends State<AccountPage> {
             SizedBox(height: 5.h),
             _buildShippingAddress(),
             SizedBox(height: 5.h),
-            ChangeNotificationSettingItem(
-              snackBarService: snackBarService!,
-            ),
+            ChangeNotificationSettingItem(),
             SizedBox(height: 5.h),
           ],
           LanguageSettingItem(),
           SizedBox(height: 5.h),
           if (user != null) ...[
-            LogoutItem(
-              snackBarService: snackBarService!,
-              progressService: progressService!,
-            ),
+            LogoutItem(),
             SizedBox(height: 5.h),
           ],
         ],
@@ -424,15 +384,26 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _onChangeImage() async {
-    imageFile = await imageCustomPickerService!.getImageWithDialog();
-    if (imageFile != null) {
-      name = imageFile!.path.split('/').last;
-      image = imageFile!.readAsBytesSync();
-      profileBloc!.add(ProfileImageUpdated(
-        token: user!.token,
-        image: image!,
-        name: name!,
-      ));
+    _imageFile = await _imageCustomPickerService.getImageWithDialog();
+    if (_imageFile != null) {
+      _name = _imageFile!.path.split('/').last;
+      _image = _imageFile!.readAsBytesSync();
+      _accountChangeNotifier.updateProfileImage(user!.token, _image!, _name!,
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     }
+  }
+
+  void _onProcess() {
+    _progressService.showProgress();
+  }
+
+  void _onSuccess(String profileUrl) {
+    user!.profileUrl = profileUrl;
+    _progressService.hideProgress();
+  }
+
+  void _onFailure(String message) {
+    _progressService.hideProgress();
+    _flushBarService.showErrorDialog(message);
   }
 }

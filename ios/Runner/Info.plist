@@ -116,5 +116,7 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>OneSignal_app_groups_key</key>
+	<string>group.com.markaa.shop.onesignal</string>
 </dict>
 </plist>

@@ -25,6 +25,8 @@ class SearchProductCard extends StatelessWidget {
             width: 50.w,
             height: 50.h,
             fit: BoxFit.fitHeight,
+            errorWidget: (_, __, ___) =>
+                Center(child: Icon(Icons.image, size: 20)),
           ),
           Expanded(
             child: Text(

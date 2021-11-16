@@ -28,6 +28,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   @override
   void initState() {
     super.initState();
+    OneSignal.shared.addTrigger('iam', 'order_success');
     OneSignal.shared.getTags().then((tags) {
       if (tags.containsKey('amount_spent')) {
         var orderPrice = StringService.roundDouble(widget.order.totalPrice, 3);

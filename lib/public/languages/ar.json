@@ -346,7 +346,7 @@
     "choose_payment_method": "الرجاء اختيار طريقة الدفع",
     "shipment_address_title": "عنوان الشحنة",
     "order_summary": "ملخص الطلب",
-    "add_button_title": "يضيف",
+    "add_button_title": "إضافه",
     "not_enough_balance": "رصيدك الحالي غير يكفي",
     "checkout_address_error": "يرجى استكمال عنوان الشحن الخاص بك",
     "your_amount": "المبلغ الخاص بك",
@@ -397,6 +397,7 @@
     "coupon_apply_notice": "كبون الخصم لا يشمل هذا المنتج.",
     "cart_empty_error": "آسف! لا توجد عناصر في سلة التسوق الخاصة بك.",
     "coupon": "كوبون الخصم",
-    "connection_error": "وجه الفتاة! الاتصال ضعيف ، يرجى المحاولة مرة أخرى لاحقًا.",
-    "added_review_success": "اشكرك! تم تقديم رأيك بنجاح."
+    "connection_error": "الاتصال ضعيف ، يرجى المحاولة مرة أخرى لاحقًا.",
+    "added_review_success": "اشكرك! تم تقديم رأيك بنجاح.",
+    "read_more": "المزيد"
 }

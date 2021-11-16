@@ -6,7 +6,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 
 class SelectRegionDialog extends StatefulWidget {
   final String? value;
@@ -21,7 +21,7 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
   final searchController = TextEditingController();
   _loadData() async {
     try {
-      regions = await ShippingAddressRepository().getRegions();
+      regions = await AppRepository().getRegions();
       print(regions.length);
       setState(() {});
     } catch (e) {
@@ -79,20 +79,6 @@ class _SelectRegionDialogState extends State<SelectRegionDialog> {
       ),
     );
   }
-
-  // Widget _buildNoRegions() {
-  //   return Container(
-  //     width: 355.w,
-  //     padding: EdgeInsets.symmetric(vertical: 20.h),
-  //     child: Text(
-  //       'no_available_regions'.tr(),
-  //       textAlign: TextAlign.center,
-  //       style: mediumTextStyle.copyWith(
-  //         fontSize: 18.sp,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildRegionList() {
     return Expanded(

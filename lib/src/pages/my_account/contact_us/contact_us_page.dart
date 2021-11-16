@@ -1,19 +1,19 @@
+import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,19 +31,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
-  SettingBloc? settingBloc;
   ProgressService? progressService;
-  SnackBarService? snackBarService;
+  FlushBarService? flushBarService;
+  late AccountChangeNotifier _accountChangeNotifier;
 
   @override
   void initState() {
     super.initState();
-    settingBloc = context.read<SettingBloc>();
+    _accountChangeNotifier = context.read<AccountChangeNotifier>();
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
+    flushBarService = FlushBarService(context: context);
     firstNameController.text = user?.firstName ?? '';
     emailController.text = user?.email ?? '';
     phoneNumberController.text = user?.phoneNumber ?? '';
@@ -56,28 +53,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
       key: scaffoldKey,
       drawer: MarkaaSideMenu(),
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      body: BlocConsumer<SettingBloc, SettingState>(
-        listener: (context, state) {
-          if (state is ContactUsSubmittedInProcess) {
-            progressService!.showProgress();
-          }
-          if (state is ContactUsSubmittedFailure) {
-            progressService!.hideProgress();
-            snackBarService!.showErrorSnackBar(state.message);
-          }
-          if (state is ContactUsSubmittedSuccess) {
-            progressService!.hideProgress();
-            Navigator.pushReplacementNamed(context, Routes.contactUsSuccess);
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildAppBar(),
-              _buildContactUsForm(),
-            ],
-          );
-        },
+      body: Column(
+        children: [
+          _buildAppBar(),
+          _buildContactUsForm(),
+        ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.account,
@@ -128,10 +108,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildFirstName() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: firstNameController,
         style: mediumTextStyle.copyWith(
@@ -156,10 +133,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildPhoneNumber() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: phoneNumberController,
         style: mediumTextStyle.copyWith(
@@ -194,10 +168,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildEmail() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: emailController,
         style: mediumTextStyle.copyWith(
@@ -224,10 +195,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildMessageTitle() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: Text(
         'message_title'.tr(),
         style: mediumTextStyle.copyWith(
@@ -241,10 +209,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildMessage() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: TextFormField(
         controller: messageController,
         style: mediumTextStyle.copyWith(
@@ -281,11 +246,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildSendButton() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.only(
-        left: 80.w,
-        right: 80.w,
-        top: 20.h,
-      ),
+      padding: EdgeInsets.only(left: 80.w, right: 80.w, top: 20.h),
       child: MarkaaTextButton(
         title: 'send_button_title'.tr(),
         titleSize: 14.sp,
@@ -301,10 +262,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget _buildCallUs() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 80.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 10.h),
       child: MarkaaTextButton(
         title: 'call_us'.tr(),
         titleSize: 14.sp,
@@ -319,12 +277,21 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   void _onSubmit() {
     if (formKey.currentState!.validate()) {
-      settingBloc!.add(ContactUsSubmitted(
-        name: firstNameController.text,
-        phone: phoneNumberController.text,
-        email: emailController.text,
-        comment: messageController.text,
-      ));
+      _accountChangeNotifier.contactSupport(
+        firstNameController.text,
+        phoneNumberController.text,
+        emailController.text,
+        messageController.text,
+        onProcess: () => progressService!.showProgress(),
+        onSuccess: () {
+          progressService!.hideProgress();
+          Navigator.pushReplacementNamed(context, Routes.contactUsSuccess);
+        },
+        onFailure: (message) {
+          progressService!.hideProgress();
+          flushBarService!.showErrorDialog(message);
+        },
+      );
     }
   }
 

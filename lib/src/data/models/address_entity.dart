@@ -1,4 +1,5 @@
 class AddressEntity {
+  int id;
   String? title;
   String? firstName;
   String? lastName;
@@ -14,10 +15,11 @@ class AddressEntity {
   String? company;
   String? postCode;
   String? phoneNumber;
-  int? defaultBillingAddress;
-  int? defaultShippingAddress;
+  int defaultBillingAddress;
+  int defaultShippingAddress;
 
   AddressEntity({
+    required this.id,
     this.title,
     this.firstName,
     this.lastName,
@@ -33,12 +35,13 @@ class AddressEntity {
     this.company,
     this.postCode,
     this.phoneNumber,
-    this.defaultBillingAddress,
-    this.defaultShippingAddress,
+    required this.defaultBillingAddress,
+    required this.defaultShippingAddress,
   });
 
   AddressEntity.fromJson(Map<String, dynamic> json)
-      : title = json.containsKey('prefix') ? json['prefix'] : '',
+      : id = json.containsKey('id') ? json['id'] : 0,
+        title = json.containsKey('prefix') ? json['prefix'] : '',
         firstName = json['firstname'],
         lastName = json['lastname'],
         fullName = json['firstname'] + " " + json['lastname'],
@@ -53,10 +56,13 @@ class AddressEntity {
         postCode = json['postcode'],
         company = json['company'] ?? '',
         phoneNumber = json['telephone'],
-        defaultBillingAddress = json['DefaultBillingAddress'],
-        defaultShippingAddress = json['DefaultShippingAddress'];
+        defaultBillingAddress =
+            json['DefaultBillingAddress'] ?? json['isdefaultbilling'] ?? 0,
+        defaultShippingAddress =
+            json['DefaultShippingAddress'] ?? json['isdefaultshipping'] ?? 0;
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'entity_id': addressId ?? '',
         'addressId': addressId ?? '',
         'customer_address_id': addressId ?? '',
@@ -74,7 +80,7 @@ class AddressEntity {
         'telephone': phoneNumber,
         'company': company,
         'email': email,
-        'isdefaultbilling': '$defaultBillingAddress',
-        'isdefaultshipping': '$defaultShippingAddress',
+        'isdefaultbilling': defaultBillingAddress,
+        'isdefaultshipping': defaultShippingAddress,
       };
 }

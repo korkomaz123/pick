@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/env.dart';
+import 'package:markaa/slack.dart';
 import 'package:markaa/src/apis/firebase_path.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_model.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
 import 'package:markaa/src/utils/repositories/firebase_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/utils/repositories/my_cart_repository.dart';
@@ -19,7 +20,6 @@ import 'package:markaa/src/utils/services/string_service.dart';
 class MyCartChangeNotifier extends ChangeNotifier {
   final myCartRepository = MyCartRepository();
   final localStorageRepository = LocalStorageRepository();
-  final checkoutRepository = CheckoutRepository();
   final firebaseRepository = FirebaseRepository();
 
   /// cart loading status
@@ -80,8 +80,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     double price = .0;
     bool cartConditionMatched = true;
     for (var condition in cartConditions) {
-      if (condition.attribute == 'price' ||
-          condition.attribute == 'special_price') {
+      if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
@@ -98,9 +97,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
                     ? price <= double.parse(condition.value)
                     : price < double.parse(condition.value);
       } else if (condition.attribute == 'sku') {
-        cartConditionMatched = condition.operator == '=='
-            ? item.product.sku == condition.value
-            : item.product.sku != condition.value;
+        cartConditionMatched =
+            condition.operator == '==' ? item.product.sku == condition.value : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         cartConditionMatched = condition.operator == '=='
             ? item.product.brandEntity!.optionId == condition.value
@@ -108,18 +106,15 @@ class MyCartChangeNotifier extends ChangeNotifier {
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         cartConditionMatched = condition.operator == '=='
-            ? values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value))
-            : !values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value));
+            ? values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value))
+            : !values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value));
       }
     }
     bool productConditionMatched = true;
     for (var condition in productConditions) {
-      if (condition.attribute == 'price' ||
-          condition.attribute == 'special_price') {
+      if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
@@ -136,35 +131,27 @@ class MyCartChangeNotifier extends ChangeNotifier {
                     ? price <= double.parse(condition.value)
                     : price < double.parse(condition.value);
       } else if (condition.attribute == 'sku') {
-        productConditionMatched = condition.operator == '=='
-            ? item.product.sku == condition.value
-            : item.product.sku != condition.value;
+        productConditionMatched =
+            condition.operator == '==' ? item.product.sku == condition.value : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
-            ? item.product.brandEntity!.optionId == condition.value
-            : item.product.brandEntity!.optionId != condition.value;
+            ? item.product.brandEntity?.optionId == condition.value
+            : item.product.brandEntity?.optionId != condition.value;
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         productConditionMatched = condition.operator == '=='
-            ? values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value))
-            : !values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value));
+            ? values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value))
+            : !values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value));
       }
     }
-    bool isOkay = (cartConditionMatched == isOkayCartCondition) &&
-        (productConditionMatched == isOkayProductCondition);
+    bool isOkay = (cartConditionMatched == isOkayCartCondition) && (productConditionMatched == isOkayProductCondition);
     if (isRowPrice) {
-      return isOkay
-          ? NumericService.roundDouble(
-              item.rowPrice * (100 - discount) / 100, 3)
-          : item.rowPrice;
+      return isOkay ? NumericService.roundDouble(item.rowPrice * (100 - discount) / 100, 3) : item.rowPrice;
     } else {
       return isOkay
-          ? NumericService.roundDouble(
-              double.parse(item.product.price) * (100 - discount) / 100, 3)
+          ? NumericService.roundDouble(double.parse(item.product.price) * (100 - discount) / 100, 3)
           : StringService.roundDouble(item.product.price, 3);
     }
   }
@@ -191,6 +178,28 @@ class MyCartChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> getCartId() async {
+    try {
+      if (user != null) {
+        cartId = await myCartRepository.getShoppingCart(user!.token);
+      } else {
+        if (await localStorageRepository.existItem('cartId')) {
+          cartId = await localStorageRepository.getCartId();
+        } else {
+          cartId = await myCartRepository.getShoppingCart();
+          if (cartId.isNotEmpty) {
+            await localStorageRepository.setCartId(cartId);
+          }
+        }
+      }
+      notifyListeners();
+      return cartId;
+    } catch (e) {
+      print('GET SHOPPING CART ID CATCH ERROR: $e');
+      return '';
+    }
+  }
+
   Future<void> getCartItems(
     String lang, [
     Function? onProcess,
@@ -210,41 +219,39 @@ class MyCartChangeNotifier extends ChangeNotifier {
     isOkayProductCondition = true;
     cartConditions = [];
     productConditions = [];
-    processStatus = ProcessStatus.process;
-    if (onProcess != null) {
-      onProcess();
-    }
-    try {
-      if (cartId.isEmpty) await getCartId();
-      final result = await myCartRepository.getCartItems(cartId, lang);
-      if (result['code'] == 'SUCCESS') {
-        couponCode = result['couponCode'];
-        discount = result['discount'] + .0;
-        type = result['type'];
-        cartConditions = result['cartCondition'];
-        productConditions = result['productCondition'];
-        isOkayCartCondition = result['isCartConditionOkay'];
-        isOkayProductCondition = result['isProductConditionOkay'];
-        cartItemCount = result['items'].length;
-        for (CartItemEntity item in result['items']) {
-          cartItemsMap[item.itemId] = item;
-          cartTotalPrice += item.rowPrice;
-          cartTotalCount += item.itemCount;
-          cartDiscountedTotalPrice += getDiscountedPrice(item);
-        }
+    if (onProcess != null) onProcess();
 
-        processStatus = ProcessStatus.done;
-        if (onSuccess != null) {
-          onSuccess();
-        }
-      } else {
-        processStatus = ProcessStatus.failed;
-        if (onFailure != null) {
-          onFailure(result['errorMessage']);
-          reportCartIssue(result, data);
+    try {
+      if (cartId.isEmpty) cartId = await getCartId();
+      if (cartId.isNotEmpty) {
+        final result = await myCartRepository.getCartItems(cartId, lang);
+        if (result['code'] == 'SUCCESS') {
+          couponCode = result['couponCode'];
+          discount = result['discount'] + .0;
+          type = result['type'];
+          cartConditions = result['cartCondition'];
+          productConditions = result['productCondition'];
+          isOkayCartCondition = result['isCartConditionOkay'];
+          isOkayProductCondition = result['isProductConditionOkay'];
+          cartItemCount = result['items'].length;
+          for (CartItemEntity item in result['items']) {
+            cartItemsMap[item.itemId] = item;
+            cartTotalPrice += item.rowPrice;
+            cartTotalCount += item.itemCount;
+            cartDiscountedTotalPrice += getDiscountedPrice(item);
+          }
+          notifyListeners();
+          if (onSuccess != null) {
+            onSuccess(cartItemCount);
+          }
+        } else {
+          notifyListeners();
+          if (onFailure != null) {
+            onFailure(result['errorMessage']);
+            reportCartIssue(result, data);
+          }
         }
       }
-      notifyListeners();
     } catch (e) {
       print('GET CART ITEMS CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
@@ -252,38 +259,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // Future<void> clearCart(
-  //   Function onProcess,
-  //   Function onSuccess,
-  //   Function onFailure,
-  // ) async {
-  //   final data = {'action': 'clearCart'};
-  //   onProcess();
-  //   try {
-  //     String clearCartId = cartId;
-  //     String clearType = type;
-  //     String clearCouponCode = couponCode;
-  //     double clearDiscount = discount;
-  //     final result = await myCartRepository.clearCartItems(clearCartId);
-  //     if (result['code'] != 'SUCCESS') {
-  //       onFailure(result['errorMessage']);
-
-  //       reportCartIssue(result, data);
-  //     } else {
-  //       initialize();
-  //       notifyListeners();
-  //       cartId = clearCartId;
-  //       type = clearType;
-  //       couponCode = clearCouponCode;
-  //       discount = clearDiscount;
-  //       onSuccess();
-  //     }
-  //   } catch (e) {
-  //     onFailure('connection_error');
-  //     reportCartIssue(e.toString(), data);
-  //   }
-  // }
 
   Future<void> removeCartItem(String key, Function onFailure) async {
     final data = {'action': 'removeCartItem', 'productId': key};
@@ -305,10 +280,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
         cartTotalCount += item.itemCount;
         cartItemsMap[key] = item;
         notifyListeners();
-
-        if (processStatus != ProcessStatus.process) {
-          await getCartItems(lang);
-        }
         reportCartIssue(result, data);
       }
     } catch (e) {
@@ -319,10 +290,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
       cartTotalCount += item.itemCount;
       cartItemsMap[key] = item;
       notifyListeners();
-
-      if (processStatus != ProcessStatus.process) {
-        await getCartItems(lang);
-      }
       reportCartIssue(e.toString(), data);
     }
   }
@@ -337,44 +304,35 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-    if (cartId.isEmpty) {
-      await getCartId();
-      await getCartItems(lang);
-    }
-    final data = {
-      'action': 'addProductToCart',
-      'productId': product.productId,
-      'qty': qty,
-      'options': options
-    };
-
-    try {
-      final result = await myCartRepository.addCartItem(
-          cartId, product.productId, '$qty', lang, options);
-
-      if (result['code'] == 'SUCCESS') {
-        CartItemEntity newItem = result['item'];
-        if (cartItemsMap.containsKey(newItem.itemId)) {
-          CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
-          cartTotalPrice -= oldItem.rowPrice;
-          cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
+    if (cartId.isEmpty) await getCartItems(lang);
+    if (cartId.isNotEmpty) {
+      final data = {'action': 'addProductToCart', 'productId': product.productId, 'qty': qty, 'options': options};
+      try {
+        final result = await myCartRepository.addCartItem(cartId, product.productId, '$qty', lang, options);
+        if (result['code'] == 'SUCCESS') {
+          CartItemEntity newItem = result['item'];
+          if (cartItemsMap.containsKey(newItem.itemId)) {
+            CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
+            cartTotalPrice -= oldItem.rowPrice;
+            cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
+          } else {
+            cartItemCount += 1;
+          }
+          cartTotalCount += qty;
+          cartTotalPrice += newItem.rowPrice;
+          cartDiscountedTotalPrice += getDiscountedPrice(newItem);
+          cartItemsMap[newItem.itemId] = newItem;
+          if (onSuccess != null) onSuccess();
+          notifyListeners();
         } else {
-          cartItemCount += 1;
+          if (onFailure != null) onFailure(result['errorMessage']);
+          reportCartIssue(result, data);
         }
-        cartTotalCount += qty;
-        cartTotalPrice += newItem.rowPrice;
-        cartDiscountedTotalPrice += getDiscountedPrice(newItem);
-        cartItemsMap[newItem.itemId] = newItem;
-        if (onSuccess != null) onSuccess();
-        notifyListeners();
-      } else {
-        if (onFailure != null) onFailure(result['errorMessage']);
-        reportCartIssue(result, data);
+      } catch (e) {
+        print('ADD ITEM TO CART CATCH ERROR: $e');
+        if (onFailure != null) onFailure('connection_error');
+        reportCartIssue(e.toString(), data);
       }
-    } catch (e) {
-      print('ADD ITEM TO CART CATCH ERROR: $e');
-      if (onFailure != null) onFailure('connection_error');
-      reportCartIssue(e.toString(), data);
     }
   }
 
@@ -383,77 +341,47 @@ class MyCartChangeNotifier extends ChangeNotifier {
     int qty,
     Function onFailure,
   ) async {
-    final data = {
-      'action': 'updateCartItem',
-      'itemid': item.itemId,
-      'qty': qty,
-      'lang': lang,
-    };
-    int updatedQty = qty - item.itemCount;
-    double updatedPrice =
-        StringService.roundDouble(item.product.price, 3) * updatedQty;
-    cartTotalCount += updatedQty;
-    cartTotalPrice += updatedPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-    cartItemsMap[item.itemId]!.itemCount = qty;
-    cartItemsMap[item.itemId]!.rowPrice =
-        StringService.roundDouble(item.product.price, 3) * qty;
-    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
-    notifyListeners();
-
-    try {
-      final result = await myCartRepository.updateCartItem(
-          cartId, item.itemId, qty.toString());
-      if (result['code'] != 'SUCCESS') {
-        onFailure(result['errorMessage']);
+    if (cartId.isEmpty) await getCartItems(lang);
+    if (cartId.isNotEmpty) {
+      final data = {
+        'action': 'updateCartItem',
+        'itemid': item.itemId,
+        'qty': qty,
+        'lang': lang,
+      };
+      int updatedQty = qty - item.itemCount;
+      double updatedPrice = StringService.roundDouble(item.product.price, 3) * updatedQty;
+      cartTotalCount += updatedQty;
+      cartTotalPrice += updatedPrice;
+      cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
+      cartItemsMap[item.itemId]!.itemCount = qty;
+      cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * qty;
+      cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+      notifyListeners();
+      try {
+        final result = await myCartRepository.updateCartItem(cartId, item.itemId, qty.toString());
+        if (result['code'] != 'SUCCESS') {
+          onFailure(result['errorMessage']);
+          cartTotalCount -= updatedQty;
+          cartTotalPrice -= updatedPrice;
+          cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
+          cartItemsMap[item.itemId]!.itemCount = item.itemCount;
+          cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
+          cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+          notifyListeners();
+          reportCartIssue(result, data);
+        }
+      } catch (e) {
+        onFailure('connection_error');
         cartTotalCount -= updatedQty;
         cartTotalPrice -= updatedPrice;
-        cartDiscountedTotalPrice -=
-            getDiscountedPrice(cartItemsMap[item.itemId]!);
+        cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
         cartItemsMap[item.itemId]!.itemCount = item.itemCount;
-        cartItemsMap[item.itemId]!.rowPrice =
-            StringService.roundDouble(item.product.price, 3) * item.itemCount;
-        cartDiscountedTotalPrice +=
-            getDiscountedPrice(cartItemsMap[item.itemId]!);
+        cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
+        cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
         notifyListeners();
-
-        // await getCartItems(lang);
-        reportCartIssue(result, data);
+        reportCartIssue(e.toString(), data);
       }
-    } catch (e) {
-      onFailure('connection_error');
-      cartTotalCount -= updatedQty;
-      cartTotalPrice -= updatedPrice;
-      cartDiscountedTotalPrice -=
-          getDiscountedPrice(cartItemsMap[item.itemId]!);
-      cartItemsMap[item.itemId]!.itemCount = item.itemCount;
-      cartItemsMap[item.itemId]!.rowPrice =
-          StringService.roundDouble(item.product.price, 3) * item.itemCount;
-      cartDiscountedTotalPrice +=
-          getDiscountedPrice(cartItemsMap[item.itemId]!);
-      notifyListeners();
-      // if (processStatus != ProcessStatus.process) {
-      //   await getCartItems(lang);
-      // }
-      reportCartIssue(e.toString(), data);
-    }
-  }
-
-  Future<void> getCartId() async {
-    try {
-      if (user != null) {
-        cartId = await myCartRepository.getShoppingCart(user!.token);
-      } else {
-        if (await localStorageRepository.existItem('cartId')) {
-          cartId = await localStorageRepository.getCartId();
-        } else {
-          cartId = await myCartRepository.getShoppingCart();
-          await localStorageRepository.setCartId(cartId);
-        }
-      }
-      notifyListeners();
-    } catch (e) {
-      print('GET SHOPPING CART ID CATCH ERROR: $e');
     }
   }
 
@@ -479,9 +407,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-
     final result = await myCartRepository.getCartItems(reorderCartId, lang);
-
     if (result['code'] == 'SUCCESS') {
       reorderCartItemCount = result['items'].length;
       for (CartItemEntity item in result['items']) {
@@ -489,11 +415,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
         reorderCartTotalPrice += item.rowPrice;
         reorderCartTotalCount += item.itemCount;
       }
-
       if (onSuccess != null) onSuccess();
     } else {
-      processStatus = ProcessStatus.failed;
-
       if (onFailure != null) onFailure();
     }
     notifyListeners();
@@ -530,7 +453,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
     reorderCartTotalCount = 0;
     reorderCartTotalPrice = .0;
     reorderCartItemsMap = {};
-    // notifyListeners();
   }
 
   Future<void> applyCouponCode(
@@ -593,36 +515,20 @@ class MyCartChangeNotifier extends ChangeNotifier {
     await myCartRepository.transferCart(viewerCartId, cartId);
   }
 
-  Future<void> generatePaymentUrl(
-    Map<String, dynamic> data,
-    String lang,
-    Function onProcess,
-    Function onSuccess,
-    Function onFailure,
-  ) async {
-    onProcess();
-    try {
-      final result = await checkoutRepository.tapPaymentCheckout(data, lang);
-      print(result);
-      onSuccess(result['transaction']['url'], result['id']);
-    } catch (e) {
-      onFailure('connection_error');
-    }
-  }
-
   void reportCartIssue(dynamic result, dynamic data) async {
     data['cartId'] = cartId;
+    Map<String, dynamic> appVersion = {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion};
+    SlackChannels.send(
+      '$env CART ERROR: ${result.toString()} \r\n ${data.toString()} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      SlackChannels.logCartError,
+    );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
     final reportData = {
       'result': result,
       'collectData': data,
       'customer': user?.token != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': appVersion,
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };

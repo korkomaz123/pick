@@ -16,14 +16,14 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -61,7 +61,7 @@ class _MyCartPageState extends State<MyCartPage>
   late MyCartChangeNotifier myCartChangeNotifier;
   late WishlistChangeNotifier wishlistChangeNotifier;
 
-  CheckoutRepository checkoutRepo = CheckoutRepository();
+  AppRepository appRepository = AppRepository();
 
   _determineShippingMethod() {
     for (var shippingMethod in shippingMethods) {
@@ -77,7 +77,7 @@ class _MyCartPageState extends State<MyCartPage>
 
   _loadData() async {
     if (shippingMethods.isEmpty) {
-      shippingMethods = await checkoutRepo.getShippingMethod();
+      shippingMethods = await appRepository.getShippingMethod();
     }
     _determineShippingMethod();
 
@@ -450,11 +450,11 @@ class _MyCartPageState extends State<MyCartPage>
         lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
 
-  void _onReloadItemSuccess() {
+  void _onReloadItemSuccess(int count) {
     progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
 
-    if (myCartChangeNotifier.cartItemCount == 0) {
+    if (count == 0) {
       flushBarService.showErrorDialog('cart_empty_error'.tr());
       return;
     }

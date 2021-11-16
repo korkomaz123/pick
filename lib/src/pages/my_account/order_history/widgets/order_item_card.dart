@@ -44,6 +44,8 @@ class OrderItemCard extends StatelessWidget {
                 width: 90.w,
                 height: 120.h,
                 fit: BoxFit.fitHeight,
+                errorWidget: (_, __, ___) =>
+                    Center(child: Icon(Icons.image, size: 20)),
               ),
               SizedBox(width: 5.w),
               Expanded(

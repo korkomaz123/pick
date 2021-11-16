@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
@@ -5,11 +6,10 @@ import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/pages/my_account/bloc/setting_bloc.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
@@ -30,14 +30,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   TextEditingController confirmPasswordController = TextEditingController();
   ProgressService? progressService;
   FlushBarService? flushBarService;
-  SettingBloc? settingBloc;
+  late AccountChangeNotifier _accountChangeNotifier;
 
   @override
   void initState() {
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    settingBloc = context.read<SettingBloc>();
+    _accountChangeNotifier = context.read<AccountChangeNotifier>();
   }
 
   @override
@@ -46,51 +46,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       key: scaffoldKey,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
-      body: BlocConsumer<SettingBloc, SettingState>(
-        listener: (context, state) {
-          if (state is PasswordUpdatedInProcess) {
-            progressService!.showProgress();
-          }
-          if (state is PasswordUpdatedSuccess) {
-            progressService!.hideProgress();
-            _showSuccessDialog();
-          }
-          if (state is PasswordUpdatedFailure) {
-            progressService!.hideProgress();
-            flushBarService!.showErrorDialog(state.message);
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 30.h),
-                        _buildOldPassword(),
-                        SizedBox(height: 10.h),
-                        _buildNewPassword(),
-                        SizedBox(height: 10.h),
-                        _buildConfirmPassword(),
-                        SizedBox(height: 10.h),
-                        _buildUpdateButton(),
-                        SizedBox(height: 30.h),
-                      ],
-                    ),
-                  ),
+      body: Column(
+        children: [
+          _buildAppBar(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 30.h),
+                    _buildOldPassword(),
+                    SizedBox(height: 10.h),
+                    _buildNewPassword(),
+                    SizedBox(height: 10.h),
+                    _buildConfirmPassword(),
+                    SizedBox(height: 10.h),
+                    _buildUpdateButton(),
+                    SizedBox(height: 30.h),
+                  ],
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -204,15 +185,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   void _onSave() {
     if (formKey.currentState!.validate()) {
-      settingBloc!.add(PasswordUpdated(
-        token: user!.token,
-        oldPassword: oldPasswordController.text,
-        newPassword: newPasswordController.text,
-      ));
+      _accountChangeNotifier.updatePassword(
+          user!.token, oldPasswordController.text, newPasswordController.text,
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     }
   }
 
-  void _showSuccessDialog() async {
+  _onProcess() {
+    progressService!.showProgress();
+  }
+
+  _onFailure(String message) {
+    progressService!.hideProgress();
+    flushBarService!.showErrorDialog(message);
+  }
+
+  _onSuccess() async {
+    progressService!.hideProgress();
     await showDialog(
       context: context,
       builder: (context) {

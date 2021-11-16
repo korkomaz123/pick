@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/pages/home/notification_setup.dart';
-import 'package:markaa/src/utils/repositories/category_repository.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:kommunicate_flutter/kommunicate_flutter.dart';
@@ -24,13 +23,10 @@ import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
-import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 import 'src/change_notifier/home_change_notifier.dart';
 import 'src/config/config.dart';
 import 'src/data/mock/mock.dart';
-import 'src/utils/repositories/local_storage_repository.dart';
 import 'src/utils/repositories/sign_in_repository.dart';
 
 import 'env.dart';
@@ -83,11 +79,7 @@ class Preload {
   static final homeChangeNotifier = HomeChangeNotifier();
   static final myCartChangeNotifier = MyCartChangeNotifier();
 
-  static final categoryRepository = CategoryRepository();
-  static final checkoutRepository = CheckoutRepository();
-  static final shippingAddressRepository = ShippingAddressRepository();
   static final signInRepository = SignInRepository();
-  static final localRepository = LocalStorageRepository();
   static final appRepository = AppRepository();
 
   static Future<dynamic> checkAppVersion() async {
@@ -116,23 +108,29 @@ class Preload {
 
   static loadAssetData() {
     homeChangeNotifier.getHomeCategories();
-    checkoutRepository
+    appRepository
         .getShippingMethod()
         .then((result) => shippingMethods = result)
         .catchError((error) {
       print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
     });
-    checkoutRepository
+    appRepository
         .getPaymentMethod()
         .then((result) => paymentMethods = result)
         .catchError((error) {
       print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
     });
-    shippingAddressRepository
+    appRepository
         .getRegions()
         .then((result) => regions = result)
         .catchError((error) {
       print('GET REGION LIST TIMEOUT ERROR: $error');
+    });
+    appRepository
+        .getDeliveryRule(language)
+        .then((result) => deliveryRule = result)
+        .catchError((error) {
+      print('GET DELIVERY RULES TIMEOUT ERROR: $error');
     });
   }
 
@@ -152,13 +150,15 @@ class Preload {
         await Future.wait([
           _wishlistProvider.getWishlistItems(user!.token, lang),
           _orderProvider.loadOrderHistories(user!.token, lang),
-          _addressProvider.loadAddresses(user!.token),
+          _addressProvider.loadCustomerAddresses(user!.token),
         ]);
         await _cartProvider.getCartId();
         await _cartProvider.getCartItems(Preload.language);
       },
       onFailure: () async {
         NotificationSetup().init();
+        _addressProvider.initialize();
+        await _addressProvider.loadGuestAddresses();
         await _cartProvider.getCartId();
         await _cartProvider.getCartItems(Preload.language);
       },

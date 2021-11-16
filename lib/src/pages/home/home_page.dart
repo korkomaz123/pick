@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
+import 'package:flutter_smartlook/flutter_smartlook.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -15,7 +16,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:markaa/src/utils/services/onesignal_communicator.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
@@ -173,23 +174,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             HomeBestDeals(homeChangeNotifier: _homeProvider),
                             HomeCelebrity(homeChangeNotifier: _homeProvider),
                             HomeGrooming(homeChangeNotifier: _homeProvider),
-                            HomeBestDealsBanner(
-                                homeChangeNotifier: _homeProvider),
+                            HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
                             HomeSaleBrands(homeChangeNotifier: _homeProvider),
                             HomeNewArrivals(homeChangeNotifier: _homeProvider),
-                            HomeOrientalFragrances(
-                                homeChangeNotifier: _homeProvider),
-                            HomeNewArrivalsBanner(
-                                homeChangeNotifier: _homeProvider),
-                            HomeFragrancesBanners(
-                                homeChangeNotifier: _homeProvider),
+                            HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
+                            HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
+                            HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
                             HomePerfumes(homeChangeNotifier: _homeProvider),
                             HomeBestWatches(homeChangeNotifier: _homeProvider),
                             HomeAdvertise(homeChangeNotifier: _homeProvider),
-                            HomeExploreCategories(
-                                homeChangeNotifier: _homeProvider),
-                            HomeDiscoverStores(
-                                homeChangeNotifier: _homeProvider),
+                            HomeExploreCategories(homeChangeNotifier: _homeProvider),
+                            HomeDiscoverStores(homeChangeNotifier: _homeProvider),
                             HomeSmartTech(homeChangeNotifier: _homeProvider),
                             HomeRecent(homeChangeNotifier: _homeProvider),
                           ],

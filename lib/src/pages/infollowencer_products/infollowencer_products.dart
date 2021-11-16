@@ -182,6 +182,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 backgroundImage: CachedNetworkImageProvider(
                   _info['profile_picture'],
                   cacheKey: _info['profile_picture'],
+                  errorListener: () => print('IMAGE LOADING ERROR'),
                 ),
                 radius: 50,
               ),

@@ -1,32 +1,109 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:markaa/env.dart';
+import 'package:markaa/slack.dart';
+import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
-import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
+import 'package:markaa/src/utils/repositories/local_db_repository.dart';
 import 'package:markaa/src/utils/repositories/shipping_address_repository.dart';
 
 class AddressChangeNotifier extends ChangeNotifier {
+  final LocalDBRepository localDB;
+
+  AddressChangeNotifier({required this.localDB});
+
   ShippingAddressRepository addressRepository = ShippingAddressRepository();
-  LocalStorageRepository localStorageRepository = LocalStorageRepository();
 
-  Map<String, AddressEntity>? addressesMap;
-  AddressEntity? defaultAddress;
-  List<String>? keys;
+  late Map<String, AddressEntity> customerAddressesMap;
+  late List<String> customerAddressKeys;
+  AddressEntity? customerDefaultAddress;
 
-  AddressEntity? guestAddress;
+  late Map<int, AddressEntity> guestAddressesMap;
+  late List<int> guestAddressKeys;
+  AddressEntity? guestDefaultAddress;
 
   void initialize() {
-    addressesMap = {};
-    keys = [];
-    defaultAddress = null;
-    guestAddress = null;
+    guestAddressesMap = {};
+    guestAddressKeys = [];
+    guestDefaultAddress = null;
+    customerAddressesMap = {};
+    customerAddressKeys = [];
+    customerDefaultAddress = null;
   }
 
-  Future<void> loadGuestAddress() async {
-    final exist = await localStorageRepository.existItem('guest_address');
-    if (exist) {
-      final address = await localStorageRepository.getItem('guest_address');
-      guestAddress = AddressEntity.fromJson(address);
+  Future<void> loadGuestAddresses() async {
+    try {
+      final list = await localDB.getAddress();
+      if (list.isNotEmpty) {
+        for (var item in list) {
+          AddressEntity address = AddressEntity.fromJson(item);
+          guestAddressesMap[address.id] = address;
+          if (address.defaultShippingAddress == 1) {
+            guestDefaultAddress = address;
+          }
+        }
+      }
+      guestAddressKeys = guestAddressesMap.keys.toList();
+      guestAddressKeys.sort((key1, key2) => key2.compareTo(key1));
+      notifyListeners();
+    } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e',
+        SlackChannels.logAddressError,
+      );
     }
-    notifyListeners();
+  }
+
+  Future<void> changeGuestAddress(
+    bool isNew,
+    Map<String, dynamic> data, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (isNew) {
+      await addGuestAddress(
+        data,
+        onProcess: onProcess,
+        onSuccess: onSuccess,
+        onFailure: onFailure,
+      );
+    } else {
+      await updateGuestAddress(
+        data,
+        onProcess: onProcess,
+        onSuccess: onSuccess,
+        onFailure: onFailure,
+      );
+    }
+  }
+
+  Future<void> addGuestAddress(
+    Map<String, dynamic> data, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      int id = await localDB.addAddress(data);
+      data['id'] = id;
+      AddressEntity address = AddressEntity.fromJson(data);
+      guestAddressesMap[address.id] = address;
+      guestAddressKeys = guestAddressesMap.keys.toList();
+      guestAddressKeys.sort((key1, key2) => key2.compareTo(key1));
+      notifyListeners();
+      if (onSuccess != null) onSuccess();
+      setGuestDefaultAddress(address);
+    } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e \r\n [data] => ${data.toString()}',
+        SlackChannels.logAddressError,
+      );
+      if (onFailure != null) onFailure('connection_error');
+    }
   }
 
   Future<void> updateGuestAddress(
@@ -37,21 +114,79 @@ class AddressChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      await localStorageRepository.setItem('guest_address', data);
-      guestAddress = AddressEntity.fromJson(data);
-      notifyListeners();
+      bool updated = await localDB.updateAddress(data);
+      if (updated) {
+        AddressEntity address = AddressEntity.fromJson(data);
+        guestAddressesMap[address.id] = address;
+        if (address.defaultShippingAddress == 1) guestDefaultAddress = address;
+        notifyListeners();
+      }
       if (onSuccess != null) onSuccess();
     } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e \r\n [data] => ${data.toString()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
 
-  void setDefaultAddress(AddressEntity address) {
-    defaultAddress = address;
-    notifyListeners();
+  Future<void> removeGuestAddress(
+    int id, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (onProcess != null) onProcess();
+    try {
+      bool removed = await localDB.removeAddress(id);
+      if (removed) {
+        AddressEntity address = guestAddressesMap[id]!;
+        guestAddressesMap.remove(id);
+        guestAddressKeys = guestAddressesMap.keys.toList();
+        guestAddressKeys.sort((key1, key2) => key2.compareTo(key1));
+        notifyListeners();
+        if (onSuccess != null) onSuccess();
+
+        if (address.defaultShippingAddress == 1) {
+          guestDefaultAddress = null;
+          if (guestAddressKeys.isNotEmpty) {
+            setGuestDefaultAddress(guestAddressesMap[guestAddressKeys[0]]!);
+          }
+        }
+      } else {
+        SlackChannels.send(
+          '$env GUEST ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [data] => ${guestAddressesMap[id]?.toJson() ?? {}}',
+          SlackChannels.logAddressError,
+        );
+        if (onFailure != null) onFailure('connection_error');
+      }
+    } catch (e) {
+      SlackChannels.send(
+        '$env GUEST ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e \r\n [data] => ${guestAddressesMap[id]?.toJson() ?? {}}',
+        SlackChannels.logAddressError,
+      );
+      if (onFailure != null) onFailure('connection_error');
+    }
   }
 
-  Future<void> loadAddresses(
+  void setGuestDefaultAddress(AddressEntity address) {
+    guestDefaultAddress = address;
+    notifyListeners();
+    address.defaultBillingAddress = 1;
+    address.defaultShippingAddress = 1;
+    updateGuestAddress(address.toJson());
+  }
+
+  void setDefaultAddress(AddressEntity address) {
+    customerDefaultAddress = address;
+    notifyListeners();
+    address.defaultBillingAddress = 1;
+    address.defaultShippingAddress = 1;
+    updateCustomerAddress(user!.token, address);
+  }
+
+  Future<void> loadCustomerAddresses(
     String token, [
     Function? onSuccess,
     Function? onFailure,
@@ -62,25 +197,60 @@ class AddressChangeNotifier extends ChangeNotifier {
         List<dynamic> shippingAddressesList = result['addresses'];
         for (int i = 0; i < shippingAddressesList.length; i++) {
           final address = AddressEntity.fromJson(shippingAddressesList[i]);
-          addressesMap![address.addressId!] = address;
+          customerAddressesMap[address.addressId!] = address;
           if (address.defaultShippingAddress == 1) {
-            defaultAddress = address;
+            customerDefaultAddress = address;
           }
         }
-        keys = addressesMap!.keys.toList();
-        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        customerAddressKeys = customerAddressesMap.keys.toList();
+        customerAddressKeys
+            .sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure();
       }
     } catch (e) {
-      print('LOAD ADDRESS CATCH ERROR: $e');
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS LOAD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure();
     }
   }
 
-  Future<void> addAddress(
+  Future<void> changeCustomerAddress(
+    bool isNew,
+    String token,
+    AddressEntity address, {
+    Function? onProcess,
+    Function? onSuccess,
+    Function? onFailure,
+  }) async {
+    if (isNew) {
+      await addCustomerAddress(
+        token,
+        address,
+        onProcess: onProcess,
+        onSuccess: onSuccess,
+        onFailure: onFailure,
+      );
+    } else {
+      await updateCustomerAddress(
+        token,
+        address,
+        onProcess: onProcess,
+        onSuccess: onSuccess,
+        onFailure: onFailure,
+      );
+    }
+  }
+
+  Future<void> addCustomerAddress(
     String token,
     AddressEntity newAddress, {
     Function? onProcess,
@@ -92,23 +262,31 @@ class AddressChangeNotifier extends ChangeNotifier {
       final result = await addressRepository.addAddress(token, newAddress);
       if (result['code'] == 'SUCCESS') {
         newAddress.addressId = result['address'];
-        addressesMap![newAddress.addressId!] = newAddress;
-        if (newAddress.defaultShippingAddress == 1) {
-          defaultAddress = newAddress;
-        }
-        keys = addressesMap!.keys.toList();
-        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        customerAddressesMap[newAddress.addressId!] = newAddress;
+        customerAddressKeys = customerAddressesMap.keys.toList();
+        customerAddressKeys
+            .sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
+
+        setDefaultAddress(newAddress);
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} \r\n [data] => ${newAddress.toJson()}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e \r\n [data] => ${newAddress.toJson()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
 
-  Future<void> updateAddress(
+  Future<void> updateCustomerAddress(
     String token,
     AddressEntity address, {
     Function? onProcess,
@@ -119,21 +297,29 @@ class AddressChangeNotifier extends ChangeNotifier {
     try {
       final result = await addressRepository.updateAddress(token, address);
       if (result['code'] == 'SUCCESS') {
-        addressesMap![address.addressId!] = address;
+        customerAddressesMap[address.addressId!] = address;
         if (address.defaultShippingAddress == 1) {
-          defaultAddress = address;
+          customerDefaultAddress = address;
         }
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} \r\n [data] => ${address.toJson()}',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS UPDATE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e \r\n [data] => ${address.toJson()}',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }
 
-  Future<void> deleteAddress(
+  Future<void> deleteCustomerAddress(
     String token,
     String addressId,
     Function? onProcess,
@@ -144,19 +330,32 @@ class AddressChangeNotifier extends ChangeNotifier {
     try {
       final result = await addressRepository.deleteAddress(token, addressId);
       if (result['code'] == 'SUCCESS') {
-        final address = addressesMap![addressId];
-        addressesMap!.remove(addressId);
-        if (address!.defaultShippingAddress == 1) {
-          defaultAddress = null;
-        }
-        keys = addressesMap!.keys.toList();
-        keys!.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+        final address = customerAddressesMap[addressId];
+        customerAddressesMap.remove(addressId);
+        customerAddressKeys = customerAddressesMap.keys.toList();
+        customerAddressKeys
+            .sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
+
+        if (address!.defaultShippingAddress == 1) {
+          customerDefaultAddress = null;
+          if (customerAddressKeys.isNotEmpty) {
+            setDefaultAddress(customerAddressesMap[customerAddressKeys[0]]!);
+          }
+        }
       } else {
+        SlackChannels.send(
+          '$env CUSTOMER ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} [data] => $addressId',
+          SlackChannels.logAddressError,
+        );
         if (onFailure != null) onFailure(result['errorMessage']);
       }
     } catch (e) {
+      SlackChannels.send(
+        '$env CUSTOMER ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => $e [data] => $addressId',
+        SlackChannels.logAddressError,
+      );
       if (onFailure != null) onFailure('connection_error');
     }
   }

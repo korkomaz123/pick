@@ -19,18 +19,19 @@ import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:string_validator/string_validator.dart';
 
+import 'widgets/delivery_rules.dart';
 import 'widgets/payment_address.dart';
 import 'widgets/payment_method_list.dart';
 import 'widgets/payment_summary.dart';
@@ -64,17 +65,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late OrderChangeNotifier orderChangeNotifier;
   late AddressChangeNotifier addressChangeNotifier;
 
-  LocalStorageRepository localStorageRepo = LocalStorageRepository();
-  CheckoutRepository checkoutRepo = CheckoutRepository();
+  LocalStorageRepository localRepository = LocalStorageRepository();
+  AppRepository appRepository = AppRepository();
 
   bool get emptyAddress =>
-      user != null && addressChangeNotifier.defaultAddress == null ||
-      user == null && addressChangeNotifier.guestAddress == null;
+      user != null && addressChangeNotifier.customerDefaultAddress == null ||
+      user == null && addressChangeNotifier.guestDefaultAddress == null;
 
   void _loadAssetData() async {
     try {
       if (paymentMethods.isEmpty) {
-        paymentMethods = await checkoutRepo.getPaymentMethod();
+        paymentMethods = await appRepository.getPaymentMethod();
       }
       if (widget.reorder != null) {
         payment = widget.reorder!.paymentMethod.id;
@@ -138,6 +139,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PaymentAddress(),
+                DeliveryRules(),
                 if (paymentMethods.isEmpty) ...[
                   Center(child: PulseLoadingSpinner()),
                 ] else ...[
@@ -235,9 +237,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     var address;
     if (user != null) {
-      address = addressChangeNotifier.defaultAddress!.toJson();
+      address = addressChangeNotifier.customerDefaultAddress!.toJson();
     } else {
-      address = addressChangeNotifier.guestAddress!.toJson();
+      address = addressChangeNotifier.guestDefaultAddress!.toJson();
     }
     address['postcode'] = address['post_code'];
     address['save_in_address_book'] = '0';
@@ -294,7 +296,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     } else {
       myCartChangeNotifier.initialize();
       if (user == null) {
-        await localStorageRepo.removeItem('cartId');
+        await localRepository.removeItem('cartId');
       }
       await myCartChangeNotifier.getCartId();
     }

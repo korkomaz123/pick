@@ -107,6 +107,8 @@ class _AlarmListPageState extends State<AlarmListPage> {
                         width: 90.w,
                         height: 80.h,
                         fit: BoxFit.fitHeight,
+                        errorWidget: (_, __, ___) =>
+                            Center(child: Icon(Icons.image, size: 20)),
                       ),
                     ),
                     Expanded(

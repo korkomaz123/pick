@@ -93,4 +93,16 @@ class LocalStorageRepository {
   Future<bool> removeItem(String key) async {
     return await (await prefs).remove(key);
   }
+
+  Future<bool> clear() async {
+    return await (await prefs).clear();
+  }
+
+  Future<bool> addVersion(String version) async {
+    return await (await prefs).setString('version', version);
+  }
+
+  Future<String?> getVersion() async {
+    return (await prefs).getString('version');
+  }
 }

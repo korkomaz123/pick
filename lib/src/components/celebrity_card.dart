@@ -48,6 +48,7 @@ class CelebrityCard extends StatelessWidget {
           image: CachedNetworkImageProvider(
             _image(),
             cacheKey: _image(),
+            errorListener: () => print('IMAGE LOADING ERROR'),
           ),
           fit: BoxFit.cover,
         ),

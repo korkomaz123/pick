@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -8,10 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'bloc/filter_bloc.dart';
 import 'widgets/filter_basic_select.dart';
 import 'widgets/filter_category_select.dart';
 import 'widgets/filter_option_select_dialog.dart';
@@ -66,16 +64,26 @@ class _FilterPageState extends State<FilterPage> {
     model = context.read<MarkaaAppChangeNotifier>();
   }
 
-  void _setSelectedValues(Map<String, dynamic> availableFilters) {
-    List<String> keys = availableFilters.keys.toList();
+  void _setSelectedValues() {
+    genderList =
+        filters.containsKey('Gender') ? filters['Gender']['values'] : [];
+    price = filters.containsKey('Price')
+        ? filters['Price']
+        : {'min': .0, 'max': .0};
+    minPrice = minPrice ?? price['min'] + .0;
+    maxPrice = maxPrice ?? price['max'] + .0;
+    List<String> keys = filters.keys.toList();
     for (int i = 0; i < keys.length; i++) {
-      String code = availableFilters[keys[i]]['attribute_code'];
+      String code = filters[keys[i]]['attribute_code'];
       if (!['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)) {
         if (!selectedValues!.containsKey(code)) {
           selectedValues![code] = [];
         }
       }
     }
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      model!.rebuild();
+    });
   }
 
   @override
@@ -119,35 +127,19 @@ class _FilterPageState extends State<FilterPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: BlocConsumer<FilterBloc, FilterState>(
-          listener: (context, state) {
-            if (state is FilterAttributesLoadedInProcess) {}
-            if (state is FilterAttributesLoadedSuccess) {
-              _setSelectedValues(state.availableFilters);
-            }
-            if (state is FilterAttributesLoadedFailure) {
-              flushBarService!.showErrorDialog(state.message!);
-            }
-          },
-          builder: (context, state) {
-            if (state is FilterAttributesLoadedSuccess) {
-              filters = state.availableFilters;
-              genderList = filters.containsKey('Gender')
-                  ? filters['Gender']['values']
-                  : [];
-              price = filters.containsKey('Price')
-                  ? filters['Price']
-                  : {'min': .0, 'max': .0};
-              minPrice = minPrice ?? price['min'] + .0;
-              maxPrice = maxPrice ?? price['max'] + .0;
-              return Column(
-                children: [
-                  _buildCategories(),
-                  if (price.keys.toList().length > 0) ...[_buildPriceRange()],
-                  if (genderList.isNotEmpty) ...[_buildGender()],
-                  Consumer<MarkaaAppChangeNotifier>(builder: (_, __, ___) {
-                    return Column(
+      body: Consumer<FilterChangeNotifier>(
+        builder: (_, provider, __) {
+          filters = provider.availableFilters;
+          _setSelectedValues();
+          return Consumer<MarkaaAppChangeNotifier>(
+            builder: (_, __, ___) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildCategories(),
+                    if (price.keys.toList().length > 0) ...[_buildPriceRange()],
+                    if (genderList.isNotEmpty) ...[_buildGender()],
+                    Column(
                       children: filters.keys.map((key) {
                         String code = filters[key]['attribute_code'];
                         return [
@@ -161,15 +153,13 @@ class _FilterPageState extends State<FilterPage> {
                             ? SizedBox.shrink()
                             : _buildFilterOption(key, filters[key]);
                       }).toList(),
-                    );
-                  }),
-                ],
+                    ),
+                  ],
+                ),
               );
-            } else {
-              return Container();
-            }
-          },
-        ),
+            },
+          );
+        },
       ),
       bottomSheet: _buildApplyButton(),
     );
@@ -199,7 +189,7 @@ class _FilterPageState extends State<FilterPage> {
           } else {
             selectedCategories!.add(value['value']);
           }
-          setState(() {});
+          model!.rebuild();
         },
       ),
     );
@@ -241,7 +231,7 @@ class _FilterPageState extends State<FilterPage> {
             onChanged: (RangeValues values) {
               minPrice = values.start;
               maxPrice = values.end;
-              setState(() {});
+              model!.rebuild();
             },
             min: (price['min'] + .0),
             max: (price['max'] + .0),
@@ -280,7 +270,7 @@ class _FilterPageState extends State<FilterPage> {
               } else {
                 selectedGenders!.add(value['value']);
               }
-              setState(() {});
+              model!.rebuild();
             },
           ),
         ],
@@ -385,6 +375,6 @@ class _FilterPageState extends State<FilterPage> {
     selectedValues = {};
     minPrice = null;
     maxPrice = null;
-    setState(() {});
+    model!.rebuild();
   }
 }

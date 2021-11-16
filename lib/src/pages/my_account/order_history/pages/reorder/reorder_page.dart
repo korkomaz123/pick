@@ -17,7 +17,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:markaa/src/utils/repositories/checkout_repository.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -52,7 +52,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
   MyCartChangeNotifier? myCartChangeNotifier;
   AddressChangeNotifier? addressChangeNotifier;
 
-  CheckoutRepository checkoutRepo = CheckoutRepository();
+  AppRepository appRepository = AppRepository();
 
   @override
   void initState() {
@@ -64,9 +64,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
-    if (!addressChangeNotifier!.addressesMap!
+    if (!addressChangeNotifier!.customerAddressesMap
         .containsKey(widget.order.address.addressId)) {
-      widget.order.address = addressChangeNotifier!.defaultAddress!;
+      widget.order.address = addressChangeNotifier!.customerDefaultAddress!;
     }
     _getOrderStatus();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -108,7 +108,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _getShippingMethods() async {
     if (shippingMethods.isEmpty) {
-      shippingMethods = await checkoutRepo.getShippingMethod();
+      shippingMethods = await appRepository.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
       if (shippingMethod.minOrderAmount! <=
@@ -543,7 +543,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _onNext() {
     if (myCartChangeNotifier!.reorderCartItemCount > 0) {
-      if (addressChangeNotifier!.addressesMap!
+      if (addressChangeNotifier!.customerAddressesMap
           .containsKey(widget.order.address.addressId)) {
         addressChangeNotifier!.setDefaultAddress(widget.order.address);
       }

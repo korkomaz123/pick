@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
@@ -10,7 +11,6 @@ import 'package:markaa/src/data/models/brand_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/pages/filter/bloc/filter_bloc.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -18,7 +18,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -48,12 +48,13 @@ class _ProductListPageState extends State<ProductListPage> {
   late int activeSubcategoryIndex;
   bool? isFromBrand;
   bool? isFilter;
-  FilterBloc? filterBloc;
+
   ProgressService? progressService;
   double scrollPosition = 0;
   ScrollChangeNotifier? scrollChangeNotifier;
   ProductChangeNotifier? productChangeNotifier;
   CategoryChangeNotifier? categoryChangeNotifier;
+  late FilterChangeNotifier filterChangeNotifier;
   ProductViewModeEnum? viewMode;
   Map<String, dynamic> filterValues = {};
 
@@ -71,9 +72,7 @@ class _ProductListPageState extends State<ProductListPage> {
     scrollChangeNotifier = context.read<ScrollChangeNotifier>();
     productChangeNotifier = context.read<ProductChangeNotifier>();
     categoryChangeNotifier = context.read<CategoryChangeNotifier>();
-
-    filterBloc = context.read<FilterBloc>();
-
+    filterChangeNotifier = context.read<FilterChangeNotifier>();
     categoryChangeNotifier!.initialSubCategories();
 
     if (isFromBrand!) {
@@ -259,6 +258,8 @@ class _ProductListPageState extends State<ProductListPage> {
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
+              errorWidget: (_, __, ___) =>
+                  Center(child: Icon(Icons.image, size: 20)),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
                   key: ValueKey(brand?.brandThumbnail ?? ''),
@@ -267,6 +268,8 @@ class _ProductListPageState extends State<ProductListPage> {
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
+                  errorWidget: (_, __, ___) =>
+                      Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),
@@ -418,11 +421,11 @@ class _ProductListPageState extends State<ProductListPage> {
         );
       }
       filterValues = {};
-      filterBloc!.add(FilterAttributesLoaded(
-        categoryId: subCategories![index].id,
-        brandId: brand?.optionId ?? '',
-        lang: lang,
-      ));
+      filterChangeNotifier.loadFilterAttributes(
+        subCategories![index].id,
+        brand?.optionId ?? '',
+        lang,
+      );
     });
   }
 
