@@ -39,8 +39,8 @@ class LocalDBRepository {
       data['postcode'],
       data['company'],
       data['telephone'],
-      data['DefaultBillingAddress'],
-      data['DefaultShippingAddress'],
+      data['isdefaultbilling'],
+      data['isdefaultshipping'],
       data['id']
     ];
     int changes = await db.rawUpdate(updateQuery, arguments);

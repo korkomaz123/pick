@@ -96,6 +96,7 @@ class AddressChangeNotifier extends ChangeNotifier {
       guestAddressKeys.sort((key1, key2) => key2.compareTo(key1));
       notifyListeners();
       if (onSuccess != null) onSuccess();
+      setGuestDefaultAddress(address);
     } catch (e) {
       SlackChannels.send(
         '$env GUEST ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] [error] => $e \r\n [data] => ${data.toString()}',
@@ -117,7 +118,6 @@ class AddressChangeNotifier extends ChangeNotifier {
       if (updated) {
         AddressEntity address = AddressEntity.fromJson(data);
         guestAddressesMap[address.id] = address;
-        print(address.defaultBillingAddress);
         if (address.defaultShippingAddress == 1) guestDefaultAddress = address;
         notifyListeners();
       }
@@ -143,13 +143,17 @@ class AddressChangeNotifier extends ChangeNotifier {
       if (removed) {
         AddressEntity address = guestAddressesMap[id]!;
         guestAddressesMap.remove(id);
-        if (address.defaultShippingAddress == 1) {
-          guestDefaultAddress = null;
-        }
         guestAddressKeys = guestAddressesMap.keys.toList();
         guestAddressKeys.sort((key1, key2) => key2.compareTo(key1));
         notifyListeners();
         if (onSuccess != null) onSuccess();
+
+        if (address.defaultShippingAddress == 1) {
+          guestDefaultAddress = null;
+          if (guestAddressKeys.isNotEmpty) {
+            setGuestDefaultAddress(guestAddressesMap[guestAddressKeys[0]]!);
+          }
+        }
       } else {
         SlackChannels.send(
           '$env GUEST ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [data] => ${guestAddressesMap[id]?.toJson() ?? {}}',
@@ -169,11 +173,17 @@ class AddressChangeNotifier extends ChangeNotifier {
   void setGuestDefaultAddress(AddressEntity address) {
     guestDefaultAddress = address;
     notifyListeners();
+    address.defaultBillingAddress = 1;
+    address.defaultShippingAddress = 1;
+    updateGuestAddress(address.toJson());
   }
 
   void setDefaultAddress(AddressEntity address) {
     customerDefaultAddress = address;
     notifyListeners();
+    address.defaultBillingAddress = 1;
+    address.defaultShippingAddress = 1;
+    updateCustomerAddress(user!.token, address);
   }
 
   Future<void> loadCustomerAddresses(
@@ -253,14 +263,13 @@ class AddressChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         newAddress.addressId = result['address'];
         customerAddressesMap[newAddress.addressId!] = newAddress;
-        if (newAddress.defaultShippingAddress == 1) {
-          customerDefaultAddress = newAddress;
-        }
         customerAddressKeys = customerAddressesMap.keys.toList();
         customerAddressKeys
             .sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
+
+        setDefaultAddress(newAddress);
       } else {
         SlackChannels.send(
           '$env CUSTOMER ADRESS ADD ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} \r\n [data] => ${newAddress.toJson()}',
@@ -323,14 +332,18 @@ class AddressChangeNotifier extends ChangeNotifier {
       if (result['code'] == 'SUCCESS') {
         final address = customerAddressesMap[addressId];
         customerAddressesMap.remove(addressId);
-        if (address!.defaultShippingAddress == 1) {
-          customerDefaultAddress = null;
-        }
         customerAddressKeys = customerAddressesMap.keys.toList();
         customerAddressKeys
             .sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
         notifyListeners();
         if (onSuccess != null) onSuccess();
+
+        if (address!.defaultShippingAddress == 1) {
+          customerDefaultAddress = null;
+          if (customerAddressKeys.isNotEmpty) {
+            setDefaultAddress(customerAddressesMap[customerAddressKeys[0]]!);
+          }
+        }
       } else {
         SlackChannels.send(
           '$env CUSTOMER ADRESS REMOVE ERROR: [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [error] => ${result['errorMessage']} [data] => $addressId',
