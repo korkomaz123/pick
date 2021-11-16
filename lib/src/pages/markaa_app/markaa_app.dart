@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter_smartlook/flutter_smartlook.dart';
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
@@ -34,6 +35,18 @@ import '../../../onesignal.dart';
 import '../../../preload.dart';
 import 'no_network_access_page.dart';
 
+class CustomIntegrationListener implements IntegrationListener {
+  void onSessionReady(String? dashboardSessionUrl) {
+    print("DashboardUrl:");
+    print(dashboardSessionUrl);
+  }
+
+  void onVisitorReady(String? dashboardVisitorUrl) {
+    print("DashboardVisitorUrl:");
+    print(dashboardVisitorUrl);
+  }
+}
+
 class MarkaaApp extends StatefulWidget {
   final String home;
   MarkaaApp({Key? key, required this.home}) : super(key: key);
@@ -49,6 +62,22 @@ class _MarkaaAppState extends State<MarkaaApp> {
   void initState() {
     super.initState();
 
+    SetupOptions options = (new SetupOptionsBuilder('ed7cae14a0a462fe8be2b38ae3460e7ae7bbbfb8')
+          ..Fps = 2
+          ..StartNewSession = true)
+        .build();
+
+    Smartlook.setupAndStartRecording(options);
+
+    Smartlook.setEventTrackingMode(EventTrackingMode.FULL_TRACKING);
+    List<EventTrackingMode> eventTrackingModes = [EventTrackingMode.FULL_TRACKING, EventTrackingMode.IGNORE_USER_INTERACTION];
+    Smartlook.setEventTrackingModes(eventTrackingModes);
+    Smartlook.registerIntegrationListener(new CustomIntegrationListener());
+    // Smartlook.setUserIdentifier('FlutterLul', {"flutter-usr-prop": "valueX"});
+    Smartlook.enableWebviewRecording(true);
+    Smartlook.enableCrashlytics(true);
+    Smartlook.getDashboardSessionUrl(true);
+    // Smartlook.startRecording();
     OneSignalNotification.initOneSignalPlatform();
 
     _localDBRepository.init();
@@ -111,9 +140,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
               stream: Connectivity().onConnectivityChanged,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data != null &&
-                      (snapshot.data == ConnectivityResult.mobile ||
-                          snapshot.data == ConnectivityResult.wifi)) {
+                  if (snapshot.data != null && (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
                     return child ?? Container();
                   } else {
                     return NoNetworkAccessPage();
@@ -129,16 +156,14 @@ class _MarkaaAppState extends State<MarkaaApp> {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate
-    extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) =>
-      DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;
