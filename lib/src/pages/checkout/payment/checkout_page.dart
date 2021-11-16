@@ -69,8 +69,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   AppRepository appRepository = AppRepository();
 
   bool get emptyAddress =>
-      user != null && addressChangeNotifier.defaultAddress == null ||
-      user == null && addressChangeNotifier.guestAddress == null;
+      user != null && addressChangeNotifier.customerDefaultAddress == null ||
+      user == null && addressChangeNotifier.guestDefaultAddress == null;
 
   void _loadAssetData() async {
     try {
@@ -237,9 +237,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     var address;
     if (user != null) {
-      address = addressChangeNotifier.defaultAddress!.toJson();
+      address = addressChangeNotifier.customerDefaultAddress!.toJson();
     } else {
-      address = addressChangeNotifier.guestAddress!.toJson();
+      address = addressChangeNotifier.guestDefaultAddress!.toJson();
     }
     address['postcode'] = address['post_code'];
     address['save_in_address_book'] = '0';

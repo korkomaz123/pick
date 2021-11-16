@@ -22,7 +22,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final PackageInfo _packageInfo = await PackageInfo.fromPlatform();
-
   final String? _currentVersion = await LocalStorageRepository().getVersion();
   if (_packageInfo.version != _currentVersion) {
     await LocalStorageRepository().clear();
@@ -38,7 +37,8 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await DefaultCacheManager().emptyCache();
 
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: SystemUiOverlay.values);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   EquatableConfig.stringify = kDebugMode;

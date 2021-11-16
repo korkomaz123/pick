@@ -1,6 +1,5 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -42,7 +41,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   int? selectedIndex;
   bool isCheckout = false;
 
-  AddressChangeNotifier? model;
+  late AddressChangeNotifier model;
 
   @override
   void initState() {
@@ -56,8 +55,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRefresh() async {
-    model!.initialize();
-    await model!.loadAddresses(
+    model.initialize();
+    await model.loadCustomerAddresses(
       user!.token,
       _refreshController.refreshCompleted,
       _refreshController.refreshFailed,
@@ -119,9 +118,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
             child: Consumer<AddressChangeNotifier>(
               builder: (_, notifier, ___) {
                 model = notifier;
-                if (model?.keys == null) {
-                  return Center(child: PulseLoadingSpinner());
-                } else if (model!.keys!.isEmpty) {
+                if (model.customerAddressKeys.isEmpty) {
                   return NoAvailableData(
                     message: 'no_saved_addresses'.tr(),
                   );
@@ -129,8 +126,9 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                   return SingleChildScrollView(
                     child: Column(
                       children: List.generate(
-                        model!.keys!.length,
-                        (index) => _buildAddressCard(model!.keys![index]),
+                        model.customerAddressKeys.length,
+                        (index) =>
+                            _buildAddressCard(model.customerAddressKeys[index]),
                       )..add(SizedBox(height: 60.h)),
                     ),
                   );
@@ -176,7 +174,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   Widget _buildAddressCard(String key) {
-    final address = model!.addressesMap![key];
+    final address = model.customerAddressesMap[key];
     return InkWell(
       onTap: () => _onUpdate(key),
       child: Container(
@@ -243,7 +241,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               left: 0,
               child: Radio(
                 value: address.addressId!,
-                groupValue: model?.defaultAddress?.addressId ?? '',
+                groupValue: model.customerDefaultAddress?.addressId ?? '',
                 activeColor: primaryColor,
                 onChanged: _onUpdate,
               ),
@@ -278,16 +276,16 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final result = await flushBarService!
         .showConfirmDialog(message: 'remove_shipping_address_subtitle');
     if (result != null) {
-      await model!
-          .deleteAddress(user!.token, key, _onProcess, _onSuccess, _onFailure);
+      await model.deleteCustomerAddress(
+          user!.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
   void _onUpdate(String? key) async {
-    final address = model!.addressesMap![key];
+    final address = model.customerAddressesMap[key];
     address!.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await model!.updateAddress(user!.token, address,
+    await model.updateCustomerAddress(user!.token, address,
         onProcess: _onProcess,
         onSuccess: _onUpdateSuccess,
         onFailure: _onFailure);

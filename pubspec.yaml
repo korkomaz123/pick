@@ -66,6 +66,7 @@ dependencies:
   sign_in_with_apple: ^3.0.0
   sliding_sheet: ^0.5.0
   smooth_page_indicator: ^1.0.0+2
+  sqflite: ^2.0.0+4
   string_validator: ^0.3.0
   top_sliding_sheet:
     path: plugins/top_sliding_sheet-1.0.0

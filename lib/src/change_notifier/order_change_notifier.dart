@@ -306,7 +306,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   Future submitOrderResult(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [${user?.email ?? 'guest'}] [Phone: ${result['order']['shippingAddress']['telephone']}]  \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [Phone: ${result['order']['shippingAddress']['telephone']}]  \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logAddOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -330,7 +330,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitCanceledOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logCanceledByUserOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -354,7 +354,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitPaymentFailedOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logPaymentFailedOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -378,7 +378,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitPaymentSuccessOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [${user?.email ?? 'guest'}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
       SlackChannels.logPaymentSuccessOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());

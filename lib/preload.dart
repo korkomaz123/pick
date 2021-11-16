@@ -150,13 +150,15 @@ class Preload {
         await Future.wait([
           _wishlistProvider.getWishlistItems(user!.token, lang),
           _orderProvider.loadOrderHistories(user!.token, lang),
-          _addressProvider.loadAddresses(user!.token),
+          _addressProvider.loadCustomerAddresses(user!.token),
         ]);
         await _cartProvider.getCartId();
         await _cartProvider.getCartItems(Preload.language);
       },
       onFailure: () async {
         NotificationSetup().init();
+        _addressProvider.initialize();
+        await _addressProvider.loadGuestAddresses();
         await _cartProvider.getCartId();
         await _cartProvider.getCartItems(Preload.language);
       },

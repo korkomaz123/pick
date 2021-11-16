@@ -1,4 +1,5 @@
 import 'package:markaa/src/apis/endpoints.dart';
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
@@ -41,18 +42,19 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   int? activeIndex;
   double? menuWidth;
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
 
   final LocalStorageRepository localRepo = LocalStorageRepository();
   final SettingRepository settingRepo = SettingRepository();
 
-  AuthChangeNotifier? authChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
-  WishlistChangeNotifier? wishlistChangeNotifier;
-  OrderChangeNotifier? orderChangeNotifier;
-  HomeChangeNotifier? homeChangeNotifier;
-  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late WishlistChangeNotifier wishlistChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late MarkaaAppChangeNotifier markaaAppChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
@@ -73,7 +76,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      flushBarService!.showErrorDialog('can_not_launch_url'.tr());
+      flushBarService.showErrorDialog('can_not_launch_url'.tr());
     }
   }
 
@@ -240,8 +243,8 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
       width: menuWidth,
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Column(
-        children: homeChangeNotifier!.sideMenus[lang]!.map((menu) {
-          int index = homeChangeNotifier!.sideMenus[lang]!.indexOf(menu);
+        children: homeChangeNotifier.sideMenus[lang]!.map((menu) {
+          int index = homeChangeNotifier.sideMenus[lang]!.indexOf(menu);
           return Column(
             key: activeIndex == index ? dataKey : null,
             children: [
@@ -363,20 +366,20 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
 
   void _login() async {
     await Navigator.pushNamed(context, Routes.signIn);
-    markaaAppChangeNotifier!.rebuild();
+    markaaAppChangeNotifier.rebuild();
     Navigator.pop(context);
   }
 
   void _logout() async {
-    final result = await flushBarService!
-        .showConfirmDialog(message: 'logout_confirm_dialog_text');
+    final result = await flushBarService.showConfirmDialog(
+        message: 'logout_confirm_dialog_text');
     if (result != null) {
-      authChangeNotifier!.logout(
-        onProcess: () => progressService!.showProgress(),
+      authChangeNotifier.logout(
+        onProcess: () => progressService.showProgress(),
         onSuccess: _logoutUser,
         onFailure: (message) {
-          progressService!.hideProgress();
-          flushBarService!.showErrorDialog(message);
+          progressService.hideProgress();
+          flushBarService.showErrorDialog(message);
         },
       );
     }
@@ -387,14 +390,17 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
     await localRepo.setToken('');
     user = null;
 
-    orderChangeNotifier!.initializeOrders();
-    wishlistChangeNotifier!.initialize();
-    myCartChangeNotifier!.initialize();
-    await myCartChangeNotifier!.getCartId();
-    await myCartChangeNotifier!.getCartItems(lang);
-    homeChangeNotifier!.loadRecentlyViewedGuest();
+    addressChangeNotifier.initialize();
+    orderChangeNotifier.initializeOrders();
+    wishlistChangeNotifier.initialize();
+    myCartChangeNotifier.initialize();
 
-    progressService!.hideProgress();
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
+    await addressChangeNotifier.loadGuestAddresses();
+    await homeChangeNotifier.loadRecentlyViewedGuest();
+
+    progressService.hideProgress();
     Navigator.pop(context);
     Navigator.popUntil(
       context,

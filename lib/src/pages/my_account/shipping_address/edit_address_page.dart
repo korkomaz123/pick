@@ -333,6 +333,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
       String lastName = fullNameController.text.split(' ')[1];
 
       AddressEntity address = AddressEntity(
+        id: 0,
         title: 'title',
         country: countryController.text,
         countryId: countryId!,
@@ -347,33 +348,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
         phoneNumber: phoneNumberController.text,
         company: companyController.text,
         email: emailController.text,
-        defaultBillingAddress: addressParam?.defaultBillingAddress != null
-            ? addressParam?.defaultBillingAddress
-            : isCheckout!
-                ? 1
-                : 0,
-        defaultShippingAddress: addressParam?.defaultShippingAddress != null
-            ? addressParam?.defaultShippingAddress
-            : isCheckout!
-                ? 1
-                : 0,
+        defaultBillingAddress:
+            addressParam?.defaultBillingAddress ?? (isCheckout! ? 1 : 0),
+        defaultShippingAddress:
+            addressParam?.defaultShippingAddress ?? (isCheckout! ? 1 : 0),
         addressId: addressParam?.addressId ?? '',
       );
-      if (user?.token != null) {
-        if (isNew!) {
-          await model!.addAddress(user!.token, address,
-              onProcess: _onProcess,
-              onSuccess: _onSuccess,
-              onFailure: _onFailure);
-        } else {
-          await model!.updateAddress(user!.token, address,
-              onProcess: _onProcess,
-              onSuccess: _onSuccess,
-              onFailure: _onFailure);
-        }
-      } else {
-        await model!.updateGuestAddress(address.toJson());
-      }
+      await model!.changeCustomerAddress(isNew!, user!.token, address,
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     }
   }
 

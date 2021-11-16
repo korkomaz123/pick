@@ -100,7 +100,7 @@ class _MyCartQuickAccessLoginDialogState
       await myCartChangeNotifier.getCartItems(lang);
       await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
       await orderChangeNotifier.loadOrderHistories(user!.token, lang);
-      await addressChangeNotifier.loadAddresses(user!.token);
+      await addressChangeNotifier.loadCustomerAddresses(user!.token);
       await homeChangeNotifier.loadRecentlyViewedCustomer();
       await settingRepository.updateFcmDeviceToken(
         user!.token,

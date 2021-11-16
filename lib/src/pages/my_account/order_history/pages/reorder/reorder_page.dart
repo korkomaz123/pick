@@ -64,9 +64,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
-    if (!addressChangeNotifier!.addressesMap!
+    if (!addressChangeNotifier!.customerAddressesMap
         .containsKey(widget.order.address.addressId)) {
-      widget.order.address = addressChangeNotifier!.defaultAddress!;
+      widget.order.address = addressChangeNotifier!.customerDefaultAddress!;
     }
     _getOrderStatus();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -543,7 +543,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _onNext() {
     if (myCartChangeNotifier!.reorderCartItemCount > 0) {
-      if (addressChangeNotifier!.addressesMap!
+      if (addressChangeNotifier!.customerAddressesMap
           .containsKey(widget.order.address.addressId)) {
         addressChangeNotifier!.setDefaultAddress(widget.order.address);
       }

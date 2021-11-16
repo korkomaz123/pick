@@ -33,12 +33,11 @@ class _PaymentAddressState extends State<PaymentAddress> {
   final dataKey = GlobalKey();
 
   _loadData() async {
-    if (user == null) {
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadGuestAddress();
-    } else if (user != null && addressChangeNotifier.addressesMap == null) {
-      addressChangeNotifier.initialize();
-      await addressChangeNotifier.loadAddresses(user!.token);
+    if (user == null && addressChangeNotifier.guestAddressesMap.isEmpty) {
+      await addressChangeNotifier.loadGuestAddresses();
+    } else if (user != null &&
+        addressChangeNotifier.customerAddressesMap.isEmpty) {
+      await addressChangeNotifier.loadCustomerAddresses(user!.token);
     }
   }
 
@@ -62,7 +61,8 @@ class _PaymentAddressState extends State<PaymentAddress> {
           padding: EdgeInsets.symmetric(vertical: 5.h),
           child: Column(
             children: [
-              if (model.keys!.isNotEmpty || model.guestAddress != null) ...[
+              if ((user != null && model.customerAddressKeys.isNotEmpty) ||
+                  (user == null && model.guestAddressKeys.isNotEmpty)) ...[
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Row(
@@ -76,51 +76,62 @@ class _PaymentAddressState extends State<PaymentAddress> {
                           fontSize: 16.sp,
                         ),
                       ),
-                      if (user?.token != null ||
-                          model.guestAddress == null) ...[
-                        InkWell(
-                          onTap: _onAddNewAddress,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.add_circle_outline,
-                                size: 18.sp,
+                      InkWell(
+                        onTap: _onAddNewAddress,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline,
+                              size: 18.sp,
+                              color: primaryColor,
+                            ),
+                            SizedBox(width: 5.w),
+                            Text(
+                              'add_new_address_button_title'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                fontSize: 12.sp,
                                 color: primaryColor,
                               ),
-                              SizedBox(width: 5.w),
-                              Text(
-                                'add_new_address_button_title'.tr(),
-                                style: mediumTextStyle.copyWith(
-                                  fontSize: 12.sp,
-                                  color: primaryColor,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
-                if (user?.token != null) ...[
+                if (user != null) ...[
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: List.generate(
-                        model.keys!.length,
+                        model.customerAddressKeys.length,
                         (index) {
-                          String key = model.keys![index];
-                          return _buildAddressCard(key);
+                          String key = model.customerAddressKeys[index];
+                          return _buildAddressCard(
+                              model.customerAddressesMap[key]!);
                         },
                       ),
                     ),
                   ),
                 ] else ...[
-                  _buildGuestAddressCard()
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        model.guestAddressKeys.length,
+                        (index) {
+                          int key = model.guestAddressKeys[index];
+                          return _buildAddressCard(
+                              model.guestAddressesMap[key]!);
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ] else ...[
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -170,13 +181,20 @@ class _PaymentAddressState extends State<PaymentAddress> {
     );
   }
 
-  Widget _buildAddressCard(String key) {
-    final address = addressChangeNotifier.addressesMap![key];
-    final defaultAddress = addressChangeNotifier.defaultAddress;
+  Widget _buildAddressCard(AddressEntity address) {
+    final defaultAddress = user != null
+        ? addressChangeNotifier.customerDefaultAddress
+        : addressChangeNotifier.guestDefaultAddress;
+    final isDefault = user != null
+        ? address.addressId == defaultAddress?.addressId
+        : address.id == defaultAddress?.id;
+    var groupValue =
+        user != null ? defaultAddress?.addressId : defaultAddress?.id;
+    var value = user != null ? address.addressId : address.id;
     return InkWell(
-      onTap: () => _onUpdateAddress(key),
+      onTap: () => _onUpdateAddress(value),
       child: Container(
-        key: address!.addressId == defaultAddress?.addressId ? dataKey : null,
+        key: isDefault ? dataKey : null,
         width: 300.w,
         margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
         decoration: BoxDecoration(
@@ -205,10 +223,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'Block No.${address.company}, ' +
-                          address.city +
-                          ', ' +
-                          address.country,
+                      'Block No.${address.company}, ${address.city}, ${address.country}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -232,12 +247,22 @@ class _PaymentAddressState extends State<PaymentAddress> {
               top: 0,
               left: 0,
               child: Radio(
-                value: address.addressId!,
-                groupValue: addressChangeNotifier.defaultAddress!.addressId,
+                value: value,
+                groupValue: groupValue,
                 activeColor: primaryColor,
                 onChanged: _onUpdateAddress,
               ),
             ),
+            if (user == null) ...[
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: IconButton(
+                  icon: SvgPicture.asset(trashIcon),
+                  onPressed: () => _onRemoveAddress(address),
+                ),
+              )
+            ],
             Positioned(
               top: 0,
               right: 0,
@@ -252,72 +277,23 @@ class _PaymentAddressState extends State<PaymentAddress> {
     );
   }
 
-  Widget _buildGuestAddressCard() {
-    final address = addressChangeNotifier.guestAddress;
-    return Container(
-      width: 355.w,
-      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 10.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    address!.street,
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    'Block No.${address.company}, ${address.city}, ${address.country}',
-                    style: mediumTextStyle.copyWith(
-                      color: greyDarkColor,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
-                    style: mediumTextStyle.copyWith(
-                      color: greyDarkColor,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: SvgPicture.asset(editIcon),
-              onPressed: _onUpdateGuestAddress,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onUpdateAddress(String? key) async {
-    final address = addressChangeNotifier.addressesMap![key];
-    address!.defaultBillingAddress = 1;
+  void _onUpdateAddress(var key) async {
+    late AddressEntity address;
+    if (user == null) {
+      address = addressChangeNotifier.guestAddressesMap[key]!;
+    } else {
+      address = addressChangeNotifier.customerAddressesMap[key]!;
+    }
+    address.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
-    await addressChangeNotifier.updateAddress(user!.token, address,
-        onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
+    if (user == null) {
+      await addressChangeNotifier.changeGuestAddress(false, address.toJson(),
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
+    } else {
+      await addressChangeNotifier.changeCustomerAddress(
+          false, user!.token, address,
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
+    }
   }
 
   void _onAddNewAddress() async {
@@ -366,31 +342,13 @@ class _PaymentAddressState extends State<PaymentAddress> {
     );
   }
 
-  void _onUpdateGuestAddress() async {
-    showSlidingBottomSheet(
-      context,
-      builder: (_) {
-        return SlidingSheetDialog(
-          color: Colors.white,
-          elevation: 2,
-          cornerRadius: 15.sp,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [1],
-            positioning: SnapPositioning.relativeToSheetHeight,
-          ),
-          minHeight: designHeight.h - 100.h,
-          duration: Duration(milliseconds: 500),
-          builder: (context, state) {
-            return AddressForm(
-              params: {
-                'address': addressChangeNotifier.guestAddress,
-              },
-            );
-          },
-        );
-      },
-    );
+  void _onRemoveAddress(AddressEntity address) async {
+    final result = await flushBarService.showConfirmDialog(
+        message: 'remove_shipping_address_subtitle');
+    if (result != null) {
+      addressChangeNotifier.removeGuestAddress(address.id,
+          onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
+    }
   }
 
   _onProcess() {

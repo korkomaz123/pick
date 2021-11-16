@@ -1,3 +1,4 @@
+import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
@@ -30,11 +31,12 @@ class _LogoutItemState extends State<LogoutItem> {
   LocalStorageRepository localRepo = LocalStorageRepository();
   SettingRepository settingRepo = SettingRepository();
 
-  AuthChangeNotifier? authChangeNotifier;
-  MyCartChangeNotifier? myCartChangeNotifier;
-  WishlistChangeNotifier? wishlistChangeNotifier;
-  OrderChangeNotifier? orderChangeNotifier;
-  HomeChangeNotifier? homeChangeNotifier;
+  late AuthChangeNotifier authChangeNotifier;
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late WishlistChangeNotifier wishlistChangeNotifier;
+  late OrderChangeNotifier orderChangeNotifier;
+  late HomeChangeNotifier homeChangeNotifier;
+  late AddressChangeNotifier addressChangeNotifier;
 
   @override
   void initState() {
@@ -47,6 +49,7 @@ class _LogoutItemState extends State<LogoutItem> {
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     homeChangeNotifier = context.read<HomeChangeNotifier>();
+    addressChangeNotifier = context.read<AddressChangeNotifier>();
   }
 
   @override
@@ -88,7 +91,7 @@ class _LogoutItemState extends State<LogoutItem> {
     final result = await flushBarService.showConfirmDialog(
         message: 'logout_confirm_dialog_text');
     if (result != null) {
-      authChangeNotifier?.logout(
+      authChangeNotifier.logout(
         onProcess: _onProcess,
         onSuccess: _onSuccess,
         onFailure: _onFailure,
@@ -110,12 +113,15 @@ class _LogoutItemState extends State<LogoutItem> {
     await settingRepo.updateFcmDeviceToken(user!.token, '', '', lang, lang);
     user = null;
 
-    orderChangeNotifier!.initializeOrders();
-    wishlistChangeNotifier!.initialize();
-    myCartChangeNotifier!.initialize();
-    await myCartChangeNotifier!.getCartId();
-    await myCartChangeNotifier!.getCartItems(lang);
-    homeChangeNotifier!.loadRecentlyViewedGuest();
+    addressChangeNotifier.initialize();
+    orderChangeNotifier.initializeOrders();
+    wishlistChangeNotifier.initialize();
+    myCartChangeNotifier.initialize();
+
+    await myCartChangeNotifier.getCartId();
+    await myCartChangeNotifier.getCartItems(lang);
+    await addressChangeNotifier.loadGuestAddresses();
+    await homeChangeNotifier.loadRecentlyViewedGuest();
 
     progressService.hideProgress();
     Navigator.popUntil(

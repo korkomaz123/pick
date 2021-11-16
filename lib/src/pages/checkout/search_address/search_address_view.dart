@@ -330,12 +330,15 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     print(address.street);
     print(address.postalCode);
     AddressEntity addressEntity = AddressEntity(
+      id: 0,
       country: address.country ?? '',
       countryId: address.countryCode ?? '',
       region: address.state ?? '',
       city: address.city ?? '',
       street: address.street ?? '',
       postCode: address.postalCode,
+      defaultShippingAddress: 0,
+      defaultBillingAddress: 0,
     );
     Navigator.pop(context, addressEntity);
   }

@@ -19,13 +19,13 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/local_db_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -43,13 +43,15 @@ class MarkaaApp extends StatefulWidget {
 }
 
 class _MarkaaAppState extends State<MarkaaApp> {
+  LocalDBRepository _localDBRepository = LocalDBRepository();
+
   @override
   void initState() {
     super.initState();
 
     OneSignalNotification.initOneSignalPlatform();
 
-    NotificationSetup().init();
+    _localDBRepository.init();
   }
 
   @override
@@ -68,7 +70,9 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
         ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
         ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => AddressChangeNotifier()),
+        ChangeNotifierProvider(
+          create: (_) => AddressChangeNotifier(localDB: _localDBRepository),
+        ),
         ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
         ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
         ChangeNotifierProvider(create: (_) => AccountChangeNotifier()),
@@ -107,7 +111,9 @@ class _MarkaaAppState extends State<MarkaaApp> {
               stream: Connectivity().onConnectivityChanged,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data != null && (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
+                  if (snapshot.data != null &&
+                      (snapshot.data == ConnectivityResult.mobile ||
+                          snapshot.data == ConnectivityResult.wifi)) {
                     return child ?? Container();
                   } else {
                     return NoNetworkAccessPage();
@@ -123,14 +129,16 @@ class _MarkaaAppState extends State<MarkaaApp> {
   }
 }
 
-class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;
