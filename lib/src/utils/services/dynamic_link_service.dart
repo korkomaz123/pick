@@ -1,5 +1,6 @@
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:markaa/preload.dart';
@@ -25,8 +26,7 @@ class DynamicLinkService {
     final shortDescription = product.shortDescription;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://markaa.page.link',
-      link: Uri.parse(
-          'https://markaa.page.link.com/product?id=$productId&target=product'),
+      link: Uri.parse('https://markaa.page.link.com/product?id=$productId&target=product'),
       androidParameters: AndroidParameters(
         packageName: 'com.app.markaa',
         minimumVersion: 1,
@@ -71,8 +71,7 @@ class DynamicLinkService {
 
   Future<void> initialDynamicLink() async {
     try {
-      PendingDynamicLinkData? dynamicLink =
-          await FirebaseDynamicLinks.instance.getInitialLink();
+      PendingDynamicLinkData? dynamicLink = await FirebaseDynamicLinks.instance.getInitialLink();
       if (dynamicLink != null) {
         final Uri deepLink = dynamicLink.link;
         if (deepLink.queryParameters.containsKey('id')) {
@@ -97,8 +96,7 @@ class DynamicLinkService {
           arguments: product,
         );
       } else if (target == 'category') {
-        final category =
-            await categoryRepository.getCategory(id, Preload.language);
+        final category = await categoryRepository.getCategory(id, Preload.language);
         ProductListArguments arguments = ProductListArguments(
           category: category,
           subCategory: [],
@@ -131,6 +129,48 @@ class DynamicLinkService {
             Preload.navigatorKey!.currentContext!,
             (route) => route.settings.name == Routes.home,
           );
+        } else if (id == 'category') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.categoryList);
+        } else if (id == 'brand') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.brandList);
+        } else if (id == 'cart') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.myCart);
+        } else if (id == 'search') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.search);
+        } else if (id == 'account') {
+          if (user != null) {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.account);
+          } else {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.signIn);
+          }
+        } else if (id == 'wishlist') {
+          if (user != null) {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.wishlist);
+          } else {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.signIn);
+          }
+        } else if (id == 'order_history') {
+          if (user != null) {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.orderHistory);
+          } else {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.signIn);
+          }
+        } else if (id == 'terms') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.terms);
+        } else if (id == 'contact_us') {
+          Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.contactUs);
+        } else if (id == 'shipping_address') {
+          if (user != null) {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.shippingAddress, arguments: false);
+          } else {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.signIn);
+          }
+        } else if (id == 'wallet') {
+          if (user != null) {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.myWallet);
+          } else {
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.signIn);
+          }
         }
       } else if (target == 'cart') {
         Navigator.pushNamed(
@@ -143,10 +183,7 @@ class DynamicLinkService {
         final cartModel = context!.read<MyCartChangeNotifier>();
         final flushBarService = FlushBarService(context: context);
         cartModel.applyCouponCode(code, flushBarService);
-        Navigator.popUntil(
-          context,
-          (route) => route.settings.name == Routes.myCart,
-        );
+        Navigator.popUntil(context, (route) => route.settings.name == Routes.myCart);
       } else if (target == 'celebrity') {
         Navigator.pushNamed(
           Preload.navigatorKey!.currentContext!,

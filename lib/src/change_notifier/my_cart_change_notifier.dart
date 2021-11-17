@@ -183,7 +183,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
       if (user != null) {
         cartId = await myCartRepository.getShoppingCart(user!.token);
       } else {
-        if (await localStorageRepository.existItem('cartId')) {
+        bool isExist = await localStorageRepository.existItem('cartId');
+        if (isExist) {
           cartId = await localStorageRepository.getCartId();
         } else {
           cartId = await myCartRepository.getShoppingCart();
@@ -220,7 +221,6 @@ class MyCartChangeNotifier extends ChangeNotifier {
     cartConditions = [];
     productConditions = [];
     if (onProcess != null) onProcess();
-
     try {
       if (cartId.isEmpty) cartId = await getCartId();
       if (cartId.isNotEmpty) {
@@ -241,57 +241,55 @@ class MyCartChangeNotifier extends ChangeNotifier {
             cartDiscountedTotalPrice += getDiscountedPrice(item);
           }
           notifyListeners();
-          if (onSuccess != null) {
-            onSuccess(cartItemCount);
-          }
+          if (onSuccess != null) onSuccess(cartItemCount);
         } else {
           notifyListeners();
-          if (onFailure != null) {
-            onFailure(result['errorMessage']);
-            reportCartIssue(result, data);
-          }
+          if (onFailure != null) onFailure(result['errorMessage']);
+          _reportCartIssue(result, data);
         }
       }
     } catch (e) {
-      print('GET CART ITEMS CATCH ERROR: $e');
       if (onFailure != null) onFailure('connection_error');
-      reportCartIssue(e.toString(), data);
+      _reportCartIssue(e.toString(), data);
       notifyListeners();
     }
   }
 
   Future<void> removeCartItem(String key, Function onFailure) async {
     final data = {'action': 'removeCartItem', 'productId': key};
-    final item = cartItemsMap[key];
-    cartTotalPrice -= cartItemsMap[key]!.rowPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(item!);
-    cartItemCount -= 1;
-    cartTotalCount -= cartItemsMap[key]!.itemCount;
-    cartItemsMap.remove(key);
+    final item = cartItemsMap[key]!;
+    _onRemoveHandler(item, key);
     notifyListeners();
-
     try {
       final result = await myCartRepository.deleteCartItem(cartId, key);
       if (result['code'] != 'SUCCESS') {
         onFailure(result['errorMessage']);
-        cartTotalPrice += item.rowPrice;
-        cartDiscountedTotalPrice += getDiscountedPrice(item);
-        cartItemCount += 1;
-        cartTotalCount += item.itemCount;
-        cartItemsMap[key] = item;
+        _onRemoveFailedHandler(item, key);
         notifyListeners();
-        reportCartIssue(result, data);
+        _reportCartIssue(result, data);
       }
     } catch (e) {
       onFailure('connection_error');
-      cartTotalPrice += item.rowPrice;
-      cartDiscountedTotalPrice += getDiscountedPrice(item);
-      cartItemCount += 1;
-      cartTotalCount += item.itemCount;
-      cartItemsMap[key] = item;
+      _onRemoveFailedHandler(item, key);
       notifyListeners();
-      reportCartIssue(e.toString(), data);
+      _reportCartIssue(e.toString(), data);
     }
+  }
+
+  _onRemoveHandler(CartItemEntity item, String key) {
+    cartTotalPrice -= cartItemsMap[key]!.rowPrice;
+    cartDiscountedTotalPrice -= getDiscountedPrice(item);
+    cartItemCount -= 1;
+    cartTotalCount -= cartItemsMap[key]!.itemCount;
+    cartItemsMap.remove(key);
+  }
+
+  _onRemoveFailedHandler(CartItemEntity item, String key) {
+    cartTotalPrice += item.rowPrice;
+    cartDiscountedTotalPrice += getDiscountedPrice(item);
+    cartItemCount += 1;
+    cartTotalCount += item.itemCount;
+    cartItemsMap[key] = item;
   }
 
   Future<void> addProductToCart(
@@ -311,29 +309,32 @@ class MyCartChangeNotifier extends ChangeNotifier {
         final result = await myCartRepository.addCartItem(cartId, product.productId, '$qty', lang, options);
         if (result['code'] == 'SUCCESS') {
           CartItemEntity newItem = result['item'];
-          if (cartItemsMap.containsKey(newItem.itemId)) {
-            CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
-            cartTotalPrice -= oldItem.rowPrice;
-            cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
-          } else {
-            cartItemCount += 1;
-          }
-          cartTotalCount += qty;
-          cartTotalPrice += newItem.rowPrice;
-          cartDiscountedTotalPrice += getDiscountedPrice(newItem);
-          cartItemsMap[newItem.itemId] = newItem;
+          _onAddItemHandler(newItem, qty);
           if (onSuccess != null) onSuccess();
           notifyListeners();
         } else {
           if (onFailure != null) onFailure(result['errorMessage']);
-          reportCartIssue(result, data);
+          _reportCartIssue(result, data);
         }
       } catch (e) {
-        print('ADD ITEM TO CART CATCH ERROR: $e');
         if (onFailure != null) onFailure('connection_error');
-        reportCartIssue(e.toString(), data);
+        _reportCartIssue(e.toString(), data);
       }
     }
+  }
+
+  _onAddItemHandler(CartItemEntity newItem, int qty) {
+    if (cartItemsMap.containsKey(newItem.itemId)) {
+      CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
+      cartTotalPrice -= oldItem.rowPrice;
+      cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
+    } else {
+      cartItemCount += 1;
+    }
+    cartTotalCount += qty;
+    cartTotalPrice += newItem.rowPrice;
+    cartDiscountedTotalPrice += getDiscountedPrice(newItem);
+    cartItemsMap[newItem.itemId] = newItem;
   }
 
   Future<void> updateCartItem(
@@ -351,38 +352,41 @@ class MyCartChangeNotifier extends ChangeNotifier {
       };
       int updatedQty = qty - item.itemCount;
       double updatedPrice = StringService.roundDouble(item.product.price, 3) * updatedQty;
-      cartTotalCount += updatedQty;
-      cartTotalPrice += updatedPrice;
-      cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-      cartItemsMap[item.itemId]!.itemCount = qty;
-      cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * qty;
-      cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+      _onUpdateHandler(qty, updatedQty, updatedPrice, item);
       notifyListeners();
       try {
         final result = await myCartRepository.updateCartItem(cartId, item.itemId, qty.toString());
         if (result['code'] != 'SUCCESS') {
           onFailure(result['errorMessage']);
-          cartTotalCount -= updatedQty;
-          cartTotalPrice -= updatedPrice;
-          cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-          cartItemsMap[item.itemId]!.itemCount = item.itemCount;
-          cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
-          cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+          _onUpdateFailedHandler(updatedQty, updatedPrice, item);
           notifyListeners();
-          reportCartIssue(result, data);
+          _reportCartIssue(result, data);
         }
       } catch (e) {
         onFailure('connection_error');
-        cartTotalCount -= updatedQty;
-        cartTotalPrice -= updatedPrice;
-        cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-        cartItemsMap[item.itemId]!.itemCount = item.itemCount;
-        cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
-        cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+        _onUpdateFailedHandler(updatedQty, updatedPrice, item);
         notifyListeners();
-        reportCartIssue(e.toString(), data);
+        _reportCartIssue(e.toString(), data);
       }
     }
+  }
+
+  _onUpdateHandler(int qty, int updatedQty, double updatedPrice, CartItemEntity item) {
+    cartTotalCount += updatedQty;
+    cartTotalPrice += updatedPrice;
+    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
+    cartItemsMap[item.itemId]!.itemCount = qty;
+    cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * qty;
+    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+  }
+
+  _onUpdateFailedHandler(int updatedQty, double updatedPrice, CartItemEntity item) {
+    cartTotalCount -= updatedQty;
+    cartTotalPrice -= updatedPrice;
+    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
+    cartItemsMap[item.itemId]!.itemCount = item.itemCount;
+    cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
+    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
   }
 
   Future<bool> activateCart() async {
@@ -515,7 +519,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     await myCartRepository.transferCart(viewerCartId, cartId);
   }
 
-  void reportCartIssue(dynamic result, dynamic data) async {
+  void _reportCartIssue(dynamic result, dynamic data) async {
     data['cartId'] = cartId;
     Map<String, dynamic> appVersion = {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion};
     SlackChannels.send(
