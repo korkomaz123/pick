@@ -70,7 +70,10 @@ class _MarkaaAppState extends State<MarkaaApp> {
     Smartlook.setupAndStartRecording(options);
 
     Smartlook.setEventTrackingMode(EventTrackingMode.FULL_TRACKING);
-    List<EventTrackingMode> eventTrackingModes = [EventTrackingMode.FULL_TRACKING, EventTrackingMode.IGNORE_USER_INTERACTION];
+    List<EventTrackingMode> eventTrackingModes = [
+      EventTrackingMode.FULL_TRACKING,
+      EventTrackingMode.IGNORE_USER_INTERACTION
+    ];
     Smartlook.setEventTrackingModes(eventTrackingModes);
     Smartlook.registerIntegrationListener(new CustomIntegrationListener());
     // Smartlook.setUserIdentifier('FlutterLul', {"flutter-usr-prop": "valueX"});
@@ -140,7 +143,8 @@ class _MarkaaAppState extends State<MarkaaApp> {
               stream: Connectivity().onConnectivityChanged,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data != null && (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
+                  if (snapshot.data != null &&
+                      (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
                     return child ?? Container();
                   } else {
                     return NoNetworkAccessPage();

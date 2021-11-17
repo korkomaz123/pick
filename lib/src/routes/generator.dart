@@ -72,14 +72,12 @@ class RouteGenerator {
         );
       case Routes.signIn:
         return CupertinoPageRoute(
-          builder: (context) =>
-              SignInPage(isFromCheckout: (params ?? false) as bool),
+          builder: (context) => SignInPage(isFromCheckout: (params ?? false) as bool),
           settings: RouteSettings(name: Routes.signIn),
         );
       case Routes.signUp:
         return CupertinoPageRoute(
-          builder: (context) =>
-              SignUpPage(isFromCheckout: (params ?? false) as bool),
+          builder: (context) => SignUpPage(isFromCheckout: (params ?? false) as bool),
           settings: RouteSettings(name: Routes.signUp),
         );
       case Routes.forgotPassword:
@@ -97,14 +95,12 @@ class RouteGenerator {
         );
       case Routes.productList:
         return CupertinoPageRoute(
-          builder: (context) =>
-              ProductListPage(arguments: params as ProductListArguments),
+          builder: (context) => ProductListPage(arguments: params as ProductListArguments),
           settings: RouteSettings(name: Routes.productList),
         );
       case Routes.summerCollection:
         return CupertinoPageRoute(
-          builder: (context) =>
-              SummerCollectionPage(arguments: params as ProductListArguments),
+          builder: (context) => SummerCollectionPage(arguments: params as ProductListArguments),
           settings: RouteSettings(name: Routes.summerCollection),
         );
       case Routes.categoryList:
@@ -155,8 +151,7 @@ class RouteGenerator {
         );
       case Routes.checkoutPayment:
         return CupertinoPageRoute(
-          builder: (context) =>
-              CheckoutPaymentPage(params: params as Map<String, dynamic>),
+          builder: (context) => CheckoutPaymentPage(params: params as Map<String, dynamic>),
           settings: RouteSettings(name: Routes.checkoutPayment),
         );
       case Routes.creditCard:
@@ -166,8 +161,7 @@ class RouteGenerator {
         );
       case Routes.checkoutConfirmed:
         return CupertinoPageRoute(
-          builder: (context) =>
-              CheckoutConfirmedPage(order: params as OrderEntity),
+          builder: (context) => CheckoutConfirmedPage(order: params as OrderEntity),
           settings: RouteSettings(name: Routes.checkoutConfirmed),
         );
       case Routes.paymentFailed:
@@ -229,20 +223,17 @@ class RouteGenerator {
         );
       case Routes.notificationMessageDetails:
         return CupertinoPageRoute(
-          builder: (context) =>
-              NotificationMessageDetailsPage(message: params as MessageEntity),
+          builder: (context) => NotificationMessageDetailsPage(message: params as MessageEntity),
           settings: RouteSettings(name: Routes.notificationMessageDetails),
         );
       case Routes.shippingAddress:
         return CupertinoPageRoute(
-          builder: (context) =>
-              ShippingAddressPage(isCheckout: (params ?? false) as bool),
+          builder: (context) => ShippingAddressPage(isCheckout: (params ?? false) as bool),
           settings: RouteSettings(name: Routes.shippingAddress),
         );
       case Routes.editAddress:
         return CupertinoPageRoute(
-          builder: (context) =>
-              EditAddressPage(params: params as Map<String, dynamic>?),
+          builder: (context) => EditAddressPage(params: params as Map<String, dynamic>?),
           settings: RouteSettings(name: Routes.editAddress),
         );
       case Routes.viewOrder:
@@ -262,8 +253,7 @@ class RouteGenerator {
         );
       case Routes.cancelOrderInfo:
         return CupertinoPageRoute(
-          builder: (context) =>
-              CancelOrderInfoPage(params: params as Map<String, dynamic>),
+          builder: (context) => CancelOrderInfoPage(params: params as Map<String, dynamic>),
           settings: RouteSettings(name: Routes.cancelOrderInfo),
         );
       case Routes.returnOrder:
@@ -273,8 +263,7 @@ class RouteGenerator {
         );
       case Routes.returnOrderInfo:
         return CupertinoPageRoute(
-          builder: (context) =>
-              ReturnOrderInfoPage(params: params as Map<String, dynamic>),
+          builder: (context) => ReturnOrderInfoPage(params: params as Map<String, dynamic>),
           settings: RouteSettings(name: Routes.returnOrderInfo),
         );
       case Routes.changePassword:
@@ -284,14 +273,12 @@ class RouteGenerator {
         );
       case Routes.productReviews:
         return CupertinoPageRoute(
-          builder: (context) =>
-              ProductReviewPage(product: params as ProductEntity),
+          builder: (context) => ProductReviewPage(product: params as ProductEntity),
           settings: RouteSettings(name: Routes.productReviews),
         );
       case Routes.addProductReview:
         return CupertinoPageRoute(
-          builder: (context) =>
-              AddProductReviewPage(product: params as ProductEntity),
+          builder: (context) => AddProductReviewPage(product: params as ProductEntity),
           settings: RouteSettings(name: Routes.addProductReview),
         );
       case Routes.myWallet:
@@ -301,14 +288,12 @@ class RouteGenerator {
         );
       case Routes.myWalletCheckout:
         return CupertinoPageRoute(
-          builder: (_) =>
-              MyWalletCheckoutPage(fromCheckout: (params ?? false) as bool),
+          builder: (_) => MyWalletCheckoutPage(fromCheckout: (params ?? false) as bool),
           settings: settings,
         );
       case Routes.myWalletPayment:
         return CupertinoPageRoute(
-          builder: (_) =>
-              MyWalletPaymentPage(params: params as Map<String, dynamic>),
+          builder: (_) => MyWalletPaymentPage(params: params as Map<String, dynamic>),
           settings: settings,
         );
       case Routes.myWalletSuccess:
