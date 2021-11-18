@@ -85,9 +85,7 @@ class DeliveryRulesDialogHeader extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           child: Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.topRight
-                : Alignment.topLeft,
+            alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
             child: IconButton(
               icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
               onPressed: () => Navigator.pop(context),

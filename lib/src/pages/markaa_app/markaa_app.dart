@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_smartlook/flutter_smartlook.dart';
@@ -20,12 +21,15 @@ import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/models/index.dart';
+import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/routes/generator.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:cupertino_back_gesture/cupertino_back_gesture.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/local_db_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -131,31 +135,45 @@ class _MarkaaAppState extends State<MarkaaApp> {
           locale: EasyLocalization.of(context)!.locale,
           debugShowCheckedModeBanner: false,
           theme: markaaAppTheme.copyWith(
-            colorScheme: markaaAppTheme.colorScheme.copyWith(
-              secondary: Color(0xFFB4C9FA),
-            ),
+            colorScheme: markaaAppTheme.colorScheme.copyWith(secondary: Color(0xFFB4C9FA)),
           ),
           title: 'Markaa',
           initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,
-          builder: (context, child) {
-            return StreamBuilder<ConnectivityResult>(
-              stream: Connectivity().onConnectivityChanged,
+          builder: _builder,
+        ),
+      ),
+    );
+  }
+
+  Widget _builder(BuildContext context, Widget? child) {
+    return StreamBuilder<ConnectivityResult>(
+      stream: Connectivity().onConnectivityChanged,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data != null &&
+              (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
+            return StreamBuilder<VersionEntity>(
+              stream: AppRepository().checkAppVersion(Platform.isAndroid),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data != null &&
-                      (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
-                    return child ?? Container();
+                  final versionData = snapshot.data!;
+                  if (versionData.updateMandatory) {
+                    return UpdatePage(storeLink: versionData.storeLink);
                   } else {
-                    return NoNetworkAccessPage();
+                    return child ?? Container();
                   }
                 }
                 return child ?? Container();
               },
             );
-          },
-        ),
-      ),
+          } else {
+            return NoNetworkAccessPage();
+          }
+        } else {
+          return NoNetworkAccessPage();
+        }
+      },
     );
   }
 }

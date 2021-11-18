@@ -33,8 +33,7 @@ class _SplashPageState extends State<SplashPage> {
     setState(() {});
 
     /// CHECK THE UPGRADABLE STATUS: MANDATORY OR NOT
-    bool isUpgradeRequired = await Preload.checkAppVersion();
-    if (!isUpgradeRequired && !_firstOpen) {
+    if (!_firstOpen) {
       Preload.setLanguage();
       Preload.navigatorKey!.currentState!.pushNamedAndRemoveUntil(
         Routes.home,

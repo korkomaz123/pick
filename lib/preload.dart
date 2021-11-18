@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_attribution.dart';
@@ -21,7 +20,6 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 
 import 'src/change_notifier/home_change_notifier.dart';
@@ -36,11 +34,7 @@ class Preload {
   static String imagesUrl = "";
   static String? languageCode;
 
-  static String get language =>
-      EasyLocalization.of(navigatorKey!.currentContext!)!
-          .locale
-          .languageCode
-          .toLowerCase();
+  static String get language => EasyLocalization.of(navigatorKey!.currentContext!)!.locale.languageCode.toLowerCase();
   static set language(String val) => setLanguage(val: val);
 
   static setLanguage({String? val}) {
@@ -49,25 +43,17 @@ class Preload {
     } else {
       lang = languageCode = language;
     }
-    final enLocale = EasyLocalization.of(navigatorKey!.currentContext!)!
-        .supportedLocales
-        .first;
-    final arLocale = EasyLocalization.of(navigatorKey!.currentContext!)!
-        .supportedLocales
-        .last;
+    final enLocale = EasyLocalization.of(navigatorKey!.currentContext!)!.supportedLocales.first;
+    final arLocale = EasyLocalization.of(navigatorKey!.currentContext!)!.supportedLocales.last;
 
     if (lang == 'en') {
       navigatorKey!.currentContext!.setLocale(enLocale);
-      FirebaseMessaging.instance
-          .unsubscribeFromTopic(MarkaaNotificationChannels.arChannel);
-      FirebaseMessaging.instance
-          .subscribeToTopic(MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance.unsubscribeFromTopic(MarkaaNotificationChannels.arChannel);
+      FirebaseMessaging.instance.subscribeToTopic(MarkaaNotificationChannels.enChannel);
     } else {
       navigatorKey!.currentContext!.setLocale(arLocale);
-      FirebaseMessaging.instance
-          .unsubscribeFromTopic(MarkaaNotificationChannels.enChannel);
-      FirebaseMessaging.instance
-          .subscribeToTopic(MarkaaNotificationChannels.arChannel);
+      FirebaseMessaging.instance.unsubscribeFromTopic(MarkaaNotificationChannels.enChannel);
+      FirebaseMessaging.instance.subscribeToTopic(MarkaaNotificationChannels.arChannel);
     }
     OneSignal.shared.sendTag('lang', lang);
     loadAssetData();
@@ -82,20 +68,6 @@ class Preload {
   static final signInRepository = SignInRepository();
   static final appRepository = AppRepository();
 
-  static Future<dynamic> checkAppVersion() async {
-    print('CHECKING THE APP VERSION');
-    final versionEntity =
-        await appRepository.checkAppVersion(Platform.isAndroid);
-    if (versionEntity.updateMandatory) {
-      Navigator.pushReplacementNamed(
-        navigatorKey!.currentContext!,
-        Routes.update,
-        arguments: versionEntity.storeLink,
-      );
-    } else if (versionEntity.canUpdate) {}
-    return versionEntity.updateMandatory;
-  }
-
   static firebaseLogin() async {
     String? firebaseUserId = signInRepository.getFirebaseUser();
     if (firebaseUserId == null) {
@@ -108,28 +80,16 @@ class Preload {
 
   static loadAssetData() {
     homeChangeNotifier.getHomeCategories();
-    appRepository
-        .getShippingMethod()
-        .then((result) => shippingMethods = result)
-        .catchError((error) {
+    appRepository.getShippingMethod().then((result) => shippingMethods = result).catchError((error) {
       print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
     });
-    appRepository
-        .getPaymentMethod()
-        .then((result) => paymentMethods = result)
-        .catchError((error) {
+    appRepository.getPaymentMethod().then((result) => paymentMethods = result).catchError((error) {
       print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
     });
-    appRepository
-        .getRegions()
-        .then((result) => regions = result)
-        .catchError((error) {
+    appRepository.getRegions().then((result) => regions = result).catchError((error) {
       print('GET REGION LIST TIMEOUT ERROR: $error');
     });
-    appRepository
-        .getDeliveryRule(language)
-        .then((result) => deliveryRule = result)
-        .catchError((error) {
+    appRepository.getDeliveryRule(language).then((result) => deliveryRule = result).catchError((error) {
       print('GET DELIVERY RULES TIMEOUT ERROR: $error');
     });
   }
@@ -261,8 +221,7 @@ class Preload {
       };
     }
     conversationObject['kmUser'] = jsonEncode(kmUser);
-    dynamic clientConversationId =
-        await KommunicateFlutterPlugin.buildConversation(conversationObject);
+    dynamic clientConversationId = await KommunicateFlutterPlugin.buildConversation(conversationObject);
     print("Conversation builder success : " + clientConversationId.toString());
     chatInitiated = true;
   }
