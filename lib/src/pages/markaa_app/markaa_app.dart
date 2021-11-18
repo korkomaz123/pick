@@ -140,39 +140,43 @@ class _MarkaaAppState extends State<MarkaaApp> {
           title: 'Markaa',
           initialRoute: widget.home,
           onGenerateRoute: RouteGenerator.generateRoute,
-          builder: _builder,
+          builder: _checkNetwork,
         ),
       ),
     );
   }
 
-  Widget _builder(BuildContext context, Widget? child) {
+  Widget _checkNetwork(BuildContext context, Widget? child) {
     return StreamBuilder<ConnectivityResult>(
       stream: Connectivity().onConnectivityChanged,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data != null &&
               (snapshot.data == ConnectivityResult.mobile || snapshot.data == ConnectivityResult.wifi)) {
-            return StreamBuilder<VersionEntity>(
-              stream: AppRepository().checkAppVersion(Platform.isAndroid),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final versionData = snapshot.data!;
-                  if (versionData.updateMandatory) {
-                    return UpdatePage(storeLink: versionData.storeLink);
-                  } else {
-                    return child ?? Container();
-                  }
-                }
-                return child ?? Container();
-              },
-            );
+            return _checkAppVersion(child);
           } else {
             return NoNetworkAccessPage();
           }
         } else {
-          return NoNetworkAccessPage();
+          return _checkAppVersion(child);
         }
+      },
+    );
+  }
+
+  Widget _checkAppVersion(Widget? child) {
+    return StreamBuilder<VersionEntity>(
+      stream: AppRepository().checkAppVersion(Platform.isAndroid),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final versionData = snapshot.data!;
+          if (versionData.updateMandatory) {
+            return UpdatePage(storeLink: versionData.storeLink);
+          } else {
+            return child ?? Container();
+          }
+        }
+        return child ?? Container();
       },
     );
   }
