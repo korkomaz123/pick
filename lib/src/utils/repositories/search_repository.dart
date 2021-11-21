@@ -51,15 +51,29 @@ class SearchRepository {
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////
+
+//Pass your name in this method
+
+  bool isArabic(String name) {
+    String namePattern = r"^[\u0621-\u064A\u0660-\u0669 ]+$";
+//  String namePattern =r"^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FFa-zA-Z]+[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FFa-zA-Z-_]*$";
+    if (name.isEmpty) {
+      return false;
+    } else {
+      RegExp nameExp = RegExp(namePattern, caseSensitive: false, multiLine: false);
+      return nameExp.hasMatch(name.trim());
+    }
+  }
+
   Future<dynamic> getSearchSuggestion(String q, String lang) async {
     // final url = EndPoints.getSearchSuggestion;
     // final params = {'q': q, 'lang': lang};
     // print(url);
     // print(params);
     // return await Api.getMethod(url, data: params);
+    print('isArabic(q) ${isArabic(q)}');
     Algolia algolia = AlgoliaService.algolia;
-    String index =
-        lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
+    String index = isArabic(q) != true ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
     AlgoliaQuery query = algolia.instance.index(index).query(q);
     AlgoliaQuerySnapshot snap = await query.getObjects();
     List<ProductModel> products = [];
@@ -70,8 +84,7 @@ class SearchRepository {
       data['product_id'] = item.objectID;
       data['name'] = item.data['name'];
       data['price'] = item.data['price']['KWD']['default'].toString();
-      data['image_url'] =
-          item.data['image_url'].toString().replaceFirst('//', 'https://');
+      data['image_url'] = item.data['image_url'].toString().replaceFirst('//', 'https://');
       products.add(ProductModel.fromJson(data));
     }
     return products;
@@ -87,18 +100,11 @@ class SearchRepository {
     String lang,
   ) async {
     Algolia algolia = AlgoliaService.algolia;
-    String index =
-        lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
+    String index = lang == 'en' ? AlgoliaIndexes.enProducts : AlgoliaIndexes.arProducts;
     final algoliaIndex = algolia.instance.index(index);
     final settings = algoliaIndex.settings;
     AlgoliaSettings settingsData = settings;
-    settingsData = settingsData.setAttributesForFaceting([
-      'categories',
-      'categoryIds',
-      'color',
-      'price.KWD.default',
-      'manufacturer'
-    ]);
+    settingsData = settingsData.setAttributesForFaceting(['categories', 'categoryIds', 'color', 'price.KWD.default', 'manufacturer']);
     await settingsData.setSettings();
     AlgoliaQuery query = algoliaIndex.query(q);
     if (categories.isNotEmpty) {
@@ -124,8 +130,7 @@ class SearchRepository {
       data['product_id'] = item.objectID;
       data['name'] = item.data['name'];
       data['price'] = item.data['price']['KWD']['default'].toString();
-      data['image_url'] =
-          item.data['image_url'].toString().replaceFirst('//', 'https://');
+      data['image_url'] = item.data['image_url'].toString().replaceFirst('//', 'https://');
       products.add(ProductModel.fromJson(data));
     }
     return products;
