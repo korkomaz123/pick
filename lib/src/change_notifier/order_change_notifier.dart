@@ -115,8 +115,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrderById(
-          order.orderId, Preload.language);
+      final result = await orderRepository.cancelOrderById(order.orderId, Preload.language);
 
       if (result['code'] == 'SUCCESS') {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
@@ -146,8 +145,7 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.cancelOrder(
-          orderId, items, additionalInfo, reason, product, imageName);
+      final result = await orderRepository.cancelOrder(orderId, items, additionalInfo, reason, product, imageName);
 
       if (result['code'] == 'SUCCESS') {
         final canceledOrder = OrderEntity.fromJson(result['order']);
@@ -176,8 +174,8 @@ class OrderChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      final result = await orderRepository.returnOrder(
-          token, orderId, items, additionalInfo, reason, product, imageName);
+      final result =
+          await orderRepository.returnOrder(token, orderId, items, additionalInfo, reason, product, imageName);
       if (result['code'] == 'SUCCESS') {
         if (onSuccess != null) onSuccess();
       } else {
@@ -200,8 +198,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
 
     try {
-      final result = await orderRepository.sendAsGift(
-          token!, sender!, receiver!, message!);
+      final result = await orderRepository.sendAsGift(token!, sender!, receiver!, message!);
       if (result['code'] == 'SUCCESS') {
         if (onSuccess != null) onSuccess(result['gift_message_id']);
       } else {
@@ -283,7 +280,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}] [Phone: ${result['order']['shippingAddress']['telephone']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}] [Phone: ${result['order']['shippingAddress']['telephone']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
       SlackChannels.logOrderError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -291,12 +288,8 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': await addDeviceInfo(orderDetails),
       'customer': user != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
@@ -314,23 +307,18 @@ class OrderChangeNotifier extends ChangeNotifier {
       'result': result,
       'orderDetails': await addDeviceInfo(orderDetails),
       'customer': user != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
     final path = FirebasePath.ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
-    return await firebaseRepository.setDoc(
-        '$path/${result['orderNo']}', resultData);
+    return await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
   void submitCanceledOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logCanceledByUserOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -338,23 +326,18 @@ class OrderChangeNotifier extends ChangeNotifier {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
       'customer': user != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path =
-        FirebasePath.CANCELED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
+    final path = FirebasePath.CANCELED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
   void submitPaymentFailedOrderResult(OrderEntity order) async {
     SlackChannels.send(
-      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logPaymentFailedOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -362,17 +345,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
       'customer': user != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path = FirebasePath.PAYMENT_FAILED_ORDER_RESULT_COLL_PATH
-        .replaceFirst('date', date);
+    final path = FirebasePath.PAYMENT_FAILED_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
@@ -386,17 +364,12 @@ class OrderChangeNotifier extends ChangeNotifier {
       'orderId': order.orderId,
       'orderNo': order.orderNo,
       'customer': user != null ? user!.toJson() : 'guest',
-      'createdAt':
-          DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
-      'appVersion': {
-        'android': MarkaaVersion.androidVersion,
-        'iOS': MarkaaVersion.iOSVersion
-      },
+      'createdAt': DateFormat('yyyy-MM-dd hh:mm:ss', 'en_US').format(DateTime.now()),
+      'appVersion': {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion},
       'platform': Platform.isAndroid ? 'Android' : 'IOS',
       'lang': lang
     };
-    final path = FirebasePath.PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH
-        .replaceFirst('date', date);
+    final path = FirebasePath.PAYMENT_SUCCESS_ORDER_RESULT_COLL_PATH.replaceFirst('date', date);
     await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 }

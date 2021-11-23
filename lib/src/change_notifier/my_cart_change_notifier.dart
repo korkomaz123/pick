@@ -523,7 +523,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     data['cartId'] = cartId;
     Map<String, dynamic> appVersion = {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion};
     SlackChannels.send(
-      '$env CART ERROR: ${result.toString()} \r\n ${data.toString()} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      '$env CART ERROR: ${result.toString()} \r\n ${data.toString()} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
       SlackChannels.logCartError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter_smartlook/flutter_smartlook.dart';
+import 'package:markaa/smartlook_track.dart';
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
@@ -39,18 +39,6 @@ import '../../../onesignal.dart';
 import '../../../preload.dart';
 import 'no_network_access_page.dart';
 
-class CustomIntegrationListener implements IntegrationListener {
-  void onSessionReady(String? dashboardSessionUrl) {
-    print("DashboardUrl:");
-    print(dashboardSessionUrl);
-  }
-
-  void onVisitorReady(String? dashboardVisitorUrl) {
-    print("DashboardVisitorUrl:");
-    print(dashboardVisitorUrl);
-  }
-}
-
 class MarkaaApp extends StatefulWidget {
   final String home;
   MarkaaApp({Key? key, required this.home}) : super(key: key);
@@ -66,26 +54,9 @@ class _MarkaaAppState extends State<MarkaaApp> {
   void initState() {
     super.initState();
 
-    SetupOptions options = (new SetupOptionsBuilder('ed7cae14a0a462fe8be2b38ae3460e7ae7bbbfb8')
-          ..Fps = 2
-          ..StartNewSession = true)
-        .build();
-
-    Smartlook.setupAndStartRecording(options);
-
-    Smartlook.setEventTrackingMode(EventTrackingMode.FULL_TRACKING);
-    List<EventTrackingMode> eventTrackingModes = [
-      EventTrackingMode.FULL_TRACKING,
-      EventTrackingMode.IGNORE_USER_INTERACTION
-    ];
-    Smartlook.setEventTrackingModes(eventTrackingModes);
-    Smartlook.registerIntegrationListener(new CustomIntegrationListener());
-    // Smartlook.setUserIdentifier('FlutterLul', {"flutter-usr-prop": "valueX"});
-    Smartlook.enableWebviewRecording(true);
-    Smartlook.enableCrashlytics(true);
-    Smartlook.getDashboardSessionUrl(true);
-    // Smartlook.startRecording();
-    OneSignalNotification.initOneSignalPlatform();
+    Preload.setupAdjustSDK();
+    OneSignalNotification.setupSDK();
+    SmartlookTrack.setupSDK();
 
     _localDBRepository.init();
   }
@@ -106,9 +77,7 @@ class _MarkaaAppState extends State<MarkaaApp> {
         ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
         ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
         ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
-        ChangeNotifierProvider(
-          create: (_) => AddressChangeNotifier(localDB: _localDBRepository),
-        ),
+        ChangeNotifierProvider(create: (_) => AddressChangeNotifier(localDB: _localDBRepository)),
         ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
         ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
         ChangeNotifierProvider(create: (_) => AccountChangeNotifier()),

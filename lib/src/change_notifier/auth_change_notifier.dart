@@ -73,9 +73,7 @@ class AuthChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
 
     try {
-      final result = await _signInRepository.socialLogin(
-          email, firstName, lastName, loginType, lang, appleId);
-      print(result);
+      final result = await _signInRepository.socialLogin(email, firstName, lastName, loginType, lang, appleId);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         result['user']['amount_wallet'] = result['user']['wallet'];
@@ -98,11 +96,9 @@ class AuthChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-
     try {
       await _signInRepository.logout(currentUser!.token);
       currentUser = null;
-
       if (onSuccess != null) onSuccess();
       notifyListeners();
     } catch (e) {
@@ -123,8 +119,7 @@ class AuthChangeNotifier extends ChangeNotifier {
     if (onProcess != null) onProcess();
 
     try {
-      final result = await _signInRepository.register(
-          firstName, lastName, phoneNumber, email, password);
+      final result = await _signInRepository.register(firstName, lastName, phoneNumber, email, password);
       if (result['code'] == 'SUCCESS') {
         result['user']['token'] = result['token'];
         currentUser = UserEntity.fromJson(result['user']);

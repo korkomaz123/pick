@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
-import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
@@ -16,8 +15,7 @@ import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:markaa/src/utils/services/onesignal_communicator.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:markaa/src/utils/services/communicator.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/home_advertise.dart';
@@ -53,7 +51,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
   late ProductChangeNotifier _productChangeNotifier;
 
-  late OneSignalCommunicator _oneSignalCommunicator;
+  late Communicator _communicator;
   DynamicLinkService _dynamicLinkService = DynamicLinkService();
   ScrollController _scrollController = ScrollController();
   ScrollDirection _prevDirection = ScrollDirection.forward;
@@ -109,17 +107,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    Preload.setupAdjustSDK();
-    OneSignal.shared.sendTag('lang', Preload.language).then((result) {
-      print('ONESIGNAL >>> SENT THE LANG TAG SUCCESS');
-    });
 
     _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     _productChangeNotifier = context.read<ProductChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
-    _oneSignalCommunicator = OneSignalCommunicator(context: context);
-
-    _oneSignalCommunicator.subscribeToChangeNotifiers();
+    _communicator = Communicator(context: context);
+    _communicator.subscribeToChangeNotifiers();
     _dynamicLinkService.initialDynamicLink();
     _dynamicLinkService.retrieveDynamicLink();
     _productChangeNotifier.initialize();
@@ -163,12 +156,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         controller: _scrollController,
                         child: Column(
                           children: [
-                            HomeHeaderCarousel(
-                              homeChangeNotifier: _homeProvider,
-                            ),
-                            HomeFeaturedCategories(
-                              homeChangeNotifier: _homeProvider,
-                            ),
+                            HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
+                            HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
                             HomeMegaBanner(homeChangeNotifier: _homeProvider),
                             HomeBestDeals(homeChangeNotifier: _homeProvider),
                             HomeCelebrity(homeChangeNotifier: _homeProvider),

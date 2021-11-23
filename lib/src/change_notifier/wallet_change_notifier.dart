@@ -270,7 +270,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   void reportWalletIssue(dynamic result, dynamic walletDetails) async {
     SlackChannels.send(
-      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
       SlackChannels.logAddWalletError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -311,7 +311,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   void submitCanceledWalletResult(dynamic result) async {
     SlackChannels.send(
-      '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logWalletPaymentCanceled,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -329,7 +329,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   void submitPaymentFailedWalletResult(dynamic result) async {
     SlackChannels.send(
-      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logWalletPaymentFailed,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
