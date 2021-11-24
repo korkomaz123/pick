@@ -31,8 +31,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
   late AccountChangeNotifier _accountChangeNotifier;
 
   @override
@@ -54,14 +54,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
       drawer: MarkaaSideMenu(),
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildContactUsForm(),
-        ],
+        children: [_buildAppBar(), _buildContactUsForm()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -76,10 +71,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       centerTitle: true,
       title: Text(
         'account_contact_us_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -111,10 +103,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: firstNameController,
-        style: mediumTextStyle.copyWith(
-          color: greyColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'first_name'.tr(),
@@ -136,10 +125,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: phoneNumberController,
-        style: mediumTextStyle.copyWith(
-          color: greyColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'phone_number_hint'.tr(),
@@ -171,10 +157,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: TextFormField(
         controller: emailController,
-        style: mediumTextStyle.copyWith(
-          color: greyColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'email_hint'.tr(),
@@ -198,10 +181,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: Text(
         'message_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: greyColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
       ),
     );
   }
@@ -212,10 +192,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: TextFormField(
         controller: messageController,
-        style: mediumTextStyle.copyWith(
-          color: greyColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
         decoration: InputDecoration(
           hintText: 'message_hint'.tr(),
           border: OutlineInputBorder(
@@ -282,14 +259,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
         phoneNumberController.text,
         emailController.text,
         messageController.text,
-        onProcess: () => progressService!.showProgress(),
+        onProcess: () => progressService.showProgress(),
         onSuccess: () {
-          progressService!.hideProgress();
+          progressService.hideProgress();
           Navigator.pushReplacementNamed(context, Routes.contactUsSuccess);
         },
         onFailure: (message) {
-          progressService!.hideProgress();
-          flushBarService!.showErrorDialog(message);
+          progressService.hideProgress();
+          flushBarService.showErrorDialog(message);
         },
       );
     }

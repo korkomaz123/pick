@@ -25,25 +25,16 @@ class _NoNetworkAccessPageState extends State<NoNetworkAccessPage> {
             Container(
               width: 245.w,
               height: 150.h,
-              margin: EdgeInsets.only(
-                top: 200.h,
-                bottom: 60.h,
-              ),
+              margin: EdgeInsets.only(top: 200.h, bottom: 60.h),
               child: SvgPicture.asset(noNetworkIcon),
             ),
             Text(
               'sorry'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 28.sp,
-                color: Colors.white60,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 28.sp, color: Colors.white60),
             ),
             Text(
               'no_network_access'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 20.sp,
-                color: Colors.white,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 20.sp, color: Colors.white),
             ),
             SizedBox(height: 42.h),
             Container(

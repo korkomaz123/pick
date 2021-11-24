@@ -31,11 +31,7 @@ class _HomePerfumesState extends State<HomePerfumes> {
         child: Column(
           children: [
             _buildProductView(),
-            Divider(
-              height: 0.5.h,
-              thickness: 0.5.h,
-              color: greyColor.withOpacity(0.4),
-            ),
+            Divider(height: 0.5.h, thickness: 0.5.h, color: greyColor.withOpacity(0.4)),
             _buildIndicator(),
           ],
         ),
@@ -96,74 +92,48 @@ class _HomePerfumesState extends State<HomePerfumes> {
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product:
-                        widget.homeChangeNotifier.perfumesProducts[4 * index],
+                    product: widget.homeChangeNotifier.perfumesProducts[4 * index],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
-                    onAddToCartFailure: () => widget.homeChangeNotifier
-                        .updatePerfumesProduct(4 * index),
+                    onAddToCartFailure: () => widget.homeChangeNotifier.updatePerfumesProduct(4 * index),
                   ),
-                  Container(
-                    width: 179.w,
-                    child: Divider(
-                      color: greyColor,
-                      thickness: 0.5,
-                      height: 0.5,
-                    ),
-                  ),
+                  Container(width: 179.w, child: Divider(color: greyColor, thickness: 0.5, height: 0.5)),
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: widget
-                        .homeChangeNotifier.perfumesProducts[4 * index + 1],
+                    product: widget.homeChangeNotifier.perfumesProducts[4 * index + 1],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
-                    onAddToCartFailure: () => widget.homeChangeNotifier
-                        .updatePerfumesProduct(4 * index + 1),
+                    onAddToCartFailure: () => widget.homeChangeNotifier.updatePerfumesProduct(4 * index + 1),
                   ),
                 ],
               ),
               Padding(
                 padding: EdgeInsets.only(top: 2.h),
-                child: VerticalDivider(
-                  width: 1.w,
-                  thickness: 1.w,
-                  color: greyColor.withOpacity(0.4),
-                ),
+                child: VerticalDivider(width: 1.w, thickness: 1.w, color: greyColor.withOpacity(0.4)),
               ),
               Column(
                 children: [
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: widget
-                        .homeChangeNotifier.perfumesProducts[4 * index + 2],
+                    product: widget.homeChangeNotifier.perfumesProducts[4 * index + 2],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
-                    onAddToCartFailure: () => widget.homeChangeNotifier
-                        .updatePerfumesProduct(4 * index + 2),
+                    onAddToCartFailure: () => widget.homeChangeNotifier.updatePerfumesProduct(4 * index + 2),
                   ),
-                  Container(
-                    width: 179.w,
-                    child: Divider(
-                      color: greyColor,
-                      thickness: 0.5,
-                      height: 0.5,
-                    ),
-                  ),
+                  Container(width: 179.w, child: Divider(color: greyColor, thickness: 0.5, height: 0.5)),
                   ProductVCard(
                     cardWidth: 179.w,
                     cardHeight: 290.h,
-                    product: widget
-                        .homeChangeNotifier.perfumesProducts[4 * index + 3],
+                    product: widget.homeChangeNotifier.perfumesProducts[4 * index + 3],
                     isShoppingCart: true,
                     isWishlist: true,
                     isShare: true,
-                    onAddToCartFailure: () => widget.homeChangeNotifier
-                        .updatePerfumesProduct(4 * index + 3),
+                    onAddToCartFailure: () => widget.homeChangeNotifier.updatePerfumesProduct(4 * index + 3),
                   ),
                 ],
               ),

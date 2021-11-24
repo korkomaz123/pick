@@ -65,11 +65,8 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   void _setSelectedValues() {
-    genderList =
-        filters.containsKey('Gender') ? filters['Gender']['values'] : [];
-    price = filters.containsKey('Price')
-        ? filters['Price']
-        : {'min': .0, 'max': .0};
+    genderList = filters.containsKey('Gender') ? filters['Gender']['values'] : [];
+    price = filters.containsKey('Price') ? filters['Price'] : {'min': .0, 'max': .0};
     minPrice = minPrice ?? price['min'] + .0;
     maxPrice = maxPrice ?? price['max'] + .0;
     List<String> keys = filters.keys.toList();
@@ -95,19 +92,12 @@ class _FilterPageState extends State<FilterPage> {
         backgroundColor: filterBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: primaryColor,
-            size: 22.sp,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: primaryColor, size: 22.sp),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'filter_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: primaryColor,
-            fontSize: 25.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 25.sp),
         ),
         actions: [
           Center(
@@ -117,10 +107,7 @@ class _FilterPageState extends State<FilterPage> {
                 onTap: () => _onResetAll(),
                 child: Text(
                   'filter_reset_all'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 16.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 16.sp),
                 ),
               ),
             ),
@@ -142,14 +129,7 @@ class _FilterPageState extends State<FilterPage> {
                     Column(
                       children: filters.keys.map((key) {
                         String code = filters[key]['attribute_code'];
-                        return [
-                          'price',
-                          'gender',
-                          'rating',
-                          'cat',
-                          'new',
-                          'sale'
-                        ].contains(code)
+                        return ['price', 'gender', 'rating', 'cat', 'new', 'sale'].contains(code)
                             ? SizedBox.shrink()
                             : _buildFilterOption(key, filters[key]);
                       }).toList(),
@@ -171,14 +151,8 @@ class _FilterPageState extends State<FilterPage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: FilterCategorySelect(
         items: [
-          {
-            'display': homeCategories[0].name,
-            'value': '${homeCategories[0].id}'
-          },
-          {
-            'display': homeCategories[1].name,
-            'value': '${homeCategories[1].id}'
-          },
+          {'display': homeCategories[0].name, 'value': '${homeCategories[0].id}'},
+          {'display': homeCategories[1].name, 'value': '${homeCategories[1].id}'},
         ],
         itemWidth: 160.w,
         itemHeight: 40.h,
@@ -204,11 +178,7 @@ class _FilterPageState extends State<FilterPage> {
         children: [
           Text(
             'filter_price'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-            ),
+            style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 20.sp, fontWeight: FontWeight.w600),
           ),
           Container(
             width: double.infinity,
@@ -219,11 +189,7 @@ class _FilterPageState extends State<FilterPage> {
                   ' - ' +
                   '${maxPrice!.toStringAsFixed(0)} ' +
                   'currency'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-              ),
+              style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp, fontWeight: FontWeight.w600),
             ),
           ),
           RangeSlider(
@@ -285,9 +251,7 @@ class _FilterPageState extends State<FilterPage> {
         width: 375.w,
         margin: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: primaryColor, width: 0.5),
-          ),
+          border: Border(bottom: BorderSide(color: primaryColor, width: 0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -298,10 +262,8 @@ class _FilterPageState extends State<FilterPage> {
                   width: 8.w,
                   height: 8.h,
                   decoration: BoxDecoration(
-                    color: !selectedValues!
-                                .containsKey(filterOption['attribute_code']) ||
-                            selectedValues![filterOption['attribute_code']]
-                                .isEmpty
+                    color: !selectedValues!.containsKey(filterOption['attribute_code']) ||
+                            selectedValues![filterOption['attribute_code']].isEmpty
                         ? Colors.white
                         : Colors.greenAccent,
                     shape: BoxShape.circle,
@@ -318,11 +280,7 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ],
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: primaryColor,
-              size: 20.sp,
-            ),
+            Icon(Icons.arrow_forward_ios, color: primaryColor, size: 20.sp),
           ],
         ),
       ),

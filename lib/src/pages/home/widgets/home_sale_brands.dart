@@ -32,10 +32,7 @@ class HomeSaleBrands extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
               child: Text(
                 homeChangeNotifier.saleBrandsTitle,
-                style: mediumTextStyle.copyWith(
-                  fontSize: 26.sp,
-                  color: darkColor,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 26.sp, color: darkColor),
               ),
             ),
             Container(
@@ -81,43 +78,27 @@ class HomeSaleBrands extends StatelessWidget {
           children: [
             Card(
               color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.sp),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
               elevation: 4,
               child: Container(
                 width: 110.w,
                 height: 110.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.sp),
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.sp)),
                 child: CachedNetworkImage(
-                  key: ValueKey(
-                      homeChangeNotifier.saleBrands[itemIndex].brandImage ??
-                          ''),
-                  cacheKey:
-                      homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
-                  imageUrl:
-                      homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
+                  key: ValueKey(homeChangeNotifier.saleBrands[itemIndex].brandImage ?? ''),
+                  cacheKey: homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
+                  imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandImage ?? '',
                   width: 110.w,
                   height: 110.w,
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Icon(Icons.image, size: 20)),
+                  errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                   progressIndicatorBuilder: (_, __, ___) {
                     return CachedNetworkImage(
-                      key: ValueKey(homeChangeNotifier
-                              .saleBrands[itemIndex].brandThumbnail ??
-                          ''),
-                      cacheKey: homeChangeNotifier
-                              .saleBrands[itemIndex].brandThumbnail ??
-                          '',
+                      key: ValueKey(homeChangeNotifier.saleBrands[itemIndex].brandThumbnail ?? ''),
+                      cacheKey: homeChangeNotifier.saleBrands[itemIndex].brandThumbnail ?? '',
                       width: 110.w,
                       height: 110.w,
-                      imageUrl: homeChangeNotifier
-                              .saleBrands[itemIndex].brandThumbnail ??
-                          '',
-                      errorWidget: (_, __, ___) =>
-                          Center(child: Icon(Icons.image, size: 20)),
+                      imageUrl: homeChangeNotifier.saleBrands[itemIndex].brandThumbnail ?? '',
+                      errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                     );
                   },
                 ),
@@ -141,17 +122,11 @@ class HomeSaleBrands extends StatelessWidget {
                       children: [
                         Text(
                           'discount'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 8.sp,
-                            color: Colors.white70,
-                          ),
+                          style: mediumTextStyle.copyWith(fontSize: 8.sp, color: Colors.white70),
                         ),
                         Text(
                           'up_to'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 8.sp,
-                            color: Colors.white70,
-                          ),
+                          style: mediumTextStyle.copyWith(fontSize: 8.sp, color: Colors.white70),
                         ),
                       ],
                     ),

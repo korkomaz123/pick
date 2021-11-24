@@ -34,19 +34,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     super.initState();
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     progressService = ProgressService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
+    snackBarService = SnackBarService(context: context, scaffoldKey: scaffoldKey);
   }
 
   void _onRefresh() async {
     await orderChangeNotifier!.loadOrderHistories(
       user!.token,
       lang,
-      () {
-        refreshController.refreshCompleted();
-      },
+      () => refreshController.refreshCompleted(),
     );
   }
 
@@ -67,35 +62,22 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         child: Consumer<OrderChangeNotifier>(
           builder: (_, model, __) {
             if (model.ordersMap.isEmpty) {
-              return Center(
-                child: NoAvailableData(
-                  message: 'no_orders_list'.tr(),
-                ),
-              );
+              return Center(child: NoAvailableData(message: 'no_orders_list'.tr()));
             } else {
               return SingleChildScrollView(
                 child: Column(
                   children: [
                     Container(
                       width: 375.w,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 30.h,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
                       child: Text(
-                        'items'.tr().replaceFirst(
-                            '0', '${model.ordersMap.keys.toList().length}'),
-                        style: mediumTextStyle.copyWith(
-                          color: primaryColor,
-                          fontSize: 14.sp,
-                        ),
+                        'items'.tr().replaceFirst('0', '${model.ordersMap.keys.toList().length}'),
+                        style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 14.sp),
                       ),
                     ),
                     Container(
                       width: 375.w,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Column(
                         children: model.keys.map((key) {
                           return OrderCard(order: model.ordersMap[key]!);
@@ -109,9 +91,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           },
         ),
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 }

@@ -32,10 +32,7 @@ class HomeRecent extends StatelessWidget {
           children: [
             Text(
               'home_recently_view'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 23.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 23.sp, color: greyDarkColor),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -50,17 +47,13 @@ class HomeRecent extends StatelessWidget {
                         ProductVCard(
                           cardWidth: 175.w,
                           cardHeight: 280.h,
-                          product:
-                              homeChangeNotifier.recentlyViewedProducts![index],
+                          product: homeChangeNotifier.recentlyViewedProducts![index],
                           isShoppingCart: true,
                           isWishlist: true,
                           isShare: true,
-                          onAddToCartFailure: () => homeChangeNotifier
-                              .updateRecentlyViewedProduct(index),
+                          onAddToCartFailure: () => homeChangeNotifier.updateRecentlyViewedProduct(index),
                         ),
-                        if (index <
-                            homeChangeNotifier.recentlyViewedProducts!.length -
-                                1) ...[
+                        if (index < homeChangeNotifier.recentlyViewedProducts!.length - 1) ...[
                           Container(
                             height: 280.h,
                             child: VerticalDivider(

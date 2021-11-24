@@ -24,10 +24,7 @@ class HomeCelebrity extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,
         child: Column(
-          children: [
-            _buildHeadline(),
-            _buildProductsList(),
-          ],
+          children: [_buildHeadline(), _buildProductsList()],
         ),
       );
     } else {
@@ -45,10 +42,7 @@ class HomeCelebrity extends StatelessWidget {
             child: Text(
               homeChangeNotifier.celebrityTitle,
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                fontSize: 26.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
             ),
           ),
           Container(
@@ -89,10 +83,7 @@ class HomeCelebrity extends StatelessWidget {
               return Container(
                 margin: EdgeInsets.all(2.w),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 0.5.w,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 0.5.w),
                 ),
                 child: CelebrityCard(
                   cardWidth: 100.w,

@@ -64,8 +64,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
-    if (!addressChangeNotifier!.customerAddressesMap
-        .containsKey(widget.order.address.addressId)) {
+    if (!addressChangeNotifier!.customerAddressesMap.containsKey(widget.order.address.addressId)) {
       widget.order.address = addressChangeNotifier!.customerDefaultAddress!;
     }
     _getOrderStatus();
@@ -111,8 +110,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       shippingMethods = await appRepository.getShippingMethod();
     }
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount! <=
-          myCartChangeNotifier!.reorderCartTotalPrice) {
+      if (shippingMethod.minOrderAmount! <= myCartChangeNotifier!.reorderCartTotalPrice) {
         this.shippingMethod = shippingMethod;
       } else {
         break;
@@ -180,17 +178,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _setPaymentWidget() {
     if (order!.paymentMethod.title == 'Visa Card') {
-      paymentWidget = Image.asset(
-        visaImage,
-        width: 35.w,
-        height: 20.h,
-      );
+      paymentWidget = Image.asset(visaImage, width: 35.w, height: 20.h);
     } else if (order!.paymentMethod.title == 'KNet') {
-      paymentWidget = Image.asset(
-        knetImage,
-        width: 35.w,
-        height: 20.h,
-      );
+      paymentWidget = Image.asset(knetImage, width: 35.w, height: 20.h);
     }
   }
 
@@ -200,24 +190,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
-          Column(
-            children: [
-              _buildAppBar(),
-              _buildOrder(),
-            ],
-          ),
+          Column(children: [_buildAppBar(), _buildOrder()])
         ],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -232,10 +212,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
       centerTitle: true,
       title: Text(
         'reorder_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -244,10 +221,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 20.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
           child: Column(
             children: [
               _buildOrderNo(),
@@ -275,20 +249,14 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildOrderNo() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       color: Colors.grey.shade200,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_order_no'.tr() + ' #${order!.orderNo}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           SvgPicture.asset(icon),
         ],
@@ -299,25 +267,17 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildOrderDate() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_order_date'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             order!.orderDate,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -327,25 +287,17 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildOrderStatus() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_status'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             status,
-            style: mediumTextStyle.copyWith(
-              color: color,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: color, fontSize: 14.sp),
           ),
         ],
       ),
@@ -378,9 +330,7 @@ class _ReOrderPageState extends State<ReOrderPage> {
                       ],
                     ],
                   ),
-                  if (index < (model.reorderCartItemCount - 1)) ...[
-                    Divider(color: greyColor, thickness: 0.5)
-                  ],
+                  if (index < (model.reorderCartItemCount - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
                 ],
               );
             },
@@ -393,22 +343,15 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildOrderPaymentMethod() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_payment_method'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
-          OrderPaymentMethod(
-            paymentMethod: order!.paymentMethod.id,
-          ),
+          OrderPaymentMethod(paymentMethod: order!.paymentMethod.id),
         ],
       ),
     );
@@ -418,26 +361,17 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 5.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'checkout_subtotal_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
             ),
             Text(
               '${'currency'.tr()} ${NumericService.roundString(model.reorderCartTotalPrice, 3)}',
-              style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
             ),
           ],
         ),
@@ -448,30 +382,19 @@ class _ReOrderPageState extends State<ReOrderPage> {
   Widget _buildShippingCost() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'checkout_shipping_cost_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             shippingMethod!.serviceFees == 0
                 ? 'free'.tr()
-                : 'currency'.tr() +
-                    ' ' +
-                    shippingMethod!.serviceFees.toString(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+                : 'currency'.tr() + ' ' + shippingMethod!.serviceFees.toString(),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -480,14 +403,10 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   Widget _buildTotal() {
     return Consumer<MyCartChangeNotifier>(builder: (_, model, __) {
-      double totalPrice =
-          shippingMethod!.serviceFees + model.reorderCartTotalPrice;
+      double totalPrice = shippingMethod!.serviceFees + model.reorderCartTotalPrice;
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 10.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -524,17 +443,13 @@ class _ReOrderPageState extends State<ReOrderPage> {
       color: primaryColor,
       child: Text(
         'next_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          fontSize: 17.sp,
-          color: Colors.white,
-        ),
+        style: mediumTextStyle.copyWith(fontSize: 17.sp, color: Colors.white),
       ),
     );
   }
 
   void _onDeleteOrderItem(String key) async {
-    final result = await flushBarService!
-        .showConfirmDialog(message: 'remove_reorder_item_subtitle');
+    final result = await flushBarService!.showConfirmDialog(message: 'remove_reorder_item_subtitle');
     if (result != null) {
       await myCartChangeNotifier!.removeReorderCartItem(key);
       _getShippingMethods();
@@ -543,13 +458,10 @@ class _ReOrderPageState extends State<ReOrderPage> {
 
   void _onNext() {
     if (myCartChangeNotifier!.reorderCartItemCount > 0) {
-      if (addressChangeNotifier!.customerAddressesMap
-          .containsKey(widget.order.address.addressId)) {
+      if (addressChangeNotifier!.customerAddressesMap.containsKey(widget.order.address.addressId)) {
         addressChangeNotifier!.setDefaultAddress(widget.order.address);
       }
-
       _prepareDetails();
-
       Navigator.pushNamed(context, Routes.checkout, arguments: order);
     } else {
       flushBarService!.showErrorDialog('reorder_items_error'.tr());
@@ -570,13 +482,9 @@ class _ReOrderPageState extends State<ReOrderPage> {
     totalPrice = subtotalPrice + shippingMethod!.serviceFees;
 
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['discount'] =
-        NumericService.roundString(discount, 3);
-    orderDetails['orderDetails']['totalPrice'] =
-        NumericService.roundString(totalPrice, 3);
-    orderDetails['orderDetails']['subTotalPrice'] =
-        NumericService.roundString(subtotalPrice, 3);
-    orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(shippingMethod!.serviceFees, 3);
+    orderDetails['orderDetails']['discount'] = NumericService.roundString(discount, 3);
+    orderDetails['orderDetails']['totalPrice'] = NumericService.roundString(totalPrice, 3);
+    orderDetails['orderDetails']['subTotalPrice'] = NumericService.roundString(subtotalPrice, 3);
+    orderDetails['orderDetails']['fees'] = NumericService.roundString(shippingMethod!.serviceFees, 3);
   }
 }

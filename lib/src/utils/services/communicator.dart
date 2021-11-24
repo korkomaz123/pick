@@ -66,8 +66,9 @@ class Communicator {
       OneSignal.shared.sendTag('wallet', _walletAmount);
     }
 
-    /// set user identity of the smartlook
+    /// set user identity of the smartlook, onesignal
     Map<String, dynamic> userMap = _authProvider?.currentUser?.toJson() ?? {};
+    OneSignal.shared.sendTags(userMap);
     Smartlook.setUserIdentifier('user_identity', {'authenticated': authenticated, ...userMap});
   }
 }

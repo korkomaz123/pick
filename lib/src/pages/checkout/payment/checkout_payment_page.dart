@@ -28,22 +28,17 @@ class CheckoutPaymentPage extends StatefulWidget {
   _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
 }
 
-class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
-    with WidgetsBindingObserver {
+class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> with WidgetsBindingObserver {
   WebViewController? webViewController;
 
   late OrderChangeNotifier orderChangeNotifier;
   late MyCartChangeNotifier myCartChangeNotifier;
-
   late ProgressService progressService;
   late FlushBarService flushBarService;
-
   LocalStorageRepository localStorageRepo = LocalStorageRepository();
-
   String? url;
   OrderEntity? order;
   OrderEntity? reorder;
-
   bool isLoading = true;
   bool isProgress = true;
 
@@ -53,10 +48,8 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     WidgetsBinding.instance!.addObserver(this);
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-
     orderChangeNotifier = context.read<OrderChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
-
     url = widget.params['url'];
     order = widget.params['order'];
     reorder = widget.params['reorder'];
@@ -73,17 +66,14 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       flushBarService.showErrorDialog('Please try again later.');
       return;
     }
-    final result = await flushBarService.showConfirmDialog(
-        message: 'payment_abort_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'payment_abort_dialog_text');
     if (result != null) {
       /// activate the current shopping cart
       await myCartChangeNotifier.activateCart();
 
       /// cancel the order
       await orderChangeNotifier.cancelFullOrder(order!,
-          onProcess: _onCancelProcess,
-          onSuccess: _onCanceledSuccess,
-          onFailure: _onCanceledFailure);
+          onProcess: _onCancelProcess, onSuccess: _onCanceledSuccess, onFailure: _onCanceledFailure);
     }
   }
 
@@ -111,19 +101,12 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 25.sp,
-              color: greyColor,
-            ),
+            icon: Icon(Icons.arrow_back_ios, size: 25.sp, color: greyColor),
             onPressed: _onBack,
           ),
           title: Text(
             'payment_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 23.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 23.sp),
           ),
         ),
         body: Stack(
@@ -163,10 +146,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     try {
       Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
-
-      print('LOADING URL>>> $loadingUrl');
-      print('PARAMS>>> $params');
-
       if (params.containsKey('result')) {
         if (params['result'] == 'failed') {
           if (user != null) orderChangeNotifier.removeOrder(order!);

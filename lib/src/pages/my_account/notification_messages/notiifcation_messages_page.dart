@@ -12,8 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NotificationMessagesPage extends StatefulWidget {
   @override
-  _NotificationMessagesPageState createState() =>
-      _NotificationMessagesPageState();
+  _NotificationMessagesPageState createState() => _NotificationMessagesPageState();
 }
 
 class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
@@ -26,14 +25,9 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildMessageList(),
-        ],
+        children: [_buildAppBar(), _buildMessageList()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -47,10 +41,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
       centerTitle: true,
       title: Text(
         'account_notification_message_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -70,10 +61,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
                 ),
                 child: Container(
                   width: 375.w,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 10.h,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                   margin: EdgeInsets.only(bottom: 4.h),
                   color: Colors.white,
                   child: Row(
@@ -85,25 +73,17 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
                           children: [
                             Text(
                               messages[index].time,
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 9.sp,
-                              ),
+                              style: mediumTextStyle.copyWith(fontSize: 9.sp),
                             ),
                             Text(
                               messages[index].title,
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 13.sp,
-                                color: primaryColor,
-                              ),
+                              style: mediumTextStyle.copyWith(fontSize: 13.sp, color: primaryColor),
                             ),
                             Text(
                               messages[index].content,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 13.sp,
-                                color: greyColor,
-                              ),
+                              style: mediumTextStyle.copyWith(fontSize: 13.sp, color: greyColor),
                             ),
                           ],
                         ),
@@ -111,11 +91,7 @@ class _NotificationMessagesPageState extends State<NotificationMessagesPage> {
                       Expanded(
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: primaryColor,
-                            size: 22.sp,
-                          ),
+                          child: Icon(Icons.arrow_forward_ios, color: primaryColor, size: 22.sp),
                         ),
                       ),
                     ],

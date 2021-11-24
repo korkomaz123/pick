@@ -6,15 +6,12 @@ import 'package:markaa/preload.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 
 import 'home_loading_widget.dart';
 
@@ -28,8 +25,6 @@ class HomeBestWatches extends StatefulWidget {
 }
 
 class _HomeBestWatchesState extends State<HomeBestWatches> {
-  final ProductRepository productRepository = ProductRepository();
-
   int activeIndex = 0;
 
   Widget build(BuildContext context) {
@@ -61,9 +56,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                 child: Text(
                   widget.homeChangeNotifier.bestWatchesTitle,
                   maxLines: 1,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 26.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 26.sp),
                 ),
               ),
               Container(
@@ -77,8 +70,7 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   borderColor: primaryColor,
                   borderWidth: Preload.language == 'en' ? 1 : 0.5,
                   radius: 0,
-                  onPressed: () =>
-                      _onLink(widget.homeChangeNotifier.bestWatchesViewAll!),
+                  onPressed: () => ActionHandler.onClickBanner(widget.homeChangeNotifier.bestWatchesViewAll!, context),
                 ),
               ),
             ],
@@ -92,17 +84,15 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
               return Row(
                 children: [
                   InkWell(
-                    onTap: () => _onLink(item),
+                    onTap: () => ActionHandler.onClickBanner(item, context),
                     child: CachedNetworkImage(
                       key: ValueKey(item.bannerImage ?? ''),
                       cacheKey: item.bannerImage ?? '',
                       width: banners.length == 1 ? 375.w : 340.w,
-                      height:
-                          (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                      height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                       imageUrl: item.bannerImage ?? '',
                       fit: BoxFit.fitHeight,
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.image, size: 20)),
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                     ),
                   ),
                   if (index < banners.length - 1) ...[SizedBox(width: 5.w)],
@@ -134,52 +124,10 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
-            onAddToCartFailure: () =>
-                widget.homeChangeNotifier.updateBestWatchesProduct(index),
+            onAddToCartFailure: () => widget.homeChangeNotifier.updateBestWatchesProduct(index),
           ),
         ),
       ),
     );
-  }
-
-  _onLink(SliderImageEntity banner) async {
-    if (banner.categoryId != null) {
-      final arguments = ProductListArguments(
-        category: CategoryEntity(
-          id: banner.categoryId!,
-          name: banner.categoryName!,
-        ),
-        brand: null,
-        subCategory: [],
-        selectedSubCategoryIndex: 0,
-        isFromBrand: false,
-      );
-      Navigator.pushNamed(
-        context,
-        Routes.productList,
-        arguments: arguments,
-      );
-    } else if (banner.brand != null) {
-      final arguments = ProductListArguments(
-        category: null,
-        brand: banner.brand,
-        subCategory: [],
-        selectedSubCategoryIndex: 0,
-        isFromBrand: true,
-      );
-      Navigator.pushNamed(
-        context,
-        Routes.productList,
-        arguments: arguments,
-      );
-    } else if (banner.productId != null) {
-      final product = await productRepository.getProduct(banner.productId!);
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Routes.product,
-        (route) => route.settings.name == Routes.home,
-        arguments: product,
-      );
-    }
   }
 }

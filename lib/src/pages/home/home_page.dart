@@ -144,9 +144,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Consumer<HomeChangeNotifier>(
             builder: (_, __, ___) {
               return RefreshIndicator(
-                onRefresh: () async {
-                  _loadHomePage();
-                },
+                onRefresh: () => _loadHomePage(),
                 color: primaryColor,
                 child: Column(
                   children: [

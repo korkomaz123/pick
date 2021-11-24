@@ -47,17 +47,11 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                     children: [
                       Text(
                         'checkout_subtotal_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                       ),
                       Text(
                         'currency'.tr() + ' ${widget.details['subTotalPrice']}',
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                       )
                     ],
                   ),
@@ -91,19 +85,13 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                     children: [
                       Text(
                         'checkout_shipping_cost_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                       ),
                       Text(
                         double.parse(widget.details['fees']) == .0
                             ? 'free'.tr()
                             : 'currency'.tr() + ' ${widget.details['fees']}',
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                       )
                     ],
                   ),
@@ -129,17 +117,11 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                       Row(
                         children: [
                           Text(
-                            'currency'.tr() +
-                                ' ${widget.details['totalPrice']}',
-                            style: mediumTextStyle.copyWith(
-                              color: greyColor,
-                              fontSize: 18.sp,
-                            ),
+                            'currency'.tr() + ' ${widget.details['totalPrice']}',
+                            style: mediumTextStyle.copyWith(color: greyColor, fontSize: 18.sp),
                           ),
                           Icon(
-                            isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
+                            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                             color: primaryColor,
                             size: 30.sp,
                           ),

@@ -110,8 +110,7 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
 
   Widget _buildItem(int index) {
     bool isSingleSelected = widget.value == widget.items[index]['value'];
-    bool isMultiSelected =
-        widget.values!.indexOf(widget.items[index]['value']) >= 0;
+    bool isMultiSelected = widget.values!.indexOf(widget.items[index]['value']) >= 0;
     bool isSelected = isSingleSelected || isMultiSelected;
     return Container(
       width: widget.itemWidth,
@@ -126,9 +125,7 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(widget.radius)),
               side: BorderSide(
-                color: isSelected
-                    ? widget.selectedBorderColor
-                    : widget.unSelectedBorderColor,
+                color: isSelected ? widget.selectedBorderColor : widget.unSelectedBorderColor,
                 width: 1,
               ),
             ),
@@ -136,9 +133,7 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
               child: Text(
                 widget.items[index]['display'],
                 style: TextStyle(
-                  color: isSelected
-                      ? widget.selectedTitleColor
-                      : widget.unSelectedTitleColor,
+                  color: isSelected ? widget.selectedTitleColor : widget.unSelectedTitleColor,
                   fontSize: widget.titleSize,
                 ),
               ),
@@ -156,8 +151,6 @@ class _FilterCustomOptionState extends State<FilterCustomOption> {
                 ),
               ),
             )
-          ] else ...[
-            SizedBox.shrink()
           ],
         ],
       ),

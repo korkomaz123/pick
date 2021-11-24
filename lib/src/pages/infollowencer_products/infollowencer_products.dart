@@ -22,8 +22,7 @@ class InfollowencerProductsPage extends StatefulWidget {
   InfollowencerProductsPage({this.arguments});
 
   @override
-  _InfollowencerProductsPageState createState() =>
-      _InfollowencerProductsPageState();
+  _InfollowencerProductsPageState createState() => _InfollowencerProductsPageState();
 }
 
 class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
@@ -34,12 +33,15 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
   List<dynamic> items = [];
   dynamic _info = {};
   bool isLoading = true;
+
   void getAllCelebrities() async {
     items = [];
     setState(() => isLoading = true);
-    final result = await Api.getMethod(EndPoints.celebrityProducts,
-        data: {'lang': lang, 'customerId': widget.arguments['id'].toString()},
-        extra: {"refresh": true});
+    final result = await Api.getMethod(
+      EndPoints.celebrityProducts,
+      data: {'lang': lang, 'customerId': widget.arguments['id'].toString()},
+      extra: {"refresh": true},
+    );
     if (result['code'] == 'SUCCESS') {
       items = result['items'];
       _info = result['userinfo'];
@@ -58,10 +60,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
@@ -78,10 +77,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Divider(
-                      color: Colors.blue,
-                      height: 5,
-                    ),
+                    Divider(color: Colors.blue, height: 5),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Container(
@@ -124,11 +120,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
         height: 40.h,
         color: primarySwatchColor,
         alignment: Alignment.center,
-        padding: EdgeInsets.only(
-          left: 10.w,
-          right: 10.w,
-          bottom: 10.h,
-        ),
+        padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
@@ -138,11 +130,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
+                    child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
                     onTap: () => Navigator.pop(context),
                   ),
                 ],
@@ -152,10 +140,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
               alignment: Alignment.center,
               child: Text(
                 '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: 17.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
               ),
             )
           ],
@@ -200,8 +185,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                     fontFamily: 'AvenirMedium',
                   ),
                 ),
-                if (_info['coupon'] != null &&
-                    _info['coupon'].toString().isNotEmpty)
+                if (_info['coupon'] != null && _info['coupon'].toString().isNotEmpty)
                   RichText(
                     text: TextSpan(
                       text: '${'coupon'.tr()} : ',
@@ -224,12 +208,8 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                       ],
                     ),
                   ),
-                Expanded(
-                  child: Container(),
-                ),
-                Text(
-                  'items'.tr().replaceAll('0', items.length.toString()),
-                ),
+                Expanded(child: Container()),
+                Text('items'.tr().replaceAll('0', items.length.toString())),
               ],
             ),
             SizedBox(width: 20),

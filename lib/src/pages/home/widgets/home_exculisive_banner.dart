@@ -1,20 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
-import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'home_loading_widget.dart';
 
 class HomeExculisiveBanner extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
+
   HomeExculisiveBanner({required this.homeChangeNotifier});
 
   @override
@@ -22,7 +20,6 @@ class HomeExculisiveBanner extends StatefulWidget {
 }
 
 class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
-  final ProductRepository productRepository = ProductRepository();
   int activeIndex = 0;
 
   @override
@@ -41,56 +38,14 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
               curve: Curves.easeInOutCubic,
               onIndexChanged: (value) => setState(() => activeIndex = value),
               itemBuilder: (context, index) {
-                final banner =
-                    widget.homeChangeNotifier.exculisiveBanners![index];
+                final banner = widget.homeChangeNotifier.exculisiveBanners![index];
                 return InkWell(
-                  onTap: () async {
-                    if (banner.categoryId != null) {
-                      final arguments = ProductListArguments(
-                        category: CategoryEntity(
-                          id: banner.categoryId!,
-                          name: banner.categoryName!,
-                        ),
-                        brand: null,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: false,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner.brand != null) {
-                      final arguments = ProductListArguments(
-                        category: null,
-                        brand: banner.brand,
-                        subCategory: [],
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    } else if (banner.productId != null) {
-                      final product =
-                          await productRepository.getProduct(banner.productId!);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.product,
-                        (route) => route.settings.name == Routes.home,
-                        arguments: product,
-                      );
-                    }
-                  },
+                  onTap: () => ActionHandler.onClickBanner(banner, context),
                   child: CachedNetworkImage(
                     key: ValueKey(banner.bannerImage ?? ''),
                     cacheKey: banner.bannerImage ?? '',
                     imageUrl: banner.bannerImage ?? '',
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.image, size: 20)),
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 );
               },

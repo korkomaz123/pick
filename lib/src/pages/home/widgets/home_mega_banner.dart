@@ -44,8 +44,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
                 curve: Curves.easeInOutCubic,
                 onIndexChanged: (value) => setState(() => activeIndex = value),
                 itemBuilder: (context, index) {
-                  return _buildBannerItem(
-                      widget.homeChangeNotifier.megaBanners[index]);
+                  return _buildBannerItem(widget.homeChangeNotifier.megaBanners[index]);
                 },
               ),
             ),
@@ -82,10 +81,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
       onTap: () async {
         if (banner.categoryId != null) {
           if (banner.categoryId == "1447") {
-            Navigator.pushNamed(
-              Preload.navigatorKey!.currentContext!,
-              Routes.summerCollection,
-            );
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.summerCollection);
           } else {
             final arguments = ProductListArguments(
               category: CategoryEntity(
@@ -117,8 +113,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
             arguments: arguments,
           );
         } else if (banner.productId != null) {
-          final product =
-              await ProductRepository().getProduct(banner.productId!);
+          final product = await ProductRepository().getProduct(banner.productId!);
           Navigator.pushNamedAndRemoveUntil(
             Preload.navigatorKey!.currentContext!,
             Routes.product,

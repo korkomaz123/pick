@@ -57,10 +57,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             child: Text(
               'brands_title'.tr(),
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: 26.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 26.sp),
             ),
           ),
           Container(
@@ -89,9 +86,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildStoresSlider() {
-    int length = widget.homeChangeNotifier.brandList.length > 20
-        ? 20
-        : widget.homeChangeNotifier.brandList.length;
+    int length = widget.homeChangeNotifier.brandList.length > 20 ? 20 : widget.homeChangeNotifier.brandList.length;
     return Expanded(
       child: Stack(
         children: [
@@ -119,11 +114,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
+                    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                   },
                   child: CachedNetworkImage(
                     key: ValueKey(brand.brandImage),
@@ -141,8 +132,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                         width: designWidth.w,
                         height: 200.h,
                         fit: BoxFit.fitHeight,
-                        errorWidget: (_, __, ___) =>
-                            Center(child: Icon(Icons.image, size: 20)),
+                        errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                       );
                     },
                   ),

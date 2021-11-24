@@ -14,34 +14,40 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 
 import '../../../../preload.dart';
 import 'home_loading_widget.dart';
 
-class HomeSmartTech extends StatelessWidget {
+class HomeSmartTech extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
-  final ProductRepository productRepository = ProductRepository();
 
   HomeSmartTech({required this.homeChangeNotifier});
 
   @override
+  State<HomeSmartTech> createState() => _HomeSmartTechState();
+}
+
+class _HomeSmartTechState extends State<HomeSmartTech> {
+  final ProductRepository productRepository = ProductRepository();
+
+  @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.smartTechBanners.isNotEmpty ||
-        homeChangeNotifier.smartTechItems.isNotEmpty) {
+    if (widget.homeChangeNotifier.smartTechBanners.isNotEmpty || widget.homeChangeNotifier.smartTechItems.isNotEmpty) {
       return Container(
         width: designWidth.w,
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
-            if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
-              _buildBanners(homeChangeNotifier.smartTechBanners)
+            if (widget.homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
+              _buildBanners(widget.homeChangeNotifier.smartTechBanners)
             ],
             SizedBox(height: 10.h),
-            if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+            if (widget.homeChangeNotifier.smartTechItems.isNotEmpty) ...[
               _buildProducts(
-                homeChangeNotifier.smartTechTitle,
-                homeChangeNotifier.smartTechCategory!,
-                homeChangeNotifier.smartTechItems,
+                widget.homeChangeNotifier.smartTechTitle,
+                widget.homeChangeNotifier.smartTechCategory!,
+                widget.homeChangeNotifier.smartTechItems,
               )
             ],
           ],
@@ -58,54 +64,12 @@ class HomeSmartTech extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 5.h),
           color: Colors.white,
           child: InkWell(
-            onTap: () async {
-              if (banner.categoryId != null) {
-                final arguments = ProductListArguments(
-                  category: CategoryEntity(
-                    id: banner.categoryId!,
-                    name: banner.categoryName!,
-                  ),
-                  brand: null,
-                  subCategory: [],
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: false,
-                );
-                Navigator.pushNamed(
-                  Preload.navigatorKey!.currentContext!,
-                  Routes.productList,
-                  arguments: arguments,
-                );
-              } else if (banner.brand != null) {
-                final arguments = ProductListArguments(
-                  category: null,
-                  brand: banner.brand,
-                  subCategory: [],
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: true,
-                );
-                Navigator.pushNamed(
-                  Preload.navigatorKey!.currentContext!,
-                  Routes.productList,
-                  arguments: arguments,
-                );
-              } else if (banner.productId != null) {
-                final product =
-                    await productRepository.getProduct(banner.productId!);
-                Navigator.pushNamedAndRemoveUntil(
-                  Preload.navigatorKey!.currentContext!,
-                  Routes.product,
-                  (route) => route.settings.name == Routes.home,
-                  arguments: product,
-                );
-              }
-            },
+            onTap: () => ActionHandler.onClickBanner(banner, context),
             child: CachedNetworkImage(
               key: ValueKey(banner.bannerImage ?? ''),
               cacheKey: banner.bannerImage ?? '',
               imageUrl: banner.bannerImage ?? '',
-              errorWidget: (context, url, error) => Center(
-                child: Icon(Icons.image, size: 20),
-              ),
+              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
             ),
           ),
         );
@@ -113,11 +77,7 @@ class HomeSmartTech extends StatelessWidget {
     );
   }
 
-  Widget _buildProducts(
-    String title,
-    CategoryEntity category,
-    List<ProductModel> list,
-  ) {
+  Widget _buildProducts(String title, CategoryEntity category, List<ProductModel> list) {
     return Container(
       padding: EdgeInsets.only(bottom: 20.h),
       color: Colors.white,
@@ -129,12 +89,7 @@ class HomeSmartTech extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 26.sp,
-                  ),
-                ),
+                Text(title, style: mediumTextStyle.copyWith(fontSize: 26.sp)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
                   height: 30.h,

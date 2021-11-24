@@ -125,9 +125,7 @@ class _AddressFormState extends State<AddressForm> {
         child: Column(
           children: [
             Align(
-              alignment: Preload.language == 'en'
-                  ? Alignment.topRight
-                  : Alignment.topLeft,
+              alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
               child: IconButton(
                 icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
                 onPressed: () => Navigator.pop(context),
@@ -136,10 +134,7 @@ class _AddressFormState extends State<AddressForm> {
             Center(
               child: Text(
                 'shipping_address_title'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 22.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 22.sp),
               ),
             ),
             SizedBox(height: 10.h),
@@ -210,8 +205,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.h,
                         fontSize: 14.sp,
                         hint: 'checkout_state_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         readOnly: true,
                         onTap: _onSelectState,
@@ -239,8 +233,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.w,
                         fontSize: 14.sp,
                         hint: 'checkout_street_name_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         suffixIcon: IconButton(
                           onPressed: _onSearchAddress,
@@ -254,8 +247,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.h,
                         fontSize: 14.sp,
                         hint: 'checkout_city_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         maxLine: 3,
                       ),
@@ -280,25 +272,17 @@ class _AddressFormState extends State<AddressForm> {
         onPressed: () => _onSave(),
         color: primaryColor,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Text(
           'checkout_save_address_button_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: Colors.white,
-            fontSize: 16.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 16.sp),
         ),
       ),
     );
   }
 
   void _onSearchAddress() async {
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.searchAddress,
-    );
+    final result = await Navigator.pushNamed(context, Routes.searchAddress);
     FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
@@ -364,14 +348,10 @@ class _AddressFormState extends State<AddressForm> {
       );
       if (user != null) {
         await model.changeCustomerAddress(isNew, user!.token, address,
-            onProcess: _onProcess,
-            onSuccess: _onSuccess,
-            onFailure: _onFailure);
+            onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
       } else {
         await model.changeGuestAddress(isNew, address.toJson(),
-            onProcess: _onProcess,
-            onSuccess: _onSuccess,
-            onFailure: _onFailure);
+            onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
       }
     }
   }

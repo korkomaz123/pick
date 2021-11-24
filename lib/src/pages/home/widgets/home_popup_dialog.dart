@@ -3,11 +3,8 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/data/models/category_entity.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/utils/repositories/product_repository.dart';
+import 'package:markaa/src/utils/services/action_handler.dart';
 
 class HomePopupDialog extends StatefulWidget {
   final SliderImageEntity item;
@@ -18,10 +15,7 @@ class HomePopupDialog extends StatefulWidget {
   _HomePopupDialogState createState() => _HomePopupDialogState();
 }
 
-class _HomePopupDialogState extends State<HomePopupDialog>
-    with WidgetsBindingObserver {
-  final ProductRepository productRepository = ProductRepository();
-
+class _HomePopupDialogState extends State<HomePopupDialog> with WidgetsBindingObserver {
   Future<Image> get cachedImage => _loadPrecachedImage();
 
   Future<Image> _loadPrecachedImage() async {
@@ -50,46 +44,7 @@ class _HomePopupDialogState extends State<HomePopupDialog>
                     Padding(
                       padding: EdgeInsets.all(10.w),
                       child: InkWell(
-                        onTap: () async {
-                          if (widget.item.categoryId != null) {
-                            final arguments = ProductListArguments(
-                              category: CategoryEntity(
-                                id: widget.item.categoryId!,
-                                name: widget.item.categoryName!,
-                              ),
-                              brand: null,
-                              subCategory: [],
-                              selectedSubCategoryIndex: 0,
-                              isFromBrand: false,
-                            );
-                            Navigator.popAndPushNamed(
-                              context,
-                              Routes.productList,
-                              arguments: arguments,
-                            );
-                          } else if (widget.item.brand != null) {
-                            final arguments = ProductListArguments(
-                              category: null,
-                              brand: widget.item.brand,
-                              subCategory: [],
-                              selectedSubCategoryIndex: 0,
-                              isFromBrand: true,
-                            );
-                            Navigator.popAndPushNamed(
-                              context,
-                              Routes.productList,
-                              arguments: arguments,
-                            );
-                          } else if (widget.item.productId != null) {
-                            final product = await productRepository
-                                .getProduct(widget.item.productId!);
-                            Navigator.popAndPushNamed(
-                              context,
-                              Routes.product,
-                              arguments: product,
-                            );
-                          }
-                        },
+                        onTap: () => ActionHandler.onClickBanner(widget.item, context),
                         child: snapshot.data,
                       ),
                     ),

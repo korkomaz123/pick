@@ -28,8 +28,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
   late AccountChangeNotifier _accountChangeNotifier;
 
   @override
@@ -86,10 +86,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       centerTitle: true,
       title: Text(
         'account_update_profile_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -185,23 +182,22 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   void _onSave() {
     if (formKey.currentState!.validate()) {
-      _accountChangeNotifier.updatePassword(
-          user!.token, oldPasswordController.text, newPasswordController.text,
+      _accountChangeNotifier.updatePassword(user!.token, oldPasswordController.text, newPasswordController.text,
           onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     }
   }
 
   _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   _onFailure(String message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   _onSuccess() async {
-    progressService!.hideProgress();
+    progressService.hideProgress();
     await showDialog(
       context: context,
       builder: (context) {

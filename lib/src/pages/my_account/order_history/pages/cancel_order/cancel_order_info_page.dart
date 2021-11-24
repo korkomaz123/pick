@@ -81,10 +81,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Column(
         children: [
@@ -94,11 +91,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
               child: Form(
                 key: formKey,
                 child: Column(
-                  children: [
-                    _buildAdditionalInfo(),
-                    _buildImageUploader(),
-                    _buildSubmitButton(),
-                  ],
+                  children: [_buildAdditionalInfo(), _buildImageUploader(), _buildSubmitButton()],
                 ),
               ),
             ),
@@ -119,10 +112,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
       centerTitle: true,
       title: Text(
         'cancel_order_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -213,10 +203,7 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
         color: primaryColor,
         child: Text(
           'submit_button_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            fontSize: 17.sp,
-            color: Colors.white,
-          ),
+          style: mediumTextStyle.copyWith(fontSize: 17.sp, color: Colors.white),
         ),
       ),
     );

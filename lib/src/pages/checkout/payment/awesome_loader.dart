@@ -20,8 +20,7 @@ class AwesomeLoader extends StatefulWidget {
   _AwesomeLoaderState createState() => _AwesomeLoaderState();
 }
 
-class _AwesomeLoaderState extends State<AwesomeLoader>
-    with TickerProviderStateMixin {
+class _AwesomeLoaderState extends State<AwesomeLoader> with TickerProviderStateMixin {
   Animation<double>? outerAnimation;
   Animation<double>? innerAnimation;
   AnimationController? outerController;
@@ -69,31 +68,23 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
     }
 
     // controls the smoothness of the arc animation
-    arcIncrement = 2 *
-        2 *
-        (100 - minimumArcSize + (100 * 0.1)) *
-        (1 - staticStatePercent) *
-        (TIME_PORTION / widget.duration);
+    arcIncrement =
+        2 * 2 * (100 - minimumArcSize + (100 * 0.1)) * (1 - staticStatePercent) * (TIME_PORTION / widget.duration);
 
     /// determines the size of the rect in initially [0-100]
     endRectSize = 100;
 
-    outerController = AnimationController(
-        duration: Duration(milliseconds: widget.duration), vsync: this);
+    outerController = AnimationController(duration: Duration(milliseconds: widget.duration), vsync: this);
 
-    innerController = AnimationController(
-        duration: Duration(milliseconds: widget.duration), vsync: this);
+    innerController = AnimationController(duration: Duration(milliseconds: widget.duration), vsync: this);
 
     /// rotates three times per duration
-    outerAnimation = Tween<double>(begin: 0, end: 3).animate(CurvedAnimation(
-        parent: outerController!,
-        curve: const Interval(0.0, 1.0, curve: Curves.linear)));
+    outerAnimation = Tween<double>(begin: 0, end: 3)
+        .animate(CurvedAnimation(parent: outerController!, curve: const Interval(0.0, 1.0, curve: Curves.linear)));
 
     /// rotates three rotations per duration
-    innerAnimation = Tween<double>(begin: 3.0, end: 0.0).animate(
-        CurvedAnimation(
-            parent: innerController!,
-            curve: const Interval(0.0, 1.0, curve: Curves.linear)));
+    innerAnimation = Tween<double>(begin: 3.0, end: 0.0)
+        .animate(CurvedAnimation(parent: innerController!, curve: const Interval(0.0, 1.0, curve: Curves.linear)));
 
     /// if there is no controller, start the loader immediatly
     if (widget.controller == null) {
@@ -110,8 +101,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
             turns: outerAnimation!,
             child: CustomPaint(
               //  /50 to return a range from  to 0-2
-              painter: OuterArcPainter(widget.outerColor, startRectSize / 50.0,
-                  endRectSize / 50.0, widget.strokeWidth),
+              painter: OuterArcPainter(widget.outerColor, startRectSize / 50.0, endRectSize / 50.0, widget.strokeWidth),
               child: Container(
                 width: 200.0,
                 height: 200.0,
@@ -121,8 +111,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
           RotationTransition(
             turns: innerAnimation!,
             child: CustomPaint(
-              painter: InnerArcPainter(widget.innerColor, startRectSize / 50.0,
-                  endRectSize / 50.0, widget.strokeWidth),
+              painter: InnerArcPainter(widget.innerColor, startRectSize / 50.0, endRectSize / 50.0, widget.strokeWidth),
               child: Container(
                 width: 200.0,
                 height: 200.0,
@@ -212,8 +201,7 @@ class _AwesomeLoaderState extends State<AwesomeLoader>
 }
 
 class OuterArcPainter extends CustomPainter {
-  OuterArcPainter(
-      this.color, this.startRectSize, this.endRectSize, this.strokeWidth);
+  OuterArcPainter(this.color, this.startRectSize, this.endRectSize, this.strokeWidth);
 
   final Color color;
   final double endRectSize;
@@ -229,8 +217,7 @@ class OuterArcPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final Rect outerRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
-    canvas.drawArc(
-        outerRect, startRectSize * pi, endRectSize * pi, false, outerPaint);
+    canvas.drawArc(outerRect, startRectSize * pi, endRectSize * pi, false, outerPaint);
   }
 
   @override
@@ -259,14 +246,10 @@ class InnerArcPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
-    final Rect innerRect = Rect.fromLTWH(
-        0.0 + (0.35 * size.width) / 2,
-        0.0 + (0.35 * size.height) / 2,
-        size.width - 0.35 * size.width,
-        size.height - 0.35 * size.height);
+    final Rect innerRect = Rect.fromLTWH(0.0 + (0.35 * size.width) / 2, 0.0 + (0.35 * size.height) / 2,
+        size.width - 0.35 * size.width, size.height - 0.35 * size.height);
 
-    canvas.drawArc(
-        innerRect, -startRectSize * pi, -endRectSize * pi, false, innerPaint);
+    canvas.drawArc(innerRect, -startRectSize * pi, -endRectSize * pi, false, innerPaint);
   }
 
   @override

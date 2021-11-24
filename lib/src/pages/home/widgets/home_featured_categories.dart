@@ -34,8 +34,7 @@ class HomeFeaturedCategories extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            ProductListArguments arguments =
-                                ProductListArguments(
+                            ProductListArguments arguments = ProductListArguments(
                               category: category,
                               subCategory: [],
                               brand: null,
@@ -53,18 +52,15 @@ class HomeFeaturedCategories extends StatelessWidget {
                             height: 70.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border:
-                                  Border.all(color: primaryColor, width: 2.w),
+                              border: Border.all(color: primaryColor, width: 2.w),
                             ),
                             child: CachedNetworkImage(
                               key: ValueKey(category.imageUrl),
                               cacheKey: category.imageUrl,
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(backgroundImage: imageProvider),
+                              imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
                               imageUrl: category.imageUrl ?? '',
                               fit: BoxFit.cover,
-                              errorWidget: (context, url, error) =>
-                                  Center(child: Icon(Icons.image, size: 20)),
+                              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                             ),
                           ),
                         ),
@@ -76,10 +72,7 @@ class HomeFeaturedCategories extends StatelessWidget {
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
-                            style: mediumTextStyle.copyWith(
-                              fontSize: 10.sp,
-                              color: greyDarkColor,
-                            ),
+                            style: mediumTextStyle.copyWith(fontSize: 10.sp, color: greyDarkColor),
                           ),
                         ),
                       ],

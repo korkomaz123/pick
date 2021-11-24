@@ -25,6 +25,7 @@ class HomeExploreCategories extends StatefulWidget {
 
 class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   int activeIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     if (widget.homeChangeNotifier.categories.isNotEmpty) {
@@ -34,10 +35,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitle(),
-            _buildCategorySliders(),
-          ],
+          children: [_buildTitle(), _buildCategorySliders()],
         ),
       );
     } else {
@@ -55,10 +53,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             child: Text(
               'home_categories'.tr(),
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: 26.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 26.sp),
             ),
           ),
           Container(
@@ -73,10 +68,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               borderWidth: Preload.language == 'en' ? 1 : 0.5,
               radius: 0,
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.categoryList,
-                );
+                Navigator.pushNamed(context, Routes.categoryList);
               },
             ),
           ),
@@ -86,6 +78,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
   }
 
   Widget _buildCategorySliders() {
+    int categoryLength = widget.homeChangeNotifier.categories.length;
     return Container(
       width: designWidth.w,
       height: 250.h,
@@ -95,9 +88,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             width: designWidth.w,
             height: 250.h,
             child: Swiper(
-              itemCount: widget.homeChangeNotifier.categories.length > 10
-                  ? 10
-                  : widget.homeChangeNotifier.categories.length,
+              itemCount: categoryLength > 10 ? 10 : categoryLength,
               autoplay: false,
               curve: Curves.easeIn,
               duration: 300,
@@ -119,9 +110,7 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
               padding: EdgeInsets.only(bottom: 20.h),
               child: SmoothIndicator(
                 offset: activeIndex.toDouble(),
-                count: widget.homeChangeNotifier.categories.length > 10
-                    ? 10
-                    : widget.homeChangeNotifier.categories.length,
+                count: categoryLength > 10 ? 10 : categoryLength,
                 axisDirection: Axis.horizontal,
                 effect: SlideEffect(
                   spacing: 8.0,

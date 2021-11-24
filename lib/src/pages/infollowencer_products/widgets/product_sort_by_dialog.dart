@@ -18,24 +18,15 @@ class ProductSortByDialog extends StatelessWidget {
           children: [
             Container(
               width: 375.w,
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               alignment: Alignment.center,
               child: Text(
                 "sort".tr(),
                 textAlign: TextAlign.center,
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 26.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 26.sp),
               ),
             ),
-            Divider(
-              thickness: 0.8,
-              color: greyColor.withOpacity(0.6),
-            ),
+            Divider(thickness: 0.8, color: greyColor.withOpacity(0.6)),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
@@ -48,25 +39,16 @@ class ProductSortByDialog extends StatelessWidget {
                         onTap: () => Navigator.pop(context, sortByList[index]),
                         child: Container(
                           width: 375.w,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 4.h,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                           alignment: Alignment.center,
                           child: Text(
                             sortByList[index].tr(),
                             textAlign: TextAlign.center,
-                            style: mediumTextStyle.copyWith(
-                              color: primaryColor,
-                              fontSize: 16.sp,
-                            ),
+                            style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 16.sp),
                           ),
                         ),
                       ),
-                      Divider(
-                        thickness: 0.8,
-                        color: greyColor.withOpacity(0.6),
-                      )
+                      Divider(thickness: 0.8, color: greyColor.withOpacity(0.6))
                     ],
                   );
                 },
@@ -76,17 +58,12 @@ class ProductSortByDialog extends StatelessWidget {
               onTap: () => Navigator.pop(context, 'default'),
               child: Container(
                 width: 375.w,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10.w,
-                  vertical: 4.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 alignment: Alignment.center,
                 child: Text(
                   'default'.tr(),
                   textAlign: TextAlign.center,
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 16.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 16.sp),
                 ),
               ),
             ),

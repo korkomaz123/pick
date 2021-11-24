@@ -30,9 +30,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
           _buildAboutUsView(),
         ],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -47,10 +45,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
       centerTitle: true,
       title: Text(
         'account_about_us_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }

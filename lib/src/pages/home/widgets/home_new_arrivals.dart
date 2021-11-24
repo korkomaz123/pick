@@ -52,10 +52,7 @@ class HomeNewArrivals extends StatelessWidget {
             child: Text(
               homeChangeNotifier.newArrivalsTitle,
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                fontSize: 26.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
             ),
           ),
           Container(
@@ -77,11 +74,7 @@ class HomeNewArrivals extends StatelessWidget {
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
                 );
-                Navigator.pushNamed(
-                  context,
-                  Routes.productList,
-                  arguments: arguments,
-                );
+                Navigator.pushNamed(context, Routes.productList, arguments: arguments);
               },
             ),
           ),

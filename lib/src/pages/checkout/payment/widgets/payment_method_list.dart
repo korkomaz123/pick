@@ -50,8 +50,7 @@ class _PaymentMethodListState extends State<PaymentMethodList> {
           Column(
             children: List.generate(paymentMethods.length, (index) {
               int idx = paymentMethods.length - index - 1;
-              if ((user == null || user!.balance <= 0) &&
-                  paymentMethods[idx].id == 'wallet') {
+              if ((user == null || user!.balance <= 0) && paymentMethods[idx].id == 'wallet') {
                 return Container();
               }
               return PaymentMethodCard(
