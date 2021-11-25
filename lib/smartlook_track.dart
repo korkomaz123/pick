@@ -19,7 +19,7 @@ class CustomIntegrationListener implements IntegrationListener {
 }
 
 class SmartlookTrack {
-  static setupSDK() {
+  static setupSDK() async {
     SetupOptions options = (new SetupOptionsBuilder('ed7cae14a0a462fe8be2b38ae3460e7ae7bbbfb8')
           ..Fps = 2
           ..StartNewSession = true)
@@ -32,6 +32,11 @@ class SmartlookTrack {
     ];
     Smartlook.setEventTrackingModes(eventTrackingModes);
     Smartlook.registerIntegrationListener(new CustomIntegrationListener());
+    String? dashboardVisitorUrl = await Smartlook.getDashboardVisitorUrl();
+    if (dashboardVisitorUrl != null) {
+      String visitorId = dashboardVisitorUrl.split('visitor/')[1];
+      Smartlook.setUserIdentifier(visitorId);
+    }
     Smartlook.enableWebviewRecording(true);
     Smartlook.enableCrashlytics(true);
     Smartlook.getDashboardSessionUrl(true);

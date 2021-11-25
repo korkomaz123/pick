@@ -85,8 +85,6 @@ class _MyCartItemState extends State<MyCartItem> {
                 ),
               ),
               CachedNetworkImage(
-                key: ValueKey(widget.cartItem.product.imageUrl),
-                cacheKey: widget.cartItem.product.imageUrl,
                 imageUrl: widget.cartItem.product.imageUrl,
                 width: 104.w,
                 height: 150.h,

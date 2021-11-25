@@ -55,8 +55,6 @@ class HomeFeaturedCategories extends StatelessWidget {
                               border: Border.all(color: primaryColor, width: 2.w),
                             ),
                             child: CachedNetworkImage(
-                              key: ValueKey(category.imageUrl),
-                              cacheKey: category.imageUrl,
                               imageBuilder: (context, imageProvider) => CircleAvatar(backgroundImage: imageProvider),
                               imageUrl: category.imageUrl ?? '',
                               fit: BoxFit.cover,

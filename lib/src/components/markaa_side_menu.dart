@@ -36,8 +36,7 @@ class MarkaaSideMenu extends StatefulWidget {
   _MarkaaSideMenuState createState() => _MarkaaSideMenuState();
 }
 
-class _MarkaaSideMenuState extends State<MarkaaSideMenu>
-    with WidgetsBindingObserver {
+class _MarkaaSideMenuState extends State<MarkaaSideMenu> with WidgetsBindingObserver {
   final dataKey = GlobalKey();
   int? activeIndex;
   double? menuWidth;
@@ -142,8 +141,6 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
                 width: 60.w,
                 height: 60.w,
                 child: CachedNetworkImage(
-                  key: ValueKey(user?.profileUrl ?? ''),
-                  cacheKey: user?.profileUrl ?? '',
                   imageUrl: user?.profileUrl ?? '',
                   imageBuilder: (_, _imageProvider) {
                     return Container(
@@ -279,14 +276,11 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
               children: [
                 if (menu.iconUrl!.isNotEmpty) ...[
                   CachedNetworkImage(
-                    key: ValueKey(menu.iconUrl ?? ''),
-                    cacheKey: menu.iconUrl ?? '',
                     width: 25.w,
                     height: 25.w,
                     imageUrl: menu.iconUrl ?? '',
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        Center(child: Icon(Icons.image, size: 20)),
+                    errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 ],
                 SizedBox(width: 10.w),
@@ -371,8 +365,7 @@ class _MarkaaSideMenuState extends State<MarkaaSideMenu>
   }
 
   void _logout() async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'logout_confirm_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'logout_confirm_dialog_text');
     if (result != null) {
       authChangeNotifier.logout(
         onProcess: () => progressService.showProgress(),

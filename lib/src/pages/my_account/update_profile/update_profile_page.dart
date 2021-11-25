@@ -139,7 +139,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                   image: user?.profileUrl != null && user?.profileUrl != ''
                       ? CachedNetworkImageProvider(
                           user!.profileUrl!,
-                          cacheKey: user!.profileUrl!,
                           errorListener: () => print('Image loading error'),
                         ) as ImageProvider<Object>
                       : AssetImage('lib/public/images/profile.png'),
@@ -294,9 +293,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       _name = _imageFile!.path.split('/').last;
       _image = _imageFile!.readAsBytesSync();
       _accountChangeNotifier.updateProfileImage(user!.token, _image!, _name!,
-          onProcess: _onProcess,
-          onSuccess: _onProfileImageUpdated,
-          onFailure: _onFailure);
+          onProcess: _onProcess, onSuccess: _onProfileImageUpdated, onFailure: _onFailure);
     }
   }
 

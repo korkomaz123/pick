@@ -38,8 +38,6 @@ class WishlistProductCard extends StatelessWidget {
                 ),
               ),
               CachedNetworkImage(
-                key: ValueKey(product.imageUrl),
-                cacheKey: product.imageUrl,
                 imageUrl: product.imageUrl,
                 width: 114.w,
                 height: 140.h,
@@ -101,9 +99,7 @@ class WishlistProductCard extends StatelessWidget {
             ],
           ),
         ),
-        if (product.stockQty == null || product.stockQty == 0) ...[
-          _buildOutOfStock()
-        ]
+        if (product.stockQty == null || product.stockQty == 0) ...[_buildOutOfStock()]
       ],
     );
   }

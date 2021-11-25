@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/preload.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/components/product_custom_vv_card.dart';
 import 'package:markaa/src/config/config.dart';
@@ -86,13 +87,14 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                   InkWell(
                     onTap: () => ActionHandler.onClickBanner(item, context),
                     child: CachedNetworkImage(
-                      key: ValueKey(item.bannerImage ?? ''),
-                      cacheKey: item.bannerImage ?? '',
                       width: banners.length == 1 ? 375.w : 340.w,
                       height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
                       imageUrl: item.bannerImage ?? '',
                       fit: BoxFit.fitHeight,
                       errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                      progressIndicatorBuilder: (_, __, ___) {
+                        return Center(child: PulseLoadingSpinner());
+                      },
                     ),
                   ),
                   if (index < banners.length - 1) ...[SizedBox(width: 5.w)],

@@ -22,14 +22,11 @@ class MarkaaReviewProductCard extends StatelessWidget {
       child: Row(
         children: [
           CachedNetworkImage(
-            key: ValueKey(cartItem.product.imageUrl),
-            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.h,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            errorWidget: (_, __, ___) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
           ),
           SizedBox(width: 10.w),
           Expanded(

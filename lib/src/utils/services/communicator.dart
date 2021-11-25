@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smartlook/flutter_smartlook.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
@@ -69,6 +70,8 @@ class Communicator {
     /// set user identity of the smartlook, onesignal
     Map<String, dynamic> userMap = _authProvider?.currentUser?.toJson() ?? {};
     OneSignal.shared.sendTags(userMap);
-    Smartlook.setUserIdentifier('user_identity', {'authenticated': authenticated, ...userMap});
+
+    String visitorId = gDashboardVisitorUrl.split('visitor/')[1];
+    Smartlook.setUserIdentifier(visitorId, userMap);
   }
 }

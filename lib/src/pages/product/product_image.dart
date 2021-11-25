@@ -49,7 +49,6 @@ class _ProductImageState extends State<ProductImage> {
                     backgroundDecoration: BoxDecoration(color: Colors.white),
                     imageProvider: CachedNetworkImageProvider(
                       images[activeIndex],
-                      cacheKey: images[activeIndex],
                       errorListener: () => print('image loading error'),
                     ),
                     loadingBuilder: (context, downloadProgress) => Center(
@@ -100,15 +99,11 @@ class _ProductImageState extends State<ProductImage> {
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
                                 images[index],
-                                cacheKey: images[index],
-                                errorListener: () =>
-                                    print('image loading error'),
+                                errorListener: () => print('image loading error'),
                               ),
                             ),
                             border: Border.all(
-                              color: activeIndex == index
-                                  ? primaryColor
-                                  : greyColor,
+                              color: activeIndex == index ? primaryColor : greyColor,
                               width: 0.8.w,
                             ),
                           ),

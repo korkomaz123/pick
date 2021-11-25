@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
@@ -99,8 +98,6 @@ class _AlarmListPageState extends State<AlarmListPage> {
                         _goDetails(context, _items[i]['productdetail']);
                       },
                       child: CachedNetworkImage(
-                        key: ValueKey(_items[i]['productdetail']['image_url']),
-                        cacheKey: _items[i]['productdetail']['image_url'],
                         imageUrl: _items[i]['productdetail']['image_url'],
                         width: 90.w,
                         height: 80.h,
@@ -151,17 +148,9 @@ class _AlarmListPageState extends State<AlarmListPage> {
                             progressService.showProgress();
                             ProductEntity _productEntity = ProductEntity.fromJson(_items[i]['productdetail']);
                             if (_items[i]['type'] == 'stock') {
-                              FirebaseMessaging.instance.unsubscribeFromTopic(
-                                  "${_items[i]['productdetail']['product_id']}_product_instock_en");
-                              FirebaseMessaging.instance.unsubscribeFromTopic(
-                                  "${_items[i]['productdetail']['product_id']}_product_instock_ar");
                               await _productEntity.requestPriceAlarm('remove', _productEntity.productId,
                                   data: {"stockItem_Id": _items[i]['id']});
                             } else if (_items[i]['type'] == 'price') {
-                              FirebaseMessaging.instance
-                                  .unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_price_en");
-                              FirebaseMessaging.instance
-                                  .unsubscribeFromTopic("${_items[i]['productdetail']['product_id']}_product_price_ar");
                               await _productEntity.requestPriceAlarm('remove', _productEntity.productId,
                                   data: {"priceItem_Id": _items[i]['id']});
                             }

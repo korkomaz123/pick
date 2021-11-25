@@ -40,7 +40,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> with WidgetsB
   OrderEntity? order;
   OrderEntity? reorder;
   bool isLoading = true;
-  bool isProgress = true;
 
   @override
   void initState() {
@@ -62,18 +61,15 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> with WidgetsB
   }
 
   void _onBack() async {
-    if (isProgress) {
-      flushBarService.showErrorDialog('Please try again later.');
-      return;
-    }
     final result = await flushBarService.showConfirmDialog(message: 'payment_abort_dialog_text');
     if (result != null) {
-      /// activate the current shopping cart
       await myCartChangeNotifier.activateCart();
-
-      /// cancel the order
-      await orderChangeNotifier.cancelFullOrder(order!,
-          onProcess: _onCancelProcess, onSuccess: _onCanceledSuccess, onFailure: _onCanceledFailure);
+      await orderChangeNotifier.cancelFullOrder(
+        order!,
+        onProcess: _onCancelProcess,
+        onSuccess: _onCanceledSuccess,
+        onFailure: _onCanceledFailure,
+      );
     }
   }
 
@@ -121,13 +117,6 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> with WidgetsB
                 _onPageLoaded(action.url);
                 return NavigationDecision.navigate;
               },
-              onProgress: (progress) {
-                if (progress < 100) {
-                  isProgress = true;
-                } else {
-                  isProgress = false;
-                }
-              },
               onPageFinished: (_) {
                 if (isLoading) {
                   isLoading = false;
@@ -146,35 +135,36 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage> with WidgetsB
     try {
       Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
-      if (params.containsKey('result')) {
-        if (params['result'] == 'failed') {
+      if (params.containsKey('flag')) {
+        if (params['flag'] == 'failed') {
           if (user != null) orderChangeNotifier.removeOrder(order!);
-          orderChangeNotifier.submitPaymentFailedOrderResult(order!);
+          orderChangeNotifier.submitPaymentFailedOrderResult(order!, params);
           if (reorder != null) {
-            Navigator.popAndPushNamed(
-              context,
-              Routes.paymentFailed,
-              arguments: true,
-            );
+            Navigator.popAndPushNamed(context, Routes.paymentFailed, arguments: true);
           } else {
-            Navigator.popAndPushNamed(
-              context,
-              Routes.paymentFailed,
-              arguments: false,
-            );
+            Navigator.popAndPushNamed(context, Routes.paymentFailed, arguments: false);
           }
-        } else if (params['result'] == 'success') {
+        } else if (params['flag'] == 'success') {
           _onSuccessPayment();
           if (user != null) {
             order!.status = OrderStatusEnum.processing;
             orderChangeNotifier.updateOrder(order!);
           }
-          orderChangeNotifier.submitPaymentSuccessOrderResult(order!);
+          orderChangeNotifier.submitPaymentSuccessOrderResult(order!, params);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.checkoutConfirmed,
             (route) => route.settings.name == Routes.home,
             arguments: order,
+          );
+        } else if (params['flag'] == 'canceled') {
+          await myCartChangeNotifier.activateCart();
+          await orderChangeNotifier.cancelFullOrder(
+            order!,
+            onProcess: _onCancelProcess,
+            onSuccess: _onCanceledSuccess,
+            onFailure: _onCanceledFailure,
+            params: params,
           );
         }
       }

@@ -101,12 +101,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     details = orderDetails['orderDetails'];
-    orderDetails['deliver_as_gift'] = {
-      'deliver_as_gift': '0',
-      'sender': '',
-      'receiver': '',
-      'message': '',
-    };
+    orderDetails['deliver_as_gift'] = {'deliver_as_gift': '0', 'sender': '', 'receiver': '', 'message': ''};
 
     _loadAssetData();
   }

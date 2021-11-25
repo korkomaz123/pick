@@ -50,8 +50,7 @@ class ProductVCard extends StatefulWidget {
   _ProductVCardState createState() => _ProductVCardState();
 }
 
-class _ProductVCardState extends State<ProductVCard>
-    with TickerProviderStateMixin {
+class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMixin {
   bool? _isWishlist;
 
   AnimationController? _addToCartController;
@@ -153,8 +152,6 @@ class _ProductVCardState extends State<ProductVCard>
       child: Column(
         children: [
           CachedNetworkImage(
-            key: ValueKey(widget.product.imageUrl),
-            cacheKey: widget.product.imageUrl,
             imageUrl: widget.product.imageUrl,
             width: widget.cardWidth,
             height: widget.cardHeight * 0.63,
@@ -204,9 +201,7 @@ class _ProductVCardState extends State<ProductVCard>
                   ),
                 ),
                 Spacer(),
-                if (widget.isLine) ...[
-                  Divider(color: greyColor, thickness: 0.5.h, height: 10.h)
-                ],
+                if (widget.isLine) ...[Divider(color: greyColor, thickness: 0.5.h, height: 10.h)],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -225,9 +220,7 @@ class _ProductVCardState extends State<ProductVCard>
                           if (widget.product.discount! > 0) ...[
                             SizedBox(width: widget.isMinor ? 4.w : 10.w),
                             Text(
-                              widget.product.beforePrice! +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.beforePrice! + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -300,8 +293,7 @@ class _ProductVCardState extends State<ProductVCard>
 
   Widget _buildDealValueLabel() {
     return Align(
-      alignment:
-          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      alignment: Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(top: widget.cardHeight * 0.63 - 22.h),
         child: ClipPath(
@@ -333,13 +325,10 @@ class _ProductVCardState extends State<ProductVCard>
   Widget _buildToolbar() {
     return Consumer<WishlistChangeNotifier>(
       builder: (_, model, __) {
-        _isWishlist =
-            model.wishlistItemsMap.containsKey(widget.product.productId);
+        _isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
         if (widget.isWishlist) {
           return Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.topRight
-                : Alignment.topLeft,
+            alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: InkWell(
@@ -358,9 +347,7 @@ class _ProductVCardState extends State<ProductVCard>
                   child: Container(
                     width: _isWishlist! ? 22.w : 25.w,
                     height: _isWishlist! ? 22.w : 25.w,
-                    child: _isWishlist!
-                        ? SvgPicture.asset(wishlistedIcon)
-                        : SvgPicture.asset(favoriteIcon),
+                    child: _isWishlist! ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                   ),
                 ),
               ),
@@ -376,9 +363,7 @@ class _ProductVCardState extends State<ProductVCard>
   Widget _buildOutofStock() {
     if (outOfStock) {
       return Align(
-        alignment: Preload.language == 'en'
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
+        alignment: Preload.language == 'en' ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
           color: primarySwatchColor.withOpacity(0.4),
@@ -410,14 +395,10 @@ class _ProductVCardState extends State<ProductVCard>
       });
 
       if (widget.product.stockQty! > 0) {
-        await _myCartChangeNotifier!.addProductToCart(
-            widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+        await _myCartChangeNotifier!.addProductToCart(widget.product, 1, lang, {},
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        _flushBarService!
-            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+        _flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }

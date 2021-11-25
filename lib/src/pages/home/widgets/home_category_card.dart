@@ -35,7 +35,6 @@ class HomeCategoryCard extends StatelessWidget {
           image: DecorationImage(
             image: CachedNetworkImageProvider(
               category.imageUrl ?? '',
-              cacheKey: category.imageUrl ?? '',
               errorListener: () => print('IMAGE LOADING ERROR'),
             ),
             fit: BoxFit.cover,

@@ -52,8 +52,7 @@ class ProductHCard extends StatefulWidget {
   _ProductHCardState createState() => _ProductHCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard>
-    with TickerProviderStateMixin {
+class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMixin {
   FlushBarService? flushBarService;
   ProgressService? progressService;
 
@@ -174,8 +173,6 @@ class _ProductHCardState extends State<ProductHCard>
               left: lang == 'ar' ? 5.w : 0,
             ),
             child: CachedNetworkImage(
-              key: ValueKey(widget.product.imageUrl),
-              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth * 0.34,
               height: widget.cardHeight,
@@ -268,9 +265,7 @@ class _ProductHCardState extends State<ProductHCard>
                               width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
-                              widget.product.beforePrice! +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.beforePrice! + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -342,8 +337,7 @@ class _ProductHCardState extends State<ProductHCard>
 
   Widget _buildDealValueLabel() {
     return Align(
-      alignment:
-          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      alignment: Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(top: widget.cardHeight * 0.45),
         child: ClipPath(
@@ -381,17 +375,13 @@ class _ProductHCardState extends State<ProductHCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation!,
                 child: Container(
                   width: isWishlist! ? 22.sp : 25.sp,
                   height: isWishlist! ? 22.sp : 25.sp,
-                  child: isWishlist!
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  child: isWishlist! ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -437,14 +427,10 @@ class _ProductHCardState extends State<ProductHCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier!.addProductToCart(
-            widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+        await myCartChangeNotifier!.addProductToCart(widget.product, 1, lang, {},
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService!
-            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+        flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
@@ -474,11 +460,9 @@ class _ProductHCardState extends State<ProductHCard>
         timer.cancel();
       });
       if (isWishlist!) {
-        wishlistChangeNotifier!
-            .removeItemFromWishlist(user!.token, widget.product);
+        wishlistChangeNotifier!.removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier!
-            .addItemToWishlist(user!.token, widget.product, 1, {});
+        wishlistChangeNotifier!.addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

@@ -11,7 +11,6 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -106,8 +105,7 @@ class _SignInPageState extends State<SignInPage> {
               Container(
                 width: 375.w,
                 padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment:
-                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                 child: IconButton(
                   icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
@@ -407,7 +405,6 @@ class _SignInPageState extends State<SignInPage> {
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
-      // Future.wait([
       await localRepository.setToken(user!.token);
       await orderChangeNotifier.loadOrderHistories(user!.token, lang);
       await myCartChangeNotifier.getCartId();
@@ -416,11 +413,8 @@ class _SignInPageState extends State<SignInPage> {
       await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
       await addressChangeNotifier.loadCustomerAddresses(user!.token);
       await homeChangeNotifier.loadRecentlyViewedCustomer();
-      await NotificationSetup().updateFcmDeviceToken();
-      // ]);
     } catch (e) {
-      print(
-          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
+      print('LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
     }
     progressService.hideProgress();
     if (Navigator.of(context).canPop()) {
@@ -476,11 +470,8 @@ class _SignInPageState extends State<SignInPage> {
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'Facebook Sign', lang,
-          onProcess: _onLoginProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onLoginFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Facebook Sign', lang,
+          onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
     } catch (e) {
       print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
@@ -496,11 +487,8 @@ class _SignInPageState extends State<SignInPage> {
         String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier.loginWithSocial(
-            email, firstName, lastName, 'Google Sign', lang,
-            onProcess: _onLoginProcess,
-            onSuccess: _onLoginSuccess,
-            onFailure: _onLoginFailure);
+        authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Google Sign', lang,
+            onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
       }
     } catch (e) {
       print('/// LOGIN WITH GOOGLE ERROR: $e ///');
@@ -525,12 +513,8 @@ class _SignInPageState extends State<SignInPage> {
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'apple', lang,
-          appleId: appleId,
-          onProcess: _onLoginProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onLoginFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'apple', lang,
+          appleId: appleId, onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
     } catch (e) {
       print('LOGIN WITH APPLE ERROR: $e');
     }

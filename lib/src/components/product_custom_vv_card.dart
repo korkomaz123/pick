@@ -52,8 +52,7 @@ class ProductCustomVVCard extends StatefulWidget {
   _ProductCustomVVCardState createState() => _ProductCustomVVCardState();
 }
 
-class _ProductCustomVVCardState extends State<ProductCustomVVCard>
-    with TickerProviderStateMixin {
+class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerProviderStateMixin {
   int? index;
   bool? isWishlist;
 
@@ -174,8 +173,6 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
         child: Column(
           children: [
             CachedNetworkImage(
-              key: ValueKey(widget.product.imageUrl),
-              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardHeight * 0.65,
               height: widget.cardHeight * 0.6,
@@ -328,8 +325,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
 
   Widget _buildDealValueLabel() {
     return Align(
-      alignment:
-          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      alignment: Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(top: widget.cardHeight * 0.6 - 22.h),
         child: ClipPath(
@@ -367,17 +363,13 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation!,
                 child: Container(
                   width: isWishlist! ? 22.w : 25.w,
                   height: isWishlist! ? 22.w : 25.w,
-                  child: isWishlist!
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  child: isWishlist! ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -420,14 +412,10 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier!.addProductToCart(
-            widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+        await myCartChangeNotifier!.addProductToCart(widget.product, 1, lang, {},
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService!
-            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+        flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
@@ -457,11 +445,9 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard>
         timer.cancel();
       });
       if (isWishlist!) {
-        wishlistChangeNotifier!
-            .removeItemFromWishlist(user!.token, widget.product);
+        wishlistChangeNotifier!.removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier!
-            .addItemToWishlist(user!.token, widget.product, 1, {});
+        wishlistChangeNotifier!.addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

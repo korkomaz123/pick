@@ -166,7 +166,6 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 backgroundColor: Colors.grey,
                 backgroundImage: CachedNetworkImageProvider(
                   _info['profile_picture'],
-                  cacheKey: _info['profile_picture'],
                   errorListener: () => print('IMAGE LOADING ERROR'),
                 ),
                 radius: 50,

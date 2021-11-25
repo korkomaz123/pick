@@ -32,8 +32,7 @@ class MyCartSaveForLaterItems extends StatefulWidget {
   });
 
   @override
-  _MyCartSaveForLaterItemsState createState() =>
-      _MyCartSaveForLaterItemsState();
+  _MyCartSaveForLaterItemsState createState() => _MyCartSaveForLaterItemsState();
 }
 
 class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
@@ -140,16 +139,13 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
                         model.changePutInCartStatus(true);
                       }
                     },
-                    child: SvgPicture.asset(
-                        lang == 'en' ? putInCartEnIcon : putInCartArIcon),
+                    child: SvgPicture.asset(lang == 'en' ? putInCartEnIcon : putInCartArIcon),
                   );
                 },
               ),
             ],
           ),
           CachedNetworkImage(
-            key: ValueKey(item.imageUrl),
-            cacheKey: item.imageUrl,
             imageUrl: item.imageUrl,
             width: 140.w,
             height: 160.h,
@@ -190,18 +186,16 @@ class _MyCartSaveForLaterItemsState extends State<MyCartSaveForLaterItems> {
   }
 
   void _onRemoveItem(ProductModel item) async {
-    final result = await widget.flushBarService!.showConfirmDialog(
-        message: 'my_cart_save_later_remove_item_dialog_text');
+    final result =
+        await widget.flushBarService!.showConfirmDialog(message: 'my_cart_save_later_remove_item_dialog_text');
     if (result != null) {
-      await widget.wishlistChangeNotifier!
-          .removeItemFromWishlist(user!.token, item);
+      await widget.wishlistChangeNotifier!.removeItemFromWishlist(user!.token, item);
     }
   }
 
   void _onPutInCart(ProductModel item) async {
     widget.wishlistChangeNotifier!.removeItemFromWishlist(user!.token, item);
-    widget.myCartChangeNotifier!.addProductToCart(
-        item, item.qtySaveForLater!, lang, {},
+    widget.myCartChangeNotifier!.addProductToCart(item, item.qtySaveForLater!, lang, {},
         onSuccess: () => _onAddSuccess(item), onFailure: _onAddFailure);
   }
 

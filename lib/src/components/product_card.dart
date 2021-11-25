@@ -44,8 +44,7 @@ class ProductCard extends StatefulWidget {
   _ProductCardState createState() => _ProductCardState();
 }
 
-class _ProductCardState extends State<ProductCard>
-    with TickerProviderStateMixin {
+class _ProductCardState extends State<ProductCard> with TickerProviderStateMixin {
   bool? isWishlist;
   int? index;
   FlushBarService? flushBarService;
@@ -67,12 +66,9 @@ class _ProductCardState extends State<ProductCard>
 
   void _initAnimation() {
     _addToWishlistController = AnimationController(
-        duration: const Duration(milliseconds: 300),
-        reverseDuration: const Duration(milliseconds: 300),
-        vsync: this);
-    _addToWishlistScaleAnimation = Tween<double>(begin: 1.0, end: 3.0).animate(
-        CurvedAnimation(
-            parent: _addToWishlistController!, curve: Curves.easeIn));
+        duration: const Duration(milliseconds: 300), reverseDuration: const Duration(milliseconds: 300), vsync: this);
+    _addToWishlistScaleAnimation = Tween<double>(begin: 1.0, end: 3.0)
+        .animate(CurvedAnimation(parent: _addToWishlistController!, curve: Curves.easeIn));
   }
 
   @override
@@ -123,8 +119,7 @@ class _ProductCardState extends State<ProductCard>
 
   Widget _buildDealValueLabel() {
     return Align(
-      alignment:
-          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      alignment: Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(top: widget.cardHeight / 2),
         child: ClipPath(
@@ -163,8 +158,6 @@ class _ProductCardState extends State<ProductCard>
         children: [
           Container(
             child: CachedNetworkImage(
-              key: ValueKey(widget.product.imageUrl),
-              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth,
               height: widget.cardWidth,
@@ -244,17 +237,13 @@ class _ProductCardState extends State<ProductCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist(model)
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist(model) : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation!,
                 child: Container(
                   width: isWishlist! ? 18.w : 22.w,
                   height: isWishlist! ? 18.w : 22.w,
-                  child: isWishlist!
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  child: isWishlist! ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -296,11 +285,9 @@ class _ProductCardState extends State<ProductCard>
         timer.cancel();
       });
       if (isWishlist!) {
-        wishlistChangeNotifier.removeItemFromWishlist(
-            user!.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier
-            .addItemToWishlist(user!.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

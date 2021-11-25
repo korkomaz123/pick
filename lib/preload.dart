@@ -8,11 +8,9 @@ import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
-import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:kommunicate_flutter/kommunicate_flutter.dart';
@@ -48,12 +46,8 @@ class Preload {
 
     if (lang == 'en') {
       navigatorKey!.currentContext!.setLocale(enLocale);
-      FirebaseMessaging.instance.unsubscribeFromTopic(MarkaaNotificationChannels.arChannel);
-      FirebaseMessaging.instance.subscribeToTopic(MarkaaNotificationChannels.enChannel);
     } else {
       navigatorKey!.currentContext!.setLocale(arLocale);
-      FirebaseMessaging.instance.unsubscribeFromTopic(MarkaaNotificationChannels.enChannel);
-      FirebaseMessaging.instance.subscribeToTopic(MarkaaNotificationChannels.arChannel);
     }
     OneSignal.shared.sendTag('lang', lang);
     loadAssetData();
@@ -105,7 +99,6 @@ class Preload {
     _authProvider.getCurrentUser(
       onSuccess: (data) async {
         user = data;
-        NotificationSetup().init();
         _addressProvider.initialize();
         await Future.wait([
           _wishlistProvider.getWishlistItems(user!.token, lang),
@@ -116,7 +109,6 @@ class Preload {
         await _cartProvider.getCartItems(Preload.language);
       },
       onFailure: () async {
-        NotificationSetup().init();
         _addressProvider.initialize();
         await _addressProvider.loadGuestAddresses();
         await _cartProvider.getCartId();

@@ -29,8 +29,7 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   TabController? tabController;
 
@@ -108,8 +107,7 @@ class _SearchPageState extends State<SearchPage>
 
   void _getSearchHistories() async {
     bool isExist = await localStorageRepository.existItem('search_history');
-    searchHistory =
-        isExist ? await localStorageRepository.getItem('search_history') : [];
+    searchHistory = isExist ? await localStorageRepository.getItem('search_history') : [];
     markaaAppChangeNotifier!.rebuild();
   }
 
@@ -174,10 +172,7 @@ class _SearchPageState extends State<SearchPage>
                             ] else ...[
                               _buildBrandResult()
                             ],
-                            if (!searchNode.hasFocus &&
-                                searchHistory.isNotEmpty) ...[
-                              _buildSearchHistory()
-                            ],
+                            if (!searchNode.hasFocus && searchHistory.isNotEmpty) ...[_buildSearchHistory()],
                           ],
                         ),
                       ],
@@ -255,9 +250,7 @@ class _SearchPageState extends State<SearchPage>
                   'search_items_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color: tabController!.index == 0
-                        ? primaryColor
-                        : greyDarkColor,
+                    color: tabController!.index == 0 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -269,9 +262,7 @@ class _SearchPageState extends State<SearchPage>
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: tabController!.index == 0
-                            ? primaryColor
-                            : greyDarkColor,
+                        color: tabController!.index == 0 ? primaryColor : greyDarkColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -295,9 +286,7 @@ class _SearchPageState extends State<SearchPage>
                   'search_brands_tab_title'.tr(),
                   style: mediumTextStyle.copyWith(
                     fontSize: 14.sp,
-                    color: tabController!.index == 1
-                        ? primaryColor
-                        : greyDarkColor,
+                    color: tabController!.index == 1 ? primaryColor : greyDarkColor,
                   ),
                 ),
                 SizedBox(width: 4.w),
@@ -307,10 +296,8 @@ class _SearchPageState extends State<SearchPage>
                     for (var brand in homeChangeNotifier.sortedBrandList) {
                       bool isEmpty = searchController.text.isEmpty;
                       String searchText = searchController.text.toLowerCase();
-                      String brandLabel =
-                          brand.brandLabel.toString().toLowerCase();
-                      if ((!isEmpty && brandLabel.contains(searchText)) &&
-                          brand.productsCount! > 0) {
+                      String brandLabel = brand.brandLabel.toString().toLowerCase();
+                      if ((!isEmpty && brandLabel.contains(searchText)) && brand.productsCount! > 0) {
                         count += 1;
                       }
                     }
@@ -320,9 +307,7 @@ class _SearchPageState extends State<SearchPage>
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: tabController!.index == 1
-                            ? primaryColor
-                            : greyDarkColor,
+                        color: tabController!.index == 1 ? primaryColor : greyDarkColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -353,9 +338,7 @@ class _SearchPageState extends State<SearchPage>
         child: Container(
           padding: EdgeInsets.all(10.w),
           color: Colors.white,
-          child: tabController!.index == 0
-              ? _buildProductsSuggestion()
-              : _buildBrandsSuggestion(),
+          child: tabController!.index == 0 ? _buildProductsSuggestion() : _buildBrandsSuggestion(),
         ),
       ),
     );
@@ -364,8 +347,7 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildProductsSuggestion() {
     return Consumer<SuggestionChangeNotifier>(
       builder: (ctx, notifier, _) {
-        if (notifier.suggestions.isNotEmpty &&
-            searchController.text.isNotEmpty) {
+        if (notifier.suggestions.isNotEmpty && searchController.text.isNotEmpty) {
           return Column(
             children: List.generate(
               notifier.suggestions.length,
@@ -408,10 +390,8 @@ class _SearchPageState extends State<SearchPage>
             (index) {
               bool isEmpty = searchController.text.isEmpty;
               String searchText = searchController.text.toLowerCase();
-              String brandLabel =
-                  brands[index].brandLabel.toString().toLowerCase();
-              if ((!isEmpty && brandLabel.contains(searchText)) &&
-                  brands[index].productsCount! > 0) {
+              String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+              if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount! > 0) {
                 rIndex += 1;
                 return Column(
                   children: [
@@ -452,33 +432,20 @@ class _SearchPageState extends State<SearchPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CachedNetworkImage(
-                              key: ValueKey(brands[index].brandThumbnail ?? ''),
-                              cacheKey: brands[index].brandThumbnail ?? '',
                               imageUrl: brands[index].brandThumbnail ?? '',
-                              errorWidget: (_, __, ___) =>
-                                  Center(child: Icon(Icons.image, size: 20)),
+                              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                             ),
                             Text(
                               brands[index].brandLabel,
-                              style: mediumTextStyle.copyWith(
-                                color: darkColor,
-                                fontSize: 12.sp,
-                              ),
+                              style: mediumTextStyle.copyWith(color: darkColor, fontSize: 12.sp),
                             ),
                             Row(
                               children: [
                                 Text(
                                   'view_all'.tr(),
-                                  style: mediumTextStyle.copyWith(
-                                    color: primaryColor,
-                                    fontSize: 10.sp,
-                                  ),
+                                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 10.sp),
                                 ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 20,
-                                  color: primaryColor,
-                                ),
+                                Icon(Icons.arrow_forward_ios, size: 20, color: primaryColor),
                               ],
                             ),
                           ],
@@ -563,18 +530,13 @@ class _SearchPageState extends State<SearchPage>
                       onTap: () => Navigator.pushNamed(
                         context,
                         Routes.product,
-                        arguments:
-                            suggestionChangeNotifier!.searchedProducts![index],
+                        arguments: suggestionChangeNotifier!.searchedProducts![index],
                       ),
                       child: SearchProductCard(
-                        product:
-                            suggestionChangeNotifier!.searchedProducts![index],
+                        product: suggestionChangeNotifier!.searchedProducts![index],
                       ),
                     ),
-                    index <
-                            (suggestionChangeNotifier!
-                                    .searchedProducts!.length -
-                                1)
+                    index < (suggestionChangeNotifier!.searchedProducts!.length - 1)
                         ? Divider(color: greyColor, thickness: 0.5)
                         : SizedBox.shrink(),
                   ],
@@ -599,10 +561,8 @@ class _SearchPageState extends State<SearchPage>
               (index) {
                 bool isEmpty = searchController.text.isEmpty;
                 String searchText = searchController.text.toLowerCase();
-                String brandLabel =
-                    brands[index].brandLabel.toString().toLowerCase();
-                if ((!isEmpty && brandLabel.contains(searchText)) &&
-                    brands[index].productsCount! > 0) {
+                String brandLabel = brands[index].brandLabel.toString().toLowerCase();
+                if ((!isEmpty && brandLabel.contains(searchText)) && brands[index].productsCount! > 0) {
                   rIndex += 1;
                   return Column(
                     children: [
@@ -637,45 +597,26 @@ class _SearchPageState extends State<SearchPage>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CachedNetworkImage(
-                                key: ValueKey(brands[index].brandImage ?? ''),
-                                cacheKey: brands[index].brandImage ?? '',
                                 imageUrl: brands[index].brandImage ?? '',
-                                errorWidget: (_, __, ___) =>
-                                    Center(child: Icon(Icons.image, size: 20)),
+                                errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                                 progressIndicatorBuilder: (_, __, ___) {
                                   return CachedNetworkImage(
-                                    key: ValueKey(
-                                        brands[index].brandThumbnail ?? ''),
-                                    cacheKey:
-                                        brands[index].brandThumbnail ?? '',
-                                    imageUrl:
-                                        brands[index].brandThumbnail ?? '',
-                                    errorWidget: (_, __, ___) => Center(
-                                        child: Icon(Icons.image, size: 20)),
+                                    imageUrl: brands[index].brandThumbnail ?? '',
+                                    errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                                   );
                                 },
                               ),
                               Text(
                                 brands[index].brandLabel,
-                                style: mediumTextStyle.copyWith(
-                                  color: darkColor,
-                                  fontSize: 12.sp,
-                                ),
+                                style: mediumTextStyle.copyWith(color: darkColor, fontSize: 12.sp),
                               ),
                               Row(
                                 children: [
                                   Text(
                                     'view_all'.tr(),
-                                    style: mediumTextStyle.copyWith(
-                                      color: primaryColor,
-                                      fontSize: 10.sp,
-                                    ),
+                                    style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 10.sp),
                                   ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 20,
-                                    color: primaryColor,
-                                  ),
+                                  Icon(Icons.arrow_forward_ios, size: 20, color: primaryColor),
                                 ],
                               ),
                             ],

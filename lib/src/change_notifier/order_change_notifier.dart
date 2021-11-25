@@ -112,6 +112,7 @@ class OrderChangeNotifier extends ChangeNotifier {
     Function? onProcess,
     Function? onSuccess,
     Function? onFailure,
+    Map<String, dynamic>? params,
   }) async {
     if (onProcess != null) onProcess();
     try {
@@ -121,7 +122,7 @@ class OrderChangeNotifier extends ChangeNotifier {
         if (user?.token != null && ordersMap.containsKey(order.orderId)) {
           ordersMap.remove(order.orderId);
         }
-        submitCanceledOrderResult(order);
+        submitCanceledOrderResult(order, params);
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
@@ -316,9 +317,11 @@ class OrderChangeNotifier extends ChangeNotifier {
     return await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
-  void submitCanceledOrderResult(OrderEntity order) async {
+  void submitCanceledOrderResult(OrderEntity order, [Map<String, dynamic>? params]) async {
     SlackChannels.send(
-      '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
+      params != null
+          ? '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl] \r\n [payment_result => $params]'''
+          : '''$env Order Payment Canceled [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logCanceledByUserOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -335,9 +338,9 @@ class OrderChangeNotifier extends ChangeNotifier {
     await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
-  void submitPaymentFailedOrderResult(OrderEntity order) async {
+  void submitPaymentFailedOrderResult(OrderEntity order, Map<String, dynamic> params) async {
     SlackChannels.send(
-      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
+      '''$env Order Payment Failed: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl] \r\n [payment_result => $params]''',
       SlackChannels.logPaymentFailedOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -354,9 +357,9 @@ class OrderChangeNotifier extends ChangeNotifier {
     await firebaseRepository.setDoc('$path/${order.orderNo}', resultData);
   }
 
-  void submitPaymentSuccessOrderResult(OrderEntity order) async {
+  void submitPaymentSuccessOrderResult(OrderEntity order, Map<String, dynamic> params) async {
     SlackChannels.send(
-      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [payment_result => $params]''',
       SlackChannels.logPaymentSuccessOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());

@@ -121,8 +121,6 @@ class _CategoryListPageState extends State<CategoryListPage> with WidgetsBinding
         child: Stack(
           children: [
             CachedNetworkImage(
-              key: ValueKey(category.imageUrl ?? ''),
-              cacheKey: category.imageUrl ?? '',
               imageUrl: category.imageUrl ?? '',
               imageBuilder: (context, imageProvider) => Container(
                 width: 375.w,

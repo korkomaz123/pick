@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
+import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -123,13 +124,14 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
         }
       },
       child: CachedNetworkImage(
-        key: ValueKey(banner.bannerImage ?? ''),
-        cacheKey: banner.bannerImage ?? '',
         imageUrl: banner.bannerImage ?? '',
         fit: BoxFit.fill,
         errorWidget: (context, url, error) => Center(
           child: Icon(Icons.image, size: 20),
         ),
+        progressIndicatorBuilder: (_, __, ___) {
+          return Center(child: PulseLoadingSpinner());
+        },
       ),
     );
   }

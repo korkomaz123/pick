@@ -116,11 +116,8 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
                           (e) => InkWell(
                             onTap: () => _goToPage(e),
                             child: CachedNetworkImage(
-                              key: ValueKey(e.imageUrl ?? ''),
-                              cacheKey: e.imageUrl ?? '',
                               imageUrl: e.imageUrl ?? '',
-                              errorWidget: (_, __, ___) =>
-                                  Center(child: Icon(Icons.image, size: 20)),
+                              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                             ),
                           ),
                         )

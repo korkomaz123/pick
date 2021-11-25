@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:badges/badges.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
@@ -51,8 +50,7 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage>
-    with TickerProviderStateMixin {
+class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _refreshController = RefreshController();
 
@@ -74,19 +72,16 @@ class _ProductPageState extends State<ProductPage>
 
   bool isBuyNow = false;
   bool get variantSelectRequired =>
-      productChangeNotifier!.productDetailsMap[productId]!.typeId ==
-          'configurable' &&
+      productChangeNotifier!.productDetailsMap[productId]!.typeId == 'configurable' &&
       productChangeNotifier!.selectedVariant == null;
 
   bool get isChildOutOfStock =>
-      productChangeNotifier!.productDetailsMap[productId]!.typeId ==
-          'configurable' &&
+      productChangeNotifier!.productDetailsMap[productId]!.typeId == 'configurable' &&
       (productChangeNotifier!.selectedVariant!.stockQty == null ||
           productChangeNotifier!.selectedVariant!.stockQty == 0);
 
   bool get isParentOutOfStock =>
-      productChangeNotifier!.productDetailsMap[productId]!.typeId !=
-          'configurable' &&
+      productChangeNotifier!.productDetailsMap[productId]!.typeId != 'configurable' &&
       productChangeNotifier!.productDetailsMap[productId]!.stockQty == 0;
 
   @override
@@ -124,8 +119,7 @@ class _ProductPageState extends State<ProductPage>
       reverseDuration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _addToCartScaleAnimation =
-        Tween<double>(begin: 1.0, end: 3.0).animate(CurvedAnimation(
+    _addToCartScaleAnimation = Tween<double>(begin: 1.0, end: 3.0).animate(CurvedAnimation(
       parent: _addToCartController!,
       curve: Curves.easeIn,
     ));
@@ -150,14 +144,11 @@ class _ProductPageState extends State<ProductPage>
 
   _sendViewedProduct() async {
     if (user?.token != null) {
-      await productRepository.setRecentlyViewedCustomerProduct(
-          user!.token, productId!, lang);
+      await productRepository.setRecentlyViewedCustomerProduct(user!.token, productId!, lang);
     } else {
       await localStorageRepository.addRecentlyViewedItem(productId!);
     }
-    Preload.navigatorKey!.currentContext!
-        .read<HomeChangeNotifier>()
-        .getViewedProducts();
+    Preload.navigatorKey!.currentContext!.read<HomeChangeNotifier>().getViewedProducts();
   }
 
   @override
@@ -185,30 +176,23 @@ class _ProductPageState extends State<ProductPage>
                           children: [
                             ProductSingleProduct(
                               product: product!,
-                              productDetails:
-                                  model.productDetailsMap[productId]!,
+                              productDetails: model.productDetailsMap[productId]!,
                               model: model,
                             ),
                             ProductReviewTotal(
                               progressService: progressService!,
                               model: model,
                               product: model.productDetailsMap[productId]!,
-                              onFirstReview: () => _onFirstReview(
-                                  model.productDetailsMap[productId]!),
-                              onReviews: () => _onReviews(
-                                  model.productDetailsMap[productId]!),
+                              onFirstReview: () => _onFirstReview(model.productDetailsMap[productId]!),
+                              onReviews: () => _onReviews(model.productDetailsMap[productId]!),
                             ),
-                            ProductSameBrandProducts(
-                                product: product!, model: model),
+                            ProductSameBrandProducts(product: product!, model: model),
                             ProductDetailsTabs(
                               model: model,
-                              productEntity:
-                                  model.productDetailsMap[productId]!,
+                              productEntity: model.productDetailsMap[productId]!,
                             ),
-                            TopBrandsInCategory(
-                                productId: productId!, model: model),
-                            ProductRelatedItems(
-                                productId: productId!, model: model),
+                            TopBrandsInCategory(productId: productId!, model: model),
+                            ProductRelatedItems(productId: productId!, model: model),
                             SizedBox(height: 60.h),
                           ],
                         ),
@@ -399,13 +383,9 @@ class _ProductPageState extends State<ProductPage>
                 return;
               }
               progressService!.showProgress();
-              FirebaseMessaging.instance.subscribeToTopic(
-                  "${productId}_product_instock_${Preload.language}");
-              await model.productDetailsMap[productId]!
-                  .requestPriceAlarm('stock', productId!);
+              await model.productDetailsMap[productId]!.requestPriceAlarm('stock', productId!);
               progressService!.hideProgress();
-              FlushBarService(context: context).showErrorDialog(
-                  "alarm_subscribed".tr(), "../icons/price_alarm.svg");
+              FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
               setState(() {
                 _notified = true;
               });
@@ -438,28 +418,21 @@ class _ProductPageState extends State<ProductPage>
       timer.cancel();
     });
 
-    await myCartChangeNotifier!.addProductToCart(
-        product!, 1, lang, model.selectedOptions,
-        onProcess: _onAdding,
-        onSuccess: _onAddSuccess,
-        onFailure: _onAddFailure);
+    await myCartChangeNotifier!.addProductToCart(product!, 1, lang, model.selectedOptions,
+        onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
   }
 
   _onBuyNow(ProductChangeNotifier model) {
     if (variantSelectRequired) {
-      flushBarService!
-          .showErrorDialog('required_options'.tr(), "select_option.svg");
+      flushBarService!.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {
       flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       return;
     }
-    myCartChangeNotifier!.addProductToCart(
-        product!, 1, lang, model.selectedOptions,
-        onProcess: _onBuyProcess,
-        onSuccess: _onBuySuccess,
-        onFailure: _onBuyFailure);
+    myCartChangeNotifier!.addProductToCart(product!, 1, lang, model.selectedOptions,
+        onProcess: _onBuyProcess, onSuccess: _onBuySuccess, onFailure: _onBuyFailure);
   }
 
   _onBuyProcess() {

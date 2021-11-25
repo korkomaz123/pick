@@ -121,10 +121,8 @@ class _ProductListPageState extends State<ProductListPage> {
                 if (subCategories!.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
-                      double extra =
-                          scrollChangeNotifier!.showBrandBar ? 0 : 75;
-                      double pos =
-                          !scrollChangeNotifier!.showScrollBar ? 40 : 0;
+                      double extra = scrollChangeNotifier!.showBrandBar ? 0 : 75;
+                      double pos = !scrollChangeNotifier!.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
                         top: isFromBrand! ? 120.h - extra : 45.h,
                         left: 0,
@@ -252,24 +250,18 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              key: ValueKey(brand?.brandImage ?? ''),
-              cacheKey: brand?.brandImage ?? '',
               imageUrl: brand?.brandImage ?? '',
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
-              errorWidget: (_, __, ___) =>
-                  Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  key: ValueKey(brand?.brandThumbnail ?? ''),
-                  cacheKey: brand?.brandThumbnail ?? '',
                   imageUrl: brand?.brandThumbnail ?? '',
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Icon(Icons.image, size: 20)),
+                  errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),
@@ -287,21 +279,11 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories?[activeSubcategoryIndex].id ?? 'all',
           brandId: brand?.optionId ?? '',
-          minPrice: filterValues.containsKey('minPrice')
-              ? filterValues['minPrice']
-              : null,
-          maxPrice: filterValues.containsKey('maxPrice')
-              ? filterValues['maxPrice']
-              : null,
-          selectedCategories: filterValues.containsKey('selectedCategories')
-              ? filterValues['selectedCategories']
-              : [],
-          selectedGenders: filterValues.containsKey('selectedGenders')
-              ? filterValues['selectedGenders']
-              : [],
-          selectedValues: filterValues.containsKey('selectedValues')
-              ? filterValues['selectedValues']
-              : {},
+          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
+          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
+          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
+          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
+          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
         );
       },
     );

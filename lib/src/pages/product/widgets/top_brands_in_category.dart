@@ -19,8 +19,7 @@ class TopBrandsInCategory extends StatefulWidget {
 }
 
 class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
-  List<BrandEntity> get brands =>
-      widget.model.brandsMap[widget.productId] ?? [];
+  List<BrandEntity> get brands => widget.model.brandsMap[widget.productId] ?? [];
   dynamic get category => widget.model.categoryMap[widget.productId];
 
   @override
@@ -56,16 +55,12 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
                             selectedSubCategoryIndex: 0,
                             isFromBrand: true,
                           );
-                          Navigator.pushNamed(context, Routes.productList,
-                              arguments: arguments);
+                          Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                         },
                         child: CachedNetworkImage(
-                          key: ValueKey(e.brandThumbnail ?? ''),
-                          cacheKey: e.brandThumbnail ?? '',
                           imageUrl: e.brandThumbnail ?? '',
                           placeholder: (context, url) => Container(),
-                          errorWidget: (context, url, error) =>
-                              Center(child: Icon(Icons.error)),
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                           width: 120.w,
                           height: 60.h,
                           fit: BoxFit.fitHeight,
