@@ -281,7 +281,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void reportOrderIssue(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}] [Phone: ${result['order']['shippingAddress']['telephone']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
+      '$env Order Error [${result['code']}] : ${result['errorMessage']} \r\n [cartId => ${orderDetails['cartId']}] [totalPrice => ${orderDetails['orderDetails']['totalPrice']}] [${orderDetails['paymentMethod']}] [${orderDetails['shipping']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
       SlackChannels.logOrderError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -300,7 +300,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   Future submitOrderResult(dynamic result, dynamic orderDetails) async {
     SlackChannels.send(
-      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [Phone: ${result['order']['shippingAddress']['telephone']}]  \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env New Order [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}]\r\n[totalPrice : ${result['order']['base_grand_total']}] [Phone: ${result['order']['shippingAddress']['telephone']}]  \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]\r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logAddOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -359,7 +359,7 @@ class OrderChangeNotifier extends ChangeNotifier {
 
   void submitPaymentSuccessOrderResult(OrderEntity order, Map<String, dynamic> params) async {
     SlackChannels.send(
-      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [payment_result => $params]''',
+      '''$env Order Payment Success: [${order.orderId}] => [orderNo : ${order.orderNo}] [cart : ${order.cartId}] [${order.paymentMethod.id}]\r\n[totalPrice : ${order.totalPrice}] [Phone: ${order.address.phoneNumber ?? ''}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl] \r\n [payment_result => $params]''',
       SlackChannels.logPaymentSuccessOrder,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());

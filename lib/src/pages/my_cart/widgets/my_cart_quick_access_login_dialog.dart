@@ -49,12 +49,10 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
   });
 
   @override
-  _MyCartQuickAccessLoginDialogState createState() =>
-      _MyCartQuickAccessLoginDialogState();
+  _MyCartQuickAccessLoginDialogState createState() => _MyCartQuickAccessLoginDialogState();
 }
 
-class _MyCartQuickAccessLoginDialogState
-    extends State<MyCartQuickAccessLoginDialog> {
+class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDialog> {
   final LocalStorageRepository localRepository = LocalStorageRepository();
   final SettingRepository settingRepository = SettingRepository();
 
@@ -89,7 +87,7 @@ class _MyCartQuickAccessLoginDialogState
     try {
       user = loggedInUser;
       SlackChannels.send(
-        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]\r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
@@ -111,8 +109,7 @@ class _MyCartQuickAccessLoginDialogState
       );
       // ]);
     } catch (e) {
-      print(
-          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON QUICK ACCESS LOGIN PAGE $e');
+      print('LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON QUICK ACCESS LOGIN PAGE $e');
     }
     progressService.hideProgress();
     markaaAppChangeNotifier.rebuild();
@@ -137,9 +134,7 @@ class _MyCartQuickAccessLoginDialogState
               mainAxisSize: MainAxisSize.min,
               children: [
                 Align(
-                  alignment: Preload.languageCode == 'en'
-                      ? Alignment.topRight
-                      : Alignment.topLeft,
+                  alignment: Preload.languageCode == 'en' ? Alignment.topRight : Alignment.topLeft,
                   child: IconButton(
                     icon: SvgPicture.asset(closeIcon),
                     onPressed: () => Navigator.pop(context),
@@ -230,15 +225,13 @@ class _MyCartQuickAccessLoginDialogState
                 borderColor: primaryColor,
                 radius: 30.sp,
                 onPressed: () async {
-                  AdjustEvent adjustEvent =
-                      new AdjustEvent(AdjustSDKConfig.initiateCheckout);
+                  AdjustEvent adjustEvent = new AdjustEvent(AdjustSDKConfig.initiateCheckout);
                   Adjust.trackEvent(adjustEvent);
 
                   adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
                   Adjust.trackEvent(adjustEvent);
 
-                  await myCartChangeNotifier.getCartItems(
-                      lang, _onProcess, _onReloadItemSuccess, _onFailure);
+                  await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
                 },
               ),
             ),
@@ -300,9 +293,7 @@ class _MyCartQuickAccessLoginDialogState
       }
       if (item.itemCount > item.availableCount) {
         flushBarService.showErrorDialog(
-          'inventory_qty_exceed_error'
-              .tr()
-              .replaceFirst('A', item.product.name),
+          'inventory_qty_exceed_error'.tr().replaceFirst('A', item.product.name),
           'no_qty.svg',
         );
         return;
@@ -360,11 +351,8 @@ class _MyCartQuickAccessLoginDialogState
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'Facebook Sign', lang,
-          onProcess: _onProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Facebook Sign', lang,
+          onProcess: _onProcess, onSuccess: _onLoginSuccess, onFailure: _onFailure);
     } catch (e) {
       print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
@@ -379,11 +367,8 @@ class _MyCartQuickAccessLoginDialogState
         String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier.loginWithSocial(
-            email, firstName, lastName, 'Google Sign', lang,
-            onProcess: _onProcess,
-            onSuccess: _onLoginSuccess,
-            onFailure: _onFailure);
+        authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Google Sign', lang,
+            onProcess: _onProcess, onSuccess: _onLoginSuccess, onFailure: _onFailure);
       }
     } catch (e) {
       print('GOOGLE LOGIN CATCH ERROR: $e');
@@ -408,12 +393,8 @@ class _MyCartQuickAccessLoginDialogState
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'apple', lang,
-          appleId: appleId,
-          onProcess: _onProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'apple', lang,
+          appleId: appleId, onProcess: _onProcess, onSuccess: _onLoginSuccess, onFailure: _onFailure);
     } catch (e) {
       print('LOGIN WITH APPLE CATCH ERROR: $e');
     }

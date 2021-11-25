@@ -401,7 +401,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       user = loggedInUser;
       SlackChannels.send(
-        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]\r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();

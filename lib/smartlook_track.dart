@@ -28,7 +28,7 @@ class SmartlookTrack {
     Smartlook.setEventTrackingMode(EventTrackingMode.FULL_TRACKING);
     List<EventTrackingMode> eventTrackingModes = [
       EventTrackingMode.FULL_TRACKING,
-      EventTrackingMode.IGNORE_USER_INTERACTION
+      EventTrackingMode.IGNORE_USER_INTERACTION,
     ];
     Smartlook.setEventTrackingModes(eventTrackingModes);
     Smartlook.registerIntegrationListener(new CustomIntegrationListener());
