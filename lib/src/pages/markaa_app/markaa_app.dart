@@ -32,6 +32,7 @@ import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/repositories/local_db_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -57,33 +58,35 @@ class _MarkaaAppState extends State<MarkaaApp> {
     Preload.setupAdjustSDK();
     OneSignalNotification.setupSDK();
     SmartlookTrack.setupSDK();
-
     _localDBRepository.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => AuthChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => ScrollChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => SuggestionChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => ProductChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => CategoryChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => MyCartChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => WishlistChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => AddressChangeNotifier(localDB: _localDBRepository)),
-        ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
-        ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => AccountChangeNotifier()),
-        ChangeNotifierProvider(create: (_) => FilterChangeNotifier()),
-      ],
-      child: _buildAppView(context),
+    return RepositoryProvider<LocalDBRepository>.value(
+      value: _localDBRepository,
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => MarkaaAppChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => AuthChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => PlaceChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => ScrollChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => SuggestionChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => ProductChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => CategoryChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => MyCartChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => WishlistChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => ProductReviewChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => HomeChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => OrderChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => AddressChangeNotifier(localDB: _localDBRepository)),
+          ChangeNotifierProvider(create: (_) => SummerCollectionNotifier()),
+          ChangeNotifierProvider(create: (_) => WalletChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => AccountChangeNotifier()),
+          ChangeNotifierProvider(create: (_) => FilterChangeNotifier()),
+        ],
+        child: _buildAppView(context),
+      ),
     );
   }
 

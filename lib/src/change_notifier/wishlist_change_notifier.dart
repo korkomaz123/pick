@@ -14,6 +14,14 @@ class WishlistChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  setWishlistItems(List<ProductModel> list) {
+    wishlistItemsCount = list.length;
+    for (var item in list) {
+      wishlistItemsMap[item.productId] = item;
+    }
+    notifyListeners();
+  }
+
   Future<void> getWishlistItems(String token, String lang) async {
     final result = await wishlistRepository.getSaveForLaterItems(token, lang);
     if (result['code'] == 'SUCCESS') {
@@ -58,8 +66,7 @@ class WishlistChangeNotifier extends ChangeNotifier {
       count = 1;
     }
     notifyListeners();
-    final result = await wishlistRepository.changeSaveForLaterItem(
-        token, product.productId, '', 'add', qty, options);
+    final result = await wishlistRepository.changeSaveForLaterItem(token, product.productId, '', 'add', qty, options);
     if (result['code'] != 'SUCCESS') {
       wishlistItemsCount -= count;
       wishlistItemsMap.remove(productId);
@@ -85,7 +92,7 @@ class WishlistChangeNotifier extends ChangeNotifier {
     wishlistItemsMap.remove(productId);
     wishlistItemsCount -= 1;
     notifyListeners();
-    await wishlistRepository.changeSaveForLaterItem(token, productId, parentId,
-        'delete_new', item!.qtySaveForLater!, {}, item.wishlistItemId!);
+    await wishlistRepository.changeSaveForLaterItem(
+        token, productId, parentId, 'delete_new', item!.qtySaveForLater!, {}, item.wishlistItemId!);
   }
 }

@@ -52,6 +52,9 @@ class MyCartChangeNotifier extends ChangeNotifier {
   bool isOkayCartCondition = true;
   bool isOkayProductCondition = true;
 
+  /// cart items count with product id as key
+  Map<String, int> cartItemsCountMap = {};
+
   /// cart items map data
   Map<String, CartItemEntity> cartItemsMap = {};
 
@@ -79,7 +82,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   double getDiscountedPrice(CartItemEntity item, {bool isRowPrice = true}) {
     double price = .0;
     bool cartConditionMatched = true;
-    for (var condition in cartConditions) {
+    for (var condition in this.cartConditions) {
       if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
@@ -113,7 +116,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
       }
     }
     bool productConditionMatched = true;
-    for (var condition in productConditions) {
+    for (var condition in this.productConditions) {
       if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
@@ -146,7 +149,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
                 (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value));
       }
     }
-    bool isOkay = (cartConditionMatched == isOkayCartCondition) && (productConditionMatched == isOkayProductCondition);
+    bool isOkay =
+        (cartConditionMatched == this.isOkayCartCondition) && (productConditionMatched == this.isOkayProductCondition);
     if (isRowPrice) {
       return isOkay ? NumericService.roundDouble(item.rowPrice * (100 - discount) / 100, 3) : item.rowPrice;
     } else {
@@ -156,45 +160,46 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void initialize() {
-    cartId = '';
-    cartItemCount = 0;
-    cartTotalPrice = .0;
-    cartTotalCount = 0;
-    cartDiscountedTotalPrice = 0;
-    cartItemsMap = {};
-    reorderCartId = '';
-    reorderCartItemCount = 0;
-    reorderCartTotalCount = 0;
-    reorderCartTotalPrice = .0;
-    reorderCartItemsMap = {};
-    type = '';
-    couponCode = '';
-    discount = .0;
-    isOkayCartCondition = true;
-    isOkayProductCondition = true;
-    cartConditions = [];
-    productConditions = [];
+  void initialize([bool isFullRefresh = true]) {
+    if (isFullRefresh) this.cartId = '';
+    this.cartItemCount = 0;
+    this.cartTotalPrice = .0;
+    this.cartTotalCount = 0;
+    this.cartDiscountedTotalPrice = 0;
+    this.cartItemsMap = {};
+    this.cartItemsCountMap = {};
+    this.reorderCartId = '';
+    this.reorderCartItemCount = 0;
+    this.reorderCartTotalCount = 0;
+    this.reorderCartTotalPrice = .0;
+    this.reorderCartItemsMap = {};
+    this.type = '';
+    this.couponCode = '';
+    this.discount = .0;
+    this.isOkayCartCondition = true;
+    this.isOkayProductCondition = true;
+    this.cartConditions = [];
+    this.productConditions = [];
     notifyListeners();
   }
 
   Future<String> getCartId() async {
     try {
       if (user != null) {
-        cartId = await myCartRepository.getShoppingCart(user!.token);
+        this.cartId = await myCartRepository.getShoppingCart(user!.token);
       } else {
         bool isExist = await localStorageRepository.existItem('cartId');
         if (isExist) {
-          cartId = await localStorageRepository.getCartId();
+          this.cartId = await localStorageRepository.getCartId();
         } else {
-          cartId = await myCartRepository.getShoppingCart();
-          if (cartId.isNotEmpty) {
-            await localStorageRepository.setCartId(cartId);
+          this.cartId = await myCartRepository.getShoppingCart();
+          if (this.cartId.isNotEmpty) {
+            await localStorageRepository.setCartId(this.cartId);
           }
         }
       }
       notifyListeners();
-      return cartId;
+      return this.cartId;
     } catch (e) {
       print('GET SHOPPING CART ID CATCH ERROR: $e');
       return '';
@@ -208,49 +213,39 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   ]) async {
     final data = {'action': 'getCartItems'};
-    cartItemCount = 0;
-    cartTotalPrice = .0;
-    cartDiscountedTotalPrice = 0;
-    cartTotalCount = 0;
-    cartItemsMap = {};
-    discount = 0;
-    couponCode = '';
-    type = '';
-    isOkayCartCondition = true;
-    isOkayProductCondition = true;
-    cartConditions = [];
-    productConditions = [];
+    this.initialize();
     if (onProcess != null) onProcess();
     try {
-      if (cartId.isEmpty) cartId = await getCartId();
-      if (cartId.isNotEmpty) {
-        final result = await myCartRepository.getCartItems(cartId, lang);
+      if (this.cartId.isEmpty) this.cartId = await this.getCartId();
+      if (this.cartId.isNotEmpty) {
+        final result = await myCartRepository.getCartItems(this.cartId, lang);
         if (result['code'] == 'SUCCESS') {
-          couponCode = result['couponCode'];
-          discount = result['discount'] + .0;
-          type = result['type'];
-          cartConditions = result['cartCondition'];
-          productConditions = result['productCondition'];
-          isOkayCartCondition = result['isCartConditionOkay'];
-          isOkayProductCondition = result['isProductConditionOkay'];
-          cartItemCount = result['items'].length;
+          this.couponCode = result['couponCode'];
+          this.discount = result['discount'] + .0;
+          this.type = result['type'];
+          this.cartConditions = result['cartCondition'];
+          this.productConditions = result['productCondition'];
+          this.isOkayCartCondition = result['isCartConditionOkay'];
+          this.isOkayProductCondition = result['isProductConditionOkay'];
+          this.cartItemCount = result['items'].length;
           for (CartItemEntity item in result['items']) {
-            cartItemsMap[item.itemId] = item;
-            cartTotalPrice += item.rowPrice;
-            cartTotalCount += item.itemCount;
-            cartDiscountedTotalPrice += getDiscountedPrice(item);
+            this.cartItemsCountMap[item.product.productId] = item.itemCount;
+            this.cartItemsMap[item.itemId] = item;
+            this.cartTotalPrice += item.rowPrice;
+            this.cartTotalCount += item.itemCount;
+            this.cartDiscountedTotalPrice += this.getDiscountedPrice(item);
           }
           notifyListeners();
           if (onSuccess != null) onSuccess(cartItemCount);
         } else {
           notifyListeners();
           if (onFailure != null) onFailure(result['errorMessage']);
-          _reportCartIssue(result, data);
+          this._reportCartIssue(result, data);
         }
       }
     } catch (e) {
       if (onFailure != null) onFailure('connection_error');
-      _reportCartIssue(e.toString(), data);
+      this._reportCartIssue(e.toString(), data);
       notifyListeners();
     }
   }
@@ -258,38 +253,40 @@ class MyCartChangeNotifier extends ChangeNotifier {
   Future<void> removeCartItem(String key, Function onFailure) async {
     final data = {'action': 'removeCartItem', 'productId': key};
     final item = cartItemsMap[key]!;
-    _onRemoveHandler(item, key);
+    this._onRemoveHandler(item, key);
     notifyListeners();
     try {
-      final result = await myCartRepository.deleteCartItem(cartId, key);
+      final result = await myCartRepository.deleteCartItem(this.cartId, key);
       if (result['code'] != 'SUCCESS') {
         onFailure(result['errorMessage']);
-        _onRemoveFailedHandler(item, key);
+        this._onRemoveFailedHandler(item, key);
+        this._reportCartIssue(result, data);
         notifyListeners();
-        _reportCartIssue(result, data);
       }
     } catch (e) {
       onFailure('connection_error');
-      _onRemoveFailedHandler(item, key);
+      this._onRemoveFailedHandler(item, key);
+      this._reportCartIssue(e.toString(), data);
       notifyListeners();
-      _reportCartIssue(e.toString(), data);
     }
   }
 
   _onRemoveHandler(CartItemEntity item, String key) {
-    cartTotalPrice -= cartItemsMap[key]!.rowPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(item);
-    cartItemCount -= 1;
-    cartTotalCount -= cartItemsMap[key]!.itemCount;
-    cartItemsMap.remove(key);
+    this.cartTotalPrice -= this.cartItemsMap[key]!.rowPrice;
+    this.cartDiscountedTotalPrice -= this.getDiscountedPrice(item);
+    this.cartItemCount -= 1;
+    this.cartTotalCount -= this.cartItemsMap[key]!.itemCount;
+    this.cartItemsMap.remove(key);
+    this.cartItemsCountMap.remove(item.product.productId);
   }
 
   _onRemoveFailedHandler(CartItemEntity item, String key) {
-    cartTotalPrice += item.rowPrice;
-    cartDiscountedTotalPrice += getDiscountedPrice(item);
-    cartItemCount += 1;
-    cartTotalCount += item.itemCount;
-    cartItemsMap[key] = item;
+    this.cartTotalPrice += item.rowPrice;
+    this.cartDiscountedTotalPrice += this.getDiscountedPrice(item);
+    this.cartItemCount += 1;
+    this.cartTotalCount += item.itemCount;
+    this.cartItemsMap[key] = item;
+    this.cartItemsCountMap[item.product.productId] = item.itemCount;
   }
 
   Future<void> addProductToCart(
@@ -302,96 +299,91 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-    if (cartId.isEmpty) await getCartItems(lang);
-    if (cartId.isNotEmpty) {
+    if (this.cartId.isEmpty) await this.getCartItems(lang);
+    if (this.cartId.isNotEmpty) {
       final data = {'action': 'addProductToCart', 'productId': product.productId, 'qty': qty, 'options': options};
       try {
-        final result = await myCartRepository.addCartItem(cartId, product.productId, '$qty', lang, options);
+        final result = await myCartRepository.addCartItem(this.cartId, product.productId, '$qty', lang, options);
         if (result['code'] == 'SUCCESS') {
           CartItemEntity newItem = result['item'];
-          _onAddItemHandler(newItem, qty);
+          this._onAddItemHandler(newItem, qty);
           if (onSuccess != null) onSuccess();
           notifyListeners();
         } else {
           if (onFailure != null) onFailure(result['errorMessage']);
-          _reportCartIssue(result, data);
+          this._reportCartIssue(result, data);
         }
       } catch (e) {
         if (onFailure != null) onFailure('connection_error');
-        _reportCartIssue(e.toString(), data);
+        this._reportCartIssue(e.toString(), data);
       }
     }
   }
 
   _onAddItemHandler(CartItemEntity newItem, int qty) {
-    if (cartItemsMap.containsKey(newItem.itemId)) {
+    if (this.cartItemsMap.containsKey(newItem.itemId)) {
       CartItemEntity oldItem = cartItemsMap[newItem.itemId]!;
-      cartTotalPrice -= oldItem.rowPrice;
-      cartDiscountedTotalPrice -= getDiscountedPrice(oldItem);
+      this.cartTotalPrice -= oldItem.rowPrice;
+      this.cartDiscountedTotalPrice -= this.getDiscountedPrice(oldItem);
     } else {
-      cartItemCount += 1;
+      this.cartItemCount += 1;
     }
-    cartTotalCount += qty;
-    cartTotalPrice += newItem.rowPrice;
-    cartDiscountedTotalPrice += getDiscountedPrice(newItem);
-    cartItemsMap[newItem.itemId] = newItem;
+    this.cartTotalCount += qty;
+    this.cartTotalPrice += newItem.rowPrice;
+    this.cartDiscountedTotalPrice += this.getDiscountedPrice(newItem);
+    this.cartItemsMap[newItem.itemId] = newItem;
+    this.cartItemsCountMap[newItem.product.productId] = newItem.itemCount;
   }
 
-  Future<void> updateCartItem(
-    CartItemEntity item,
-    int qty,
-    Function onFailure,
-  ) async {
-    if (cartId.isEmpty) await getCartItems(lang);
-    if (cartId.isNotEmpty) {
-      final data = {
-        'action': 'updateCartItem',
-        'itemid': item.itemId,
-        'qty': qty,
-        'lang': lang,
-      };
+  Future<void> updateCartItem(CartItemEntity item, int qty, Function onFailure) async {
+    if (this.cartId.isEmpty) await this.getCartItems(lang);
+    if (this.cartId.isNotEmpty) {
+      final data = {'action': 'updateCartItem', 'itemid': item.itemId, 'qty': qty, 'lang': lang};
       int updatedQty = qty - item.itemCount;
       double updatedPrice = StringService.roundDouble(item.product.price, 3) * updatedQty;
-      _onUpdateHandler(qty, updatedQty, updatedPrice, item);
+      this._onUpdateHandler(qty, updatedQty, updatedPrice, item);
       notifyListeners();
+
       try {
-        final result = await myCartRepository.updateCartItem(cartId, item.itemId, qty.toString());
+        final result = await myCartRepository.updateCartItem(this.cartId, item.itemId, qty.toString());
         if (result['code'] != 'SUCCESS') {
           onFailure(result['errorMessage']);
-          _onUpdateFailedHandler(updatedQty, updatedPrice, item);
+          this._onUpdateFailedHandler(updatedQty, updatedPrice, item);
+          this._reportCartIssue(result, data);
           notifyListeners();
-          _reportCartIssue(result, data);
         }
       } catch (e) {
         onFailure('connection_error');
-        _onUpdateFailedHandler(updatedQty, updatedPrice, item);
+        this._onUpdateFailedHandler(updatedQty, updatedPrice, item);
+        this._reportCartIssue(e.toString(), data);
         notifyListeners();
-        _reportCartIssue(e.toString(), data);
       }
     }
   }
 
   _onUpdateHandler(int qty, int updatedQty, double updatedPrice, CartItemEntity item) {
-    cartTotalCount += updatedQty;
-    cartTotalPrice += updatedPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-    cartItemsMap[item.itemId]!.itemCount = qty;
-    cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * qty;
-    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+    this.cartTotalCount += updatedQty;
+    this.cartTotalPrice += updatedPrice;
+    this.cartDiscountedTotalPrice -= this.getDiscountedPrice(this.cartItemsMap[item.itemId]!);
+    this.cartItemsMap[item.itemId]!.itemCount = qty;
+    this.cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * qty;
+    this.cartDiscountedTotalPrice += this.getDiscountedPrice(this.cartItemsMap[item.itemId]!);
+    this.cartItemsCountMap[item.product.productId] = qty;
   }
 
   _onUpdateFailedHandler(int updatedQty, double updatedPrice, CartItemEntity item) {
-    cartTotalCount -= updatedQty;
-    cartTotalPrice -= updatedPrice;
-    cartDiscountedTotalPrice -= getDiscountedPrice(cartItemsMap[item.itemId]!);
-    cartItemsMap[item.itemId]!.itemCount = item.itemCount;
-    cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
-    cartDiscountedTotalPrice += getDiscountedPrice(cartItemsMap[item.itemId]!);
+    this.cartTotalCount -= updatedQty;
+    this.cartTotalPrice -= updatedPrice;
+    this.cartDiscountedTotalPrice -= this.getDiscountedPrice(this.cartItemsMap[item.itemId]!);
+    this.cartItemsMap[item.itemId]!.itemCount = item.itemCount;
+    this.cartItemsMap[item.itemId]!.rowPrice = StringService.roundDouble(item.product.price, 3) * item.itemCount;
+    this.cartDiscountedTotalPrice += this.getDiscountedPrice(this.cartItemsMap[item.itemId]!);
+    this.cartItemsCountMap[item.product.productId] = item.itemCount;
   }
 
   Future<bool> activateCart() async {
     try {
-      final result = await myCartRepository.activateCart(cartId);
+      final result = await myCartRepository.activateCart(this.cartId);
       if (result['code'] == 'SUCCESS') {
         return true;
       } else {
@@ -411,13 +403,13 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   }) async {
     if (onProcess != null) onProcess();
-    final result = await myCartRepository.getCartItems(reorderCartId, lang);
+    final result = await myCartRepository.getCartItems(this.reorderCartId, lang);
     if (result['code'] == 'SUCCESS') {
-      reorderCartItemCount = result['items'].length;
+      this.reorderCartItemCount = result['items'].length;
       for (CartItemEntity item in result['items']) {
-        reorderCartItemsMap[item.itemId] = item;
-        reorderCartTotalPrice += item.rowPrice;
-        reorderCartTotalCount += item.itemCount;
+        this.reorderCartItemsMap[item.itemId] = item;
+        this.reorderCartTotalPrice += item.rowPrice;
+        this.reorderCartTotalCount += item.itemCount;
       }
       if (onSuccess != null) onSuccess();
     } else {
@@ -427,12 +419,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> removeReorderCartItem(String key) async {
-    reorderCartTotalPrice -= reorderCartItemsMap[key]!.rowPrice;
-    reorderCartItemCount -= 1;
-    reorderCartTotalCount -= reorderCartItemsMap[key]!.itemCount;
-    reorderCartItemsMap.remove(key);
+    this.reorderCartTotalPrice -= this.reorderCartItemsMap[key]!.rowPrice;
+    this.reorderCartItemCount -= 1;
+    this.reorderCartTotalCount -= this.reorderCartItemsMap[key]!.itemCount;
+    this.reorderCartItemsMap.remove(key);
     notifyListeners();
-    await myCartRepository.deleteCartItem(reorderCartId, key);
+    await myCartRepository.deleteCartItem(this.reorderCartId, key);
   }
 
   Future<void> getReorderCartId(
@@ -444,7 +436,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }) async {
     if (onProcess != null) onProcess();
     try {
-      reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
+      this.reorderCartId = await myCartRepository.getReorderCartId(orderId, lang);
       if (onSuccess != null) onSuccess();
     } catch (e) {
       if (onFailure != null) onFailure();
@@ -452,75 +444,75 @@ class MyCartChangeNotifier extends ChangeNotifier {
   }
 
   void initializeReorderCart() {
-    reorderCartId = '';
-    reorderCartItemCount = 0;
-    reorderCartTotalCount = 0;
-    reorderCartTotalPrice = .0;
-    reorderCartItemsMap = {};
+    this.reorderCartId = '';
+    this.reorderCartItemCount = 0;
+    this.reorderCartTotalCount = 0;
+    this.reorderCartTotalPrice = .0;
+    this.reorderCartItemsMap = {};
   }
 
   Future<void> applyCouponCode(
     String code,
     FlushBarService flushBarService,
   ) async {
-    isApplying = true;
+    this.isApplying = true;
     notifyListeners();
-    final result = await myCartRepository.couponCode(cartId, code, '0');
+    final result = await myCartRepository.couponCode(this.cartId, code, '0');
     if (result['code'] == 'SUCCESS') {
-      couponCode = code;
-      discount = result['discount'] + .0;
-      type = result['type'];
-      isApplying = false;
-      cartConditions = result['cartCondition'];
-      productConditions = result['productCondition'];
-      isOkayCartCondition = result['isCartConditionOkay'];
-      isOkayProductCondition = result['isProductConditionOkay'];
+      this.couponCode = code;
+      this.discount = result['discount'] + .0;
+      this.type = result['type'];
+      this.isApplying = false;
+      this.cartConditions = result['cartCondition'];
+      this.productConditions = result['productCondition'];
+      this.isOkayCartCondition = result['isCartConditionOkay'];
+      this.isOkayProductCondition = result['isProductConditionOkay'];
       resetDiscountPrice();
     } else {
       flushBarService.showErrorDialog(result['errorMessage']);
-      isApplying = false;
+      this.isApplying = false;
     }
     notifyListeners();
   }
 
   void resetDiscountPrice() {
-    cartDiscountedTotalPrice = 0;
-    for (var key in cartItemsMap.keys.toList()) {
-      final item = cartItemsMap[key]!;
-      cartDiscountedTotalPrice += getDiscountedPrice(item);
+    this.cartDiscountedTotalPrice = 0;
+    for (var key in this.cartItemsMap.keys.toList()) {
+      final item = this.cartItemsMap[key]!;
+      this.cartDiscountedTotalPrice += this.getDiscountedPrice(item);
     }
   }
 
   Future<void> cancelCouponCode(
     FlushBarService flushBarService,
   ) async {
-    isApplying = true;
+    this.isApplying = true;
     notifyListeners();
-    final result = await myCartRepository.couponCode(cartId, couponCode, '1');
+    final result = await myCartRepository.couponCode(this.cartId, this.couponCode, '1');
     if (result['code'] == 'SUCCESS') {
-      couponCode = '';
-      discount = .0;
-      type = '';
-      isApplying = false;
-      cartDiscountedTotalPrice = cartTotalPrice;
-      cartConditions.clear();
-      productConditions.clear();
-      isOkayCartCondition = true;
-      isOkayProductCondition = true;
+      this.couponCode = '';
+      this.discount = .0;
+      this.type = '';
+      this.isApplying = false;
+      this.cartDiscountedTotalPrice = this.cartTotalPrice;
+      this.cartConditions.clear();
+      this.productConditions.clear();
+      this.isOkayCartCondition = true;
+      this.isOkayProductCondition = true;
     } else {
       flushBarService.showErrorDialog(result['errorMessage']);
-      isApplying = false;
+      this.isApplying = false;
     }
     notifyListeners();
   }
 
   Future<void> transferCartItems() async {
     final viewerCartId = await localStorageRepository.getCartId();
-    await myCartRepository.transferCart(viewerCartId, cartId);
+    await myCartRepository.transferCart(viewerCartId, this.cartId);
   }
 
   void _reportCartIssue(dynamic result, dynamic data) async {
-    data['cartId'] = cartId;
+    data['cartId'] = this.cartId;
     Map<String, dynamic> appVersion = {'android': MarkaaVersion.androidVersion, 'iOS': MarkaaVersion.iOSVersion};
     SlackChannels.send(
       '$env CART ERROR: ${result.toString()} \r\n ${data.toString()} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',

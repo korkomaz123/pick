@@ -43,6 +43,39 @@ class AppRepository {
     });
   }
 
+  Future<dynamic> getAppAsset() async {
+    String url = EndPoints.getAppAsset;
+    final data = {'lang': Preload.language, 'country_code': 'KW'};
+    final result = await Api.getMethod(url, data: data);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> shippingMethodList = result['shippingMethods'];
+      List<ShippingMethodEntity> shippingMethods = [];
+      for (int i = 0; i < shippingMethodList.length; i++) {
+        shippingMethods.add(ShippingMethodEntity.fromJson(shippingMethodList[i]));
+      }
+      List<String> keys = (result['paymentMethods'] as Map<String, dynamic>).keys.toList();
+      List<PaymentMethodEntity> paymentMethods = [];
+      for (int i = 0; i < keys.length; i++) {
+        paymentMethods.add(PaymentMethodEntity.fromJson(result['paymentMethods'][keys[i]]));
+      }
+      List<RegionEntity> _regionsObjs = [];
+      result['regions'].forEach((region) => _regionsObjs.add(RegionEntity.fromJson(region)));
+
+      return {
+        'shippingMethods': shippingMethods,
+        'paymentMethods': paymentMethods,
+        'regions': _regionsObjs,
+        'deliveryRules': DeliveryRuleEntity.fromJson(result['deliveryRules'])
+      };
+    }
+    return {
+      'shippingMethods': [],
+      'paymentMethods': [],
+      'regions': [],
+      'deliveryRules': null,
+    };
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   ///
   //////////////////////////////////////////////////////////////////////////////

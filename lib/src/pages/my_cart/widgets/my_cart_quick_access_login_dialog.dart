@@ -91,23 +91,14 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
-      // Future.wait([
+      orderChangeNotifier.setOrderList(user!.orders);
+      wishlistChangeNotifier.setWishlistItems(user!.wishlistItems);
+      addressChangeNotifier.setCustomerAddressList(user!.addresses);
       await localRepository.setToken(user!.token);
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
-      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
-      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
-      await addressChangeNotifier.loadCustomerAddresses(user!.token);
       await homeChangeNotifier.loadRecentlyViewedCustomer();
-      await settingRepository.updateFcmDeviceToken(
-        user!.token,
-        Platform.isAndroid ? deviceToken : '',
-        Platform.isIOS ? deviceToken : '',
-        Platform.isAndroid ? lang : '',
-        Platform.isIOS ? lang : '',
-      );
-      // ]);
     } catch (e) {
       print('LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON QUICK ACCESS LOGIN PAGE $e');
     }

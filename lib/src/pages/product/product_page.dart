@@ -302,109 +302,151 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   bool _notified = false;
+  bool get isConfigurable => productChangeNotifier!.productDetailsMap[productId]!.typeId == 'configurable';
   Widget _buildToolbar(ProductChangeNotifier model) {
     return Consumer<MarkaaAppChangeNotifier>(
       builder: (_, appModel, __) {
-        if (model.productDetailsMap[productId]!.typeId == 'configurable' ||
-            (!isParentOutOfStock && !isChildOutOfStock)) {
-          return Container(
-            width: 375.w,
-            height: 60.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (appModel.buying) ...[
-                  Container(
-                    width: 317.w,
-                    height: 60.h,
-                    color: Color(0xFFFF8B00),
-                    child: CircleLoadingSpinner(loadingColor: Colors.white),
-                  )
-                ] else ...[
-                  Container(
-                    width: 317.w,
-                    height: 60.h,
-                    child: MarkaaTextButton(
-                      title: 'product_buy_now'.tr(),
-                      titleSize: 23.sp,
-                      titleColor: Colors.white,
-                      buttonColor: Color(0xFFFF8B00),
-                      borderColor: Colors.transparent,
-                      radius: 1,
-                      onPressed: () => _onBuyNow(model),
-                      isBold: true,
-                    ),
-                  )
-                ],
-                MarkaaRoundImageButton(
-                  width: 58.w,
-                  height: 60.h,
-                  color: primarySwatchColor,
-                  child: ScaleTransition(
-                    scale: _addToCartScaleAnimation!,
-                    child: Container(
-                      width: 25.w,
-                      height: 25.h,
-                      child: SvgPicture.asset(
-                        shoppingCartIcon,
-                        color: Colors.white,
+        return Consumer<MyCartChangeNotifier>(
+          builder: (_, cartModel, __) {
+            bool isExceedChild = isConfigurable &&
+                model.selectedVariant != null &&
+                cartModel.cartItemsCountMap.containsKey(model.selectedVariant!.productId) &&
+                model.selectedVariant!.stockQty == cartModel.cartItemsCountMap[model.selectedVariant!.productId];
+            bool isExceedParent = !isConfigurable &&
+                cartModel.cartItemsCountMap.containsKey(productId) &&
+                model.productDetailsMap[productId]!.stockQty == cartModel.cartItemsCountMap[productId];
+            if (isExceedChild || isExceedParent) {
+              return Container(
+                width: 375.w,
+                height: 60.h,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 317.w,
+                      height: 60.h,
+                      child: MarkaaTextButton(
+                        title: 'exceed_qty'.tr(),
+                        titleSize: 14.sp,
+                        titleColor: Colors.grey.shade500,
+                        buttonColor: Colors.grey.shade200,
+                        borderColor: Colors.transparent,
+                        radius: 1,
+                        onPressed: () => null,
+                        isBold: true,
                       ),
                     ),
-                  ),
-                  onTap: () {
-                    if (appModel.activeAddCart) {
-                      appModel.changeAddCartStatus(false);
-                      _onAddToCart(model);
-                      appModel.changeAddCartStatus(true);
-                    }
-                  },
-                  radius: 1,
+                    MarkaaRoundImageButton(
+                      width: 58.w,
+                      height: 60.h,
+                      color: Colors.grey.shade300,
+                      child: Container(
+                        width: 25.w,
+                        height: 25.h,
+                        child: SvgPicture.asset(shoppingCartIcon, color: Colors.grey),
+                      ),
+                      onTap: () {},
+                      radius: 1,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        } else {
-          // if (model.productDetailsMap[productId].specification != null && model.productDetailsMap[productId].specification.isNotEmpty)
-          return MarkaaTextButton(
-            title: 'notify_me'.tr(),
-            titleSize: 23.sp,
-            titleColor: Colors.white,
-            buttonColor: _notified ? greyColor : primaryColor,
-            borderColor: _notified ? greyColor : primaryColor,
-            image: 'price_alarm',
-            radius: 1,
-            onPressed: () async {
-              if (_notified) return;
-              if (user == null) {
-                Navigator.pushNamed(
-                  Preload.navigatorKey!.currentContext!,
-                  Routes.signIn,
-                );
-                return;
-              }
-              progressService!.showProgress();
-              await model.productDetailsMap[productId]!.requestPriceAlarm('stock', productId!);
-              progressService!.hideProgress();
-              FlushBarService(context: context).showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
-              setState(() {
-                _notified = true;
-              });
-            },
-            isBold: true,
-          );
-          // else
-          //   return Container();
-        }
+              );
+            } else if (isConfigurable || (!isParentOutOfStock && !isChildOutOfStock)) {
+              return Container(
+                width: 375.w,
+                height: 60.h,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (appModel.buying) ...[
+                      Container(
+                        width: 317.w,
+                        height: 60.h,
+                        color: Color(0xFFFF8B00),
+                        child: CircleLoadingSpinner(loadingColor: Colors.white),
+                      )
+                    ] else ...[
+                      Container(
+                        width: 317.w,
+                        height: 60.h,
+                        child: MarkaaTextButton(
+                          title: 'product_buy_now'.tr(),
+                          titleSize: 23.sp,
+                          titleColor: Colors.white,
+                          buttonColor: Color(0xFFFF8B00),
+                          borderColor: Colors.transparent,
+                          radius: 1,
+                          onPressed: () => _onBuyNow(model),
+                          isBold: true,
+                        ),
+                      )
+                    ],
+                    MarkaaRoundImageButton(
+                      width: 58.w,
+                      height: 60.h,
+                      color: primarySwatchColor,
+                      child: ScaleTransition(
+                        scale: _addToCartScaleAnimation!,
+                        child: Container(
+                          width: 25.w,
+                          height: 25.h,
+                          child: SvgPicture.asset(
+                            shoppingCartIcon,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        if (appModel.activeAddCart) {
+                          appModel.changeAddCartStatus(false);
+                          _onAddToCart(model);
+                          appModel.changeAddCartStatus(true);
+                        }
+                      },
+                      radius: 1,
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return MarkaaTextButton(
+                title: 'notify_me'.tr(),
+                titleSize: 23.sp,
+                titleColor: Colors.white,
+                buttonColor: _notified ? greyColor : primaryColor,
+                borderColor: _notified ? greyColor : primaryColor,
+                image: 'price_alarm',
+                radius: 1,
+                onPressed: () async {
+                  if (_notified) return;
+                  if (user == null) {
+                    Navigator.pushNamed(
+                      Preload.navigatorKey!.currentContext!,
+                      Routes.signIn,
+                    );
+                    return;
+                  }
+                  progressService!.showProgress();
+                  await model.productDetailsMap[productId]!.requestPriceAlarm('stock', productId!);
+                  progressService!.hideProgress();
+                  FlushBarService(context: context)
+                      .showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                  setState(() {
+                    _notified = true;
+                  });
+                },
+                isBold: true,
+              );
+            }
+          },
+        );
       },
     );
   }
 
   _onAddToCart(ProductChangeNotifier model) async {
     if (variantSelectRequired) {
-      flushBarService!.showErrorDialog(
-        'required_options'.tr(),
-        "select_option.svg",
-      );
+      flushBarService!.showErrorDialog('required_options'.tr(), "select_option.svg");
       return;
     }
     if (isParentOutOfStock || isChildOutOfStock) {

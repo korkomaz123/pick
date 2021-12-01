@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +53,6 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
             imageUrl: banner.bannerImage ?? '',
             fit: BoxFit.fill,
             errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-            progressIndicatorBuilder: (_, __, ___) {
-              return Center(child: PulseLoadingSpinner());
-            },
           ),
         );
       },

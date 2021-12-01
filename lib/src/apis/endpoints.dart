@@ -10,6 +10,7 @@ class EndPoints {
   static const String socialLogin = '$baseUrl/LoginWithSocial';
   static const String register = '$baseUrl/Register';
   static const String getCurrentUser = '$baseUrl/GetCurrentUser';
+  static const String getAppAsset = '$baseUrl/GetAppAsset';
   static const String getSubCategories = '$baseUrl/GetSubCategories';
   static const String getMenuCategories = '$baseUrl/GetMenuCategories';
   static const String getCategoryProducts = '$baseUrl/GetCategoryProducts';

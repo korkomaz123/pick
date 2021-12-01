@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/action_handler.dart';
@@ -45,9 +44,6 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
                   child: CachedNetworkImage(
                     imageUrl: banner.bannerImage ?? '',
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                    progressIndicatorBuilder: (_, __, ___) {
-                      return Center(child: PulseLoadingSpinner());
-                    },
                   ),
                 );
               },

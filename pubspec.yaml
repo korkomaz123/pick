@@ -13,7 +13,7 @@ dependencies:
   algolia: ^1.0.1
   app_tracking_transparency: ^2.0.1
   badges: ^2.0.1
-  bloc: ^7.0.0
+  bloc: ^8.0.0
   cached_network_image: ^3.0.0
   carousel_slider: ^4.0.0
   cloud_firestore: ^2.5.2
@@ -31,6 +31,7 @@ dependencies:
   firebase_dynamic_links: ^2.0.2
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.0.0
   flutter_cache_manager: ^3.1.2
   flutter_facebook_auth: ^3.5.6
   flutter_html: ^2.1.2

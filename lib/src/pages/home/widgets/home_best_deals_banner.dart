@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -84,9 +83,6 @@ class _HomeBestDealsBannerState extends State<HomeBestDealsBanner> {
                           imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                          progressIndicatorBuilder: (_, __, ___) {
-                            return Center(child: PulseLoadingSpinner());
-                          },
                         ),
                       ),
                       if (index < faceCareBanners.length - 1) ...[SizedBox(width: 5.w)],

@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/components/product_card.dart';
@@ -81,9 +80,6 @@ class _HomeNewArrivalsBannerState extends State<HomeNewArrivalsBanner> {
                           imageUrl: item.bannerImage ?? '',
                           fit: BoxFit.fitHeight,
                           errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                          progressIndicatorBuilder: (_, __, ___) {
-                            return Center(child: PulseLoadingSpinner());
-                          },
                         ),
                       ),
                       if (index < widget.homeChangeNotifier.sunglassesBanners.length - 1) ...[SizedBox(width: 5.w)],

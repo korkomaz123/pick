@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -100,9 +99,6 @@ class HomeFragrancesBanners extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: banner.bannerImage ?? '',
                 errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                progressIndicatorBuilder: (_, __, ___) {
-                  return Center(child: PulseLoadingSpinner());
-                },
               ),
             ),
           );

@@ -36,6 +36,14 @@ class OrderChangeNotifier extends ChangeNotifier {
     keys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
   }
 
+  setOrderList(List<OrderEntity> list) {
+    for (var item in list) {
+      ordersMap[item.orderId] = item;
+    }
+    setKeys();
+    notifyListeners();
+  }
+
   Future<void> loadOrderHistories(
     String token,
     String lang, [

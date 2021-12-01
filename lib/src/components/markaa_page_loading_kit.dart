@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ChasingDotsLoadingSpinner extends StatefulWidget {
   @override
-  _ChasingDotsLoadingSpinnerState createState() =>
-      _ChasingDotsLoadingSpinnerState();
+  _ChasingDotsLoadingSpinnerState createState() => _ChasingDotsLoadingSpinnerState();
 }
 
-class _ChasingDotsLoadingSpinnerState extends State<ChasingDotsLoadingSpinner>
-    with TickerProviderStateMixin {
+class _ChasingDotsLoadingSpinnerState extends State<ChasingDotsLoadingSpinner> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SpinKitChasingDots(
@@ -29,8 +28,7 @@ class CircleLoadingSpinner extends StatefulWidget {
   _CircleLoadingSpinnerState createState() => _CircleLoadingSpinnerState();
 }
 
-class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner>
-    with TickerProviderStateMixin {
+class _CircleLoadingSpinnerState extends State<CircleLoadingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -63,8 +61,7 @@ class BounceLoadingSpinner extends StatefulWidget {
   _BounceLoadingSpinnerState createState() => _BounceLoadingSpinnerState();
 }
 
-class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner>
-    with TickerProviderStateMixin {
+class _BounceLoadingSpinnerState extends State<BounceLoadingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -96,8 +93,7 @@ class PulseLoadingSpinner extends StatefulWidget {
   _PulseLoadingSpinnerState createState() => _PulseLoadingSpinnerState();
 }
 
-class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner>
-    with TickerProviderStateMixin {
+class _PulseLoadingSpinnerState extends State<PulseLoadingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -129,8 +125,7 @@ class WaveLoadingSpinner extends StatefulWidget {
   _WaveLoadingSpinnerState createState() => _WaveLoadingSpinnerState();
 }
 
-class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner>
-    with TickerProviderStateMixin {
+class _WaveLoadingSpinnerState extends State<WaveLoadingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -163,8 +158,7 @@ class RippleLoadingSpinner extends StatefulWidget {
   _RippleLoadingSpinnerState createState() => _RippleLoadingSpinnerState();
 }
 
-class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner>
-    with TickerProviderStateMixin {
+class _RippleLoadingSpinnerState extends State<RippleLoadingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -196,8 +190,7 @@ class DualRingSpinner extends StatefulWidget {
   _DualRingSpinnerState createState() => _DualRingSpinnerState();
 }
 
-class _DualRingSpinnerState extends State<DualRingSpinner>
-    with TickerProviderStateMixin {
+class _DualRingSpinnerState extends State<DualRingSpinner> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -231,8 +224,7 @@ class SpinningLinesBar extends StatefulWidget {
   _SpinningLinesBarState createState() => _SpinningLinesBarState();
 }
 
-class _SpinningLinesBarState extends State<SpinningLinesBar>
-    with TickerProviderStateMixin {
+class _SpinningLinesBarState extends State<SpinningLinesBar> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -266,8 +258,7 @@ class ThreeBounceLoadingBar extends StatefulWidget {
   _ThreeBounceLoadingBarState createState() => _ThreeBounceLoadingBarState();
 }
 
-class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar>
-    with TickerProviderStateMixin {
+class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar> with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override
@@ -291,6 +282,31 @@ class _ThreeBounceLoadingBarState extends State<ThreeBounceLoadingBar>
       size: 20,
       controller: _controller,
       color: primarySwatchColor,
+    );
+  }
+}
+
+class BannerLoadingShimmer extends StatefulWidget {
+  final double width;
+  final double height;
+
+  const BannerLoadingShimmer({Key? key, required this.width, required this.height}) : super(key: key);
+
+  @override
+  _BannerLoadingShimmerState createState() => _BannerLoadingShimmerState();
+}
+
+class _BannerLoadingShimmerState extends State<BannerLoadingShimmer> {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.white,
+      highlightColor: Colors.grey.shade300,
+      child: Container(
+        width: widget.width,
+        height: widget.height,
+        color: Colors.white,
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewOrderPage extends StatefulWidget {
   final OrderEntity order;
@@ -160,7 +162,9 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               //     order.status == OrderStatusEnum.order_approval_pending) ...[
               //   _buildCancelOrderButton()
               // ],
-              if (order.status == OrderStatusEnum.complete) ...[_buildReturnOrderButton()]
+              if (order.status == OrderStatusEnum.complete) ...[_buildReturnOrderButton()],
+              SizedBox(height: 60.h),
+              _buildCallUs(),
             ],
           ),
         ),
@@ -423,5 +427,35 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCallUs() {
+    return Container(
+      width: 375.w,
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('need_help'.tr(), style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp)),
+          SizedBox(width: 20.w),
+          MarkaaTextIconButton(
+            icon: Icon(Icons.call, size: 22.sp, color: Colors.white),
+            title: 'call_us'.tr(),
+            titleSize: 14.sp,
+            titleColor: Colors.white,
+            buttonColor: Colors.orange,
+            borderColor: Colors.transparent,
+            onPressed: () => _onCallUs(),
+            radius: 30,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onCallUs() async {
+    if (await canLaunch('tel:+96522285188')) {
+      await launch('tel:+96522285188');
+    }
   }
 }

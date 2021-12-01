@@ -186,6 +186,18 @@ class AddressChangeNotifier extends ChangeNotifier {
     updateCustomerAddress(user!.token, address);
   }
 
+  setCustomerAddressList(List<AddressEntity> list) {
+    for (var item in list) {
+      customerAddressesMap[item.addressId!] = item;
+      if (item.defaultShippingAddress == 1) {
+        customerDefaultAddress = item;
+      }
+    }
+    customerAddressKeys = customerAddressesMap.keys.toList();
+    customerAddressKeys.sort((key1, key2) => int.parse(key2).compareTo(int.parse(key1)));
+    notifyListeners();
+  }
+
   Future<void> loadCustomerAddresses(
     String token, [
     Function? onSuccess,

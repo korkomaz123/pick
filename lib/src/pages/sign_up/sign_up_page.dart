@@ -71,13 +71,11 @@ class _SignUpPageState extends State<SignUpPage> {
     Adjust.trackEvent(adjustEvent);
     user = newUser;
 
-    // Future.wait([
     await localRepository.setToken(newUser.token);
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
     await homeChangeNotifier.loadRecentlyViewedCustomer();
-    // ]);
 
     progressService.hideProgress();
     Navigator.pop(context);
@@ -96,8 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
               Container(
                 width: 375.w,
                 padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment:
-                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                 child: IconButton(
                   icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () => Navigator.pop(context),

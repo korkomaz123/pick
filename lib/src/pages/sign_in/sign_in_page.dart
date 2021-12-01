@@ -405,13 +405,13 @@ class _SignInPageState extends State<SignInPage> {
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
+      orderChangeNotifier.setOrderList(user!.orders);
+      wishlistChangeNotifier.setWishlistItems(user!.wishlistItems);
+      addressChangeNotifier.setCustomerAddressList(user!.addresses);
       await localRepository.setToken(user!.token);
-      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
-      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
-      await addressChangeNotifier.loadCustomerAddresses(user!.token);
       await homeChangeNotifier.loadRecentlyViewedCustomer();
     } catch (e) {
       print('LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');

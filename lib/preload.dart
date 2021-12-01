@@ -74,18 +74,26 @@ class Preload {
 
   static loadAssetData() {
     homeChangeNotifier.getHomeCategories();
-    appRepository.getShippingMethod().then((result) => shippingMethods = result).catchError((error) {
-      print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
+    appRepository.getAppAsset().then((result) {
+      shippingMethods = result['shippingMethods'];
+      paymentMethods = result['paymentMethods'];
+      regions = result['regions'];
+      deliveryRule = result['deliveryRules'];
+    }).catchError((error) {
+      print('GET APP ASSET TIMED OUT OR CONNECTION CLOSED');
     });
-    appRepository.getPaymentMethod().then((result) => paymentMethods = result).catchError((error) {
-      print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
-    });
-    appRepository.getRegions().then((result) => regions = result).catchError((error) {
-      print('GET REGION LIST TIMEOUT ERROR: $error');
-    });
-    appRepository.getDeliveryRule(language).then((result) => deliveryRule = result).catchError((error) {
-      print('GET DELIVERY RULES TIMEOUT ERROR: $error');
-    });
+    // appRepository.getShippingMethod().then((result) => shippingMethods = result).catchError((error) {
+    //   print('GET SHIPPING METHOD TIMEOUT ERROR: $error');
+    // });
+    // appRepository.getPaymentMethod().then((result) => paymentMethods = result).catchError((error) {
+    //   print('GET PAYMENT METHOD TIMEOUT ERROR: $error');
+    // });
+    // appRepository.getRegions().then((result) => regions = result).catchError((error) {
+    //   print('GET REGION LIST TIMEOUT ERROR: $error');
+    // });
+    // appRepository.getDeliveryRule(language).then((result) => deliveryRule = result).catchError((error) {
+    //   print('GET DELIVERY RULES TIMEOUT ERROR: $error');
+    // });
   }
 
   static loadCustomerData() async {
@@ -100,11 +108,9 @@ class Preload {
       onSuccess: (data) async {
         user = data;
         _addressProvider.initialize();
-        await Future.wait([
-          _wishlistProvider.getWishlistItems(user!.token, lang),
-          _orderProvider.loadOrderHistories(user!.token, lang),
-          _addressProvider.loadCustomerAddresses(user!.token),
-        ]);
+        _addressProvider.setCustomerAddressList(user!.addresses);
+        _orderProvider.setOrderList(user!.orders);
+        _wishlistProvider.setWishlistItems(user!.wishlistItems);
         await _cartProvider.getCartId();
         await _cartProvider.getCartItems(Preload.language);
       },
