@@ -56,8 +56,8 @@ class AddressEntity {
         postCode = json['postcode'],
         company = json['company'] ?? '',
         phoneNumber = json['telephone'],
-        defaultBillingAddress = json['DefaultBillingAddress'],
-        defaultShippingAddress = json['DefaultShippingAddress'];
+        defaultBillingAddress = json['DefaultBillingAddress'] ?? 0,
+        defaultShippingAddress = json['DefaultShippingAddress'] ?? 0;
 
   Map<String, dynamic> toJson() => {
         'id': id,
