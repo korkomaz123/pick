@@ -180,7 +180,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     this.isOkayProductCondition = true;
     this.cartConditions = [];
     this.productConditions = [];
-    notifyListeners();
+    if (isFullRefresh) notifyListeners();
   }
 
   Future<String> getCartId() async {
@@ -213,7 +213,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     Function? onFailure,
   ]) async {
     final data = {'action': 'getCartItems'};
-    this.initialize();
+    this.initialize(false);
     if (onProcess != null) onProcess();
     try {
       if (this.cartId.isEmpty) this.cartId = await this.getCartId();
@@ -235,12 +235,12 @@ class MyCartChangeNotifier extends ChangeNotifier {
             this.cartTotalCount += item.itemCount;
             this.cartDiscountedTotalPrice += this.getDiscountedPrice(item);
           }
-          notifyListeners();
           if (onSuccess != null) onSuccess(cartItemCount);
-        } else {
           notifyListeners();
+        } else {
           if (onFailure != null) onFailure(result['errorMessage']);
           this._reportCartIssue(result, data);
+          notifyListeners();
         }
       }
     } catch (e) {
