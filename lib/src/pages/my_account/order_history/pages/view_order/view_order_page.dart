@@ -111,7 +111,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
       ),
       drawer: MarkaaSideMenu(),
       body: Column(
-        children: [_buildAppBar(), _buildOrder()],
+        children: [_buildAppBar(), _buildOrder(), _buildCallUs()],
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
@@ -164,7 +164,6 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
               // ],
               if (order.status == OrderStatusEnum.complete) ...[_buildReturnOrderButton()],
               SizedBox(height: 60.h),
-              _buildCallUs(),
             ],
           ),
         ),
@@ -432,6 +431,7 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
   Widget _buildCallUs() {
     return Container(
       width: 375.w,
+      height: 60.h,
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

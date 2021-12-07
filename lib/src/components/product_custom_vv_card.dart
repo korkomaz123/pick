@@ -54,7 +54,8 @@ class ProductCustomVVCard extends StatefulWidget {
 
 class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerProviderStateMixin {
   int? index;
-  bool? isWishlist;
+  bool isWishlist = false;
+  bool isMaxed = false;
 
   FlushBarService? flushBarService;
   ProgressService? progressService;
@@ -124,32 +125,39 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
         Routes.product,
         arguments: widget.product,
       ),
-      child: Container(
-        width: widget.cardWidth,
-        height: widget.cardHeight,
-        child: Stack(
-          children: [
-            _buildProductCard(),
-            if (widget.product.discount! > 0) ...[
-              if (lang == 'en') ...[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: _buildDiscount(),
-                ),
-              ] else ...[
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: _buildDiscount(),
-                ),
+      child: Consumer<MyCartChangeNotifier>(
+        builder: (_, cartModel, __) {
+          isMaxed = widget.product.typeId != 'configurable' &&
+              cartModel.cartItemsCountMap.containsKey(widget.product.productId) &&
+              widget.product.stockQty == cartModel.cartItemsCountMap[widget.product.productId];
+          return Container(
+            width: widget.cardWidth,
+            height: widget.cardHeight,
+            child: Stack(
+              children: [
+                _buildProductCard(),
+                if (widget.product.discount! > 0) ...[
+                  if (lang == 'en') ...[
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: _buildDiscount(),
+                    ),
+                  ] else ...[
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: _buildDiscount(),
+                    ),
+                  ],
+                ],
+                if (widget.product.isDeal!) _buildDealValueLabel(),
+                _buildToolbar(),
+                if (outOfStock || isMaxed) _buildNotAvailablQty(outOfStock ? 'out_stock' : 'max_qty'),
               ],
-            ],
-            if (widget.product.isDeal!) ...[_buildDealValueLabel()],
-            _buildToolbar(),
-            _buildOutofStock(),
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -266,7 +274,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                   ),
                   if (widget.isLine) ...[Divider(color: primaryColor)],
                   if (widget.isShoppingCart) ...[
-                    if (!outOfStock) ...[
+                    if (!outOfStock && !isMaxed) ...[
                       ScaleTransition(
                         scale: _addToCartScaleAnimation!,
                         child: Container(
@@ -355,50 +363,46 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
   }
 
   Widget _buildToolbar() {
-    return Consumer<WishlistChangeNotifier>(builder: (_, model, __) {
-      isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
-      if (widget.isWishlist) {
-        return Align(
-          alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
-              child: ScaleTransition(
-                scale: _addToWishlistScaleAnimation!,
-                child: Container(
-                  width: isWishlist! ? 22.w : 25.w,
-                  height: isWishlist! ? 22.w : 25.w,
-                  child: isWishlist! ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
+    return Consumer<WishlistChangeNotifier>(
+      builder: (_, model, __) {
+        isWishlist = model.wishlistItemsMap.containsKey(widget.product.productId);
+        if (widget.isWishlist) {
+          return Align(
+            alignment: lang == 'en' ? Alignment.topRight : Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
+                child: ScaleTransition(
+                  scale: _addToWishlistScaleAnimation!,
+                  child: Container(
+                    width: isWishlist ? 22.w : 25.w,
+                    height: isWishlist ? 22.w : 25.w,
+                    child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      } else {
-        return SizedBox.shrink();
-      }
-    });
+          );
+        } else {
+          return SizedBox.shrink();
+        }
+      },
+    );
   }
 
-  Widget _buildOutofStock() {
-    if (outOfStock) {
-      return Align(
-        alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
-          color: primarySwatchColor.withOpacity(0.4),
-          child: Text(
-            'out_stock'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: Colors.white70,
-            ),
-          ),
+  Widget _buildNotAvailablQty(String label) {
+    return Align(
+      alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+        color: outOfStock ? primarySwatchColor.withOpacity(0.4) : greyDarkColor.withOpacity(0.4),
+        child: Text(
+          label.tr(),
+          style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white70),
         ),
-      );
-    }
-    return SizedBox.shrink();
+      ),
+    );
   }
 
   void _onAddProductToCart() async {
@@ -444,7 +448,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
         _addToWishlistController!.stop(canceled: true);
         timer.cancel();
       });
-      if (isWishlist!) {
+      if (isWishlist) {
         wishlistChangeNotifier!.removeItemFromWishlist(user!.token, widget.product);
       } else {
         wishlistChangeNotifier!.addItemToWishlist(user!.token, widget.product, 1, {});

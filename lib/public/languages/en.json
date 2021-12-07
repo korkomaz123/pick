@@ -402,5 +402,6 @@
     "added_review_success": "Thank You! Your review has been submitted success.",
     "read_more": "Read More",
     "need_help": "Need Help?",
-    "exceed_qty": "Already added maximum quantity for this item"
+    "exceed_qty": "Already added maximum quantity for this item",
+    "max_qty": "Added max qty"
 }
