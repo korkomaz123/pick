@@ -9,6 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:markaa/env.dart';
+import 'package:markaa/slack.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'src/routes/routes.dart';
@@ -39,11 +41,13 @@ void main() async {
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
-    // int _errorLength = e.stack.toString().length;
-    // SlackChannels.send(
-    //   '''${e.exceptionAsString()} ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
-    //   SlackChannels.logAppErrors,
-    // );
+    if (dev) {
+      int _errorLength = e.stack.toString().length;
+      SlackChannels.send(
+        '''$env ${e.exceptionAsString()} ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+        SlackChannels.logAppErrors,
+      );
+    }
     return Center(
       child: Text("Something went wrong"),
     );

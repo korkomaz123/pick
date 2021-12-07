@@ -105,8 +105,10 @@ class ProductModel {
   }
 
   static int _getDiscount(String? afterPriceString, String? beforePriceString) {
-    double afterPrice = double.parse(afterPriceString!);
-    double beforePrice = double.parse(beforePriceString!);
+    if (afterPriceString == null) afterPriceString = '0';
+    if (beforePriceString == null) beforePriceString = '0';
+    double afterPrice = double.parse(afterPriceString);
+    double beforePrice = double.parse(beforePriceString);
     if (beforePrice == 0) {
       return 0;
     }

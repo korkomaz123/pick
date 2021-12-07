@@ -69,40 +69,41 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
             Center(child: PulseLoadingSpinner())
           else
             Positioned(
-                top: 150.h,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Divider(color: Colors.blue, height: 5),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          color: Colors.grey.shade200,
-                          child: Wrap(
-                            spacing: 2.w,
-                            runSpacing: 2.w,
-                            children: items
-                                .map(
-                                  (item) => ProductVCard(
-                                    product: ProductModel.fromJson(item),
-                                    cardWidth: 184.25.w,
-                                    cardHeight: 280.h,
-                                    isShoppingCart: true,
-                                    isWishlist: true,
-                                    isShare: true,
-                                  ),
-                                )
-                                .toList(),
-                          ),
+              top: 150.h,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Divider(color: Colors.blue, height: 5),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        color: Colors.grey.shade200,
+                        child: Wrap(
+                          spacing: 2.w,
+                          runSpacing: 2.w,
+                          children: items
+                              .map(
+                                (item) => ProductVCard(
+                                  product: ProductModel.fromJson(item),
+                                  cardWidth: 184.25.w,
+                                  cardHeight: 280.h,
+                                  isShoppingCart: true,
+                                  isWishlist: true,
+                                  isShare: true,
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
-                    )
-                  ],
-                )),
+                    ),
+                  )
+                ],
+              ),
+            ),
           _buildAppBar(),
         ],
       ),

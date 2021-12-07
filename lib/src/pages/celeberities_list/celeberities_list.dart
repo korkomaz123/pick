@@ -55,7 +55,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
           else
             GridView.builder(
               itemCount: allCelebritiesList.length,
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               itemBuilder: (ctx, index) {
                 return Container(
                   padding: const EdgeInsets.all(3.0),
