@@ -18,7 +18,7 @@ class EndPoints {
   static const String getAllStores = '$baseUrl/GetAllStores';
   static const String getAllCategories = '$baseUrl/GetAllCategories';
   static const String getPerfumes = '$baseUrl/GetPerfumes';
-  static const String getNewArrivals = '$baseUrl/GetnewArrivals';
+  static const String getNewArrivals = '$baseUrl/GetNewArrivals';
   static const String getBestDeals = '$baseUrl/GetBestDeals';
   static const String refreshToken = '$baseUrl/RefreshToken';
   static const String getProductDetails = '$baseUrl/GetProductDetails';

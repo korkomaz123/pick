@@ -311,10 +311,11 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
             bool isExceedChild = isConfigurable &&
                 model.selectedVariant != null &&
                 cartModel.cartItemsCountMap.containsKey(model.selectedVariant!.productId) &&
-                model.selectedVariant!.stockQty == cartModel.cartItemsCountMap[model.selectedVariant!.productId];
+                model.selectedVariant!.availableQty! <=
+                    (cartModel.cartItemsCountMap[model.selectedVariant!.productId] as num);
             bool isExceedParent = !isConfigurable &&
                 cartModel.cartItemsCountMap.containsKey(productId) &&
-                model.productDetailsMap[productId]!.stockQty == cartModel.cartItemsCountMap[productId];
+                model.productDetailsMap[productId]!.availableQty <= (cartModel.cartItemsCountMap[productId] as num);
             if (isExceedChild || isExceedParent) {
               return Container(
                 width: 375.w,

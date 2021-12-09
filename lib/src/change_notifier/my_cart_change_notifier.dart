@@ -206,12 +206,7 @@ class MyCartChangeNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> getCartItems(
-    String lang, [
-    Function? onProcess,
-    Function? onSuccess,
-    Function? onFailure,
-  ]) async {
+  Future<void> getCartItems(String lang, [Function? onProcess, Function? onSuccess, Function? onFailure]) async {
     final data = {'action': 'getCartItems'};
     this.initialize(false);
     if (onProcess != null) onProcess();
@@ -235,8 +230,8 @@ class MyCartChangeNotifier extends ChangeNotifier {
             this.cartTotalCount += item.itemCount;
             this.cartDiscountedTotalPrice += this.getDiscountedPrice(item);
           }
-          if (onSuccess != null) onSuccess(cartItemCount);
           notifyListeners();
+          if (onSuccess != null) onSuccess(this.cartItemCount);
         } else {
           if (onFailure != null) onFailure(result['errorMessage']);
           this._reportCartIssue(result, data);

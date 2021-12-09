@@ -133,7 +133,7 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
         builder: (_, cartModel, __) {
           isMaxed = widget.product.typeId != 'configurable' &&
               cartModel.cartItemsCountMap.containsKey(widget.product.productId) &&
-              widget.product.stockQty == cartModel.cartItemsCountMap[widget.product.productId];
+              widget.product.availableQty! <= (cartModel.cartItemsCountMap[widget.product.productId] as num);
           return Container(
             width: widget.cardWidth,
             height: widget.cardHeight,

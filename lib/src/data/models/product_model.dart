@@ -22,6 +22,7 @@ class ProductModel {
   String productId;
   BrandEntity? brandEntity;
   int? stockQty;
+  int? availableQty;
   int? qtySaveForLater;
   Map<String, dynamic>? options;
   bool? isDeal;
@@ -49,6 +50,7 @@ class ProductModel {
     required this.productId,
     this.brandEntity,
     this.stockQty,
+    this.availableQty,
     this.qtySaveForLater,
     this.options,
     this.isDeal,
@@ -86,7 +88,8 @@ class ProductModel {
                 brandImage: json['brand_thumbnail'],
               )
             : null,
-        stockQty = json['stockQty'],
+        stockQty = json['stockQty'] ?? 0,
+        availableQty = json['availableQty'] ?? 0,
         qtySaveForLater =
             json.containsKey('qty_saveforlater') ? double.parse(json['qty_saveforlater'].toString()).ceil() : 0,
         options = json.containsKey('options') ? _getOptions(json['options']) : null,

@@ -38,8 +38,7 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage>
-    with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
 
@@ -65,8 +64,7 @@ class _MyCartPageState extends State<MyCartPage>
 
   _determineShippingMethod() {
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount! <=
-          myCartChangeNotifier.cartDiscountedTotalPrice) {
+      if (shippingMethod.minOrderAmount! <= myCartChangeNotifier.cartDiscountedTotalPrice) {
         shippingMethodId = shippingMethod.id;
         serviceFees = shippingMethod.serviceFees;
       } else {
@@ -81,8 +79,7 @@ class _MyCartPageState extends State<MyCartPage>
     }
     _determineShippingMethod();
 
-    if (myCartChangeNotifier.cartItemCount == 0)
-      await myCartChangeNotifier.getCartItems(lang);
+    if (myCartChangeNotifier.cartItemCount == 0) await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override
@@ -156,8 +153,7 @@ class _MyCartPageState extends State<MyCartPage>
                       builder: (_, model, ___) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
-                            vertical:
-                                model.wishlistItemsCount > 0 ? 100.h : 250.h,
+                            vertical: model.wishlistItemsCount > 0 ? 100.h : 250.h,
                           ),
                           child: Center(
                             child: NoAvailableData(
@@ -209,9 +205,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: primaryColor,
                   fontSize: 13.sp,
@@ -243,15 +237,12 @@ class _MyCartPageState extends State<MyCartPage>
                     child: Column(
                       children: [
                         MyCartItem(
-                          cartItem:
-                              myCartChangeNotifier.cartItemsMap[keys[index]]!,
+                          cartItem: myCartChangeNotifier.cartItemsMap[keys[index]]!,
                           discount: myCartChangeNotifier.discount,
                           type: myCartChangeNotifier.type,
                           cartId: cartId,
-                          onRemoveCartItem: () =>
-                              _onRemoveCartItem(keys[index]),
-                          onSaveForLaterItem: () =>
-                              _onSaveForLaterItem(keys[index]),
+                          onRemoveCartItem: () => _onRemoveCartItem(keys[index]),
+                          onSaveForLaterItem: () => _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
                           myCartChangeNotifier: myCartChangeNotifier,
                         ),
@@ -274,8 +265,7 @@ class _MyCartPageState extends State<MyCartPage>
     double subTotal = myCartChangeNotifier.cartTotalPrice;
     double discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
+        : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,
@@ -305,9 +295,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
                 style: mediumTextStyle.copyWith(
                   color: greyDarkColor,
                   fontSize: 13.sp,
@@ -404,8 +392,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onRemoveCartItem(String key) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'my_cart_remove_item_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'my_cart_remove_item_dialog_text');
     if (result != null) {
       await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     }
@@ -446,8 +433,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(
-        lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
 
   void _onReloadItemSuccess(int count) {
@@ -469,9 +455,7 @@ class _MyCartPageState extends State<MyCartPage>
       }
       if (item.itemCount > item.availableCount) {
         flushBarService.showErrorDialog(
-          'inventory_qty_exceed_error'
-              .tr()
-              .replaceFirst('A', item.product.name),
+          'inventory_qty_exceed_error'.tr().replaceFirst('A', item.product.name),
           'no_qty.svg',
         );
         return;
@@ -504,21 +488,16 @@ class _MyCartPageState extends State<MyCartPage>
 
     discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
+        : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
     subtotalPrice = myCartChangeNotifier.cartTotalPrice;
 
     totalPrice = subtotalPrice + (serviceFees ?? 0) - discount;
 
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['discount'] =
-        NumericService.roundString(discount, 3);
-    orderDetails['orderDetails']['totalPrice'] =
-        NumericService.roundString(totalPrice, 3);
-    orderDetails['orderDetails']['subTotalPrice'] =
-        NumericService.roundString(subtotalPrice, 3);
-    orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(serviceFees!, 3);
+    orderDetails['orderDetails']['discount'] = NumericService.roundString(discount, 3);
+    orderDetails['orderDetails']['totalPrice'] = NumericService.roundString(totalPrice, 3);
+    orderDetails['orderDetails']['subTotalPrice'] = NumericService.roundString(subtotalPrice, 3);
+    orderDetails['orderDetails']['fees'] = NumericService.roundString(serviceFees!, 3);
   }
 
   void _onRemoveFailure(String message) {

@@ -129,7 +129,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
         builder: (_, cartModel, __) {
           isMaxed = widget.product.typeId != 'configurable' &&
               cartModel.cartItemsCountMap.containsKey(widget.product.productId) &&
-              widget.product.stockQty == cartModel.cartItemsCountMap[widget.product.productId];
+              widget.product.availableQty! <= (cartModel.cartItemsCountMap[widget.product.productId] as num);
           return Container(
             width: widget.cardWidth,
             height: widget.cardHeight,
