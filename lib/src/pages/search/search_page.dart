@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/repositories/product_repository.dart';
 import 'package:markaa/src/utils/repositories/search_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -356,11 +357,11 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, Si
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        Routes.product,
-                        arguments: notifier.suggestions[index],
-                      ),
+                      onTap: () async {
+                        ProductModel product =
+                            (await ProductRepository().getProduct(notifier.suggestions[index].productId))!;
+                        Navigator.pushNamed(context, Routes.product, arguments: product);
+                      },
                       child: SearchProductCard(
                         product: notifier.suggestions[index],
                       ),
@@ -527,11 +528,11 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver, Si
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        Routes.product,
-                        arguments: suggestionChangeNotifier!.searchedProducts![index],
-                      ),
+                      onTap: () async {
+                        ProductModel product = (await ProductRepository()
+                            .getProduct(suggestionChangeNotifier!.searchedProducts![index].productId))!;
+                        Navigator.pushNamed(context, Routes.product, arguments: product);
+                      },
                       child: SearchProductCard(
                         product: suggestionChangeNotifier!.searchedProducts![index],
                       ),
