@@ -133,6 +133,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
             color: primaryColor,
             backgroundColor: Colors.white,
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 60.h),
               child: Column(
                 children: [
                   Consumer<MyCartChangeNotifier>(
