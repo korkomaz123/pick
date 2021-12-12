@@ -185,7 +185,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         buttonColor: primaryColor,
         borderColor: primaryColor,
         onPressed: () => _onPlaceOrder(),
-        radius: 6.sp,
+        radius: 0,
       ),
     );
   }
