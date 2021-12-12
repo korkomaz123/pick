@@ -1,17 +1,19 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -124,69 +126,73 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          RefreshIndicator(
-            onRefresh: () async {
-              await myCartChangeNotifier.getCartItems(lang);
-            },
-            color: primaryColor,
-            backgroundColor: Colors.white,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: 60.h),
-              child: Column(
-                children: [
-                  Consumer<MyCartChangeNotifier>(
-                    builder: (_, model, ___) {
-                      if (model.cartItemCount > 0) {
-                        return Column(
-                          children: [
-                            _buildTitleBar(),
-                            _buildCartItems(),
-                            MyCartCouponCode(
-                              cartId: cartId,
-                              onSignIn: () => _onSignIn(false),
-                            ),
-                            _buildTotalPrice(),
-                          ],
-                        );
-                      } else {
-                        return Consumer<WishlistChangeNotifier>(
-                          builder: (_, model, ___) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: model.wishlistItemsCount > 0 ? 100.h : 250.h,
+      body: Container(
+        width: designWidth.w,
+        height: designHeight.h,
+        child: Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: () async {
+                await myCartChangeNotifier.getCartItems(lang);
+              },
+              color: primaryColor,
+              backgroundColor: Colors.white,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: 60.h),
+                child: Column(
+                  children: [
+                    Consumer<MyCartChangeNotifier>(
+                      builder: (_, model, ___) {
+                        if (model.cartItemCount > 0) {
+                          return Column(
+                            children: [
+                              _buildTitleBar(),
+                              _buildCartItems(),
+                              MyCartCouponCode(
+                                cartId: cartId,
+                                onSignIn: () => _onSignIn(false),
                               ),
-                              child: Center(
-                                child: NoAvailableData(
-                                  message: 'no_cart_items_available',
+                              _buildTotalPrice(),
+                            ],
+                          );
+                        } else {
+                          return Consumer<WishlistChangeNotifier>(
+                            builder: (_, model, ___) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: model.wishlistItemsCount > 0 ? 100.h : 250.h,
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
-                  if (user != null) ...[
-                    MyCartSaveForLaterItems(
-                      progressService: progressService,
-                      flushBarService: flushBarService,
-                      myCartChangeNotifier: myCartChangeNotifier,
-                      wishlistChangeNotifier: wishlistChangeNotifier,
-                    )
-                  ]
-                ],
+                                child: Center(
+                                  child: NoAvailableData(
+                                    message: 'no_cart_items_available',
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    if (user != null) ...[
+                      MyCartSaveForLaterItems(
+                        progressService: progressService,
+                        flushBarService: flushBarService,
+                        myCartChangeNotifier: myCartChangeNotifier,
+                        wishlistChangeNotifier: wishlistChangeNotifier,
+                      )
+                    ]
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildCheckoutButton(),
-          ),
-        ],
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildCheckoutButton(),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.home,
@@ -385,15 +391,16 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     return Container(
       width: 375.w,
       height: 60.h,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-      child: MarkaaTextButton(
+      padding: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
+      child: MarkaaTextIconButton(
+        icon: SvgPicture.asset(circleArrowRightIcon, width: 20.w),
         title: 'checkout_button_title'.tr(),
-        titleSize: 23.sp,
-        titleColor: primaryColor,
-        buttonColor: Colors.white,
-        borderColor: primarySwatchColor,
+        titleSize: 20.sp,
+        titleColor: Colors.white,
+        buttonColor: primaryColor,
+        borderColor: primaryColor,
         onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(true),
-        radius: 0,
+        radius: 6.sp,
       ),
     );
   }
