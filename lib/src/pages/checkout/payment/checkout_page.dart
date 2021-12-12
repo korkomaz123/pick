@@ -178,7 +178,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       width: designWidth.w,
       height: 50.h,
       margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: MarkaaTextButton(
         title: 'checkout_place_payment_button_title'.tr(),
         titleColor: Colors.white,
