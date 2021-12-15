@@ -1,8 +1,6 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -64,15 +62,6 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME SLIDER IMAGE LOADING ERROR: $e');
     }
-    notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in sliderImages) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    sliderImages = list;
     notifyListeners();
   }
 
@@ -154,15 +143,6 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME MEGA BANNER LOADING ERROR: $e');
     }
     notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in megaBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    megaBanners = list;
-    notifyListeners();
   }
 
   String sunglassesTitle = '';
@@ -186,15 +166,6 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME NEW ARRIVALS BANNER LOADING ERROR: $e');
     }
-    notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in sunglassesBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    sunglassesBanners = list;
     notifyListeners();
   }
 
@@ -238,17 +209,6 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME EXCULISIVE BANNER LOADING ERROR: $e');
     }
     notifyListeners();
-
-    if (exculisiveBanners != null) {
-      List<SliderImageEntity> list = [];
-      for (SliderImageEntity banner in exculisiveBanners!) {
-        File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-        banner.bannerImageFile = file;
-        list.add(banner);
-      }
-      exculisiveBanners = list;
-      notifyListeners();
-    }
   }
 
   List<ProductModel> orientalProducts = [];
@@ -300,15 +260,6 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME FACECARE LOADING ERROR: $e');
     }
     notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in faceCareBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    faceCareBanners = list;
-    notifyListeners();
   }
 
   String fragrancesBannersTitle = '';
@@ -326,15 +277,6 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME FRAGRANCES BANNER LOADING ERROR: $e');
     }
-    notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in fragrancesBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    fragrancesBanners = list;
     notifyListeners();
   }
 
@@ -392,15 +334,6 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME BEST WATCHES LOADING ERROR: $e');
     }
     notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in bestWatchesBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    bestWatchesBanners = list;
-    notifyListeners();
   }
 
   String celebrityTitle = '';
@@ -446,15 +379,6 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME ADS LOADING ERROR: $e');
     }
-    notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in skinCareBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    skinCareBanners = list;
     notifyListeners();
   }
 
@@ -556,15 +480,6 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME SMART TECH LOADING ERROR: $e');
     }
-    notifyListeners();
-
-    List<SliderImageEntity> list = [];
-    for (SliderImageEntity banner in smartTechBanners) {
-      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
-      banner.bannerImageFile = file;
-      list.add(banner);
-    }
-    smartTechBanners = list;
     notifyListeners();
   }
 

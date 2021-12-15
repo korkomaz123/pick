@@ -73,20 +73,13 @@ class _HomeAdvertiseState extends State<HomeAdvertise> {
                     children: [
                       InkWell(
                         onTap: () => ActionHandler.onClickBanner(item, context),
-                        child: item.bannerImageFile != null
-                            ? Image.file(
-                                item.bannerImageFile!,
-                                width: single ? 375.w : 340.w,
-                                height: (single ? 375.w : 340.w) * (897 / 1096),
-                                fit: BoxFit.fitHeight,
-                              )
-                            : CachedNetworkImage(
-                                width: single ? 375.w : 340.w,
-                                height: (single ? 375.w : 340.w) * (897 / 1096),
-                                imageUrl: item.bannerImage ?? '',
-                                fit: BoxFit.fitHeight,
-                                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                              ),
+                        child: CachedNetworkImage(
+                          width: single ? 375.w : 340.w,
+                          height: (single ? 375.w : 340.w) * (897 / 1096),
+                          imageUrl: item.bannerImage ?? '',
+                          fit: BoxFit.fitHeight,
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                        ),
                       ),
                       if (index < widget.homeChangeNotifier.skinCareBanners.length - 1) ...[SizedBox(width: 5.w)],
                     ],

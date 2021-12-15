@@ -31,7 +31,6 @@ class HomeSmartTech extends StatelessWidget {
     if (homeChangeNotifier.smartTechBanners.isNotEmpty || homeChangeNotifier.smartTechItems.isNotEmpty) {
       return Container(
         width: designWidth.w,
-        margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
             if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
@@ -53,23 +52,23 @@ class HomeSmartTech extends StatelessWidget {
   }
 
   Widget _buildBanners(List<SliderImageEntity> banners, BuildContext context) {
-    return Column(
-      children: banners.map((banner) {
-        return Container(
-          margin: EdgeInsets.only(bottom: 5.h),
-          color: Colors.white,
-          child: InkWell(
-            onTap: () => ActionHandler.onClickBanner(banner, context),
-            child: banner.bannerImageFile != null
-                ? Image.file(banner.bannerImageFile!, fit: BoxFit.fill)
-                : CachedNetworkImage(
-                    imageUrl: banner.bannerImage ?? '',
-                    fit: BoxFit.fill,
-                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                  ),
-          ),
-        );
-      }).toList(),
+    return Container(
+      width: double.infinity,
+      child: Column(
+        children: banners.map((banner) {
+          int index = banners.indexOf(banner);
+          return Padding(
+            padding: EdgeInsets.only(bottom: index < banners.length - 1 ? 3.h : 0),
+            child: InkWell(
+              onTap: () => ActionHandler.onClickBanner(banner, context),
+              child: CachedNetworkImage(
+                imageUrl: banner.bannerImage ?? '',
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 

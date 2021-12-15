@@ -39,17 +39,13 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
               onIndexChanged: (value) => setState(() => activeIndex = value),
               itemBuilder: (context, index) {
                 final banner = widget.homeChangeNotifier.exculisiveBanners![index];
-                if (banner.bannerImageFile != null) {
-                  return Image.file(banner.bannerImageFile!);
-                } else {
-                  return InkWell(
-                    onTap: () => ActionHandler.onClickBanner(banner, context),
-                    child: CachedNetworkImage(
-                      imageUrl: banner.bannerImage ?? '',
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                    ),
-                  );
-                }
+                return InkWell(
+                  onTap: () => ActionHandler.onClickBanner(banner, context),
+                  child: CachedNetworkImage(
+                    imageUrl: banner.bannerImage ?? '',
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                  ),
+                );
               },
             ),
           ),

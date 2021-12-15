@@ -122,15 +122,13 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
           );
         }
       },
-      child: banner.bannerImageFile != null
-          ? Image.file(banner.bannerImageFile!, fit: BoxFit.fill)
-          : CachedNetworkImage(
-              imageUrl: banner.bannerImage ?? '',
-              fit: BoxFit.fill,
-              errorWidget: (context, url, error) => Center(
-                child: Icon(Icons.image, size: 20),
-              ),
-            ),
+      child: CachedNetworkImage(
+        imageUrl: banner.bannerImage ?? '',
+        fit: BoxFit.fill,
+        errorWidget: (context, url, error) => Center(
+          child: Icon(Icons.image, size: 20),
+        ),
+      ),
     );
   }
 }

@@ -47,20 +47,13 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
         final banner = widget.homeChangeNotifier.sliderImages[index];
         return InkWell(
           onTap: () => ActionHandler.onClickBanner(banner, context),
-          child: banner.bannerImageFile != null
-              ? Image.file(
-                  banner.bannerImageFile!,
-                  width: designWidth.w,
-                  height: designWidth.w * 579 / 1125,
-                  fit: BoxFit.fill,
-                )
-              : CachedNetworkImage(
-                  width: designWidth.w,
-                  height: designWidth.w * 579 / 1125,
-                  imageUrl: banner.bannerImage ?? '',
-                  fit: BoxFit.fill,
-                  errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                ),
+          child: CachedNetworkImage(
+            width: designWidth.w,
+            height: designWidth.w * 579 / 1125,
+            imageUrl: banner.bannerImage ?? '',
+            fit: BoxFit.fill,
+            errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+          ),
         );
       },
     );
