@@ -65,10 +65,12 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
           color: Colors.white,
           child: InkWell(
             onTap: () => ActionHandler.onClickBanner(banner, context),
-            child: CachedNetworkImage(
-              imageUrl: banner.bannerImage ?? '',
-              errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-            ),
+            child: banner.bannerImageFile != null
+                ? Image.file(banner.bannerImageFile!)
+                : CachedNetworkImage(
+                    imageUrl: banner.bannerImage ?? '',
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                  ),
           ),
         );
       }).toList(),

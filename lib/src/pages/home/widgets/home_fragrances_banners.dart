@@ -96,10 +96,12 @@ class HomeFragrancesBanners extends StatelessWidget {
             padding: EdgeInsets.only(bottom: index < banners.length - 1 ? 3.h : 0),
             child: InkWell(
               onTap: () => ActionHandler.onClickBanner(banner, context),
-              child: CachedNetworkImage(
-                imageUrl: banner.bannerImage ?? '',
-                errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-              ),
+              child: banner.bannerImageFile != null
+                  ? Image.file(banner.bannerImageFile!)
+                  : CachedNetworkImage(
+                      imageUrl: banner.bannerImage ?? '',
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                    ),
             ),
           );
         }).toList(),

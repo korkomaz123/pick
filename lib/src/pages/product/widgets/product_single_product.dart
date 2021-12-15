@@ -278,7 +278,9 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
       height: 460.h,
       child: Stack(
         children: [
-          if (details.gallery!.length == 1) ...[
+          if (details.gallery == null) ...[
+            Container()
+          ] else if (details.gallery!.length == 1) ...[
             InkWell(
               onTap: () => Navigator.pushNamed(
                 context,
@@ -355,21 +357,25 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               padding: EdgeInsets.only(bottom: 10.h),
               child: Consumer<MarkaaAppChangeNotifier>(
                 builder: (_, __, ___) {
-                  return SmoothIndicator(
-                    offset: activeIndex.toDouble(),
-                    count: details.gallery!.length,
-                    axisDirection: Axis.horizontal,
-                    effect: SlideEffect(
-                      spacing: 8.0,
-                      radius: 30,
-                      dotWidth: 8.h,
-                      dotHeight: 8.h,
-                      paintStyle: PaintingStyle.fill,
-                      strokeWidth: 0,
-                      dotColor: greyLightColor,
-                      activeDotColor: primarySwatchColor,
-                    ),
-                  );
+                  if (details.gallery != null) {
+                    return SmoothIndicator(
+                      offset: activeIndex.toDouble(),
+                      count: details.gallery!.length,
+                      axisDirection: Axis.horizontal,
+                      effect: SlideEffect(
+                        spacing: 8.0,
+                        radius: 30,
+                        dotWidth: 8.h,
+                        dotHeight: 8.h,
+                        paintStyle: PaintingStyle.fill,
+                        strokeWidth: 0,
+                        dotColor: greyLightColor,
+                        activeDotColor: primarySwatchColor,
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
                 },
               ),
             ),
@@ -501,9 +507,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                   child: Container(
                     width: 28.w,
                     height: 28.h,
-                    child: SvgPicture.asset(
-                      isWishlist ? wishlistedIcon : favoriteIcon,
-                    ),
+                    child: SvgPicture.asset(isWishlist ? wishlistedIcon : favoriteIcon),
                   ),
                 ),
               );
@@ -535,11 +539,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
+                    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                   },
                   child: Text(
                     details.brandEntity?.brandLabel ?? '',
@@ -553,10 +553,7 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
               _buildProductPrice(),
             ],
           ),
-          Text(
-            details.name,
-            style: mediumTextStyle.copyWith(fontSize: 20.sp),
-          ),
+          Text(details.name, style: mediumTextStyle.copyWith(fontSize: 20.sp)),
         ],
       ),
     );
@@ -586,57 +583,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
     );
   }
 
-  // Widget _buildDescription() {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding: EdgeInsets.symmetric(vertical: 10.h),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         if (isMore) ...[
-  //           Text(
-  //             details.shortDescription,
-  //             style: mediumTextStyle.copyWith(
-  //               fontSize: 14.sp,
-  //             ),
-  //           )
-  //         ] else if (isLength(details.shortDescription, 110)) ...[
-  //           Text(
-  //             details.shortDescription.substring(0, 110) + ' ...',
-  //             style: mediumTextStyle.copyWith(
-  //               fontSize: 14.sp,
-  //             ),
-  //           )
-  //         ] else ...[
-  //           Text(
-  //             details.shortDescription,
-  //             style: mediumTextStyle.copyWith(
-  //               fontSize: 14.sp,
-  //             ),
-  //           )
-  //         ],
-  //         if (isLength(details.shortDescription, 110)) ...[
-  //           InkWell(
-  //             onTap: () {
-  //               isMore = !isMore;
-  //               setState(() {});
-  //             },
-  //             child: Text(
-  //               isMore ? 'product_less'.tr() : 'product_more'.tr(),
-  //               style: mediumTextStyle.copyWith(
-  //                 color: primaryColor,
-  //                 fontSize: 14.sp,
-  //               ),
-  //             ),
-  //           )
-  //         ] else ...[
-  //           SizedBox.shrink()
-  //         ],
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildPrice() {
     return Container(
       width: double.infinity,
@@ -648,14 +594,10 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
           Expanded(
             child: Text(
               'sku'.tr() + ': ' + details.sku,
-              style: mediumTextStyle.copyWith(
-                fontSize: 12.sp,
-                color: primaryColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 12.sp, color: primaryColor),
             ),
           ),
           _buildStock(),
-          // if (details.typeId == 'configurable') ...[_buildStock()] else ...[_buildProductPrice()],
         ],
       ),
     );
@@ -683,19 +625,12 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
           children: [
             Text(
               widget.model.selectedVariant != null ? widget.model.selectedVariant!.price : details.price,
-              style: mediumTextStyle.copyWith(
-                fontSize: 18.sp,
-                color: greyColor,
-                // fontWeight: FontWeight.w700,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 18.sp, color: greyColor),
             ),
             SizedBox(width: 1.w),
             Text(
               'currency'.tr(),
-              style: mediumTextStyle.copyWith(
-                fontSize: 12.sp,
-                color: greyColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 12.sp, color: greyColor),
             )
           ],
         ),

@@ -85,13 +85,20 @@ class _HomeBestWatchesState extends State<HomeBestWatches> {
                 children: [
                   InkWell(
                     onTap: () => ActionHandler.onClickBanner(item, context),
-                    child: CachedNetworkImage(
-                      width: banners.length == 1 ? 375.w : 340.w,
-                      height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
-                      imageUrl: item.bannerImage ?? '',
-                      fit: BoxFit.fitHeight,
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
-                    ),
+                    child: item.bannerImageFile != null
+                        ? Image.file(
+                            item.bannerImageFile!,
+                            width: banners.length == 1 ? 375.w : 340.w,
+                            height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                            fit: BoxFit.fitHeight,
+                          )
+                        : CachedNetworkImage(
+                            width: banners.length == 1 ? 375.w : 340.w,
+                            height: (banners.length == 1 ? 375.w : 340.w) * (897 / 1096),
+                            imageUrl: item.bannerImage ?? '',
+                            fit: BoxFit.fitHeight,
+                            errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
+                          ),
                   ),
                   if (index < banners.length - 1) ...[SizedBox(width: 5.w)],
                 ],

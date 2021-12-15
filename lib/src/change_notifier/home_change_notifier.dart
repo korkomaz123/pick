@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/mock/mock.dart';
@@ -63,12 +65,20 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME SLIDER IMAGE LOADING ERROR: $e');
     }
     notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in sliderImages) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    sliderImages = list;
+    notifyListeners();
   }
 
   List<CategoryEntity> featuredCategories = [];
   Future getFeaturedCategoriesList() async {
-    final result =
-        await categoryRepository.getFeaturedCategories(Preload.language);
+    final result = await categoryRepository.getFeaturedCategories(Preload.language);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoryList = result['categories'];
       featuredCategories.clear();
@@ -90,8 +100,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadBestDeals() async {
     try {
-      final result =
-          await productRepository.getBestDealsProducts(Preload.language);
+      final result = await productRepository.getBestDealsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         bestDealsTitle = result['title'];
         bestDealsProducts.clear();
@@ -107,8 +116,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future getHomeCategories() async {
     final params = {'lang': Preload.language};
-    final result =
-        await Api.getMethod(EndPoints.getHomeCategories, data: params);
+    final result = await Api.getMethod(EndPoints.getHomeCategories, data: params);
     if (result['code'] == 'SUCCESS') {
       List<dynamic> categoriesList = result['categories'];
       homeCategories.clear();
@@ -146,6 +154,15 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME MEGA BANNER LOADING ERROR: $e');
     }
     notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in megaBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    megaBanners = list;
+    notifyListeners();
   }
 
   String sunglassesTitle = '';
@@ -154,8 +171,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   SliderImageEntity? sunglassesViewAll;
   Future loadNewArrivalsBanner() async {
     try {
-      final result = await homeRepository.getHomeSection(
-          Preload.language, EndPoints.homeSection3);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection3);
       if (result['code'] == 'SUCCESS') {
         sunglassesTitle = result['title'];
         sunglassesViewAll = result['viewAll'];
@@ -171,6 +187,15 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME NEW ARRIVALS BANNER LOADING ERROR: $e');
     }
     notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in sunglassesBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    sunglassesBanners = list;
+    notifyListeners();
   }
 
   List<ProductModel> newArrivalsProducts = [];
@@ -184,8 +209,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadNewArrivals() async {
     try {
-      final result =
-          await productRepository.getNewArrivalsProducts(Preload.language);
+      final result = await productRepository.getNewArrivalsProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         newArrivalsTitle = result['title'];
         newArrivalsProducts.clear();
@@ -201,8 +225,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   List<SliderImageEntity>? exculisiveBanners;
   Future loadExculisiveBanner() async {
-    final result =
-        await homeRepository.getHomeExculisiveBanner(Preload.language);
+    final result = await homeRepository.getHomeExculisiveBanner(Preload.language);
     try {
       if (result['code'] == 'SUCCESS') {
         exculisiveBanners = [];
@@ -215,6 +238,17 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME EXCULISIVE BANNER LOADING ERROR: $e');
     }
     notifyListeners();
+
+    if (exculisiveBanners != null) {
+      List<SliderImageEntity> list = [];
+      for (SliderImageEntity banner in exculisiveBanners!) {
+        File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+        banner.bannerImageFile = file;
+        list.add(banner);
+      }
+      exculisiveBanners = list;
+      notifyListeners();
+    }
   }
 
   List<ProductModel> orientalProducts = [];
@@ -229,8 +263,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadOrientalProducts() async {
     try {
-      final result =
-          await productRepository.getOrientalProducts(Preload.language);
+      final result = await productRepository.getOrientalProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         orientalTitle = result['title'];
         orientalCategory = CategoryEntity.fromJson(result['category']);
@@ -251,8 +284,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   List<SliderImageEntity> faceCareBanners = [];
   Future loadFaceCare() async {
     try {
-      final result = await homeRepository.getHomeSection(
-          Preload.language, EndPoints.homeSection1);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection1);
       if (result['code'] == 'SUCCESS') {
         faceCareTitle = result['title'];
         faceCareViewAll = result['viewAll'];
@@ -268,14 +300,22 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME FACECARE LOADING ERROR: $e');
     }
     notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in faceCareBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    faceCareBanners = list;
+    notifyListeners();
   }
 
   String fragrancesBannersTitle = '';
   List<SliderImageEntity> fragrancesBanners = [];
   Future loadFragrancesBanner() async {
     try {
-      final result =
-          await homeRepository.getHomeFragrancesBanners(Preload.language);
+      final result = await homeRepository.getHomeFragrancesBanners(Preload.language);
       if (result['code'] == 'SUCCESS') {
         fragrancesBannersTitle = result['title'];
         fragrancesBanners.clear();
@@ -286,6 +326,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME FRAGRANCES BANNER LOADING ERROR: $e');
     }
+    notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in fragrancesBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    fragrancesBanners = list;
     notifyListeners();
   }
 
@@ -300,8 +349,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadPerfumes() async {
     try {
-      final result =
-          await productRepository.getPerfumesProducts(Preload.language);
+      final result = await productRepository.getPerfumesProducts(Preload.language);
       if (result['code'] == 'SUCCESS') {
         perfumesTitle = result['title'];
         perfumesProducts.clear();
@@ -328,8 +376,7 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadBestWatches() async {
     try {
-      final result = await homeRepository.getHomeSection(
-          Preload.language, EndPoints.homeSection2);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection2);
       if (result['code'] == 'SUCCESS') {
         bestWatchesTitle = result['title'];
         bestWatchesViewAll = result['viewAll'];
@@ -345,6 +392,15 @@ class HomeChangeNotifier extends ChangeNotifier {
       print('HOME BEST WATCHES LOADING ERROR: $e');
     }
     notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in bestWatchesBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    bestWatchesBanners = list;
+    notifyListeners();
   }
 
   String celebrityTitle = '';
@@ -352,8 +408,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future gethomecelebrity() async {
     try {
       print('gethomecelebrity start');
-      final result = await homeRepository.gethomecelebrity(
-          Preload.language, EndPoints.gethomecelebrity);
+      final result = await homeRepository.gethomecelebrity(Preload.language, EndPoints.gethomecelebrity);
       print('celebri result');
       print(result);
       log('gethomecelebrity end');
@@ -376,8 +431,7 @@ class HomeChangeNotifier extends ChangeNotifier {
   SliderImageEntity? skinCareViewAll;
   Future loadAds() async {
     try {
-      final result = await homeRepository.getHomeSection(
-          Preload.language, EndPoints.homeSection4);
+      final result = await homeRepository.getHomeSection(Preload.language, EndPoints.homeSection4);
       if (result['code'] == 'SUCCESS') {
         skinCareTitle = result['title'];
         skinCareViewAll = result['viewAll'];
@@ -392,6 +446,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME ADS LOADING ERROR: $e');
     }
+    notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in skinCareBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    skinCareBanners = list;
     notifyListeners();
   }
 
@@ -414,13 +477,11 @@ class HomeChangeNotifier extends ChangeNotifier {
   Future loadRecentlyViewedGuest() async {
     List<String> ids = await localStorageRepository.getRecentlyViewedIds();
     try {
-      final result = await productRepository.getHomeRecentlyViewedGuestProducts(
-          ids, Preload.language);
+      final result = await productRepository.getHomeRecentlyViewedGuestProducts(ids, Preload.language);
       if (result['code'] == 'SUCCESS') {
         recentlyViewedProducts = [];
         for (int i = 0; i < result['items'].length; i++) {
-          recentlyViewedProducts!
-              .add(ProductModel.fromJson(result['items'][i]));
+          recentlyViewedProducts!.add(ProductModel.fromJson(result['items'][i]));
         }
       }
     } catch (e) {
@@ -433,13 +494,11 @@ class HomeChangeNotifier extends ChangeNotifier {
 
   Future loadRecentlyViewedCustomer() async {
     try {
-      final result = await productRepository
-          .getHomeRecentlyViewedCustomerProducts(user!.token, Preload.language);
+      final result = await productRepository.getHomeRecentlyViewedCustomerProducts(user!.token, Preload.language);
       if (result['code'] == 'SUCCESS') {
         recentlyViewedProducts = [];
         for (int i = 0; i < result['products'].length; i++) {
-          recentlyViewedProducts!
-              .add(ProductModel.fromJson(result['products'][i]));
+          recentlyViewedProducts!.add(ProductModel.fromJson(result['products'][i]));
         }
       }
     } catch (e) {
@@ -497,6 +556,15 @@ class HomeChangeNotifier extends ChangeNotifier {
     } catch (e) {
       print('HOME SMART TECH LOADING ERROR: $e');
     }
+    notifyListeners();
+
+    List<SliderImageEntity> list = [];
+    for (SliderImageEntity banner in smartTechBanners) {
+      File file = (await DefaultCacheManager().downloadFile(banner.bannerImage ?? '')).file;
+      banner.bannerImageFile = file;
+      list.add(banner);
+    }
+    smartTechBanners = list;
     notifyListeners();
   }
 

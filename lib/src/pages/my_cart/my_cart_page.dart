@@ -118,11 +118,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 25.sp,
-            color: greyColor,
-          ),
+          icon: Icon(Icons.arrow_back_ios, size: 25.sp, color: greyColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -194,9 +190,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
           ],
         ),
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.home,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),
     );
   }
 
@@ -215,17 +209,11 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
             children: [
               Text(
                 'total'.tr() + ' ',
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 16.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 16.sp),
               ),
               Text(
                 'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 13.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 13.sp),
               ),
             ],
           ),
@@ -285,14 +273,8 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 6.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: greyLightColor,
         borderRadius: BorderRadius.circular(2),
@@ -305,17 +287,11 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
             children: [
               Text(
                 'products'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 13.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 13.sp),
               ),
               Text(
                 'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 13.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 13.sp),
               )
             ],
           ),
@@ -326,17 +302,11 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
               children: [
                 Text(
                   'checkout_subtotal_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 17.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
                 ),
                 Text(
                   '${NumericService.roundString(subTotal, 3)} ${'currency'.tr()}',
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 18.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
                 )
               ],
             ),
@@ -354,10 +324,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                 ),
                 Text(
                   '${NumericService.roundString(discount, 3)} ${'currency'.tr()}',
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 18.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
                 )
               ],
             )
@@ -368,17 +335,11 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
             children: [
               Text(
                 'total'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 17.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
               ),
               Text(
                 '${NumericService.roundString(totalPrice, 3)} ${'currency'.tr()}',
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 18.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
               )
             ],
           )
