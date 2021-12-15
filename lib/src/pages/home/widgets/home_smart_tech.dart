@@ -19,35 +19,30 @@ import 'package:markaa/src/utils/services/action_handler.dart';
 import '../../../../preload.dart';
 import 'home_loading_widget.dart';
 
-class HomeSmartTech extends StatefulWidget {
+class HomeSmartTech extends StatelessWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
   HomeSmartTech({required this.homeChangeNotifier});
 
-  @override
-  State<HomeSmartTech> createState() => _HomeSmartTechState();
-}
-
-class _HomeSmartTechState extends State<HomeSmartTech> {
   final ProductRepository productRepository = ProductRepository();
 
   @override
   Widget build(BuildContext context) {
-    if (widget.homeChangeNotifier.smartTechBanners.isNotEmpty || widget.homeChangeNotifier.smartTechItems.isNotEmpty) {
+    if (homeChangeNotifier.smartTechBanners.isNotEmpty || homeChangeNotifier.smartTechItems.isNotEmpty) {
       return Container(
         width: designWidth.w,
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
-            if (widget.homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
-              _buildBanners(widget.homeChangeNotifier.smartTechBanners)
+            if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
+              _buildBanners(homeChangeNotifier.smartTechBanners, context),
             ],
             SizedBox(height: 10.h),
-            if (widget.homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+            if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
               _buildProducts(
-                widget.homeChangeNotifier.smartTechTitle,
-                widget.homeChangeNotifier.smartTechCategory!,
-                widget.homeChangeNotifier.smartTechItems,
+                homeChangeNotifier.smartTechTitle,
+                homeChangeNotifier.smartTechCategory!,
+                homeChangeNotifier.smartTechItems,
               )
             ],
           ],
@@ -57,7 +52,7 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
     return HomeLoadingWidget();
   }
 
-  Widget _buildBanners(List<SliderImageEntity> banners) {
+  Widget _buildBanners(List<SliderImageEntity> banners, BuildContext context) {
     return Column(
       children: banners.map((banner) {
         return Container(
@@ -66,9 +61,10 @@ class _HomeSmartTechState extends State<HomeSmartTech> {
           child: InkWell(
             onTap: () => ActionHandler.onClickBanner(banner, context),
             child: banner.bannerImageFile != null
-                ? Image.file(banner.bannerImageFile!)
+                ? Image.file(banner.bannerImageFile!, fit: BoxFit.fill)
                 : CachedNetworkImage(
                     imageUrl: banner.bannerImage ?? '',
+                    fit: BoxFit.fill,
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
           ),
