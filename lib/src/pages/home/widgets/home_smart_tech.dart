@@ -36,8 +36,8 @@ class HomeSmartTech extends StatelessWidget {
             if (homeChangeNotifier.smartTechBanners.isNotEmpty) ...[
               _buildBanners(homeChangeNotifier.smartTechBanners, context),
             ],
-            SizedBox(height: 10.h),
             if (homeChangeNotifier.smartTechItems.isNotEmpty) ...[
+              SizedBox(height: 10.h),
               _buildProducts(
                 homeChangeNotifier.smartTechTitle,
                 homeChangeNotifier.smartTechCategory!,

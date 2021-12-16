@@ -55,8 +55,7 @@ class ProductListView extends StatefulWidget {
   _ProductListViewState createState() => _ProductListViewState();
 }
 
-class _ProductListViewState extends State<ProductListView>
-    with TickerProviderStateMixin {
+class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState>? scaffoldKey;
   ProgressService? progressService;
   FlushBarService? flushBarService;
@@ -117,8 +116,7 @@ class _ProductListViewState extends State<ProductListView>
     currentProduct = ((currentScroll ~/ 280.h).floor() * 2) + 4;
     markaaAppChangeNotifier!.rebuild();
 
-    if (!productChangeNotifier!.isReachedMax &&
-        (maxScroll - currentScroll <= 200)) {
+    if (!productChangeNotifier!.isReachedMax && (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
@@ -130,8 +128,7 @@ class _ProductListViewState extends State<ProductListView>
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       key = '${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      key =
-          '${widget.sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
+      key = '${widget.sortByItem}_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
       key = 'filter_${brand?.optionId ?? ''}_${category?.id ?? 'all'}';
     }
@@ -278,12 +275,9 @@ class _ProductListViewState extends State<ProductListView>
                         return Column(
                           children: [
                             Expanded(
-                              child: _buildPList(
-                                  productChangeNotifier!.data![index]!),
+                              child: _buildPList(productChangeNotifier!.data![index]!),
                             ),
-                            if (productChangeNotifier!.isLoading) ...[
-                              Center(child: ThreeBounceLoadingBar())
-                            ],
+                            if (productChangeNotifier!.isLoading) ...[Center(child: ThreeBounceLoadingBar())],
                           ],
                         );
                       }
@@ -326,9 +320,7 @@ class _ProductListViewState extends State<ProductListView>
                 index == 0 ? 'all'.tr() : subCategories![index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: 14.sp,
-                  color: tabController!.index == index
-                      ? Colors.white
-                      : Colors.black,
+                  color: tabController!.index == index ? Colors.white : Colors.black,
                 ),
               ),
             );
@@ -403,8 +395,7 @@ class _ProductListViewState extends State<ProductListView>
                   ],
                 ],
               ),
-              if (productChangeNotifier!.isReachedMax &&
-                  (pIndex + 1 >= products.length)) ...[
+              if (productChangeNotifier!.isReachedMax && (pIndex + 2 >= products.length)) ...[
                 Container(
                   width: 375.w,
                   alignment: Alignment.center,
@@ -429,7 +420,7 @@ class _ProductListViewState extends State<ProductListView>
     return AnimatedPositioned(
       left: 120.w,
       right: 120.w,
-      bottom: 10.h - widget.pos,
+      bottom: 5.h - widget.pos,
       duration: Duration(milliseconds: 500),
       child: InkWell(
         onTap: () => _onGotoTop(),

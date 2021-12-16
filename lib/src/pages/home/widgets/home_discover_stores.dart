@@ -42,9 +42,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
           ],
         ),
       );
-    } else {
-      return HomeLoadingWidget();
     }
+    return HomeLoadingWidget();
   }
 
   Widget _buildTitle() {
