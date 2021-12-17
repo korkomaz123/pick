@@ -41,13 +41,11 @@ void main() async {
 
   EquatableConfig.stringify = kDebugMode;
   ErrorWidget.builder = ((FlutterErrorDetails e) {
-    if (dev) {
-      int _errorLength = e.stack.toString().length;
-      SlackChannels.send(
-        '''$env ${e.exceptionAsString()} ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
-        SlackChannels.logAppErrors,
-      );
-    }
+    int _errorLength = e.stack.toString().length;
+    SlackChannels.send(
+      '''$env ${e.exceptionAsString()} ${e.stack.toString().substring(0, _errorLength > 500 ? 500 : _errorLength)}''',
+      SlackChannels.logAppErrors,
+    );
     return Center(
       child: Text("Something went wrong"),
     );

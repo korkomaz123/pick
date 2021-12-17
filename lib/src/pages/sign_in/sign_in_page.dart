@@ -97,54 +97,56 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                width: 375.w,
-                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 180.h,
+              floating: false,
+              pinned: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
-              Container(
-                padding: EdgeInsets.only(top: 40.h, bottom: 100.h),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: 120.w,
-                  height: 45.h,
-                ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: SvgPicture.asset(hLogoIcon, width: 160.w),
               ),
-              _buildEmail(),
-              _buildPassword(),
-              SizedBox(height: 40),
-              _buildSignInButton(),
-              SizedBox(height: 10),
-              _buildForgotPassword(),
-              SizedBox(height: 40),
-              _buildOrDivider(),
-              SizedBox(height: 40),
-              _buildExternalSignInButtons(),
-              SizedBox(height: 40),
-              if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
-              Center(
-                child: InkWell(
-                  onTap: _onPrivacyPolicy,
-                  child: Text(
-                    'suffix_agree_terms'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: Colors.white54,
-                      fontSize: 16.sp,
+            ),
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(height: 100.h),
+                _buildEmail(),
+                _buildPassword(),
+                SizedBox(height: 40),
+                _buildSignInButton(),
+                SizedBox(height: 10),
+                _buildForgotPassword(),
+                SizedBox(height: 40),
+                _buildOrDivider(),
+                SizedBox(height: 40),
+                _buildExternalSignInButtons(),
+                SizedBox(height: 40),
+                if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
+                Center(
+                  child: InkWell(
+                    onTap: _onPrivacyPolicy,
+                    child: Text(
+                      'suffix_agree_terms'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: Colors.white54,
+                        fontSize: 16.sp,
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -383,7 +385,7 @@ class _SignInPageState extends State<SignInPage> {
             child: Text(
               'sign_up'.tr(),
               style: mediumTextStyle.copyWith(
-                color: Colors.white,
+                color: Colors.orange,
                 fontSize: 17.sp,
               ),
             ),

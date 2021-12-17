@@ -1,5 +1,5 @@
 import 'package:badges/badges.dart';
-import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
+// import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -16,11 +16,15 @@ class MarkaaSimpleAppBar extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool isCartPage;
   final bool isCenter;
+  final AnimationController animationController;
+  final Animation<double> searchAnimation;
 
   MarkaaSimpleAppBar({
     required this.scaffoldKey,
     this.isCartPage = false,
     this.isCenter = true,
+    required this.animationController,
+    required this.searchAnimation,
   });
 
   @override
@@ -62,8 +66,9 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
     pageIconSize = 25.sp;
     shoppingCartIconWidth = 25.06.w;
     shoppingCartIconHeight = 23.92.h;
-    return Consumer<MarkaaAppChangeNotifier>(
-      builder: (_, model, __) {
+    return AnimatedBuilder(
+      animation: widget.animationController,
+      builder: (_, __) {
         return Container(
           color: primarySwatchColor,
           child: Column(
@@ -96,9 +101,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () => widget.isCartPage
-                          ? null
-                          : Navigator.pushNamed(context, Routes.myCart),
+                      onPressed: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
                       icon: Center(
                         child: Consumer<MyCartChangeNotifier>(
                           builder: (_, model, __) {
@@ -114,9 +117,8 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                               showBadge: model.cartItemCount > 0,
                               toAnimate: false,
                               animationDuration: Duration.zero,
-                              position: lang == 'ar'
-                                  ? BadgePosition.topStart(start: -8.w)
-                                  : BadgePosition.topEnd(end: -8.w),
+                              position:
+                                  lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
                               child: Container(
                                 width: 25.w,
                                 height: 25.h,
@@ -130,41 +132,46 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                   ],
                 ),
               ),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                width: designWidth.w,
-                height: model.isShowingSearchBar ? 40.h : 0,
-                padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 5.h),
-                child: TextFormField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.sp),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.sp),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.sp),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'search_items'.tr(),
-                    hintStyle: TextStyle(color: primarySwatchColor),
-                    suffixIcon: Icon(
-                      Icons.search,
-                      color: greyDarkColor,
-                      size: 25.sp,
+              SizeTransition(
+                sizeFactor: widget.searchAnimation,
+                child: Container(
+                  width: designWidth.w,
+                  height: 40.h,
+                  padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 5.h),
+                  child: ScaleTransition(
+                    scale: widget.searchAnimation,
+                    child: TextFormField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'search_items'.tr(),
+                        hintStyle: TextStyle(color: primarySwatchColor),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: greyDarkColor,
+                          size: 25.sp,
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: () => Navigator.pushNamed(context, Routes.search),
                     ),
                   ),
-                  readOnly: true,
-                  onTap: () => Navigator.pushNamed(context, Routes.search),
                 ),
               ),
             ],

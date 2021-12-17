@@ -114,35 +114,41 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, size: 25.sp, color: greyColor),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Container(
-        width: designWidth.w,
-        height: designHeight.h,
-        child: Stack(
-          children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                await myCartChangeNotifier.getCartItems(lang);
-              },
-              color: primaryColor,
-              backgroundColor: Colors.white,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 60.h),
-                child: Column(
-                  children: [
-                    Consumer<MyCartChangeNotifier>(
-                      builder: (_, model, ___) {
-                        if (model.cartItemCount > 0) {
-                          return Column(
+      body: Consumer<MyCartChangeNotifier>(
+        builder: (_, model, __) {
+          return NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.white,
+                  expandedHeight: 100.h,
+                  floating: false,
+                  pinned: true,
+                  leading: SizedBox.shrink(),
+                  flexibleSpace: FlexibleSpaceBar(
+                    titlePadding: EdgeInsetsDirectional.only(bottom: 16.0),
+                    centerTitle: false,
+                    title: _buildTitleBar(),
+                  ),
+                ),
+              ];
+            },
+            body: Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () async {
+                    await myCartChangeNotifier.getCartItems(lang);
+                  },
+                  color: primaryColor,
+                  backgroundColor: Colors.white,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 60.h),
+                    child: Column(
+                      children: [
+                        if (model.cartItemCount > 0) ...[
+                          Column(
                             children: [
-                              _buildTitleBar(),
+                              SizedBox(height: 10.h),
                               _buildCartItems(),
                               MyCartCouponCode(
                                 cartId: cartId,
@@ -150,9 +156,9 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                               ),
                               _buildTotalPrice(),
                             ],
-                          );
-                        } else {
-                          return Consumer<WishlistChangeNotifier>(
+                          )
+                        ] else ...[
+                          Consumer<WishlistChangeNotifier>(
                             builder: (_, model, ___) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(
@@ -165,30 +171,32 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
                                 ),
                               );
                             },
-                          );
-                        }
-                      },
+                          )
+                        ],
+                        if (user != null) ...[
+                          MyCartSaveForLaterItems(
+                            progressService: progressService,
+                            flushBarService: flushBarService,
+                            myCartChangeNotifier: myCartChangeNotifier,
+                            wishlistChangeNotifier: wishlistChangeNotifier,
+                          )
+                        ]
+                      ],
                     ),
-                    if (user != null) ...[
-                      MyCartSaveForLaterItems(
-                        progressService: progressService,
-                        flushBarService: flushBarService,
-                        myCartChangeNotifier: myCartChangeNotifier,
-                        wishlistChangeNotifier: wishlistChangeNotifier,
-                      )
-                    ]
-                  ],
+                  ),
                 ),
-              ),
+                if (model.cartTotalCount > 0) ...[
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildCheckoutButton(),
+                  ),
+                ],
+              ],
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildCheckoutButton(),
-            ),
-          ],
-        ),
+          );
+        },
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),
     );
@@ -197,23 +205,24 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   Widget _buildTitleBar() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'my_cart_title'.tr(),
-            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 23.sp),
+            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 18.sp),
           ),
           Row(
             children: [
               Text(
                 'total'.tr() + ' ',
-                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 16.sp),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 12.sp),
               ),
               Text(
                 'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 13.sp),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 9.sp),
               ),
             ],
           ),

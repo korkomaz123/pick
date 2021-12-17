@@ -179,7 +179,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Container(
       width: designWidth.w,
       height: 50.h,
-      margin: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
+      margin: EdgeInsets.only(bottom: 20.h, left: 10.w, right: 10.w),
       child: MarkaaTextIconButton(
         icon: SvgPicture.asset(circleArrowRightIcon, width: 20.w),
         title: 'checkout_place_payment_button_title'.tr(),
