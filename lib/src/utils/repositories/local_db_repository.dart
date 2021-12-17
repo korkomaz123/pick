@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:markaa/src/config/config.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalDBRepository {
@@ -5,7 +8,8 @@ class LocalDBRepository {
 
   Future<void> init() async {
     String path = 'markaa_db.db';
-    db = await openDatabase(path, version: 1, onCreate: (db, version) async {
+    int version = Platform.isAndroid ? MarkaaVersion.androidVersion : MarkaaVersion.iOSVersion;
+    db = await openDatabase(path, version: version, onCreate: (db, version) async {
       const String createTableQuery =
           '''CREATE TABLE address_table (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstname TEXT, lastname TEXT, email TEXT, country_name TEXT, country_id TEXT, region TEXT, region_id TEXT, city TEXT, street TEXT, postcode TEXT, company TEXT, telephone TEXT, DefaultBillingAddress INTEGER, DefaultShippingAddress INTEGER)''';
       await db.execute(createTableQuery);
