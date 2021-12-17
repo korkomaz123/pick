@@ -12,6 +12,7 @@ List<String> sortByList = [
   'price_low_high',
   'price_high_low',
   'sort_by_brand',
+  'sort_by_discount',
   'name_az',
   'name_za',
 ];

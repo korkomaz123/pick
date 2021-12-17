@@ -1,7 +1,7 @@
 import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
-import 'package:markaa/src/data/mock/mock.dart';
+// import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -11,7 +11,7 @@ import 'package:markaa/src/utils/services/progress_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'widgets/filter_basic_select.dart';
-import 'widgets/filter_category_select.dart';
+// import 'widgets/filter_category_select.dart';
 import 'widgets/filter_option_select_dialog.dart';
 
 class FilterPage extends StatefulWidget {
@@ -123,7 +123,7 @@ class _FilterPageState extends State<FilterPage> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    _buildCategories(),
+                    // _buildCategories(),
                     if (price.keys.toList().length > 0) ...[_buildPriceRange()],
                     if (genderList.isNotEmpty) ...[_buildGender()],
                     Column(
@@ -145,29 +145,29 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildCategories() {
-    return Container(
-      width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-      child: FilterCategorySelect(
-        items: [
-          {'display': homeCategories[0].name, 'value': '${homeCategories[0].id}'},
-          {'display': homeCategories[1].name, 'value': '${homeCategories[1].id}'},
-        ],
-        itemWidth: 160.w,
-        itemHeight: 40.h,
-        values: selectedCategories!,
-        onTap: (value) {
-          if (selectedCategories!.contains(value['value'])) {
-            selectedCategories!.remove(value['value']);
-          } else {
-            selectedCategories!.add(value['value']);
-          }
-          model!.rebuild();
-        },
-      ),
-    );
-  }
+  // Widget _buildCategories() {
+  //   return Container(
+  //     width: 375.w,
+  //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+  //     child: FilterCategorySelect(
+  //       items: [
+  //         {'display': homeCategories[0].name, 'value': '${homeCategories[0].id}'},
+  //         {'display': homeCategories[1].name, 'value': '${homeCategories[1].id}'},
+  //       ],
+  //       itemWidth: 160.w,
+  //       itemHeight: 40.h,
+  //       values: selectedCategories!,
+  //       onTap: (value) {
+  //         if (selectedCategories!.contains(value['value'])) {
+  //           selectedCategories!.remove(value['value']);
+  //         } else {
+  //           selectedCategories!.add(value['value']);
+  //         }
+  //         model!.rebuild();
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildPriceRange() {
     return Container(
