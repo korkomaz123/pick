@@ -51,7 +51,6 @@ import 'package:markaa/src/pages/splash/update_page.dart';
 import 'package:markaa/src/pages/summer_collection/summer_collection_page.dart';
 import 'package:markaa/src/pages/wishlist/wishlist_page.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import 'routes.dart';
 

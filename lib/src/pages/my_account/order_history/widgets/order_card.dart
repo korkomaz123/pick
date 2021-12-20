@@ -1,5 +1,4 @@
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';

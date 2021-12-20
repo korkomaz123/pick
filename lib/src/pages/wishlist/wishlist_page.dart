@@ -4,9 +4,7 @@ import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 import 'package:markaa/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -26,8 +24,7 @@ class WishlistPage extends StatefulWidget {
   _WishlistPageState createState() => _WishlistPageState();
 }
 
-class _WishlistPageState extends State<WishlistPage>
-    with TickerProviderStateMixin {
+class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   ProgressService? progressService;
@@ -159,21 +156,17 @@ class _WishlistPageState extends State<WishlistPage>
   void _onRemoveWishlist(ProductModel product, bool ask) async {
     var result;
     if (ask) {
-      result = await flushBarService!
-          .showConfirmDialog(message: 'wishlist_remove_item_dialog_text');
+      result = await flushBarService!.showConfirmDialog(message: 'wishlist_remove_item_dialog_text');
     }
     if (result != null || !ask) {
-      await wishlistChangeNotifier!
-          .removeItemFromWishlist(user!.token, product);
+      await wishlistChangeNotifier!.removeItemFromWishlist(user!.token, product);
     }
   }
 
   void _onAddToCart(ProductModel product) {
     wishlistChangeNotifier!.removeItemFromWishlist(user!.token, product);
     myCartChangeNotifier!.addProductToCart(product, 1, lang, {},
-        onProcess: _onAdding,
-        onSuccess: () => _onAddSuccess(product),
-        onFailure: _onAddFailure);
+        onProcess: _onAdding, onSuccess: () => _onAddSuccess(product), onFailure: _onAddFailure);
   }
 
   _onAdding() {

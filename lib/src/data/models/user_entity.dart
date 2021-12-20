@@ -1,4 +1,3 @@
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 
 class UserEntity {

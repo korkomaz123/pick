@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/rendering.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
-// import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
@@ -12,7 +10,6 @@ import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:markaa/src/utils/services/communicator.dart';
@@ -48,13 +45,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   late HomeChangeNotifier _homeProvider;
-  // late MarkaaAppChangeNotifier _markaaAppChangeNotifier;
   late ProductChangeNotifier _productChangeNotifier;
 
   late Communicator _communicator;
   DynamicLinkService _dynamicLinkService = DynamicLinkService();
-  // ScrollController _scrollController = ScrollController();
-  // ScrollDirection _prevDirection = ScrollDirection.forward;
   late AnimationController _animationController;
   late Animation<double> _searchAnimation;
 
@@ -85,17 +79,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
     ]);
   }
 
-  // void _onScroll() {
-  //   if (_prevDirection != _scrollController.position.userScrollDirection) {
-  //     if (_prevDirection == ScrollDirection.forward) {
-  //       _markaaAppChangeNotifier.changeSearchBarStatus(false);
-  //     } else if (_prevDirection == ScrollDirection.reverse) {
-  //       _markaaAppChangeNotifier.changeSearchBarStatus(true);
-  //     }
-  //   }
-  //   _prevDirection = _scrollController.position.userScrollDirection;
-  // }
-
   void _onShowPopup(SliderImageEntity popupItem) async {
     await showDialog(
       context: context,
@@ -112,7 +95,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
     _animationController = AnimationController(vsync: this, duration: Duration.zero);
     _searchAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_animationController);
 
-    // _markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     _productChangeNotifier = context.read<ProductChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _communicator = Communicator(context: context);
@@ -153,7 +135,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
         backgroundColor: scaffoldBackgroundColor,
         body: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (notification) {
-            notification.disallowGlow();
+            notification.disallowIndicator();
             return true;
           },
           child: NotificationListener<ScrollNotification>(
@@ -172,7 +154,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          // controller: _scrollController,
                           child: Column(
                             children: [
                               HomeHeaderCarousel(homeChangeNotifier: _homeProvider),

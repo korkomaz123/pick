@@ -1,6 +1,5 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
@@ -362,6 +361,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
       width: 375.w,
       height: 60.h,
       padding: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
+      color: Colors.white,
       child: MarkaaTextIconButton(
         icon: SvgPicture.asset(circleArrowRightIcon, width: 20.w),
         title: 'checkout_button_title'.tr(),

@@ -4,7 +4,6 @@ import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 
 class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
