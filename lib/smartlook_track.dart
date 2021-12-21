@@ -32,11 +32,6 @@ class SmartlookTrack {
     ];
     Smartlook.setEventTrackingModes(eventTrackingModes);
     Smartlook.registerIntegrationListener(new CustomIntegrationListener());
-    String? dashboardVisitorUrl = await Smartlook.getDashboardVisitorUrl();
-    if (dashboardVisitorUrl != null) {
-      String visitorId = dashboardVisitorUrl.split('visitor/')[1];
-      Smartlook.setUserIdentifier(visitorId);
-    }
     Smartlook.enableWebviewRecording(true);
     Smartlook.enableCrashlytics(true);
     Smartlook.getDashboardSessionUrl(true);

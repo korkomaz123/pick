@@ -156,7 +156,6 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
           CachedNetworkImage(
@@ -169,113 +168,116 @@ class _ProductVCardState extends State<ProductVCard> with TickerProviderStateMix
             },
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    if (widget.product.brandEntity != null) {
-                      ProductListArguments arguments = ProductListArguments(
-                        category: null,
-                        subCategory: [],
-                        brand: widget.product.brandEntity,
-                        selectedSubCategoryIndex: 0,
-                        isFromBrand: true,
-                      );
-                      Navigator.pushNamed(
-                        context,
-                        Routes.productList,
-                        arguments: arguments,
-                      );
-                    }
-                  },
-                  child: Text(
-                    widget.product.brandEntity?.brandLabel ?? '',
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 14.sp,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (widget.product.brandEntity != null) {
+                        ProductListArguments arguments = ProductListArguments(
+                          category: null,
+                          subCategory: [],
+                          brand: widget.product.brandEntity,
+                          selectedSubCategoryIndex: 0,
+                          isFromBrand: true,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productList,
+                          arguments: arguments,
+                        );
+                      }
+                    },
+                    child: Text(
+                      widget.product.brandEntity?.brandLabel ?? '',
+                      style: mediumTextStyle.copyWith(
+                        color: primaryColor,
+                        fontSize: 14.sp,
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  widget.product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: widget.isMinor ? 12.sp : 16.sp,
-                    fontWeight: FontWeight.w700,
+                  Text(
+                    widget.product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: mediumTextStyle.copyWith(
+                      color: greyDarkColor,
+                      fontSize: widget.isMinor ? 12.sp : 16.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                Spacer(),
-                if (widget.isLine) ...[Divider(color: greyColor, thickness: 0.5.h, height: 10.h)],
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Text(
-                            (widget.product.price + ' ' + 'currency'.tr()),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: widget.isMinor ? 12.sp : 14.sp,
-                              color: greyColor,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          if (widget.product.discount! > 0) ...[
-                            SizedBox(width: widget.isMinor ? 4.w : 10.w),
+                  Spacer(),
+                  if (widget.isLine) ...[Divider(color: greyColor, thickness: 0.5.h, height: 10.h)],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
                             Text(
-                              widget.product.beforePrice! + ' ' + 'currency'.tr(),
+                              (widget.product.price + ' ' + 'currency'.tr()),
                               style: mediumTextStyle.copyWith(
-                                decorationStyle: TextDecorationStyle.solid,
-                                decoration: TextDecoration.lineThrough,
-                                decorationColor: dangerColor,
                                 fontSize: widget.isMinor ? 12.sp : 14.sp,
                                 color: greyColor,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    if (widget.isShoppingCart) ...[
-                      Consumer<MarkaaAppChangeNotifier>(
-                        builder: (_, model, __) {
-                          if (!outOfStock && !isMaxed) {
-                            return InkWell(
-                              onTap: () {
-                                if (model.activeAddCart) {
-                                  model.changeAddCartStatus(false);
-                                  _onAddProductToCart();
-                                  model.changeAddCartStatus(true);
-                                }
-                              },
-                              child: ScaleTransition(
-                                scale: _addToCartScaleAnimation!,
-                                child: Container(
-                                  width: widget.isMinor ? 26.w : 32.w,
-                                  height: widget.isMinor ? 26.w : 32.w,
-                                  child: SvgPicture.asset(addCartIcon),
+                            if (widget.product.discount! > 0) ...[
+                              SizedBox(width: widget.isMinor ? 4.w : 10.w),
+                              Text(
+                                widget.product.beforePrice! + ' ' + 'currency'.tr(),
+                                style: mediumTextStyle.copyWith(
+                                  decorationStyle: TextDecorationStyle.solid,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationColor: dangerColor,
+                                  fontSize: widget.isMinor ? 12.sp : 14.sp,
+                                  color: greyColor,
                                 ),
                               ),
-                            );
-                          } else {
-                            return Container(
-                              width: widget.isMinor ? 26.w : 32.w,
-                              height: widget.isMinor ? 26.w : 32.w,
-                              child: SvgPicture.asset(greyAddCartIcon),
-                            );
-                          }
-                        },
+                            ],
+                          ],
+                        ),
                       ),
+                      if (widget.isShoppingCart) ...[
+                        Consumer<MarkaaAppChangeNotifier>(
+                          builder: (_, model, __) {
+                            if (!outOfStock && !isMaxed) {
+                              return InkWell(
+                                onTap: () {
+                                  if (model.activeAddCart) {
+                                    model.changeAddCartStatus(false);
+                                    _onAddProductToCart();
+                                    model.changeAddCartStatus(true);
+                                  }
+                                },
+                                child: ScaleTransition(
+                                  scale: _addToCartScaleAnimation!,
+                                  child: Container(
+                                    width: widget.isMinor ? 26.w : 32.w,
+                                    height: widget.isMinor ? 26.w : 32.w,
+                                    child: SvgPicture.asset(addCartIcon),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                width: widget.isMinor ? 26.w : 32.w,
+                                height: widget.isMinor ? 26.w : 32.w,
+                                child: SvgPicture.asset(greyAddCartIcon),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-                SizedBox(height: 5.h),
-              ],
+                  ),
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         ],

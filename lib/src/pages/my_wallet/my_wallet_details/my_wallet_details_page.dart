@@ -23,8 +23,7 @@ class MyWalletDetailsPage extends StatefulWidget {
   _MyWalletDetailsPageState createState() => _MyWalletDetailsPageState();
 }
 
-class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
-    with WidgetsBindingObserver {
+class _MyWalletDetailsPageState extends State<MyWalletDetailsPage> with WidgetsBindingObserver {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController _controller = ScrollController();
   ScrollDirection prevDirection = ScrollDirection.forward;
@@ -35,8 +34,7 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
     if (widget.amount == null) {
       _controller.addListener(_onScroll);
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-        _scaffoldKey.currentState!
-            .showBottomSheet((context) => _buildBottomSheet());
+        _scaffoldKey.currentState!.showBottomSheet((context) => _buildBottomSheet());
       });
     }
   }
@@ -44,11 +42,9 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
   _onScroll() {
     if (prevDirection != _controller.position.userScrollDirection) {
       if (prevDirection == ScrollDirection.forward) {
-        _scaffoldKey.currentState!
-            .showBottomSheet((context) => SizedBox.shrink());
+        _scaffoldKey.currentState!.showBottomSheet((context) => SizedBox.shrink());
       } else if (prevDirection == ScrollDirection.reverse) {
-        _scaffoldKey.currentState!
-            .showBottomSheet((context) => _buildBottomSheet());
+        _scaffoldKey.currentState!.showBottomSheet((context) => _buildBottomSheet());
       }
     }
     prevDirection = _controller.position.userScrollDirection;
@@ -59,16 +55,23 @@ class _MyWalletDetailsPageState extends State<MyWalletDetailsPage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: MyWalletDetailsHeader(fromCheckout: widget.amount != null),
-      body: Column(
-        children: [
-          MyWalletDetailsForm(amount: widget.amount),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _controller,
-              child: MyWalletDetailsTransactions(),
+      body: NestedScrollView(
+        controller: _controller,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              expandedHeight: 220.h,
+              floating: false,
+              pinned: false,
+              leading: SizedBox.shrink(),
+              flexibleSpace: FlexibleSpaceBar(
+                background: MyWalletDetailsForm(amount: widget.amount),
+              ),
             ),
-          ),
-        ],
+          ];
+        },
+        body: SingleChildScrollView(child: MyWalletDetailsTransactions()),
       ),
     );
   }

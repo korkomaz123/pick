@@ -156,16 +156,14 @@ class _ProductCardState extends State<ProductCard> with TickerProviderStateMixin
       padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         children: [
-          Container(
-            child: CachedNetworkImage(
-              imageUrl: widget.product.imageUrl,
-              width: widget.cardWidth,
-              height: widget.cardWidth,
-              fit: BoxFit.fitHeight,
-              errorWidget: (context, url, error) {
-                return Center(child: Icon(Icons.image, size: 20.sp));
-              },
-            ),
+          CachedNetworkImage(
+            imageUrl: widget.product.imageUrl,
+            width: widget.cardWidth,
+            height: widget.cardWidth,
+            fit: BoxFit.fitHeight,
+            errorWidget: (context, url, error) {
+              return Center(child: Icon(Icons.image, size: 20.sp));
+            },
           ),
           Expanded(
             child: Column(

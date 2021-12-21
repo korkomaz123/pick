@@ -190,8 +190,6 @@ class _ProductSingleProductState extends State<ProductSingleProduct> with Ticker
                         productEntity: details,
                         model: widget.model,
                       )
-                    ] else ...[
-                      // _buildDescription()
                     ],
                     _buildPrice(),
                   ],

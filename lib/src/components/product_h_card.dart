@@ -171,15 +171,11 @@ class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMix
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(
-              right: lang == 'en' ? 5.w : 0,
-              left: lang == 'ar' ? 5.w : 0,
-            ),
+            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5.w, 0),
             child: CachedNetworkImage(
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth * 0.34,

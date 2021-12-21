@@ -57,15 +57,16 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
   bool isWishlist = false;
   bool isMaxed = false;
 
-  FlushBarService? flushBarService;
-  ProgressService? progressService;
+  late FlushBarService flushBarService;
+  late ProgressService progressService;
 
   AnimationController? _addToCartController;
   Animation<double>? _addToCartScaleAnimation;
   AnimationController? _addToWishlistController;
   Animation<double>? _addToWishlistScaleAnimation;
-  MyCartChangeNotifier? myCartChangeNotifier;
-  WishlistChangeNotifier? wishlistChangeNotifier;
+
+  late MyCartChangeNotifier myCartChangeNotifier;
+  late WishlistChangeNotifier wishlistChangeNotifier;
 
   bool get outOfStock => !(widget.product.stockQty! > 0);
 
@@ -177,7 +178,6 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
           color: Colors.white,
           borderRadius: BorderRadius.circular(widget.borderRadius),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: Column(
           children: [
             CachedNetworkImage(
@@ -190,37 +190,51 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
               },
             ),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      if (widget.product.brandEntity?.optionId != null) {
-                        ProductListArguments arguments = ProductListArguments(
-                          category: null,
-                          subCategory: [],
-                          brand: widget.product.brandEntity,
-                          selectedSubCategoryIndex: 0,
-                          isFromBrand: true,
-                        );
-                        Navigator.pushNamed(
-                          context,
-                          Routes.productList,
-                          arguments: arguments,
-                        );
-                      }
-                    },
-                    child: Text(
-                      widget.product.brandEntity?.brandLabel ?? '',
-                      style: mediumTextStyle.copyWith(
-                        color: primaryColor,
-                        fontSize: 14.sp,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        if (widget.product.brandEntity?.optionId != null) {
+                          ProductListArguments arguments = ProductListArguments(
+                            category: null,
+                            subCategory: [],
+                            brand: widget.product.brandEntity,
+                            selectedSubCategoryIndex: 0,
+                            isFromBrand: true,
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productList,
+                            arguments: arguments,
+                          );
+                        }
+                      },
+                      child: Text(
+                        widget.product.brandEntity?.brandLabel ?? '',
+                        style: mediumTextStyle.copyWith(
+                          color: primaryColor,
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ),
-                  ),
-                  if (widget.isLine || widget.isMinor) ...[
-                    Expanded(
-                      child: Text(
+                    if (widget.isLine || widget.isMinor) ...[
+                      Expanded(
+                        child: Text(
+                          widget.product.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: mediumTextStyle.copyWith(
+                            color: greyDarkColor,
+                            fontSize: widget.isMinor ? 12.sp : 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    ] else ...[
+                      Text(
                         widget.product.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -228,56 +242,58 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                           color: greyDarkColor,
                           fontSize: widget.isMinor ? 12.sp : 16.sp,
                           fontWeight: FontWeight.w700,
+                          height: 0.5,
                         ),
-                      ),
-                    )
-                  ] else ...[
-                    Text(
-                      widget.product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: widget.isMinor ? 12.sp : 16.sp,
-                        fontWeight: FontWeight.w700,
-                        height: 0.5,
-                      ),
-                    )
-                  ],
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5.h),
-                    child: Row(
-                      children: [
-                        Text(
-                          widget.product.price + ' ' + 'currency'.tr(),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: widget.isMinor ? 12.sp : 14.sp,
-                            color: greyColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        if (widget.product.discount! > 0) ...[
-                          SizedBox(width: widget.isMinor ? 4.w : 10.w),
+                      )
+                    ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.h),
+                      child: Row(
+                        children: [
                           Text(
-                            widget.product.beforePrice! + ' ' + 'currency'.tr(),
+                            widget.product.price + ' ' + 'currency'.tr(),
                             style: mediumTextStyle.copyWith(
-                              decorationStyle: TextDecorationStyle.solid,
-                              decoration: TextDecoration.lineThrough,
-                              decorationColor: dangerColor,
                               fontSize: widget.isMinor ? 12.sp : 14.sp,
                               color: greyColor,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
+                          if (widget.product.discount! > 0) ...[
+                            SizedBox(width: widget.isMinor ? 4.w : 10.w),
+                            Text(
+                              widget.product.beforePrice! + ' ' + 'currency'.tr(),
+                              style: mediumTextStyle.copyWith(
+                                decorationStyle: TextDecorationStyle.solid,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: dangerColor,
+                                fontSize: widget.isMinor ? 12.sp : 14.sp,
+                                color: greyColor,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                  if (widget.isLine) ...[Divider(color: primaryColor)],
-                  if (widget.isShoppingCart) ...[
-                    if (!outOfStock && !isMaxed) ...[
-                      ScaleTransition(
-                        scale: _addToCartScaleAnimation!,
-                        child: Container(
+                    if (widget.isLine) ...[Divider(color: primaryColor)],
+                    if (widget.isShoppingCart) ...[
+                      if (!outOfStock && !isMaxed) ...[
+                        ScaleTransition(
+                          scale: _addToCartScaleAnimation!,
+                          child: Container(
+                            width: widget.cardWidth - 16.w,
+                            height: 35.h,
+                            child: MarkaaTextButton(
+                              title: 'wishlist_add_cart_button_title'.tr(),
+                              titleColor: Colors.white,
+                              titleSize: 14.sp,
+                              borderColor: Colors.transparent,
+                              buttonColor: primaryColor,
+                              onPressed: () => _onAddProductToCart(),
+                            ),
+                          ),
+                        )
+                      ] else ...[
+                        Container(
                           width: widget.cardWidth - 16.w,
                           height: 35.h,
                           child: MarkaaTextButton(
@@ -285,28 +301,15 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                             titleColor: Colors.white,
                             titleSize: 14.sp,
                             borderColor: Colors.transparent,
-                            buttonColor: primaryColor,
-                            onPressed: () => _onAddProductToCart(),
+                            buttonColor: greyColor,
+                            onPressed: () => null,
                           ),
-                        ),
-                      )
-                    ] else ...[
-                      Container(
-                        width: widget.cardWidth - 16.w,
-                        height: 35.h,
-                        child: MarkaaTextButton(
-                          title: 'wishlist_add_cart_button_title'.tr(),
-                          titleColor: Colors.white,
-                          titleSize: 14.sp,
-                          borderColor: Colors.transparent,
-                          buttonColor: greyColor,
-                          onPressed: () => null,
-                        ),
-                      )
+                        )
+                      ],
                     ],
+                    SizedBox(height: 5.h),
                   ],
-                  SizedBox(height: 5.h),
-                ],
+                ),
               ),
             ),
           ],
@@ -416,26 +419,26 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier!.addProductToCart(widget.product, 1, lang, {},
+        await myCartChangeNotifier.addProductToCart(widget.product, 1, lang, {},
             onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+        flushBarService.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
 
   _onAdding() {
-    progressService!.addingProductProgress();
+    progressService.addingProductProgress();
   }
 
   void _onAddSuccess() {
-    progressService!.hideProgress();
+    progressService.hideProgress();
     ActionHandler.addedItemToCartSuccess(context, widget.product);
   }
 
   _onAddFailure(String message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message, "no_qty.svg");
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message, "no_qty.svg");
     widget.onAddToCartFailure();
   }
 
@@ -449,9 +452,9 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
         timer.cancel();
       });
       if (isWishlist) {
-        wishlistChangeNotifier!.removeItemFromWishlist(user!.token, widget.product);
+        wishlistChangeNotifier.removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier!.addItemToWishlist(user!.token, widget.product, 1, {});
+        wishlistChangeNotifier.addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

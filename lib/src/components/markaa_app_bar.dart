@@ -116,12 +116,8 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(30),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-          ),
-          margin: EdgeInsets.only(
-            bottom: (widget.isCenter ? 10.h : 5.h),
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          margin: EdgeInsets.only(bottom: (widget.isCenter ? 10.h : 5.h)),
           width: double.infinity,
           height: 30.h,
           child: TextFormField(
