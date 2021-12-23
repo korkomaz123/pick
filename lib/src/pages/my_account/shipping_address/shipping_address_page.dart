@@ -127,8 +127,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     child: Column(
                       children: List.generate(
                         model.customerAddressKeys.length,
-                        (index) =>
-                            _buildAddressCard(model.customerAddressKeys[index]),
+                        (index) => _buildAddressCard(model.customerAddressKeys[index]),
                       )..add(SizedBox(height: 60.h)),
                     ),
                   );
@@ -193,15 +192,12 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               alignment: Alignment.topCenter,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 60.w,
-                  vertical: 15.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 60.w, vertical: 15.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      address!.street,
+                      address?.fullName?.toUpperCase() ?? '',
                       style: mediumTextStyle.copyWith(
                         color: primaryColor,
                         fontSize: 18.sp,
@@ -210,27 +206,18 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      address.country,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 14.sp,
-                      ),
+                      address?.street ?? '',
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      address.city,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 14.sp,
-                      ),
+                      '${address?.city ?? ''}, ${address?.country ?? ''}',
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 14.sp,
-                      ),
+                      'phone_number_hint'.tr() + ': ' + (address?.phoneNumber ?? ''),
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -240,7 +227,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
               top: 0,
               left: 0,
               child: Radio(
-                value: address.addressId!,
+                value: address?.addressId ?? '',
                 groupValue: model.customerDefaultAddress?.addressId ?? '',
                 activeColor: primaryColor,
                 onChanged: _onUpdate,
@@ -273,11 +260,9 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
   }
 
   void _onRemove(String key) async {
-    final result = await flushBarService!
-        .showConfirmDialog(message: 'remove_shipping_address_subtitle');
+    final result = await flushBarService!.showConfirmDialog(message: 'remove_shipping_address_subtitle');
     if (result != null) {
-      await model.deleteCustomerAddress(
-          user!.token, key, _onProcess, _onSuccess, _onFailure);
+      await model.deleteCustomerAddress(user!.token, key, _onProcess, _onSuccess, _onFailure);
     }
   }
 
@@ -286,9 +271,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     address!.defaultBillingAddress = 1;
     address.defaultShippingAddress = 1;
     await model.updateCustomerAddress(user!.token, address,
-        onProcess: _onProcess,
-        onSuccess: _onUpdateSuccess,
-        onFailure: _onFailure);
+        onProcess: _onProcess, onSuccess: _onUpdateSuccess, onFailure: _onFailure);
   }
 
   void _onProcess() {

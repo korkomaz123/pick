@@ -195,7 +195,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      address.street,
+                      address.fullName?.toUpperCase() ?? '',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -206,7 +206,14 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'Block No.${address.company}, ${address.city}, ${address.country}',
+                      'Block No.${address.company}, ${address.street}',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 12.sp),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      '${address.city}, ${address.country}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 12.sp),

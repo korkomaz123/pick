@@ -38,6 +38,7 @@ class AddressChangeNotifier extends ChangeNotifier {
       final list = await localDB.getAddress();
       if (list.isNotEmpty) {
         for (var item in list) {
+          print(item);
           AddressEntity address = AddressEntity.fromJson(item);
           guestAddressesMap[address.id] = address;
           if (address.defaultShippingAddress == 1) {
@@ -86,9 +87,11 @@ class AddressChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
+    print('add address');
     if (onProcess != null) onProcess();
     try {
       int id = await localDB.addAddress(data);
+      print(id);
       data['id'] = id;
       AddressEntity address = AddressEntity.fromJson(data);
       guestAddressesMap[address.id] = address;
@@ -112,9 +115,12 @@ class AddressChangeNotifier extends ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
   }) async {
+    print('update address');
+    print(data);
     if (onProcess != null) onProcess();
     try {
       bool updated = await localDB.updateAddress(data);
+      print(updated);
       if (updated) {
         AddressEntity address = AddressEntity.fromJson(data);
         guestAddressesMap[address.id] = address;

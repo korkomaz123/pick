@@ -152,7 +152,7 @@ class _AddressFormState extends State<AddressForm> {
                         validator: (String value) {
                           if (value.isEmpty) {
                             return 'required_field'.tr();
-                          } else if (value.trim().indexOf(' ') == -1) {
+                          } else if (value.trim().split(' ').length < 2) {
                             return 'full_name_issue'.tr();
                           }
                           return null;
@@ -321,25 +321,25 @@ class _AddressFormState extends State<AddressForm> {
 
   void _onSave() async {
     if (formKey.currentState!.validate()) {
-      String firstName = fullNameController.text.split(' ')[0];
-      String lastName = fullNameController.text.split(' ')[1];
+      String firstName = fullNameController.text.trim().split(' ')[0];
+      String lastName = fullNameController.text.trim().split(' ')[1];
 
       AddressEntity address = AddressEntity(
-        id: 0,
+        id: addressParam?.id ?? 0,
         title: 'title',
-        country: countryController.text,
+        country: countryController.text.trim(),
         countryId: countryId!,
         regionId: regionId!,
-        region: stateController.text,
+        region: stateController.text.trim(),
         firstName: firstName,
-        fullName: fullNameController.text,
+        fullName: fullNameController.text.trim(),
         lastName: lastName,
         city: cityController.text.trim(),
-        street: streetController.text,
-        postCode: postCodeController.text,
-        phoneNumber: phoneNumberController.text,
-        company: companyController.text,
-        email: emailController.text,
+        street: streetController.text.trim(),
+        postCode: postCodeController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
+        company: companyController.text.trim(),
+        email: emailController.text.trim(),
         defaultBillingAddress: addressParam?.defaultBillingAddress ?? 1,
         defaultShippingAddress: addressParam?.defaultShippingAddress ?? 1,
         addressId: addressParam?.addressId ?? '',
