@@ -3,7 +3,6 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/components/markaa_loading_widget.dart';
-import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -52,12 +51,12 @@ class ProductListView extends StatefulWidget {
 }
 
 class _ProductListViewState extends State<ProductListView> with TickerProviderStateMixin {
-  GlobalKey<ScaffoldState>? scaffoldKey;
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
-  ProductChangeNotifier? productChangeNotifier;
-  ScrollChangeNotifier? scrollChangeNotifier;
-  MarkaaAppChangeNotifier? markaaAppChangeNotifier;
+  late GlobalKey<ScaffoldState> scaffoldKey;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
+  late ProductChangeNotifier productChangeNotifier;
+  late ScrollChangeNotifier scrollChangeNotifier;
+  late MarkaaAppChangeNotifier markaaAppChangeNotifier;
   late FilterChangeNotifier filterChangeNotifier;
 
   List<CategoryEntity>? subCategories;
@@ -107,12 +106,12 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
     double maxScroll = scrollController.position.maxScrollExtent;
     double currentScroll = scrollController.position.pixels;
 
-    scrollChangeNotifier!.controlBrandBar(currentScroll);
+    scrollChangeNotifier.controlBrandBar(currentScroll);
 
     currentProduct = ((currentScroll ~/ 280.h).floor() * 2) + 4;
-    markaaAppChangeNotifier!.rebuild();
+    markaaAppChangeNotifier.rebuild();
 
-    if (!productChangeNotifier!.isReachedMax && (maxScroll - currentScroll <= 200)) {
+    if (!productChangeNotifier.isReachedMax && (maxScroll - currentScroll <= 200)) {
       _onLoadMore();
     }
   }
@@ -135,7 +134,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
     String key = _generateKey(subCategories![widget.activeIndex]);
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.viewMode == ProductViewModeEnum.filter) {
-        await productChangeNotifier!.initialLoadFilteredProducts(
+        await productChangeNotifier.initialLoadFilteredProducts(
           key,
           brand?.optionId ?? '',
           subCategories?[widget.activeIndex].id ?? 'all',
@@ -143,13 +142,13 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
           lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.category) {
-        await productChangeNotifier!.initialLoadCategoryProducts(
+        await productChangeNotifier.initialLoadCategoryProducts(
           key,
           subCategories![widget.activeIndex].id,
           lang,
         );
       } else if (widget.viewMode == ProductViewModeEnum.brand) {
-        await productChangeNotifier!.initialLoadBrandProducts(
+        await productChangeNotifier.initialLoadBrandProducts(
           key,
           brand!.optionId,
           subCategories?[widget.activeIndex].id ?? '',
@@ -167,20 +166,20 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   Future<void> _onRefresh() async {
     String key = _generateKey(subCategories![tabController!.index]);
     if (widget.viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier!.refreshCategoryProducts(
+      await productChangeNotifier.refreshCategoryProducts(
         key,
         subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier!.refreshBrandProducts(
+      await productChangeNotifier.refreshBrandProducts(
         key,
         brand!.optionId,
         subCategories?[tabController!.index].id ?? 'all',
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      await productChangeNotifier!.refreshSortedProducts(
+      await productChangeNotifier.refreshSortedProducts(
         key,
         brand?.optionId ?? '',
         subCategories?[tabController!.index].id ?? 'all',
@@ -188,7 +187,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      await productChangeNotifier!.refreshFilteredProducts(
+      await productChangeNotifier.refreshFilteredProducts(
         key,
         brand?.optionId ?? '',
         subCategories?[tabController!.index].id ?? 'all',
@@ -200,18 +199,18 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   void _onLoadMore() async {
     String key = _generateKey(subCategories![tabController!.index]);
-    page = productChangeNotifier!.pages[key] ?? 1;
+    page = productChangeNotifier.pages[key] ?? 1;
     page += 1;
 
     if (widget.viewMode == ProductViewModeEnum.category) {
-      await productChangeNotifier!.loadMoreCategoryProducts(
+      await productChangeNotifier.loadMoreCategoryProducts(
         key,
         page,
         subCategories![tabController!.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
-      await productChangeNotifier!.loadMoreBrandProducts(
+      await productChangeNotifier.loadMoreBrandProducts(
         key,
         page,
         brand!.optionId,
@@ -219,7 +218,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
-      await productChangeNotifier!.loadMoreSortedProducts(
+      await productChangeNotifier.loadMoreSortedProducts(
         key,
         page,
         brand?.optionId ?? '',
@@ -228,7 +227,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.filter) {
-      await productChangeNotifier!.loadMoreFilteredProducts(
+      await productChangeNotifier.loadMoreFilteredProducts(
         key,
         page,
         brand?.optionId ?? '',
@@ -262,18 +261,23 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   return Consumer<ProductChangeNotifier>(
                     builder: (ctx, notifier, _) {
                       String index = _generateKey(cat);
-                      if (!productChangeNotifier!.data!.containsKey(index) ||
-                          productChangeNotifier!.data![index] == null) {
+                      if (!productChangeNotifier.data!.containsKey(index) ||
+                          productChangeNotifier.data![index] == null) {
                         return MarkaaLoadingWidget(child: ProductNoAvailable());
-                      } else if (productChangeNotifier!.data![index]!.isEmpty) {
+                      } else if (productChangeNotifier.data![index]!.isEmpty) {
                         return ProductNoAvailable();
                       } else {
                         return Column(
                           children: [
                             Expanded(
-                              child: _buildPList(productChangeNotifier!.data![index]!),
+                              child: _buildPList(productChangeNotifier.data![index]!),
                             ),
-                            if (productChangeNotifier!.isLoading) ...[Center(child: ThreeBounceLoadingBar())],
+                            if (productChangeNotifier.isLoading) ...[
+                              LinearProgressIndicator(
+                                backgroundColor: Colors.white,
+                                color: primarySwatchColor.withOpacity(0.6),
+                              )
+                            ],
                           ],
                         );
                       }
@@ -345,10 +349,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(
-                          color: greyColor,
-                          width: 0.5.w,
-                        ),
+                        bottom: BorderSide(color: greyColor, width: 0.5.w),
                       ),
                     ),
                     child: ProductVCard(
@@ -362,19 +363,13 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   ),
                   Container(
                     height: 280.h,
-                    child: VerticalDivider(
-                      color: greyColor,
-                      width: 0.5.w,
-                    ),
+                    child: VerticalDivider(color: greyColor, width: 0.5.w),
                   ),
                   if (pIndex + 1 < products.length) ...[
                     Container(
                       decoration: BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(
-                            color: greyColor,
-                            width: 0.5.w,
-                          ),
+                          bottom: BorderSide(color: greyColor, width: 0.5.w),
                         ),
                       ),
                       child: ProductVCard(
@@ -391,11 +386,11 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                   ],
                 ],
               ),
-              if (productChangeNotifier!.isReachedMax && (pIndex + 2 >= products.length)) ...[
+              if (productChangeNotifier.isReachedMax && (pIndex + 2 >= products.length)) ...[
                 Container(
                   width: 375.w,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: 10.h),
+                  padding: EdgeInsets.only(top: 20.h),
                   child: Text(
                     'no_more_products'.tr(),
                     style: mediumTextStyle.copyWith(
@@ -436,9 +431,9 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                 size: 20.sp,
                 color: Colors.white70,
               ),
-              if (productChangeNotifier!.totalProducts[key] != null) ...[
+              if (productChangeNotifier.totalProducts[key] != null) ...[
                 Text(
-                  '${int.parse(productChangeNotifier!.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier!.totalProducts[key]} / ${productChangeNotifier!.totalProducts[key] ?? ''}',
+                  '${int.parse(productChangeNotifier.totalProducts[key]) > currentProduct ? currentProduct : productChangeNotifier.totalProducts[key]} / ${productChangeNotifier.totalProducts[key] ?? ''}',
                   style: TextStyle(color: Colors.white70),
                 )
               ],
