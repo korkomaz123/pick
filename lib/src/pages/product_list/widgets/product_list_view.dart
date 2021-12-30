@@ -4,6 +4,7 @@ import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/components/markaa_loading_widget.dart';
 import 'package:markaa/src/components/product_v_card.dart';
+import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -67,7 +68,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   bool? isFromBrand;
 
-  TabController? tabController;
+  late TabController tabController;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -89,7 +90,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
       initialIndex: widget.activeIndex,
       vsync: this,
     );
-    tabController!.addListener(() => widget.onChangeTab(tabController!.index));
+    tabController.addListener(() => widget.onChangeTab(tabController.index));
     scrollController.addListener(_onScroll);
 
     _initLoadProducts();
@@ -97,7 +98,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   @override
   void dispose() {
-    tabController!.dispose();
+    tabController.dispose();
     scrollController.dispose();
     super.dispose();
   }
@@ -164,25 +165,25 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   Future<void> _onRefresh() async {
-    String key = _generateKey(subCategories![tabController!.index]);
+    String key = _generateKey(subCategories![tabController.index]);
     if (widget.viewMode == ProductViewModeEnum.category) {
       await productChangeNotifier.refreshCategoryProducts(
         key,
-        subCategories![tabController!.index].id,
+        subCategories![tabController.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
       await productChangeNotifier.refreshBrandProducts(
         key,
         brand!.optionId,
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
       await productChangeNotifier.refreshSortedProducts(
         key,
         brand?.optionId ?? '',
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         widget.sortByItem,
         lang,
       );
@@ -190,7 +191,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
       await productChangeNotifier.refreshFilteredProducts(
         key,
         brand?.optionId ?? '',
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         widget.filterValues,
         lang,
       );
@@ -198,7 +199,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   void _onLoadMore() async {
-    String key = _generateKey(subCategories![tabController!.index]);
+    String key = _generateKey(subCategories![tabController.index]);
     page = productChangeNotifier.pages[key] ?? 1;
     page += 1;
 
@@ -206,7 +207,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
       await productChangeNotifier.loadMoreCategoryProducts(
         key,
         page,
-        subCategories![tabController!.index].id,
+        subCategories![tabController.index].id,
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.brand) {
@@ -214,7 +215,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         key,
         page,
         brand!.optionId,
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         lang,
       );
     } else if (widget.viewMode == ProductViewModeEnum.sort) {
@@ -222,7 +223,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         key,
         page,
         brand?.optionId ?? '',
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         widget.sortByItem,
         lang,
       );
@@ -231,7 +232,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
         key,
         page,
         brand?.optionId ?? '',
-        subCategories?[tabController!.index].id ?? 'all',
+        subCategories?[tabController.index].id ?? 'all',
         widget.filterValues,
         lang,
       );
@@ -248,7 +249,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    tabController!.index = widget.activeIndex;
+    tabController.index = widget.activeIndex;
     return Stack(
       children: [
         Column(
@@ -273,9 +274,13 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                               child: _buildPList(productChangeNotifier.data![index]!),
                             ),
                             if (productChangeNotifier.isLoading) ...[
-                              LinearProgressIndicator(
-                                backgroundColor: Colors.white,
-                                color: primarySwatchColor.withOpacity(0.6),
+                              SizedBox(
+                                width: designWidth.w,
+                                height: 1.h,
+                                child: LinearProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                  color: primarySwatchColor.withOpacity(0.6),
+                                ),
                               )
                             ],
                           ],
@@ -320,7 +325,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
                 index == 0 ? 'all'.tr() : subCategories![index].name,
                 style: mediumTextStyle.copyWith(
                   fontSize: 14.sp,
-                  color: tabController!.index == index ? Colors.white : Colors.black,
+                  color: tabController.index == index ? Colors.white : Colors.black,
                 ),
               ),
             );
@@ -407,7 +412,7 @@ class _ProductListViewState extends State<ProductListView> with TickerProviderSt
   }
 
   Widget _buildArrowButton() {
-    String key = _generateKey(subCategories![tabController!.index]);
+    String key = _generateKey(subCategories![tabController.index]);
     return AnimatedPositioned(
       left: 120.w,
       right: 120.w,
