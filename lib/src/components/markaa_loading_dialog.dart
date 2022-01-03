@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:markaa/src/theme/icons.dart';
+// import 'package:markaa/src/theme/icons.dart';
 // import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:markaa/src/theme/theme.dart';
+import 'package:shimmer/shimmer.dart';
 // import 'package:easy_localization/easy_localization.dart';
 // import 'package:markaa/src/theme/theme.dart';
 
@@ -11,8 +13,17 @@ class MarkaaLoadingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.black.withOpacity(0.3),
-      child: Center(
-        child: SvgPicture.asset(markaaCustomIcon, width: 30.w),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: primaryColor,
+        period: Duration(milliseconds: 2000),
+        child: Center(
+          child: SvgPicture.asset(
+            'lib/public/icons/loading.svg',
+            width: 100.w,
+            height: 40.h,
+          ),
+        ),
       ),
     );
     // return Material(
