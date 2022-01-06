@@ -14,6 +14,7 @@ import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -207,10 +208,10 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         labelSize: 16.sp,
         fillColor: Colors.grey.shade300,
         bordered: false,
-        validator: (String? value) {
-          if (value!.isEmpty) {
+        validator: (value) {
+          if (value == null || value.isEmpty) {
             return 'required_field'.tr();
-          } else if (value.trim().indexOf(' ') == -1) {
+          } else if (!value.isValidName) {
             return 'full_name_issue'.tr();
           }
           return null;
@@ -299,7 +300,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   void _onSave() {
     if (_formKey.currentState!.validate()) {
-      String fullName = _fullNameController.text;
+      String fullName = _fullNameController.text.trim();
       _accountChangeNotifier.updateProfileInfo(
         user!.token,
         fullName.split(' ')[0],
@@ -329,7 +330,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   void _onProfileInfoUpdated() {
     _progressService.hideProgress();
-    String fullName = _fullNameController.text;
+    String fullName = _fullNameController.text.trim();
     user!.firstName = fullName.split(' ')[0];
     user!.lastName = fullName.split(' ')[1];
     user!.phoneNumber = _phoneNumberController.text;

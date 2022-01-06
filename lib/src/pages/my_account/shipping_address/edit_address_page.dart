@@ -13,6 +13,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -169,7 +170,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     validator: (String value) {
                       if (value.isEmpty) {
                         return 'required_field'.tr();
-                      } else if (value.trim().split(' ').length < 2) {
+                      } else if (!value.isValidName) {
                         return 'full_name_issue'.tr();
                       }
                       return null;

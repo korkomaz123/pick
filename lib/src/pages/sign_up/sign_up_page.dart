@@ -11,6 +11,7 @@ import 'package:markaa/src/data/models/user_entity.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -173,9 +174,9 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value!.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'required_field'.tr();
-          } else if (value.trim().indexOf(' ') == -1) {
+          } else if (!value.isValidName) {
             return 'full_name_issue'.tr();
           }
           return null;
@@ -443,7 +444,7 @@ class _SignUpPageState extends State<SignUpPage> {
   _onSignUp() {
     if (_formKey.currentState!.validate()) {
       if (agreeTerms) {
-        String fullName = fullNameController.text;
+        String fullName = fullNameController.text.trim();
         String firstName = fullName.split(' ')[0];
         String lastName = fullName.split(' ')[1];
         authChangeNotifier.signUp(
