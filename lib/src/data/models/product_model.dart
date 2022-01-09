@@ -22,6 +22,7 @@ class ProductModel {
   String productId;
   BrandEntity? brandEntity;
   int? stockQty;
+  int? availableQty;
   int? qtySaveForLater;
   Map<String, dynamic>? options;
   bool? isDeal;
@@ -49,6 +50,7 @@ class ProductModel {
     required this.productId,
     this.brandEntity,
     this.stockQty,
+    this.availableQty,
     this.qtySaveForLater,
     this.options,
     this.isDeal,
@@ -59,12 +61,8 @@ class ProductModel {
   });
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : parentId = json.containsKey('parent_id') && json['parent_id'] != null
-            ? json['parent_id']
-            : '',
-        wishlistItemId = json.containsKey('wishlist_item_id')
-            ? json['wishlist_item_id']
-            : null,
+      : parentId = json.containsKey('parent_id') && json['parent_id'] != null ? json['parent_id'] : '',
+        wishlistItemId = json.containsKey('wishlist_item_id') ? json['wishlist_item_id'] : null,
         entityId = json['entity_id'],
         typeId = json['type_id'],
         sku = json['sku'],
@@ -76,14 +74,8 @@ class ProductModel {
         price = json['special_price'] != null
             ? StringService.roundString(json['special_price'], 3)
             : StringService.roundString(json['price'], 3),
-        beforePrice = json['price'] != null
-            ? StringService.roundString(json['price'], 3)
-            : null,
-        discount = _getDiscount(
-            json['special_price'] != null
-                ? json['special_price']
-                : json['price'],
-            json['price']),
+        beforePrice = json['price'] != null ? StringService.roundString(json['price'], 3) : null,
+        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -96,37 +88,41 @@ class ProductModel {
                 brandImage: json['brand_thumbnail'],
               )
             : null,
-        stockQty = json['stockQty'],
-        qtySaveForLater = json.containsKey('qty_saveforlater')
-            ? double.parse(json['qty_saveforlater'].toString()).ceil()
-            : 0,
-        options =
-            json.containsKey('options') ? _getOptions(json['options']) : null,
+        stockQty = json['stockQty'] ?? 0,
+        availableQty = json['availableQty'] ?? 0,
+        qtySaveForLater =
+            json.containsKey('qty_saveforlater') ? double.parse(json['qty_saveforlater'].toString()).ceil() : 0,
+        options = json.containsKey('options') ? _getOptions(json['options']) : null,
         isDeal = json['sale'] == '1',
         gallery = json.containsKey('gallery') ? json['gallery'] : [],
         categories = json.containsKey('categories') ? json['categories'] : [],
-        subCategories =
-            json.containsKey('subcategories') ? json['subcategories'] : [],
-        parentCategories = json.containsKey('parentcategories')
-            ? json['parentcategories']
-            : [];
+        subCategories = json.containsKey('subcategories') ? json['subcategories'] : [],
+        parentCategories = json.containsKey('parentcategories') ? json['parentcategories'] : [];
 
   static Map<String, dynamic> _getOptions(List<dynamic> list) {
     Map<String, dynamic> options = {};
     for (var item in list) {
-      if (item['attribute_options'] != null)
-        options[item['attribute_id']] =
-            item['attribute_options']['option_value'];
+      if (item['attribute_options'] != null) options[item['attribute_id']] = item['attribute_options']['option_value'];
     }
     return options;
   }
 
   static int _getDiscount(String? afterPriceString, String? beforePriceString) {
-    double afterPrice = double.parse(afterPriceString!);
-    double beforePrice = double.parse(beforePriceString!);
+    if (afterPriceString == null) afterPriceString = '0';
+    if (beforePriceString == null) beforePriceString = '0';
+    double afterPrice = double.parse(afterPriceString);
+    double beforePrice = double.parse(beforePriceString);
     if (beforePrice == 0) {
       return 0;
     }
     return (((beforePrice - afterPrice) / beforePrice * 100) + 0.5).floor();
   }
+}
+
+List<ProductModel> getProductList(List<dynamic> list) {
+  List<ProductModel> products = [];
+  for (var item in list) {
+    products.add(ProductModel.fromJson(item));
+  }
+  return products;
 }

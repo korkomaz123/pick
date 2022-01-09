@@ -52,8 +52,7 @@ class ProductHCard extends StatefulWidget {
   _ProductHCardState createState() => _ProductHCardState();
 }
 
-class _ProductHCardState extends State<ProductHCard>
-    with TickerProviderStateMixin {
+class _ProductHCardState extends State<ProductHCard> with TickerProviderStateMixin {
   FlushBarService? flushBarService;
   ProgressService? progressService;
 
@@ -66,7 +65,8 @@ class _ProductHCardState extends State<ProductHCard>
   WishlistChangeNotifier? wishlistChangeNotifier;
 
   int? index;
-  bool? isWishlist;
+  bool isWishlist = false;
+  bool isMaxed = false;
 
   bool get outOfStock => !(widget.product.stockQty! > 0);
 
@@ -129,32 +129,39 @@ class _ProductHCardState extends State<ProductHCard>
         );
         widget.onTap!();
       },
-      child: Container(
-        width: widget.cardWidth,
-        height: widget.cardHeight,
-        child: Stack(
-          children: [
-            _buildProductCard(),
-            if (widget.product.discount! > 0) ...[
-              if (lang == 'en') ...[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: _buildDiscount(),
-                ),
-              ] else ...[
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: _buildDiscount(),
-                ),
+      child: Consumer<MyCartChangeNotifier>(
+        builder: (_, cartModel, __) {
+          isMaxed = widget.product.typeId != 'configurable' &&
+              cartModel.cartItemsCountMap.containsKey(widget.product.productId) &&
+              widget.product.availableQty! <= (cartModel.cartItemsCountMap[widget.product.productId] as num);
+          return Container(
+            width: widget.cardWidth,
+            height: widget.cardHeight,
+            child: Stack(
+              children: [
+                _buildProductCard(),
+                if (widget.product.discount! > 0) ...[
+                  if (lang == 'en') ...[
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: _buildDiscount(),
+                    ),
+                  ] else ...[
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: _buildDiscount(),
+                    ),
+                  ],
+                ],
+                if (widget.product.isDeal!) ...[_buildDealValueLabel()],
+                _buildToolbar(),
+                if (outOfStock || isMaxed) _buildNotAvailableQty(outOfStock ? 'out_stock' : 'max_qty'),
               ],
-            ],
-            if (widget.product.isDeal!) ...[_buildDealValueLabel()],
-            _buildToolbar(),
-            _buildOutofStock(),
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -164,18 +171,12 @@ class _ProductHCardState extends State<ProductHCard>
       width: widget.cardWidth,
       height: widget.cardHeight,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(
-              right: lang == 'en' ? 5.w : 0,
-              left: lang == 'ar' ? 5.w : 0,
-            ),
+            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5.w, 0),
             child: CachedNetworkImage(
-              key: ValueKey(widget.product.imageUrl),
-              cacheKey: widget.product.imageUrl,
               imageUrl: widget.product.imageUrl,
               width: widget.cardWidth * 0.34,
               height: widget.cardHeight,
@@ -209,10 +210,7 @@ class _ProductHCardState extends State<ProductHCard>
                   },
                   child: Text(
                     widget.product.brandEntity?.brandLabel ?? '',
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 14.sp,
-                    ),
+                    style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 14.sp),
                   ),
                 ),
                 Padding(
@@ -268,9 +266,7 @@ class _ProductHCardState extends State<ProductHCard>
                               width: widget.isMinor ? 4.w : 10.w,
                             ),
                             Text(
-                              widget.product.beforePrice! +
-                                  ' ' +
-                                  'currency'.tr(),
+                              widget.product.beforePrice! + ' ' + 'currency'.tr(),
                               style: mediumTextStyle.copyWith(
                                 decorationStyle: TextDecorationStyle.solid,
                                 decoration: TextDecoration.lineThrough,
@@ -284,7 +280,7 @@ class _ProductHCardState extends State<ProductHCard>
                       ),
                     ),
                     if (widget.isShoppingCart) ...[
-                      if (!outOfStock) ...[
+                      if (!outOfStock && !isMaxed) ...[
                         Consumer<MarkaaAppChangeNotifier>(
                           builder: (_, model, __) {
                             return InkWell(
@@ -342,8 +338,7 @@ class _ProductHCardState extends State<ProductHCard>
 
   Widget _buildDealValueLabel() {
     return Align(
-      alignment:
-          Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
+      alignment: Preload.language == 'en' ? Alignment.topLeft : Alignment.topRight,
       child: Padding(
         padding: EdgeInsets.only(top: widget.cardHeight * 0.45),
         child: ClipPath(
@@ -381,17 +376,13 @@ class _ProductHCardState extends State<ProductHCard>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: InkWell(
-              onTap: () => user != null
-                  ? _onWishlist()
-                  : Navigator.pushNamed(context, Routes.signIn),
+              onTap: () => user != null ? _onWishlist() : Navigator.pushNamed(context, Routes.signIn),
               child: ScaleTransition(
                 scale: _addToWishlistScaleAnimation!,
                 child: Container(
-                  width: isWishlist! ? 22.sp : 25.sp,
-                  height: isWishlist! ? 22.sp : 25.sp,
-                  child: isWishlist!
-                      ? SvgPicture.asset(wishlistedIcon)
-                      : SvgPicture.asset(favoriteIcon),
+                  width: isWishlist ? 22.sp : 25.sp,
+                  height: isWishlist ? 22.sp : 25.sp,
+                  child: isWishlist ? SvgPicture.asset(wishlistedIcon) : SvgPicture.asset(favoriteIcon),
                 ),
               ),
             ),
@@ -403,27 +394,18 @@ class _ProductHCardState extends State<ProductHCard>
     });
   }
 
-  Widget _buildOutofStock() {
-    if (outOfStock) {
-      return Align(
-        alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 15.w,
-            vertical: 5.h,
-          ),
-          color: primarySwatchColor.withOpacity(0.4),
-          child: Text(
-            'out_stock'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: Colors.white70,
-            ),
-          ),
+  Widget _buildNotAvailableQty(String label) {
+    return Align(
+      alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+        color: outOfStock ? primarySwatchColor.withOpacity(0.4) : greyDarkColor.withOpacity(0.4),
+        child: Text(
+          label.tr(),
+          style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white70),
         ),
-      );
-    }
-    return Container();
+      ),
+    );
   }
 
   void _onAddProductToCart() async {
@@ -437,14 +419,10 @@ class _ProductHCardState extends State<ProductHCard>
       });
 
       if (!outOfStock) {
-        await myCartChangeNotifier!.addProductToCart(
-            widget.product, 1, lang, {},
-            onProcess: _onAdding,
-            onSuccess: _onAddSuccess,
-            onFailure: _onAddFailure);
+        await myCartChangeNotifier!.addProductToCart(widget.product, 1, lang, {},
+            onProcess: _onAdding, onSuccess: _onAddSuccess, onFailure: _onAddFailure);
       } else {
-        flushBarService!
-            .showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
+        flushBarService!.showErrorDialog('out_of_stock_error'.tr(), "no_qty.svg");
       }
     }
   }
@@ -473,12 +451,10 @@ class _ProductHCardState extends State<ProductHCard>
         _addToWishlistController!.stop(canceled: true);
         timer.cancel();
       });
-      if (isWishlist!) {
-        wishlistChangeNotifier!
-            .removeItemFromWishlist(user!.token, widget.product);
+      if (isWishlist) {
+        wishlistChangeNotifier!.removeItemFromWishlist(user!.token, widget.product);
       } else {
-        wishlistChangeNotifier!
-            .addItemToWishlist(user!.token, widget.product, 1, {});
+        wishlistChangeNotifier!.addItemToWishlist(user!.token, widget.product, 1, {});
       }
     }
   }

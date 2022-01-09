@@ -39,8 +39,7 @@ class FilterColorSelect extends StatelessWidget {
           onTap: () => onTap(item),
           child: Container(
             width: values.contains(item['value']) ? itemWidth * 1.2 : itemWidth,
-            height:
-                values.contains(item['value']) ? itemHeight * 1.2 : itemHeight,
+            height: values.contains(item['value']) ? itemHeight * 1.2 : itemHeight,
             decoration: BoxDecoration(
               color: _getColorFromHex(item['color_code']),
               borderRadius: BorderRadius.circular(2),

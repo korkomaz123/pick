@@ -26,6 +26,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> allCelebritiesList = [];
   bool isLoading = true;
+
   void getAllCelebrities() async {
     allCelebritiesList = [];
     setState(() => isLoading = true);
@@ -45,10 +46,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
@@ -57,7 +55,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
           else
             GridView.builder(
               itemCount: allCelebritiesList.length,
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               itemBuilder: (ctx, index) {
                 return Container(
                   padding: const EdgeInsets.all(3.0),
@@ -87,11 +85,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
         height: 40.h,
         color: primarySwatchColor,
         alignment: Alignment.center,
-        padding: EdgeInsets.only(
-          left: 10.w,
-          right: 10.w,
-          bottom: 10.h,
-        ),
+        padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
@@ -101,11 +95,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
+                    child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
                     onTap: () => Navigator.pop(context),
                   ),
                 ],
@@ -115,10 +105,7 @@ class _CelebritiesListPageState extends State<CelebritiesListPage> {
               alignment: Alignment.center,
               child: Text(
                 widget.arguments['title'],
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: 17.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
               ),
             )
           ],

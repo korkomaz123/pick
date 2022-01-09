@@ -5,7 +5,6 @@ import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/repositories/product_repository.dart';
@@ -44,8 +43,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
                 curve: Curves.easeInOutCubic,
                 onIndexChanged: (value) => setState(() => activeIndex = value),
                 itemBuilder: (context, index) {
-                  return _buildBannerItem(
-                      widget.homeChangeNotifier.megaBanners[index]);
+                  return _buildBannerItem(widget.homeChangeNotifier.megaBanners[index]);
                 },
               ),
             ),
@@ -82,10 +80,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
       onTap: () async {
         if (banner.categoryId != null) {
           if (banner.categoryId == "1447") {
-            Navigator.pushNamed(
-              Preload.navigatorKey!.currentContext!,
-              Routes.summerCollection,
-            );
+            Navigator.pushNamed(Preload.navigatorKey!.currentContext!, Routes.summerCollection);
           } else {
             final arguments = ProductListArguments(
               category: CategoryEntity(
@@ -117,8 +112,7 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
             arguments: arguments,
           );
         } else if (banner.productId != null) {
-          final product =
-              await ProductRepository().getProduct(banner.productId!);
+          final product = await ProductRepository().getProduct(banner.productId!);
           Navigator.pushNamedAndRemoveUntil(
             Preload.navigatorKey!.currentContext!,
             Routes.product,
@@ -128,8 +122,6 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
         }
       },
       child: CachedNetworkImage(
-        key: ValueKey(banner.bannerImage ?? ''),
-        cacheKey: banner.bannerImage ?? '',
         imageUrl: banner.bannerImage ?? '',
         fit: BoxFit.fill,
         errorWidget: (context, url, error) => Center(

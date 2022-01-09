@@ -21,8 +21,7 @@ class FilterOptionSelectDialog extends StatefulWidget {
   });
 
   @override
-  _FilterOptionSelectDialogState createState() =>
-      _FilterOptionSelectDialogState();
+  _FilterOptionSelectDialogState createState() => _FilterOptionSelectDialogState();
 }
 
 class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
@@ -54,19 +53,12 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
         backgroundColor: filterBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: primaryColor,
-            size: 22.sp,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: primaryColor, size: 22.sp),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.title,
-          style: mediumTextStyle.copyWith(
-            color: primaryColor,
-            fontSize: 25.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 25.sp),
         ),
         actions: [
           Padding(
@@ -76,10 +68,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                 onTap: () => _onClear(),
                 child: Text(
                   'reset'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 14.sp,
-                    color: primaryColor,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp, color: primaryColor),
                 ),
               ),
             ),
@@ -106,10 +95,7 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: TextFormField(
         controller: searchController,
-        style: mediumTextStyle.copyWith(
-          fontSize: 15.sp,
-          color: greyColor,
-        ),
+        style: mediumTextStyle.copyWith(fontSize: 15.sp, color: greyColor),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
           border: OutlineInputBorder(
@@ -160,28 +146,18 @@ class _FilterOptionSelectDialogState extends State<FilterOptionSelectDialog> {
                             height: 30.w,
                             margin: EdgeInsets.only(right: 10.w),
                             decoration: BoxDecoration(
-                              color: _getColorFromHex(
-                                  options![index]['color_code']),
+                              color: _getColorFromHex(options![index]['color_code']),
                               shape: BoxShape.circle,
                             ),
                           )
                         ],
                         Text(
                           title,
-                          style: mediumTextStyle.copyWith(
-                            color: primaryColor,
-                            fontSize: 18.sp,
-                          ),
+                          style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
                         ),
                       ],
                     ),
-                    if (isSelected) ...[
-                      Icon(
-                        Icons.check,
-                        size: 20.sp,
-                        color: primaryColor,
-                      )
-                    ],
+                    if (isSelected) ...[Icon(Icons.check, size: 20.sp, color: primaryColor)],
                   ],
                 ),
               ),

@@ -1,17 +1,18 @@
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/no_available_data.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,8 +39,7 @@ class MyCartPage extends StatefulWidget {
   _MyCartPageState createState() => _MyCartPageState();
 }
 
-class _MyCartPageState extends State<MyCartPage>
-    with SingleTickerProviderStateMixin {
+class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController couponCodeController = TextEditingController();
 
@@ -65,8 +65,7 @@ class _MyCartPageState extends State<MyCartPage>
 
   _determineShippingMethod() {
     for (var shippingMethod in shippingMethods) {
-      if (shippingMethod.minOrderAmount! <=
-          myCartChangeNotifier.cartDiscountedTotalPrice) {
+      if (shippingMethod.minOrderAmount! <= myCartChangeNotifier.cartDiscountedTotalPrice) {
         shippingMethodId = shippingMethod.id;
         serviceFees = shippingMethod.serviceFees;
       } else {
@@ -81,8 +80,7 @@ class _MyCartPageState extends State<MyCartPage>
     }
     _determineShippingMethod();
 
-    if (myCartChangeNotifier.cartItemCount == 0)
-      await myCartChangeNotifier.getCartItems(lang);
+    if (myCartChangeNotifier.cartItemCount == 0) await myCartChangeNotifier.getCartItems(lang);
   }
 
   @override
@@ -115,107 +113,115 @@ class _MyCartPageState extends State<MyCartPage>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 25.sp,
-            color: greyColor,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await myCartChangeNotifier.getCartItems(lang);
-        },
-        color: primaryColor,
-        backgroundColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Consumer<MyCartChangeNotifier>(
-                builder: (_, model, ___) {
-                  if (model.cartItemCount > 0) {
-                    return Column(
+      body: Consumer<MyCartChangeNotifier>(
+        builder: (_, model, __) {
+          return NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.white,
+                  expandedHeight: 100.h,
+                  floating: false,
+                  pinned: true,
+                  leading: SizedBox.shrink(),
+                  flexibleSpace: FlexibleSpaceBar(
+                    titlePadding: EdgeInsetsDirectional.only(bottom: 16.0),
+                    centerTitle: false,
+                    title: _buildTitleBar(),
+                  ),
+                ),
+              ];
+            },
+            body: Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () async {
+                    await myCartChangeNotifier.getCartItems(lang);
+                  },
+                  color: primaryColor,
+                  backgroundColor: Colors.white,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 60.h),
+                    child: Column(
                       children: [
-                        _buildTitleBar(),
-                        _buildCartItems(),
-                        MyCartCouponCode(
-                          cartId: cartId,
-                          onSignIn: () => _onSignIn(false),
-                        ),
-                        _buildTotalPrice(),
-                        _buildCheckoutButton(),
+                        if (model.cartItemCount > 0) ...[
+                          Column(
+                            children: [
+                              SizedBox(height: 10.h),
+                              _buildCartItems(),
+                              MyCartCouponCode(
+                                cartId: cartId,
+                                onSignIn: () => _onSignIn(false),
+                              ),
+                              _buildTotalPrice(),
+                            ],
+                          )
+                        ] else ...[
+                          Consumer<WishlistChangeNotifier>(
+                            builder: (_, model, ___) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: model.wishlistItemsCount > 0 ? 100.h : 250.h,
+                                ),
+                                child: Center(
+                                  child: NoAvailableData(
+                                    message: 'no_cart_items_available',
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                        if (user != null) ...[
+                          MyCartSaveForLaterItems(
+                            progressService: progressService,
+                            flushBarService: flushBarService,
+                            myCartChangeNotifier: myCartChangeNotifier,
+                            wishlistChangeNotifier: wishlistChangeNotifier,
+                          )
+                        ]
                       ],
-                    );
-                  } else {
-                    return Consumer<WishlistChangeNotifier>(
-                      builder: (_, model, ___) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical:
-                                model.wishlistItemsCount > 0 ? 100.h : 250.h,
-                          ),
-                          child: Center(
-                            child: NoAvailableData(
-                              message: 'no_cart_items_available',
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-              if (user != null) ...[
-                MyCartSaveForLaterItems(
-                  progressService: progressService,
-                  flushBarService: flushBarService,
-                  myCartChangeNotifier: myCartChangeNotifier,
-                  wishlistChangeNotifier: wishlistChangeNotifier,
-                )
-              ]
-            ],
-          ),
-        ),
+                    ),
+                  ),
+                ),
+                if (model.cartTotalCount > 0) ...[
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildCheckoutButton(),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.home,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),
     );
   }
 
   Widget _buildTitleBar() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'my_cart_title'.tr(),
-            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 23.sp),
+            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 18.sp),
           ),
           Row(
             children: [
               Text(
                 'total'.tr() + ' ',
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 16.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 12.sp),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 13.sp,
-                ),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 9.sp),
               ),
             ],
           ),
@@ -243,15 +249,12 @@ class _MyCartPageState extends State<MyCartPage>
                     child: Column(
                       children: [
                         MyCartItem(
-                          cartItem:
-                              myCartChangeNotifier.cartItemsMap[keys[index]]!,
+                          cartItem: myCartChangeNotifier.cartItemsMap[keys[index]]!,
                           discount: myCartChangeNotifier.discount,
                           type: myCartChangeNotifier.type,
                           cartId: cartId,
-                          onRemoveCartItem: () =>
-                              _onRemoveCartItem(keys[index]),
-                          onSaveForLaterItem: () =>
-                              _onSaveForLaterItem(keys[index]),
+                          onRemoveCartItem: () => _onRemoveCartItem(keys[index]),
+                          onSaveForLaterItem: () => _onSaveForLaterItem(keys[index]),
                           onSignIn: () => _onSignIn(false),
                           myCartChangeNotifier: myCartChangeNotifier,
                         ),
@@ -274,19 +277,12 @@ class _MyCartPageState extends State<MyCartPage>
     double subTotal = myCartChangeNotifier.cartTotalPrice;
     double discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
+        : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
     double totalPrice = subTotal - discount;
     return Container(
       width: 375.w,
-      margin: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 6.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: greyLightColor,
         borderRadius: BorderRadius.circular(2),
@@ -299,19 +295,11 @@ class _MyCartPageState extends State<MyCartPage>
             children: [
               Text(
                 'products'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 13.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 13.sp),
               ),
               Text(
-                'items'
-                    .tr()
-                    .replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 13.sp,
-                ),
+                'items'.tr().replaceFirst('0', '${myCartChangeNotifier.cartItemCount}'),
+                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 13.sp),
               )
             ],
           ),
@@ -322,17 +310,11 @@ class _MyCartPageState extends State<MyCartPage>
               children: [
                 Text(
                   'checkout_subtotal_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 17.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
                 ),
                 Text(
                   '${NumericService.roundString(subTotal, 3)} ${'currency'.tr()}',
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 18.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
                 )
               ],
             ),
@@ -350,10 +332,7 @@ class _MyCartPageState extends State<MyCartPage>
                 ),
                 Text(
                   '${NumericService.roundString(discount, 3)} ${'currency'.tr()}',
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 18.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
                 )
               ],
             )
@@ -364,17 +343,11 @@ class _MyCartPageState extends State<MyCartPage>
             children: [
               Text(
                 'total'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 17.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
               ),
               Text(
                 '${NumericService.roundString(totalPrice, 3)} ${'currency'.tr()}',
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 18.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 18.sp),
               )
             ],
           )
@@ -386,26 +359,24 @@ class _MyCartPageState extends State<MyCartPage>
   Widget _buildCheckoutButton() {
     return Container(
       width: 375.w,
-      height: 80.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
-      child: MarkaaTextButton(
+      height: 60.h,
+      padding: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
+      color: Colors.white,
+      child: MarkaaTextIconButton(
+        icon: SvgPicture.asset(circleArrowRightIcon, width: 20.w),
         title: 'checkout_button_title'.tr(),
-        titleSize: 23.sp,
-        titleColor: primaryColor,
-        buttonColor: Colors.white,
-        borderColor: primarySwatchColor,
+        titleSize: 20.sp,
+        titleColor: Colors.white,
+        buttonColor: primaryColor,
+        borderColor: primaryColor,
         onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(true),
-        radius: 0,
+        radius: 6.sp,
       ),
     );
   }
 
   void _onRemoveCartItem(String key) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'my_cart_remove_item_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'my_cart_remove_item_dialog_text');
     if (result != null) {
       await myCartChangeNotifier.removeCartItem(key, _onRemoveFailure);
     }
@@ -446,8 +417,7 @@ class _MyCartPageState extends State<MyCartPage>
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(
-        lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
   }
 
   void _onReloadItemSuccess(int count) {
@@ -469,9 +439,7 @@ class _MyCartPageState extends State<MyCartPage>
       }
       if (item.itemCount > item.availableCount) {
         flushBarService.showErrorDialog(
-          'inventory_qty_exceed_error'
-              .tr()
-              .replaceFirst('A', item.product.name),
+          'inventory_qty_exceed_error'.tr().replaceFirst('A', item.product.name),
           'no_qty.svg',
         );
         return;
@@ -504,21 +472,16 @@ class _MyCartPageState extends State<MyCartPage>
 
     discount = myCartChangeNotifier.type == 'fixed'
         ? myCartChangeNotifier.discount
-        : myCartChangeNotifier.cartTotalPrice -
-            myCartChangeNotifier.cartDiscountedTotalPrice;
+        : myCartChangeNotifier.cartTotalPrice - myCartChangeNotifier.cartDiscountedTotalPrice;
     subtotalPrice = myCartChangeNotifier.cartTotalPrice;
 
     totalPrice = subtotalPrice + (serviceFees ?? 0) - discount;
 
     orderDetails['orderDetails'] = {};
-    orderDetails['orderDetails']['discount'] =
-        NumericService.roundString(discount, 3);
-    orderDetails['orderDetails']['totalPrice'] =
-        NumericService.roundString(totalPrice, 3);
-    orderDetails['orderDetails']['subTotalPrice'] =
-        NumericService.roundString(subtotalPrice, 3);
-    orderDetails['orderDetails']['fees'] =
-        NumericService.roundString(serviceFees!, 3);
+    orderDetails['orderDetails']['discount'] = NumericService.roundString(discount, 3);
+    orderDetails['orderDetails']['totalPrice'] = NumericService.roundString(totalPrice, 3);
+    orderDetails['orderDetails']['subTotalPrice'] = NumericService.roundString(subtotalPrice, 3);
+    orderDetails['orderDetails']['fees'] = NumericService.roundString(serviceFees!, 3);
   }
 
   void _onRemoveFailure(String message) {

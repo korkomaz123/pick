@@ -1,5 +1,4 @@
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -97,20 +96,14 @@ class _OrderCardState extends State<OrderCard> {
         children: [
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 15.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
             color: Colors.grey.shade200,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'order_order_no'.tr() + ' #${widget.order.orderNo}',
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
                 SvgPicture.asset(icon),
               ],
@@ -118,100 +111,65 @@ class _OrderCardState extends State<OrderCard> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'order_order_date'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
                 Text(
                   widget.order.orderDate,
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
               ],
             ),
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'order_status'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
                 Text(
                   status,
-                  style: mediumTextStyle.copyWith(
-                    color: color,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: color, fontSize: 14.sp),
                 ),
               ],
             ),
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'order_payment_method'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
-                OrderPaymentMethod(
-                  paymentMethod: widget.order.paymentMethod.id,
-                ),
+                OrderPaymentMethod(paymentMethod: widget.order.paymentMethod.id),
               ],
             ),
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.w,
-              vertical: 10.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'total'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
                 Text(
                   'currency'.tr() + ' ${widget.order.totalPrice}',
-                  style: mediumTextStyle.copyWith(
-                    color: greyDarkColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
                 ),
               ],
             ),
@@ -230,25 +188,16 @@ class _OrderCardState extends State<OrderCard> {
                     arguments: widget.order,
                   ),
                   height: 45.h,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                   color: primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        FontAwesomeIcons.eye,
-                        color: Colors.white54,
-                        size: 20.sp,
-                      ),
+                      Icon(FontAwesomeIcons.eye, color: Colors.white54, size: 20.sp),
                       SizedBox(width: 6.w),
                       Text(
                         'view_order_button_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 15.sp,
-                          color: Colors.white,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 15.sp, color: Colors.white),
                       ),
                     ],
                   ),
@@ -265,25 +214,16 @@ class _OrderCardState extends State<OrderCard> {
                           ),
                   minWidth: 150.w,
                   height: 45.h,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                   color: !isStock ? greyColor : primaryColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        FontAwesomeIcons.history,
-                        color: Colors.white54,
-                        size: 20.sp,
-                      ),
+                      Icon(FontAwesomeIcons.history, color: Colors.white54, size: 20.sp),
                       SizedBox(width: 4.w),
                       Text(
                         'reorder_button_title'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 17.sp,
-                          color: Colors.white,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 17.sp, color: Colors.white),
                       ),
                     ],
                   ),

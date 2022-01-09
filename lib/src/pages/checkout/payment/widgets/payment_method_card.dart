@@ -16,11 +16,7 @@ class PaymentMethodCard extends StatelessWidget {
   final String value;
   final void Function(String?)? onChangeMethod;
 
-  PaymentMethodCard({
-    required this.method,
-    required this.value,
-    this.onChangeMethod,
-  });
+  PaymentMethodCard({required this.method, required this.value, this.onChangeMethod});
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +48,7 @@ class PaymentMethodCard extends StatelessWidget {
                       ),
                       Text(
                         "    " + method.title,
-                        style: mediumTextStyle.copyWith(
-                          color: greyColor,
-                          fontSize: 14.sp,
-                        ),
+                        style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                       ),
                     ],
                   ),
@@ -73,17 +66,13 @@ class PaymentMethodCard extends StatelessWidget {
                         height: 25.h,
                         width: 75.w,
                       ),
-                      SizedBox(
-                        width: 6.w,
-                      ),
+                      SizedBox(width: 6.w),
                       SvgPicture.asset(
                         'lib/public/icons/line.svg',
                         height: 25.h,
                         width: 10.w,
                       ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
+                      SizedBox(width: 10.w),
                       SvgPicture.asset(
                         'lib/public/icons/master-card.svg',
                         height: 25.h,
@@ -106,17 +95,11 @@ class PaymentMethodCard extends StatelessWidget {
                         children: [
                           Text(
                             'your_amount'.tr(),
-                            style: mediumTextStyle.copyWith(
-                              fontSize: 10.sp,
-                              color: primaryColor,
-                            ),
+                            style: mediumTextStyle.copyWith(fontSize: 10.sp, color: primaryColor),
                           ),
                           Text(
                             '${NumericService.roundString(model.currentUser!.balance, 3)} ${'currency'.tr()}',
-                            style: mediumTextStyle.copyWith(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: mediumTextStyle.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),
                           ),
                         ],
                       );

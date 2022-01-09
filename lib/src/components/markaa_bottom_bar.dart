@@ -95,10 +95,7 @@ class MarkaaBottomBar extends StatelessWidget {
                 showBadge: count > 0,
                 badgeContent: Text(
                   '$count',
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 8.sp, color: Colors.white),
                 ),
                 child: Container(
                   width: 28.w,
@@ -111,9 +108,7 @@ class MarkaaBottomBar extends StatelessWidget {
           // ignore: deprecated_member_use
           title: Text(
             'bottom_wishlist'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 11.sp,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 11.sp),
           ),
           activeIcon: Consumer<WishlistChangeNotifier>(
             builder: (_, model, __) {
@@ -126,10 +121,7 @@ class MarkaaBottomBar extends StatelessWidget {
                 animationDuration: Duration.zero,
                 badgeContent: Text(
                   '$count',
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 8.sp, color: Colors.white),
                 ),
                 child: Container(
                   width: 28.w,
@@ -149,9 +141,7 @@ class MarkaaBottomBar extends StatelessWidget {
           // ignore: deprecated_member_use
           title: Text(
             'bottom_account'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 11.sp,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 11.sp),
           ),
           activeIcon: Container(
             width: 28.w,

@@ -6,15 +6,14 @@ import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -83,16 +82,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
     isNew = true;
     firstNameController.text = user!.firstName;
     lastNameController.text = user!.lastName;
-    fullNameController.text =
-        firstNameController.text + " " + lastNameController.text;
+    fullNameController.text = firstNameController.text + " " + lastNameController.text;
     emailController.text = user!.email;
     phoneNumberController.text = user!.phoneNumber ?? '';
     if (addressParam != null) {
       isNew = false;
       firstNameController.text = addressParam!.firstName!;
       lastNameController.text = addressParam!.lastName!;
-      fullNameController.text =
-          firstNameController.text + " " + lastNameController.text;
+      fullNameController.text = firstNameController.text + " " + lastNameController.text;
       emailController.text = addressParam?.email ?? '';
       titleController.text = addressParam?.title ?? '';
       countryController.text = addressParam!.country;
@@ -170,11 +167,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'full_name'.tr(),
-                    validator: (String value) => value.isEmpty
-                        ? 'required_field'.tr()
-                        : (value.trim().indexOf(' ') == -1
-                            ? 'full_name_issue'.tr()
-                            : null),
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return 'required_field'.tr();
+                      } else if (!value.isValidName) {
+                        return 'full_name_issue'.tr();
+                      }
+                      return null;
+                    },
                     inputType: TextInputType.text,
                   ),
                   SizedBox(height: 10.h),
@@ -202,8 +202,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.h,
                     fontSize: 14.sp,
                     hint: 'checkout_state_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: _onSelectState,
@@ -215,11 +214,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.h,
                     fontSize: 14.sp,
                     hint: 'checkout_company_hint'.tr(),
-                    validator: (value) => value.isEmpty
-                        ? 'required_field'.tr()
-                        : !isInt(value)
-                            ? 'invalid_field'.tr()
-                            : null,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'required_field'.tr();
+                      } else if (!isInt(value)) {
+                        return 'invalid_field'.tr();
+                      }
+                      return null;
+                    },
                     inputType: TextInputType.text,
                     readOnly: true,
                     onTap: _onSelectBlock,
@@ -231,8 +233,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.w,
                     fontSize: 14.sp,
                     hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     suffixIcon: IconButton(
                       onPressed: _onSearchAddress,
@@ -246,8 +247,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                     padding: 10.h,
                     fontSize: 14.sp,
                     hint: 'checkout_city_hint'.tr(),
-                    validator: (value) =>
-                        value.isEmpty ? 'required_field'.tr() : null,
+                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                     inputType: TextInputType.text,
                     maxLine: 3,
                   ),
@@ -329,29 +329,27 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onSave() async {
     if (formKey.currentState!.validate()) {
-      String firstName = fullNameController.text.split(' ')[0];
-      String lastName = fullNameController.text.split(' ')[1];
+      String firstName = fullNameController.text.trim().split(' ')[0].trim();
+      String lastName = fullNameController.text.trim().split(' ')[1].trim();
 
       AddressEntity address = AddressEntity(
         id: 0,
         title: 'title',
-        country: countryController.text,
+        country: countryController.text.trim(),
         countryId: countryId!,
         regionId: regionId,
-        region: stateController.text,
+        region: stateController.text.trim(),
         firstName: firstName,
-        fullName: fullNameController.text,
+        fullName: fullNameController.text.trim(),
         lastName: lastName,
         city: cityController.text.trim(),
-        street: streetController.text,
-        postCode: postCodeController.text,
-        phoneNumber: phoneNumberController.text,
-        company: companyController.text,
-        email: emailController.text,
-        defaultBillingAddress:
-            addressParam?.defaultBillingAddress ?? (isCheckout! ? 1 : 0),
-        defaultShippingAddress:
-            addressParam?.defaultShippingAddress ?? (isCheckout! ? 1 : 0),
+        street: streetController.text.trim(),
+        postCode: postCodeController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
+        company: companyController.text.trim(),
+        email: emailController.text.trim(),
+        defaultBillingAddress: addressParam?.defaultBillingAddress ?? (isCheckout! ? 1 : 0),
+        defaultShippingAddress: addressParam?.defaultShippingAddress ?? (isCheckout! ? 1 : 0),
         addressId: addressParam?.addressId ?? '',
       );
       await model!.changeCustomerAddress(isNew!, user!.token, address,

@@ -11,7 +11,6 @@ import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/pages/home/notification_setup.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -98,55 +97,56 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                width: 375.w,
-                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment:
-                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 180.h,
+              floating: false,
+              pinned: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
-              Container(
-                padding: EdgeInsets.only(top: 40.h, bottom: 100.h),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: 120.w,
-                  height: 45.h,
-                ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: SvgPicture.asset(hLogoIcon, width: 160.w),
               ),
-              _buildEmail(),
-              _buildPassword(),
-              SizedBox(height: 40),
-              _buildSignInButton(),
-              SizedBox(height: 10),
-              _buildForgotPassword(),
-              SizedBox(height: 40),
-              _buildOrDivider(),
-              SizedBox(height: 40),
-              _buildExternalSignInButtons(),
-              SizedBox(height: 40),
-              if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
-              Center(
-                child: InkWell(
-                  onTap: _onPrivacyPolicy,
-                  child: Text(
-                    'suffix_agree_terms'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: Colors.white54,
-                      fontSize: 16.sp,
+            ),
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(height: 100.h),
+                _buildEmail(),
+                _buildPassword(),
+                SizedBox(height: 40),
+                _buildSignInButton(),
+                SizedBox(height: 10),
+                _buildForgotPassword(),
+                SizedBox(height: 40),
+                _buildOrDivider(),
+                SizedBox(height: 40),
+                _buildExternalSignInButtons(),
+                SizedBox(height: 40),
+                if (!widget.isFromCheckout) ...[_buildSignUpPhase()],
+                Center(
+                  child: InkWell(
+                    onTap: _onPrivacyPolicy,
+                    child: Text(
+                      'suffix_agree_terms'.tr(),
+                      style: mediumTextStyle.copyWith(
+                        color: Colors.white54,
+                        fontSize: 16.sp,
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -385,7 +385,7 @@ class _SignInPageState extends State<SignInPage> {
             child: Text(
               'sign_up'.tr(),
               style: mediumTextStyle.copyWith(
-                color: Colors.white,
+                color: Colors.orange,
                 fontSize: 17.sp,
               ),
             ),
@@ -403,24 +403,20 @@ class _SignInPageState extends State<SignInPage> {
     try {
       user = loggedInUser;
       SlackChannels.send(
-        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]',
+        '$env CUSTOMER LOGIN [${user!.email}][${user!.toJson()}]\r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
         SlackChannels.logAppUsers,
       );
       addressChangeNotifier.initialize();
-      // Future.wait([
+      orderChangeNotifier.setOrderList(user!.orders);
+      wishlistChangeNotifier.setWishlistItems(user!.wishlistItems);
+      addressChangeNotifier.setCustomerAddressList(user!.addresses);
       await localRepository.setToken(user!.token);
-      await orderChangeNotifier.loadOrderHistories(user!.token, lang);
       await myCartChangeNotifier.getCartId();
       await myCartChangeNotifier.transferCartItems();
       await myCartChangeNotifier.getCartItems(lang);
-      await wishlistChangeNotifier.getWishlistItems(user!.token, lang);
-      await addressChangeNotifier.loadCustomerAddresses(user!.token);
       await homeChangeNotifier.loadRecentlyViewedCustomer();
-      await NotificationSetup().updateFcmDeviceToken();
-      // ]);
     } catch (e) {
-      print(
-          'LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
+      print('LOADING CUSTOMER DATA WHEN LOGIN SUCCESS ON LOGIN PAGE CATCH ERROR: $e');
     }
     progressService.hideProgress();
     if (Navigator.of(context).canPop()) {
@@ -476,11 +472,8 @@ class _SignInPageState extends State<SignInPage> {
       String firstName = profile['first_name'];
       String lastName = profile['last_name'];
       String email = profile['email'];
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'Facebook Sign', lang,
-          onProcess: _onLoginProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onLoginFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Facebook Sign', lang,
+          onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
     } catch (e) {
       print('LOAD FACEBOOK CREDENTIAL: CATCH ERROR $e');
     }
@@ -496,11 +489,8 @@ class _SignInPageState extends State<SignInPage> {
         String displayName = googleAccount.displayName!;
         String firstName = displayName.split(' ')[0];
         String lastName = displayName.split(' ')[1];
-        authChangeNotifier.loginWithSocial(
-            email, firstName, lastName, 'Google Sign', lang,
-            onProcess: _onLoginProcess,
-            onSuccess: _onLoginSuccess,
-            onFailure: _onLoginFailure);
+        authChangeNotifier.loginWithSocial(email, firstName, lastName, 'Google Sign', lang,
+            onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
       }
     } catch (e) {
       print('/// LOGIN WITH GOOGLE ERROR: $e ///');
@@ -525,12 +515,8 @@ class _SignInPageState extends State<SignInPage> {
         int timestamp = DateTime.now().microsecondsSinceEpoch;
         email = '$timestamp-$fakeEmail';
       }
-      authChangeNotifier.loginWithSocial(
-          email, firstName, lastName, 'apple', lang,
-          appleId: appleId,
-          onProcess: _onLoginProcess,
-          onSuccess: _onLoginSuccess,
-          onFailure: _onLoginFailure);
+      authChangeNotifier.loginWithSocial(email, firstName, lastName, 'apple', lang,
+          appleId: appleId, onProcess: _onLoginProcess, onSuccess: _onLoginSuccess, onFailure: _onLoginFailure);
     } catch (e) {
       print('LOGIN WITH APPLE ERROR: $e');
     }

@@ -26,10 +26,7 @@ class HomeBestDeals extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10.h),
         color: Colors.white,
         child: Column(
-          children: [
-            _buildHeadline(),
-            _buildProductsList(),
-          ],
+          children: [_buildHeadline(), _buildProductsList()],
         ),
       );
     } else {
@@ -47,10 +44,7 @@ class HomeBestDeals extends StatelessWidget {
             child: Text(
               homeChangeNotifier.bestDealsTitle,
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                fontSize: 26.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
             ),
           ),
           Container(
@@ -97,10 +91,7 @@ class HomeBestDeals extends StatelessWidget {
             (index) {
               return Container(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 0.5.w,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 0.5.w),
                 ),
                 child: ProductVCard(
                   cardWidth: 170.w,
@@ -111,8 +102,7 @@ class HomeBestDeals extends StatelessWidget {
                   isMinor: true,
                   isWishlist: true,
                   isShare: false,
-                  onAddToCartFailure: () =>
-                      homeChangeNotifier.updateBestDealProduct(index),
+                  onAddToCartFailure: () => homeChangeNotifier.updateBestDealProduct(index),
                 ),
               );
             },

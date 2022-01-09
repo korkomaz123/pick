@@ -4,9 +4,7 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
-import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/summer_collection_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -116,11 +114,8 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
                           (e) => InkWell(
                             onTap: () => _goToPage(e),
                             child: CachedNetworkImage(
-                              key: ValueKey(e.imageUrl ?? ''),
-                              cacheKey: e.imageUrl ?? '',
                               imageUrl: e.imageUrl ?? '',
-                              errorWidget: (_, __, ___) =>
-                                  Center(child: Icon(Icons.image, size: 20)),
+                              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                             ),
                           ),
                         )

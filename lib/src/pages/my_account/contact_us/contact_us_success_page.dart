@@ -28,14 +28,9 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildContactUsSucceed(),
-        ],
+        children: [_buildAppBar(), _buildContactUsSucceed()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -49,10 +44,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
       centerTitle: true,
       title: Text(
         'account_contact_us_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -70,10 +62,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
                 children: [
                   Text(
                     'checkout_ordered_success_title'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 34.sp,
-                    ),
+                    style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 34.sp),
                   ),
                   Container(
                     width: 25.w,
@@ -85,17 +74,11 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
             ),
             Text(
               'message_sent_prefix'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: greyColor,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
             ),
             Text(
               'message_sent_suffix'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: greyColor,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
             ),
             _buildBackToShopButton(),
           ],
@@ -107,10 +90,7 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
   Widget _buildBackToShopButton() {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(
-        vertical: 30.h,
-        horizontal: 30.w,
-      ),
+      margin: EdgeInsets.symmetric(vertical: 30.h, horizontal: 30.w),
       child: MarkaaTextButton(
         title: 'checkout_back_shop_button_title'.tr(),
         titleSize: 17.sp,

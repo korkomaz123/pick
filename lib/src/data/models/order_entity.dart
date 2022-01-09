@@ -64,15 +64,11 @@ class OrderEntity {
             ) ??
             OrderStatusEnum.new_pending,
         totalQty = json['total_qty_ordered'],
-        totalPrice = json['status'] == 'canceled'
-            ? '0.000'
-            : StringService.roundString(json['base_grand_total'], 3),
+        totalPrice = json['status'] == 'canceled' ? '0.000' : StringService.roundString(json['base_grand_total'], 3),
         subtotalPrice = StringService.roundString(json['base_subtotal'], 3),
-        discountPrice = json.containsKey('discount_amount')
-            ? StringService.roundDouble(json['discount_amount'], 3) * -1
-            : 0,
-        discountAmount = double.parse(
-            json['discount'].isNotEmpty ? json['discount'] : '0.000'),
+        discountPrice =
+            json.containsKey('discount_amount') ? StringService.roundDouble(json['discount_amount'], 3) * -1 : 0,
+        discountAmount = double.parse(json['discount'].isNotEmpty ? json['discount'] : '0.000'),
         discountType = json['discount_type'],
         paymentMethod = PaymentMethodEntity(
           id: json['payment_code'],
@@ -86,22 +82,18 @@ class OrderEntity {
         cartId = json['cartid'],
         cartItems = _getCartItems(json['products']),
         address = AddressEntity.fromJson(json['shippingAddress']),
-        cartCondition =
-            json.containsKey('cart_condition') && json['cart_condition'] != ''
-                ? _getCondition(json['cart_condition'])
-                : [],
-        productCondition = json.containsKey('product_condition') &&
-                json['product_condition'] != ''
+        cartCondition = json.containsKey('cart_condition') && json['cart_condition'] != ''
+            ? _getCondition(json['cart_condition'])
+            : [],
+        productCondition = json.containsKey('product_condition') && json['product_condition'] != ''
             ? _getCondition(json['product_condition'])
             : [],
-        isProductConditionOkay = json.containsKey('product_condition') &&
-                json['product_condition'] != ''
+        isProductConditionOkay = json.containsKey('product_condition') && json['product_condition'] != ''
             ? json['product_condition']['value'] == '1'
             : true,
-        isCartConditionOkay =
-            json.containsKey('cart_condition') && json['cart_condition'] != ''
-                ? json['cart_condition']['value'] == '1'
-                : true;
+        isCartConditionOkay = json.containsKey('cart_condition') && json['cart_condition'] != ''
+            ? json['cart_condition']['value'] == '1'
+            : true;
 
   static String _covertLocalTime(int timestamp) {
     int milliseconds = timestamp * 1000;
@@ -155,8 +147,7 @@ class OrderEntity {
     bool cartConditionMatched = true;
     for (var condition in cartCondition) {
       print(condition.attribute);
-      if (condition.attribute == 'price' ||
-          condition.attribute == 'special_price') {
+      if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
@@ -173,9 +164,8 @@ class OrderEntity {
                     ? price <= double.parse(condition.value)
                     : price < double.parse(condition.value);
       } else if (condition.attribute == 'sku') {
-        cartConditionMatched = condition.operator == '=='
-            ? item.product.sku == condition.value
-            : item.product.sku != condition.value;
+        cartConditionMatched =
+            condition.operator == '==' ? item.product.sku == condition.value : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         cartConditionMatched = condition.operator == '=='
             ? item.product.brandEntity!.optionId == condition.value
@@ -183,18 +173,15 @@ class OrderEntity {
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         cartConditionMatched = condition.operator == '=='
-            ? values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value))
-            : !values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value));
+            ? values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value))
+            : !values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value));
       }
     }
     bool productConditionMatched = true;
     for (var condition in productCondition) {
-      if (condition.attribute == 'price' ||
-          condition.attribute == 'special_price') {
+      if (condition.attribute == 'price' || condition.attribute == 'special_price') {
         if (condition.attribute == 'price') {
           price = StringService.roundDouble(item.product.beforePrice!, 3);
         } else if (condition.attribute == 'special_price') {
@@ -211,9 +198,8 @@ class OrderEntity {
                     ? price <= double.parse(condition.value)
                     : price < double.parse(condition.value);
       } else if (condition.attribute == 'sku') {
-        productConditionMatched = condition.operator == '=='
-            ? item.product.sku == condition.value
-            : item.product.sku != condition.value;
+        productConditionMatched =
+            condition.operator == '==' ? item.product.sku == condition.value : item.product.sku != condition.value;
       } else if (condition.attribute == 'manufacturer') {
         productConditionMatched = condition.operator == '=='
             ? item.product.brandEntity!.optionId == condition.value
@@ -221,27 +207,27 @@ class OrderEntity {
       } else if (condition.attribute == 'category_ids') {
         List<String> values = condition.value.split(', ');
         productConditionMatched = condition.operator == '=='
-            ? values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value))
-            : !values.any((value) =>
-                item.product.categories!.contains(value) ||
-                item.product.parentCategories!.contains(value));
+            ? values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value))
+            : !values.any(
+                (value) => item.product.categories!.contains(value) || item.product.parentCategories!.contains(value));
       }
     }
-    bool isOkay = (cartConditionMatched == isCartConditionOkay) &&
-        (productConditionMatched == isProductConditionOkay);
+    bool isOkay = (cartConditionMatched == isCartConditionOkay) && (productConditionMatched == isProductConditionOkay);
     if (isRowPrice) {
-      return isOkay
-          ? NumericService.roundDouble(
-              item.rowPrice * (100 - discountAmount) / 100, 3)
-          : item.rowPrice;
+      return isOkay ? NumericService.roundDouble(item.rowPrice * (100 - discountAmount) / 100, 3) : item.rowPrice;
     } else {
       return isOkay
-          ? NumericService.roundDouble(
-              double.parse(item.product.price) * (100 - discountAmount) / 100,
-              3)
+          ? NumericService.roundDouble(double.parse(item.product.price) * (100 - discountAmount) / 100, 3)
           : StringService.roundDouble(item.product.price, 3);
     }
   }
+}
+
+List<OrderEntity> getOrderList(List<dynamic> list) {
+  List<OrderEntity> orders = [];
+  for (var item in list) {
+    orders.add(OrderEntity.fromJson(item));
+  }
+  return orders;
 }

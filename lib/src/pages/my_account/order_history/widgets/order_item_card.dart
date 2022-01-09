@@ -22,30 +22,21 @@ class OrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isStock =
-        cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
-    double discountedPrice =
-        order.getDiscountedPrice(cartItem, isRowPrice: false);
-    print(discountedPrice);
+    bool isStock = cartItem.product.stockQty == null || cartItem.product.stockQty == 0;
+    double discountedPrice = order.getDiscountedPrice(cartItem, isRowPrice: false);
     return Stack(
       children: [
         Container(
           width: 375.w,
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 20.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
           child: Row(
             children: [
               CachedNetworkImage(
-                key: ValueKey(cartItem.product.imageUrl),
-                cacheKey: cartItem.product.imageUrl,
                 imageUrl: cartItem.product.imageUrl,
                 width: 90.w,
                 height: 120.h,
                 fit: BoxFit.fitHeight,
-                errorWidget: (_, __, ___) =>
-                    Center(child: Icon(Icons.image, size: 20)),
+                errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
               ),
               SizedBox(width: 5.w),
               Expanded(
@@ -56,49 +47,33 @@ class OrderItemCard extends StatelessWidget {
                       cartItem.product.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 16.sp,
-                      ),
+                      style: mediumTextStyle.copyWith(fontSize: 16.sp),
                     ),
                     Text(
                       cartItem.product.shortDescription!,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: mediumTextStyle.copyWith(
-                        fontSize: 12.sp,
-                      ),
+                      style: mediumTextStyle.copyWith(fontSize: 12.sp),
                     ),
                     SizedBox(height: 10.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'items'
-                              .tr()
-                              .replaceFirst('0', '${cartItem.itemCount}'),
-                          style: mediumTextStyle.copyWith(
-                            fontSize: 14.sp,
-                            color: primaryColor,
-                          ),
+                          'items'.tr().replaceFirst('0', '${cartItem.itemCount}'),
+                          style: mediumTextStyle.copyWith(fontSize: 14.sp, color: primaryColor),
                         ),
                         Row(
                           children: [
-                            if (discountedPrice ==
-                                double.parse(cartItem.product.price)) ...[
+                            if (discountedPrice == double.parse(cartItem.product.price)) ...[
                               Text(
                                 cartItem.product.price + ' ' + 'currency'.tr(),
-                                style: mediumTextStyle.copyWith(
-                                  fontSize: 16.sp,
-                                  color: primaryColor,
-                                ),
+                                style: mediumTextStyle.copyWith(fontSize: 16.sp, color: primaryColor),
                               )
                             ] else ...[
                               Text(
                                 '$discountedPrice ' + 'currency'.tr(),
-                                style: mediumTextStyle.copyWith(
-                                  fontSize: 16.sp,
-                                  color: primaryColor,
-                                ),
+                                style: mediumTextStyle.copyWith(fontSize: 16.sp, color: primaryColor),
                               ),
                               SizedBox(width: 5.w),
                               Text(
@@ -142,24 +117,15 @@ class OrderItemCard extends StatelessWidget {
           children: [
             Text(
               'items'.tr().replaceFirst('0', '${cartItem.itemCountCanceled}'),
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: dangerColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 14.sp, color: dangerColor),
             ),
             SizedBox(width: 20.w),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               color: dangerColor.withOpacity(0.5),
               child: Text(
                 'item_canceled'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
               ),
             ),
           ],
@@ -173,24 +139,15 @@ class OrderItemCard extends StatelessWidget {
           children: [
             Text(
               'items'.tr().replaceFirst('0', '${cartItem.itemCountCanceled}'),
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: dangerColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 14.sp, color: dangerColor),
             ),
             SizedBox(width: 20.w),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               color: dangerColor.withOpacity(0.5),
               child: Text(
                 'item_canceled'.tr(),
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
               ),
             ),
           ],
@@ -205,17 +162,11 @@ class OrderItemCard extends StatelessWidget {
         bottom: 0,
         right: 0,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 4.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           color: primarySwatchColor.withOpacity(0.5),
           child: Text(
             'out_stock'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: Colors.white,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
           ),
         ),
       );
@@ -224,17 +175,11 @@ class OrderItemCard extends StatelessWidget {
         bottom: 0,
         left: 0,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 4.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           color: primarySwatchColor.withOpacity(0.5),
           child: Text(
             'out_stock'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: Colors.white,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
           ),
         ),
       );
@@ -273,24 +218,15 @@ class OrderItemCard extends StatelessWidget {
           children: [
             Text(
               'items'.tr().replaceFirst('0', '${cartItem.itemCountReturned}'),
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: color,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 14.sp, color: color),
             ),
             SizedBox(width: 20.w),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               color: color.withOpacity(0.5),
               child: Text(
                 label,
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
               ),
             ),
           ],
@@ -304,24 +240,15 @@ class OrderItemCard extends StatelessWidget {
           children: [
             Text(
               'items'.tr().replaceFirst('0', '${cartItem.itemCountReturned}'),
-              style: mediumTextStyle.copyWith(
-                fontSize: 14.sp,
-                color: color,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 14.sp, color: color),
             ),
             SizedBox(width: 20.w),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               color: color.withOpacity(0.5),
               child: Text(
                 label,
-                style: mediumTextStyle.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 14.sp, color: Colors.white),
               ),
             ),
           ],

@@ -16,37 +16,64 @@ class AppRepository {
   //////////////////////////////////////////////////////////////////////////////
   /// [CHECK APP VERSION BETWEEN STORE & LOCAL VERSION]
   //////////////////////////////////////////////////////////////////////////////
-  Future<VersionEntity> checkAppVersion(
-    bool isAndroid, [
-    String lang = 'en',
-  ]) async {
+  Stream<VersionEntity> checkAppVersion(bool isAndroid, [String lang = 'en']) {
     final path = FirebasePath.APP_VERSION_DOC_PATH;
-    final doc = await firebaseRepository.loadDoc(path);
-    final data = doc.data() as Map<String, dynamic>;
-    int androidStoreVersion = data['android'];
-    int iOSStoreVersion = data['ios'];
-    int androidMinVersion = data['androidMinVersion'];
-    int iOSMinVersion = data['iosMinVersion'];
-    String newVersionString =
-        isAndroid ? data['androidVersionString'] : data['iosVersionString'];
-    String title = lang == 'en' ? data['dialogTitleEn'] : data['dialogTitleAr'];
-    String content =
-        lang == 'en' ? data['dialogContentEn'] : data['dialogContentAr'];
-    bool canUpdate = isAndroid
-        ? androidStoreVersion > MarkaaVersion.androidVersion
-        : iOSStoreVersion > MarkaaVersion.iOSVersion;
-    bool updateMandatory = isAndroid
-        ? androidMinVersion > MarkaaVersion.androidVersion
-        : iOSMinVersion > MarkaaVersion.iOSVersion;
-    String storeLink = isAndroid ? data['playStoreLink'] : data['appStoreLink'];
-    final versionEntity = VersionEntity(
-      canUpdate: canUpdate,
-      updateMandatory: updateMandatory,
-      dialogTitle: title,
-      dialogContent: content.replaceFirst('###', newVersionString),
-      storeLink: storeLink,
-    );
-    return versionEntity;
+    final docStream = firebaseRepository.loadDocStream(path);
+    return docStream.asyncMap((data) {
+      int androidStoreVersion = data['android'];
+      int iOSStoreVersion = data['ios'];
+      int androidMinVersion = data['androidMinVersion'];
+      int iOSMinVersion = data['iosMinVersion'];
+      String newVersionString = isAndroid ? data['androidVersionString'] : data['iosVersionString'];
+      String title = lang == 'en' ? data['dialogTitleEn'] : data['dialogTitleAr'];
+      String content = lang == 'en' ? data['dialogContentEn'] : data['dialogContentAr'];
+      bool canUpdate =
+          isAndroid ? androidStoreVersion > MarkaaVersion.androidVersion : iOSStoreVersion > MarkaaVersion.iOSVersion;
+      bool updateMandatory =
+          isAndroid ? androidMinVersion > MarkaaVersion.androidVersion : iOSMinVersion > MarkaaVersion.iOSVersion;
+      String storeLink = isAndroid ? data['playStoreLink'] : data['appStoreLink'];
+      final versionEntity = VersionEntity(
+        canUpdate: canUpdate,
+        updateMandatory: updateMandatory,
+        dialogTitle: title,
+        dialogContent: content.replaceFirst('###', newVersionString),
+        storeLink: storeLink,
+      );
+      return versionEntity;
+    });
+  }
+
+  Future<dynamic> getAppAsset() async {
+    String url = EndPoints.getAppAsset;
+    final data = {'lang': Preload.language, 'country_code': 'KW'};
+    final result = await Api.getMethod(url, data: data);
+    if (result['code'] == 'SUCCESS') {
+      List<dynamic> shippingMethodList = result['shippingMethods'];
+      List<ShippingMethodEntity> shippingMethods = [];
+      for (int i = 0; i < shippingMethodList.length; i++) {
+        shippingMethods.add(ShippingMethodEntity.fromJson(shippingMethodList[i]));
+      }
+      List<String> keys = (result['paymentMethods'] as Map<String, dynamic>).keys.toList();
+      List<PaymentMethodEntity> paymentMethods = [];
+      for (int i = 0; i < keys.length; i++) {
+        paymentMethods.add(PaymentMethodEntity.fromJson(result['paymentMethods'][keys[i]]));
+      }
+      List<RegionEntity> _regionsObjs = [];
+      result['regions'].forEach((region) => _regionsObjs.add(RegionEntity.fromJson(region)));
+
+      return {
+        'shippingMethods': shippingMethods,
+        'paymentMethods': paymentMethods,
+        'regions': _regionsObjs,
+        'deliveryRules': DeliveryRuleEntity.fromJson(result['deliveryRules'])
+      };
+    }
+    return {
+      'shippingMethods': [],
+      'paymentMethods': [],
+      'regions': [],
+      'deliveryRules': null,
+    };
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -76,8 +103,7 @@ class AppRepository {
     final data = {'lang': Preload.language};
     final result = await Api.getMethod(url, data: data);
     if (result['code'] == 'SUCCESS') {
-      List<String> keys =
-          (result['data'] as Map<String, dynamic>).keys.toList();
+      List<String> keys = (result['data'] as Map<String, dynamic>).keys.toList();
       List<PaymentMethodEntity> methods = [];
       for (int i = 0; i < keys.length; i++) {
         methods.add(PaymentMethodEntity.fromJson(result['data'][keys[i]]));
@@ -100,8 +126,7 @@ class AppRepository {
     );
     List<RegionEntity> _regionsObjs = [];
     if (regionsList['code'] == 'SUCCESS') {
-      regionsList['regions']
-          .forEach((region) => _regionsObjs.add(RegionEntity.fromJson(region)));
+      regionsList['regions'].forEach((region) => _regionsObjs.add(RegionEntity.fromJson(region)));
     }
     return _regionsObjs;
   }

@@ -4,7 +4,6 @@ import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:markaa/src/utils/repositories/setting_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,12 +13,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangeNotificationSettingItem extends StatefulWidget {
   @override
-  _ChangeNotificationSettingItemState createState() =>
-      _ChangeNotificationSettingItemState();
+  _ChangeNotificationSettingItemState createState() => _ChangeNotificationSettingItemState();
 }
 
-class _ChangeNotificationSettingItemState
-    extends State<ChangeNotificationSettingItem> {
+class _ChangeNotificationSettingItemState extends State<ChangeNotificationSettingItem> {
   late MarkaaAppChangeNotifier markaaAppChangeNotifier;
   SettingRepository settingRepository = SettingRepository();
 

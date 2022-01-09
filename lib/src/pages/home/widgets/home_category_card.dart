@@ -26,11 +26,7 @@ class HomeCategoryCard extends StatelessWidget {
           selectedSubCategoryIndex: 0,
           isFromBrand: false,
         );
-        Navigator.pushNamed(
-          context,
-          Routes.productList,
-          arguments: arguments,
-        );
+        Navigator.pushNamed(context, Routes.productList, arguments: arguments);
       },
       child: Container(
         width: designWidth.w,
@@ -39,16 +35,12 @@ class HomeCategoryCard extends StatelessWidget {
           image: DecorationImage(
             image: CachedNetworkImageProvider(
               category.imageUrl ?? '',
-              cacheKey: category.imageUrl ?? '',
               errorListener: () => print('IMAGE LOADING ERROR'),
             ),
             fit: BoxFit.cover,
           ),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 18.w,
-          vertical: 23.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 23.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -56,10 +48,7 @@ class HomeCategoryCard extends StatelessWidget {
               width: designWidth.w / 1.5,
               child: Text(
                 category.name,
-                style: mediumTextStyle.copyWith(
-                  color: darkColor,
-                  fontSize: 23.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: darkColor, fontSize: 23.sp),
               ),
             ),
             Container(
@@ -69,10 +58,7 @@ class HomeCategoryCard extends StatelessWidget {
                 category.description ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                style: mediumTextStyle.copyWith(
-                  color: greyDarkColor,
-                  fontSize: 10.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 10.sp),
               ),
             ),
             Container(
@@ -92,11 +78,7 @@ class HomeCategoryCard extends StatelessWidget {
                     selectedSubCategoryIndex: 0,
                     isFromBrand: false,
                   );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.productList,
-                    arguments: arguments,
-                  );
+                  Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                 },
               ),
             )

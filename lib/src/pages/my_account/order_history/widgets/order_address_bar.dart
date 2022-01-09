@@ -35,24 +35,15 @@ class OrderAddressBar extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
           Text(
-            'Block No.${address.company}, ' +
-                address.city +
-                ', ' +
-                address.country,
+            'Block No.${address.company}, ' + address.city + ', ' + address.country,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           SizedBox(height: 6.h),
           Text(
             'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),

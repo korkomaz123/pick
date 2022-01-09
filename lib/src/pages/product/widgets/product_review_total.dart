@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_review_change_notifier.dart';
@@ -106,16 +105,10 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
                     return;
                   }
                   widget.progressService.showProgress();
-
-                  print(
-                      "${widget.product.productId}_product_price_${Preload.language}");
-                  FirebaseMessaging.instance.subscribeToTopic(
-                      "${widget.product.productId}_product_price_${Preload.language}");
-                  await widget.product
-                      .requestPriceAlarm('price', widget.product.productId);
+                  await widget.product.requestPriceAlarm('price', widget.product.productId);
                   widget.progressService.hideProgress();
-                  FlushBarService(context: context).showErrorDialog(
-                      "alarm_subscribed".tr(), "../icons/price_alarm.svg");
+                  FlushBarService(context: context)
+                      .showErrorDialog("alarm_subscribed".tr(), "../icons/price_alarm.svg");
                   _alarmActive = '_done';
                   setState(() {});
                 }
@@ -175,13 +168,9 @@ class _ProductReviewTotalState extends State<ProductReviewTotal> {
           onRatingUpdate: (value) => null,
         ),
         InkWell(
-          onTap: model.reviews.length > 0
-              ? widget.onReviews
-              : widget.onFirstReview,
+          onTap: model.reviews.length > 0 ? widget.onReviews : widget.onFirstReview,
           child: Text(
-            'reviews_count'
-                .tr()
-                .replaceFirst('0', model.reviews.length.toString()),
+            'reviews_count'.tr().replaceFirst('0', model.reviews.length.toString()),
             style: mediumTextStyle.copyWith(
               fontSize: 11.sp,
               color: primaryColor,

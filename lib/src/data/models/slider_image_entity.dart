@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'brand_entity.dart';
 
 class SliderImageEntity {
@@ -17,6 +19,7 @@ class SliderImageEntity {
   final String? categoryName;
   final BrandEntity? brand;
   final String? productId;
+  File? bannerImageFile;
 
   SliderImageEntity({
     this.bannerId,
@@ -35,6 +38,7 @@ class SliderImageEntity {
     this.categoryName,
     this.brand,
     this.productId,
+    this.bannerImageFile,
   });
 
   SliderImageEntity.fromJson(Map<String, dynamic> json)
@@ -60,5 +64,6 @@ class SliderImageEntity {
                 brandImage: json['brand_thumbnail'],
               )
             : null,
-        productId = json.containsKey('product_id') ? json['product_id'] : null;
+        productId = json.containsKey('product_id') ? json['product_id'] : null,
+        bannerImageFile = json.containsKey('banner_image_file') ? json['banner_image_file'] : null;
 }

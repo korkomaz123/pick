@@ -54,16 +54,11 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                           children: [
                             Text(
                               'deliver_as_gift'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                color: primaryColor,
-                                fontSize: 14.sp,
-                              ),
+                              style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 14.sp),
                             ),
                             Text(
                               'special_reopen_special_message'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 12.sp,
-                              ),
+                              style: mediumTextStyle.copyWith(fontSize: 12.sp),
                             ),
                           ],
                         ),

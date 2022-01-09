@@ -112,17 +112,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
 
   void _setPaymentWidget() {
     if (order!.paymentMethod.title == 'Visa Card') {
-      paymentWidget = Image.asset(
-        visaImage,
-        width: 35.w,
-        height: 20.h,
-      );
+      paymentWidget = Image.asset(visaImage, width: 35.w, height: 20.h);
     } else if (order!.paymentMethod.title == 'KNet') {
-      paymentWidget = Image.asset(
-        knetImage,
-        width: 35.w,
-        height: 20.h,
-      );
+      paymentWidget = Image.asset(knetImage, width: 35.w, height: 20.h);
     }
   }
 
@@ -147,20 +139,12 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildOrder(),
-        ],
+        children: [_buildAppBar(), _buildOrder()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -175,10 +159,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       centerTitle: true,
       title: Text(
         'cancel_order_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -187,10 +168,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 20.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
           child: Column(
             children: [
               _buildOrderNo(),
@@ -214,9 +192,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                       _buildCancelRequestCost(),
                       _buildSubtotal(),
                       _buildShippingCost(),
-                      if (widget.order.discountAmount != 0) ...[
-                        _buildDiscount(),
-                      ],
+                      if (widget.order.discountAmount != 0) ...[_buildDiscount()],
                       _buildTotal(),
                     ],
                   );
@@ -233,20 +209,14 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildOrderNo() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 15.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       color: Colors.grey.shade200,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_order_no'.tr() + ' #${order!.orderNo}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           SvgPicture.asset(icon),
         ],
@@ -257,25 +227,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildOrderDate() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_order_date'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             order!.orderDate,
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -293,17 +255,11 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         children: [
           Text(
             'order_status'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             status,
-            style: mediumTextStyle.copyWith(
-              color: color,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: color, fontSize: 14.sp),
           ),
         ],
       ),
@@ -319,8 +275,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           bool isSelected = cancelItemsMap.containsKey(key);
           int availableCount = order!.cartItems[index].availableCount;
           if (availableCount == 0) {
-            order!.cartItems[index].availableCount =
-                order!.cartItems[index].itemCount;
+            order!.cartItems[index].availableCount = order!.cartItems[index].itemCount;
           }
           if (order!.cartItems[index].itemCount > 0) {
             return Column(
@@ -331,9 +286,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                     _buildCheckButton(isSelected, key, index),
                   ],
                 ),
-                if (index < (order!.cartItems.length - 1)) ...[
-                  Divider(color: greyColor, thickness: 0.5)
-                ],
+                if (index < (order!.cartItems.length - 1)) ...[Divider(color: greyColor, thickness: 0.5)],
               ],
             );
           } else {
@@ -347,25 +300,18 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildProductCard(CartItemEntity cartItem, int index) {
     String productId = cartItem.product.productId.toString();
     bool isDefaultValue = cancelItemsMap.containsKey(productId);
-    double discountedPrice =
-        order!.getDiscountedPrice(cartItem, isRowPrice: false);
+    double discountedPrice = order!.getDiscountedPrice(cartItem, isRowPrice: false);
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 20.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
       child: Row(
         children: [
           CachedNetworkImage(
-            key: ValueKey(cartItem.product.imageUrl),
-            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.w,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            errorWidget: (_, __, ___) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
           ),
           SizedBox(width: 5.w),
           Expanded(
@@ -388,22 +334,15 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (discountedPrice ==
-                        double.parse(cartItem.product.price)) ...[
+                    if (discountedPrice == double.parse(cartItem.product.price)) ...[
                       Text(
                         cartItem.product.price + ' ' + 'currency'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 16.sp,
-                          color: primaryColor,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 16.sp, color: primaryColor),
                       )
                     ] else ...[
                       Text(
                         '$discountedPrice ' + 'currency'.tr(),
-                        style: mediumTextStyle.copyWith(
-                          fontSize: 16.sp,
-                          color: primaryColor,
-                        ),
+                        style: mediumTextStyle.copyWith(fontSize: 16.sp, color: primaryColor),
                       ),
                       SizedBox(width: 5.w),
                       Text(
@@ -439,8 +378,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       child: IconButton(
         icon: SvgPicture.asset(isSelected ? selectedIcon : unSelectedIcon),
         onPressed: () {
-          double discountedRowPrice =
-              order!.getDiscountedPrice(order!.cartItems[index]);
+          double discountedRowPrice = order!.getDiscountedPrice(order!.cartItems[index]);
           if (isSelected) {
             canceledPrice -= discountedRowPrice;
             cancelItemsMap.remove(key);
@@ -464,22 +402,15 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildOrderPaymentMethod() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'order_payment_method'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
-          OrderPaymentMethod(
-            paymentMethod: order!.paymentMethod.id,
-          ),
+          OrderPaymentMethod(paymentMethod: order!.paymentMethod.id),
         ],
       ),
     );
@@ -488,26 +419,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildCancelRequestCost() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'cancel_request_price'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: dangerColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: dangerColor, fontSize: 14.sp),
           ),
           Text(
             '${'currency'.tr()} ${NumericService.roundString(canceledPrice, 3)}',
-            style: mediumTextStyle.copyWith(
-              color: dangerColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: dangerColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -517,26 +439,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildSubtotal() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'checkout_subtotal_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             '${'currency'.tr()} ${NumericService.roundDouble(subtotalPrice, 3)}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -546,28 +459,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildShippingCost() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'checkout_shipping_cost_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
-            serviceFees == 0
-                ? 'free'.tr()
-                : '${'currency'.tr()} ${NumericService.roundString(serviceFees, 3)}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            serviceFees == 0 ? 'free'.tr() : '${'currency'.tr()} ${NumericService.roundString(serviceFees, 3)}',
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -577,26 +479,17 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildDiscount() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 5.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'discount'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
           Text(
             '${'currency'.tr()} ${NumericService.roundDouble(discount, 3)}',
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 14.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
           ),
         ],
       ),
@@ -606,10 +499,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
   Widget _buildTotal() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -639,16 +529,11 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       onPressed: () => _onNext(),
       minWidth: 150.w,
       height: 45.h,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       color: primaryColor,
       child: Text(
         'next_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          fontSize: 17.sp,
-          color: Colors.white,
-        ),
+        style: mediumTextStyle.copyWith(fontSize: 17.sp, color: Colors.white),
       ),
     );
   }
@@ -674,11 +559,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       } else {
         updatedCount = count - order!.cartItems[index].itemCount;
       }
-      double discountedUpdatePrice = order!
-              .getDiscountedPrice(order!.cartItems[index], isRowPrice: false) *
-          updatedCount;
-      double updatePrice =
-          double.parse(order!.cartItems[index].product.price) * updatedCount;
+      double discountedUpdatePrice =
+          order!.getDiscountedPrice(order!.cartItems[index], isRowPrice: false) * updatedCount;
+      double updatePrice = double.parse(order!.cartItems[index].product.price) * updatedCount;
       canceledPrice += discountedUpdatePrice;
       subtotalPrice -= updatePrice;
       totalPrice -= discountedUpdatePrice;

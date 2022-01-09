@@ -105,8 +105,6 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 if (user != null) ...[
                   CachedNetworkImage(
-                    key: ValueKey(user?.profileUrl ?? ''),
-                    cacheKey: user?.profileUrl ?? '',
                     imageUrl: user?.profileUrl ?? '',
                     imageBuilder: (_, _imageProvider) {
                       return Container(

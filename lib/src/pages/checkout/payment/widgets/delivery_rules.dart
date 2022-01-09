@@ -31,20 +31,13 @@ class _DeliveryRulesState extends State<DeliveryRules> {
             width: 150.w,
             child: Text(
               deliveryRule?.title ?? '',
-              style: mediumTextStyle.copyWith(
-                color: dangerColor,
-                fontSize: 12.sp,
-                overflow: TextOverflow.clip,
-              ),
+              style: mediumTextStyle.copyWith(color: dangerColor, fontSize: 12.sp, overflow: TextOverflow.clip),
               maxLines: 1,
             ),
           ),
           Text(
             '...' + 'read_more'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: primaryColor,
-              fontSize: 12.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 12.sp),
           ),
         ],
       ),
@@ -85,9 +78,7 @@ class DeliveryRulesDialogHeader extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           child: Align(
-            alignment: Preload.language == 'en'
-                ? Alignment.topRight
-                : Alignment.topLeft,
+            alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
             child: IconButton(
               icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
               onPressed: () => Navigator.pop(context),
@@ -112,11 +103,7 @@ class DeliveryRulesDialog extends StatelessWidget {
           children: [
             Text(
               deliveryRule?.title ?? '',
-              style: mediumTextStyle.copyWith(
-                color: primaryColor,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-              ),
+              style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 20.sp, fontWeight: FontWeight.w700),
             ),
             Html(data: deliveryRule?.content),
           ],

@@ -11,6 +11,7 @@ import 'package:markaa/src/data/models/user_entity.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:markaa/src/utils/repositories/local_storage_repository.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -71,13 +72,11 @@ class _SignUpPageState extends State<SignUpPage> {
     Adjust.trackEvent(adjustEvent);
     user = newUser;
 
-    // Future.wait([
     await localRepository.setToken(newUser.token);
     await myCartChangeNotifier.getCartId();
     await myCartChangeNotifier.transferCartItems();
     await myCartChangeNotifier.getCartItems(lang);
     await homeChangeNotifier.loadRecentlyViewedCustomer();
-    // ]);
 
     progressService.hideProgress();
     Navigator.pop(context);
@@ -88,44 +87,45 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primarySwatchColor,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                width: 375.w,
-                padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment:
-                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 180.h,
+              floating: false,
+              pinned: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
-              Container(
-                padding: EdgeInsets.only(top: 20.h, bottom: 60.h),
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: 120.w,
-                  height: 45.h,
-                ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: SvgPicture.asset(hLogoIcon, width: 160.w),
               ),
-              _buildFullName(),
-              SizedBox(height: 10),
-              _buildPhoneNumber(),
-              SizedBox(height: 10),
-              _buildEmail(),
-              SizedBox(height: 10),
-              _buildPassword(),
-              SizedBox(height: 40),
-              _buildTermsAndConditions(),
-              SizedBox(height: 40),
-              _buildSignUpButton(),
-              SizedBox(height: 40),
-              if (!widget.isFromCheckout) ...[_buildSignInPhase()],
-            ],
+            ),
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(height: 40.h),
+                _buildFullName(),
+                SizedBox(height: 10),
+                _buildPhoneNumber(),
+                SizedBox(height: 10),
+                _buildEmail(),
+                SizedBox(height: 10),
+                _buildPassword(),
+                SizedBox(height: 40),
+                _buildTermsAndConditions(),
+                SizedBox(height: 40),
+                _buildSignUpButton(),
+                SizedBox(height: 40),
+                if (!widget.isFromCheckout) ...[_buildSignInPhase()],
+              ],
+            ),
           ),
         ),
       ),
@@ -174,9 +174,9 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         validator: (value) {
-          if (value!.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'required_field'.tr();
-          } else if (value.trim().indexOf(' ') == -1) {
+          } else if (!value.isValidName) {
             return 'full_name_issue'.tr();
           }
           return null;
@@ -444,7 +444,7 @@ class _SignUpPageState extends State<SignUpPage> {
   _onSignUp() {
     if (_formKey.currentState!.validate()) {
       if (agreeTerms) {
-        String fullName = fullNameController.text;
+        String fullName = fullNameController.text.trim();
         String firstName = fullName.split(' ')[0];
         String lastName = fullName.split(' ')[1];
         authChangeNotifier.signUp(

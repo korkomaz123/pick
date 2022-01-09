@@ -21,7 +21,7 @@ class SearchAddressScreen extends StatelessWidget {
       ),
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overScroll) {
-          overScroll.disallowGlow();
+          overScroll.disallowIndicator();
           return false;
         },
         child: SearchAddressView(placeChangeNotifier: bloc),

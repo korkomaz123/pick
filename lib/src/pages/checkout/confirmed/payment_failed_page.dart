@@ -4,6 +4,7 @@ import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
+import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -25,8 +26,7 @@ class PaymentFailedPage extends StatefulWidget {
 
 class _PaymentFailedPageState extends State<PaymentFailedPage> {
   TextEditingController noteController = TextEditingController();
-
-  MyCartChangeNotifier? _cartProvider;
+  late MyCartChangeNotifier _cartProvider;
 
   @override
   void initState() {
@@ -36,10 +36,12 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
 
     if (!widget.isReorder) {
       _cartProvider = context.read<MyCartChangeNotifier>();
-      _cartProvider!.activateCart().then((value) {
+      _cartProvider.activateCart().then((value) {
         print('CART ACTIVATED: $value');
       });
     }
+
+    orderDetails = {};
   }
 
   @override
@@ -57,19 +59,13 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
               SizedBox(height: 15.h),
               Text(
                 'sorry'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 60.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 60.sp),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
                 child: Text(
                   'transation_failed'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                 ),
               ),
               if (!widget.isReorder) ...[_buildGoToShoppingCartButton()],
@@ -77,10 +73,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
                 width: double.infinity,
                 child: Text(
                   'checkout_ordered_success_account_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 17.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
                 ),
               ),
               SizedBox(height: 20.h),
@@ -88,10 +81,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
                 padding: EdgeInsets.only(left: 8.w),
                 child: Text(
                   'checkout_ordered_success_account_text'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                 ),
               ),
               _buildBackToShopButton(),

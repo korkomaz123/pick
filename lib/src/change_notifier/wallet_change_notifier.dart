@@ -128,13 +128,14 @@ class WalletChangeNotifier extends ChangeNotifier {
     Function? onProcess,
     Function? onSuccess,
     Function? onFailure,
+    Map<String, dynamic>? params,
   }) async {
     if (onProcess != null) onProcess();
     try {
       final result = await orderRepository.cancelOrderById(walletResult['order']['entity_id'], Preload.language);
 
       if (result['code'] == 'SUCCESS') {
-        submitCanceledWalletResult(walletResult);
+        submitCanceledWalletResult(walletResult, params);
         notifyListeners();
         if (onSuccess != null) onSuccess();
       } else {
@@ -270,7 +271,7 @@ class WalletChangeNotifier extends ChangeNotifier {
 
   void reportWalletIssue(dynamic result, dynamic walletDetails) async {
     SlackChannels.send(
-      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]',
+      '$env Error Wallet: [${result['code']}] : ${result['errorMessage']} \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]',
       SlackChannels.logAddWalletError,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -309,9 +310,11 @@ class WalletChangeNotifier extends ChangeNotifier {
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
-  void submitCanceledWalletResult(dynamic result) async {
+  void submitCanceledWalletResult(dynamic result, [Map<String, dynamic>? params]) async {
     SlackChannels.send(
-      '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      params != null
+          ? '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl] \r\n [payment_result => $params]'''
+          : '''$env Wallet Canceled: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl]''',
       SlackChannels.logWalletPaymentCanceled,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -327,9 +330,9 @@ class WalletChangeNotifier extends ChangeNotifier {
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
-  void submitPaymentFailedWalletResult(dynamic result) async {
+  void submitPaymentFailedWalletResult(dynamic result, Map<String, dynamic> params) async {
     SlackChannels.send(
-      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Wallet Payment Failed: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [DashboardVisitorUrl => $gDashboardVisitorUrl] [DashboardSessionUrl => $gDashboardSessionUrl] \r\n [payment_result => $params]''',
       SlackChannels.logWalletPaymentFailed,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());
@@ -345,9 +348,9 @@ class WalletChangeNotifier extends ChangeNotifier {
     await firebaseRepository.setDoc('$path/${result['orderNo']}', resultData);
   }
 
-  void submitPaymentSuccessWalletResult(dynamic result) async {
+  void submitPaymentSuccessWalletResult(dynamic result, Map<String, dynamic> params) async {
     SlackChannels.send(
-      '''$env Wallet Payment Success: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}]''',
+      '''$env Wallet Payment Success: [${result['order']['entity_id']}] => [orderNo : ${result['orderNo']}] [cart : ${result['order']['quote_id']}] [${result['order']['payment_code']}] [totalPrice : ${result['order']['base_grand_total']}] \r\n [${Platform.isAndroid ? 'Android => ${MarkaaVersion.androidVersion}' : 'iOS => ${MarkaaVersion.iOSVersion}'}] \r\n [customer_info => ${user?.toJson() ?? 'Guest'}] \r\n [payment_result => $params]''',
       SlackChannels.logWalletPaymentSuccess,
     );
     final date = DateFormat('yyyy-MM-dd', 'en_US').format(DateTime.now());

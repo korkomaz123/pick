@@ -30,6 +30,7 @@ class ProductEntity {
   final List<ReviewEntity>? reviews;
   final BrandEntity? brandEntity;
   final int stockQty;
+  final int availableQty;
   final Map<String, dynamic>? configurable;
   final List<ProductModel>? variants;
   final List<Specification>? specification;
@@ -61,6 +62,7 @@ class ProductEntity {
     this.reviews,
     this.brandEntity,
     required this.stockQty,
+    required this.availableQty,
     this.configurable,
     this.variants,
     required this.isDeal,
@@ -92,6 +94,7 @@ class ProductEntity {
     reviews,
     brandEntity,
     stockQty,
+    availableQty,
     configurable,
     variants,
     isDeal,
@@ -122,6 +125,7 @@ class ProductEntity {
         reviews: reviews ?? this.reviews,
         brandEntity: brandEntity ?? this.brandEntity,
         stockQty: stockQty ?? this.stockQty,
+        availableQty: availableQty ?? this.availableQty,
         configurable: configurable ?? this.configurable,
         variants: variants ?? this.variants,
         isDeal: isDeal ?? this.isDeal,
@@ -144,14 +148,8 @@ class ProductEntity {
         price = json['special_price'] != null
             ? StringService.roundString(json['special_price'], 3)
             : StringService.roundString(json['price'], 3),
-        beforePrice = json['price'] != null
-            ? StringService.roundString(json['price'], 3)
-            : null,
-        discount = _getDiscount(
-            json['special_price'] != null
-                ? json['special_price']
-                : json['price'],
-            json['price']),
+        beforePrice = json['price'] != null ? StringService.roundString(json['price'], 3) : null,
+        discount = _getDiscount(json['special_price'] != null ? json['special_price'] : json['price'], json['price']),
         imageUrl = json['image_url'],
         hasOptions = json['has_options'],
         addCartUrl = json['add_cart_url'],
@@ -168,6 +166,7 @@ class ProductEntity {
               )
             : null,
         stockQty = json['stockQty'],
+        availableQty = json['availableQty'],
         configurable = json['configurable'],
         variants = _getVariants(json['child_products']),
         isDeal = json['sale'] == '1',
@@ -217,6 +216,7 @@ class ProductEntity {
         productId = product.productId,
         gallery = [product.imageUrl],
         stockQty = product.stockQty ?? 0,
+        availableQty = product.availableQty ?? 0,
         brandEntity = product.brandEntity,
         reviews = null,
         specification = null,

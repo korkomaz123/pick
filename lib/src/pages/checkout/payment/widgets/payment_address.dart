@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
@@ -26,7 +25,6 @@ class PaymentAddress extends StatefulWidget {
 
 class _PaymentAddressState extends State<PaymentAddress> {
   late AddressChangeNotifier addressChangeNotifier;
-
   late FlushBarService flushBarService;
   late ProgressService progressService;
 
@@ -35,8 +33,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
   _loadData() async {
     if (user == null && addressChangeNotifier.guestAddressesMap.isEmpty) {
       await addressChangeNotifier.loadGuestAddresses();
-    } else if (user != null &&
-        addressChangeNotifier.customerAddressesMap.isEmpty) {
+    } else if (user != null && addressChangeNotifier.customerAddressesMap.isEmpty) {
       await addressChangeNotifier.loadCustomerAddresses(user!.token);
     }
   }
@@ -80,18 +77,11 @@ class _PaymentAddressState extends State<PaymentAddress> {
                         onTap: _onAddNewAddress,
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.add_circle_outline,
-                              size: 18.sp,
-                              color: primaryColor,
-                            ),
+                            Icon(Icons.add_circle_outline, size: 18.sp, color: primaryColor),
                             SizedBox(width: 5.w),
                             Text(
                               'add_new_address_button_title'.tr(),
-                              style: mediumTextStyle.copyWith(
-                                fontSize: 12.sp,
-                                color: primaryColor,
-                              ),
+                              style: mediumTextStyle.copyWith(fontSize: 12.sp, color: primaryColor),
                             ),
                           ],
                         ),
@@ -107,8 +97,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                         model.customerAddressKeys.length,
                         (index) {
                           String key = model.customerAddressKeys[index];
-                          return _buildAddressCard(
-                              model.customerAddressesMap[key]!);
+                          return _buildAddressCard(model.customerAddressesMap[key]!);
                         },
                       ),
                     ),
@@ -121,8 +110,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                         model.guestAddressKeys.length,
                         (index) {
                           int key = model.guestAddressKeys[index];
-                          return _buildAddressCard(
-                              model.guestAddressesMap[key]!);
+                          return _buildAddressCard(model.guestAddressesMap[key]!);
                         },
                       ),
                     ),
@@ -130,8 +118,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                 ],
               ] else ...[
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -182,14 +169,10 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   Widget _buildAddressCard(AddressEntity address) {
-    final defaultAddress = user != null
-        ? addressChangeNotifier.customerDefaultAddress
-        : addressChangeNotifier.guestDefaultAddress;
-    final isDefault = user != null
-        ? address.addressId == defaultAddress?.addressId
-        : address.id == defaultAddress?.id;
-    var groupValue =
-        user != null ? defaultAddress?.addressId : defaultAddress?.id;
+    final defaultAddress =
+        user != null ? addressChangeNotifier.customerDefaultAddress : addressChangeNotifier.guestDefaultAddress;
+    final isDefault = user != null ? address.addressId == defaultAddress?.addressId : address.id == defaultAddress?.id;
+    var groupValue = user != null ? defaultAddress?.addressId : defaultAddress?.id;
     var value = user != null ? address.addressId : address.id;
     return InkWell(
       onTap: () => _onUpdateAddress(value),
@@ -212,7 +195,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      address.street,
+                      address.fullName?.toUpperCase() ?? '',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: mediumTextStyle.copyWith(
@@ -223,21 +206,22 @@ class _PaymentAddressState extends State<PaymentAddress> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'Block No.${address.company}, ${address.city}, ${address.country}',
+                      'Block No.${address.company}, ${address.street}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 12.sp,
-                      ),
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 12.sp),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      '${address.city}, ${address.country}',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 12.sp),
                     ),
                     SizedBox(height: 6.h),
                     Text(
                       'phone_number_hint'.tr() + ': ' + address.phoneNumber!,
-                      style: mediumTextStyle.copyWith(
-                        color: greyDarkColor,
-                        fontSize: 12.sp,
-                      ),
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 12.sp),
                     ),
                   ],
                 ),
@@ -290,8 +274,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
       await addressChangeNotifier.changeGuestAddress(false, address.toJson(),
           onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     } else {
-      await addressChangeNotifier.changeCustomerAddress(
-          false, user!.token, address,
+      await addressChangeNotifier.changeCustomerAddress(false, user!.token, address,
           onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
     }
   }
@@ -343,8 +326,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
   }
 
   void _onRemoveAddress(AddressEntity address) async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'remove_shipping_address_subtitle');
+    final result = await flushBarService.showConfirmDialog(message: 'remove_shipping_address_subtitle');
     if (result != null) {
       addressChangeNotifier.removeGuestAddress(address.id,
           onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);

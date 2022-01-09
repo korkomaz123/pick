@@ -7,7 +7,6 @@ import 'package:markaa/src/data/models/formatted_address_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -66,12 +65,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
           ),
           _buildForm(widget.placeChangeNotifier),
           _buildUseMyLocationButton(),
-          widget.placeChangeNotifier.listPlace != null && searchNode.hasFocus
-              ? _buildSearchedAddressList()
-              : Container(),
-          formattedAddresses.isNotEmpty && !searchNode.hasFocus
-              ? _buildFormattedAddressList()
-              : SizedBox.shrink(),
+          if (widget.placeChangeNotifier.listPlace != null && searchNode.hasFocus) _buildSearchedAddressList(),
+          if (formattedAddresses.isNotEmpty && !searchNode.hasFocus) _buildFormattedAddressList(),
         ],
       ),
     );
@@ -96,9 +91,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
           controller: TextEditingController.fromValue(
             TextEditingValue(
               text: toLocation ?? '',
-              selection: TextSelection.collapsed(
-                offset: toLocation?.length ?? 0,
-              ),
+              selection: TextSelection.collapsed(offset: toLocation?.length ?? 0),
             ),
           ),
           onChanged: (String value) async {
@@ -133,9 +126,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
               widget.placeChangeNotifier.listPlace![index].formattedAddress!,
             ),
             onTap: () {
-              widget.placeChangeNotifier
-                  .selectLocation(widget.placeChangeNotifier.listPlace![index])
-                  .then((_) {
+              widget.placeChangeNotifier.selectLocation(widget.placeChangeNotifier.listPlace![index]).then((_) {
                 toLocation = widget.placeChangeNotifier.locationSelect!.name;
                 FocusScope.of(context).requestFocus(searchNode);
                 final newPosition = CameraPosition(
@@ -173,8 +164,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                   InkWell(
                     onTap: () => _onSelectAddress(address),
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Row(
                         children: [
                           Icon(Icons.location_on, color: greyColor, size: 18),
@@ -184,10 +174,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
                       ),
                     ),
                   ),
-                  formattedAddresses.indexOf(address) <
-                          (formattedAddresses.length - 1)
-                      ? Divider()
-                      : SizedBox.shrink(),
+                  formattedAddresses.indexOf(address) < (formattedAddresses.length - 1) ? Divider() : SizedBox.shrink(),
                 ],
               );
             }).toList(),
@@ -209,10 +196,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
             SizedBox(width: 10),
             Text(
               'Current Location',
-              style: mediumTextStyle.copyWith(
-                fontSize: 14,
-                color: Colors.white,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 14, color: Colors.white),
             ),
           ],
         ),
@@ -248,8 +232,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         progressService.hideProgress();
         flushBarService.showErrorDialog(
           'Location permissions are denied (actual value: $permission).',
@@ -261,8 +244,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
       forceAndroidLocationManager: true,
       desiredAccuracy: LocationAccuracy.high,
     );
-    print(position.latitude);
-    print(position.longitude);
     CameraPosition myPosition = CameraPosition(
       target: LatLng(position.latitude, position.longitude),
       zoom: 14,
@@ -278,8 +259,8 @@ class _SearchAddressViewState extends State<SearchAddressView> {
     controller.animateCamera(CameraUpdate.newCameraPosition(newPosition));
     double lat = newPosition.target.latitude;
     double lng = newPosition.target.longitude;
-    final response = await Api.getMethod(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
+    final response =
+        await Api.getMethod('https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey');
     List<dynamic> addressList = response['results'];
     for (var address in addressList) {
       Map<String, dynamic> formattedJson = {};
@@ -311,8 +292,7 @@ class _SearchAddressViewState extends State<SearchAddressView> {
         }
       }
       formattedJson['formatted_address'] = address['formatted_address'];
-      FormattedAddressEntity addressEntity =
-          FormattedAddressEntity.fromJson(formattedJson);
+      FormattedAddressEntity addressEntity = FormattedAddressEntity.fromJson(formattedJson);
       if (addressEntity.street != null) {
         formattedAddresses.add(addressEntity);
       }
@@ -323,12 +303,6 @@ class _SearchAddressViewState extends State<SearchAddressView> {
   }
 
   void _onSelectAddress(FormattedAddressEntity address) {
-    print(address.country);
-    print(address.countryCode);
-    print(address.state);
-    print(address.city);
-    print(address.street);
-    print(address.postalCode);
     AddressEntity addressEntity = AddressEntity(
       id: 0,
       country: address.country ?? '',

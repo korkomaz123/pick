@@ -50,10 +50,7 @@ class HomeOrientalFragrances extends StatelessWidget {
             child: Text(
               homeChangeNotifier.orientalTitle,
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                fontSize: 26.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
             ),
           ),
           Container(
@@ -70,8 +67,7 @@ class HomeOrientalFragrances extends StatelessWidget {
               onPressed: () {
                 ProductListArguments arguments = ProductListArguments(
                   category: homeChangeNotifier.orientalCategory,
-                  subCategory:
-                      homeChangeNotifier.orientalCategory!.subCategories,
+                  subCategory: homeChangeNotifier.orientalCategory!.subCategories,
                   brand: null,
                   selectedSubCategoryIndex: 0,
                   isFromBrand: false,
@@ -108,8 +104,7 @@ class HomeOrientalFragrances extends StatelessWidget {
             isWishlist: true,
             isShare: false,
             borderRadius: 10.sp,
-            onAddToCartFailure: () =>
-                homeChangeNotifier.updateOrientalProduct(index),
+            onAddToCartFailure: () => homeChangeNotifier.updateOrientalProduct(index),
           ),
         ),
       ),

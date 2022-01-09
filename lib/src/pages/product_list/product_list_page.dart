@@ -7,10 +7,7 @@ import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/brand_entity.dart';
-import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
 import 'package:markaa/src/pages/product_list/widgets/product_sort_by_dialog.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -121,10 +118,8 @@ class _ProductListPageState extends State<ProductListPage> {
                 if (subCategories!.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
-                      double extra =
-                          scrollChangeNotifier!.showBrandBar ? 0 : 75;
-                      double pos =
-                          !scrollChangeNotifier!.showScrollBar ? 40 : 0;
+                      double extra = scrollChangeNotifier!.showBrandBar ? 0 : 75;
+                      double pos = !scrollChangeNotifier!.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
                         top: isFromBrand! ? 120.h - extra : 45.h,
                         left: 0,
@@ -252,24 +247,18 @@ class _ProductListPageState extends State<ProductListPage> {
             alignment: Alignment.center,
             color: Colors.white,
             child: CachedNetworkImage(
-              key: ValueKey(brand?.brandImage ?? ''),
-              cacheKey: brand?.brandImage ?? '',
               imageUrl: brand?.brandImage ?? '',
               width: 120.w,
               height: 60.h,
               fit: BoxFit.fitHeight,
-              errorWidget: (_, __, ___) =>
-                  Center(child: Icon(Icons.image, size: 20)),
+              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  key: ValueKey(brand?.brandThumbnail ?? ''),
-                  cacheKey: brand?.brandThumbnail ?? '',
                   imageUrl: brand?.brandThumbnail ?? '',
                   width: 120.w,
                   height: 60.h,
                   fit: BoxFit.fitHeight,
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Icon(Icons.image, size: 20)),
+                  errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),
@@ -287,21 +276,11 @@ class _ProductListPageState extends State<ProductListPage> {
         return FilterPage(
           categoryId: subCategories?[activeSubcategoryIndex].id ?? 'all',
           brandId: brand?.optionId ?? '',
-          minPrice: filterValues.containsKey('minPrice')
-              ? filterValues['minPrice']
-              : null,
-          maxPrice: filterValues.containsKey('maxPrice')
-              ? filterValues['maxPrice']
-              : null,
-          selectedCategories: filterValues.containsKey('selectedCategories')
-              ? filterValues['selectedCategories']
-              : [],
-          selectedGenders: filterValues.containsKey('selectedGenders')
-              ? filterValues['selectedGenders']
-              : [],
-          selectedValues: filterValues.containsKey('selectedValues')
-              ? filterValues['selectedValues']
-              : {},
+          minPrice: filterValues.containsKey('minPrice') ? filterValues['minPrice'] : null,
+          maxPrice: filterValues.containsKey('maxPrice') ? filterValues['maxPrice'] : null,
+          selectedCategories: filterValues.containsKey('selectedCategories') ? filterValues['selectedCategories'] : [],
+          selectedGenders: filterValues.containsKey('selectedGenders') ? filterValues['selectedGenders'] : [],
+          selectedValues: filterValues.containsKey('selectedValues') ? filterValues['selectedValues'] : {},
         );
       },
     );

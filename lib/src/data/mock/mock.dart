@@ -1,7 +1,6 @@
 import 'package:markaa/src/data/models/delivery_rule_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
 
-/// category list for home screen
 List<CategoryEntity> homeCategories = [];
 List<RegionEntity> regions = [];
 List<ShippingMethodEntity> shippingMethods = [];
@@ -13,6 +12,7 @@ List<String> sortByList = [
   'price_low_high',
   'price_high_low',
   'sort_by_brand',
+  'sort_by_discount',
   'name_az',
   'name_za',
 ];
@@ -91,27 +91,6 @@ String deviceToken = '';
 String lang = 'en';
 bool isNotification = true;
 
-List<BankAccountEntity> bankAccounts = [
-  BankAccountEntity(
-    title: 'My account',
-    bank: 'global bank',
-    name: 'name',
-    iBan: '2232222',
-  ),
-  BankAccountEntity(
-    title: 'Wife account',
-    bank: 'global bank',
-    name: 'name',
-    iBan: '2232222',
-  ),
-  BankAccountEntity(
-    title: 'mother account',
-    bank: 'global bank',
-    name: 'name',
-    iBan: '2232222',
-  ),
-];
-
 Map<String, dynamic> emptyAddress = {
   'customer_address_id': '',
   'prefix': '',
@@ -129,3 +108,6 @@ Map<String, dynamic> emptyAddress = {
   'company': '',
   'email': '',
 };
+
+String gDashboardSessionUrl = '';
+String gDashboardVisitorUrl = '';

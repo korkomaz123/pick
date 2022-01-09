@@ -4,7 +4,6 @@ import 'package:markaa/src/apis/api.dart';
 import 'package:markaa/src/apis/endpoints.dart';
 import 'package:markaa/src/data/models/condition_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_model.dart';
 
 class MyCartRepository {
   //////////////////////////////////////////////////////////////////////////////
@@ -58,8 +57,7 @@ class MyCartRepository {
       bool isProductConditionOkay = true;
       List<dynamic> cartConditionsList = [];
       List<dynamic> productConditionsList = [];
-      if (result.containsKey('cart_condition') &&
-          result['cart_condition'] != '') {
+      if (result.containsKey('cart_condition') && result['cart_condition'] != '') {
         isCartConditionOkay = result['cart_condition']['value'] == '1';
         for (var cartCondition in result['cart_condition']['conditions']) {
           if (cartCondition.containsKey('conditions')) {
@@ -69,11 +67,9 @@ class MyCartRepository {
           }
         }
       }
-      if (result.containsKey('product_condition') &&
-          result['product_condition'] != '') {
+      if (result.containsKey('product_condition') && result['product_condition'] != '') {
         isProductConditionOkay = result['product_condition']['value'] == '1';
-        for (var productCondition in result['product_condition']
-            ['conditions']) {
+        for (var productCondition in result['product_condition']['conditions']) {
           if (productCondition.containsKey('conditions')) {
             productConditionsList.addAll(productCondition['conditions']);
           } else {
@@ -154,12 +150,11 @@ class MyCartRepository {
     String itemId,
     String qty,
   ) async {
-    String url = EndPoints.getCartItems;
+    String url = EndPoints.updateCartItem;
     final params = {
       'cartId': cartId,
       'itemId': itemId,
       'qty': qty,
-      'type': 'edit'
     };
     return await Api.postMethod(url, data: params);
   }
@@ -168,8 +163,8 @@ class MyCartRepository {
   ///
   //////////////////////////////////////////////////////////////////////////////
   Future<dynamic> deleteCartItem(String cartId, String itemId) async {
-    String url = EndPoints.getCartItems;
-    final params = {'cartId': cartId, 'itemId': itemId, 'type': 'delete'};
+    String url = EndPoints.deleteCartItem;
+    final params = {'cartId': cartId, 'itemId': itemId};
     return await Api.postMethod(url, data: params);
   }
 
@@ -182,11 +177,7 @@ class MyCartRepository {
     String remove,
   ) async {
     String url = EndPoints.applyCouponCode;
-    final params = {
-      'cartId': cartId,
-      'coupon_code': couponCode,
-      'remove': remove
-    };
+    final params = {'cartId': cartId, 'coupon_code': couponCode, 'remove': remove};
     final result = await Api.postMethod(url, data: params);
     if (remove == '0' && result['code'] == 'SUCCESS') {
       List<ConditionEntity> cartConditions = [];
@@ -195,8 +186,7 @@ class MyCartRepository {
       bool isProductConditionOkay = true;
       List<dynamic> cartConditionsList = [];
       List<dynamic> productConditionsList = [];
-      if (result.containsKey('cart_condition') &&
-          result['cart_condition'] != '') {
+      if (result.containsKey('cart_condition') && result['cart_condition'] != '') {
         isCartConditionOkay = result['cart_condition']['value'] == '1';
         for (var cartCondition in result['cart_condition']['conditions']) {
           if (cartCondition.containsKey('conditions')) {
@@ -206,11 +196,9 @@ class MyCartRepository {
           }
         }
       }
-      if (result.containsKey('product_condition') &&
-          result['product_condition'] != '') {
+      if (result.containsKey('product_condition') && result['product_condition'] != '') {
         isProductConditionOkay = result['product_condition']['value'] == '1';
-        for (var productCondition in result['product_condition']
-            ['conditions']) {
+        for (var productCondition in result['product_condition']['conditions']) {
           if (productCondition.containsKey('conditions')) {
             productConditionsList.addAll(productCondition['conditions']);
           } else {

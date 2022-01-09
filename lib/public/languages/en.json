@@ -211,6 +211,7 @@
     "price_high_low": "Price (Low to High)",
     "price_low_high": "Price (High to Low)",
     "sort_by_brand": "Sort By Brand",
+    "sort_by_discount": "Products on Discount",
     "products_on_sale": "Products on Sale",
     "name_az": "Name (A - Z)",
     "name_za": "Name (Z - A)",
@@ -400,5 +401,9 @@
     "coupon": "Discount Coupon",
     "connection_error": "Oops! Connection is poor, please try again later.",
     "added_review_success": "Thank You! Your review has been submitted success.",
-    "read_more": "Read More"
+    "read_more": "Read More",
+    "need_help": "Need Help?",
+    "exceed_qty": "Already added maximum quantity for this item",
+    "max_qty": "Added max qty",
+    "please_wait": "Please wait..."
 }

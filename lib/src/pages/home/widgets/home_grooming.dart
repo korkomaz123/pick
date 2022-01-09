@@ -31,15 +31,11 @@ class HomeGrooming extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
-            if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[
-              _buildHeadline()
-            ],
+            if (homeChangeNotifier.groomingTitle.isNotEmpty) ...[_buildHeadline()],
             if (homeChangeNotifier.groomingCategories.isNotEmpty) ...[
               _buildCategories(homeChangeNotifier.groomingCategories)
             ],
-            if (homeChangeNotifier.groomingItems.isNotEmpty) ...[
-              _buildProducts(homeChangeNotifier.groomingItems)
-            ],
+            if (homeChangeNotifier.groomingItems.isNotEmpty) ...[_buildProducts(homeChangeNotifier.groomingItems)],
           ],
         ),
       );
@@ -58,10 +54,7 @@ class HomeGrooming extends StatelessWidget {
             child: Text(
               homeChangeNotifier.groomingTitle,
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                fontSize: 26.sp,
-                color: greyDarkColor,
-              ),
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
             ),
           ),
           Container(
@@ -120,12 +113,9 @@ class HomeGrooming extends StatelessWidget {
             );
           },
           child: CachedNetworkImage(
-            key: ValueKey(categories[index].imageUrl ?? ''),
-            cacheKey: categories[index].imageUrl ?? '',
             imageUrl: categories[index].imageUrl ?? '',
             fit: BoxFit.fill,
-            errorWidget: (context, url, error) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
           ),
         ),
       ),

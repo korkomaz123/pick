@@ -28,12 +28,12 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
   @override
   void initState() {
     super.initState();
+    orderDetails = {};
     OneSignal.shared.addTrigger('iam', 'order_success');
     OneSignal.shared.getTags().then((tags) {
       if (tags.containsKey('amount_spent')) {
         var orderPrice = StringService.roundDouble(widget.order.totalPrice, 3);
-        var value =
-            StringService.roundDouble(tags['amount_spent'].toString(), 3);
+        var value = StringService.roundDouble(tags['amount_spent'].toString(), 3);
         OneSignal.shared.sendTag('amount_sent', value + orderPrice);
       }
     });
@@ -56,10 +56,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 children: [
                   Text(
                     'checkout_ordered_success_title'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: primaryColor,
-                      fontSize: 34.sp,
-                    ),
+                    style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 34.sp),
                   ),
                   SvgPicture.asset(orderedSuccessIcon),
                 ],
@@ -70,52 +67,35 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 color: greyLightColor,
                 child: Text(
-                  'checkout_ordered_success_text'
-                      .tr()
-                      .replaceFirst('0', widget.order.orderNo),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 14.sp,
-                  ),
+                  'checkout_ordered_success_text'.tr().replaceFirst('0', widget.order.orderNo),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                 ),
               ),
               SizedBox(height: 20.h),
               Text(
                 'checkout_ordered_success_subtitle'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: greyColor,
-                  fontSize: 17.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
               ),
               SizedBox(height: 20.h),
               Padding(
                 padding: EdgeInsets.only(left: 8.w),
                 child: Text(
                   'checkout_ordered_success_subtext'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                 ),
               ),
               if (user != null) ...[
                 _buildShowAllMyOrderedButton(),
                 Text(
                   'checkout_ordered_success_account_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: greyColor,
-                    fontSize: 17.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: greyColor, fontSize: 17.sp),
                 ),
                 SizedBox(height: 20.h),
                 Padding(
                   padding: EdgeInsets.only(left: 8.w),
                   child: Text(
                     'checkout_ordered_success_account_text'.tr(),
-                    style: mediumTextStyle.copyWith(
-                      color: greyColor,
-                      fontSize: 14.sp,
-                    ),
+                    style: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
                   ),
                 ),
               ],
@@ -137,10 +117,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
         titleColor: Colors.white70,
         buttonColor: primaryColor,
         borderColor: Colors.transparent,
-        onPressed: () => Navigator.popAndPushNamed(
-          context,
-          Routes.orderHistory,
-        ),
+        onPressed: () => Navigator.popAndPushNamed(context, Routes.orderHistory),
         radius: 30,
       ),
     );

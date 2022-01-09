@@ -42,9 +42,8 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
           ],
         ),
       );
-    } else {
-      return HomeLoadingWidget();
     }
+    return HomeLoadingWidget();
   }
 
   Widget _buildTitle() {
@@ -57,10 +56,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
             child: Text(
               'brands_title'.tr(),
               maxLines: 1,
-              style: mediumTextStyle.copyWith(
-                color: greyDarkColor,
-                fontSize: 26.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 26.sp),
             ),
           ),
           Container(
@@ -89,9 +85,7 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
   }
 
   Widget _buildStoresSlider() {
-    int length = widget.homeChangeNotifier.brandList.length > 20
-        ? 20
-        : widget.homeChangeNotifier.brandList.length;
+    int length = widget.homeChangeNotifier.brandList.length > 20 ? 20 : widget.homeChangeNotifier.brandList.length;
     return Expanded(
       child: Stack(
         children: [
@@ -119,15 +113,9 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                       selectedSubCategoryIndex: 0,
                       isFromBrand: true,
                     );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.productList,
-                      arguments: arguments,
-                    );
+                    Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                   },
                   child: CachedNetworkImage(
-                    key: ValueKey(brand.brandImage),
-                    cacheKey: brand.brandImage,
                     imageUrl: brand.brandImage ?? '',
                     width: designWidth.w,
                     height: 200.h,
@@ -135,14 +123,11 @@ class _HomeDiscoverStoresState extends State<HomeDiscoverStores> {
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     progressIndicatorBuilder: (_, __, ___) {
                       return CachedNetworkImage(
-                        key: ValueKey(brand.brandThumbnail ?? ''),
-                        cacheKey: brand.brandThumbnail ?? '',
                         imageUrl: brand.brandThumbnail ?? '',
                         width: designWidth.w,
                         height: 200.h,
                         fit: BoxFit.fitHeight,
-                        errorWidget: (_, __, ___) =>
-                            Center(child: Icon(Icons.image, size: 20)),
+                        errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                       );
                     },
                   ),

@@ -30,12 +30,10 @@ class BrandEntity {
         attributeId = json['attribute_id'],
         optionId = json['option_id'],
         attributeCode = json['attribute_code'],
-        brandLabel = json['brand_label'],
+        brandLabel = json['brand_label'] ?? '',
         sortOrder = json['sort_order'],
-        brandThumbnail = json['brand_thumbnail'],
-        brandImage = json.containsKey('brand_image')
-            ? json['brand_image']
-            : json['brand_thumbnail'],
+        brandThumbnail = json['brand_thumbnail'] ?? '',
+        brandImage = json.containsKey('brand_image') ? json['brand_image'] : json['brand_thumbnail'] ?? '',
         url = json['url'],
         productsCount = json['item_count'],
         percentage = json.containsKey('disPercent') ? json['disPercent'] : 0;

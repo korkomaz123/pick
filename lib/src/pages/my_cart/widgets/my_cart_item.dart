@@ -6,7 +6,6 @@ import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/pages/my_cart/widgets/my_cart_shop_counter.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -85,8 +84,6 @@ class _MyCartItemState extends State<MyCartItem> {
                 ),
               ),
               CachedNetworkImage(
-                key: ValueKey(widget.cartItem.product.imageUrl),
-                cacheKey: widget.cartItem.product.imageUrl,
                 imageUrl: widget.cartItem.product.imageUrl,
                 width: 104.w,
                 height: 150.h,

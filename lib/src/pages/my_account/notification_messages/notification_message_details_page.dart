@@ -15,12 +15,10 @@ class NotificationMessageDetailsPage extends StatefulWidget {
   NotificationMessageDetailsPage({required this.message});
 
   @override
-  _NotificationMessageDetailsPageState createState() =>
-      _NotificationMessageDetailsPageState();
+  _NotificationMessageDetailsPageState createState() => _NotificationMessageDetailsPageState();
 }
 
-class _NotificationMessageDetailsPageState
-    extends State<NotificationMessageDetailsPage> {
+class _NotificationMessageDetailsPageState extends State<NotificationMessageDetailsPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -30,14 +28,9 @@ class _NotificationMessageDetailsPageState
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
       drawer: MarkaaSideMenu(),
       body: Column(
-        children: [
-          _buildAppBar(),
-          _buildMessage(),
-        ],
+        children: [_buildAppBar(), _buildMessage()],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.account,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
@@ -51,10 +44,7 @@ class _NotificationMessageDetailsPageState
       centerTitle: true,
       title: Text(
         'account_notification_message_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -64,10 +54,7 @@ class _NotificationMessageDetailsPageState
       child: SingleChildScrollView(
         child: Container(
           width: 375.w,
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 10.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           margin: EdgeInsets.only(bottom: 4.h),
           color: Colors.white,
           child: Column(
@@ -78,26 +65,18 @@ class _NotificationMessageDetailsPageState
                 children: [
                   Text(
                     widget.message.title,
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 13.sp,
-                      color: primaryColor,
-                    ),
+                    style: mediumTextStyle.copyWith(fontSize: 13.sp, color: primaryColor),
                   ),
                   Text(
                     widget.message.time,
-                    style: mediumTextStyle.copyWith(
-                      fontSize: 9.sp,
-                    ),
+                    style: mediumTextStyle.copyWith(fontSize: 9.sp),
                   ),
                 ],
               ),
               SizedBox(height: 10.h),
               Text(
                 widget.message.content,
-                style: mediumTextStyle.copyWith(
-                  fontSize: 13.sp,
-                  color: greyColor,
-                ),
+                style: mediumTextStyle.copyWith(fontSize: 13.sp, color: greyColor),
               ),
             ],
           ),

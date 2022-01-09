@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +18,7 @@ class TopBrandsInCategory extends StatefulWidget {
 }
 
 class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
-  List<BrandEntity> get brands =>
-      widget.model.brandsMap[widget.productId] ?? [];
+  List<BrandEntity> get brands => widget.model.brandsMap[widget.productId] ?? [];
   dynamic get category => widget.model.categoryMap[widget.productId];
 
   @override
@@ -56,16 +54,12 @@ class _TopBrandsInCategoryState extends State<TopBrandsInCategory> {
                             selectedSubCategoryIndex: 0,
                             isFromBrand: true,
                           );
-                          Navigator.pushNamed(context, Routes.productList,
-                              arguments: arguments);
+                          Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                         },
                         child: CachedNetworkImage(
-                          key: ValueKey(e.brandThumbnail ?? ''),
-                          cacheKey: e.brandThumbnail ?? '',
                           imageUrl: e.brandThumbnail ?? '',
                           placeholder: (context, url) => Container(),
-                          errorWidget: (context, url, error) =>
-                              Center(child: Icon(Icons.error)),
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                           width: 120.w,
                           height: 60.h,
                           fit: BoxFit.fitHeight,

@@ -87,9 +87,7 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
         Padding(
           padding: EdgeInsets.only(right: 20.w, left: 20.w),
           child: InkWell(
-            onTap: () => widget.isCartPage
-                ? null
-                : Navigator.pushNamed(context, Routes.myCart),
+            onTap: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
             child: Center(
               child: Consumer<MyCartChangeNotifier>(
                 builder: (_, model, __) {
@@ -102,13 +100,7 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
                     showBadge: model.cartItemCount > 0,
                     toAnimate: false,
                     animationDuration: Duration.zero,
-                    position: lang == 'ar'
-                        ? BadgePosition.topStart(
-                            start: -8.w,
-                          )
-                        : BadgePosition.topEnd(
-                            end: -8.w,
-                          ),
+                    position: lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
                     child: Container(
                       width: 25.w,
                       height: 25.h,
@@ -124,20 +116,14 @@ class _MarkaaAppBarState extends State<MarkaaAppBar> {
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(30),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-          ),
-          margin: EdgeInsets.only(
-            bottom: (widget.isCenter ? 10.h : 5.h),
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          margin: EdgeInsets.only(bottom: (widget.isCenter ? 10.h : 5.h)),
           width: double.infinity,
           height: 30.h,
           child: TextFormField(
             controller: _searchController,
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.sp),
                 borderSide: BorderSide.none,

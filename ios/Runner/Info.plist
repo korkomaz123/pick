@@ -118,5 +118,7 @@
 	<true/>
 	<key>OneSignal_app_groups_key</key>
 	<string>group.com.markaa.shop.onesignal</string>
+	<key>com.apple.developer.networking.multicast</key>
+	<true/>
 </dict>
 </plist>

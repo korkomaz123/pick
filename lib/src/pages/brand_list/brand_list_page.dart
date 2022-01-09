@@ -109,7 +109,6 @@ class _BrandListPageState extends State<BrandListPage> {
                           curve: Curves.easeIn,
                         );
                       } else {
-                        // Scrollable.ensureVisible(_alphabetKey.currentContext);
                         Scrollable.ensureVisible(_itemKey.currentContext!);
                       }
                     });
@@ -119,8 +118,7 @@ class _BrandListPageState extends State<BrandListPage> {
                     height: 20.w,
                     margin: EdgeInsets.all(2.w),
                     decoration: BoxDecoration(
-                      color:
-                          index == selectedIndex ? primaryColor : Colors.white,
+                      color: index == selectedIndex ? primaryColor : Colors.white,
                       borderRadius: BorderRadius.circular(5.w),
                       border: Border.all(color: primaryColor),
                     ),
@@ -130,9 +128,7 @@ class _BrandListPageState extends State<BrandListPage> {
                       textAlign: TextAlign.justify,
                       style: mediumTextStyle.copyWith(
                         fontSize: 12.sp,
-                        color: index != selectedIndex
-                            ? primaryColor
-                            : Colors.white,
+                        color: index != selectedIndex ? primaryColor : Colors.white,
                       ),
                     ),
                   ),
@@ -144,11 +140,7 @@ class _BrandListPageState extends State<BrandListPage> {
             future: _loadingData,
             builder: (_, model) {
               if (model.connectionState == ConnectionState.waiting) {
-                return Expanded(
-                  child: Center(
-                    child: PulseLoadingSpinner(),
-                  ),
-                );
+                return Expanded(child: Center(child: PulseLoadingSpinner()));
               }
               return Expanded(
                 child: SingleChildScrollView(
@@ -167,9 +159,7 @@ class _BrandListPageState extends State<BrandListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: MarkaaBottomBar(
-        activeItem: BottomEnum.store,
-      ),
+      bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.store),
     );
   }
 
@@ -195,10 +185,7 @@ class _BrandListPageState extends State<BrandListPage> {
         elevation: 0,
         child: Text(
           'home_categories'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: greyColor,
-            fontSize: 12.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: greyColor, fontSize: 12.sp),
         ),
       ),
     );
@@ -220,10 +207,7 @@ class _BrandListPageState extends State<BrandListPage> {
         elevation: 0,
         child: Text(
           'brands_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: Colors.white,
-            fontSize: 12.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 12.sp),
         ),
       ),
     );
@@ -252,44 +236,24 @@ class _BrandListPageState extends State<BrandListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CachedNetworkImage(
-              key: ValueKey(
-                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? ''),
-              cacheKey:
-                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? '',
-              imageUrl:
-                  _homeChangeNotifier.sortedBrandList[index].brandImage ?? '',
+              imageUrl: _homeChangeNotifier.sortedBrandList[index].brandImage ?? '',
               errorWidget: (context, url, error) => Icon(Icons.error),
               progressIndicatorBuilder: (_, __, ___) {
                 return CachedNetworkImage(
-                  key: ValueKey(_homeChangeNotifier
-                          .sortedBrandList[index].brandThumbnail ??
-                      ''),
-                  cacheKey: _homeChangeNotifier
-                          .sortedBrandList[index].brandThumbnail ??
-                      '',
-                  imageUrl: _homeChangeNotifier
-                          .sortedBrandList[index].brandThumbnail ??
-                      '',
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Icon(Icons.image, size: 20)),
+                  imageUrl: _homeChangeNotifier.sortedBrandList[index].brandThumbnail ?? '',
+                  errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
                 );
               },
             ),
             Text(
               _homeChangeNotifier.sortedBrandList[index].brandLabel,
-              style: mediumTextStyle.copyWith(
-                color: darkColor,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: darkColor, fontSize: 14.sp),
             ),
             Row(
               children: [
                 Text(
                   'view_all'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: primaryColor,
-                    fontSize: 11.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 11.sp),
                 ),
                 Icon(Icons.arrow_forward_ios, size: 22, color: primaryColor),
               ],

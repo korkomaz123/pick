@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
@@ -22,14 +20,11 @@ class MarkaaReviewProductCard extends StatelessWidget {
       child: Row(
         children: [
           CachedNetworkImage(
-            key: ValueKey(cartItem.product.imageUrl),
-            cacheKey: cartItem.product.imageUrl,
             imageUrl: cartItem.product.imageUrl,
             width: 90.h,
             height: 120.h,
             fit: BoxFit.fitHeight,
-            errorWidget: (_, __, ___) =>
-                Center(child: Icon(Icons.image, size: 20)),
+            errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
           ),
           SizedBox(width: 10.w),
           Expanded(

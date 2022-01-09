@@ -72,10 +72,8 @@ const String noNetworkIcon = '$iconsAssetPath/no-network-icon.svg';
 const String walletIcon = '$iconsAssetPath/wallet-icon.svg';
 const String walletSimpleIcon = '$iconsAssetPath/wallet-simple-icon.svg';
 const String walletTitle = '$iconsAssetPath/wallet-title.svg';
-const String boldCheckBoxCheckedIcon =
-    '$iconsAssetPath/bold-checkbox-checked-icon.svg';
-const String boldCheckBoxUncheckedIcon =
-    '$iconsAssetPath/bold-checkbox-unchecked-icon.svg';
+const String boldCheckBoxCheckedIcon = '$iconsAssetPath/bold-checkbox-checked-icon.svg';
+const String boldCheckBoxUncheckedIcon = '$iconsAssetPath/bold-checkbox-unchecked-icon.svg';
 const String facebookCircleIcon = '$iconsAssetPath/facebook-circle.svg';
 const String appleCircleIcon = '$iconsAssetPath/apple.svg';
 const String walletSuccessIcon = '$iconsAssetPath/wallet-success-icon.svg';
@@ -84,8 +82,7 @@ const String markaaTextIcon = '$iconsAssetPath/markaa-text-icon.svg';
 const String giftIcon = '$iconsAssetPath/gift-icon.svg';
 
 const String wishlistCustomIcon = '$iconsAssetPath/wishlist-custom-icon.svg';
-const String orderHistoryCustomIcon =
-    '$iconsAssetPath/order-history-custom-icon.svg';
+const String orderHistoryCustomIcon = '$iconsAssetPath/order-history-custom-icon.svg';
 const String markaaCustomIcon = '$iconsAssetPath/markaa-custom-icon.svg';
 const String termsCustomIcon = '$iconsAssetPath/terms-custom-icon.svg';
 const String starCustomIcon = '$iconsAssetPath/star-custom-icon.svg';
@@ -99,3 +96,4 @@ const String bellCustomIcon = '$iconsAssetPath/bell-custom-icon.svg';
 const String globalCustomIcon = '$iconsAssetPath/global-custom-icon.svg';
 const String logoutCustomIcon = '$iconsAssetPath/logout-custom-icon.svg';
 const String errorOutlineIcon = '$iconsAssetPath/Icon-material-error-outline.svg';
+const String circleArrowRightIcon = '$iconsAssetPath/circle-arrow-right-icon.svg';

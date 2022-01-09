@@ -1,5 +1,4 @@
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,8 +19,7 @@ class ProductMoreAbout extends StatelessWidget {
           data: """${productEntity.fullDescription ?? ''}""",
           style: {
             "p": Style.fromTextStyle(mediumTextStyle.copyWith(fontSize: 14.sp)),
-            "span":
-                Style.fromTextStyle(mediumTextStyle.copyWith(fontSize: 14.sp)),
+            "span": Style.fromTextStyle(mediumTextStyle.copyWith(fontSize: 14.sp)),
           },
         ),
       ),

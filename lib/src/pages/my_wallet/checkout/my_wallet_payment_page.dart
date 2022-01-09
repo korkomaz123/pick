@@ -20,8 +20,7 @@ class MyWalletPaymentPage extends StatefulWidget {
   _MyWalletPaymentPageState createState() => _MyWalletPaymentPageState();
 }
 
-class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
-    with WidgetsBindingObserver {
+class _MyWalletPaymentPageState extends State<MyWalletPaymentPage> with WidgetsBindingObserver {
   WebViewController? webViewController;
 
   late WalletChangeNotifier walletChangeNotifier;
@@ -55,14 +54,15 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
   }
 
   void _onBack() async {
-    final result = await flushBarService.showConfirmDialog(
-        message: 'payment_abort_dialog_text');
+    final result = await flushBarService.showConfirmDialog(message: 'payment_abort_dialog_text');
     if (result != null) {
       /// cancel the order
-      await walletChangeNotifier.cancelWalletPayment(walletResult,
-          onProcess: _onCancelProcess,
-          onSuccess: _onCanceledSuccess,
-          onFailure: _onCanceledFailure);
+      await walletChangeNotifier.cancelWalletPayment(
+        walletResult,
+        onProcess: _onCancelProcess,
+        onSuccess: _onCanceledSuccess,
+        onFailure: _onCanceledFailure,
+      );
     }
   }
 
@@ -90,19 +90,12 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 25.sp,
-              color: greyColor,
-            ),
+            icon: Icon(Icons.arrow_back_ios, size: 25.sp, color: greyColor),
             onPressed: _onBack,
           ),
           title: Text(
             'payment_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: greyDarkColor,
-              fontSize: 23.sp,
-            ),
+            style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 23.sp),
           ),
         ),
         body: Stack(
@@ -136,26 +129,31 @@ class _MyWalletPaymentPageState extends State<MyWalletPaymentPage>
       Uri uri = Uri.parse(loadingUrl);
       Map<String, dynamic> params = uri.queryParameters;
 
-      print('LOADING URL>>> $loadingUrl');
-      print('PARAMS>>> $params');
-
-      if (params.containsKey('result')) {
+      if (params.containsKey('flag')) {
         String destination = fromCheckout! ? Routes.checkout : Routes.account;
-        if (params['result'] == 'failed') {
-          walletChangeNotifier.submitPaymentFailedWalletResult(walletResult);
+        if (params['flag'] == 'failed') {
+          walletChangeNotifier.submitPaymentFailedWalletResult(walletResult, params);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.myWalletFailed,
             (route) => route.settings.name == destination,
             arguments: false,
           );
-        } else if (params['result'] == 'success') {
-          walletChangeNotifier.submitPaymentSuccessWalletResult(walletResult);
+        } else if (params['flag'] == 'success') {
+          walletChangeNotifier.submitPaymentSuccessWalletResult(walletResult, params);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.myWalletSuccess,
             (route) => route.settings.name == destination,
             arguments: walletResult['orderNo'],
+          );
+        } else if (params['flag'] == 'canceled') {
+          await walletChangeNotifier.cancelWalletPayment(
+            walletResult,
+            onProcess: _onCancelProcess,
+            onSuccess: _onCanceledSuccess,
+            onFailure: _onCanceledFailure,
+            params: params,
           );
         }
       }

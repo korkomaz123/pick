@@ -28,10 +28,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
 
-  ProgressService? progressService;
-  FlushBarService? flushBarService;
-
-  AuthChangeNotifier? authChangeNotifier;
+  late ProgressService progressService;
+  late FlushBarService flushBarService;
+  late AuthChangeNotifier authChangeNotifier;
 
   @override
   void initState() {
@@ -53,8 +52,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Container(
                 width: 375.w,
                 padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-                alignment:
-                    lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
+                alignment: lang == 'en' ? Alignment.centerLeft : Alignment.centerRight,
                 child: IconButton(
                   icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
@@ -63,20 +61,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Container(
                 padding: EdgeInsets.only(top: 60.h, bottom: 120.h),
                 alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  hLogoIcon,
-                  width: 120.w,
-                  height: 45.h,
-                ),
+                child: SvgPicture.asset(hLogoIcon, width: 120.w, height: 45.h),
               ),
               Container(
                 alignment: Alignment.center,
                 child: Text(
                   'forgot_password_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 14.sp),
                 ),
               ),
               SizedBox(height: 30),
@@ -100,21 +91,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       child: TextFormField(
         controller: emailController,
         textAlign: TextAlign.center,
-        style: mediumTextStyle.copyWith(
-          color: greyDarkColor,
-          fontSize: 14.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 14.sp),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(0),
           hintText: 'email'.tr().toUpperCase(),
-          hintStyle: mediumTextStyle.copyWith(
-            color: greyColor,
-            fontSize: 14.sp,
-          ),
-          errorStyle: mediumTextStyle.copyWith(
-            color: Color(0xFF00F5FF),
-            fontSize: 12.sp,
-          ),
+          hintStyle: mediumTextStyle.copyWith(color: greyColor, fontSize: 14.sp),
+          errorStyle: mediumTextStyle.copyWith(color: Color(0xFF00F5FF), fontSize: 12.sp),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: Colors.white, width: 0.5),
@@ -179,10 +161,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             onTap: () => Navigator.pop(context),
             child: Text(
               'login'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: 14.sp,
-              ),
+              style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 14.sp),
             ),
           ),
           if (!widget.isFromCheckout) ...[
@@ -191,14 +170,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               child: VerticalDivider(color: Colors.white, thickness: 0.5),
             ),
             InkWell(
-              onTap: () =>
-                  Navigator.pushReplacementNamed(context, Routes.signUp),
+              onTap: () => Navigator.pushReplacementNamed(context, Routes.signUp),
               child: Text(
                 'register'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 14.sp),
               ),
             ),
           ],
@@ -209,7 +184,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   _onGetNewPassword() {
     if (_formKey.currentState!.validate()) {
-      authChangeNotifier!.requestNewPassword(
+      authChangeNotifier.requestNewPassword(
         emailController.text,
         onProcess: _onProcess,
         onSuccess: _onSuccess,
@@ -219,16 +194,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   _onProcess() {
-    progressService!.showProgress();
+    progressService.showProgress();
   }
 
   _onFailure(message) {
-    progressService!.hideProgress();
-    flushBarService!.showErrorDialog(message);
+    progressService.hideProgress();
+    flushBarService.showErrorDialog(message);
   }
 
   Future _onSuccess() async {
-    progressService!.hideProgress();
+    progressService.hideProgress();
     await showDialog(
       context: context,
       builder: (context) {

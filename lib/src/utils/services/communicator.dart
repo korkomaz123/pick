@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 
-class OneSignalCommunicator {
+class Communicator {
   final BuildContext context;
 
-  OneSignalCommunicator({required this.context});
+  Communicator({required this.context});
 
   MyCartChangeNotifier? _cartProvider;
   AuthChangeNotifier? _authProvider;
@@ -55,10 +55,8 @@ class OneSignalCommunicator {
 
   _onAuthChanged() {
     /// send authentication status to the onesignal
-    OneSignal.shared.sendTag(
-      'authenticated',
-      _authProvider?.currentUser != null,
-    );
+    bool authenticated = _authProvider?.currentUser != null;
+    OneSignal.shared.sendTag('authenticated', authenticated);
 
     /// if wallet has been changed, send wallet amount to the onesignal
     double amount = _authProvider?.currentUser?.balance ?? 0;
@@ -66,5 +64,9 @@ class OneSignalCommunicator {
       _walletAmount = amount;
       OneSignal.shared.sendTag('wallet', _walletAmount);
     }
+
+    /// set user identity of the smartlook, onesignal
+    Map<String, dynamic> userMap = _authProvider?.currentUser?.toJson() ?? {};
+    OneSignal.shared.sendTags(userMap);
   }
 }

@@ -3,20 +3,21 @@ import 'dart:convert';
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_event.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/components/markaa_checkout_app_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/markaa_text_icon_button.dart';
 import 'package:markaa/src/components/markaa_text_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/checkout/payment/awesome_loader.dart';
 import 'package:markaa/src/routes/routes.dart';
+import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
@@ -101,12 +102,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     addressChangeNotifier = context.read<AddressChangeNotifier>();
 
     details = orderDetails['orderDetails'];
-    orderDetails['deliver_as_gift'] = {
-      'deliver_as_gift': '0',
-      'sender': '',
-      'receiver': '',
-      'message': '',
-    };
+    orderDetails['deliver_as_gift'] = {'deliver_as_gift': '0', 'sender': '', 'receiver': '', 'message': ''};
 
     _loadAssetData();
   }
@@ -182,12 +178,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Container(
       width: designWidth.w,
       height: 50.h,
-      margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: MarkaaTextButton(
+      margin: EdgeInsets.only(bottom: 20.h, left: 10.w, right: 10.w),
+      child: MarkaaTextIconButton(
+        icon: SvgPicture.asset(circleArrowRightIcon, width: 20.w),
         title: 'checkout_place_payment_button_title'.tr(),
         titleColor: Colors.white,
-        titleSize: 18.sp,
+        titleSize: 20.sp,
         buttonColor: primaryColor,
         borderColor: primaryColor,
         onPressed: () => _onPlaceOrder(),

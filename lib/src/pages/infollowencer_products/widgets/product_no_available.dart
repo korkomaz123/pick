@@ -22,10 +22,7 @@ class ProductNoAvailable extends StatelessWidget {
           SizedBox(height: 20.h),
           Text(
             'no_data_message'.tr(),
-            style: mediumTextStyle.copyWith(
-              fontSize: 14.sp,
-              color: greyColor,
-            ),
+            style: mediumTextStyle.copyWith(fontSize: 14.sp, color: greyColor),
           ),
         ],
       ),

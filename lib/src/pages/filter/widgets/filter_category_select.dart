@@ -34,13 +34,10 @@ class FilterCategorySelect extends StatelessWidget {
             height: itemHeight,
             padding: EdgeInsets.symmetric(horizontal: 5.w),
             decoration: BoxDecoration(
-              color:
-                  values.contains(item['value']) ? primaryColor : Colors.white,
+              color: values.contains(item['value']) ? primaryColor : Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: values.contains(item['value'])
-                    ? Colors.transparent
-                    : primaryColor,
+                color: values.contains(item['value']) ? Colors.transparent : primaryColor,
               ),
             ),
             child: Row(
@@ -57,9 +54,7 @@ class FilterCategorySelect extends StatelessWidget {
                 Text(
                   item['display'].toString().tr(),
                   style: mediumTextStyle.copyWith(
-                    color: values.contains(item['value'])
-                        ? Colors.white
-                        : darkColor,
+                    color: values.contains(item['value']) ? Colors.white : darkColor,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
                   ),

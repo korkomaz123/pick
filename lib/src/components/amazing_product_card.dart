@@ -34,12 +34,9 @@ class AmazingProductCard extends StatelessWidget {
         child: Stack(
           children: [
             Align(
-              alignment:
-                  lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: lang == 'en' ? Alignment.centerRight : Alignment.centerLeft,
               child: Card(
-                margin: lang == 'en'
-                    ? EdgeInsets.only(left: 20.w)
-                    : EdgeInsets.only(right: 20.w),
+                margin: lang == 'en' ? EdgeInsets.only(left: 20.w) : EdgeInsets.only(right: 20.w),
                 shadowColor: greyLightColor,
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -57,7 +54,6 @@ class AmazingProductCard extends StatelessWidget {
                     image: DecorationImage(
                       image: CachedNetworkImageProvider(
                         product.imageUrl,
-                        cacheKey: product.imageUrl,
                         errorListener: () => print('IMAGE LOADING ERROR'),
                       ),
                       fit: BoxFit.fitHeight,
@@ -68,20 +64,13 @@ class AmazingProductCard extends StatelessWidget {
               ),
             ),
             Align(
-              alignment:
-                  lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
+              alignment: lang == 'en' ? Alignment.bottomLeft : Alignment.bottomRight,
               child: Container(
                 width: contentSize,
                 height: contentSize,
                 margin: EdgeInsets.only(bottom: 40.h),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 6.w,
-                  vertical: 10.h,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.sp),
-                  color: Color(0xFF009AFB),
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.sp), color: Color(0xFF009AFB)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,19 +81,14 @@ class AmazingProductCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             if (product.brandEntity != null) {
-                              ProductListArguments arguments =
-                                  ProductListArguments(
+                              ProductListArguments arguments = ProductListArguments(
                                 category: null,
                                 subCategory: [],
                                 brand: product.brandEntity,
                                 selectedSubCategoryIndex: 0,
                                 isFromBrand: true,
                               );
-                              Navigator.pushNamed(
-                                context,
-                                Routes.productList,
-                                arguments: arguments,
-                              );
+                              Navigator.pushNamed(context, Routes.productList, arguments: arguments);
                             }
                           },
                           child: Text(
@@ -123,11 +107,7 @@ class AmazingProductCard extends StatelessWidget {
                           product.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: mediumTextStyle.copyWith(
-                            color: Colors.white70,
-                            fontSize: 10.sp,
-                            height: 1.5.h,
-                          ),
+                          style: mediumTextStyle.copyWith(color: Colors.white70, fontSize: 10.sp, height: 1.5.h),
                         ),
                       ],
                     ),

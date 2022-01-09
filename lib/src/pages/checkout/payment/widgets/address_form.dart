@@ -4,9 +4,7 @@ import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
-import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/index.dart';
-import 'package:markaa/src/data/models/region_entity.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_block_list_dialog.dart';
 import 'package:markaa/src/pages/my_account/shipping_address/widgets/select_region_dialog.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -15,6 +13,7 @@ import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:markaa/src/utils/extensions/string_extension.dart';
 import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
@@ -125,9 +124,7 @@ class _AddressFormState extends State<AddressForm> {
         child: Column(
           children: [
             Align(
-              alignment: Preload.language == 'en'
-                  ? Alignment.topRight
-                  : Alignment.topLeft,
+              alignment: Preload.language == 'en' ? Alignment.topRight : Alignment.topLeft,
               child: IconButton(
                 icon: Icon(Icons.close, color: greyDarkColor, size: 25.sp),
                 onPressed: () => Navigator.pop(context),
@@ -136,10 +133,7 @@ class _AddressFormState extends State<AddressForm> {
             Center(
               child: Text(
                 'shipping_address_title'.tr(),
-                style: mediumTextStyle.copyWith(
-                  color: primaryColor,
-                  fontSize: 22.sp,
-                ),
+                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 22.sp),
               ),
             ),
             SizedBox(height: 10.h),
@@ -159,7 +153,7 @@ class _AddressFormState extends State<AddressForm> {
                         validator: (String value) {
                           if (value.isEmpty) {
                             return 'required_field'.tr();
-                          } else if (value.trim().indexOf(' ') == -1) {
+                          } else if (!value.isValidName) {
                             return 'full_name_issue'.tr();
                           }
                           return null;
@@ -210,8 +204,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.h,
                         fontSize: 14.sp,
                         hint: 'checkout_state_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         readOnly: true,
                         onTap: _onSelectState,
@@ -239,8 +232,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.w,
                         fontSize: 14.sp,
                         hint: 'checkout_street_name_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         suffixIcon: IconButton(
                           onPressed: _onSearchAddress,
@@ -254,8 +246,7 @@ class _AddressFormState extends State<AddressForm> {
                         padding: 10.h,
                         fontSize: 14.sp,
                         hint: 'checkout_city_hint'.tr(),
-                        validator: (value) =>
-                            value.isEmpty ? 'required_field'.tr() : null,
+                        validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                         inputType: TextInputType.text,
                         maxLine: 3,
                       ),
@@ -280,25 +271,17 @@ class _AddressFormState extends State<AddressForm> {
         onPressed: () => _onSave(),
         color: primaryColor,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Text(
           'checkout_save_address_button_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            color: Colors.white,
-            fontSize: 16.sp,
-          ),
+          style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 16.sp),
         ),
       ),
     );
   }
 
   void _onSearchAddress() async {
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.searchAddress,
-    );
+    final result = await Navigator.pushNamed(context, Routes.searchAddress);
     FocusScope.of(context).requestFocus(FocusNode());
     if (result != null) {
       final address = result as AddressEntity;
@@ -339,39 +322,35 @@ class _AddressFormState extends State<AddressForm> {
 
   void _onSave() async {
     if (formKey.currentState!.validate()) {
-      String firstName = fullNameController.text.split(' ')[0];
-      String lastName = fullNameController.text.split(' ')[1];
+      String firstName = fullNameController.text.trim().split(' ')[0];
+      String lastName = fullNameController.text.trim().split(' ')[1];
 
       AddressEntity address = AddressEntity(
-        id: 0,
+        id: addressParam?.id ?? 0,
         title: 'title',
-        country: countryController.text,
+        country: countryController.text.trim(),
         countryId: countryId!,
         regionId: regionId!,
-        region: stateController.text,
+        region: stateController.text.trim(),
         firstName: firstName,
-        fullName: fullNameController.text,
+        fullName: fullNameController.text.trim(),
         lastName: lastName,
         city: cityController.text.trim(),
-        street: streetController.text,
-        postCode: postCodeController.text,
-        phoneNumber: phoneNumberController.text,
-        company: companyController.text,
-        email: emailController.text,
+        street: streetController.text.trim(),
+        postCode: postCodeController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
+        company: companyController.text.trim(),
+        email: emailController.text.trim(),
         defaultBillingAddress: addressParam?.defaultBillingAddress ?? 1,
         defaultShippingAddress: addressParam?.defaultShippingAddress ?? 1,
         addressId: addressParam?.addressId ?? '',
       );
       if (user != null) {
         await model.changeCustomerAddress(isNew, user!.token, address,
-            onProcess: _onProcess,
-            onSuccess: _onSuccess,
-            onFailure: _onFailure);
+            onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
       } else {
         await model.changeGuestAddress(isNew, address.toJson(),
-            onProcess: _onProcess,
-            onSuccess: _onSuccess,
-            onFailure: _onFailure);
+            onProcess: _onProcess, onSuccess: _onSuccess, onFailure: _onFailure);
       }
     }
   }

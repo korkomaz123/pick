@@ -8,8 +8,7 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/change_notifier/auth_change_notifier.dart';
 
-class MyWalletDetailsHeader extends StatelessWidget
-    implements PreferredSizeWidget {
+class MyWalletDetailsHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool fromCheckout;
 
   MyWalletDetailsHeader({required this.fromCheckout});

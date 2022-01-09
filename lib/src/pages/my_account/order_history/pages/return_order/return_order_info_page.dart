@@ -78,10 +78,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
+      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
       drawer: MarkaaSideMenu(),
       body: Column(
         children: [
@@ -116,10 +113,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
       centerTitle: true,
       title: Text(
         'return_button_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
+        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
       ),
     );
   }
@@ -127,10 +121,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
   Widget _buildAdditionalInfo() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.sp,
-        vertical: 20.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.h),
       child: MarkaaInputField(
         width: double.infinity,
         controller: additionalInfoController,
@@ -154,10 +145,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
     return Container(
       width: 375.w,
       height: 120.h,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 10.h,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       decoration: file != null
           ? BoxDecoration(
               borderRadius: BorderRadius.circular(10.sp),
@@ -196,9 +184,7 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
                 ),
                 Text(
                   'cancel_order_image_for_product_title'.tr(),
-                  style: mediumTextStyle.copyWith(
-                    fontSize: 14.sp,
-                  ),
+                  style: mediumTextStyle.copyWith(fontSize: 14.sp),
                 ),
               ],
             ),
@@ -212,16 +198,11 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
         onPressed: () => _onSubmit(),
         minWidth: 150.w,
         height: 45.h,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         color: primaryColor,
         child: Text(
           'submit_button_title'.tr(),
-          style: mediumTextStyle.copyWith(
-            fontSize: 17.sp,
-            color: Colors.white,
-          ),
+          style: mediumTextStyle.copyWith(fontSize: 17.sp, color: Colors.white),
         ),
       ),
     );
@@ -250,16 +231,17 @@ class _ReturnOrderInfoPageState extends State<ReturnOrderInfoPage> {
         };
       }).toList();
       orderChangeNotifier!.returnOrder(
-          user!.token,
-          order!.orderId,
-          items,
-          additionalInfoController.text,
-          additionalInfoController.text,
-          imageData!,
-          name!,
-          onProcess: _onProcess,
-          onSuccess: _onSuccess,
-          onFailure: _onFailure);
+        user!.token,
+        order!.orderId,
+        items,
+        additionalInfoController.text,
+        additionalInfoController.text,
+        imageData!,
+        name!,
+        onProcess: _onProcess,
+        onSuccess: _onSuccess,
+        onFailure: _onFailure,
+      );
     }
   }
 }
