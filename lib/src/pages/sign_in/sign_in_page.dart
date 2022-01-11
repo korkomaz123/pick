@@ -507,8 +507,8 @@ class _SignInPageState extends State<SignInPage> {
       );
       String? email = credential.email;
       String appleId = credential.userIdentifier!;
-      String firstName = credential.givenName!;
-      String lastName = credential.familyName!;
+      String firstName = credential.givenName ?? '';
+      String lastName = credential.familyName ?? '';
       if (email == null) {
         final faker = Faker();
         String fakeEmail = faker.internet.freeEmail();
