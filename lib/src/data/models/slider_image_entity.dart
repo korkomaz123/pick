@@ -19,6 +19,7 @@ class SliderImageEntity {
   final String? categoryName;
   final BrandEntity? brand;
   final String? productId;
+  final String? page;
   File? bannerImageFile;
 
   SliderImageEntity({
@@ -38,6 +39,7 @@ class SliderImageEntity {
     this.categoryName,
     this.brand,
     this.productId,
+    this.page,
     this.bannerImageFile,
   });
 
@@ -65,5 +67,6 @@ class SliderImageEntity {
               )
             : null,
         productId = json.containsKey('product_id') ? json['product_id'] : null,
+        page = json['page'],
         bannerImageFile = json.containsKey('banner_image_file') ? json['banner_image_file'] : null;
 }
