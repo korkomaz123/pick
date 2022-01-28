@@ -196,7 +196,7 @@ class _ProductSameBrandProductsState extends State<ProductSameBrandProducts>
           Positioned(
             bottom: 10.h,
             left: Preload.language == 'en' ? 0.38 * 375.w : 0,
-            right: Preload.language == 'en' ? 0 : 0.8 * 375.w,
+            right: Preload.language == 'en' ? 0 : 0.38 * 375.w,
             child: SmoothIndicator(
               offset: activeIndex.toDouble(),
               count:
